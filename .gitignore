@@ -1,0 +1,9 @@
+bin
+.vs
+_logs
+obj
+*.user
+/test/Librame.UnitTests/*.user
+packages
+lib
+/exs/Librame.Website/_bin_deployableAssemblies

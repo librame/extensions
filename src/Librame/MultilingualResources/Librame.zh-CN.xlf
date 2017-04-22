@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="zh-CN" original="LIBRAME/PROPERTIES/RESOURCES.RESX" tool-id="MultilingualAppToolkit" product-name="n/a" product-version="n/a" build-num="n/a">
+    <header>
+      <tool tool-id="MultilingualAppToolkit" tool-name="Multilingual App Toolkit" tool-version="4.0.1795.0" tool-company="Microsoft" />
+    </header>
+    <body>
+      <group id="LIBRAME/PROPERTIES/RESOURCES.RESX" datatype="resx">
+        <trans-unit id="TypeAssignableFromExceptionFormat" translate="yes" xml:space="preserve">
+          <source>{1} is not assignable from {0}.</source>
+          <target state="translated">{1} 派生类型不能分配给基础类型 {0}。</target>
+          <note from="MultilingualEditor" annotates="source" priority="4">类型派生异常。</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Type assignable from exception.</note>
+        </trans-unit>
+        <trans-unit id="UrlContentLengthRequest" translate="yes" xml:space="preserve">
+          <source>A url (={0}) content length request.</source>
+          <target state="translated">发起 URL (={0}) 内容长度请求。</target>
+          <note from="MultilingualEditor" annotates="source" priority="4">发起 URL 内容长度请求。</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">A URL content length request.</note>
+        </trans-unit>
+        <trans-unit id="UrlContentRequest" translate="yes" xml:space="preserve">
+          <source>A url (={0}) content request.</source>
+          <target state="translated">发起 URL (={0}) 内容请求。</target>
+          <note from="MultilingualEditor" annotates="source" priority="4">发起 URL 内容请求。</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">A URL content request.</note>
+        </trans-unit>
+        <trans-unit id="TypeNoSupportConversionExceptionFormat" translate="yes" xml:space="preserve">
+          <source>Don't support the type conversion, Currently only supported {0} type.</source>
+          <target state="translated">不支持的类型转换，当前仅支持 {0} 类型。</target>
+          <note from="MultilingualEditor" annotates="source" priority="4">不支持的类型转换异常。</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Type no support conversion exception.</note>
+        </trans-unit>
+        <trans-unit id="KeyBitExceptionFormat" translate="yes" xml:space="preserve">
+          <source>Key bit (={0}) must be a multiple of 8.</source>
+          <target state="translated">指定的密钥位数 (={0}) 必须为8的倍数。</target>
+          <note from="MultilingualEditor" annotates="source" priority="4">密钥位数异常。</note>
+          <note from="MultilingualBuild" annotates="source" priority="2">Key bit exception.</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

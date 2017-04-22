@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-configuration  xmlns="urn:nhibernate-configuration-2.2" >
+  <session-factory>
+    <property name="format_sql">false</property>
+    <property name="generate_statistics">false</property>
+    <property name="hbm2ddl.keywords">none</property>
+    <property name="bytecode.provider">lcg</property>
+    <property name="use_reflection_optimizer">true</property>
+    <property name="query.startup_check">false</property>
+    <property name="show_sql">true</property>
+    <property name="jdbc.fetch_size">100</property>
+    <property name="use_proxy_validator">false</property>
+    <property name="use_sql_comments">false</property>
+    <property name="adonet.wrap_result_sets">true</property>
+    <property name="adonet.batch_size">256</property>
+  </session-factory>
+</hibernate-configuration>

@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "Test Index";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<ul>
+    @foreach (var item in (IPagingable<Librame.Website.Prefecture>)ViewBag.Paging)
+    {
+        <li>@item.Id - @item.Title</li>
+    }
+</ul>
