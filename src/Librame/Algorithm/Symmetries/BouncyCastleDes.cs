@@ -16,6 +16,8 @@ using System.Linq;
 
 namespace Librame.Algorithm.Symmetries
 {
+    using Adaptation;
+
     /// <summary>
     /// BouncyCastle DES 对称算法。
     /// </summary>
@@ -34,7 +36,7 @@ namespace Librame.Algorithm.Symmetries
         /// <summary>
         /// 生成密钥。
         /// </summary>
-        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="Adaptation.AdapterSettings.AuthId"/>）。</param>
+        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="AdapterSettings.AuthId"/>）。</param>
         /// <returns>返回用于当前算法的 192 位密钥字节数组。</returns>
         public override byte[] GenerateKey(string guid = null)
         {

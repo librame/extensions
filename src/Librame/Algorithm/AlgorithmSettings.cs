@@ -12,10 +12,12 @@
 
 namespace Librame.Algorithm
 {
+    using Adaptation;
+
     /// <summary>
     /// 算法首选项。
     /// </summary>
-    public class AlgorithmSettings : Adaptation.AbstractAdapterSettings, Adaptation.IAdapterSettings
+    public class AlgorithmSettings : AbstractAdapterSettings, IAdapterSettings
     {
         /// <summary>
         /// 用于派生密钥的密钥 salt。

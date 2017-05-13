@@ -14,6 +14,7 @@ using System;
 
 namespace Librame.Algorithm.Symmetries
 {
+    using Adaptation;
     using Utility;
 
     /// <summary>
@@ -35,7 +36,7 @@ namespace Librame.Algorithm.Symmetries
         /// 加密字符串。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="Adaptation.AdapterSettings.AuthId"/>）。</param>
+        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="AdapterSettings.AuthId"/>）。</param>
         /// <returns>返回加密字符串。</returns>
         public virtual string Encrypt(string str, string guid = null)
         {
@@ -56,7 +57,7 @@ namespace Librame.Algorithm.Symmetries
         /// 解密字符串。
         /// </summary>
         /// <param name="encrypt">给定的加密字符串。</param>
-        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="Adaptation.AdapterSettings.AuthId"/>）。</param>
+        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="AdapterSettings.AuthId"/>）。</param>
         /// <returns>返回原始字符串。</returns>
         public virtual string Decrypt(string encrypt, string guid = null)
         {
@@ -76,7 +77,7 @@ namespace Librame.Algorithm.Symmetries
         /// <summary>
         /// 生成密钥。
         /// </summary>
-        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="Adaptation.AdapterSettings.AuthId"/>）。</param>
+        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="AdapterSettings.AuthId"/>）。</param>
         /// <returns>返回用于当前算法的密钥字节数组。</returns>
         public abstract byte[] GenerateKey(string guid = null);
 
@@ -91,7 +92,7 @@ namespace Librame.Algorithm.Symmetries
         /// <summary>
         /// 将全局唯一标识符转换为 128 位的字节数组。
         /// </summary>
-        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="Adaptation.AdapterSettings.AuthId"/>）。</param>
+        /// <param name="guid">给定的全局唯一标识符（可选；默认使用 <see cref="AdapterSettings.AuthId"/>）。</param>
         /// <returns>返回 128 位的字节数组。</returns>
         protected virtual byte[] GuidToKey128Bit(string guid = null)
         {

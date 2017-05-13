@@ -22,7 +22,7 @@ namespace Librame.Algorithm
     public abstract class AbstractByteCodec : LibrameBase<AbstractByteCodec>, IByteCodec
     {
         /// <summary>
-        /// 获取 <see cref="Algorithm.AlgorithmSettings"/>。
+        /// 获取 <see cref="AlgorithmSettings"/>。
         /// </summary>
         public AlgorithmSettings AlgoSettings { get; }
 

@@ -12,17 +12,19 @@
 
 namespace Librame.Algorithm
 {
+    using Adaptation;
+
     /// <summary>
     /// 抽象算法适配器。
     /// </summary>
-    public abstract class AbstractAlgorithmAdapter : Adaptation.AbstractAdapter
+    public abstract class AbstractAlgorithmAdapter : AbstractAdapter
     {
         /// <summary>
         /// 获取适配器信息。
         /// </summary>
-        public override Adaptation.AdapterInfo AdapterInfo
+        public override AdapterInfo AdapterInfo
         {
-            get { return new Adaptation.AdapterInfo("Algorithm"); }
+            get { return new AdapterInfo(nameof(Algorithm)); }
         }
 
 
