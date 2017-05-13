@@ -24,20 +24,7 @@ namespace Librame.Container
         //container.RegisterType(typeof(IGenericClass<>), typeof(GenericClass<>));
         //<register type="IGenericClass[]" mapTo="GenericClass[]" />
 
-        /// <summary>
-        /// 初始化配置文件集合。
-        /// </summary>
-        /// <param name="adapter">给定的适配器。</param>
-        public static void InitConfigFiles(Adaptation.IAdapter adapter)
-        {
-            adapter.GuardNull(nameof(adapter));
-
-            // Unity.config
-            var unityResourceName = adapter.ToManifestResourceName("_configs\\Container\\Unity.config");
-            adapter.ExportConfigFile("Unity.config", unityResourceName);
-        }
-
-
+        
         #region Resolver Override
 
         // ResolverOverride 实现类型
@@ -49,7 +36,7 @@ namespace Librame.Container
         //Microsoft.Practices.Unity.TypeBasedOverride
 
         /// <summary>
-        /// 建立参数重载。
+        /// 建立参数重载（如构造参数重载）。
         /// </summary>
         /// <param name="parameterName">给定的参数名。</param>
         /// <param name="parameterValue">给定的参数值。</param>

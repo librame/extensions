@@ -23,7 +23,7 @@ namespace Librame.Algorithm.Asymmetries
         // 3 key triple DES with SHA-1
         private static readonly string _algorithm = "1.2.840.113549.1.12.1.3";
         private static readonly byte[] _salt = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-        private static readonly int _iterationCount = 1000;
+        //private static readonly int _iterationCount = 1000;
 
 
         /// <summary>

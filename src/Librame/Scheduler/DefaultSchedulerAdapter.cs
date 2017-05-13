@@ -28,10 +28,18 @@ namespace Librame.Scheduler
         /// </summary>
         public DefaultSchedulerAdapter()
         {
-            // Initialize
-            SchedulerHelper.InitConfigFiles(this);
+            InitializeAdapter();
 
             _scheduler = BuildScheduler();
+        }
+
+        /// <summary>
+        /// 初始化适配器。
+        /// </summary>
+        protected virtual void InitializeAdapter()
+        {
+            // 导出配置文件
+            ExportConfigDirectory("job_scheduling_data_2_0.xsd");
         }
 
 

@@ -56,8 +56,8 @@ namespace Librame.OperationLog
         /// <returns>返回从拦截目标获得的返回信息。</returns>
         public IMethodReturn Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
-            input.GuardNull(nameof(input));
-            getNext.GuardNull(nameof(getNext));
+            input.NotNull(nameof(input));
+            getNext.NotNull(nameof(getNext));
 
             var result = getNext()(input, getNext);
             if (result.Exception == null)

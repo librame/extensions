@@ -9,11 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Mvc", "src\Librame.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02A1AB01-0F0B-4ECD-9FCB-DB4B3FDDC487}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.UnitTests", "test\Librame.UnitTests\Librame.UnitTests.csproj", "{98CD74B6-B60A-4BB1-AF38-E753D5CAE9B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.UnitTests", "tests\Librame.UnitTests\Librame.UnitTests.csproj", "{98CD74B6-B60A-4BB1-AF38-E753D5CAE9B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Website", "exs\Librame.Website\Librame.Website.csproj", "{FBA323A1-3339-4F91-AA33-33A1F936AE35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Website", "examples\Librame.Website\Librame.Website.csproj", "{FBA323A1-3339-4F91-AA33-33A1F936AE35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

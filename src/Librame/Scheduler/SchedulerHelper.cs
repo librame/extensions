@@ -23,20 +23,6 @@ namespace Librame.Scheduler
     public class SchedulerHelper
     {
         /// <summary>
-        /// 初始化配置文件集合。
-        /// </summary>
-        /// <param name="adapter">给定的适配器。</param>
-        public static void InitConfigFiles(Adaptation.IAdapter adapter)
-        {
-            adapter.GuardNull(nameof(adapter));
-
-            // job_scheduling_data_2_0.xsd
-            var jobSchedulingDataResourceName = adapter.ToManifestResourceName("_configs\\Scheduler\\job_scheduling_data_2_0.xsd");
-            adapter.ExportConfigFile("job_scheduling_data_2_0.xsd", jobSchedulingDataResourceName);
-        }
-
-
-        /// <summary>
         /// 构建工作详情。
         /// </summary>
         /// <typeparam name="T">指定的工作类型。</typeparam>

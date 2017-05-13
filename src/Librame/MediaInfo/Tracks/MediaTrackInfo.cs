@@ -30,16 +30,18 @@ namespace Librame.MediaInfo.Tracks
         /// <param name="general">给定的概览轨道信息。</param>
         /// <param name="videos">给定的视频轨道信息数组。</param>
         /// <param name="audios">给定的音频轨道信息数组。</param>
-        /// <param name="images">给定的图像轨道信息数组。</param>
         /// <param name="texts">给定的文本轨道信息数组。</param>
-        /// <param name="chapters">给定的章节轨道信息数组。</param>
+        /// <param name="others">给定的其它轨道信息数组。</param>
+        /// <param name="images">给定的图像轨道信息数组。</param>
+        /// <param name="menus">给定的菜单轨道信息数组。</param>
         public MediaTrackInfo(string mediaFile,
             GeneralTrackInfo general,
             VideoTrackInfo[] videos,
             AudioTrackInfo[] audios,
-            ImageTrackInfo[] images,
             TextTrackInfo[] texts,
-            ChapterTrackInfo[] chapters)
+            OtherTrackInfo[] others,
+            ImageTrackInfo[] images,
+            MenuTrackInfo[] menus)
         {
             MediaFile = mediaFile;
             General = general;
@@ -47,7 +49,7 @@ namespace Librame.MediaInfo.Tracks
             Audios = audios;
             Images = images;
             Texts = texts;
-            Chapters = chapters;
+            Menus = menus;
 
             Initialize();
         }
@@ -64,16 +66,18 @@ namespace Librame.MediaInfo.Tracks
                 FileSize = General.FileSize.AsOrDefault(s => Convert.ToInt64(s), 0);
                 VideoCount = General.VideoCount.AsOrDefault(0);
                 AudioCount = General.AudioCount.AsOrDefault(0);
-                ImageCount = General.ImageCount.AsOrDefault(0);
                 TextCount = General.TextCount.AsOrDefault(0);
-                ChapterCount = General.ChapterCount.AsOrDefault(0);
+                OtherCount = General.OtherCount.AsOrDefault(0);
+                ImageCount = General.ImageCount.AsOrDefault(0);
+                MenuCount = General.MenuCount.AsOrDefault(0);
             }
             
             Video = Videos?.FirstOrDefault();
             Audio = Audios?.FirstOrDefault();
-            Image = Images?.FirstOrDefault();
             Text = Texts?.FirstOrDefault();
-            Chapter = Chapters?.FirstOrDefault();
+            Other = Others?.FirstOrDefault();
+            Image = Images?.FirstOrDefault();
+            Menu = Menus?.FirstOrDefault();
         }
 
         /// <summary>
@@ -99,17 +103,21 @@ namespace Librame.MediaInfo.Tracks
         /// </summary>
         public int AudioCount { get; private set; }
         /// <summary>
-        /// 图像数。
+        /// 其它数。
         /// </summary>
-        public int ImageCount { get; private set; }
+        public int OtherCount { get; private set; }
         /// <summary>
         /// 文本数。
         /// </summary>
         public int TextCount { get; private set; }
         /// <summary>
-        /// 章节数。
+        /// 图像数。
         /// </summary>
-        public int ChapterCount { get; private set; }
+        public int ImageCount { get; private set; }
+        /// <summary>
+        /// 菜单数。
+        /// </summary>
+        public int MenuCount { get; private set; }
 
 
         /// <summary>
@@ -136,13 +144,13 @@ namespace Librame.MediaInfo.Tracks
         public AudioTrackInfo Audio { get; private set; }
 
         /// <summary>
-        /// 图像轨道信息数组。
+        /// 其它轨道信息数组。
         /// </summary>
-        public ImageTrackInfo[] Images { get; private set; }
+        public OtherTrackInfo[] Others { get; private set; }
         /// <summary>
-        /// 默认的图像轨道信息。
+        /// 默认的其它轨道信息。
         /// </summary>
-        public ImageTrackInfo Image { get; private set; }
+        public OtherTrackInfo Other { get; private set; }
 
         /// <summary>
         /// 文本轨道信息数组。
@@ -154,13 +162,22 @@ namespace Librame.MediaInfo.Tracks
         public TextTrackInfo Text { get; private set; }
 
         /// <summary>
-        /// 章节轨道信息数组。
+        /// 图像轨道信息数组。
         /// </summary>
-        public ChapterTrackInfo[] Chapters { get; private set; }
+        public ImageTrackInfo[] Images { get; private set; }
         /// <summary>
-        /// 默认的章节轨道信息。
+        /// 默认的图像轨道信息。
         /// </summary>
-        public ChapterTrackInfo Chapter { get; private set; }
+        public ImageTrackInfo Image { get; private set; }
+
+        /// <summary>
+        /// 菜单轨道信息数组。
+        /// </summary>
+        public MenuTrackInfo[] Menus { get; private set; }
+        /// <summary>
+        /// 默认的菜单轨道信息。
+        /// </summary>
+        public MenuTrackInfo Menu { get; private set; }
 
     }
 }

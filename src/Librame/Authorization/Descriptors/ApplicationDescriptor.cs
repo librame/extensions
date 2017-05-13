@@ -15,6 +15,8 @@ using System.ComponentModel;
 
 namespace Librame.Authorization.Descriptors
 {
+    using Utility;
+
     /// <summary>
     /// 应用描述符。
     /// </summary>
@@ -27,7 +29,7 @@ namespace Librame.Authorization.Descriptors
         /// <param name="authId">给定的授权编号。</param>
         public ApplicationDescriptor(string authId)
         {
-            AuthId = authId;
+            AuthId = authId.NotNullOrEmpty(nameof(authId));
         }
 
 

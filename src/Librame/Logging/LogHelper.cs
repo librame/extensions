@@ -29,20 +29,6 @@ namespace Librame.Logging
         internal const string DEFAULT_CATEGORY = LibrameAssemblyConstants.TRADEMARK + "Logging";
 
 
-        /// <summary>
-        /// 初始化配置文件集合。
-        /// </summary>
-        /// <param name="adapter">给定的适配器。</param>
-        public static void InitConfigFiles(Adaptation.IAdapter adapter)
-        {
-            adapter.GuardNull(nameof(adapter));
-
-            // EntLib.config
-            var entlibResourceName = adapter.ToManifestResourceName("_configs\\Logging\\EntLib.config");
-            adapter.ExportConfigFile("EntLib.config", entlibResourceName);
-        }
-
-
         ///// <summary>
         ///// 获取日志写入器。
         ///// </summary>
@@ -82,7 +68,7 @@ namespace Librame.Logging
         /// <returns>返回 <see cref="LogEntry"/>。</returns>
         public static LogEntry PopulateLogEntry(Type type, string message, TraceEventType severity = TraceEventType.Information, int eventId = 1, int priority = 1)
         {
-            type.GuardNull(nameof(type));
+            type.NotNull(nameof(type));
 
             var log = new LogEntry();
 

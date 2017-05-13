@@ -38,30 +38,21 @@ namespace Librame.Authorization
         public bool IsSsoServerMode { get; set; }
 
         /// <summary>
-        /// SSO 认证服务器登录 URL。
+        /// SSO 认证服务器登入链接。
         /// </summary>
         public string SsoServerSignInUrl { get; set; }
         /// <summary>
-        /// SSO 认证登录应答 URL。
+        /// SSO 认证登入应答链接。
         /// </summary>
         public string SsoSignInRespondUrl { get; set; }
 
         /// <summary>
-        /// SSO 认证服务器登出 URL。
+        /// SSO 认证服务器登出链接。
         /// </summary>
         public string SsoServerSignOutUrl { get; set; }
         /// <summary>
-        /// SSO 认证登出应答 URL。
+        /// SSO 认证登出应答链接。
         /// </summary>
         public string SsoSignOutRespondUrl { get; set; }
-
-        /// <summary>
-        /// SSO 认证服务器权限 URL。
-        /// </summary>
-        public string SsoServerPermitUrl { get; set; }
-        /// <summary>
-        /// SSO 认证权限应答 URL。
-        /// </summary>
-        public string SsoPermitRespondUrl { get; set; }
     }
 }

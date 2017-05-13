@@ -30,7 +30,7 @@ namespace Librame.Utility
         /// <param name="url">给定的 URL。</param>
         public UriStream(string url)
         {
-            _url = url;
+            _url = url.NotNullOrEmpty(url);
         }
 
 
@@ -44,27 +44,35 @@ namespace Librame.Utility
         /// <param name="responseFactory">给定的响应方法。</param>
         /// <param name="requestFactory">给定的请求方法。</param>
         /// <returns>返回值。</returns>
-        protected virtual TValue Response<TValue>(Func<HttpWebResponse, TValue> responseFactory, Action<HttpWebRequest> requestFactory = null)
+        protected virtual TValue Response<TValue>(Func<HttpWebResponse, TValue> responseFactory,
+            Action<HttpWebRequest> requestFactory = null)
         {
-            responseFactory.GuardNull(nameof(responseFactory));
+            responseFactory.NotNull(nameof(responseFactory));
 
-            var request = (HttpWebRequest)WebRequest.Create(_url);
-            //request.Method = UriRequestMethod.Get.ToString();
-            //request.ContentType = CONTENT_TYPE;
-
-            // Set some reasonable limits on resources used by this request
-            //request.MaximumAutomaticRedirections = 4;
-            //request.MaximumResponseHeadersLength = 4;
-
-            // Set credentials to use for this request.
-            //request.Credentials = CredentialCache.DefaultCredentials;
-
-            if (!ReferenceEquals(requestFactory, null))
-                requestFactory(request);
-
-            using (var response = (HttpWebResponse)request.GetResponse())
+            try
             {
-                return responseFactory.Invoke(response);
+                var request = (HttpWebRequest)WebRequest.Create(_url);
+                //request.Method = UriRequestMethod.Get.ToString();
+                //request.ContentType = CONTENT_TYPE;
+
+                // Set some reasonable limits on resources used by this request
+                //request.MaximumAutomaticRedirections = 4;
+                //request.MaximumResponseHeadersLength = 4;
+
+                // Set credentials to use for this request.
+                //request.Credentials = CredentialCache.DefaultCredentials;
+
+                if (!ReferenceEquals(requestFactory, null))
+                    requestFactory.Invoke(request);
+
+                using (var response = (HttpWebResponse)request.GetResponse())
+                {
+                    return responseFactory.Invoke(response);
+                }
+            }
+            catch
+            {
+                return default(TValue);
             }
         }
 

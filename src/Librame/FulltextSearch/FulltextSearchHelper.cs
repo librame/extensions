@@ -30,49 +30,7 @@ namespace Librame.FulltextSearch
     /// </summary>
     public class FulltextSearchHelper
     {
-        /// <summary>
-        /// 初始化配置文件集合。
-        /// </summary>
-        /// <param name="adapter">给定的适配器。</param>
-        public static void InitConfigFiles(Adaptation.IAdapter adapter)
-        {
-            adapter.GuardNull(nameof(adapter));
-
-            // 因字典目录文件太大，取消嵌入资源（须手动复制）
-            //// Dict\\ChsDoubleName1.txt
-            //var chsDoubleName1ResourceName = adapter.ToManifestResourceName("_configs\\FulltextSearch\\Dict\\ChsDoubleName1.txt");
-            //adapter.ExportConfigFile("Dict\\ChsDoubleName1.txt", chsDoubleName1ResourceName);
-
-            //// Dict\\ChsDoubleName2.txt
-            //var chsDoubleName2ResourceName = adapter.ToManifestResourceName("_configs\\FulltextSearch\\Dict\\ChsDoubleName2.txt");
-            //adapter.ExportConfigFile("Dict\\ChsDoubleName2.txt", chsDoubleName2ResourceName);
-
-            //// Dict\\ChsSingleName.txt
-            //var chsSingleNameResourceName = adapter.ToManifestResourceName("_configs\\FulltextSearch\\Dict\\ChsSingleName.txt");
-            //adapter.ExportConfigFile("Dict\\ChsSingleName.txt", chsSingleNameResourceName);
-
-            //// Dict\\Dict.dct
-            //var dictResourceName = adapter.ToManifestResourceName("_configs\\FulltextSearch\\Dict\\Dict.dct");
-            //adapter.ExportConfigFile("Dict\\Dict.dct", dictResourceName);
-
-            //// Dict\\Stopword.txt
-            //var stopwordResourceName = adapter.ToManifestResourceName("_configs\\FulltextSearch\\Dict\\Stopword.txt");
-            //adapter.ExportConfigFile("Dict\\Stopword.txt", stopwordResourceName);
-
-            //// Dict\\Synonym.txt
-            //var synonymResourceName = adapter.ToManifestResourceName("_configs\\FulltextSearch\\Dict\\Synonym.txt");
-            //adapter.ExportConfigFile("Dict\\Synonym.txt", synonymResourceName);
-
-            //// Dict\\Wildcard.txt
-            //var wildcardResourceName = adapter.ToManifestResourceName("_configs\\FulltextSearch\\Dict\\Wildcard.txt");
-            //adapter.ExportConfigFile("Dict\\Wildcard.txt", wildcardResourceName);
-
-            // PanGu.xml
-            var panGuResourceName = adapter.ToManifestResourceName("_configs\\FulltextSearch\\PanGu.xml");
-            adapter.ExportConfigFile("PanGu.xml", panGuResourceName);
-        }
-
-
+        
         #region Create Index
 
         /// <summary>

@@ -152,7 +152,7 @@ namespace Librame.Data.Providers
         protected virtual AutoPersistenceModel OnMappingAssemblies()
         {
             var assemblies = GetMappingAssemblies();
-            assemblies.GuardNull(nameof(assemblies));
+            assemblies.NotNull(nameof(assemblies));
 
             if (DataSettings.EnableEntityAutomapping)
             {
@@ -228,7 +228,7 @@ namespace Librame.Data.Providers
             }
             catch (Exception ex)
             {
-                Log.Error(ex.AsOrInnerMessage(), ex);
+                Log.Error(ex.InnerMessage(), ex);
 
                 throw ex;
             }

@@ -32,7 +32,7 @@ namespace Librame.Utility
         /// <returns>返回字符串。</returns>
         public static string AsPropertyName<T, TProperty>(Expression<Func<T, TProperty>> propertyExpression)
         {
-            propertyExpression.GuardNull(nameof(propertyExpression));
+            propertyExpression.NotNull(nameof(propertyExpression));
 
             string propertyName = string.Empty;
             
@@ -200,7 +200,7 @@ namespace Librame.Utility
             Func<MemberExpression, ConstantExpression, TExpression> compareToFactory)
             where TExpression : Expression
         {
-            compareToFactory.GuardNull(nameof(compareToFactory));
+            compareToFactory.NotNull(nameof(compareToFactory));
 
             // 建立变量
             var p = Expression.Parameter(typeof(T), "p");

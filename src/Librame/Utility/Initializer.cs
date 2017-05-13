@@ -18,24 +18,6 @@ using System.Reflection;
 namespace Librame.Utility
 {
     /// <summary>
-    /// 泛型类型初始化器。
-    /// </summary>
-    /// <typeparam name="T">指定的对象类型。</typeparam>
-    public class Initializer<T>
-        where T : new()
-    {
-        /// <summary>
-        /// 初始化对象公共属性默认值。
-        /// </summary>
-        /// <returns>返回对象。</returns>
-        public static T Initialize()
-        {
-            return Initializer.Initialize<T>();
-        }
-    }
-
-
-    /// <summary>
     /// 初始化器。
     /// </summary>
     public class Initializer
@@ -60,7 +42,7 @@ namespace Librame.Utility
         /// <returns>返回对象。</returns>
         public static object Initialize(object obj)
         {
-            obj.GuardNull(nameof(obj));
+            obj.NotNull(nameof(obj));
 
             var properties = obj.GetType().GetProperties();
             if (properties == null || properties.Length < 1)
@@ -165,7 +147,10 @@ namespace Librame.Utility
                             }
                         }
 
-                        return Activator.CreateInstance(propertyType);
+                        if (propertyType.IsClass && !propertyType.IsAbstract)
+                            return Activator.CreateInstance(propertyType);
+
+                        return null;
                     }
             }
         }

@@ -12,22 +12,29 @@
 
 namespace Librame.Authorization.Providers
 {
-    using Adaptation;
     using Descriptors;
+    using Managers;
+    using Utility;
 
     /// <summary>
     /// 令牌管道基类。
     /// </summary>
-    public class TokenProviderBase : AbstractAdapterManagerReference, ITokenProvider
+    public class TokenProviderBase : ITokenProvider
     {
         /// <summary>
-        /// 构造一个 <see cref="TokenProviderBase"/> 实例。
+        /// 构造一个令牌管道基类实例。
         /// </summary>
-        /// <param name="adapters">给定的适配器管理器。</param>
-        public TokenProviderBase(IAdapterManager adapters)
-            : base(adapters)
+        /// <param name="cryptogram">给定的密文管理器。</param>
+        public TokenProviderBase(ICryptogramManager cryptogram)
         {
+            Cryptogram = cryptogram.NotNull(nameof(cryptogram));
         }
+
+
+        /// <summary>
+        /// 密文管理器接口。
+        /// </summary>
+        public ICryptogramManager Cryptogram { get; }
 
 
         /// <summary>
@@ -48,7 +55,7 @@ namespace Librame.Authorization.Providers
         /// <returns>返回 <see cref="ITokenDescriptor"/>。</returns>
         public virtual ITokenDescriptor Authenticate(ITokenDescriptor token)
         {
-            return token;
+            return token.NotNull(nameof(token));
         }
 
 
@@ -70,7 +77,7 @@ namespace Librame.Authorization.Providers
         /// <returns>返回 <see cref="ITokenDescriptor"/>。</returns>
         public virtual ITokenDescriptor Create(ITokenDescriptor token)
         {
-            return token;
+            return token.NotNull(nameof(token));
         }
 
     }

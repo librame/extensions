@@ -15,6 +15,8 @@ using System.ComponentModel;
 
 namespace Librame.Authorization.Descriptors
 {
+    using Utility;
+
     /// <summary>
     /// 令牌描述符。
     /// </summary>
@@ -24,12 +26,21 @@ namespace Librame.Authorization.Descriptors
         /// <summary>
         /// 构造一个 <see cref="AccountDescriptor"/> 实例。
         /// </summary>
+        public TokenDescriptor()
+        {
+        }
+        /// <summary>
+        /// 构造一个 <see cref="AccountDescriptor"/> 实例。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// name or ticket is null or empty.
+        /// </exception>
         /// <param name="name">给定的名称。</param>
         /// <param name="ticket">给定的票根。</param>
         public TokenDescriptor(string name, string ticket)
         {
-            Name = name;
-            Ticket = ticket;
+            Name = name.NotNullOrEmpty(nameof(name));
+            Ticket = ticket.NotNullOrEmpty(nameof(ticket));
         }
 
 

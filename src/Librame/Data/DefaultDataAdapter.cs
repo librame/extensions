@@ -52,7 +52,7 @@ namespace Librame.Data
         /// <returns>返回 <see cref="IRepository{T}"/>。</returns>
         public virtual IRepository<T> GetCurrentRepository<T>() where T : class
         {
-            return Adapters.ContainerAdapter.Resolve<IRepository<T>>();
+            return Adapters.Container.Resolve<IRepository<T>>();
         }
 
     }

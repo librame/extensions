@@ -13,8 +13,6 @@
 using Librame;
 using Librame.Authorization;
 using Librame.Authorization.Strategies;
-using System.Security.Principal;
-using System.Web.Security;
 using System.Web.SessionState;
 
 namespace System.Web
@@ -34,7 +32,7 @@ namespace System.Web
         /// <returns>返回认证信息。</returns>
         public static AuthenticateInfo SignIn(this HttpContext context, string name, string passwd, bool isPersistent)
         {
-            var stategy = LibrameArchitecture.AdapterManager.AuthorizationAdapter.Strategy;
+            var stategy = LibrameArchitecture.AdapterManager.Authorization.Strategy;
 
             // SignIn
             return stategy.SignIn(name, passwd, isPersistent,
@@ -50,7 +48,7 @@ namespace System.Web
         /// <returns>返回认证信息。</returns>
         public static AuthenticateInfo SignIn(this HttpContextBase context, string name, string passwd, bool isPersistent)
         {
-            var stategy = LibrameArchitecture.AdapterManager.AuthorizationAdapter.Strategy;
+            var stategy = LibrameArchitecture.AdapterManager.Authorization.Strategy;
 
             // SignIn
             return stategy.SignIn(name, passwd, isPersistent,
@@ -61,21 +59,37 @@ namespace System.Web
         /// 用户登出。
         /// </summary>
         /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
-        public static void SignOut(this HttpSessionState session)
+        /// <returns>返回用户票根。</returns>
+        public static AuthenticateTicket SignOut(this HttpSessionState session)
         {
-            var stategy = LibrameArchitecture.AdapterManager.AuthorizationAdapter.Strategy;
+            var stategy = LibrameArchitecture.AdapterManager.Authorization.Strategy;
 
-            stategy.SignOut((k) => session?.Remove(k));
+            return stategy.SignOut((k) =>
+            {
+                var ticket = session.ResolveTicket();
+
+                session?.Remove(k);
+
+                return ticket;
+            });
         }
         /// <summary>
         /// 用户登出。
         /// </summary>
         /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
-        public static void SignOut(this HttpSessionStateBase session)
+        /// <returns>返回用户票根。</returns>
+        public static AuthenticateTicket SignOut(this HttpSessionStateBase session)
         {
-            var stategy = LibrameArchitecture.AdapterManager.AuthorizationAdapter.Strategy;
+            var stategy = LibrameArchitecture.AdapterManager.Authorization.Strategy;
 
-            stategy.SignOut((k) => session?.Remove(k));
+            return stategy.SignOut((k) =>
+            {
+                var ticket = session.ResolveTicket();
+
+                session?.Remove(k);
+
+                return ticket;
+            });
         }
 
 
@@ -83,47 +97,39 @@ namespace System.Web
         /// 解析用户信息。
         /// </summary>
         /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
-        /// <returns>返回 <see cref="IPrincipal"/>。</returns>
-        public static IPrincipal ResolvePrincipal(this HttpSessionState session)
+        /// <returns>返回 <see cref="AccountPrincipal"/>。</returns>
+        public static AccountPrincipal ResolvePrincipal(this HttpSessionState session)
         {
-            return (IPrincipal)session?[AuthorizeHelper.AUTHORIZATION_KEY];
+            return (AccountPrincipal)session?[AuthorizeHelper.AUTHORIZATION_KEY];
         }
         /// <summary>
         /// 解析用户信息。
         /// </summary>
         /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
-        /// <returns>返回 <see cref="IPrincipal"/>。</returns>
-        public static IPrincipal ResolvePrincipal(this HttpSessionStateBase session)
+        /// <returns>返回 <see cref="AccountPrincipal"/>。</returns>
+        public static AccountPrincipal ResolvePrincipal(this HttpSessionStateBase session)
         {
-            return (IPrincipal)session?[AuthorizeHelper.AUTHORIZATION_KEY];
+            return (AccountPrincipal)session?[AuthorizeHelper.AUTHORIZATION_KEY];
         }
-
+        
 
         /// <summary>
-        /// 如同用户中包含的票根。
+        /// 解析用户票根。
         /// </summary>
-        /// <param name="principal">给定的用户。</param>
-        /// <returns>返回窗体认证票根。</returns>
-        public static FormsAuthenticationTicket AsTicket(this IPrincipal principal)
+        /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
+        /// <returns>返回认证票根。</returns>
+        public static AuthenticateTicket ResolveTicket(this HttpSessionState session)
         {
-            if (!(principal is AccountPrincipal))
-                return null;
-
-            // 取得票根
-            return (principal.Identity as AccountIdentity).Ticket;
+            return session.ResolvePrincipal()?.AsTicket();
         }
-
         /// <summary>
-        /// 如同用户中包含的票根数据描述符。
+        /// 解析用户票根。
         /// </summary>
-        /// <param name="principal">给定的用户。</param>
-        /// <returns>返回票根数据描述符。</returns>
-        public static TicketDataDescriptor AsTicketData(this IPrincipal principal)
+        /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
+        /// <returns>返回认证票根。</returns>
+        public static AuthenticateTicket ResolveTicket(this HttpSessionStateBase session)
         {
-            // 取得票根用户数据
-            var descriptor = principal.AsTicket()?.UserData;
-
-            return TicketDataDescriptor.Deserialize(descriptor);
+            return session.ResolvePrincipal()?.AsTicket();
         }
 
 
@@ -134,9 +140,9 @@ namespace System.Web
         /// <returns>返回布尔值。</returns>
         public static bool IsAuthenticated(this HttpSessionState session)
         {
-            var strategy = LibrameArchitecture.AdapterManager.AuthorizationAdapter.Strategy;
+            var strategy = LibrameArchitecture.AdapterManager.Authorization.Strategy;
 
-            return strategy.IsAuthenticated(k => (IPrincipal)session?[k]);
+            return strategy.IsAuthenticated(k => (AccountPrincipal)session?[k]);
         }
         /// <summary>
         /// 是否已认证。
@@ -145,9 +151,9 @@ namespace System.Web
         /// <returns>返回布尔值。</returns>
         public static bool IsAuthenticated(this HttpSessionStateBase session)
         {
-            var strategy = LibrameArchitecture.AdapterManager.AuthorizationAdapter.Strategy;
+            var strategy = LibrameArchitecture.AdapterManager.Authorization.Strategy;
 
-            return strategy.IsAuthenticated(k => (IPrincipal)session?[k]);
+            return strategy.IsAuthenticated(k => (AccountPrincipal)session?[k]);
         }
 
         /// <summary>
@@ -156,7 +162,7 @@ namespace System.Web
         /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
         /// <param name="principal">输出当前用户。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsAuthenticated(this HttpSessionState session, out IPrincipal principal)
+        public static bool IsAuthenticated(this HttpSessionState session, out AccountPrincipal principal)
         {
             principal = session.ResolvePrincipal();
 
@@ -168,7 +174,7 @@ namespace System.Web
         /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
         /// <param name="principal">输出当前用户。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsAuthenticated(this HttpSessionStateBase session, out IPrincipal principal)
+        public static bool IsAuthenticated(this HttpSessionStateBase session, out AccountPrincipal principal)
         {
             principal = session.ResolvePrincipal();
 
@@ -183,9 +189,9 @@ namespace System.Web
         /// <returns>返回布尔值。</returns>
         public static void OnAuthentication(this HttpSessionState session)
         {
-            var strategy = LibrameArchitecture.AdapterManager.AuthorizationAdapter.Strategy;
+            var strategy = LibrameArchitecture.AdapterManager.Authorization.Strategy;
 
-            strategy.OnAuthentication(k => (IPrincipal)session?[k]);
+            strategy.OnAuthentication(k => (AccountPrincipal)session?[k]);
         }
         /// <summary>
         /// 开始认证。
@@ -194,9 +200,9 @@ namespace System.Web
         /// <returns>返回布尔值。</returns>
         public static void OnAuthentication(this HttpSessionStateBase session)
         {
-            var strategy = LibrameArchitecture.AdapterManager.AuthorizationAdapter.Strategy;
+            var strategy = LibrameArchitecture.AdapterManager.Authorization.Strategy;
 
-            strategy.OnAuthentication(k => (IPrincipal)session?[k]);
+            strategy.OnAuthentication(k => (AccountPrincipal)session?[k]);
         }
 
     }

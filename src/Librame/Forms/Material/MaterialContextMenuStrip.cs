@@ -30,7 +30,7 @@ namespace Librame.Forms.Material
         [Browsable(false)]
         public ISkinProvider Skin
         {
-            get { return LibrameArchitecture.AdapterManager.FormsAdapter.Skin; }
+            get { return LibrameArchitecture.AdapterManager.Forms.Skin; }
         }
 
 
@@ -112,7 +112,7 @@ namespace Librame.Forms.Material
         //Properties for managing the material design properties
         public int Depth { get; set; }
 
-        public ISkinProvider Skin { get { return LibrameArchitecture.AdapterManager.FormsAdapter.Skin; } }
+        public ISkinProvider Skin { get { return LibrameArchitecture.AdapterManager.Forms.Skin; } }
 
         public MouseState MouseState { get; set; }
         

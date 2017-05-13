@@ -21,45 +21,45 @@ namespace Librame.MediaInfo
     public enum StreamKind
     {
         /// <summary>
-        /// 默认。
-        /// </summary>
-        [Description("默认")]
-        Default = 0,
-
-        /// <summary>
         /// 概要。
         /// </summary>
         [Description("概要")]
-        General = 1,
+        General,
 
         /// <summary>
         /// 视频。
         /// </summary>
         [Description("视频")]
-        Video = 2,
+        Video,
 
         /// <summary>
         /// 音频。
         /// </summary>
         [Description("音频")]
-        Audio = 4,
+        Audio,
 
         /// <summary>
         /// 字幕。
         /// </summary>
         [Description("字幕")]
-        Text = 8,
+        Text,
 
         /// <summary>
-        /// 章节。
+        /// 其它。
         /// </summary>
-        [Description("章节")]
-        Chapters = 16,
+        [Description("其它")]
+        Other,
 
         /// <summary>
         /// 图像。
         /// </summary>
         [Description("图像")]
-        Image = 32
+        Image,
+
+        /// <summary>
+        /// 菜单。
+        /// </summary>
+        [Description("菜单")]
+        Menu
     }
 }

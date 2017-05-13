@@ -12,7 +12,9 @@
 
 using Librame.Data;
 using Librame.Data.Descriptors;
+using Librame.Utility;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace System.Web.Mvc
 {
@@ -31,11 +33,33 @@ namespace System.Web.Mvc
         /// <returns>返回选择列表项集合。</returns>
         public static IList<SelectListItem> GetSelectList<T>(this IRepository<T> repository,
             Func<T, string> textSelector, bool addDefaultListItem = true)
-            where T : IIdDescriptor<int>
+            where T : class, IIdDescriptor<int>
         {
             // 无选中项
             return repository.GetSelectList(textSelector,
                 (value, text) => false, addDefaultListItem);
+        }
+        /// <summary>
+        /// 获取选择列表。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="repository">给定的仓库。</param>
+        /// <param name="textSelector">给定的文本选择器。</param>
+        /// <param name="selectedIds">给定的选中编号集合（多个编号以英文逗号分隔）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <returns>返回选择列表项集合。</returns>
+        public static IList<SelectListItem> GetSelectList<T>(this IRepository<T> repository,
+            Func<T, string> textSelector, string selectedIds, bool addDefaultListItem = true)
+            where T : class, IIdDescriptor<int>
+        {
+            // 默认选中项
+            var selectedValues = new string[] { "0" };
+
+            if (!string.IsNullOrEmpty(selectedIds))
+                selectedValues = selectedIds.Split(',');
+
+            return repository.GetSelectList(textSelector,
+                (value, text) => selectedValues.Contains(value), addDefaultListItem);
         }
         /// <summary>
         /// 获取选择列表。
@@ -48,7 +72,7 @@ namespace System.Web.Mvc
         /// <returns>返回选择列表项集合。</returns>
         public static IList<SelectListItem> GetSelectList<T>(this IRepository<T> repository,
             Func<T, string> textSelector, int selectedId, bool addDefaultListItem = true)
-            where T : IIdDescriptor<int>
+            where T : class, IIdDescriptor<int>
         {
             var selectedValue = selectedId.ToString();
 
@@ -67,7 +91,7 @@ namespace System.Web.Mvc
         public static IList<SelectListItem> GetSelectList<T>(this IRepository<T> repository,
             Func<T, string> textSelector, Func<string, string, bool> selectedFactory,
             bool addDefaultListItem = true)
-            where T : IIdDescriptor<int>
+            where T : class, IIdDescriptor<int>
         {
             var items = repository.GetMany();
 
@@ -86,7 +110,7 @@ namespace System.Web.Mvc
         /// <returns>返回选择列表项集合。</returns>
         public static IList<SelectListItem> GetDataStatusSelectList<T>(this IRepository<T> repository,
             Func<T, string> textSelector, bool addDefaultListItem = true)
-            where T : IDataIdDescriptor<int>
+            where T : class, IDataIdDescriptor<int>
         {
             // 无选中项
             return repository.GetDataStatusSelectList(textSelector,
@@ -103,7 +127,7 @@ namespace System.Web.Mvc
         /// <returns>返回选择列表项集合。</returns>
         public static IList<SelectListItem> GetDataStatusSelectList<T>(this IRepository<T> repository,
             Func<T, string> textSelector, int selectedId, bool addDefaultListItem = true)
-            where T : IDataIdDescriptor<int>
+            where T : class, IDataIdDescriptor<int>
         {
             var selectedValue = selectedId.ToString();
 
@@ -122,7 +146,7 @@ namespace System.Web.Mvc
         public static IList<SelectListItem> GetDataStatusSelectList<T>(this IRepository<T> repository,
             Func<T, string> textSelector, Func<string, string, bool> selectedFactory,
             bool addDefaultListItem = true)
-            where T : IDataIdDescriptor<int>
+            where T : class, IDataIdDescriptor<int>
         {
             var items = repository.GetMany(p => p.DataStatus == DataStatus.Public);
 

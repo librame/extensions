@@ -31,7 +31,7 @@ namespace Librame.OperationLog
         /// <returns>返回访问处理程序。</returns>
         public override ICallHandler CreateHandler(IUnityContainer container)
         {
-            container.GuardNull(nameof(container));
+            container.NotNull(nameof(container));
 
             var adapter = container.Resolve<IOperationLogAdapter>();
 

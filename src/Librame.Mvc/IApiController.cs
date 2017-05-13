@@ -21,21 +21,14 @@ namespace System.Web.Http
     /// <typeparam name="T">指定的类型。</typeparam>
     /// <typeparam name="TId">指定的主键类型。</typeparam>
     public interface IApiController<T, TId>
+        where T : class
+        where TId : struct
     {
         /// <summary>
-        /// 获取服务。
+        /// 数据仓库。
         /// </summary>
-        IService<T> Service { get; }
+        IRepository<T> Repository { get; }
 
-
-        ///// <summary>
-        ///// 获取所有类型实例。
-        ///// </summary>
-        ///// <example>
-        ///// GET api/values
-        ///// </example>
-        ///// <returns>返回类型实例集合。</returns>
-        //HttpResponseMessage Get();
         
         /// <summary>
         /// 获取指定主键的类型实例。

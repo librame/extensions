@@ -25,24 +25,26 @@ namespace System.Web.Http
     /// <typeparam name="T">指定的类型。</typeparam>
     /// <typeparam name="TId">指定的主键类型。</typeparam>
     public class ApiController<T, TId> : ApiController, IApiController<T, TId>
+        where T : class
+        where TId : struct
     {
-        private readonly IService<T> _service = null;
+        private readonly IRepository<T> _service = null;
 
         /// <summary>
-        /// 构造一个 <see cref="ApiController{T, TId}"/> 实例。
+        /// 构造一个 API 控制器实例。
         /// </summary>
-        /// <param name="service">给定的服务接口。</param>
-        public ApiController(IService<T> service)
+        /// <param name="repository">给定的数据仓库接口。</param>
+        public ApiController(IRepository<T> repository)
             : base()
         {
-            _service = service;
+            _service = repository;
         }
 
 
         /// <summary>
-        /// 获取服务。
+        /// 数据仓库。
         /// </summary>
-        public virtual IService<T> Service
+        public virtual IRepository<T> Repository
         {
             get { return _service; }
         }
@@ -80,14 +82,15 @@ namespace System.Web.Http
         ///// GET api/values
         ///// </example>
         ///// <returns>返回类型实例集合。</returns>
+        //[HttpGet]
         //public virtual HttpResponseMessage Get()
         //{
-        //    var items = Service.Repository.GetMany();
+        //    var items = Repository.GetMany();
 
         //    return ResponseJsonMessage(items);
         //}
 
-        
+
         /// <summary>
         /// 获取指定主键的类型实例。
         /// </summary>
@@ -96,14 +99,15 @@ namespace System.Web.Http
         /// </example>
         /// <param name="id">给定的主键。</param>
         /// <returns>返回类型实例。</returns>
+        [HttpGet]
         public virtual HttpResponseMessage Get(TId id)
         {
-            var item = Service.Repository.Get(id);
+            var model = Repository.Get(id);
             
-            if (ReferenceEquals(item, null))
+            if (ReferenceEquals(model, null))
                 throw new HttpResponseException(HttpStatusCode.NotFound);
 
-            return ResponseJsonMessage(item);
+            return ResponseJsonMessage(model);
         }
 
 
@@ -143,10 +147,10 @@ namespace System.Web.Http
         ///// <param name="id">给定的主键。</param>
         //public virtual void Delete(TId id)
         //{
-        //    var item = Service.Repository.Get(id);
+        //    var item = Repository.Get(id);
 
         //    if (!ReferenceEquals(item, null))
-        //        Service.Repository.Delete(item);
+        //        Repository.Delete(item);
         //}
 
 

@@ -174,7 +174,7 @@ namespace Librame.Utility
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="dispatch">给定的调用方法。</param>
-        public static void Invoke<T>(IEnumerable<T> enumerable, Action<int, T> dispatch)
+        public static void Invoke<T>(IEnumerable<T> enumerable, Action<T, int> dispatch)
         {
             if (ReferenceEquals(enumerable, null))
                 return;
@@ -184,7 +184,7 @@ namespace Librame.Utility
             {
                 try
                 {
-                    dispatch(i, sink);
+                    dispatch(sink, i);
                 }
                 catch (Exception ex)
                 {
@@ -232,7 +232,7 @@ namespace Librame.Utility
         /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="dispatch">给定的调用方法。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        public static IEnumerable<TResult> Invoke<T, TResult>(IEnumerable<T> enumerable, Func<int, T, TResult> dispatch)
+        public static IEnumerable<TResult> Invoke<T, TResult>(IEnumerable<T> enumerable, Func<T, int, TResult> dispatch)
         {
             if (ReferenceEquals(enumerable, null))
                 yield return default(TResult);
@@ -244,7 +244,7 @@ namespace Librame.Utility
 
                 try
                 {
-                    result = dispatch(i, sink);
+                    result = dispatch(sink, i);
                 }
                 catch (Exception ex)
                 {
@@ -374,7 +374,7 @@ namespace Librame.Utility
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="dispatch">给定的调用方法。</param>
-        public static void Invoke<T>(this IEnumerable<T> enumerable, Action<int, T> dispatch)
+        public static void Invoke<T>(this IEnumerable<T> enumerable, Action<T, int> dispatch)
         {
             EnumerableUtility.Invoke(enumerable, dispatch);
         }
@@ -399,7 +399,7 @@ namespace Librame.Utility
         /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="dispatch">给定的调用方法。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        public static IEnumerable<TResult> Invoke<T, TResult>(this IEnumerable<T> enumerable, Func<int, T, TResult> dispatch)
+        public static IEnumerable<TResult> Invoke<T, TResult>(this IEnumerable<T> enumerable, Func<T, int, TResult> dispatch)
         {
             return EnumerableUtility.Invoke(enumerable, dispatch);
         }

@@ -131,7 +131,7 @@ namespace Librame.Resource
             if (path.IsUrl())
                 path = SourceInfo.SaveAsFilename;
 
-            path.GuardNullOrEmpty(nameof(path));
+            path.NotNullOrEmpty(nameof(path));
 
             // 保存到本地
             SaveAs(path);

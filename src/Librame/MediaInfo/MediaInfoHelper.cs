@@ -10,11 +10,12 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace Librame.MediaInfo
 {
-    using Engines;
+    using Tracks;
     using Utility;
 
     /// <summary>
@@ -23,77 +24,178 @@ namespace Librame.MediaInfo
     public class MediaInfoHelper
     {
         /// <summary>
-        /// 获取单轨字典集合。
+        /// 导出为文本文件。
         /// </summary>
-        /// <param name="engine">给定的 <see cref="IMediaInfoEngine"/>。</param>
-        /// <param name="kind">给定的流种类。</param>
-        /// <param name="index">给定的索引。</param>
-        /// <returns>返回字典集合。</returns>
-        public static IDictionary<string, string> GetSingleTrack(IMediaInfoEngine engine, StreamKind kind, int index)
+        /// <param name="info">给定的媒体轨道信息。</param>
+        /// <param name="fileName">给定要导出的文件名。</param>
+        /// <param name="encoding">给定的字符编码。</param>
+        public static void Export(MediaTrackInfo info, string fileName, Encoding encoding)
         {
-            var dictionary = new Dictionary<string, string>();
-
-            int i = 0;
-            while (true)
+            using (var fs = new FileStream(fileName, FileMode.Create))
             {
-                string key = engine.Get(kind, index, i++, InfoKind.Name);
-                if (string.IsNullOrEmpty(key))
-                    break;
+                using (var sw = new StreamWriter(fs, encoding))
+                {
+                    // 概览（单轨）
+                    WriteGeneral(sw, info.General);
 
-                string value = engine.Get(kind, index, key);
-                dictionary.Add(key, value);
+                    // 视频（多轨）
+                    WriteVideos(sw, info.Videos);
+
+                    // 音频（多轨）
+                    WriteAudios(sw, info.Audios);
+
+                    // 文本（多轨）
+                    WriteTexts(sw, info.Texts);
+
+                    // 其它（多轨）
+                    WriteOthers(sw, info.Others);
+
+                    // 图像（多轨）
+                    WriteImages(sw, info.Images);
+
+                    // 菜单（多轨）
+                    WriteMenus(sw, info.Menus);
+                }
             }
-
-            return dictionary;
         }
 
-
-        /// <summary>
-        /// 获取多轨字典信息数组。
-        /// </summary>
-        /// <param name="engine">给定的 <see cref="IMediaInfoEngine"/>。</param>
-        /// <param name="kind">给定的流种类。</param>
-        /// <param name="general">给定的概览信息。</param>
-        /// <returns>返回数组或 NULL。</returns>
-        public static IDictionary<string, string>[] GetMultiTracks(IMediaInfoEngine engine, StreamKind kind, Tracks.GeneralTrackInfo general)
+        private static void WriteGeneral(StreamWriter sw, GeneralTrackInfo general)
         {
-            int count = 0;
+            if (general == null)
+                return;
 
-            switch (kind)
+            sw.WriteLine("General");
+
+            general.RawTracks.Invoke(pair =>
             {
-                case StreamKind.Video:
-                    count = general.VideoCount.AsOrDefault(0);
-                    break;
+                sw.WriteLine(string.Format("{0}: {1}", pair.Key, pair.Value));
+            });
+        }
 
-                case StreamKind.Audio:
-                    count = general.AudioCount.AsOrDefault(0);
-                    break;
+        private static void WriteVideos(StreamWriter sw, VideoTrackInfo[] videos)
+        {
+            if (videos == null)
+                return;
 
-                case StreamKind.Image:
-                    count = general.ImageCount.AsOrDefault(0);
-                    break;
+            sw.WriteLine("Videos");
 
-                case StreamKind.Text:
-                    count = general.TextCount.AsOrDefault(0);
-                    break;
+            videos.Invoke((v, i) =>
+            {
+                sw.WriteLine("Video" + i);
 
-                case StreamKind.Chapters:
-                    count = general.ChapterCount.AsOrDefault(0);
-                    break;
+                if (v != null)
+                {
+                    v.RawTracks.Invoke(pair =>
+                    {
+                        sw.WriteLine(string.Format("{0}: {1}", pair.Key, pair.Value));
+                    });
+                }
+            });
+        }
 
-                default:
-                    break;
-            }
+        private static void WriteAudios(StreamWriter sw, AudioTrackInfo[] audios)
+        {
+            if (audios == null)
+                return;
 
-            if (count < 1)
-                return null;
+            sw.WriteLine("Audios");
 
-            var list = new List<IDictionary<string, string>>();
+            audios.Invoke((v, i) =>
+            {
+                sw.WriteLine("Audio" + i);
 
-            for (var i = 0; i < count; i++)
-                list.Add(GetSingleTrack(engine, kind, i));
+                if (v != null)
+                {
+                    v.RawTracks.Invoke(pair =>
+                    {
+                        sw.WriteLine(string.Format("{0}: {1}", pair.Key, pair.Value));
+                    });
+                }
+            });
+        }
 
-            return list.ToArray();
+        private static void WriteTexts(StreamWriter sw, TextTrackInfo[] texts)
+        {
+            if (texts == null)
+                return;
+
+            sw.WriteLine("Texts");
+
+            texts.Invoke((v, i) =>
+            {
+                sw.WriteLine("Text" + i);
+
+                if (v != null)
+                {
+                    v.RawTracks.Invoke(pair =>
+                    {
+                        sw.WriteLine(string.Format("{0}: {1}", pair.Key, pair.Value));
+                    });
+                }
+            });
+        }
+
+        private static void WriteOthers(StreamWriter sw, OtherTrackInfo[] others)
+        {
+            if (others == null)
+                return;
+
+            sw.WriteLine("Others");
+
+            others.Invoke((v, i) =>
+            {
+                sw.WriteLine("Other" + i);
+
+                if (v != null)
+                {
+                    v.RawTracks.Invoke(pair =>
+                    {
+                        sw.WriteLine(string.Format("{0}: {1}", pair.Key, pair.Value));
+                    });
+                }
+            });
+        }
+
+        private static void WriteImages(StreamWriter sw, ImageTrackInfo[] images)
+        {
+            if (images == null)
+                return;
+
+            sw.WriteLine("Images");
+
+            images.Invoke((v, i) =>
+            {
+                sw.WriteLine("Image" + i);
+
+                if (v != null)
+                {
+                    v.RawTracks.Invoke(pair =>
+                    {
+                        sw.WriteLine(string.Format("{0}: {1}", pair.Key, pair.Value));
+                    });
+                }
+            });
+        }
+
+        private static void WriteMenus(StreamWriter sw, MenuTrackInfo[] menus)
+        {
+            if (menus == null)
+                return;
+
+            sw.WriteLine("Menus");
+
+            menus.Invoke((v, i) =>
+            {
+                sw.WriteLine("Menu" + i);
+
+                if (v != null)
+                {
+                    v.RawTracks.Invoke(pair =>
+                    {
+                        sw.WriteLine(string.Format("{0}: {1}", pair.Key, pair.Value));
+                    });
+                }
+            });
         }
 
     }

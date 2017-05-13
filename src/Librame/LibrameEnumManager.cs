@@ -52,7 +52,18 @@ namespace Librame
 
 
         #region Data
-        
+
+        /// <summary>
+        /// 获取绑定标记枚举项列表。
+        /// </summary>
+        /// <param name="itemFactory">给定创建项类型实例的方法。</param>
+        /// <returns>返回项列表。</returns>
+        public static IList<TItem> GetBindingMarkupList(Func<string, string, TItem> itemFactory)
+        {
+            return ResolveList<Data.BindingMarkup>(itemFactory);
+        }
+
+
         /// <summary>
         /// 获取数据状态枚举项列表。
         /// </summary>

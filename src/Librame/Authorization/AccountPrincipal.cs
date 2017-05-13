@@ -10,23 +10,15 @@
 
 #endregion
 
-using System.Linq;
 using System.Security.Principal;
 
 namespace Librame.Authorization
 {
-    using Utility;
-
     /// <summary>
     /// 帐户用户。
     /// </summary>
     public class AccountPrincipal : GenericPrincipal, IPrincipal
     {
-        ///// <summary>
-        ///// 获取当前用户对应的角色集合。
-        ///// </summary>
-        //public string[] Roles { get; }
-
         /// <summary>
         /// 构造一个 <see cref="AccountPrincipal"/> 实例。
         /// </summary>
@@ -35,22 +27,43 @@ namespace Librame.Authorization
         public AccountPrincipal(IIdentity identity, string[] roles)
             : base(identity, roles)
         {
-            //Roles = roles;
         }
 
+    }
 
-        ///// <summary>
-        ///// 确定当前用户是否属于指定的角色。
-        ///// </summary>
-        ///// <param name="role">要检查其成员资格的角色的名称。</param>
-        ///// <returns>如果当前用户是指定角色的成员，则为 true；否则为 false。</returns>
-        //public virtual bool IsInRole(string role)
-        //{
-        //    if (ReferenceEquals(Roles, null))
-        //        return false;
 
-        //    return Roles.Contains(role);
-        //}
+    /// <summary>
+    /// <see cref="AccountPrincipal"/> 静态扩展。
+    /// </summary>
+    public static class AccountPrincipalExtensions
+    {
+        /// <summary>
+        /// 得到用户中包含的票根。
+        /// </summary>
+        /// <param name="principal">给定的用户。</param>
+        /// <returns>返回认证票根。</returns>
+        public static AuthenticateTicket AsTicket(this IPrincipal principal)
+        {
+            if (principal == null || !(principal is AccountPrincipal))
+                return null;
+
+            // 取得票根
+            return (principal.Identity as AccountIdentity).Ticket;
+        }
+
+        /// <summary>
+        /// 得到用户中包含的票根。
+        /// </summary>
+        /// <param name="principal">给定的用户。</param>
+        /// <returns>返回认证票根。</returns>
+        public static AuthenticateTicket AsTicket(this AccountPrincipal principal)
+        {
+            if (principal == null)
+                return null;
+
+            // 取得票根
+            return (principal.Identity as AccountIdentity).Ticket;
+        }
 
     }
 }

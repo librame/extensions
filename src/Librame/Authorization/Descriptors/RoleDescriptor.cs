@@ -15,6 +15,8 @@ using System.ComponentModel;
 
 namespace Librame.Authorization.Descriptors
 {
+    using Utility;
+
     /// <summary>
     /// 角色描述符。
     /// </summary>
@@ -24,10 +26,16 @@ namespace Librame.Authorization.Descriptors
         /// <summary>
         /// 构造一个 <see cref="AccountDescriptor"/> 实例。
         /// </summary>
+        public RoleDescriptor()
+        {
+        }
+        /// <summary>
+        /// 构造一个 <see cref="AccountDescriptor"/> 实例。
+        /// </summary>
         /// <param name="name">给定的名称。</param>
         public RoleDescriptor(string name)
         {
-            Name = name;
+            Name = name.NotNullOrEmpty(nameof(name));
         }
 
 

@@ -12,22 +12,29 @@
 
 namespace Librame.Authorization.Providers
 {
-    using Adaptation;
     using Descriptors;
+    using Managers;
+    using Utility;
 
     /// <summary>
-    /// 角色管道。
+    /// 角色管道基类。
     /// </summary>
-    public class RoleProviderBase : AbstractAdapterManagerReference, IRoleProvider
+    public class RoleProviderBase : IRoleProvider
     {
         /// <summary>
-        /// 构造一个 <see cref="RoleProviderBase"/> 实例。
+        /// 构造一个角色管道基类实例。
         /// </summary>
-        /// <param name="adapters">给定的适配器管理器。</param>
-        public RoleProviderBase(IAdapterManager adapters)
-            : base(adapters)
+        /// <param name="cryptogram">给定的密文管理器。</param>
+        public RoleProviderBase(ICryptogramManager cryptogram)
         {
+            Cryptogram = cryptogram.NotNull(nameof(cryptogram));
         }
+
+
+        /// <summary>
+        /// 密文管理器接口。
+        /// </summary>
+        public ICryptogramManager Cryptogram { get; }
 
 
         /// <summary>
@@ -37,6 +44,8 @@ namespace Librame.Authorization.Providers
         /// <returns>返回字符串数组。</returns>
         public virtual string[] GetRoles(string user)
         {
+            user.NotNullOrEmpty(nameof(user));
+
             return null;
         }
 
@@ -47,7 +56,7 @@ namespace Librame.Authorization.Providers
         /// <returns>返回角色。</returns>
         public virtual IRoleDescriptor GetRole(IRoleDescriptor role)
         {
-            return role;
+            return role.NotNull(nameof(role));
         }
 
     }

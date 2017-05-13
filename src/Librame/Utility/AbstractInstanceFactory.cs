@@ -62,7 +62,7 @@ namespace Librame.Utility
         /// <returns>返回类型实例。</returns>
         public virtual T GetInstance(string name)
         {
-            name.GuardNull(nameof(name));
+            name.NotNull(nameof(name));
 
             var instance = default(T);
             
@@ -118,7 +118,7 @@ namespace Librame.Utility
         /// <returns>返回类型实例。</returns>
         public virtual T SetInstance(string name, T instance)
         {
-            name.GuardNull(nameof(name));
+            name.NotNull(nameof(name));
 
             SetInstanceByThread(name, instance);
 

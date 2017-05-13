@@ -49,9 +49,17 @@ namespace Librame.MediaInfo.Tracks
             TextCodecList = GetOrDefault("Text_Codec_List");
             TextLanguageList = GetOrDefault("Text_Language_List");
 
+            OtherFormatList = GetOrDefault("Other_Format_List");
+            OtherCodecList = GetOrDefault("Other_Codec_List");
+            OtherLanguageList = GetOrDefault("Other_Language_List");
+
             ImageFormatList = GetOrDefault("Image_Format_List");
             ImageCodecList = GetOrDefault("Image_Codec_List");
             ImageLanguageList = GetOrDefault("Image_Language_List");
+
+            MenuFormatList = GetOrDefault("Menu_Format_List");
+            MenuCodecList = GetOrDefault("Menu_Codec_List");
+            MenuLanguageList = GetOrDefault("Menu_Language_List");
 
             FormatString = GetOrDefault("Format/String");
             FormatInfo = GetOrDefault("Format/Info");
@@ -83,17 +91,21 @@ namespace Librame.MediaInfo.Tracks
         /// </summary>
         public string AudioCount { get; private set; }
         /// <summary>
-        /// 图像数。
-        /// </summary>
-        public string ImageCount { get; private set; }
-        /// <summary>
         /// 字幕数。
         /// </summary>
         public string TextCount { get; private set; }
         /// <summary>
-        /// 章节数。
+        /// 其它数。
         /// </summary>
-        public string ChapterCount { get; private set; }
+        public string OtherCount { get; private set; }
+        /// <summary>
+        /// 图像数。
+        /// </summary>
+        public string ImageCount { get; private set; }
+        /// <summary>
+        /// 菜单数。
+        /// </summary>
+        public string MenuCount { get; private set; }
 
 
         /// <summary>
@@ -104,6 +116,23 @@ namespace Librame.MediaInfo.Tracks
         /// 唯一编号（201998698691846446268886151526523723250 (0x97F788C4DB340374B1151BDA290DDDF2)）
         /// </summary>
         public string UniqueIDString { get; private set; }
+
+        /// <summary>
+        /// 完整名称。
+        /// </summary>
+        public string CompleteName { get; private set; }
+        /// <summary>
+        /// 目录名称。
+        /// </summary>
+        public string FolderName { get; private set; }
+        /// <summary>
+        /// 文件名称。
+        /// </summary>
+        public string FileName { get; private set; }
+        /// <summary>
+        /// 文件扩展名
+        /// </summary>
+        public string FileExtension { get; private set; }
 
         /// <summary>
         /// 视频格式列表（AVC）
@@ -145,6 +174,19 @@ namespace Librame.MediaInfo.Tracks
         public string TextLanguageList { get; private set; }
 
         /// <summary>
+        /// 其它格式列表
+        /// </summary>
+        public string OtherFormatList { get; private set; }
+        /// <summary>
+        /// 其它编码器列表
+        /// </summary>
+        public string OtherCodecList { get; private set; }
+        /// <summary>
+        /// 其它格式列表
+        /// </summary>
+        public string OtherLanguageList { get; private set; }
+
+        /// <summary>
         /// 图像格式列表
         /// </summary>
         public string ImageFormatList { get; private set; }
@@ -156,6 +198,19 @@ namespace Librame.MediaInfo.Tracks
         /// 图像格式列表
         /// </summary>
         public string ImageLanguageList { get; private set; }
+
+        /// <summary>
+        /// 菜单格式列表
+        /// </summary>
+        public string MenuFormatList { get; private set; }
+        /// <summary>
+        /// 菜单编码器列表
+        /// </summary>
+        public string MenuCodecList { get; private set; }
+        /// <summary>
+        /// 菜单格式列表
+        /// </summary>
+        public string MenuLanguageList { get; private set; }
 
         /// <summary>
         /// 容器格式（Matroska）

@@ -31,8 +31,8 @@ namespace Librame.Data.Conventions
     //    /// <param name="model">给定的数据模型。</param>
     //    public override void Apply(EntityType item, DbModel model)
     //    {
-    //        item.GuardNull(nameof(item));
-    //        model.GuardNull(nameof(model));
+    //        item.NotNull(nameof(item));
+    //        model.NotNull(nameof(model));
             
     //        var entitySet = model.StoreModel.GetEntitySet(item);
     //        entitySet.Table = WordHelper.Pluralize(item.Name);

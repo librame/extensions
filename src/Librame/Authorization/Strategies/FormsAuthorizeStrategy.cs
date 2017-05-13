@@ -11,28 +11,24 @@
 #endregion
 
 using System;
-using System.Security.Principal;
 using System.Web;
 using System.Web.Security;
 
 namespace Librame.Authorization.Strategies
 {
-    using Descriptors;
     using Utility;
 
     /// <summary>
-    /// Web 应用程序认证策略。
+    /// 窗体应用程序认证策略。
     /// </summary>
     public class FormsAuthorizeStrategy : AbstractAuthorizeStrategy, IAuthorizeStrategy
     {
         /// <summary>
-        /// 构造一个 <see cref="FormsAuthorizeStrategy"/> 实例。
+        /// 构造一个窗体应用程序认证策略实例。
         /// </summary>
-        /// <param name="authSettings">给定的认证首选项。</param>
-        /// <param name="provCollection">给定的管道集合。</param>
-        public FormsAuthorizeStrategy(AuthorizeSettings authSettings,
-            IProviderCollection provCollection)
-            : base(authSettings, provCollection)
+        /// <param name="authorize">给定的认证适配器接口。</param>
+        public FormsAuthorizeStrategy(IAuthorizeAdapter authorize)
+            : base(authorize)
         {
         }
 
@@ -57,91 +53,120 @@ namespace Librame.Authorization.Strategies
         /// 登录成功。
         /// </summary>
         /// <param name="authInfo">给定的认证信息。</param>
-        /// <param name="isPersistent">是否持久化存储。</param>
-        /// <param name="bindPrincipal">用于绑定键名与用户的方法。</param>
-        protected override void SignInSuccess(AuthenticateInfo authInfo, bool isPersistent,
-            Action<string, IPrincipal> bindPrincipal)
+        /// <param name="principal">给定的帐户用户。</param>
+        protected override void SignInSuccess(AuthenticateInfo authInfo, AccountPrincipal principal)
         {
-            // 构建票根
-            var ticket = BuildTicket(authInfo.Account, isPersistent);
-
-            // 构建用户
-            var identity = new AccountIdentity(FormsAuthentication.Decrypt(ticket));
-            var principal = new AccountPrincipal(identity, null);
-            bindPrincipal?.Invoke(AuthorizeHelper.AUTHORIZATION_KEY, principal);
-
             // 注册票根
-            //RegistCookie(ticket);
+            RegistCookie((principal.Identity as AccountIdentity).Ticket);
 
             // 认证后重定向回最初请求的 URL 或默认 URL。
-            //FormsAuthentication.RedirectFromLoginPage(authInfo.Account.Name, isPersistent);
-        }
-
-        /// <summary>
-        /// 构建认证票根。
-        /// </summary>
-        /// <param name="account">给定的帐户。</param>
-        /// <param name="isPersistent">是否持久化存储。</param>
-        /// <returns>返回票根字符串。</returns>
-        protected virtual string BuildTicket(IAccountDescriptor account, bool isPersistent)
-        {
-            // 生成令牌
-            var token = AuthorizeHelper.GenerateToken();
-
-            // 生成用户数据
-            var descriptor = new TicketDataDescriptor(token, account);
-            var userData = TicketDataDescriptor.Serialize(descriptor);
-            
-            // 创建票根
-            var now = DateTime.Now;
-            var expiration = now.AddDays(AuthSettings.ExpirationDays);
-            var ticket = new FormsAuthenticationTicket(1, account.Name,
-                now, expiration, isPersistent, userData,
-                FormsAuthentication.FormsCookiePath);
-
-            return FormsAuthentication.Encrypt(ticket);
+            var currentUrl = HttpContext.Current?.Request?.Url.ToString();
+            var returnUrl = HttpContext.Current?.Request?.QueryString["returnUrl"];
+            if (!string.IsNullOrEmpty(returnUrl) && returnUrl != currentUrl)
+            {
+                HttpContext.Current?.Response?.Redirect(returnUrl);
+            }
         }
 
         ///// <summary>
-        ///// 注册票根。
+        ///// 构建认证票根。
         ///// </summary>
-        ///// <param name="ticket">给定的票根。</param>
-        //protected virtual void RegistCookie(string ticket)
+        ///// <param name="account">给定的帐户。</param>
+        ///// <param name="isPersistent">是否持久化存储。</param>
+        ///// <returns>返回票根字符串。</returns>
+        //protected virtual string BuildTicket(IAccountDescriptor account, bool isPersistent)
         //{
-        //    // Web 环境
-        //    var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, ticket);
+        //    var ticket = new AuthenticateTicket(account, DateTime.Now, null, isPersistent);
 
-        //    // 同步票根与 Cookie 信息
-        //    var context = HttpContext.Current;
-        //    var decrypt = FormsAuthentication.Decrypt(ticket);
+        //    return EncryptTicket(ticket);
 
-        //    cookie.Expires = decrypt.Expiration;
-        //    cookie.Path = decrypt.CookiePath;
-        //    cookie.Domain = context?.Request?.Url?.Host;
+        //    //// 生成令牌
+        //    //var token = AuthorizeHelper.GenerateToken();
 
-        //    // 重定向会被清空
-        //    context?.Response?.Cookies?.Add(cookie);
+        //    //// 生成用户数据
+        //    //var descriptor = new TicketDataDescriptor(token, account);
+        //    //var userData = TicketDataDescriptor.Serialize(descriptor);
+
+        //    //// 创建票根
+        //    //var now = DateTime.Now;
+        //    //var expiration = now.AddDays(AuthSettings.ExpirationDays);
+        //    //var ticket = new FormsAuthenticationTicket(1, account.Name,
+        //    //    now, expiration, isPersistent, userData,
+        //    //    FormsAuthentication.FormsCookiePath);
+
+        //    //return FormsAuthentication.Encrypt(ticket);
         //}
+
+        /// <summary>
+        /// 注册票根。
+        /// </summary>
+        /// <param name="ticket">给定的票根。</param>
+        /// <returns>返回加密后的票根字符串。</returns>
+        protected virtual string RegistCookie(AuthenticateTicket ticket)
+        {
+            // Web 环境
+            var encrypt = EncryptTicket(ticket);
+            var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encrypt);
+
+            // 同步票根与 Cookie 信息
+            var context = HttpContext.Current;
+
+            cookie.Expires = ticket.Expiration;
+            cookie.Path = ticket.Path;
+            cookie.Domain = context?.Request?.Url?.Host;
+
+            // 重定向会被清空
+            context?.Response?.Cookies?.Add(cookie);
+
+            return encrypt;
+        }
+
+        /// <summary>
+        /// 移除票根。
+        /// </summary>
+        /// <returns>返回票根字符串。</returns>
+        protected virtual string RemoveCookie()
+        {
+            var cookies = HttpContext.Current?.Response?.Cookies;
+
+            if (!ReferenceEquals(cookies, null))
+            {
+                var ticket = cookies[FormsAuthentication.FormsCookieName].Value;
+                cookies.Remove(FormsAuthentication.FormsCookieName);
+
+                return ticket;
+            }
+
+            return string.Empty;
+        }
 
 
         /// <summary>
         /// 用户登出。
         /// </summary>
         /// <param name="removePrincipal">移除用户方法。</param>
-        public override void SignOut(Action<string> removePrincipal)
+        /// <returns>返回用户票根。</returns>
+        public override AuthenticateTicket SignOut(Func<string, AuthenticateTicket> removePrincipal)
         {
             try
             {
-                if (!AuthSettings.EnableAuthorize)
-                    return;
+                if (!Authorize.AuthSettings.EnableAuthorize)
+                {
+                    var authInfo = GetSimulateAuthenticateInfo();
+                    return new AuthenticateTicket(authInfo.Account, DateTime.Now);
+                }
 
-                removePrincipal?.Invoke(AuthorizeHelper.AUTHORIZATION_KEY);
+                var ticket = removePrincipal?.Invoke(AuthorizeHelper.AUTHORIZATION_KEY);
 
-                //FormsAuthentication.SignOut();
+                RemoveCookie();
+
+                return ticket;
             }
             catch (Exception ex)
             {
-                Log.Error(ex.AsOrInnerMessage(), ex);
+                Log.Error(ex.InnerMessage(), ex);
+
+                throw ex;
             }
         }
 

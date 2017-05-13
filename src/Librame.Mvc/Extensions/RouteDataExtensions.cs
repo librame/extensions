@@ -46,7 +46,7 @@ namespace System.Web.Routing
         /// <returns>返回重定向到路由结果。</returns>
         public static Mvc.RedirectToRouteResult RedirectToRoute(this RouteDescriptor route)
         {
-            route.GuardNull(nameof(route));
+            route.NotNull(nameof(route));
 
             var routeValues = new RouteValueDictionary(new
             {
@@ -65,7 +65,7 @@ namespace System.Web.Routing
         ///// <returns>返回重定向到路由结果。</returns>
         //public static Http.Results.RedirectToRouteResult RedirectToRoute(this RouteDescriptor route)
         //{
-        //    route.GuardNull(nameof(route));
+        //    route.NotNull(nameof(route));
 
         //    var routeValues = new RouteValueDictionary(new
         //    {

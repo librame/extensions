@@ -166,6 +166,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.105.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Data.SQLite.Core.1.0.105.0\lib\net46\System.Data.SQLite.dll</HintPath>
@@ -241,26 +242,28 @@
     <Compile Include="Attention\AttentionExtensions.cs" />
     <Compile Include="Attention\AttentionLevel.cs" />
     <Compile Include="Attention\AttentionResult.cs" />
-    <Compile Include="Authorization\HttpAuthorizeAttribute.cs" />
+    <Compile Include="HandleError\ApiHandleErrorAttribute.cs" />
+    <Compile Include="HandleError\MvcHandleErrorAttribute.cs" />
+    <Compile Include="Authorization\ApiAuthorizeAttribute.cs" />
     <Compile Include="ApiController.cs" />
-    <Compile Include="Authorization\RbacHttpAuthorizeAttribute.cs" />
-    <Compile Include="Authorization\RbacMvcAuthorizeAttribute.cs" />
     <Compile Include="Registration\ContainerControllerActivator.cs" />
     <Compile Include="Registration\ContainerDependencyResolver.cs" />
     <Compile Include="Registration\ContainerFilterAttributeFilterProvider.cs" />
     <Compile Include="Registration\ContainerHttpControllerActivator.cs" />
-    <Compile Include="Registration\LibrameWebRegistration.cs" />
+    <Compile Include="Registration\MvcRegistration.cs" />
     <Compile Include="IApiController.cs" />
     <Compile Include="Authorization\MvcAuthorizeAttribute.cs" />
     <Compile Include="LibrameEnumManager.cs" />
-    <Compile Include="Registration\LibrameWebActivator.cs" />
+    <Compile Include="Registration\MvcActivator.cs" />
     <Compile Include="RouteDescriptor.cs" />
     <Compile Include="Extensions\RouteDataExtensions.cs" />
     <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Extensions\SelectListItemExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SensitiveWord\SensitiveWordsFilterModelBinder.cs" />
     <Compile Include="Utility\EnumStyleUtility.cs" />
     <Compile Include="Extensions\RepositoryExtensions.cs" />
+    <Compile Include="Utility\WebApiHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -47,7 +47,9 @@ namespace System.Web.Mvc
             ActionDescriptor actionDescriptor)
         {
             var attributes = base.GetControllerAttributes(controllerContext, actionDescriptor);
-            this.BuildUpAttributes(attributes);
+
+            BuildUpAttributes(attributes);
+
             return attributes;
         }
 
@@ -72,7 +74,7 @@ namespace System.Web.Mvc
         {
             foreach (FilterAttribute attribute in attributes)
             {
-                ContainerAdapter.BuildUp<Type>(attribute.GetType(), attribute);
+                ContainerAdapter.BuildUp(attribute.GetType(), attribute);
             }
         }
 

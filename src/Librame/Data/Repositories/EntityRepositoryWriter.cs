@@ -24,7 +24,7 @@ namespace Librame.Data.Repositories
     /// EntityFramework 仓库写入器。
     /// </summary>
     /// <typeparam name="T">指定的类型。</typeparam>
-    public abstract class EntityRepositoryWriter<T> : EntityRepositoryReadiness<T>, IRepositoryWriter<T>
+    public abstract class EntityRepositoryWriter<T> : EntityRepositoryEntry<T>, IRepositoryWriter<T>
         where T : class
     {
         /// <summary>

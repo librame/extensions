@@ -113,7 +113,7 @@ namespace Librame.Utility
         public static TAttribute GetClassAttribute<TAttribute>(Type type, bool inherit = false)
             where TAttribute : Attribute
         {
-            type.GuardNull(nameof(type));
+            type.NotNull(nameof(type));
 
             var attribs = type.GetCustomAttributes(typeof(TAttribute), inherit);
 
@@ -131,7 +131,7 @@ namespace Librame.Utility
         public static TAttribute GetMemberAttribute<TAttribute>(MemberInfo member, bool inherit = false)
             where TAttribute : Attribute
         {
-            member.GuardNull(nameof(member));
+            member.NotNull(nameof(member));
             
             var attribs = member.GetCustomAttributes(typeof(TAttribute), inherit);
 
@@ -194,8 +194,8 @@ namespace Librame.Utility
         public static Type[] GetAssignableTypes(Assembly assembly, Type baseType,
             bool withInstantiable = true, bool withoutBaseType = true)
         {
-            baseType.GuardNull(nameof(baseType));
-            assembly.GuardNull(nameof(assembly));
+            baseType.NotNull(nameof(baseType));
+            assembly.NotNull(nameof(assembly));
 
             try
             {

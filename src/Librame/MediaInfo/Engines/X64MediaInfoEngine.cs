@@ -11,296 +11,314 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Librame.MediaInfo.Engines
 {
-    using Utility;
-
     /// <summary>
     /// 64 位 MediaInfo 引擎。
     /// </summary>
-    public class X64MediaInfoEngine : IMediaInfoEngine
+    public class X64MediaInfoEngine : AbstractMediaInfoEngine, IMediaInfoEngine
     {
         /// <summary>
         /// 默认 DLL 文件名。
         /// </summary>
-        private const string DEFAULT_DLL_FILENAME = "MediaInfo.dll";
+        internal const string DLL_FILENAME = "MediaInfo.dll";
 
 
-        //Import of DLL functions. DO NOT USE until you know what you do (MediaInfo DLL do NOT use CoTaskMemAlloc to allocate memory)
-        [DllImport(DEFAULT_DLL_FILENAME)]
+        // Import of DLL functions. DO NOT USE until you know what you do
+        // (MediaInfo DLL do NOT use CoTaskMemAlloc to allocate memory)
+        [DllImport(DLL_FILENAME)]
         private static extern IntPtr MediaInfo_New();
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern void   MediaInfo_Delete(IntPtr Handle);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_Open(IntPtr Handle, [MarshalAs(UnmanagedType.LPWStr)] string FileName);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfoA_Open(IntPtr Handle, IntPtr FileName);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_Open_Buffer_Init(IntPtr Handle, Int64 File_Size, Int64 File_Offset);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfoA_Open(IntPtr Handle, Int64 File_Size, Int64 File_Offset);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_Open_Buffer_Continue(IntPtr Handle, IntPtr Buffer, IntPtr Buffer_Size);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfoA_Open_Buffer_Continue(IntPtr Handle, Int64 File_Size, byte[] Buffer, IntPtr Buffer_Size);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern Int64  MediaInfo_Open_Buffer_Continue_GoTo_Get(IntPtr Handle);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern Int64  MediaInfoA_Open_Buffer_Continue_GoTo_Get(IntPtr Handle);
 
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_Open_Buffer_Finalize(IntPtr Handle);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfoA_Open_Buffer_Finalize(IntPtr Handle);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern void   MediaInfo_Close(IntPtr Handle);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_Inform(IntPtr Handle, IntPtr Reserved);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfoA_Inform(IntPtr Handle, IntPtr Reserved);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_GetI(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber,
-            IntPtr Parameter, IntPtr KindOfInfo);
+        [DllImport(DLL_FILENAME)]
+        private static extern void MediaInfo_Delete(IntPtr handle);
 
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfoA_GetI(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber,
-            IntPtr Parameter, IntPtr KindOfInfo);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_Get(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber,
-            [MarshalAs(UnmanagedType.LPWStr)] string Parameter, IntPtr KindOfInfo, IntPtr KindOfSearch);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfoA_Get(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber,
-            IntPtr Parameter, IntPtr KindOfInfo, IntPtr KindOfSearch);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_Option(IntPtr Handle, [MarshalAs(UnmanagedType.LPWStr)] string Option,
-            [MarshalAs(UnmanagedType.LPWStr)] string Value);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfoA_Option(IntPtr Handle, IntPtr Option,  IntPtr Value);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_State_Get(IntPtr Handle);
-        
-        [DllImport(DEFAULT_DLL_FILENAME)]
-        private static extern IntPtr MediaInfo_Count_Get(IntPtr Handle, IntPtr StreamKind, IntPtr StreamNumber);
-        
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_Open(IntPtr handle,
+            [MarshalAs(UnmanagedType.LPWStr)] string fileName);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfoA_Open(IntPtr handle, IntPtr fileName);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_Open_Buffer_Init(IntPtr handle, Int64 fileSize,
+            Int64 fileOffset);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfoA_Open(IntPtr handle, Int64 fileSize, Int64 fileOffset);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_Open_Buffer_Continue(IntPtr handle, IntPtr buffer,
+            IntPtr bufferSize);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfoA_Open_Buffer_Continue(IntPtr handle, Int64 fileSize,
+            byte[] buffer, IntPtr bufferSize);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern Int64 MediaInfo_Open_Buffer_Continue_GoTo_Get(IntPtr handle);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern Int64 MediaInfoA_Open_Buffer_Continue_GoTo_Get(IntPtr handle);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_Open_Buffer_Finalize(IntPtr handle);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfoA_Open_Buffer_Finalize(IntPtr handle);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern void MediaInfo_Close(IntPtr handle);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_Inform(IntPtr handle, IntPtr reserved);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfoA_Inform(IntPtr handle, IntPtr reserved);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_GetI(IntPtr handle, IntPtr streamKind, IntPtr streamNumber,
+            IntPtr parameter, IntPtr kindOfInfo);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfoA_GetI(IntPtr handle, IntPtr streamKind, IntPtr streamNumber,
+            IntPtr parameter, IntPtr kindOfInfo);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_Get(IntPtr handle, IntPtr streamKind, IntPtr streamNumber,
+            [MarshalAs(UnmanagedType.LPWStr)] string parameter, IntPtr kindOfInfo, IntPtr kindOfSearch);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfoA_Get(IntPtr handle, IntPtr streamKind, IntPtr streamNumber,
+            IntPtr parameter, IntPtr kindOfInfo, IntPtr kindOfSearch);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_Option(IntPtr handle,
+            [MarshalAs(UnmanagedType.LPWStr)] string option,
+            [MarshalAs(UnmanagedType.LPWStr)] string value);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfoA_Option(IntPtr handle, IntPtr option, IntPtr value);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_State_Get(IntPtr handle);
+
+        [DllImport(DLL_FILENAME)]
+        private static extern IntPtr MediaInfo_Count_Get(IntPtr handle, IntPtr streamKind, IntPtr streamNumber);
+
+
+        private IntPtr _handle;
+        private bool _mustUseAnsi;
 
         /// <summary>
-        /// 构造一个 <see cref="X64MediaInfoEngine"/> 对象。
+        /// 构造一个 <see cref="X64MediaInfoEngine"/> 实例。
         /// </summary>
         public X64MediaInfoEngine()
+            : base(DLL_FILENAME)
         {
-            DllFileInfo = new FileInfo(PathUtility.BinDirectory.AppendPath(DEFAULT_DLL_FILENAME));
-            if (!DllFileInfo.Exists)
-                throw new FileNotFoundException(DllFileInfo.FullName);
-            
-            Handle = MediaInfo_New();
-            
-            if (Environment.OSVersion.ToString().IndexOf("Windows")==-1)
-                MustUseAnsi=true;
-            else
-                MustUseAnsi=false;
-        }
+            try
+            {
+                _handle = MediaInfo_New();
+            }
+            catch
+            {
+                _handle = (IntPtr)0;
+            }
 
+            if (Environment.OSVersion.ToString().IndexOf("Windows") == -1)
+                _mustUseAnsi = true;
+            else
+                _mustUseAnsi = false;
+        }
         /// <summary>
-        /// 解构一个 <see cref="X64MediaInfoEngine"/> 对象。
+        /// 解构一个 <see cref="X64MediaInfoEngine"/> 实例。
         /// </summary>
         ~X64MediaInfoEngine()
         {
-            MediaInfo_Delete(Handle);
+            if (_handle == (IntPtr)0)
+                return;
+
+            MediaInfo_Delete(_handle);
         }
 
 
         /// <summary>
-        /// 获取 DLL 文件信息。
+        /// 打开媒体文件。
         /// </summary>
-        public FileInfo DllFileInfo { get; private set; }
-
-
-        /// <summary>
-        /// 打开指定的媒体文件。
-        /// </summary>
-        /// <param name="FileName">给定的完整文件名。</param>
-        /// <returns></returns>
-        public int Open(String FileName)
+        /// <param name="fileName">给定的媒体文件。</param>
+        /// <returns>返回指针或句柄平台特定类型。</returns>
+        public int Open(string fileName)
         {
-            if (MustUseAnsi)
+            if (_handle == (IntPtr)0)
+                return 0;
+
+            if (_mustUseAnsi)
             {
-                IntPtr FileName_Ptr = Marshal.StringToHGlobalAnsi(FileName);
-                int ToReturn = (int)MediaInfoA_Open(Handle, FileName_Ptr);
+                IntPtr FileName_Ptr = Marshal.StringToHGlobalAnsi(fileName);
+                int ToReturn = (int)MediaInfoA_Open(_handle, FileName_Ptr);
                 Marshal.FreeHGlobal(FileName_Ptr);
                 return ToReturn;
             }
             else
-                return (int)MediaInfo_Open(Handle, FileName);
+                return (int)MediaInfo_Open(_handle, fileName);
         }
-        
-        private int Open_Buffer_Init(Int64 File_Size, Int64 File_Offset)
+
+        private int Open_Buffer_Init(Int64 fileSize, Int64 fileOffset)
         {
-            return (int)MediaInfo_Open_Buffer_Init(Handle, File_Size, File_Offset);
+            return (int)MediaInfo_Open_Buffer_Init(_handle, fileSize, fileOffset);
         }
-        
-        private int Open_Buffer_Continue(IntPtr Buffer, IntPtr Buffer_Size)
+
+        private int Open_Buffer_Continue(IntPtr buffer, IntPtr bufferSize)
         {
-            return (int)MediaInfo_Open_Buffer_Continue(Handle, Buffer, Buffer_Size);
+            return (int)MediaInfo_Open_Buffer_Continue(_handle, buffer, bufferSize);
         }
-        
+
         private Int64 Open_Buffer_Continue_GoTo_Get()
         {
-            return (int)MediaInfo_Open_Buffer_Continue_GoTo_Get(Handle);
+            return (int)MediaInfo_Open_Buffer_Continue_GoTo_Get(_handle);
         }
-        
+
         private int Open_Buffer_Finalize()
         {
-            return (int)MediaInfo_Open_Buffer_Finalize(Handle);
+            return (int)MediaInfo_Open_Buffer_Finalize(_handle);
         }
 
 
         /// <summary>
-        /// 关闭。
+        /// 关闭媒体文件。
         /// </summary>
         public void Close()
         {
-            MediaInfo_Close(Handle);
+            if (_handle == (IntPtr)0)
+                return;
+
+            MediaInfo_Close(_handle);
         }
 
 
         /// <summary>
-        /// 通告。
+        /// 报告媒体文件。
         /// </summary>
-        /// <returns></returns>
-        public String Inform()
+        /// <returns>返回字符串。</returns>
+        public string Inform()
         {
-            if (MustUseAnsi)
-                return Marshal.PtrToStringAnsi(MediaInfoA_Inform(Handle, (IntPtr)0));
+            if (_handle == (IntPtr)0)
+                return "Unable to load MediaInfo library";
+
+            if (_mustUseAnsi)
+                return Marshal.PtrToStringAnsi(MediaInfoA_Inform(_handle, (IntPtr)0));
             else
-                return Marshal.PtrToStringUni(MediaInfo_Inform(Handle, (IntPtr)0));
+                return Marshal.PtrToStringUni(MediaInfo_Inform(_handle, (IntPtr)0));
         }
 
 
         /// <summary>
-        /// 获取指定条件的字符串信息。
+        /// 获取内容。
         /// </summary>
-        /// <param name="StreamKind"></param>
-        /// <param name="StreamNumber"></param>
-        /// <param name="Parameter"></param>
-        /// <param name="KindOfInfo"></param>
-        /// <param name="KindOfSearch"></param>
-        /// <returns></returns>
-        public String Get(StreamKind StreamKind, int StreamNumber, String Parameter, InfoKind KindOfInfo, InfoKind KindOfSearch)
+        /// <param name="streamKind">给定的流种类。</param>
+        /// <param name="streamNumber">给定的流编号。</param>
+        /// <param name="parameter">给定的参数。</param>
+        /// <param name="kindOfInfo">给定的信息种类。</param>
+        /// <param name="kindOfSearch">给定的查询信息种类。</param>
+        /// <returns>返回字符串。</returns>
+        public string Get(StreamKind streamKind, int streamNumber, string parameter, InfoKind kindOfInfo,
+            InfoKind kindOfSearch)
         {
-            if (MustUseAnsi)
+            if (_handle == (IntPtr)0)
+                return "Unable to load MediaInfo library";
+
+            if (_mustUseAnsi)
             {
-                IntPtr Parameter_Ptr=Marshal.StringToHGlobalAnsi(Parameter);
-                String ToReturn=Marshal.PtrToStringAnsi(MediaInfoA_Get(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber, Parameter_Ptr, (IntPtr)KindOfInfo, (IntPtr)KindOfSearch));
+                IntPtr Parameter_Ptr = Marshal.StringToHGlobalAnsi(parameter);
+                string ToReturn = Marshal.PtrToStringAnsi(MediaInfoA_Get(_handle, (IntPtr)streamKind,
+                    (IntPtr)streamNumber, Parameter_Ptr, (IntPtr)kindOfInfo, (IntPtr)kindOfSearch));
                 Marshal.FreeHGlobal(Parameter_Ptr);
                 return ToReturn;
             }
             else
-                return Marshal.PtrToStringUni(MediaInfo_Get(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber, Parameter, (IntPtr)KindOfInfo, (IntPtr)KindOfSearch));
-        }
-        /// <summary>
-        /// 获取指定条件的字符串信息。
-        /// </summary>
-        /// <param name="StreamKind"></param>
-        /// <param name="StreamNumber"></param>
-        /// <param name="Parameter"></param>
-        /// <param name="KindOfInfo"></param>
-        /// <returns></returns>
-        public String Get(StreamKind StreamKind, int StreamNumber, int Parameter, InfoKind KindOfInfo)
-        {
-            if (MustUseAnsi)
-                return Marshal.PtrToStringAnsi(MediaInfoA_GetI(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber, (IntPtr)Parameter, (IntPtr)KindOfInfo));
-            else
-                return Marshal.PtrToStringUni(MediaInfo_GetI(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber, (IntPtr)Parameter, (IntPtr)KindOfInfo));
-        }
-
-
-        /// <summary>
-        /// 获取指定项。
-        /// </summary>
-        /// <param name="Option"></param>
-        /// <param name="Value"></param>
-        /// <returns></returns>
-        public String Option(String Option, String Value)
-        {
-            if (MustUseAnsi)
             {
-                IntPtr Option_Ptr=Marshal.StringToHGlobalAnsi(Option);
-                IntPtr Value_Ptr=Marshal.StringToHGlobalAnsi(Value);
-                String ToReturn=Marshal.PtrToStringAnsi(MediaInfoA_Option(Handle, Option_Ptr, Value_Ptr));
+                return Marshal.PtrToStringUni(MediaInfo_Get(_handle, (IntPtr)streamKind, (IntPtr)streamNumber,
+                    parameter, (IntPtr)kindOfInfo, (IntPtr)kindOfSearch));
+            }
+        }
+
+        /// <summary>
+        /// 获取内容。
+        /// </summary>
+        /// <param name="streamKind">给定的流种类。</param>
+        /// <param name="streamNumber">给定的流编号。</param>
+        /// <param name="parameter">给定的参数。</param>
+        /// <param name="kindOfInfo">给定的信息种类。</param>
+        /// <returns>返回字符串。</returns>
+        public string Get(StreamKind streamKind, int streamNumber, int parameter, InfoKind kindOfInfo)
+        {
+            if (_handle == (IntPtr)0)
+                return "Unable to load MediaInfo library";
+
+            if (_mustUseAnsi)
+            {
+                return Marshal.PtrToStringAnsi(MediaInfoA_GetI(_handle, (IntPtr)streamKind,
+                    (IntPtr)streamNumber, (IntPtr)parameter, (IntPtr)kindOfInfo));
+            }
+            else
+            {
+                return Marshal.PtrToStringUni(MediaInfo_GetI(_handle, (IntPtr)streamKind,
+                    (IntPtr)streamNumber, (IntPtr)parameter, (IntPtr)kindOfInfo));
+            }
+        }
+
+
+        /// <summary>
+        /// 选项值信息。
+        /// </summary>
+        /// <param name="option">给定的选项。</param>
+        /// <param name="value">给定的值。</param>
+        /// <returns>返回字符串。</returns>
+        public string Option(string option, string value)
+        {
+            if (_handle == (IntPtr)0)
+                return "Unable to load MediaInfo library";
+
+            if (_mustUseAnsi)
+            {
+                IntPtr Option_Ptr = Marshal.StringToHGlobalAnsi(option);
+                IntPtr Value_Ptr = Marshal.StringToHGlobalAnsi(value);
+                string ToReturn = Marshal.PtrToStringAnsi(MediaInfoA_Option(_handle, Option_Ptr, Value_Ptr));
                 Marshal.FreeHGlobal(Option_Ptr);
                 Marshal.FreeHGlobal(Value_Ptr);
                 return ToReturn;
             }
             else
-                return Marshal.PtrToStringUni(MediaInfo_Option(Handle, Option, Value));
-        }
-        
-        private int State_Get()
-        {
-            return (int)MediaInfo_State_Get(Handle);
-        }
-        
-        private int Count_Get(StreamKind StreamKind, int StreamNumber)
-        {
-            return (int)MediaInfo_Count_Get(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber);
+                return Marshal.PtrToStringUni(MediaInfo_Option(_handle, option, value));
         }
 
-        private IntPtr Handle;
-        private bool MustUseAnsi;
-        //Default values, if you know how to set default values in C#, say me
-        
-        private String Get(StreamKind StreamKind, int StreamNumber, String Parameter, InfoKind KindOfInfo)
-        {
-            return Get(StreamKind, StreamNumber, Parameter, KindOfInfo, InfoKind.Name);
-        }
 
         /// <summary>
-        /// 获取指定条件的字符串信息。
+        /// 统计信息。
         /// </summary>
-        /// <param name="StreamKind"></param>
-        /// <param name="StreamNumber"></param>
-        /// <param name="Parameter"></param>
-        /// <returns></returns>
-        public String Get(StreamKind StreamKind, int StreamNumber, String Parameter)
+        /// <param name="streamKind">给定的流种类。</param>
+        /// <param name="streamNumber">给定的流编号。</param>
+        /// <returns>返回指针或句柄平台特定类型。</returns>
+        public int Count(StreamKind streamKind, int streamNumber)
         {
-            return Get(StreamKind, StreamNumber, Parameter, InfoKind.Text, InfoKind.Name);
+            if (_handle == (IntPtr)0)
+                return 0;
+
+            return (int)MediaInfo_Count_Get(_handle, (IntPtr)streamKind, (IntPtr)streamNumber);
         }
-        
-        private String Get(StreamKind StreamKind, int StreamNumber, int Parameter)
+
+
+        /// <summary>
+        /// 状态信息。
+        /// </summary>
+        /// <returns>返回指针或句柄平台特定类型。</returns>
+        public int State()
         {
-            return Get(StreamKind, StreamNumber, Parameter, InfoKind.Text);
-        }
-        
-        private String Option(String Option_)
-        {
-            return Option(Option_, "");
-        }
-        
-        private int Count_Get(StreamKind StreamKind)
-        {
-            return Count_Get(StreamKind, -1);
+            if (_handle == (IntPtr)0)
+                return 0;
+
+            return (int)MediaInfo_State_Get(_handle);
         }
 
 
@@ -313,229 +331,4 @@ namespace Librame.MediaInfo.Engines
         }
 
     }
-    
-    ///// <summary>
-    ///// MediaInfoStream 列表。
-    ///// </summary>
-    //class MediaInfoStreamList
-    //{
-    //    //Import of DLL functions. DO NOT USE until you know what you do (MediaInfo DLL do NOT use CoTaskMemAlloc to allocate memory)
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern IntPtr MediaInfoList_New();
-        
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern void MediaInfoList_Delete(IntPtr Handle);
-        
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern IntPtr MediaInfoList_Open(IntPtr Handle, [MarshalAs(UnmanagedType.LPWStr)] string FileName, IntPtr Options);
-        
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern void MediaInfoList_Close(IntPtr Handle, IntPtr FilePos);
-        
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern IntPtr MediaInfoList_Inform(IntPtr Handle, IntPtr FilePos, IntPtr Reserved);
-        
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern IntPtr MediaInfoList_GetI(IntPtr Handle, IntPtr FilePos, IntPtr StreamKind,
-    //        IntPtr StreamNumber, IntPtr Parameter, IntPtr KindOfInfo);
-        
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern IntPtr MediaInfoList_Get(IntPtr Handle, IntPtr FilePos, IntPtr StreamKind,
-    //        IntPtr StreamNumber, [MarshalAs(UnmanagedType.LPWStr)] string Parameter, IntPtr KindOfInfo, IntPtr KindOfSearch);
-        
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern IntPtr MediaInfoList_Option(IntPtr Handle, [MarshalAs(UnmanagedType.LPWStr)] string Option,
-    //        [MarshalAs(UnmanagedType.LPWStr)] string Value);
-        
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern IntPtr MediaInfoList_State_Get(IntPtr Handle);
-        
-    //    [DllImport(MediaInfoX64Provider.DllFileName)]
-    //    private static extern IntPtr MediaInfoList_Count_Get(IntPtr Handle, IntPtr FilePos, IntPtr StreamKind, IntPtr StreamNumber);
-        
-    //    /// <summary>
-    //    /// MediaInfoStream 列表。
-    //    /// </summary>
-    //    public MediaInfoStreamList()
-    //    {
-    //        Handle = MediaInfoList_New();
-    //    }
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    ~MediaInfoStreamList()
-    //    {
-    //        MediaInfoList_Delete(Handle);
-    //    }
-        
-    //    /// <summary>
-    //    /// 打开指定的媒体文件。
-    //    /// </summary>
-    //    /// <param name="FileName"></param>
-    //    /// <param name="Options"></param>
-    //    /// <returns></returns>
-    //    public int Open(String FileName, InfoFileOptions Options)
-    //    {
-    //        return (int)MediaInfoList_Open(Handle, FileName, (IntPtr)Options);
-    //    }
-        
-    //    /// <summary>
-    //    /// 关闭当前媒体文件。
-    //    /// </summary>
-    //    /// <param name="FilePos"></param>
-    //    public void Close(int FilePos)
-    //    {
-    //        MediaInfoList_Close(Handle, (IntPtr)FilePos);
-    //    }
-        
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="FilePos"></param>
-    //    /// <returns></returns>
-    //    public String Inform(int FilePos)
-    //    {
-    //        return Marshal.PtrToStringUni(MediaInfoList_Inform(Handle, (IntPtr)FilePos, (IntPtr)0));
-    //    }
-        
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="FilePos"></param>
-    //    /// <param name="StreamKind"></param>
-    //    /// <param name="StreamNumber"></param>
-    //    /// <param name="Parameter"></param>
-    //    /// <param name="KindOfInfo"></param>
-    //    /// <param name="KindOfSearch"></param>
-    //    /// <returns></returns>
-    //    public String Get(int FilePos, StreamKind StreamKind, int StreamNumber, String Parameter,
-    //        InfoKind KindOfInfo, InfoKind KindOfSearch)
-    //    {
-    //        return Marshal.PtrToStringUni(MediaInfoList_Get(Handle, (IntPtr)FilePos, (IntPtr)StreamKind,
-    //            (IntPtr)StreamNumber, Parameter, (IntPtr)KindOfInfo, (IntPtr)KindOfSearch));
-    //    }
-        
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="FilePos"></param>
-    //    /// <param name="StreamKind"></param>
-    //    /// <param name="StreamNumber"></param>
-    //    /// <param name="Parameter"></param>
-    //    /// <param name="KindOfInfo"></param>
-    //    /// <returns></returns>
-    //    public String Get(int FilePos, StreamKind StreamKind, int StreamNumber, int Parameter, InfoKind KindOfInfo)
-    //    {
-    //        return Marshal.PtrToStringUni(MediaInfoList_GetI(Handle, (IntPtr)FilePos, (IntPtr)StreamKind,
-    //            (IntPtr)StreamNumber, (IntPtr)Parameter, (IntPtr)KindOfInfo));
-    //    }
-        
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="Option"></param>
-    //    /// <param name="Value"></param>
-    //    /// <returns></returns>
-    //    public String Option(String Option, String Value)
-    //    {
-    //        return Marshal.PtrToStringUni(MediaInfoList_Option(Handle, Option, Value));
-    //    }
-        
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <returns></returns>
-    //    public int State_Get()
-    //    {
-    //        return (int)MediaInfoList_State_Get(Handle);
-    //    }
-        
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="FilePos"></param>
-    //    /// <param name="StreamKind"></param>
-    //    /// <param name="StreamNumber"></param>
-    //    /// <returns></returns>
-    //    public int Count_Get(int FilePos, StreamKind StreamKind, int StreamNumber)
-    //    {
-    //        return (int)MediaInfoList_Count_Get(Handle, (IntPtr)FilePos, (IntPtr)StreamKind, (IntPtr)StreamNumber);
-    //    }
-        
-    //    private IntPtr Handle;
-        
-    //    //Default values, if you know how to set default values in C#, say me
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="FileName"></param>
-    //    public void Open(String FileName)
-    //    {
-    //        Open(FileName, 0);
-    //    }
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    public void Close()
-    //    {
-    //        Close(-1);
-    //    }
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="FilePos"></param>
-    //    /// <param name="StreamKind"></param>
-    //    /// <param name="StreamNumber"></param>
-    //    /// <param name="Parameter"></param>
-    //    /// <param name="KindOfInfo"></param>
-    //    /// <returns></returns>
-    //    public String Get(int FilePos, StreamKind StreamKind, int StreamNumber, String Parameter, InfoKind KindOfInfo)
-    //    {
-    //        return Get(FilePos, StreamKind, StreamNumber, Parameter, KindOfInfo, InfoKind.Name);
-    //    }
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="FilePos"></param>
-    //    /// <param name="StreamKind"></param>
-    //    /// <param name="StreamNumber"></param>
-    //    /// <param name="Parameter"></param>
-    //    /// <returns></returns>
-    //    public String Get(int FilePos, StreamKind StreamKind, int StreamNumber, String Parameter)
-    //    {
-    //        return Get(FilePos, StreamKind, StreamNumber, Parameter, InfoKind.Text, InfoKind.Name);
-    //    }
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="FilePos"></param>
-    //    /// <param name="StreamKind"></param>
-    //    /// <param name="StreamNumber"></param>
-    //    /// <param name="Parameter"></param>
-    //    /// <returns></returns>
-    //    public String Get(int FilePos, StreamKind StreamKind, int StreamNumber, int Parameter)
-    //    {
-    //        return Get(FilePos, StreamKind, StreamNumber, Parameter, InfoKind.Text);
-    //    }
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="Option_"></param>
-    //    /// <returns></returns>
-    //    public String Option(String Option_)
-    //    {
-    //        return Option(Option_, "");
-    //    }
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <param name="FilePos"></param>
-    //    /// <param name="StreamKind"></param>
-    //    /// <returns></returns>
-    //    public int Count_Get(int FilePos, StreamKind StreamKind)
-    //    {
-    //        return Count_Get(FilePos, StreamKind, -1);
-    //    }
-
-    //}
 }

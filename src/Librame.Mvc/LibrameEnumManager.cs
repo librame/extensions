@@ -75,6 +75,28 @@ namespace Librame
         #region Data
 
         /// <summary>
+        /// 获取绑定标记枚举项列表。
+        /// </summary>
+        /// <param name="markup">给定的默认选中项。</param>
+        /// <returns>返回项列表。</returns>
+        public static IList<SelectListItem> GetBindingMarkupList(Data.BindingMarkup markup)
+        {
+            string selectedValue = ((int)markup).ToString();
+
+            return GetBindingMarkupList((value, text) => selectedValue == value);
+        }
+        /// <summary>
+        /// 获取绑定标记枚举项列表。
+        /// </summary>
+        /// <param name="selectedFactory">给定的默认选中项方法。</param>
+        /// <returns>返回项列表。</returns>
+        public static IList<SelectListItem> GetBindingMarkupList(Func<string, string, bool> selectedFactory)
+        {
+            return ResolveList<Data.BindingMarkup>(selectedFactory);
+        }
+
+
+        /// <summary>
         /// 获取数据状态枚举项列表。
         /// </summary>
         /// <param name="status">给定的默认选中项。</param>
@@ -298,7 +320,7 @@ namespace Librame
         /// <returns>返回项列表。</returns>
         protected static IList<SelectListItem> ResolveList<TEnum>(Func<string, string, bool> selectedFactory)
         {
-            selectedFactory.GuardNull(nameof(selectedFactory));
+            selectedFactory.NotNull(nameof(selectedFactory));
 
             return ResolveList<TEnum>((value, text) => new SelectListItem()
             {

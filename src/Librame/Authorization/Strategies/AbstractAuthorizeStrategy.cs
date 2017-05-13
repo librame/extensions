@@ -24,26 +24,29 @@ namespace Librame.Authorization.Strategies
     public abstract class AbstractAuthorizeStrategy : LibrameBase<AbstractAuthorizeStrategy>, IAuthorizeStrategy
     {
         /// <summary>
-        /// 获取认证首选项。
+        /// 获取认证适配器接口。
         /// </summary>
-        public AuthorizeSettings AuthSettings { get; }
-
-        /// <summary>
-        /// 获取管道集合。
-        /// </summary>
-        public IProviderCollection ProvCollection { get; }
+        public IAuthorizeAdapter Authorize { get; }
 
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractAuthorizeStrategy"/> 实例。
+        /// 构造一个抽象认证策略实例。
         /// </summary>
-        /// <param name="authSettings">给定的认证首选项。</param>
-        /// <param name="provCollection">给定的管道集合。</param>
-        public AbstractAuthorizeStrategy(AuthorizeSettings authSettings,
-            IProviderCollection provCollection)
+        /// <param name="authorize">给定的认证适配器接口。</param>
+        public AbstractAuthorizeStrategy(IAuthorizeAdapter authorize)
         {
-            AuthSettings = authSettings.NotNull(nameof(authSettings));
-            ProvCollection = provCollection.NotNull(nameof(provCollection));
+            Authorize = authorize.NotNull(nameof(authorize));
+        }
+
+        /// <summary>
+        /// 获取模拟用户认证信息。
+        /// </summary>
+        /// <returns>返回认证信息。</returns>
+        protected virtual AuthenticateInfo GetSimulateAuthenticateInfo()
+        {
+            var account = new AccountDescriptor("VirtualUser");
+
+            return new AuthenticateInfo(account, "模拟用户认证（通常为禁用认证功能后发生）");
         }
 
 
@@ -58,10 +61,10 @@ namespace Librame.Authorization.Strategies
         {
             try
             {
-                if (!AuthSettings.EnableAuthorize)
+                if (!Authorize.AuthSettings.EnableAuthorize)
                     return true; // 禁用认证，默认模拟已认证
 
-                principalFactory.GuardNull(nameof(principalFactory));
+                principalFactory.NotNull(nameof(principalFactory));
 
                 // 解析当前用户
                 var principal = principalFactory.Invoke(AuthorizeHelper.AUTHORIZATION_KEY);
@@ -70,7 +73,7 @@ namespace Librame.Authorization.Strategies
             }
             catch (Exception ex)
             {
-                Log.Error(ex.AsOrInnerMessage(), ex);
+                Log.Error(ex.InnerMessage(), ex);
 
                 return false;
             }
@@ -91,7 +94,7 @@ namespace Librame.Authorization.Strategies
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex.AsOrInnerMessage(), ex);
+                    Log.Error(ex.InnerMessage(), ex);
                 }
             }
         }
@@ -119,28 +122,35 @@ namespace Librame.Authorization.Strategies
         {
             try
             {
-                if (!AuthSettings.EnableAuthorize)
+                if (!Authorize.AuthSettings.EnableAuthorize)
                 {
                     // 禁用认证，默认模拟已认证用户
-                    var account = new AccountDescriptor("VirtualUser", string.Empty, AccountStatus.Active);
-                    return new AuthenticateInfo(account, "当前已禁用认证，默认使用模拟认证用户");
+                    return GetSimulateAuthenticateInfo();
                 }
 
                 // 认证用户
-                var authInfo = ProvCollection.Account.Authenticate(name, passwd);
+                var authInfo = Authorize.Providers.Account.Authenticate(name, passwd);
 
                 // 认证失败
                 if (ReferenceEquals(authInfo.Account, null) || authInfo.Status != AuthenticateStatus.Success)
                     return authInfo;
 
+                // 创建票根
+                var ticket = new AuthenticateTicket(authInfo.Account, DateTime.Now, null, isPersistent);
+
+                // 绑定用户
+                var identity = new AccountIdentity(ticket);
+                var principal = new AccountPrincipal(identity, null);
+                bindPrincipal?.Invoke(AuthorizeHelper.AUTHORIZATION_KEY, principal);
+
                 // 认证成功
-                SignInSuccess(authInfo, isPersistent, bindPrincipal);
+                SignInSuccess(authInfo, principal);
 
                 return authInfo;
             }
             catch (Exception ex)
             {
-                Log.Error(ex.AsOrInnerMessage(), ex);
+                Log.Error(ex.InnerMessage(), ex);
 
                 return null;
             }
@@ -150,17 +160,59 @@ namespace Librame.Authorization.Strategies
         /// 登录成功。
         /// </summary>
         /// <param name="authInfo">给定的认证信息。</param>
-        /// <param name="isPersistent">是否持久化存储。</param>
-        /// <param name="bindPrincipal">用于绑定键名与用户的方法。</param>
-        protected abstract void SignInSuccess(AuthenticateInfo authInfo, bool isPersistent,
-            Action<string, IPrincipal> bindPrincipal);
+        /// <param name="principal">给定的帐户用户。</param>
+        protected abstract void SignInSuccess(AuthenticateInfo authInfo, AccountPrincipal principal);
 
 
         /// <summary>
         /// 用户登出。
         /// </summary>
         /// <param name="removePrincipal">移除用户方法。</param>
-        public abstract void SignOut(Action<string> removePrincipal);
+        /// <returns>返回用户票根。</returns>
+        public abstract AuthenticateTicket SignOut(Func<string, AuthenticateTicket> removePrincipal);
+
+        #endregion
+
+
+        #region Ticket
+
+        /// <summary>
+        /// 加密票根。
+        /// </summary>
+        /// <param name="ticket">给定的认证票根。</param>
+        /// <returns>返回票根字符串。</returns>
+        public virtual string EncryptTicket(AuthenticateTicket ticket)
+        {
+            try
+            {
+                return Authorize.Managers.Cryptogram.Encrypt(ticket);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.InnerMessage(), ex);
+
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 解密票根。
+        /// </summary>
+        /// <param name="ticket">给定的票根字符串。</param>
+        /// <returns>返回认证票根。</returns>
+        public virtual AuthenticateTicket DecryptTicket(string ticket)
+        {
+            try
+            {
+                return Authorize.Managers.Cryptogram.Decrypt<AuthenticateTicket>(ticket);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.InnerMessage(), ex);
+
+                throw ex;
+            }
+        }
 
         #endregion
 

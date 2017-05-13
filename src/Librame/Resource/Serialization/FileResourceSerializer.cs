@@ -49,7 +49,7 @@ namespace Librame.Resource.Serialization
         /// <returns>返回修改后的文件名。</returns>
         public virtual string ChangeFileExtension(string fileName)
         {
-            fileName.GuardNullOrEmpty(nameof(fileName));
+            fileName.NotNullOrEmpty(nameof(fileName));
 
             string currentExtension = FileExtension;
 
@@ -111,7 +111,7 @@ namespace Librame.Resource.Serialization
         /// <returns>返回字符串。</returns>
         public override string SerializeSchema(ResourceSchema schema)
         {
-            schema.GuardNull(nameof(schema));
+            schema.NotNull(nameof(schema));
 
             schema = ChangeSchemaFormat(schema);
 

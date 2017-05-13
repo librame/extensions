@@ -10,11 +10,12 @@
 
 #endregion
 
-using System.Security.Principal;
-using System.Web;
-using System.Web.Mvc;
+using Librame;
+using Librame.Authorization;
+using System.Web.Caching;
+using System.Web.Security;
 
-namespace Librame.Authorization
+namespace System.Web.Mvc
 {
     /// <summary>
     /// MVC 认证属性。
@@ -29,11 +30,21 @@ namespace Librame.Authorization
         {
         }
 
+        /// <summary>
+        /// 当前认证上下文包含的 HTTP 会话状态（需调用 <see cref="OnAuthorization(AuthorizationContext)"/> 开始认证方法）。
+        /// </summary>
+        protected HttpSessionStateBase Session { get; private set; }
+
+        /// <summary>
+        /// 当前认证上下文包含的 Web 缓存（需调用 <see cref="OnAuthorization(AuthorizationContext)"/> 开始认证方法）。
+        /// </summary>
+        protected Cache Cache { get; private set; }
 
         /// <summary>
         /// 当前用户。
         /// </summary>
-        protected IPrincipal CurrentUser = null;
+        protected AccountPrincipal CurrentUser = null;
+
 
         /// <summary>
         /// 开始认证。
@@ -43,11 +54,55 @@ namespace Librame.Authorization
         {
             if (!AuthorizeCore(filterContext.HttpContext))
             {
-                // 使用策略开始认证
-                filterContext.HttpContext?.Session.OnAuthentication();
+                var authorize = Archit.Adapters.Authorization;
+
+                // 如果不启用认证
+                if (!authorize.AuthSettings.EnableAuthorize)
+                    return;
+
+                // 失败
+                AuthorizeFailed(filterContext, authorize);
+            }
+            else
+            {
+                // 成功
+                AuthorizeSuccess(filterContext);
             }
         }
 
+        /// <summary>
+        /// 认证成功。
+        /// </summary>
+        /// <param name="filterContext">给定的认证上下文。</param>
+        protected virtual void AuthorizeSuccess(AuthorizationContext filterContext)
+        {
+        }
+
+        /// <summary>
+        /// 认证失败。
+        /// </summary>
+        /// <param name="filterContext">给定的认证上下文。</param>
+        /// <param name="authorize">给定的认证适配器接口。</param>
+        protected virtual void AuthorizeFailed(AuthorizationContext filterContext, IAuthorizeAdapter authorize)
+        {
+            // 解析登陆链接
+            string loginUrl = FormsAuthentication.LoginUrl;
+
+            // 如果启用 SSO 且不是服务端模式
+            if (authorize.AuthSettings.EnableSso && !authorize.AuthSettings.IsSsoServerMode)
+            {
+                var encryptAuthId = authorize.Managers.Cryptogram
+                    .Encrypt(authorize.AuthSettings.AdapterSettings.AuthId);
+
+                loginUrl = AuthorizeHelper.FormatServerSignInUrl(encryptAuthId,
+                    authorize.AuthSettings.SsoSignInRespondUrl,
+                    authorize.AuthSettings.SsoServerSignInUrl);
+            }
+
+            // 转向登陆
+            filterContext.HttpContext.Response.Redirect(loginUrl);
+            return;
+        }
 
         /// <summary>
         /// 认证核心。
@@ -59,8 +114,11 @@ namespace Librame.Authorization
             if (httpContext == null)
                 return false;
 
+            Cache = httpContext.Cache;
+            Session = httpContext.Session;
+
             // 使用策略进行认证
-            return httpContext.Session.IsAuthenticated(out CurrentUser);
+            return Session.IsAuthenticated(out CurrentUser);
         }
 
     }

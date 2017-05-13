@@ -58,7 +58,7 @@ namespace System.Linq
         /// <returns>返回一个查询接口。</returns>
         public static IQueryable<T> AsWhere<T>(this IQueryable<T> query, Expression<Func<T, bool>> predicate = null)
         {
-            query.GuardNull(nameof(query));
+            query.NotNull(nameof(query));
 
             if (ReferenceEquals(predicate, null))
                 return query;
@@ -79,8 +79,8 @@ namespace System.Linq
         public static IQueryable<TProperty> AsSelectProperties<T, TProperty>(this IQueryable<T> query,
             Expression<Func<T, TProperty>> selector, bool removeDuplicates = true)
         {
-            query.GuardNull(nameof(query));
-            selector.GuardNull(nameof(selector));
+            query.NotNull(nameof(query));
+            selector.NotNull(nameof(selector));
 
             var selectQuery = query.Select(selector);
 
@@ -123,7 +123,7 @@ namespace System.Linq
             Func<int, PagingInfo> createInfoFactory)
         {
             // 分页必须启用排序
-            order.GuardNull(nameof(order));
+            order.NotNull(nameof(order));
 
             var orderable = new Orderable<T>(query);
             order.Invoke(orderable);

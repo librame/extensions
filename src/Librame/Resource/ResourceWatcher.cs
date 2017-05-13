@@ -81,7 +81,7 @@ namespace Librame.Resource
         /// <param name="provider">给定的 <see cref="IResourceProvider"/>。</param>
         public virtual void Watching(IResourceProvider provider)
         {
-            provider.GuardNull(nameof(provider));
+            provider.NotNull(nameof(provider));
 
             // 如果禁用监视或资源路径为 URL，则取消监视
             if (!provider.SourceInfo.EnableWatching || provider.SourceInfo.Path.IsHttpOrHttpsUrl())
@@ -133,7 +133,7 @@ namespace Librame.Resource
         /// <param name="provider">给定的 <see cref="IResourceProvider"/>。</param>
         public void Refresh(IResourceProvider provider)
         {
-            provider.GuardNull(nameof(provider));
+            provider.NotNull(nameof(provider));
 
             // 加载资源
             provider.Load();

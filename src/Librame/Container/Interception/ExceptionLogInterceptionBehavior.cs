@@ -54,8 +54,8 @@ namespace Librame.Container.Interception
         /// <returns>返回从拦截目标获得的返回信息。</returns>
         public virtual IMethodReturn Invoke(IMethodInvocation input, GetNextInterceptionBehaviorDelegate getNext)
         {
-            input.GuardNull(nameof(input));
-            getNext.GuardNull(nameof(getNext));
+            input.NotNull(nameof(input));
+            getNext.NotNull(nameof(getNext));
 
             // 获取记录器
             var log = GetLogger(input.MethodBase);
@@ -132,7 +132,7 @@ namespace Librame.Container.Interception
         protected virtual void InvokeException(ILog log, IMethodReturn methodReturn)
         {
             // 记录异常的内容 比如 Log4Net 等
-            log.Error(methodReturn.Exception.AsOrInnerMessage(), methodReturn.Exception);
+            log.Error(methodReturn.Exception.InnerMessage(), methodReturn.Exception);
 
             // methodReturn.Exception 重置为 null 表示异常已经被处理
             methodReturn.Exception = null;

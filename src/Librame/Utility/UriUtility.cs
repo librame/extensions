@@ -26,7 +26,7 @@ namespace Librame.Utility
         /// <returns>返回布尔值。</returns>
         public static bool IsUrl(string path)
         {
-            path.GuardNullOrEmpty(nameof(path));
+            path.NotNullOrEmpty(nameof(path));
 
             // 如果包含协议界定符
             return path.Contains(Uri.SchemeDelimiter);
@@ -39,7 +39,7 @@ namespace Librame.Utility
         /// <returns>返回布尔值。</returns>
         public static bool IsHttpOrHttpsUrl(string path)
         {
-            path.GuardNullOrEmpty(nameof(path));
+            path.NotNullOrEmpty(nameof(path));
 
             // 如果不是 HTTP 协议
             if (!path.StartsWith(Uri.UriSchemeHttp + Uri.SchemeDelimiter))

@@ -11,7 +11,6 @@
 #endregion
 
 using System.Security.Principal;
-using System.Web.Security;
 
 namespace Librame.Authorization
 {
@@ -25,14 +24,14 @@ namespace Librame.Authorization
         /// <summary>
         /// 获取票根。
         /// </summary>
-        public FormsAuthenticationTicket Ticket { get; }
+        public AuthenticateTicket Ticket { get; }
 
         /// <summary>
         /// 构造一个 <see cref="AccountIdentity"/> 实例。
         /// </summary>
-        /// <param name="ticket">给定的 <see cref="FormsAuthenticationTicket"/>。</param>
-        public AccountIdentity(FormsAuthenticationTicket ticket)
-            : base(ticket.Name)
+        /// <param name="ticket">给定的 <see cref="AuthenticateTicket"/>。</param>
+        public AccountIdentity(AuthenticateTicket ticket)
+            : base(ticket?.Name)
         {
             Ticket = ticket.NotNull(nameof(ticket));
         }
@@ -46,7 +45,7 @@ namespace Librame.Authorization
         /// <summary>
         /// 获取一个值，该值指示是否验证了用户。
         /// </summary>
-        public override bool IsAuthenticated => (Name.Length > 0 && !Ticket.Expired);
+        public override bool IsAuthenticated => (!Ticket.Expired);
 
         /// <summary>
         /// 获取当前用户的名称。

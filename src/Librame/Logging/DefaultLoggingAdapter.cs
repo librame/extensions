@@ -27,12 +27,20 @@ namespace Librame.Logging
         /// </summary>
         public DefaultLoggingAdapter()
         {
-            // Initialize
-            LogHelper.InitConfigFiles(this);
+            InitializeAdapter();
 
             //var configurationSource = ConfigurationSourceFactory.Create();
             //var logWriterFactory = new LogWriterFactory(configurationSource);
             //Logger.SetLogWriter(logWriterFactory.Create());
+        }
+
+        /// <summary>
+        /// 初始化适配器。
+        /// </summary>
+        protected virtual void InitializeAdapter()
+        {
+            // 导出配置文件
+            ExportConfigDirectory("EntLib.config");
         }
 
 

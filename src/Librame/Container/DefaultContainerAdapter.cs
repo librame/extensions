@@ -37,11 +37,19 @@ namespace Librame.Container
         /// </summary>
         public DefaultContainerAdapter()
         {
-            // Initialize
-            ContainerHelper.InitConfigFiles(this);
+            InitializeAdapter();
 
             if (ReferenceEquals(CurrentUnityContainer, null))
                 CurrentUnityContainer = (IUnityContainer)BuildContainer();
+        }
+
+        /// <summary>
+        /// 初始化适配器。
+        /// </summary>
+        protected virtual void InitializeAdapter()
+        {
+            // 导出配置文件
+            ExportConfigDirectory("Unity.config");
         }
 
 
@@ -129,7 +137,7 @@ namespace Librame.Container
         /// <returns>返回值。</returns>
         protected TValue TryProcess<TValue>(Func<IUnityContainer, TValue> factory)
         {
-            factory.GuardNull(nameof(factory));
+            factory.NotNull(nameof(factory));
 
             try
             {

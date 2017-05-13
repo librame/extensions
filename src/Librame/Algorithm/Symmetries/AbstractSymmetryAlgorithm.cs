@@ -105,7 +105,7 @@ namespace Librame.Algorithm.Symmetries
             }
             catch (Exception ex)
             {
-                Log.Error(ex.AsOrInnerMessage(), ex);
+                Log.Error(ex.InnerMessage(), ex);
 
                 return null;
             }

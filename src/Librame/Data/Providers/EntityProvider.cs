@@ -11,6 +11,7 @@
 #endregion
 
 using Common.Logging;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Reflection;
@@ -58,8 +59,20 @@ namespace Librame.Data.Providers
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             modelBuilder.Types().Configure((config) =>
             {
-                // 自定义复数化
-                config.ToTable(WordHelper.AsPluralize(config.ClrType.Name));
+                // 表名属性特性优先
+                var table = TypeUtility.GetClassAttribute<TableAttribute>(config.ClrType);
+                if (table != null && !string.IsNullOrEmpty(table.Name))
+                {
+                    if (!string.IsNullOrEmpty(table.Schema))
+                        config.ToTable(table.Name, table.Schema);
+                    else
+                        config.ToTable(table.Name);
+                }
+                else
+                {
+                    // 默认复数化实体类名
+                    config.ToTable(WordHelper.AsPluralize(config.ClrType.Name));
+                }
             });
         }
 
@@ -70,7 +83,7 @@ namespace Librame.Data.Providers
         protected virtual void OnMappingAssemblies(DbModelBuilder modelBuilder)
         {
             var assemblies = GetMappingAssemblies();
-            assemblies.GuardNull(nameof(assemblies));
+            assemblies.NotNull(nameof(assemblies));
 
             if (DataSettings.EnableEntityAutomapping)
             {

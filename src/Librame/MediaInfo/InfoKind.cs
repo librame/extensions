@@ -21,57 +21,51 @@ namespace Librame.MediaInfo
     public enum InfoKind
     {
         /// <summary>
-        /// 默认。
-        /// </summary>
-        [Description("默认")]
-        Default = 0,
-
-        /// <summary>
         /// 名称。
         /// </summary>
         [Description("名称")]
-        Name = 1,
+        Name,
 
         /// <summary>
         /// 文本。
         /// </summary>
         [Description("文本")]
-        Text = 2,
+        Text,
 
         /// <summary>
         /// 尺寸。
         /// </summary>
         [Description("尺寸")]
-        Measure = 4,
+        Measure,
 
         /// <summary>
         /// 选项。
         /// </summary>
         [Description("选项")]
-        Options = 8,
+        Options,
 
         /// <summary>
         /// 名称文本。
         /// </summary>
         [Description("名称文本")]
-        NameText = 16,
+        NameText,
 
         /// <summary>
         /// 尺寸文本。
         /// </summary>
         [Description("尺寸文本")]
-        MeasureText = 32,
+        MeasureText,
 
         /// <summary>
         /// 信息。
         /// </summary>
         [Description("信息")]
-        Info = 64,
+        Info,
 
         /// <summary>
         /// 基本知识。
         /// </summary>
         [Description("基本知识")]
-        HowTo = 128
+        HowTo
     }
 }

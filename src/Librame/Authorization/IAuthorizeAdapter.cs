@@ -25,15 +25,16 @@ namespace Librame.Authorization
         AuthorizeSettings AuthSettings { get; set; }
 
         /// <summary>
-        /// 获取或设置管道集合。
+        /// 获取或设置管理器集合。
         /// </summary>
-        IProviderCollection ProvCollection { get; set; }
+        IAuthorizeManagerCollection Managers { get; set; }
 
         /// <summary>
-        /// 获取密码管理器。
+        /// 获取或设置管道集合。
         /// </summary>
-        IPasswdManager Passwd { get; }
+        IAuthorizeProviderCollection Providers { get; set; }
         
+
         /// <summary>
         /// 获取认证策略。
         /// </summary>

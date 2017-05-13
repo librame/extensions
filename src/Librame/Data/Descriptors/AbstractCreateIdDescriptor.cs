@@ -19,6 +19,7 @@ namespace Librame.Data.Descriptors
     /// 抽象创建、主键描述符。
     /// </summary>
     /// <typeparam name="TId">指定的主键类型。</typeparam>
+    [Serializable]
     public abstract class AbstractCreateIdDescriptor<TId> : AbstractIdDescriptor<TId>, ICreateIdDescriptor<TId>
         where TId : struct
     {

@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Reflection;
 
 namespace Librame.Adaptation
 {
@@ -42,17 +43,18 @@ namespace Librame.Adaptation
 
 
         /// <summary>
-        /// 将资源路径转换为嵌入的清单资源名。
-        /// </summary>
-        /// <param name="resourcePath">给定的资源路径。</param>
-        /// <returns>返回清单资源名。</returns>
-        string ToManifestResourceName(string resourcePath);
-
-        /// <summary>
-        /// 导出当前适配器嵌入的资源配置文件
+        /// 导出当前程序集包含的嵌入资源文件到适配器配置目录。
         /// </summary>
         /// <param name="outputRelativeFilePath">给定的输出相对文件路径（相对于 <see cref="AdapterConfigDirectory"/> 适配器配置目录）。</param>
-        /// <param name="manifestResourceName">给定的清单资源名。</param>
-        void ExportConfigFile(string outputRelativeFilePath, string manifestResourceName);
+        /// <param name="manifestResourceName">给定的清单资源文件名（可选；默认以输出相对文件路径参考文件名）。</param>
+        void ExportConfigDirectory(string outputRelativeFilePath, string manifestResourceName = null);
+        /// <summary>
+        /// 导出指定程序集包含的嵌入资源文件到适配器配置目录。
+        /// </summary>
+        /// <param name="adapterAssembly">给定包含嵌入资源文件的程序集。</param>
+        /// <param name="outputRelativeFilePath">给定的输出相对文件路径（相对于 <see cref="AdapterConfigDirectory"/> 适配器配置目录）。</param>
+        /// <param name="manifestResourceName">给定的清单资源文件名（可选；默认以输出相对文件路径参考文件名）。</param>
+        void ExportManifestResourceFile(Assembly adapterAssembly, string outputRelativeFilePath,
+            string manifestResourceName = null);
     }
 }

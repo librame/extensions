@@ -37,7 +37,7 @@ namespace System.Collections.Generic
         /// <param name="list">给定的类型实例列表。</param>
         public TreeingList(IList<T> list)
         {
-            list.GuardNull(nameof(list));
+            list.NotNull(nameof(list));
 
             Nodes = ToNodes(list);
         }

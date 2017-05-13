@@ -34,7 +34,7 @@ namespace System.Web.Mvc
         /// <param name="context">给定的控制器上下文。</param>
         public override void ExecuteResult(ControllerContext context)
         {
-            context.GuardNull(nameof(context));
+            context.NotNull(nameof(context));
 
             ViewData.Model = Descriptor;
             ViewName = "Attent";

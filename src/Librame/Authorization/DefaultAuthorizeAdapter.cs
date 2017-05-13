@@ -26,18 +26,14 @@ namespace Librame.Authorization
         public AuthorizeSettings AuthSettings { get; set; }
 
         /// <summary>
-        /// 获取或设置管道集合。
+        /// 获取或设置管理器集合。
         /// </summary>
-        public IProviderCollection ProvCollection { get; set; }
-
+        public IAuthorizeManagerCollection Managers { get; set; }
 
         /// <summary>
-        /// 获取密码管理器。
+        /// 获取或设置管道集合。
         /// </summary>
-        public virtual IPasswdManager Passwd
-        {
-            get { return SingletonManager.Resolve<IPasswdManager>(key => new PasswdManager()); }
-        }
+        public IAuthorizeProviderCollection Providers { get; set; }
 
         
         /// <summary>
@@ -52,13 +48,13 @@ namespace Librame.Authorization
                     if (AuthSettings.EnableSso)
                     {
                         if (AuthSettings.IsSsoServerMode)
-                            return new SsoServerFormsAuthorizeStrategy(AuthSettings, ProvCollection);
+                            return new SsoServerFormsAuthorizeStrategy(this);
 
-                        return new SsoClientFormsAuthorizeStrategy(AuthSettings, ProvCollection);
+                        return new SsoClientFormsAuthorizeStrategy(this);
                     }
                     else
                     {
-                        return new FormsAuthorizeStrategy(AuthSettings, ProvCollection);
+                        return new FormsAuthorizeStrategy(this);
                     }
                 });
             }

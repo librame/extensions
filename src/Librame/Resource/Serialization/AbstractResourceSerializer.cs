@@ -63,7 +63,7 @@ namespace Librame.Resource.Serialization
         /// <returns>返回字符串。</returns>
         public virtual string SerializeSchema(ResourceSchema schema)
         {
-            schema.GuardNull(nameof(schema));
+            schema.NotNull(nameof(schema));
 
             return SerializeSchemaCore(schema);
         }

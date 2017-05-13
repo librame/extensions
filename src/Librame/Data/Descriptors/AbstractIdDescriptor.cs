@@ -10,16 +10,16 @@
 
 #endregion
 
+using System;
 using System.ComponentModel;
 
 namespace Librame.Data.Descriptors
 {
-    using Utility;
-
     /// <summary>
     /// 抽象主键描述符。
     /// </summary>
     /// <typeparam name="TId">指定的主键类型。</typeparam>
+    [Serializable]
     public abstract class AbstractIdDescriptor<TId> : IIdDescriptor<TId>
         where TId : struct
     {

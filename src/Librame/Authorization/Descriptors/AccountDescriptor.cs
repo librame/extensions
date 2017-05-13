@@ -15,6 +15,8 @@ using System.ComponentModel;
 
 namespace Librame.Authorization.Descriptors
 {
+    using Utility;
+
     /// <summary>
     /// 帐户描述符。
     /// </summary>
@@ -22,16 +24,33 @@ namespace Librame.Authorization.Descriptors
     public class AccountDescriptor : IAccountDescriptor
     {
         /// <summary>
-        /// 构造一个 <see cref="AccountDescriptor"/> 实例。
+        /// 构造一个默认帐户描述符实例。
+        /// </summary>
+        public AccountDescriptor()
+        {
+            Status = AccountStatus.Default;
+        }
+        /// <summary>
+        /// 构造一个帐户描述符实例。
         /// </summary>
         /// <param name="name">给定的名称。</param>
         /// <param name="passwd">给定的密码。</param>
         /// <param name="status">给定的帐户状态。</param>
         public AccountDescriptor(string name, string passwd, AccountStatus status)
         {
-            Name = name;
+            Name = name.NotNullOrEmpty(nameof(name));
             Passwd = passwd;
             Status = status;
+        }
+        /// <summary>
+        /// 构造一个测试帐户描述符实例。
+        /// </summary>
+        /// <param name="name">给定的名称。</param>
+        internal AccountDescriptor(string name)
+        {
+            Name = name.NotNullOrEmpty(nameof(name));
+            Passwd = AuthorizeHelper.DEFAULT_PASSWD;
+            Status = AccountStatus.Active;
         }
 
 

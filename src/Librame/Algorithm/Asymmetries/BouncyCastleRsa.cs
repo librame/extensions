@@ -58,7 +58,7 @@ namespace Librame.Algorithm.Asymmetries
             if (ReferenceEquals(keyGenerator, null))
                 keyGenerator = CreateKeyPairGenerator();
             else
-                keyGenerator.GuardNotType<RsaKeyPairGenerator>(nameof(keyGenerator));
+                keyGenerator.SameType<RsaKeyPairGenerator>(nameof(keyGenerator));
             
             // 生成键名对
             var keyPair = keyGenerator.GenerateKeyPair();

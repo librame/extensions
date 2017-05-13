@@ -103,7 +103,7 @@ namespace Librame.Utility
             if (ReferenceEquals(enumType, null) || !enumType.IsEnum)
                 return null;
 
-            itemFactory.GuardNull(nameof(itemFactory));
+            itemFactory.NotNull(nameof(itemFactory));
 
             // 默认以常数值为值
             if (ReferenceEquals(valueFactory, null))

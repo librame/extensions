@@ -13,7 +13,6 @@
 using System;
 using System.Security.Principal;
 using System.Web;
-using System.Web.Security;
 
 namespace Librame.Authorization.Strategies
 {
@@ -21,18 +20,16 @@ namespace Librame.Authorization.Strategies
     using Utility;
 
     /// <summary>
-    /// SSO Web 客户端应用程序认证策略。
+    /// SSO 窗体客户端应用程序认证策略。
     /// </summary>
     public class SsoClientFormsAuthorizeStrategy : FormsAuthorizeStrategy, IAuthorizeStrategy
     {
         /// <summary>
-        /// 构造一个 <see cref="SsoClientFormsAuthorizeStrategy"/> 实例。
+        /// 构造一个 SSO 窗体客户端应用程序认证策略实例。
         /// </summary>
-        /// <param name="authSettings">给定的认证首选项。</param>
-        /// <param name="provCollection">给定的管道集合。</param>
-        public SsoClientFormsAuthorizeStrategy(AuthorizeSettings authSettings,
-            IProviderCollection provCollection)
-            : base(authSettings, provCollection)
+        /// <param name="authorize">给定的认证适配器接口。</param>
+        public SsoClientFormsAuthorizeStrategy(IAuthorizeAdapter authorize)
+            : base(authorize)
         {
         }
 
@@ -45,12 +42,14 @@ namespace Librame.Authorization.Strategies
         protected override void OnAuthenticationFailed()
         {
             // 使用框架授权编号
-            var authServerUrl = AuthorizeHelper.FormatSsoServerSignInUrl(AuthSettings.SsoServerSignInUrl,
-                AuthSettings.AdapterSettings.AuthId,
-                AuthSettings.SsoSignInRespondUrl);
+            var encryptAuthId = Authorize.Managers.Cryptogram.Encrypt(Authorize.Settings.AuthId);
+
+            var serverSignInUrl = AuthorizeHelper.FormatServerSignInUrl(encryptAuthId,
+                Authorize.AuthSettings.SsoSignInRespondUrl,
+                Authorize.AuthSettings.SsoServerSignInUrl);
             
             // 客户端模式则需重定向到认证服务器
-            HttpContext.Current?.Response.Redirect(authServerUrl);
+            HttpContext.Current?.Response.Redirect(serverSignInUrl);
         }
 
         #endregion
@@ -69,38 +68,62 @@ namespace Librame.Authorization.Strategies
         public override AuthenticateInfo SignIn(string name, string passwd, bool isPersistent,
             Action<string, IPrincipal> bindPrincipal)
         {
-            bindPrincipal.GuardNull(nameof(bindPrincipal));
+            bindPrincipal.NotNull(nameof(bindPrincipal));
 
             try
             {
                 IAccountDescriptor account = null;
 
-                if (!AuthSettings.EnableAuthorize)
+                if (!Authorize.AuthSettings.EnableAuthorize)
                 {
                     // 禁用认证，默认模拟已认证用户
-                    account = new AccountDescriptor("VirtualUser", string.Empty, AccountStatus.Active);
+                    account = new AccountDescriptor("VirtualUser");
                     return new AuthenticateInfo(account, "当前已禁用认证，默认使用模拟认证用户");
                 }
 
                 // 解析认证服务器应答链接参数
                 var request = HttpContext.Current?.Request;
-                var ticket = AuthorizeHelper.ResolveSsoSignInRespondUrl(request);
+                var encryptTicket = AuthorizeHelper.ResolveEncryptTicket(request);
 
                 // 构建用户
-                var identity = new AccountIdentity(FormsAuthentication.Decrypt(ticket));
+                var ticket = DecryptTicket(encryptTicket);
+                var identity = new AccountIdentity(ticket);
                 var principal = new AccountPrincipal(identity, null);
                 bindPrincipal?.Invoke(AuthorizeHelper.AUTHORIZATION_KEY, principal);
 
                 // 模拟帐户实例
-                account = new AccountDescriptor(identity.Name, string.Empty, AccountStatus.Active);
+                account = new AccountDescriptor(identity.Name);
                 return new AuthenticateInfo(account, "服务端认证成功");
             }
             catch (Exception ex)
             {
-                Log.Error(ex.AsOrInnerMessage(), ex);
+                Log.Error(ex.InnerMessage(), ex);
 
                 return null;
             }
+        }
+
+
+        /// <summary>
+        /// 用户登出。
+        /// </summary>
+        /// <param name="removePrincipal">移除用户方法。</param>
+        /// <return>返回用户票根。</return>
+        public override AuthenticateTicket SignOut(Func<string, AuthenticateTicket> removePrincipal)
+        {
+            var ticket = base.SignOut(removePrincipal);
+            var encryptTicket = EncryptTicket(ticket);
+
+            // 使用框架授权编号
+            var encryptAuthId = Authorize.Managers.Cryptogram.Encrypt(Authorize.Settings.AuthId);
+            
+            var signOutUrl = AuthorizeHelper.FormatServerSignOutUrl(encryptTicket, encryptAuthId,
+                Authorize.AuthSettings.SsoSignInRespondUrl,
+                Authorize.AuthSettings.SsoServerSignInUrl);
+
+            HttpContext.Current?.Response?.Redirect(signOutUrl);
+
+            return ticket;
         }
 
         #endregion

@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace Librame.Utility
 {
@@ -36,7 +37,7 @@ namespace Librame.Utility
         /// <returns>返回字符串。</returns>
         public static string BuildKey(Type type)
         {
-            type.GuardNull(nameof(type));
+            type.NotNull(nameof(type));
 
             return TypeUtility.AssemblyQualifiedNameWithoutVCP(type);
         }
@@ -45,32 +46,76 @@ namespace Librame.Utility
         /// <summary>
         /// 构建可格式化的键名。
         /// </summary>
-        /// <param name="key">给定的键名。</param>
+        /// <param name="name">给定的名称。</param>
         /// <returns>返回可格式化键名。</returns>
-        public static string BuildFormatKey(string key)
+        public static string BuildFormatKey(string name)
         {
-            if (string.IsNullOrEmpty(key))
-                return string.Empty;
+            name.NotNullOrEmpty(nameof(name));
 
-            return string.Format("$({0})", key);
+            // 如果已是可格式化的键名
+            if (name.StartsWith("$(") && name.EndsWith(")"))
+                return name;
+
+            return string.Format("$({0})", name);
         }
+
+
+        /// <summary>
+        /// 是否包含指定可格式化键名。
+        /// </summary>
+        /// <param name="template">要格式化的模板内容。</param>
+        /// <param name="formatKey">给定的可格式化键名。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool ContainsFormatKey(string template, string formatKey)
+        {
+            return template.Contains(formatKey.NotNullOrEmpty(nameof(formatKey)));
+        }
+
+
+        /// <summary>
+        /// 格式化模板内容。
+        /// </summary>
+        /// <param name="template">要格式化的模板内容。</param>
+        /// <param name="formatDictionary">给定要格式化的字典集合。</param>
+        /// <returns>返回经过格式化的模板内容。</returns>
+        public static string Formatting(string template, IDictionary<string, string> formatDictionary)
+        {
+            formatDictionary.NotNull(nameof(formatDictionary));
+            
+            formatDictionary.Invoke(pair =>
+            {
+                template = Formatting(template, pair.Key, pair.Value);
+            });
+
+            return template;
+        }
+
 
         /// <summary>
         /// 格式化键值。
         /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="formatKey">给定用于格式化的键名。</param>
-        /// <param name="formatValue">给定用于格式化的键值。</param>
+        /// <param name="template">要格式化的模板内容。</param>
+        /// <param name="name">用于格式化的名称。</param>
+        /// <param name="value">用于格式化的值。</param>
         /// <returns>返回字符串。</returns>
-        public static string FormatKeyValue(string str, string formatKey, string formatValue)
+        public static string Formatting(string template, string name, string value)
         {
-            if (string.IsNullOrEmpty(str))
+            if (string.IsNullOrEmpty(template))
                 return string.Empty;
 
-            if (string.IsNullOrEmpty(formatKey))
-                return str;
+            if (string.IsNullOrEmpty(name))
+                return template;
+            
+            value.NotNull(nameof(value));
 
-            return str.Replace(formatKey, formatValue);
+            //// 转义可格式化键名
+            //var escapedFormatKey = EscapeFormatKey(formatKey);
+
+            // 尝试构建可格式化键名
+            name = BuildFormatKey(name);
+
+            // 开始替换
+            return template.Replace(name, value);
         }
 
     }

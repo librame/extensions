@@ -12,14 +12,20 @@
 
 namespace Librame.Authorization.Providers
 {
-    using Adaptation;
     using Descriptors;
+    using Managers;
 
     /// <summary>
     /// 帐户管道接口。
     /// </summary>
-    public interface IAccountProvider : IAdapterManagerReference
+    public interface IAccountProvider
     {
+        /// <summary>
+        /// 密码管理器接口。
+        /// </summary>
+        IPasswdManager PasswdManager { get; }
+
+
         /// <summary>
         /// 认证用户。
         /// </summary>

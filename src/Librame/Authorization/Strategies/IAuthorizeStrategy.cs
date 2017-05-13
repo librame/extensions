@@ -21,14 +21,9 @@ namespace Librame.Authorization.Strategies
     public interface IAuthorizeStrategy
     {
         /// <summary>
-        /// 获取或设置认证首选项。
+        /// 获取认证适配器接口。
         /// </summary>
-        AuthorizeSettings AuthSettings { get; }
-
-        /// <summary>
-        /// 获取管道工厂。
-        /// </summary>
-        IProviderCollection ProvCollection { get; }
+        IAuthorizeAdapter Authorize { get; }
 
 
         #region Authentication
@@ -66,7 +61,27 @@ namespace Librame.Authorization.Strategies
         /// 用户登出。
         /// </summary>
         /// <param name="removePrincipal">移除用户方法。</param>
-        void SignOut(Action<string> removePrincipal);
+        /// <returns>返回用户票根。</returns>
+        AuthenticateTicket SignOut(Func<string, AuthenticateTicket> removePrincipal);
+
+        #endregion
+
+
+        #region Ticket
+
+        /// <summary>
+        /// 加密票根。
+        /// </summary>
+        /// <param name="ticket">给定的认证票根。</param>
+        /// <returns>返回票根字符串。</returns>
+        string EncryptTicket(AuthenticateTicket ticket);
+
+        /// <summary>
+        /// 解密票根。
+        /// </summary>
+        /// <param name="ticket">给定的票根字符串。</param>
+        /// <returns>返回认证票根。</returns>
+        AuthenticateTicket DecryptTicket(string ticket);
 
         #endregion
 

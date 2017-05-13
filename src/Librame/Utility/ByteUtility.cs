@@ -52,7 +52,7 @@ namespace Librame.Utility
         /// <returns>返回字节数组。</returns>
         public static byte[] FromBit(string bit)
         {
-            bit.GuardNullOrEmpty(nameof(bit));
+            bit.NotNullOrEmpty(nameof(bit));
 
             byte[] buffer = null;
 

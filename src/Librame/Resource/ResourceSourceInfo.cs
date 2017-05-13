@@ -64,9 +64,9 @@ namespace Librame.Resource
         /// <returns>返回 <see cref="ResourceSourceInfo"/>。</returns>
         public static ResourceSourceInfo CreateInfo(Type schemaType, string path, string saveAsFilename = null, bool enableWatching = true)
         {
-            path.GuardNullOrEmpty(nameof(path));
+            path.NotNullOrEmpty(nameof(path));
 
-            var configDirectory = LibrameArchitecture.AdapterManager.ResourceAdapter.AdapterConfigDirectory;
+            var configDirectory = LibrameArchitecture.AdapterManager.Resource.AdapterConfigDirectory;
             if (!System.IO.Path.IsPathRooted(path))
                 path = configDirectory.AppendPath(path);
 

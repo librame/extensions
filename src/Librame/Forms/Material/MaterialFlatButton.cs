@@ -28,7 +28,7 @@ namespace Librame.Forms.Material
         [Browsable(false)]
         public ISkinProvider Skin
         {
-            get { return LibrameArchitecture.AdapterManager.FormsAdapter.Skin; }
+            get { return LibrameArchitecture.AdapterManager.Forms.Skin; }
         }
 
         public bool Primary { get; set; }

@@ -12,8 +12,9 @@
 
 namespace Librame.Authorization.Providers
 {
-    using Adaptation;
     using Descriptors;
+    using Managers;
+    using Utility;
 
     /// <summary>
     /// 权限管道基类。
@@ -21,16 +22,22 @@ namespace Librame.Authorization.Providers
     /// <remarks>
     /// 需重写实现自己的系统应用认证逻辑。
     /// </remarks>
-    public class PermissionProviderBase : AbstractAdapterManagerReference, IPermissionProvider
+    public class PermissionProviderBase : IPermissionProvider
     {
         /// <summary>
-        /// 构造一个 <see cref="ApplicationProviderBase"/> 实例。
+        /// 构造一个权限管道基类实例。
         /// </summary>
-        /// <param name="adapters">给定的适配器管理器。</param>
-        public PermissionProviderBase(IAdapterManager adapters)
-            : base(adapters)
+        /// <param name="cryptogram">给定的密文管理器。</param>
+        public PermissionProviderBase(ICryptogramManager cryptogram)
         {
+            Cryptogram = cryptogram.NotNull(nameof(cryptogram));
         }
+
+
+        /// <summary>
+        /// 密文管理器接口。
+        /// </summary>
+        public ICryptogramManager Cryptogram { get; }
 
 
         /// <summary>
@@ -52,7 +59,7 @@ namespace Librame.Authorization.Providers
         /// <returns>返回 <see cref="IPermissionDescriptor"/>。</returns>
         public virtual IPermissionDescriptor Authenticate(IPermissionDescriptor permission)
         {
-            return permission;
+            return permission.NotNull(nameof(permission));
         }
 
     }

@@ -89,7 +89,7 @@ namespace Librame.Utility
         /// <returns>返回字符串。</returns>
         public static string AsString<T>(T item, SearchMode searchMode = SearchMode.Default, params string[] searchKeys)
         {
-            item.GuardNull(nameof(item));
+            item.NotNull(nameof(item));
 
             var pis = typeof(T).GetProperties();
 

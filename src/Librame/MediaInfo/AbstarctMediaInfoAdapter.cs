@@ -12,17 +12,19 @@
 
 namespace Librame.MediaInfo
 {
+    using Adaptation;
+
     /// <summary>
     /// 抽象媒体信息适配器基类。
     /// </summary>
-    public abstract class AbstarctMediaInfoAdapter : Adaptation.AbstractAdapter
+    public abstract class AbstarctMediaInfoAdapter : AbstractAdapter
     {
         /// <summary>
         /// 获取适配器信息。
         /// </summary>
-        public override Adaptation.AdapterInfo AdapterInfo
+        public override AdapterInfo AdapterInfo
         {
-            get { return new Adaptation.AdapterInfo("MediaInfo"); }
+            get { return new AdapterInfo("MediaInfo"); }
         }
 
     }

@@ -28,10 +28,20 @@ namespace Librame.FulltextSearch
         /// </summary>
         public DefaultFulltextSearchAdapter()
         {
-            // Initialize
-            FulltextSearchHelper.InitConfigFiles(this);
+            InitializeAdapter();
 
             PanGu.Segment.Init(AdapterConfigDirectory.AppendPath("PanGu.xml"));
+        }
+
+        /// <summary>
+        /// 初始化适配器。
+        /// </summary>
+        protected virtual void InitializeAdapter()
+        {
+            // 导出配置文件
+            ExportConfigDirectory("PanGu.xml");
+
+            // 因字典目录下文件太大，取消嵌入资源（须手动复制）
         }
 
 

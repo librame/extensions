@@ -75,7 +75,7 @@ namespace Librame.Utility
         {
             return (T)_instances.GetOrAdd(key, k =>
             {
-                addFactory.GuardNull(nameof(addFactory));
+                addFactory.NotNull(nameof(addFactory));
 
                 return addFactory(k);
             });
@@ -185,7 +185,7 @@ namespace Librame.Utility
     //    {
     //        return (TKey)_instances.GetOrAdd(key, k =>
     //        {
-    //            addFactory.GuardNull(nameof(addFactory));
+    //            addFactory.NotNull(nameof(addFactory));
 
     //            return addFactory(k);
     //        });
