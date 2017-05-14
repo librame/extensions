@@ -35,13 +35,13 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>..\..\doc\Librame.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\resource\Librame.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\..\doc\Librame.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\resource\Librame.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">

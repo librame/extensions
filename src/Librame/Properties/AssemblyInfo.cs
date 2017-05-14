@@ -14,4 +14,4 @@ using Librame;
 [assembly: AssemblyFileVersion(LibrameAssemblyConstants.FILE_VERSION)]
 [assembly: ComVisible(false)]
 [assembly: Guid("c4a54925-06bf-4ef3-9e53-847979253e98")]
-[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
+[assembly: NeutralResourcesLanguage("zh-CN", UltimateResourceFallbackLocation.Satellite)]

@@ -68,7 +68,7 @@ namespace Librame
         /// <summary>
         /// 文件版本。
         /// </summary>
-        public const string FILE_VERSION = "4.6.1705.1";
+        public const string FILE_VERSION = "4.6.1705.2";
 
         #endregion
 

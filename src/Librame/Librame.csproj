@@ -36,19 +36,13 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>..\..\doc\Librame.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\resource\Librame.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\..\doc\Librame.pfx</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <PropertyGroup Label="MultilingualAppToolkit">
-    <MultilingualAppToolkitVersion>4.0</MultilingualAppToolkitVersion>
-    <MultilingualFallbackLanguage>en-US</MultilingualFallbackLanguage>
-    <TranslationReport Condition="'$(Configuration)' == 'Release'">true</TranslationReport>
-    <SuppressPseudoWarning Condition="'$(Configuration)' == 'Debug'">true</SuppressPseudoWarning>
+    <AssemblyOriginatorKeyFile>..\..\resource\Librame.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
@@ -611,16 +605,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.en-US.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.zh-CN.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <XliffResource Include="MultilingualResources\Librame.en-US.xlf" />
-    <XliffResource Include="MultilingualResources\Librame.zh-CN.xlf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="_configs\Data\hibernate.cfg.xml" />
@@ -634,10 +623,6 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.ResxResources.targets" Label="MultilingualAppToolkit" Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\v$(MultilingualAppToolkitVersion)\Microsoft.Multilingual.ResxResources.targets')" />
-  <Target Name="MATPrerequisite" BeforeTargets="PrepareForBuild" Condition="!Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.ResxResources.targets')" Label="MultilingualAppToolkit">
-    <Warning Text="$(MSBuildProjectFile) is Multilingual build enabled, but the Multilingual App Toolkit is unavailable during the build. If building with Visual Studio, please check to ensure that toolkit is properly installed." />
-  </Target>
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.104.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net45\System.Data.SQLite.Core.targets')" />
   <PropertyGroup>
     <PostBuildEvent>
