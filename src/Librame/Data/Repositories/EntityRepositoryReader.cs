@@ -18,6 +18,7 @@ using System.Linq.Expressions;
 namespace Librame.Data.Repositories
 {
     using Providers;
+    using Utility;
 
     /// <summary>
     /// EntityFramework 仓库读取器。
@@ -43,9 +44,26 @@ namespace Librame.Data.Repositories
         /// <param name="target">给定的目标类型实例。</param>
         public virtual void Copy(T source, T target)
         {
-            //Log.DebugFormat("Copy {0} {1}", source, target);
+            source = source.NotNull(nameof(source));
+            target = target.NotNull(nameof(target));
 
-            throw new NotSupportedException("not supported copy.");
+            var sourceType = source.GetType();
+            var targetType = target.GetType();
+            if (sourceType != targetType)
+            {
+                throw new ArgumentException(string.Format("源类型 {0} 与目标类型 {1} 不一致",
+                    sourceType.Name, targetType.Name));
+            }
+
+            var properties = sourceType.GetProperties();
+            if (properties.Length < 1)
+                return;
+
+            properties.Invoke(pi =>
+            {
+                var sourceValue = pi.GetValue(source);
+                pi.SetValue(target, sourceValue);
+            });
         }
 
 

@@ -93,7 +93,12 @@ namespace Librame.Authorization.Strategies
 
                 // 模拟帐户实例
                 account = new AccountDescriptor(identity.Name);
-                return new AuthenticateInfo(account, "服务端认证成功");
+                var authInfo = new AuthenticateInfo(account, "服务端认证成功");
+
+                // 认证成功
+                SignInSuccess(authInfo, principal);
+
+                return authInfo;
             }
             catch (Exception ex)
             {

@@ -6,8 +6,8 @@
     <ProjectGuid>{98CD74B6-B60A-4BB1-AF38-E753D5CAE9B0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Librame.UnitTests</RootNamespace>
-    <AssemblyName>Librame.UnitTests</AssemblyName>
+    <RootNamespace>Librame.Tests</RootNamespace>
+    <AssemblyName>Librame.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

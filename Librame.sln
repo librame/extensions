@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame", "src\Librame\Librame.csproj", "{C4A54925-06BF-4EF3-9E53-847979253E98}"
 EndProject
@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Mvc", "src\Librame.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02A1AB01-0F0B-4ECD-9FCB-DB4B3FDDC487}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.UnitTests", "tests\Librame.UnitTests\Librame.UnitTests.csproj", "{98CD74B6-B60A-4BB1-AF38-E753D5CAE9B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Tests", "tests\Librame.Tests\Librame.Tests.csproj", "{98CD74B6-B60A-4BB1-AF38-E753D5CAE9B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}"
 EndProject
