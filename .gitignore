@@ -6,9 +6,5 @@ obj
 /test/Librame.UnitTests/*.user
 packages
 lib
-/exs/Librame.Website/_bin_deployableAssemblies
-/doc/Librame.pfx
-/doc/Librame.pfx.txt
-/examples/Librame.Website/_bin_deployableAssemblies
 /resource/Librame.pfx
 /resource/Librame.pfx.txt
