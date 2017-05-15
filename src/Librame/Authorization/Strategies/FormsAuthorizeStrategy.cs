@@ -57,11 +57,12 @@ namespace Librame.Authorization.Strategies
         protected override void SignInSuccess(AuthenticateInfo authInfo, AccountPrincipal principal)
         {
             // 注册票根
-            RegistCookie((principal.Identity as AccountIdentity).Ticket);
+            //RegistCookie((principal.Identity as AccountIdentity).Ticket);
 
             // 认证后重定向回最初请求的 URL 或默认 URL。
             var currentUrl = HttpContext.Current?.Request?.Url.ToString();
             var returnUrl = HttpContext.Current?.Request?.QueryString["returnUrl"];
+
             if (!string.IsNullOrEmpty(returnUrl) && returnUrl != currentUrl)
             {
                 HttpContext.Current?.Response?.Redirect(returnUrl);
@@ -69,76 +70,47 @@ namespace Librame.Authorization.Strategies
         }
 
         ///// <summary>
-        ///// 构建认证票根。
+        ///// 注册票根。
         ///// </summary>
-        ///// <param name="account">给定的帐户。</param>
-        ///// <param name="isPersistent">是否持久化存储。</param>
-        ///// <returns>返回票根字符串。</returns>
-        //protected virtual string BuildTicket(IAccountDescriptor account, bool isPersistent)
+        ///// <param name="ticket">给定的票根。</param>
+        ///// <returns>返回加密后的票根字符串。</returns>
+        //protected virtual string RegistCookie(AuthenticateTicket ticket)
         //{
-        //    var ticket = new AuthenticateTicket(account, DateTime.Now, null, isPersistent);
+        //    // Web 环境
+        //    var encrypt = EncryptTicket(ticket);
+        //    var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encrypt);
 
-        //    return EncryptTicket(ticket);
+        //    // 同步票根与 Cookie 信息
+        //    var context = HttpContext.Current;
 
-        //    //// 生成令牌
-        //    //var token = AuthorizeHelper.GenerateToken();
+        //    cookie.Expires = ticket.Expiration;
+        //    cookie.Path = ticket.Path;
+        //    cookie.Domain = context?.Request?.Url?.Host;
 
-        //    //// 生成用户数据
-        //    //var descriptor = new TicketDataDescriptor(token, account);
-        //    //var userData = TicketDataDescriptor.Serialize(descriptor);
+        //    // 重定向会被清空
+        //    context?.Response?.Cookies?.Add(cookie);
 
-        //    //// 创建票根
-        //    //var now = DateTime.Now;
-        //    //var expiration = now.AddDays(AuthSettings.ExpirationDays);
-        //    //var ticket = new FormsAuthenticationTicket(1, account.Name,
-        //    //    now, expiration, isPersistent, userData,
-        //    //    FormsAuthentication.FormsCookiePath);
-
-        //    //return FormsAuthentication.Encrypt(ticket);
+        //    return encrypt;
         //}
 
-        /// <summary>
-        /// 注册票根。
-        /// </summary>
-        /// <param name="ticket">给定的票根。</param>
-        /// <returns>返回加密后的票根字符串。</returns>
-        protected virtual string RegistCookie(AuthenticateTicket ticket)
-        {
-            // Web 环境
-            var encrypt = EncryptTicket(ticket);
-            var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encrypt);
+        ///// <summary>
+        ///// 移除票根。
+        ///// </summary>
+        ///// <returns>返回票根字符串。</returns>
+        //protected virtual string RemoveCookie()
+        //{
+        //    var cookies = HttpContext.Current?.Response?.Cookies;
 
-            // 同步票根与 Cookie 信息
-            var context = HttpContext.Current;
+        //    if (!ReferenceEquals(cookies, null))
+        //    {
+        //        var ticket = cookies[FormsAuthentication.FormsCookieName].Value;
+        //        cookies.Remove(FormsAuthentication.FormsCookieName);
 
-            cookie.Expires = ticket.Expiration;
-            cookie.Path = ticket.Path;
-            cookie.Domain = context?.Request?.Url?.Host;
+        //        return ticket;
+        //    }
 
-            // 重定向会被清空
-            context?.Response?.Cookies?.Add(cookie);
-
-            return encrypt;
-        }
-
-        /// <summary>
-        /// 移除票根。
-        /// </summary>
-        /// <returns>返回票根字符串。</returns>
-        protected virtual string RemoveCookie()
-        {
-            var cookies = HttpContext.Current?.Response?.Cookies;
-
-            if (!ReferenceEquals(cookies, null))
-            {
-                var ticket = cookies[FormsAuthentication.FormsCookieName].Value;
-                cookies.Remove(FormsAuthentication.FormsCookieName);
-
-                return ticket;
-            }
-
-            return string.Empty;
-        }
+        //    return string.Empty;
+        //}
 
 
         /// <summary>
@@ -158,7 +130,7 @@ namespace Librame.Authorization.Strategies
 
                 var ticket = removePrincipal?.Invoke(AuthorizeHelper.AUTHORIZATION_KEY);
 
-                RemoveCookie();
+                //RemoveCookie();
 
                 return ticket;
             }

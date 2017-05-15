@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Forms;
 
-namespace Librame.UnitTests.Forms
+namespace Librame.Tests.Forms
 {
     [TestClass()]
     public class FormsAdapterTests

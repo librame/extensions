@@ -2,7 +2,7 @@
 using Common.Logging;
 using Quartz;
 
-namespace Librame.UnitTests.Scheduler
+namespace Librame.Tests.Scheduler
 {
     public sealed class TestJob : IJob
     {

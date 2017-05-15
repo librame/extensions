@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.MediaInfo;
 
-namespace Librame.UnitTests.MediaInfo
+namespace Librame.Tests.MediaInfo
 {
     [TestClass()]
     public class MediaInfoAdapterTests

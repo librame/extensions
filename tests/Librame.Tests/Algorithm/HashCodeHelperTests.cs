@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Algorithm;
 
-namespace Librame.UnitTests.Algorithm
+namespace Librame.Tests.Algorithm
 {
     [TestClass()]
     public class HashCodeHelperTests

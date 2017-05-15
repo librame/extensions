@@ -41,7 +41,7 @@ namespace Librame.Authorization.Strategies
         /// </summary>
         protected override void OnAuthenticationFailed()
         {
-            // 使用框架授权编号
+            // 加密授权编号
             var encryptAuthId = Authorize.Managers.Cryptogram.Encrypt(Authorize.Settings.AuthId);
 
             var serverSignInUrl = AuthorizeHelper.FormatServerSignInUrl(encryptAuthId,
@@ -83,11 +83,19 @@ namespace Librame.Authorization.Strategies
 
                 // 解析认证服务器应答链接参数
                 var request = HttpContext.Current?.Request;
-                var encryptTicket = AuthorizeHelper.ResolveEncryptTicket(request);
 
-                // 构建用户
-                var ticket = DecryptTicket(encryptTicket);
-                var identity = new AccountIdentity(ticket);
+                // 解析用户令牌
+                var encryptToken = AuthorizeHelper.ResolveEncryptTicket(request);
+                var token = Authorize.Managers.Cryptogram.Decrypt<string>(encryptToken);
+
+                var tokenDescriptor = Authorize.Adapters.Authorization
+                    .Providers.Token.Authenticate(token, string.Empty);
+                tokenDescriptor.NotNull(nameof(tokenDescriptor));
+
+                // 还原票根
+                var ticket = tokenDescriptor.Ticket.FromHex().FromBytes<AuthenticateTicket>();
+
+                var identity = new AccountIdentity(ticket.NotNull(nameof(ticket)));
                 var principal = new AccountPrincipal(identity, null);
                 bindPrincipal?.Invoke(AuthorizeHelper.AUTHORIZATION_KEY, principal);
 
@@ -117,12 +125,13 @@ namespace Librame.Authorization.Strategies
         public override AuthenticateTicket SignOut(Func<string, AuthenticateTicket> removePrincipal)
         {
             var ticket = base.SignOut(removePrincipal);
-            var encryptTicket = EncryptTicket(ticket);
+            //var encryptTicket = EncryptTicket(ticket);
+            var encryptToken = Authorize.Managers.Cryptogram.Encrypt(ticket.Token);
 
-            // 使用框架授权编号
+            // 加密授权编号
             var encryptAuthId = Authorize.Managers.Cryptogram.Encrypt(Authorize.Settings.AuthId);
             
-            var signOutUrl = AuthorizeHelper.FormatServerSignOutUrl(encryptTicket, encryptAuthId,
+            var signOutUrl = AuthorizeHelper.FormatServerSignOutUrl(encryptToken, encryptAuthId,
                 Authorize.AuthSettings.SsoSignInRespondUrl,
                 Authorize.AuthSettings.SsoServerSignInUrl);
 

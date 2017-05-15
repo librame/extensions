@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Librame.UnitTests
+namespace Librame.Tests
 {
     [TestClass()]
     public class LibrameEnumManagerTests

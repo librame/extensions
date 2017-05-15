@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace Librame.Authorization.Descriptors
 {
@@ -18,6 +19,7 @@ namespace Librame.Authorization.Descriptors
     /// 权限描述符。
     /// </summary>
     [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class PermissionDescriptor : IPermissionDescriptor
     {
     }

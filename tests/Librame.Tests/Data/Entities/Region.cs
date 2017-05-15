@@ -15,7 +15,7 @@ using Librame.Data.Descriptors;
 using System;
 using System.ComponentModel;
 
-namespace Librame.UnitTests.Data.Entities
+namespace Librame.Tests.Data.Entities
 {
     /// <summary>
     /// 国家或地区。

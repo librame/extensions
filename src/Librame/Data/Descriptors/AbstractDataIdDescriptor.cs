@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace Librame.Data.Descriptors
 {
@@ -20,6 +21,7 @@ namespace Librame.Data.Descriptors
     /// </summary>
     /// <typeparam name="TId">指定的主键类型。</typeparam>
     [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public abstract class AbstractDataIdDescriptor<TId> : AbstractIdDescriptor<TId>, IDataIdDescriptor<TId>
         where TId : struct
     {

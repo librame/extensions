@@ -100,7 +100,7 @@ namespace Librame.Algorithm.Symmetries
             {
                 var bit = AlgoSettings.AdapterSettings.AuthId;
                 if (!string.IsNullOrEmpty(guid))
-                    bit = guid.AsBit();
+                    bit = GuidUtility.AsHex(guid);
 
                 return DecodeBit(bit);
             }

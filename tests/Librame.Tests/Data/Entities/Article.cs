@@ -4,7 +4,7 @@ using Librame.Utility;
 using System;
 using System.ComponentModel;
 
-namespace Librame.UnitTests.Data.Entities
+namespace Librame.Tests.Data.Entities
 {
     public class Article : AbstractCreateDataIdDescriptor<int>
     {

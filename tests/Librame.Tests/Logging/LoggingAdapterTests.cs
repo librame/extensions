@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Logging;
 
-namespace Librame.UnitTests.Logging
+namespace Librame.Tests.Logging
 {
     [TestClass()]
     public class LoggingAdapterTests

@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Socket;
 
-namespace Librame.UnitTests.Socket
+namespace Librame.Tests.Socket
 {
     [TestClass()]
     public class SocketAdapterTests

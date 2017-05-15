@@ -2,7 +2,7 @@
 using Librame.Algorithm;
 using Librame.Algorithm.Asymmetries;
 
-namespace Librame.UnitTests.Algorithm
+namespace Librame.Tests.Algorithm
 {
     [TestClass()]
     public class AlgorithmAdapterTests

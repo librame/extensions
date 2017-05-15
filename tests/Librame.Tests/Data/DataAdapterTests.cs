@@ -2,7 +2,7 @@
 using Librame.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Librame.UnitTests.Data
+namespace Librame.Tests.Data
 {
     [TestClass()]
     public class DataAdapterTests

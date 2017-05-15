@@ -16,7 +16,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Librame.UnitTests.Data.Entities
+namespace Librame.Tests.Data.Entities
 {
     /// <summary>
     /// 行政区划。

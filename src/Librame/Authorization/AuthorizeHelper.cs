@@ -136,7 +136,7 @@ namespace Librame.Authorization
             };
 
             // 格式化链接
-            serverSignInUrl = KeyBuilder.Formatting(respondUrl, formatDictionary);
+            serverSignInUrl = KeyBuilder.Formatting(serverSignInUrl, formatDictionary);
             return serverSignInUrl;
         }
 
@@ -177,7 +177,7 @@ namespace Librame.Authorization
 
 
         /// <summary>
-        /// 格式化服务器认证登出应答链接。
+        /// 格式化应答链接。
         /// </summary>
         /// <param name="encryptTicket">给定的已加密的票根字符串。</param>
         /// <param name="respondUrl">给定的应答链接（支持登入与登出应答链接）。</param>
@@ -214,7 +214,7 @@ namespace Librame.Authorization
         /// <returns>返回 32 位长度的字符串。</returns>
         public static string GenerateAuthId(Guid guid)
         {
-            return guid.AsBit();
+            return GuidUtility.AsHex(guid);
         }
 
 
@@ -238,7 +238,7 @@ namespace Librame.Authorization
         /// <returns>返回 64 位长度字符串。</returns>
         public static string GenerateToken(string authId, IAlgorithmAdapter algoAdapter)
         {
-            var guid = authId.NotNullOrEmpty(nameof(authId)).FromBitAsGuid();
+            var guid = GuidUtility.FromHex(authId.NotNullOrEmpty(nameof(authId)));
             return algoAdapter.Hash.ToSha384(guid.ToString());
         }
 

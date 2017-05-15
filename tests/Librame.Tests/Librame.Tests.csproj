@@ -246,6 +246,7 @@
     <Compile Include="Authorization\AccountAuthorizationTests.cs" />
     <Compile Include="TestHelper.cs" />
     <Compile Include="Thread\ThreadAdapterTests.cs" />
+    <Compile Include="Utility\ByteUtilityTests.cs" />
     <Compile Include="Utility\SerializerTests.cs" />
     <Compile Include="Utility\WordHelperTests.cs" />
     <Compile Include="Utility\TypeUtilityTests.cs" />

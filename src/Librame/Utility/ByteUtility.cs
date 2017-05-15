@@ -11,112 +11,55 @@
 #endregion
 
 using System;
-using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Librame.Utility
 {
     /// <summary>
     /// <see cref="byte"/> 实用工具。
     /// </summary>
-    public class ByteUtility
+    public static class ByteUtility
     {
         /// <summary>
-        /// 基数据类型连接符。
+        /// 将对象转换为字节数组。
         /// </summary>
-        public const string BIT_CONNECTOR = "-";
-
-
-        /// <summary>
-        /// 转换为十六进制字符串。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="hasConnector">是否包含连接符（可选；默认不包含连接符）。</param>
-        /// <returns>返回字符串。</returns>
-        public static string AsBit(byte[] buffer, bool hasConnector = false)
-        {
-            var bit = BitConverter.ToString(buffer);
-
-            if (!hasConnector)
-            {
-                // 清空连接符
-                bit = bit.Replace(BIT_CONNECTOR, string.Empty);
-            }
-
-            return bit;
-        }
-
-        /// <summary>
-        /// 还原为字节数组。
-        /// </summary>
-        /// <param name="bit">给定的十六进制字符串（支持有/无连接符）。</param>
+        /// <param name="obj">给定的对象。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] FromBit(string bit)
+        public static byte[] AsBytes(this object obj)
         {
-            bit.NotNullOrEmpty(nameof(bit));
+            obj.NotNull(nameof(obj));
 
-            byte[] buffer = null;
+            var buffer = new byte[Marshal.SizeOf(obj)];
+            var ip = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
 
-            if (bit.Contains(BIT_CONNECTOR))
-            {
-                // 包含连接符的情况
-                var bits = bit.Split(BIT_CONNECTOR.ToCharArray());
-                buffer = new byte[bits.Length];
-
-                for (int i = 0; i < bits.Length; i++)
-                {
-                    buffer[i] = byte.Parse(bits[i], NumberStyles.HexNumber);
-                }
-            }
-            else
-            {
-                // 无连接符的情况（以两个字符为一组）
-                var bits = bit.ToCharArray();
-                buffer = new byte[bits.Length / 2];
-
-                var index = 0;
-                for (int i = 0; i < bits.Length; i += 2)
-                {
-                    // 将顺序索引相连的字符组合为一个字符串
-                    var part = new char[] { bits[i], bits[i + 1] };
-                    var s = new string(part);
-
-                    buffer[index] = byte.Parse(s, NumberStyles.HexNumber);
-                    index++;
-                }
-            }
+            // 此方法比 BinaryFormatter 序列化方法生成的字节数组短了很多，非常节省空间
+            Marshal.StructureToPtr(obj, ip, true);
 
             return buffer;
         }
 
-    }
-
-
-    /// <summary>
-    /// <see cref="ByteUtility"/> 静态扩展。
-    /// </summary>
-    public static class ByteUtilityExtensions
-    {
         /// <summary>
-        /// 转换为十六进制字符串。
+        /// 将字节数组还原为对象。
         /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="hasConnector">是否包含连接符（可选；默认不包含连接符）。</param>
-        /// <returns>返回字符串。</returns>
-        public static string AsBit(this byte[] buffer, bool hasConnector = false)
+        /// <typeparam name="T">给定的类型。</typeparam>
+        /// <param name="bytes">给定的字节数组。</param>
+        /// <returns>返回对象。</returns>
+        public static T FromBytes<T>(this byte[] bytes)
         {
-            return ByteUtility.AsBit(buffer, hasConnector);
+            return (T)bytes.FromBytes(typeof(T));
         }
-
         /// <summary>
-        /// 还原为字节数组。
+        /// 将字节数组还原为对象。
         /// </summary>
-        /// <param name="bit">给定的十六进制字符串（支持有/无连接符）。</param>
-        /// <returns>返回字节数组。</returns>
-        public static byte[] FromBitAsBytes(this string bit)
+        /// <param name="bytes">给定的字节数组。</param>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回对象。</returns>
+        public static object FromBytes(this byte[] bytes, Type type)
         {
-            return ByteUtility.FromBit(bit);
+            var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
+
+            return Marshal.PtrToStructure(ptr, type);
         }
 
     }
-
 }

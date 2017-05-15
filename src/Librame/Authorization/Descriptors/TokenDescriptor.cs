@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace Librame.Authorization.Descriptors
 {
@@ -21,6 +22,7 @@ namespace Librame.Authorization.Descriptors
     /// 令牌描述符。
     /// </summary>
     [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class TokenDescriptor : ITokenDescriptor
     {
         /// <summary>

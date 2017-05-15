@@ -3,7 +3,7 @@ using System;
 using System.Timers;
 using Topshelf;
 
-namespace Librame.UnitTests.WinService
+namespace Librame.Tests.WinService
 {
     public class TestServiceControl : ServiceControl
     {

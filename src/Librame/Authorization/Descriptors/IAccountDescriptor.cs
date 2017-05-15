@@ -33,5 +33,12 @@ namespace Librame.Authorization.Descriptors
         /// 状态。
         /// </summary>
         AccountStatus Status { get; }
+
+
+        /// <summary>
+        /// 重置密码。
+        /// </summary>
+        /// <param name="newPasswd">给定要重置的新密码。</param>
+        void ResetPasswd(string newPasswd = null);
     }
 }

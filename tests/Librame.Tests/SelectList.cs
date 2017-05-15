@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
-namespace Librame.UnitTests
+namespace Librame.Tests
 {
-    [Serializable]
+    //[Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class SelectList
     {
         public string Text { get; set; }

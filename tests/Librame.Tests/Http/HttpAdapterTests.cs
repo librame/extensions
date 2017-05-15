@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Http;
 
-namespace Librame.UnitTests.Http
+namespace Librame.Tests.Http
 {
     [TestClass()]
     public class HttpAdapterTests

@@ -1,7 +1,7 @@
 ﻿using Librame.Resource.Schema;
 using System.Xml.Serialization;
 
-namespace Librame.UnitTests.Resource
+namespace Librame.Tests.Resource
 {
     [XmlRoot("Resource")]
     public class TestResourceSchema : ResourceSchema

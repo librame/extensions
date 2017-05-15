@@ -3,7 +3,7 @@ using System;
 using System.Text;
 using Librame.Utility;
 
-namespace Librame.UnitTests.Utility
+namespace Librame.Tests.Utility
 {
     [TestClass()]
     public class FileUtilityTests

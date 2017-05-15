@@ -2,7 +2,7 @@
 using Librame.Resource;
 using Librame.Utility;
 
-namespace Librame.UnitTests.Resource
+namespace Librame.Tests.Resource
 {
     [TestClass()]
     public class ResourceAdapterTests

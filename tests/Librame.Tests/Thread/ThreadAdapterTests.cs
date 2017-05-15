@@ -3,7 +3,7 @@ using Librame.Thread;
 using Librame.Utility;
 using System.IO;
 
-namespace Librame.UnitTests.Thread
+namespace Librame.Tests.Thread
 {
     [TestClass()]
     public class ThreadAdapterTests

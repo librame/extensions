@@ -3,7 +3,7 @@ using Librame.Html;
 using Librame.Utility;
 using System.IO;
 
-namespace Librame.UnitTests.Html
+namespace Librame.Tests.Html
 {
     [TestClass()]
     public class HtmlAdapterTests

@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Authorization;
 
-namespace Librame.UnitTests.Authorization
+namespace Librame.Tests.Authorization
 {
     [TestClass()]
     public class AuthorizeHelperTests

@@ -79,23 +79,23 @@ namespace Librame.Algorithm
 
 
         /// <summary>
-        /// 编码为 BIT。
+        /// 编码为 HEX。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
         /// <returns>返回 16 进制字符串。</returns>
         protected virtual string EncodeBit(byte[] buffer)
         {
-            return ByteUtility.AsBit(buffer);
+            return buffer.AsHex();
         }
 
         /// <summary>
-        /// 解码 BIT。
+        /// 解码 HEX。
         /// </summary>
-        /// <param name="bit">给定的 16 进制字符串。</param>
+        /// <param name="hex">给定的 16 进制字符串。</param>
         /// <returns>返回字节数组。</returns>
-        protected virtual byte[] DecodeBit(string bit)
+        protected virtual byte[] DecodeBit(string hex)
         {
-            return ByteUtility.FromBit(bit);
+            return hex.FromHex();
         }
 
     }

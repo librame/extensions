@@ -357,6 +357,7 @@
     <Compile Include="LibrameBase.cs" />
     <Compile Include="Utility\AbstractInstanceFactory.cs" />
     <Compile Include="Utility\CacheUtility.cs" />
+    <Compile Include="Utility\DecimalUtility.cs" />
     <Compile Include="Utility\DriveInfoWrapper.cs" />
     <Compile Include="Utility\IInstanceFactory.cs" />
     <Compile Include="Utility\ImageUtility.cs" />

@@ -2,7 +2,7 @@
 using Librame.Authorization;
 using Librame.Utility;
 
-namespace Librame.UnitTests.Authorization
+namespace Librame.Tests.Authorization
 {
     [TestClass()]
     public class AccountAuthorizationTests

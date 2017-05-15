@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace Librame.Authorization.Descriptors
 {
@@ -21,6 +22,7 @@ namespace Librame.Authorization.Descriptors
     /// 帐户描述符。
     /// </summary>
     [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class AccountDescriptor : IAccountDescriptor
     {
         /// <summary>
@@ -72,6 +74,19 @@ namespace Librame.Authorization.Descriptors
         [DisplayName("帐户状态")]
         [DefaultValue(AccountStatus.Active)]
         public virtual AccountStatus Status { get; }
+
+
+        /// <summary>
+        /// 重置密码。
+        /// </summary>
+        /// <param name="newPasswd">给定要重置的新密码。</param>
+        public virtual void ResetPasswd(string newPasswd = null)
+        {
+            if (newPasswd == null)
+                newPasswd = string.Empty;
+
+            Passwd = newPasswd;
+        }
 
     }
 }

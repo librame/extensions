@@ -2,7 +2,7 @@
 using System;
 using Librame.Utility;
 
-namespace Librame.UnitTests.Utility
+namespace Librame.Tests.Utility
 {
     [TestClass()]
     public class ExceptionUtilityTests

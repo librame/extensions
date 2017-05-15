@@ -112,8 +112,14 @@ namespace Librame.Authorization.Providers
                     return new AuthenticateInfo(account, EnumUtility.GetDescription(error), error);
                 }
 
+                // 创建帐户镜像
+                var accountMirror = (IAccountDescriptor)TypeUtility.CopyToCreate((object)account);
+
+                // 清空密码
+                accountMirror.ResetPasswd();
+
                 // 登录成功
-                return new AuthenticateInfo(account, "登录成功", AuthenticateStatus.Success);
+                return new AuthenticateInfo(accountMirror, "登录成功", AuthenticateStatus.Success);
             }
             else
             {

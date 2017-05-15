@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.IO;
 
-namespace Librame.UnitTests.Compression
+namespace Librame.Tests.Compression
 {
     [TestClass()]
     public class CompressionAdapterTests

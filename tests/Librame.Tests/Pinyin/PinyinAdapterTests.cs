@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Pinyin;
 
-namespace Librame.UnitTests.Pinyin
+namespace Librame.Tests.Pinyin
 {
     [TestClass()]
     public class PinyinPluginTests

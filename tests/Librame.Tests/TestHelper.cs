@@ -1,7 +1,7 @@
 ﻿using Librame.Utility;
 using System.IO;
 
-namespace Librame.UnitTests
+namespace Librame.Tests
 {
     public static class TestHelper
     {

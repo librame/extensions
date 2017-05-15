@@ -174,47 +174,47 @@ namespace Librame.Authorization.Strategies
         #endregion
 
 
-        #region Ticket
+        //#region Ticket
 
-        /// <summary>
-        /// 加密票根。
-        /// </summary>
-        /// <param name="ticket">给定的认证票根。</param>
-        /// <returns>返回票根字符串。</returns>
-        public virtual string EncryptTicket(AuthenticateTicket ticket)
-        {
-            try
-            {
-                return Authorize.Managers.Cryptogram.Encrypt(ticket);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.InnerMessage(), ex);
+        ///// <summary>
+        ///// 加密票根。
+        ///// </summary>
+        ///// <param name="ticket">给定的认证票根。</param>
+        ///// <returns>返回票根字符串。</returns>
+        //public virtual string EncryptTicket(AuthenticateTicket ticket)
+        //{
+        //    try
+        //    {
+        //        return Authorize.Managers.Cryptogram.Encrypt(ticket);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log.Error(ex.InnerMessage(), ex);
 
-                throw ex;
-            }
-        }
+        //        throw ex;
+        //    }
+        //}
 
-        /// <summary>
-        /// 解密票根。
-        /// </summary>
-        /// <param name="ticket">给定的票根字符串。</param>
-        /// <returns>返回认证票根。</returns>
-        public virtual AuthenticateTicket DecryptTicket(string ticket)
-        {
-            try
-            {
-                return Authorize.Managers.Cryptogram.Decrypt<AuthenticateTicket>(ticket);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.InnerMessage(), ex);
+        ///// <summary>
+        ///// 解密票根。
+        ///// </summary>
+        ///// <param name="ticket">给定的票根字符串。</param>
+        ///// <returns>返回认证票根。</returns>
+        //public virtual AuthenticateTicket DecryptTicket(string ticket)
+        //{
+        //    try
+        //    {
+        //        return Authorize.Managers.Cryptogram.Decrypt<AuthenticateTicket>(ticket);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log.Error(ex.InnerMessage(), ex);
 
-                throw ex;
-            }
-        }
+        //        throw ex;
+        //    }
+        //}
 
-        #endregion
+        //#endregion
 
     }
 }

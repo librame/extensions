@@ -2,7 +2,7 @@
 using Librame.Data;
 using Librame.Data.Providers;
 
-namespace Librame.UnitTests.Data
+namespace Librame.Tests.Data
 {
     //public class TestEntitySource : EntityProvider
     //{

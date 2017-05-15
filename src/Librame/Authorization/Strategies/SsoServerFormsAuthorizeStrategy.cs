@@ -29,6 +29,20 @@ namespace Librame.Authorization.Strategies
         }
 
 
+        #region Authentication
+
+        /// <summary>
+        /// 认证失败。
+        /// </summary>
+        protected override void OnAuthenticationFailed()
+        {
+            // 同父级认证策略（重定向到登录页面）
+            base.OnAuthenticationFailed();
+        }
+
+        #endregion
+
+
         #region Sign
 
         /// <summary>
@@ -40,15 +54,22 @@ namespace Librame.Authorization.Strategies
         {
             var ticket = (principal.Identity as AccountIdentity).Ticket;
 
-            // 注册票根
-            var encryptTicket = RegistCookie(ticket);
+            //// 注册票根
+            //var encryptTicket = RegistCookie(ticket);
 
-            // 客户端应答链接
-            var respondUrl = AuthorizeHelper.FormatRespondUrl(encryptTicket,
-                Authorize.AuthSettings.SsoSignInRespondUrl);
+            // 检查是否为客户端请求
+            var pair = AuthorizeHelper.ResolveEncryptAuthIdAndRespondUrl(HttpContext.Current?.Request);
+            if (!string.IsNullOrEmpty(pair.Item1) && !string.IsNullOrEmpty(pair.Item2))
+            {
+                // 加密令牌用于传输
+                var encryptToken = Authorize.Managers.Cryptogram.Encrypt(ticket.Token);
 
-            // 重定向到客户端
-            HttpContext.Current?.Response?.Redirect(respondUrl);
+                // 客户端登入应答链接
+                var respondUrl = AuthorizeHelper.FormatRespondUrl(encryptToken, pair.Item2);
+
+                // 重定向到客户端
+                HttpContext.Current?.Response?.Redirect(respondUrl);
+            }
         }
 
         #endregion

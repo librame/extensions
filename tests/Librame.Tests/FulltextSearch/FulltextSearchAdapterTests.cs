@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.FulltextSearch;
 
-namespace Librame.UnitTests.FulltextSearch
+namespace Librame.Tests.FulltextSearch
 {
     [TestClass()]
     public class FulltextSearchAdapterTests

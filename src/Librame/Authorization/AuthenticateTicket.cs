@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Runtime.InteropServices;
 using System.Web.Security;
 
 namespace Librame.Authorization
@@ -21,6 +22,8 @@ namespace Librame.Authorization
     /// <summary>
     /// 身份认证票根。
     /// </summary>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public sealed class AuthenticateTicket
     {
         /// <summary>

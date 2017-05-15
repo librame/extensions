@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.WinService;
 
-namespace Librame.UnitTests.WinService
+namespace Librame.Tests.WinService
 {
     [TestClass()]
     public class WinServiceAdapterTests

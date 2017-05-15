@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Scheduler;
 
-namespace Librame.UnitTests.Scheduler
+namespace Librame.Tests.Scheduler
 {
     [TestClass()]
     public class SchedulerAdapterTests

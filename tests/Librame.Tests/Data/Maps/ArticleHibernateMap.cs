@@ -1,6 +1,6 @@
 ﻿using FluentNHibernate.Mapping;
 
-namespace Librame.UnitTests.Data.Maps
+namespace Librame.Tests.Data.Maps
 {
     using Entities;
     

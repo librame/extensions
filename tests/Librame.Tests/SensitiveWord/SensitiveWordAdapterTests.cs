@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.SensitiveWord;
 
-namespace Librame.UnitTests.SensitiveWord
+namespace Librame.Tests.SensitiveWord
 {
     [TestClass()]
     public class SensitiveWordAdapterTests

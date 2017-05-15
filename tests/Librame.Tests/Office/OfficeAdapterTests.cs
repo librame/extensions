@@ -4,7 +4,7 @@ using Librame.Utility;
 using System.Data;
 using System.IO;
 
-namespace Librame.UnitTests.Office
+namespace Librame.Tests.Office
 {
     [TestClass()]
     public class OfficeAdapterTests

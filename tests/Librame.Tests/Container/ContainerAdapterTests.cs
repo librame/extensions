@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Container;
 
-namespace Librame.UnitTests.Container
+namespace Librame.Tests.Container
 {
     [TestClass()]
     public class ContainerAdapterTests

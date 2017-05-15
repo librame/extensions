@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace Librame.UnitTests.Data.Tools
+namespace Librame.Tests.Data.Tools
 {
     using Entities;
     
