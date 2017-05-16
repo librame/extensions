@@ -10,7 +10,7 @@ namespace Librame.Tests.Http
 
         public HttpAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Http;
+            _adapter = LibrameArchitecture.Adapters.Http;
         }
 
 

@@ -10,7 +10,7 @@ namespace Librame.Tests.Forms
 
         public FormsAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Forms;
+            _adapter = LibrameArchitecture.Adapters.Forms;
         }
 
 

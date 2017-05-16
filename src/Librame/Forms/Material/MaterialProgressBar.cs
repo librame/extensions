@@ -36,7 +36,7 @@ namespace Librame.Forms.Material
         [Browsable(false)]
         public ISkinProvider Skin
         {
-            get { return LibrameArchitecture.AdapterManager.Forms.Skin; }
+            get { return LibrameArchitecture.Adapters.Forms.Skin; }
         }
 
         /// <summary>

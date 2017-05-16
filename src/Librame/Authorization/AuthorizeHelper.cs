@@ -16,7 +16,6 @@ using System.Web;
 
 namespace Librame.Authorization
 {
-    using Algorithm;
     using Utility;
 
     /// <summary>
@@ -36,7 +35,7 @@ namespace Librame.Authorization
         /// <summary>
         /// 认证键名。
         /// </summary>
-        internal const string AUTHORIZATION_KEY = AUTHORIZATION_TYPE;
+        public const string AUTHORIZATION_KEY = AUTHORIZATION_TYPE;
 
         /// <summary>
         /// 授权编号键名。
@@ -47,35 +46,35 @@ namespace Librame.Authorization
         /// </summary>
         internal const string RESPOND_URL_KEY = "respondurl";
         /// <summary>
-        /// 认证票根键名。
+        /// 认证令牌键名。
         /// </summary>
-        internal const string TICKET_KEY = "ticket";
+        internal const string TOKEN_KEY = "token";
 
 
         #region Resolve
 
         /// <summary>
-        /// 解析指定请求包含的加密票根。
+        /// 解析指定请求包含的加密令牌。
         /// </summary>
         /// <param name="request">给定的请求。</param>
-        /// <returns>返回经过加密票根字符串。</returns>
-        public static string ResolveEncryptTicket(HttpRequest request)
+        /// <returns>返回经过加密令牌字符串。</returns>
+        public static string ResolveEncryptToken(HttpRequest request)
         {
             request.NotNull(nameof(request));
 
-            return ResolveEncryptTicket(new HttpRequestWrapper(request));
+            return ResolveEncryptToken(new HttpRequestWrapper(request));
         }
         /// <summary>
-        /// 解析指定请求包含的加密票根。
+        /// 解析指定请求包含的加密令牌。
         /// </summary>
         /// <param name="request">给定的请求。</param>
-        /// <returns>返回经过加密票根字符串。</returns>
-        public static string ResolveEncryptTicket(HttpRequestBase request)
+        /// <returns>返回经过加密令牌字符串。</returns>
+        public static string ResolveEncryptToken(HttpRequestBase request)
         {
             request.NotNull(nameof(request));
 
-            var encryptTicket = request.QueryString[TICKET_KEY];
-            return encryptTicket;
+            var encryptToken = request.QueryString[TOKEN_KEY];
+            return encryptToken;
         }
 
 
@@ -120,10 +119,10 @@ namespace Librame.Authorization
         public static string FormatServerSignInUrl(string encryptAuthId,
             string respondUrl, string serverSignInUrl)
         {
-            serverSignInUrl.NotNullOrEmpty(nameof(serverSignInUrl));
+            serverSignInUrl.NotEmpty(nameof(serverSignInUrl));
             
-            encryptAuthId.NotNullOrEmpty(nameof(encryptAuthId));
-            respondUrl.NotNullOrEmpty(nameof(respondUrl));
+            encryptAuthId.NotEmpty(nameof(encryptAuthId));
+            respondUrl.NotEmpty(nameof(respondUrl));
 
             // URL 编码
             encryptAuthId = HttpUtility.UrlEncode(encryptAuthId);
@@ -144,28 +143,28 @@ namespace Librame.Authorization
         /// <summary>
         /// 格式化认证服务器登出链接。
         /// </summary>
-        /// <param name="encryptTicket">给定的已加密的票根字符串。</param>
+        /// <param name="encryptToken">给定的已加密的令牌字符串。</param>
         /// <param name="encryptAuthId">给定的加密授权编号。</param>
         /// <param name="respondUrl">给定的应答链接。</param>
         /// <param name="serverSignOutUrl">给定的服务器登出链接。</param>
         /// <returns>返回格式化后的字符串。</returns>
-        public static string FormatServerSignOutUrl(string encryptTicket, string encryptAuthId,
+        public static string FormatServerSignOutUrl(string encryptToken, string encryptAuthId,
             string respondUrl, string serverSignOutUrl)
         {
-            serverSignOutUrl.NotNullOrEmpty(nameof(serverSignOutUrl));
+            serverSignOutUrl.NotEmpty(nameof(serverSignOutUrl));
 
-            encryptTicket.NotNullOrEmpty(nameof(encryptTicket));
-            encryptAuthId.NotNullOrEmpty(nameof(encryptAuthId));
-            respondUrl.NotNullOrEmpty(nameof(respondUrl));
+            encryptToken.NotEmpty(nameof(encryptToken));
+            encryptAuthId.NotEmpty(nameof(encryptAuthId));
+            respondUrl.NotEmpty(nameof(respondUrl));
 
             // URL 编码
-            encryptTicket = HttpUtility.UrlEncode(encryptTicket);
+            encryptToken = HttpUtility.UrlEncode(encryptToken);
             encryptAuthId = HttpUtility.UrlEncode(encryptAuthId);
             respondUrl = HttpUtility.UrlEncode(respondUrl);
 
             var formatDictionary = new Dictionary<string, string>()
             {
-                { TICKET_KEY, encryptTicket },
+                { TOKEN_KEY, encryptToken },
                 { AUTH_ID_KEY, encryptAuthId },
                 { RESPOND_URL_KEY, respondUrl }
             };
@@ -179,68 +178,24 @@ namespace Librame.Authorization
         /// <summary>
         /// 格式化应答链接。
         /// </summary>
-        /// <param name="encryptTicket">给定的已加密的票根字符串。</param>
+        /// <param name="encryptToken">给定的已加密的令牌字符串。</param>
         /// <param name="respondUrl">给定的应答链接（支持登入与登出应答链接）。</param>
         /// <returns>返回格式化后的字符串。</returns>
-        public static string FormatRespondUrl(string encryptTicket, string respondUrl)
+        public static string FormatRespondUrl(string encryptToken, string respondUrl)
         {
-            respondUrl.NotNullOrEmpty(nameof(respondUrl));
+            respondUrl.NotEmpty(nameof(respondUrl));
 
-            encryptTicket.NotNullOrEmpty(nameof(encryptTicket));
+            encryptToken.NotEmpty(nameof(encryptToken));
 
             // URL 编码
-            encryptTicket = HttpUtility.UrlEncode(encryptTicket);
+            encryptToken = HttpUtility.UrlEncode(encryptToken);
 
             // 格式化链接
-            respondUrl = KeyBuilder.Formatting(respondUrl, TICKET_KEY, encryptTicket);
+            respondUrl = KeyBuilder.Formatting(respondUrl, TOKEN_KEY, encryptToken);
             return respondUrl;
         }
 
         #endregion
-
-
-        /// <summary>
-        /// 生成授权编号（默认使用 <see cref="Guid.NewGuid"/>）。
-        /// </summary>
-        /// <returns>返回 32 位长度的字符串。</returns>
-        public static string GenerateAuthId()
-        {
-            return GenerateAuthId(Guid.NewGuid());
-        }
-        /// <summary>
-        /// 生成授权编号。
-        /// </summary>
-        /// <param name="guid">给定的全局唯一标识符。</param>
-        /// <returns>返回 32 位长度的字符串。</returns>
-        public static string GenerateAuthId(Guid guid)
-        {
-            return GuidUtility.AsHex(guid);
-        }
-
-
-        /// <summary>
-        /// 生成令牌。
-        /// </summary>
-        /// <param name="algoAdapter">给定的算法适配器接口。</param>
-        /// <returns>返回 64 位长度字符串。</returns>
-        public static string GenerateToken(IAlgorithmAdapter algoAdapter)
-        {
-            algoAdapter.NotNull(nameof(algoAdapter));
-
-            string authId = algoAdapter.Settings.AuthId;
-            return GenerateToken(authId, algoAdapter);
-        }
-        /// <summary>
-        /// 生成令牌。
-        /// </summary>
-        /// <param name="authId">给定的授权编号。</param>
-        /// <param name="algoAdapter">给定的算法适配器接口。</param>
-        /// <returns>返回 64 位长度字符串。</returns>
-        public static string GenerateToken(string authId, IAlgorithmAdapter algoAdapter)
-        {
-            var guid = GuidUtility.FromHex(authId.NotNullOrEmpty(nameof(authId)));
-            return algoAdapter.Hash.ToSha384(guid.ToString());
-        }
 
     }
 }

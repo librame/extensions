@@ -13,7 +13,7 @@
 namespace Librame.Algorithm
 {
     using Adaptation;
-
+    
     /// <summary>
     /// 算法首选项。
     /// </summary>

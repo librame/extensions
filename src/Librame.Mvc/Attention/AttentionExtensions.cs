@@ -28,7 +28,7 @@ namespace System.Web.Mvc
         /// <param name="exception">给定的异常（可选）。</param>
         /// <returns>返回动作结果。</returns>
         public static ActionResult AttentError<TEntity>(this Controller controller, string message,
-            ActionStatus status, string referUrl = null, Exception exception = null)
+            ActionStatus status = ActionStatus.Default, string referUrl = null, Exception exception = null)
         {
             var title = ActionHelper.ParseTitle<TEntity>(status);
 
@@ -46,7 +46,7 @@ namespace System.Web.Mvc
         public static ActionResult AttentError(this Controller controller, string message, string title,
             string referUrl = null, Exception exception = null)
         {
-            return controller.Attent(title, message, referUrl, AttentionLevel.Error, exception);
+            return controller.Attent(message, title, referUrl, AttentionLevel.Error, exception);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace System.Web.Mvc
         public static ActionResult AttentSuccess(this Controller controller, string message, string title,
             string referUrl = null)
         {
-            return controller.Attent(title, message, referUrl, AttentionLevel.Success);
+            return controller.Attent(message, title, referUrl, AttentionLevel.Success);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace System.Web.Mvc
         public static ActionResult AttentBlock(this Controller controller, string message, string title,
             string referUrl = null)
         {
-            return controller.Attent(title, message, referUrl, AttentionLevel.Block);
+            return controller.Attent(message, title, referUrl, AttentionLevel.Block);
         }
 
         /// <summary>

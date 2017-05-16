@@ -19,13 +19,13 @@ namespace Librame.OperationLog
     /// <summary>
     /// 操作日志管道基类。
     /// </summary>
-    public class OperateLogProviderBase : AbstractAdapterManagerReference, IOperateLogProvider
+    public class OperateLogProviderBase : AbstractAdapterCollectionManager, IOperateLogProvider
     {
         /// <summary>
         /// 构造一个 <see cref="OperateLogProviderBase"/> 实例。
         /// </summary>
         /// <param name="adapters">给定的适配器管理器。</param>
-        public OperateLogProviderBase(IAdapterManager adapters)
+        public OperateLogProviderBase(IAdapterCollection adapters)
             : base(adapters)
         {
         }

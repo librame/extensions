@@ -65,7 +65,7 @@ namespace Librame.Authorization.Providers
         /// <returns>返回认证信息。</returns>
         public virtual AuthenticateInfo Authenticate(string name, string passwd)
         {
-            name.NotNullOrEmpty(nameof(name));
+            name.NotEmpty(nameof(name));
 
             var error = AuthenticateStatus.Default;
             IAccountDescriptor account = null;

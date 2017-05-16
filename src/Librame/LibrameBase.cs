@@ -24,7 +24,7 @@ namespace Librame
 
         static LibrameBase()
         {
-            _log = LibrameArchitecture.LoggingAdapter.GetLogger<T>();
+            _log = LibrameArchitecture.Logging.GetLogger<T>();
         }
 
         /// <summary>

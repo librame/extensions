@@ -24,7 +24,7 @@ namespace Librame.Data.Mappings
         /// <summary>
         /// 当前日志对象。
         /// </summary>
-        protected readonly static ILog Log = LibrameArchitecture.LoggingAdapter.GetLogger<Providers.HibernateProvider>();
+        protected readonly static ILog Log = LibrameArchitecture.Logging.GetLogger<Providers.HibernateProvider>();
 
         
         /// <summary>

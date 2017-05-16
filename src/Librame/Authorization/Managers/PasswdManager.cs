@@ -20,13 +20,13 @@ namespace Librame.Authorization.Managers
     /// <summary>
     /// 密码管理器。
     /// </summary>
-    public class PasswdManager : AbstractAdapterManagerReference, IPasswdManager
+    public class PasswdManager : AbstractAdapterCollectionManager, IPasswdManager
     {
         /// <summary>
         /// 构造一个密码管理器实例。
         /// </summary>
         /// <param name="adapters">给定的适配器器管理器。</param>
-        public PasswdManager(IAdapterManager adapters)
+        public PasswdManager(IAdapterCollection adapters)
             : base(adapters)
         {
         }

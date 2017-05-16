@@ -10,7 +10,7 @@ namespace Librame.Tests.Pinyin
 
         public PinyinPluginTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Pinyin;
+            _adapter = LibrameArchitecture.Adapters.Pinyin;
         }
         
         [TestMethod()]

@@ -10,7 +10,7 @@ namespace Librame.Tests.Socket
 
         public SocketAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Socket;
+            _adapter = LibrameArchitecture.Adapters.Socket;
         }
 
 

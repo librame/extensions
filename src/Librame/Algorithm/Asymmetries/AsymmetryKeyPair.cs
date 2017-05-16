@@ -10,11 +10,16 @@
 
 #endregion
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace Librame.Algorithm.Asymmetries
 {
     /// <summary>
     /// 非对称密钥对。
     /// </summary>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public struct AsymmetryKeyPair
     {
         /// <summary>

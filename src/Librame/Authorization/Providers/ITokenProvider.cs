@@ -23,16 +23,15 @@ namespace Librame.Authorization.Providers
         /// <summary>
         /// 密文管理器接口。
         /// </summary>
-        ICryptogramManager Cryptogram { get; }
+        ICiphertextManager Ciphertext { get; }
 
 
         /// <summary>
         /// 认证令牌。
         /// </summary>
         /// <param name="token">给定的令牌。</param>
-        /// <param name="ticket">给定的票根。</param>
         /// <returns>返回 <see cref="ITokenDescriptor"/>。</returns>
-        ITokenDescriptor Authenticate(string token, string ticket);
+        ITokenDescriptor Authenticate(string token);
 
         /// <summary>
         /// 认证令牌。

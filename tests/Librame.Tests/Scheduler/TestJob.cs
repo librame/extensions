@@ -6,7 +6,7 @@ namespace Librame.Tests.Scheduler
 {
     public sealed class TestJob : IJob
     {
-        private readonly ILog _logger = LibrameArchitecture.LoggingAdapter.GetLogger<TestJob>();
+        private readonly ILog _logger = LibrameArchitecture.Logging.GetLogger<TestJob>();
 
         public void Execute(IJobExecutionContext context)
         {

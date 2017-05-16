@@ -37,7 +37,7 @@ namespace Librame.Authorization.Descriptors
         /// <param name="name">给定的名称。</param>
         public RoleDescriptor(string name)
         {
-            Name = name.NotNullOrEmpty(nameof(name));
+            Name = name.NotEmpty(nameof(name));
         }
 
 

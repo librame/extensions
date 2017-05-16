@@ -10,11 +10,16 @@
 
 #endregion
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace Librame.Resource.Schema
 {
     /// <summary>
     /// 抽象结构部分。
     /// </summary>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public abstract class AbstractSchemaSection
     {
         /// <summary>

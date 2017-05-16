@@ -30,7 +30,7 @@ namespace Librame.FulltextSearch
         {
             InitializeAdapter();
 
-            PanGu.Segment.Init(AdapterConfigDirectory.AppendPath("PanGu.xml"));
+            PanGu.Segment.Init(ConfigDirectory.AppendPath("PanGu.xml"));
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Librame.FulltextSearch
         /// </summary>
         public virtual string DictDirectory
         {
-            get { return AdapterConfigDirectory.AppendDirectoryName("Dict"); }
+            get { return ConfigDirectory.AppendDirectoryName("Dict"); }
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Librame.FulltextSearch
         /// </summary>
         public virtual string IndexDirectory
         {
-            get { return AdapterConfigDirectory.AppendDirectoryName("Index"); }
+            get { return ConfigDirectory.AppendDirectoryName("Index"); }
         }
 
 

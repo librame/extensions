@@ -17,22 +17,20 @@ namespace Librame.Authorization.Managers
     /// <summary>
     /// 密文管理器接口。
     /// </summary>
-    public interface ICryptogramManager : IAdapterManagerReference
+    public interface ICiphertextManager : IAdapterCollectionManager
     {
         /// <summary>
-        /// 加密实例。
+        /// 编码。
         /// </summary>
-        /// <typeparam name="TValue">指定的实例类型。</typeparam>
-        /// <param name="value">给定的实例。</param>
-        /// <returns>返回字符串。</returns>
-        string Encrypt<TValue>(TValue value);
+        /// <param name="str">给定要编码的字符串。</param>
+        /// <returns>返回编码字符串。</returns>
+        string Encode(string str);
 
         /// <summary>
-        /// 解密实例。
+        /// 解码。
         /// </summary>
-        /// <typeparam name="TValue">指定的实例类型。</typeparam>
-        /// <param name="encrypt">给定的加密字符串。</param>
-        /// <returns>返回实例。</returns>
-        TValue Decrypt<TValue>(string encrypt);
+        /// <param name="encode">给定要解码的字符串。</param>
+        /// <returns>返回原始字符串。</returns>
+        string Decode(string encode);
     }
 }

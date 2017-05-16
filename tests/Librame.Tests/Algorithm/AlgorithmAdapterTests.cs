@@ -12,7 +12,7 @@ namespace Librame.Tests.Algorithm
 
         public AlgorithmAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Algorithm;
+            _adapter = LibrameArchitecture.Adapters.Algorithm;
         }
         
 

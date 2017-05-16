@@ -29,7 +29,7 @@ namespace Librame.Adaptation
         /// <summary>
         /// 获取当前适配器配置目录。
         /// </summary>
-        public virtual string AdapterConfigDirectory
+        public virtual string ConfigDirectory
         {
             get { return PathUtility.ConfigsDirectory.AppendDirectoryName(AdapterInfo.Name); }
         }
@@ -38,7 +38,7 @@ namespace Librame.Adaptation
         /// <summary>
         /// 获取或设置管理器。
         /// </summary>
-        public IAdapterManager Adapters { get; set; }
+        public IAdapterCollection Adapters { get; set; }
 
         /// <summary>
         /// 获取或设置首选项。
@@ -49,7 +49,7 @@ namespace Librame.Adaptation
         /// <summary>
         /// 导出当前程序集包含的嵌入资源文件到适配器配置目录。
         /// </summary>
-        /// <param name="outputRelativeFilePath">给定的输出相对文件路径（相对于 <see cref="AdapterConfigDirectory"/> 适配器配置目录）。</param>
+        /// <param name="outputRelativeFilePath">给定的输出相对文件路径（相对于 <see cref="ConfigDirectory"/> 适配器配置目录）。</param>
         /// <param name="manifestResourceName">给定的清单资源文件名（可选；默认以输出相对文件路径参考文件名）。</param>
         public virtual void ExportConfigDirectory(string outputRelativeFilePath, string manifestResourceName = null)
         {
@@ -59,21 +59,21 @@ namespace Librame.Adaptation
         /// 导出指定程序集包含的嵌入资源文件到适配器配置目录。
         /// </summary>
         /// <param name="adapterAssembly">给定包含嵌入资源文件的程序集。</param>
-        /// <param name="outputRelativeFilePath">给定的输出相对文件路径（相对于 <see cref="AdapterConfigDirectory"/> 适配器配置目录）。</param>
+        /// <param name="outputRelativeFilePath">给定的输出相对文件路径（相对于 <see cref="ConfigDirectory"/> 适配器配置目录）。</param>
         /// <param name="manifestResourceName">给定的清单资源文件名（可选；默认以输出相对文件路径参考文件名）。</param>
         public virtual void ExportManifestResourceFile(Assembly adapterAssembly, string outputRelativeFilePath,
             string manifestResourceName = null)
         {
-            outputRelativeFilePath.NotNullOrEmpty(nameof(outputRelativeFilePath));
+            outputRelativeFilePath.NotEmpty(nameof(outputRelativeFilePath));
 
             // 如果不是以适配器配置目录开始的，则添加配置目录
-            if (!outputRelativeFilePath.StartsWith(AdapterConfigDirectory))
+            if (!outputRelativeFilePath.StartsWith(ConfigDirectory))
             {
                 // 支持基础目录
                 if (outputRelativeFilePath.StartsWith(PathUtility.BaseDirectory))
                     outputRelativeFilePath = PathUtility.BaseDirectory.AppendPath(outputRelativeFilePath);
                 else
-                    outputRelativeFilePath = AdapterConfigDirectory.AppendPath(outputRelativeFilePath);
+                    outputRelativeFilePath = ConfigDirectory.AppendPath(outputRelativeFilePath);
             }
 
             if (string.IsNullOrEmpty(manifestResourceName))

@@ -14,7 +14,7 @@ namespace Librame.Tests.Compression
 
         public CompressionAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Compression;
+            _adapter = LibrameArchitecture.Adapters.Compression;
         }
         
 

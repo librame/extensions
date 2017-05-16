@@ -11,7 +11,7 @@ namespace Librame.Tests.Algorithm
 
         public HashAlgorithmTests()
         {
-            _hash = LibrameArchitecture.AdapterManager.Algorithm.Hash;
+            _hash = LibrameArchitecture.Adapters.Algorithm.Hash;
         }
 
         [TestMethod()]

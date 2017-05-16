@@ -23,25 +23,23 @@ namespace Librame.Utility
         /// 转换为十六进制字符串。
         /// </summary>
         /// <param name="guid">给定的全局唯一标识符。</param>
-        /// <param name="hasConnector">是否包含连接符（可选；默认不包含连接符）。</param>
         /// <returns>返回 32 位长度的字符串。</returns>
-        public static string AsHex(string guid, bool hasConnector = false)
+        public static string AsHex(string guid)
         {
-            return AsHex(Guid.Parse(guid), hasConnector);
+            return AsHex(Guid.Parse(guid));
         }
         /// <summary>
         /// 转换为十六进制字符串。
         /// </summary>
         /// <param name="guid">给定的 <see cref="Guid"/>。</param>
-        /// <param name="hasConnector">是否包含连接符（可选；默认不包含连接符）。</param>
         /// <returns>返回 32 位长度的字符串。</returns>
-        public static string AsHex(Guid guid, bool hasConnector = false)
+        public static string AsHex(Guid guid)
         {
             var buffer = guid.ToByteArray();
 
-            return buffer.AsHex(hasConnector);
+            return buffer.AsHex();
         }
-        
+
         /// <summary>
         /// 还原为全局唯一标识符。
         /// </summary>

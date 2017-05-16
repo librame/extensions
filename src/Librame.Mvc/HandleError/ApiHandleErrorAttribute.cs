@@ -36,7 +36,7 @@ namespace System.Web.Http.Filters
             };
 
             // 记录错误日志
-            var logger = LibrameArchitecture.LoggingAdapter.GetLogger<ApiHandleErrorAttribute>();
+            var logger = LibrameArchitecture.Logging.GetLogger<ApiHandleErrorAttribute>();
             logger.Error(obj.Message, filterContext.Exception);
             
             filterContext.Response = new HttpResponseMessage()

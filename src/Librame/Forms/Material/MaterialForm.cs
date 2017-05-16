@@ -29,7 +29,7 @@ namespace Librame.Forms.Material
         [Browsable(false)]
         public ISkinProvider Skin
         {
-            get { return LibrameArchitecture.AdapterManager.Forms.Skin; }
+            get { return LibrameArchitecture.Adapters.Forms.Skin; }
         }
 
         public new FormBorderStyle FormBorderStyle { get { return base.FormBorderStyle; } set { base.FormBorderStyle = value; } }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Librame.Authorization;
 
 namespace Librame.Tests.Authorization
 {
@@ -7,16 +6,9 @@ namespace Librame.Tests.Authorization
     public class AuthorizeHelperTests
     {
         [TestMethod()]
-        public void GenerateAuthIdTest()
-        {
-            var authId = AuthorizeHelper.GenerateAuthId();
-            Assert.IsNotNull(authId);
-        }
-        
-        [TestMethod()]
         public void GenerateTokenTest()
         {
-            var token = AuthorizeHelper.GenerateToken(LibrameArchitecture.AdapterManager.Algorithm);
+            var token = LibrameArchitecture.Adapters.Authorization.Managers.Token.Generate();
             Assert.IsNotNull(token);
         }
 

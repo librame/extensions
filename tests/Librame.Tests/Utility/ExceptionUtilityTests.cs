@@ -36,7 +36,7 @@ namespace Librame.Tests.Utility
             {
                 string str = string.Empty;
 
-                str.NotNullOrEmpty(nameof(str));
+                str.NotEmpty(nameof(str));
             }
             catch (Exception ex)
             {
@@ -64,9 +64,9 @@ namespace Librame.Tests.Utility
         {
             try
             {
-                var baseType = typeof(Adaptation.IAdapterManager);
+                var baseType = typeof(Adaptation.IAdapterCollection);
 
-                baseType.AssignableFrom(typeof(Adaptation.AdapterManager));
+                baseType.AssignableFrom(typeof(Adaptation.AdapterCollection));
             }
             catch (Exception ex)
             {

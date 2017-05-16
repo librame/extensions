@@ -17,7 +17,7 @@ namespace Librame.Tests.Utility
         [TestMethod()]
         public void GetAssignableTypesTest()
         {
-            var managers = TypeUtility.GetAssignableTypes<Adaptation.IAdapterManager>();
+            var managers = TypeUtility.GetAssignableTypes<Adaptation.IAdapterCollection>();
 
             Assert.IsNotNull(managers);
         }

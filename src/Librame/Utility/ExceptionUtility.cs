@@ -61,7 +61,7 @@ namespace Librame.Utility
         /// <param name="str">给定的字符串。</param>
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回实例或抛出异常。</returns>
-        public static string NotNullOrEmpty(this string str, string paramName)
+        public static string NotEmpty(this string str, string paramName)
         {
             if (string.IsNullOrEmpty(str))
                 throw new ArgumentNullException(paramName);

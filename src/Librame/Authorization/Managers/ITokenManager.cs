@@ -10,29 +10,28 @@
 
 #endregion
 
-namespace Librame.Adaptation
+using System;
+
+namespace Librame.Authorization.Managers
 {
-    /// <summary>
-    /// 适配器首选项接口。
-    /// </summary>
-    public interface IAdapterSettings
-    {
-    }
-
+    using Adaptation;
 
     /// <summary>
-    /// 适配器首选项。
+    /// 令牌管理器接口。
     /// </summary>
-    public class AdapterSettings : IAdapterSettings
+    public interface ITokenManager : IAdapterCollectionManager
     {
         /// <summary>
-        /// 授权编号。
+        /// 生成令牌。
         /// </summary>
-        public string AuthId { get; set; }
+        /// <returns>返回令牌字符串。</returns>
+        string Generate();
 
         /// <summary>
-        /// 字符编码。
+        /// 生成令牌。
         /// </summary>
-        public System.Text.Encoding Encoding { get; set; }
+        /// <param name="guid">给定的 GUID。</param>
+        /// <returns>返回令牌字符串。</returns>
+        string Generate(Guid guid);
     }
 }

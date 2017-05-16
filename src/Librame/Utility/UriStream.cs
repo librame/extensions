@@ -30,7 +30,7 @@ namespace Librame.Utility
         /// <param name="url">给定的 URL。</param>
         public UriStream(string url)
         {
-            _url = url.NotNullOrEmpty(url);
+            _url = url.NotEmpty(url);
         }
 
 

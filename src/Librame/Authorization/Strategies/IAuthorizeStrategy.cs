@@ -66,24 +66,5 @@ namespace Librame.Authorization.Strategies
 
         #endregion
 
-
-        //#region Ticket
-
-        ///// <summary>
-        ///// 加密票根。
-        ///// </summary>
-        ///// <param name="ticket">给定的认证票根。</param>
-        ///// <returns>返回票根字符串。</returns>
-        //string EncryptTicket(AuthenticateTicket ticket);
-
-        ///// <summary>
-        ///// 解密票根。
-        ///// </summary>
-        ///// <param name="ticket">给定的票根字符串。</param>
-        ///// <returns>返回认证票根。</returns>
-        //AuthenticateTicket DecryptTicket(string ticket);
-
-        //#endregion
-
     }
 }

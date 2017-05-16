@@ -27,17 +27,17 @@ namespace Librame.Authorization.Providers
         /// <summary>
         /// 构造一个应用管道基类实例。
         /// </summary>
-        /// <param name="cryptogram">给定的密文管理器。</param>
-        public ApplicationProviderBase(ICryptogramManager cryptogram)
+        /// <param name="ciphertext">给定的密文管理器。</param>
+        public ApplicationProviderBase(ICiphertextManager ciphertext)
         {
-            Cryptogram = cryptogram.NotNull(nameof(cryptogram));
+            Ciphertext = ciphertext.NotNull(nameof(ciphertext));
         }
 
 
         /// <summary>
         /// 密文管理器接口。
         /// </summary>
-        public ICryptogramManager Cryptogram { get; }
+        public ICiphertextManager Ciphertext { get; }
 
 
         /// <summary>

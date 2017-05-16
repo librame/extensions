@@ -14,6 +14,7 @@ using Librame.Data.Descriptors;
 using Librame.Utility;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System.Collections.Generic
@@ -23,6 +24,8 @@ namespace System.Collections.Generic
     /// </summary>
     /// <typeparam name="T">指定的类型。</typeparam>
     /// <typeparam name="TId">指定的主键类型。</typeparam>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class TreeingNode<T, TId> : IEnumerable<TreeingNode<T, TId>>, IParentIdDescriptor<TId>
         where T : IParentIdDescriptor<TId>
         where TId : struct

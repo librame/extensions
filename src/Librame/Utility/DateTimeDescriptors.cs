@@ -10,11 +10,16 @@
 
 #endregion
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace Librame.Utility
 {
     /// <summary>
     /// 倒计时描述符。
     /// </summary>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class CountdownDescriptor
     {
         /// <summary>
@@ -84,6 +89,8 @@ namespace Librame.Utility
     /// <summary>
     /// 时间间隔描述符。
     /// </summary>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class TimeSpanDescriptor
     {
         /// <summary>

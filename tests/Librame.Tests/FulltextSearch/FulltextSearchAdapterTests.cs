@@ -10,7 +10,7 @@ namespace Librame.Tests.FulltextSearch
 
         public FulltextSearchAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.FulltextSearch;
+            _adapter = LibrameArchitecture.Adapters.FulltextSearch;
         }
 
 

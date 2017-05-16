@@ -45,12 +45,12 @@ namespace Librame.Authorization
             {
                 return SingletonManager.Regist<IAuthorizeStrategy>(key =>
                 {
-                    if (AuthSettings.EnableSso)
+                    if (AuthSettings.EnableSso && AuthSettings.IsSsoServerMode)
                     {
-                        if (AuthSettings.IsSsoServerMode)
-                            return new SsoServerFormsAuthorizeStrategy(this);
+                        return new SsoServerFormsAuthorizeStrategy(this);
 
-                        return new SsoClientFormsAuthorizeStrategy(this);
+                        // SSO 客户端只能通过 WEBAPI 进行远程数据查询
+                        //return new SsoClientFormsAuthorizeStrategy(this);
                     }
                     else
                     {

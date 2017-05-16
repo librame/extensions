@@ -17,7 +17,7 @@ namespace Librame.Authorization.Managers
     /// <summary>
     /// 密码管理器接口。
     /// </summary>
-    public interface IPasswdManager : IAdapterManagerReference
+    public interface IPasswdManager : IAdapterCollectionManager
     {
         /// <summary>
         /// 编码密码。

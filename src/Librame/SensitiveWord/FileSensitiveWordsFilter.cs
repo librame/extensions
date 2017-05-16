@@ -43,9 +43,9 @@ namespace Librame.SensitiveWord
         /// <param name="fileName">给定的敏感词定义文件名。</param>
         protected virtual void InitializeSchema(string fileName)
         {
-            var sourceInfo = ResourceSourceInfo.CreateInfo<SensitiveWordsResourceSchema>(fileName);
+            var sourceInfo = ResourceHelper.CreateInfo<SensitiveWordsResourceSchema>(fileName);
 
-            var provider = LibrameArchitecture.AdapterManager.Resource.GetProvider(sourceInfo,
+            var provider = LibrameArchitecture.Adapters.Resource.GetProvider(sourceInfo,
                 SensitiveWordsResourceSchema.Default);
 
             _schema = (provider.ExistingSchema as SensitiveWordsResourceSchema);

@@ -20,7 +20,7 @@ namespace Librame.OperationLog
     /// <summary>
     /// 操作日志管道接口。
     /// </summary>
-    public interface IOperateLogProvider : IAdapterManagerReference
+    public interface IOperateLogProvider : IAdapterCollectionManager
     {
         /// <summary>
         /// 添加操作日志。

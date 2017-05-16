@@ -31,11 +31,11 @@ namespace System.Web.Mvc
         /// <summary>
         /// 设置激活器。
         /// </summary>
-        /// <param name="containerAdapter">给定的容器适配器（可选；默认使用 <see cref="LibrameArchitecture.ContainerAdapter"/>）。</param>
+        /// <param name="containerAdapter">给定的容器适配器（可选；默认使用 <see cref="LibrameArchitecture.Container"/>）。</param>
         public static void SetActivator(IContainerAdapter containerAdapter = null)
         {
             if (ReferenceEquals(containerAdapter, null))
-                containerAdapter = LibrameArchitecture.ContainerAdapter;
+                containerAdapter = LibrameArchitecture.Container;
 
             // 使用内置的容器激活器
             SetActivator(new ContainerHttpControllerActivator(containerAdapter));
@@ -60,12 +60,12 @@ namespace System.Web.Mvc
         /// <summary>
         /// 设置解析器。
         /// </summary>
-        /// <param name="containerAdapter">给定的容器适配器（可选；默认使用 <see cref="LibrameArchitecture.ContainerAdapter"/>）。</param>
+        /// <param name="containerAdapter">给定的容器适配器（可选；默认使用 <see cref="LibrameArchitecture.Container"/>）。</param>
         public static void SetResolver(IContainerAdapter containerAdapter = null)
         {
             if (ReferenceEquals(containerAdapter, null))
             {
-                containerAdapter = LibrameArchitecture.ContainerAdapter;
+                containerAdapter = LibrameArchitecture.Container;
 
                 // 注册激活器
                 containerAdapter.Register<IControllerActivator, ContainerControllerActivator>();
@@ -99,7 +99,7 @@ namespace System.Web.Mvc
         {
             if (ReferenceEquals(container, null))
             {
-                var containerAdapter = LibrameArchitecture.ContainerAdapter;
+                var containerAdapter = LibrameArchitecture.Container;
 
                 if (containerAdapter.CurrentContainer is IUnityContainer)
                     container = (IUnityContainer)containerAdapter.CurrentContainer;

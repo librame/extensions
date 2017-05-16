@@ -13,7 +13,7 @@ namespace Librame.Tests.Office
 
         public OfficeAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Office;
+            _adapter = LibrameArchitecture.Adapters.Office;
         }
 
 

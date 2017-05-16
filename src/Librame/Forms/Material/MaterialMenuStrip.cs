@@ -27,7 +27,7 @@ namespace Librame.Forms.Material
         /// </summary>
         public ISkinProvider Skin
         {
-            get { return LibrameArchitecture.AdapterManager.Forms.Skin; }
+            get { return LibrameArchitecture.Adapters.Forms.Skin; }
         }
 
         public MaterialMenuStrip()
@@ -56,7 +56,7 @@ namespace Librame.Forms.Material
 		//Properties for managing the material design properties
 		public int Depth { get; set; }
 
-        public ISkinProvider Skin { get { return LibrameArchitecture.AdapterManager.Forms.Skin; } }
+        public ISkinProvider Skin { get { return LibrameArchitecture.Adapters.Forms.Skin; } }
 
         public MouseState MouseState { get; set; }
 

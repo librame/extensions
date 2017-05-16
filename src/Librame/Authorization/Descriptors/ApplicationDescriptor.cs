@@ -31,7 +31,7 @@ namespace Librame.Authorization.Descriptors
         /// <param name="authId">给定的授权编号。</param>
         public ApplicationDescriptor(string authId)
         {
-            AuthId = authId.NotNullOrEmpty(nameof(authId));
+            AuthId = authId.NotEmpty(nameof(authId));
         }
 
 

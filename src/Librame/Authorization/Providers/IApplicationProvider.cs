@@ -23,7 +23,7 @@ namespace Librame.Authorization.Providers
         /// <summary>
         /// 密文管理器接口。
         /// </summary>
-        ICryptogramManager Cryptogram { get; }
+        ICiphertextManager Ciphertext { get; }
 
 
         /// <summary>

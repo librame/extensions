@@ -10,7 +10,7 @@ namespace Librame.Tests.Container
 
         public ContainerAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Container;
+            _adapter = LibrameArchitecture.Adapters.Container;
         }
         
 

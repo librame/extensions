@@ -53,20 +53,23 @@ namespace System.Web.Http
         /// <summary>
         /// 响应 JSON 消息。
         /// </summary>
-        /// <typeparam name="TValue">指定的值类型。</typeparam>
-        /// <param name="value">给定要响应输出的值。</param>
+        /// <typeparam name="TModel">指定的模型类型。</typeparam>
+        /// <param name="model">给定要响应输出的模型实例（如果为空，则返回 404 异常）。</param>
         /// <param name="formatting">要格式化的方式（可选）。</param>
         /// <param name="serializerSettings">序列化首选项（可选）。</param>
         /// <param name="converters">转换器数组（可选）。</param>
         /// <returns>返回 HTTP 响应消息。</returns>
-        protected virtual HttpResponseMessage ResponseJsonMessage<TValue>(TValue value,
+        protected virtual HttpResponseMessage ResponseJsonMessage<TModel>(TModel model,
             Formatting formatting = Formatting.None,
             JsonSerializerSettings serializerSettings = null,
             params JsonConverter[] converters)
+            where TModel : class
         {
-            var json = value.AsJson(formatting, serializerSettings, converters);
+            if (model == null)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
 
-            var encoding = LibrameArchitecture.AdapterManager.Settings.Encoding;
+            var json = model.AsJson(formatting, serializerSettings, converters);
+            var encoding = LibrameArchitecture.Adapters.Settings.Encoding;
 
             return new HttpResponseMessage
             {
@@ -103,9 +106,6 @@ namespace System.Web.Http
         public virtual HttpResponseMessage Get(TId id)
         {
             var model = Repository.Get(id);
-            
-            if (ReferenceEquals(model, null))
-                throw new HttpResponseException(HttpStatusCode.NotFound);
 
             return ResponseJsonMessage(model);
         }

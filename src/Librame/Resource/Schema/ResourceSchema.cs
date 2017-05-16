@@ -10,11 +10,16 @@
 
 #endregion
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace Librame.Resource.Schema
 {
     /// <summary>
     /// 资源结构。
     /// </summary>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class ResourceSchema
     {
         /// <summary>

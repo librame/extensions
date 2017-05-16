@@ -18,52 +18,44 @@ namespace Librame.Authorization.Managers
     /// <summary>
     /// 密文管理器。
     /// </summary>
-    public class CryptogramManager : AbstractAdapterManagerReference, ICryptogramManager
+    public class CiphertextManager : AbstractAdapterCollectionManager, ICiphertextManager
     {
         /// <summary>
         /// 构造一个密文管理器实例。
         /// </summary>
         /// <param name="adapters">给定的适配器器管理器。</param>
-        public CryptogramManager(IAdapterManager adapters)
+        public CiphertextManager(IAdapterCollection adapters)
             : base(adapters)
         {
         }
 
 
         /// <summary>
-        /// 加密实例。
+        /// 编码。
         /// </summary>
-        /// <typeparam name="TValue">指定的实例类型。</typeparam>
-        /// <param name="value">给定的实例。</param>
-        /// <returns>返回字符串。</returns>
-        public virtual string Encrypt<TValue>(TValue value)
+        /// <param name="str">给定要编码的字符串。</param>
+        /// <returns>返回编码字符串。</returns>
+        public virtual string Encode(string str)
         {
-            value.NotNull(nameof(value));
-
-            // 转换为 JSON
-            var json = value.AsJson();
-
+            str.NotEmpty(nameof(str));
+            
             // 默认使用标准对称加密算法
             var sa = Adapters.Algorithm.StandardAes;
-            return sa.Encrypt(json);
+            return sa.Encrypt(str);
         }
 
         /// <summary>
-        /// 解密实例。
+        /// 解码。
         /// </summary>
-        /// <typeparam name="TValue">指定的实例类型。</typeparam>
-        /// <param name="encrypt">给定的加密字符串。</param>
-        /// <returns>返回实例。</returns>
-        public virtual TValue Decrypt<TValue>(string encrypt)
+        /// <param name="encode">给定要解码的字符串。</param>
+        /// <returns>返回原始字符串。</returns>
+        public virtual string Decode(string encode)
         {
-            encrypt.NotNullOrEmpty(nameof(encrypt));
+            encode.NotEmpty(nameof(encode));
 
             // 默认使用标准对称加密算法
             var sa = Adapters.Algorithm.StandardAes;
-            var json = sa.Decrypt(encrypt);
-
-            // 还原票根
-            return json.FromJson<TValue>();
+            return sa.Decrypt(encode);
         }
 
     }

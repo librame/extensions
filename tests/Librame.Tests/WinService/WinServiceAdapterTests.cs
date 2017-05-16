@@ -10,7 +10,7 @@ namespace Librame.Tests.WinService
 
         public WinServiceAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.WinService;
+            _adapter = LibrameArchitecture.Adapters.WinService;
         }
 
 

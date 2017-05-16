@@ -99,8 +99,8 @@ namespace System.Web.Http
             // 如果启用 SSO 且不是服务端模式
             if (authorize.AuthSettings.EnableSso && !authorize.AuthSettings.IsSsoServerMode)
             {
-                var encryptAuthId = authorize.Managers.Cryptogram
-                    .Encrypt(authorize.AuthSettings.AdapterSettings.AuthId);
+                var encryptAuthId = authorize.Managers.Ciphertext
+                    .Encode(authorize.AuthSettings.AdapterSettings.AuthId);
 
                 loginUrl = AuthorizeHelper.FormatServerSignInUrl(encryptAuthId,
                     authorize.AuthSettings.SsoSignInRespondUrl,

@@ -10,7 +10,7 @@ namespace Librame.Tests.Scheduler
 
         public SchedulerAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Scheduler;
+            _adapter = LibrameArchitecture.Adapters.Scheduler;
         }
 
 

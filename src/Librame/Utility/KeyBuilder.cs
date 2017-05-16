@@ -50,7 +50,7 @@ namespace Librame.Utility
         /// <returns>返回可格式化键名。</returns>
         public static string BuildFormatKey(string name)
         {
-            name.NotNullOrEmpty(nameof(name));
+            name.NotEmpty(nameof(name));
 
             // 如果已是可格式化的键名
             if (name.StartsWith("$(") && name.EndsWith(")"))
@@ -68,7 +68,7 @@ namespace Librame.Utility
         /// <returns>返回布尔值。</returns>
         public static bool ContainsFormatKey(string template, string formatKey)
         {
-            return template.Contains(formatKey.NotNullOrEmpty(nameof(formatKey)));
+            return template.Contains(formatKey.NotEmpty(nameof(formatKey)));
         }
 
 

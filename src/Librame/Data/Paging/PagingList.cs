@@ -11,6 +11,7 @@
 #endregion
 
 using Librame.Utility;
+using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
@@ -18,6 +19,8 @@ namespace System.Collections.Generic
     /// 分页列表。
     /// </summary>
     /// <typeparam name="T">要分页的对象类型。</typeparam>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class PagingList<T> : IPagingable<T>
     {
         /// <summary>

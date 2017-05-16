@@ -10,7 +10,7 @@ namespace Librame.Tests.Logging
 
         public LoggingAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Logging;
+            _adapter = LibrameArchitecture.Adapters.Logging;
         }
 
 

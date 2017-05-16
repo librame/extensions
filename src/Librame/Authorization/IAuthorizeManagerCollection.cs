@@ -18,16 +18,26 @@ namespace Librame.Authorization
     /// <summary>
     /// 认证管理器集合接口。
     /// </summary>
-    public interface IAuthorizeManagerCollection : IAdapterManagerReference
+    public interface IAuthorizeManagerCollection : IAdapterCollectionManager
     {
         /// <summary>
         /// 密文管理器接口。
         /// </summary>
-        ICryptogramManager Cryptogram { get; }
+        ICiphertextManager Ciphertext { get; }
 
         /// <summary>
         /// 密码管理器接口。
         /// </summary>
         IPasswdManager Passwd { get; }
+
+        /// <summary>
+        /// 存储管理器接口。
+        /// </summary>
+        IStorageManager Storage { get; }
+
+        /// <summary>
+        /// 令牌管理器接口。
+        /// </summary>
+        ITokenManager Token { get; }
     }
 }

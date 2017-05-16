@@ -35,7 +35,7 @@ namespace System.Web.Mvc
             };
 
             // 记录错误日志
-            var logger = LibrameArchitecture.LoggingAdapter.GetLogger(ExceptionType);
+            var logger = LibrameArchitecture.Logging.GetLogger(ExceptionType);
             logger.Error(obj.StatusCode, filterContext.Exception);
 
             if (string.IsNullOrEmpty(View))

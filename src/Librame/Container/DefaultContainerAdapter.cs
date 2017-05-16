@@ -123,7 +123,7 @@ namespace Librame.Container
         /// <returns>返回 <see cref="ExeConfigurationFileMap"/>。</returns>
         protected virtual ExeConfigurationFileMap GetContainerConfigFileMap()
         {
-            var configFilename = AdapterConfigDirectory.AppendPath("Unity.config");
+            var configFilename = ConfigDirectory.AppendPath("Unity.config");
 
             return new ExeConfigurationFileMap() { ExeConfigFilename = configFilename };
         }

@@ -13,7 +13,7 @@ namespace Librame.Website.Controllers
         public ActionResult Index()
         {
             var name = "test name";
-            var strategy = LibrameArchitecture.AdapterManager.Authorization.Strategy;
+            var strategy = LibrameArchitecture.Adapters.Authorization.Strategy;
             
             strategy.SignIn(name, string.Empty, true,
                 (k, p) => Session.Add(k, p));

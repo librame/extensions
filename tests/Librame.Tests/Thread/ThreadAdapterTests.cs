@@ -12,7 +12,7 @@ namespace Librame.Tests.Thread
 
         public ThreadAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Thread;
+            _adapter = LibrameArchitecture.Adapters.Thread;
         }
 
 

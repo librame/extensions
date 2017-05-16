@@ -12,7 +12,7 @@ namespace Librame.Tests.Html
 
         public HtmlAdapterTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Html;
+            _adapter = LibrameArchitecture.Adapters.Html;
         }
 
 

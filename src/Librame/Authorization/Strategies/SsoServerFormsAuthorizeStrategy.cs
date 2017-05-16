@@ -54,15 +54,12 @@ namespace Librame.Authorization.Strategies
         {
             var ticket = (principal.Identity as AccountIdentity).Ticket;
 
-            //// 注册票根
-            //var encryptTicket = RegistCookie(ticket);
-
             // 检查是否为客户端请求
             var pair = AuthorizeHelper.ResolveEncryptAuthIdAndRespondUrl(HttpContext.Current?.Request);
             if (!string.IsNullOrEmpty(pair.Item1) && !string.IsNullOrEmpty(pair.Item2))
             {
-                // 加密令牌用于传输
-                var encryptToken = Authorize.Managers.Cryptogram.Encrypt(ticket.Token);
+                // 编码令牌用于传输
+                var encryptToken = Authorize.Managers.Ciphertext.Encode(ticket.Token);
 
                 // 客户端登入应答链接
                 var respondUrl = AuthorizeHelper.FormatRespondUrl(encryptToken, pair.Item2);

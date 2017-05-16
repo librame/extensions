@@ -13,7 +13,7 @@ namespace Librame.Tests.Authorization
 
         public AccountAuthorizationTests()
         {
-            _adapter = LibrameArchitecture.AdapterManager.Authorization;
+            _adapter = LibrameArchitecture.Adapters.Authorization;
         }
 
         [TestMethod()]

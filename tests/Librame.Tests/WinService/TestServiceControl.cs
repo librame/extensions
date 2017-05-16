@@ -8,7 +8,7 @@ namespace Librame.Tests.WinService
     public class TestServiceControl : ServiceControl
     {
         private Timer _timer = null;
-        readonly ILog _log = LibrameArchitecture.LoggingAdapter.GetLogger<TestServiceControl>();
+        readonly ILog _log = LibrameArchitecture.Logging.GetLogger<TestServiceControl>();
 
         public TestServiceControl()
         {

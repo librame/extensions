@@ -35,14 +35,12 @@ namespace Librame.Authorization.Descriptors
         /// 构造一个 <see cref="AccountDescriptor"/> 实例。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// name or ticket is null or empty.
+        /// name is null or empty.
         /// </exception>
         /// <param name="name">给定的名称。</param>
-        /// <param name="ticket">给定的票根。</param>
-        public TokenDescriptor(string name, string ticket)
+        public TokenDescriptor(string name)
         {
-            Name = name.NotNullOrEmpty(nameof(name));
-            Ticket = ticket.NotNullOrEmpty(nameof(ticket));
+            Name = name.NotEmpty(nameof(name));
         }
 
 

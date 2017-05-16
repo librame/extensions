@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace Librame.OperationLog
 {
@@ -19,6 +20,7 @@ namespace Librame.OperationLog
     /// 操作日志描述符。
     /// </summary>
     [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class OperateLogDescriptor : IOperateLogDescriptor
     {
         /// <summary>

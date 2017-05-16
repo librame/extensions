@@ -32,7 +32,7 @@ namespace Librame.Utility
         /// <returns>返回配置键名。</returns>
         public static string BuildConfigKey(this string name)
         {
-            name.NotNullOrEmpty(nameof(name));
+            name.NotEmpty(nameof(name));
 
             if (!name.StartsWith(KEY_PREFIX))
                 return (KEY_PREFIX + name);
@@ -49,24 +49,35 @@ namespace Librame.Utility
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
         /// <param name="configKey">给定的配置（如 AppSettings）键名。</param>
-        /// <param name="defaultValue">给定的默认值（可选）。</param>
+        /// <param name="requestUrlFormat">给定的请求链接格式化方法。</param>
         /// <param name="serializerSettings">序列化首选项（可选）。</param>
         /// <param name="converters">转换器数组（可选）。</param>
         /// <returns>返回经过解析的对象。</returns>
-        public static T AsWebApi<T>(this HttpSessionState session,
-            string configKey, T defaultValue = null,
+        public static T AsWebApiByJson<T>(this HttpSessionState session,
+            string configKey, Func<string, string> requestUrlFormat,
             JsonSerializerSettings serializerSettings = null,
             params JsonConverter[] converters)
             where T : class
         {
-            // 获取对象
-            var obj = session.AsWebApi(configKey, typeof(T), serializerSettings, converters);
-
-            // 如果对象不为空，则直接返回
-            if (obj != null)
-                return (T)obj;
-
-            return defaultValue;
+            return (T)session.AsWebApiByJson(configKey, requestUrlFormat,
+                typeof(T), serializerSettings, converters);
+        }
+        /// <summary>
+        /// 转换为 WebApi 对象（如果会话中不存在，则发起远程请求并解析对象）。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
+        /// <param name="requestUrl">给定的请求链接。</param>
+        /// <param name="serializerSettings">序列化首选项（可选）。</param>
+        /// <param name="converters">转换器数组（可选）。</param>
+        /// <returns>返回经过解析的对象。</returns>
+        public static T AsWebApiByJson<T>(this HttpSessionState session,
+            string requestUrl,
+            JsonSerializerSettings serializerSettings = null,
+            params JsonConverter[] converters)
+        {
+            return (T)new HttpSessionStateWrapper(session).AsWebApiByJson(requestUrl,
+                typeof(T), serializerSettings, converters);
         }
 
         /// <summary>
@@ -74,45 +85,52 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
         /// <param name="configKey">给定的配置（如 AppSettings）键名。</param>
+        /// <param name="requestUrlFormat">给定的请求链接格式化方法。</param>
         /// <param name="type">给定的类型。</param>
         /// <param name="serializerSettings">序列化首选项（可选）。</param>
         /// <param name="converters">转换器数组（可选）。</param>
         /// <returns>返回经过解析的对象。</returns>
-        public static object AsWebApi(this HttpSessionState session,
-            string configKey, Type type,
+        public static object AsWebApiByJson(this HttpSessionState session,
+            string configKey, Func<string, string> requestUrlFormat, Type type,
             JsonSerializerSettings serializerSettings = null,
             params JsonConverter[] converters)
         {
-            var webApi = ConfigurationManager.AppSettings[configKey];
+            var requestUrl = ConfigurationManager.AppSettings[configKey];
+            requestUrl = requestUrlFormat(requestUrl);
 
-            return session.AsWebApi(webApi, s => s.FromJson(type, serializerSettings, converters));
+            return new HttpSessionStateWrapper(session).AsWebApi(requestUrl,
+                s => s.FromJson(type, serializerSettings, converters));
         }
+        /// <summary>
+        /// 转换为 WebApi 对象（如果会话中不存在，则发起远程请求并解析对象）。
+        /// </summary>
+        /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
+        /// <param name="requestUrl">给定的请求链接。</param>
+        /// <param name="type">给定的类型。</param>
+        /// <param name="serializerSettings">序列化首选项（可选）。</param>
+        /// <param name="converters">转换器数组（可选）。</param>
+        /// <returns>返回经过解析的对象。</returns>
+        public static object AsWebApiByJson(this HttpSessionState session,
+            string requestUrl, Type type,
+            JsonSerializerSettings serializerSettings = null,
+            params JsonConverter[] converters)
+        {
+            return new HttpSessionStateWrapper(session).AsWebApi(requestUrl,
+                s => s.FromJson(type, serializerSettings, converters));
+        }
+
 
         /// <summary>
         /// 转换为 WebApi 对象（如果会话中不存在，则发起远程请求并解析对象）。
         /// </summary>
         /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
-        /// <param name="webApiUrl">给定的 WebApi 链接。</param>
+        /// <param name="requestUrl">给定的请求链接。</param>
         /// <param name="resolveFactory">给定的解析工厂方法。</param>
         /// <returns>返回经过解析的对象。</returns>
         public static object AsWebApi(this HttpSessionState session,
-            string webApiUrl, Func<string, object> resolveFactory)
+            string requestUrl, Func<string, object> resolveFactory)
         {
-            // 以链接为缓存键名
-            var obj = session[webApiUrl];
-            if (obj == null)
-            {
-                // 获取 API 链接的响应内容
-                var content = UriUtility.ReadContent(webApiUrl);
-
-                // 解析对象
-                obj = resolveFactory.Invoke(content);
-
-                // 缓存对象
-                session[webApiUrl] = obj;
-            }
-
-            return obj;
+            return new HttpSessionStateWrapper(session).AsWebApi(requestUrl, resolveFactory);
         }
 
         #endregion
@@ -126,24 +144,34 @@ namespace Librame.Utility
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
         /// <param name="configKey">给定的配置（如 AppSettings）键名。</param>
-        /// <param name="defaultValue">给定的默认值（可选）。</param>
+        /// <param name="requestUrlFormat">给定的请求链接格式化方法。</param>
         /// <param name="serializerSettings">序列化首选项（可选）。</param>
         /// <param name="converters">转换器数组（可选）。</param>
         /// <returns>返回经过解析的对象。</returns>
-        public static T AsWebApi<T>(this HttpSessionStateBase session,
-            string configKey, T defaultValue = null,
+        public static T AsWebApiByJson<T>(this HttpSessionStateBase session,
+            string configKey, Func<string, string> requestUrlFormat,
             JsonSerializerSettings serializerSettings = null,
             params JsonConverter[] converters)
             where T : class
         {
-            // 获取对象
-            var obj = session.AsWebApi(configKey, typeof(T), serializerSettings, converters);
-
-            // 如果对象不为空，则直接返回
-            if (obj != null)
-                return (T)obj;
-
-            return defaultValue;
+            return (T)session.AsWebApiByJson(configKey, requestUrlFormat, typeof(T),
+                serializerSettings, converters);
+        }
+        /// <summary>
+        /// 转换为 WebApi 对象（如果会话中不存在，则发起远程请求并解析对象）。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
+        /// <param name="requestUrl">给定的请求链接。</param>
+        /// <param name="serializerSettings">序列化首选项（可选）。</param>
+        /// <param name="converters">转换器数组（可选）。</param>
+        /// <returns>返回经过解析的对象。</returns>
+        public static T AsWebApiByJson<T>(this HttpSessionStateBase session,
+            string requestUrl,
+            JsonSerializerSettings serializerSettings = null,
+            params JsonConverter[] converters)
+        {
+            return (T)session.AsWebApiByJson(requestUrl, typeof(T), serializerSettings, converters);
         }
 
         /// <summary>
@@ -151,42 +179,61 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
         /// <param name="configKey">给定的配置（如 AppSettings）键名。</param>
+        /// <param name="requestUrlFormat">给定的请求链接格式化方法。</param>
         /// <param name="type">给定的类型。</param>
         /// <param name="serializerSettings">序列化首选项（可选）。</param>
         /// <param name="converters">转换器数组（可选）。</param>
         /// <returns>返回经过解析的对象。</returns>
-        public static object AsWebApi(this HttpSessionStateBase session,
-            string configKey, Type type,
+        public static object AsWebApiByJson(this HttpSessionStateBase session,
+            string configKey, Func<string, string> requestUrlFormat, Type type,
             JsonSerializerSettings serializerSettings = null,
             params JsonConverter[] converters)
         {
-            var webApi = ConfigurationManager.AppSettings[configKey];
+            var requestUrl = ConfigurationManager.AppSettings[configKey];
+            requestUrl = requestUrlFormat(requestUrl);
 
-            return session.AsWebApi(webApi, s => s.FromJson(type, serializerSettings, converters));
+            return session.AsWebApi(requestUrl, s => s.FromJson(type, serializerSettings, converters));
         }
-
         /// <summary>
         /// 转换为 WebApi 对象（如果会话中不存在，则发起远程请求并解析对象）。
         /// </summary>
         /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
-        /// <param name="webApiUrl">给定的 WebApi 链接。</param>
+        /// <param name="requestUrl">给定的请求链接。</param>
+        /// <param name="type">给定的类型。</param>
+        /// <param name="serializerSettings">序列化首选项（可选）。</param>
+        /// <param name="converters">转换器数组（可选）。</param>
+        /// <returns>返回经过解析的对象。</returns>
+        public static object AsWebApiByJson(this HttpSessionStateBase session,
+            string requestUrl, Type type,
+            JsonSerializerSettings serializerSettings = null,
+            params JsonConverter[] converters)
+        {
+            return session.AsWebApi(requestUrl, s => s.FromJson(type, serializerSettings, converters));
+        }
+
+        
+        /// <summary>
+        /// 转换为 WebApi 对象（如果会话中不存在，则发起远程请求并解析对象）。
+        /// </summary>
+        /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
+        /// <param name="requestUrl">给定的请求链接。</param>
         /// <param name="resolveFactory">给定的解析工厂方法。</param>
         /// <returns>返回经过解析的对象。</returns>
         public static object AsWebApi(this HttpSessionStateBase session,
-            string webApiUrl, Func<string, object> resolveFactory)
+            string requestUrl, Func<string, object> resolveFactory)
         {
             // 以链接为缓存键名
-            var obj = session[webApiUrl];
+            var obj = session[requestUrl];
             if (obj == null)
             {
                 // 获取 API 链接的响应内容
-                var content = UriUtility.ReadContent(webApiUrl);
+                var content = UriUtility.ReadContent(requestUrl);
 
                 // 解析对象
                 obj = resolveFactory.Invoke(content);
 
                 // 缓存对象
-                session[webApiUrl] = obj;
+                session[requestUrl] = obj;
             }
 
             return obj;

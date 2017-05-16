@@ -13,9 +13,9 @@
 namespace Librame.Adaptation
 {
     /// <summary>
-    /// 适配器管理器接口。
+    /// 适配器集合接口。
     /// </summary>
-    public interface IAdapterManager
+    public interface IAdapterCollection
     {
         /// <summary>
         /// 获取容器适配器。

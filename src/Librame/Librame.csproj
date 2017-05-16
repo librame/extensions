@@ -217,8 +217,12 @@
     <Compile Include="Authorization\AuthenticateTicket.cs" />
     <Compile Include="Authorization\AuthorizeManagerCollection.cs" />
     <Compile Include="Authorization\IAuthorizeManagerCollection.cs" />
-    <Compile Include="Authorization\Managers\ICryptogramManager.cs" />
-    <Compile Include="Authorization\Managers\CryptogramManager.cs" />
+    <Compile Include="Authorization\Managers\ICiphertextManager.cs" />
+    <Compile Include="Authorization\Managers\CiphertextManager.cs" />
+    <Compile Include="Authorization\Managers\IStorageManager.cs" />
+    <Compile Include="Authorization\Managers\ITokenManager.cs" />
+    <Compile Include="Authorization\Managers\StorageManager.cs" />
+    <Compile Include="Authorization\Managers\TokenManager.cs" />
     <Compile Include="Data\BindingMarkup.cs" />
     <Compile Include="Data\Descriptors\AbstractCreateDataIdDescriptor.cs" />
     <Compile Include="Data\Descriptors\AbstractUpdateAndCreateDataIdDescriptor.cs" />
@@ -234,6 +238,7 @@
     <Compile Include="MediaInfo\MediaInfoHelper.cs" />
     <Compile Include="MediaInfo\Status.cs" />
     <Compile Include="MediaInfo\Tracks\OtherTrackInfo.cs" />
+    <Compile Include="Resource\ResourceHelper.cs" />
     <Compile Include="SensitiveWord\AbstarctSensitiveWordAdapter.cs" />
     <Compile Include="SensitiveWord\DefaultSensitiveWordAdapter.cs" />
     <Compile Include="SensitiveWord\FileSensitiveWordsFilter.cs" />
@@ -241,8 +246,8 @@
     <Compile Include="SensitiveWord\ISensitiveWordsFilter.cs" />
     <Compile Include="SensitiveWord\SensitiveWordsResourceSchema.cs" />
     <Compile Include="Utility\AssemblyUtility.cs" />
-    <Compile Include="Adaptation\IAdapterManager.cs" />
-    <Compile Include="Adaptation\IAdapterManagerReference.cs" />
+    <Compile Include="Adaptation\IAdapterCollection.cs" />
+    <Compile Include="Adaptation\IAdapterCollectionManager.cs" />
     <Compile Include="Algorithm\AbstractAlgorithmAdapter.cs" />
     <Compile Include="Algorithm\DefaultAlgorithmAdapter.cs" />
     <Compile Include="Algorithm\IAlgorithmAdapter.cs" />
@@ -259,7 +264,7 @@
     <Compile Include="Authorization\Managers\PasswdManager.cs" />
     <Compile Include="Authorization\Strategies\AuthorizeStrategyExtensions.cs" />
     <Compile Include="Authorization\AuthorizeProviderCollection.cs" />
-    <Compile Include="Adaptation\AbstractAdapterManagerReference.cs" />
+    <Compile Include="Adaptation\AbstractAdapterCollectionManager.cs" />
     <Compile Include="Authorization\Providers\AccountProviderBase.cs" />
     <Compile Include="Authorization\AuthorizeHelper.cs" />
     <Compile Include="Authorization\AuthorizeSettings.cs" />
@@ -309,7 +314,7 @@
     <Compile Include="Container\IContainerAdapter.cs" />
     <Compile Include="Container\DefaultContainerAdapter.cs" />
     <Compile Include="Adaptation\IAdapter.cs" />
-    <Compile Include="Adaptation\AdapterManager.cs" />
+    <Compile Include="Adaptation\AdapterCollection.cs" />
     <Compile Include="Data\AbstractDataAdapter.cs" />
     <Compile Include="Data\Conventions\EntityTableNameConvention.cs" />
     <Compile Include="Data\Conventions\HibernateHasManyConvention.cs" />
@@ -357,7 +362,6 @@
     <Compile Include="LibrameBase.cs" />
     <Compile Include="Utility\AbstractInstanceFactory.cs" />
     <Compile Include="Utility\CacheUtility.cs" />
-    <Compile Include="Utility\DecimalUtility.cs" />
     <Compile Include="Utility\DriveInfoWrapper.cs" />
     <Compile Include="Utility\IInstanceFactory.cs" />
     <Compile Include="Utility\ImageUtility.cs" />
@@ -389,7 +393,6 @@
     <Compile Include="Data\Treeing\TreeingNode.cs" />
     <Compile Include="Data\ValidationHelper.cs" />
     <Compile Include="Forms\FormsSettings.cs" />
-    <Compile Include="Adaptation\IAdapterSettings.cs" />
     <Compile Include="Adaptation\AdapterInfo.cs" />
     <Compile Include="Utility\KeyBuilder.cs" />
     <Compile Include="Utility\Singleton.cs" />

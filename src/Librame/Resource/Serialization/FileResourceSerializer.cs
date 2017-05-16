@@ -49,7 +49,7 @@ namespace Librame.Resource.Serialization
         /// <returns>返回修改后的文件名。</returns>
         public virtual string ChangeFileExtension(string fileName)
         {
-            fileName.NotNullOrEmpty(nameof(fileName));
+            fileName.NotEmpty(nameof(fileName));
 
             string currentExtension = FileExtension;
 

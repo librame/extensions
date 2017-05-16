@@ -40,7 +40,7 @@ namespace Librame.Authorization.Descriptors
         /// <param name="status">给定的帐户状态。</param>
         public AccountDescriptor(string name, string passwd, AccountStatus status)
         {
-            Name = name.NotNullOrEmpty(nameof(name));
+            Name = name.NotEmpty(nameof(name));
             Passwd = passwd;
             Status = status;
         }
@@ -50,7 +50,7 @@ namespace Librame.Authorization.Descriptors
         /// <param name="name">给定的名称。</param>
         internal AccountDescriptor(string name)
         {
-            Name = name.NotNullOrEmpty(nameof(name));
+            Name = name.NotEmpty(nameof(name));
             Passwd = AuthorizeHelper.DEFAULT_PASSWD;
             Status = AccountStatus.Active;
         }

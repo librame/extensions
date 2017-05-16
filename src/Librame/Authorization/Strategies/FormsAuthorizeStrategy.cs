@@ -56,9 +56,6 @@ namespace Librame.Authorization.Strategies
         /// <param name="principal">给定的帐户用户。</param>
         protected override void SignInSuccess(AuthenticateInfo authInfo, AccountPrincipal principal)
         {
-            // 注册票根
-            //RegistCookie((principal.Identity as AccountIdentity).Ticket);
-
             // 认证后重定向回最初请求的 URL 或默认 URL。
             var currentUrl = HttpContext.Current?.Request?.Url.ToString();
             var returnUrl = HttpContext.Current?.Request?.QueryString["returnUrl"];
@@ -68,51 +65,7 @@ namespace Librame.Authorization.Strategies
                 HttpContext.Current?.Response?.Redirect(returnUrl);
             }
         }
-
-        ///// <summary>
-        ///// 注册票根。
-        ///// </summary>
-        ///// <param name="ticket">给定的票根。</param>
-        ///// <returns>返回加密后的票根字符串。</returns>
-        //protected virtual string RegistCookie(AuthenticateTicket ticket)
-        //{
-        //    // Web 环境
-        //    var encrypt = EncryptTicket(ticket);
-        //    var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encrypt);
-
-        //    // 同步票根与 Cookie 信息
-        //    var context = HttpContext.Current;
-
-        //    cookie.Expires = ticket.Expiration;
-        //    cookie.Path = ticket.Path;
-        //    cookie.Domain = context?.Request?.Url?.Host;
-
-        //    // 重定向会被清空
-        //    context?.Response?.Cookies?.Add(cookie);
-
-        //    return encrypt;
-        //}
-
-        ///// <summary>
-        ///// 移除票根。
-        ///// </summary>
-        ///// <returns>返回票根字符串。</returns>
-        //protected virtual string RemoveCookie()
-        //{
-        //    var cookies = HttpContext.Current?.Response?.Cookies;
-
-        //    if (!ReferenceEquals(cookies, null))
-        //    {
-        //        var ticket = cookies[FormsAuthentication.FormsCookieName].Value;
-        //        cookies.Remove(FormsAuthentication.FormsCookieName);
-
-        //        return ticket;
-        //    }
-
-        //    return string.Empty;
-        //}
-
-
+        
         /// <summary>
         /// 用户登出。
         /// </summary>
@@ -125,13 +78,12 @@ namespace Librame.Authorization.Strategies
                 if (!Authorize.AuthSettings.EnableAuthorize)
                 {
                     var authInfo = GetSimulateAuthenticateInfo();
-                    return new AuthenticateTicket(authInfo.Account, DateTime.Now);
+                    var token = Authorize.Managers.Token.Generate();
+
+                    return new AuthenticateTicket(authInfo.Account, token, DateTime.Now);
                 }
 
                 var ticket = removePrincipal?.Invoke(AuthorizeHelper.AUTHORIZATION_KEY);
-
-                //RemoveCookie();
-
                 return ticket;
             }
             catch (Exception ex)

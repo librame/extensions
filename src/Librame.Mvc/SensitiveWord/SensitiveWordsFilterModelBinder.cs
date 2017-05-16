@@ -24,7 +24,7 @@ namespace System.Web.Mvc
     public class SensitiveWordsFilterModelBinder : DefaultModelBinder
     {
         private readonly ISensitiveWordsFilter _filter
-            = LibrameArchitecture.AdapterManager.SensitiveWord.Filter;
+            = LibrameArchitecture.Adapters.SensitiveWord.Filter;
 
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace System.Web.Mvc
             if (modelBinder == null)
                 modelBinder = new SensitiveWordsFilterModelBinder();
             
-            var assemblies = DataHelper.GetMappingAssemblies(LibrameArchitecture.AdapterManager.DataSettings.AssemblyStrings);
+            var assemblies = DataHelper.GetMappingAssemblies(LibrameArchitecture.Adapters.DataSettings.AssemblyStrings);
             assemblies.Invoke(a =>
             {
                 var types = TypeUtility.GetAssignableTypes<IEntityAutomapping>(a);

@@ -31,7 +31,7 @@ namespace System.Web.Mvc
             // 注册敏感词过滤模型绑定程序
             SensitiveWordsFilterModelBinder.Register();
 
-            var containerAdapter = LibrameArchitecture.ContainerAdapter;
+            var containerAdapter = LibrameArchitecture.Container;
 
             FilterProviders.Providers.Remove(FilterProviders.Providers.OfType<FilterAttributeFilterProvider>().First());
             FilterProviders.Providers.Add(new ContainerFilterAttributeFilterProvider(containerAdapter));
@@ -49,7 +49,7 @@ namespace System.Web.Mvc
         /// </summary>
         public static void Shutdown()
         {
-            var containerAdapter = LibrameArchitecture.ContainerAdapter;
+            var containerAdapter = LibrameArchitecture.Container;
 
             containerAdapter.Dispose();
         }

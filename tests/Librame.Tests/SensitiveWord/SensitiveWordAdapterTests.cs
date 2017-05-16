@@ -10,7 +10,7 @@ namespace Librame.Tests.SensitiveWord
 
         public SensitiveWordAdapterTests()
         {
-            _filter = LibrameArchitecture.AdapterManager.SensitiveWord.Filter;
+            _filter = LibrameArchitecture.Adapters.SensitiveWord.Filter;
         }
 
 

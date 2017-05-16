@@ -13,13 +13,13 @@
 namespace Librame.Adaptation
 {
     /// <summary>
-    /// 适配器管理器引用接口。
+    /// 适配器集合管理器接口。
     /// </summary>
-    public interface IAdapterManagerReference
+    public interface IAdapterCollectionManager
     {
         /// <summary>
         /// 获取适配器管理器。
         /// </summary>
-        IAdapterManager Adapters { get; }
+        IAdapterCollection Adapters { get; }
     }
 }

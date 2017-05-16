@@ -10,7 +10,7 @@ namespace Librame.Tests.Data
         [TestMethod()]
         public void DataToolsTest1()
         {
-            var repository = LibrameArchitecture.ContainerAdapter.Resolve<IRepository<Entities.Prefecture>>();
+            var repository = LibrameArchitecture.Container.Resolve<IRepository<Entities.Prefecture>>();
             //var jsonPath = @"D:\Sources\Architecture\Librame\trunk\doc\gis_prefecture_china.js";
 
             // 开始导入
@@ -25,7 +25,7 @@ namespace Librame.Tests.Data
         [TestMethod()]
         public void DataRepositoryTest1()
         {
-            var repository = LibrameArchitecture.ContainerAdapter.Resolve<IRepository<Entities.Region>>();
+            var repository = LibrameArchitecture.Container.Resolve<IRepository<Entities.Region>>();
 
             // Get
             var item = repository.Get(1);
@@ -45,7 +45,7 @@ namespace Librame.Tests.Data
         [TestMethod()]
         public void DataRepositoryTest()
         {
-            var repository = LibrameArchitecture.ContainerAdapter.Resolve<IRepository<Entities.Article>>();
+            var repository = LibrameArchitecture.Container.Resolve<IRepository<Entities.Article>>();
 
             // Create
             //var article = Initializer.Initialize<Entities.Article>();

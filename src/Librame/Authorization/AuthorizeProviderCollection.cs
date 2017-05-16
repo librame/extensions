@@ -62,7 +62,7 @@ namespace Librame.Authorization
             {
                 return SingletonManager.Resolve<IApplicationProvider>(key =>
                 {
-                    return new ApplicationProviderBase(Managers.Cryptogram);
+                    return new ApplicationProviderBase(Managers.Ciphertext);
                 });
             }
         }
@@ -76,7 +76,7 @@ namespace Librame.Authorization
             {
                 return SingletonManager.Resolve<ITokenProvider>(key =>
                 {
-                    return new TokenProviderBase(Managers.Cryptogram);
+                    return new TokenProviderBase(Managers.Ciphertext);
                 });
             }
         }
@@ -95,7 +95,7 @@ namespace Librame.Authorization
             {
                 return SingletonManager.Resolve<IRoleProvider>(key =>
                 {
-                    return new RoleProviderBase(Managers.Cryptogram);
+                    return new RoleProviderBase(Managers.Ciphertext);
                 });
             }
         }
@@ -109,7 +109,7 @@ namespace Librame.Authorization
             {
                 return SingletonManager.Resolve<IPermissionProvider>(key =>
                 {
-                    return new PermissionProviderBase(Managers.Cryptogram);
+                    return new PermissionProviderBase(Managers.Ciphertext);
                 });
             }
         }

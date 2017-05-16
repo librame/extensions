@@ -28,7 +28,7 @@ namespace Librame.SensitiveWord
             {
                 return SingletonManager.Resolve<ISensitiveWordsFilter>(key =>
                 {
-                    var fileName = AdapterConfigDirectory.AppendPath("filters.txt");
+                    var fileName = ConfigDirectory.AppendPath("filters.txt");
 
                     return new FileSensitiveWordsFilter(fileName);
                 });

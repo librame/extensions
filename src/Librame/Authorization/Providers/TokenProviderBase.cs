@@ -24,28 +24,27 @@ namespace Librame.Authorization.Providers
         /// <summary>
         /// 构造一个令牌管道基类实例。
         /// </summary>
-        /// <param name="cryptogram">给定的密文管理器。</param>
-        public TokenProviderBase(ICryptogramManager cryptogram)
+        /// <param name="ciphertext">给定的密文管理器。</param>
+        public TokenProviderBase(ICiphertextManager ciphertext)
         {
-            Cryptogram = cryptogram.NotNull(nameof(cryptogram));
+            Ciphertext = ciphertext.NotNull(nameof(ciphertext));
         }
 
 
         /// <summary>
         /// 密文管理器接口。
         /// </summary>
-        public ICryptogramManager Cryptogram { get; }
+        public ICiphertextManager Ciphertext { get; }
 
 
         /// <summary>
         /// 认证令牌。
         /// </summary>
         /// <param name="token">给定的令牌。</param>
-        /// <param name="ticket">给定的票根。</param>
         /// <returns>返回 <see cref="ITokenDescriptor"/>。</returns>
-        public virtual ITokenDescriptor Authenticate(string token, string ticket)
+        public virtual ITokenDescriptor Authenticate(string token)
         {
-            return Authenticate(new TokenDescriptor(token, ticket));
+            return Authenticate(new TokenDescriptor(token));
         }
 
         /// <summary>
@@ -67,7 +66,11 @@ namespace Librame.Authorization.Providers
         /// <returns>返回 <see cref="ITokenDescriptor"/>。</returns>
         public virtual ITokenDescriptor Create(string token, string ticket)
         {
-            return Create(new TokenDescriptor(token, ticket));
+            // 票根根据系统设计为可选
+            return Create(new TokenDescriptor(token)
+            {
+                Ticket = ticket
+            });
         }
 
         /// <summary>

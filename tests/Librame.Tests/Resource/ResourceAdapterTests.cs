@@ -11,14 +11,14 @@ namespace Librame.Tests.Resource
             TestHelper.DefaultDirectory.AppendPath("TestResource.json");
 
         public static readonly ResourceSourceInfo TestSourceInfo =
-            ResourceSourceInfo.CreateInfo<TestResourceSchema>(ResourceFileName);
+            ResourceHelper.CreateInfo<TestResourceSchema>(ResourceFileName);
 
 
         private readonly IResourceProvider _provider = null;
 
         public ResourceAdapterTests()
         {
-            _provider = LibrameArchitecture.AdapterManager.Resource.GetProvider(TestSourceInfo,
+            _provider = LibrameArchitecture.Adapters.Resource.GetProvider(TestSourceInfo,
                 TestResourceSchema.Default);
         }
 

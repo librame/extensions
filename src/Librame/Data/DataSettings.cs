@@ -12,12 +12,13 @@
 
 namespace Librame.Data
 {
+    using Adaptation;
     using Utility;
 
     /// <summary>
     /// 数据首选项。
     /// </summary>
-    public class DataSettings : Adaptation.AbstractAdapterSettings, Adaptation.IAdapterSettings
+    public class DataSettings : AbstractAdapterSettings, IAdapterSettings
     {
         /// <summary>
         /// 数据库信息。

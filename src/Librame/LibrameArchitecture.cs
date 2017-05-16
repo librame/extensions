@@ -26,7 +26,7 @@ namespace Librame
         /// </summary>
         public static Container.IContainerAdapter Can
         {
-            get { return LibrameArchitecture.ContainerAdapter; }
+            get { return LibrameArchitecture.Container; }
         }
 
         /// <summary>
@@ -34,15 +34,15 @@ namespace Librame
         /// </summary>
         public static Logging.ILoggingAdapter Log
         {
-            get { return LibrameArchitecture.LoggingAdapter; }
+            get { return LibrameArchitecture.Logging; }
         }
 
         /// <summary>
         /// 获取适配器集合。
         /// </summary>
-        public static Adaptation.IAdapterManager Adapters
+        public static Adaptation.IAdapterCollection Adapters
         {
-            get { return LibrameArchitecture.AdapterManager; }
+            get { return LibrameArchitecture.Adapters; }
         }
 
 
@@ -68,12 +68,12 @@ namespace Librame
     {
         private static readonly string _containerKey = KeyBuilder.BuildKey<Container.IContainerAdapter>();
         private static readonly string _loggingKey = KeyBuilder.BuildKey<Logging.ILoggingAdapter>();
-        private static readonly string _adapterManagerKey = KeyBuilder.BuildKey<Adaptation.IAdapterManager>();
+        private static readonly string _adapterManagerKey = KeyBuilder.BuildKey<Adaptation.IAdapterCollection>();
         
         /// <summary>
         /// 获取容器适配器。
         /// </summary>
-        public static Container.IContainerAdapter ContainerAdapter
+        public static Container.IContainerAdapter Container
         {
             get
             {
@@ -85,7 +85,7 @@ namespace Librame
         /// <summary>
         /// 获取日志适配器。
         /// </summary>
-        public static Logging.ILoggingAdapter LoggingAdapter
+        public static Logging.ILoggingAdapter Logging
         {
             get
             {
@@ -97,17 +97,17 @@ namespace Librame
         /// <summary>
         /// 获取容器管理器。
         /// </summary>
-        public static Adaptation.IAdapterManager AdapterManager
+        public static Adaptation.IAdapterCollection Adapters
         {
             get
             {
-                return (Adaptation.IAdapterManager)_adapters.GetOrAdd(_adapterManagerKey,
+                return (Adaptation.IAdapterCollection)_adapters.GetOrAdd(_adapterManagerKey,
                     key =>
                     {
-                        var container = Container.ContainerHelper.BuildDependencyOverride<Container.IContainerAdapter>(ContainerAdapter);
-                        var logging = Container.ContainerHelper.BuildDependencyOverride<Logging.ILoggingAdapter>(LoggingAdapter);
+                        var container = Librame.Container.ContainerHelper.BuildDependencyOverride<Container.IContainerAdapter>(Container);
+                        var logging = Librame.Container.ContainerHelper.BuildDependencyOverride<Logging.ILoggingAdapter>(Logging);
 
-                        return ContainerAdapter.Resolve<Adaptation.IAdapterManager>(container, logging);
+                        return Container.Resolve<Adaptation.IAdapterCollection>(container, logging);
                     });
             }
         }

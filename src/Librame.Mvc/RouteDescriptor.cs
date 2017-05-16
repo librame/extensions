@@ -10,11 +10,15 @@
 
 #endregion
 
+using System.Runtime.InteropServices;
+
 namespace System.Web.Routing
 {
     /// <summary>
     /// 路由描述符。
     /// </summary>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
     public class RouteDescriptor
     {
         /// <summary>

@@ -19,14 +19,14 @@ namespace Librame.Authorization
     /// <summary>
     /// 认证管理器集合。
     /// </summary>
-    public class AuthorizeManagerCollection : AbstractAdapterManagerReference,
+    public class AuthorizeManagerCollection : AbstractAdapterCollectionManager,
         IAuthorizeManagerCollection
     {
         /// <summary>
         /// 构造一个认证管理器集合实例。
         /// </summary>
         /// <param name="adapters">给定的适配器管理器。</param>
-        public AuthorizeManagerCollection(IAdapterManager adapters)
+        public AuthorizeManagerCollection(IAdapterCollection adapters)
             : base(adapters)
         {
         }
@@ -35,13 +35,13 @@ namespace Librame.Authorization
         /// <summary>
         /// 密文管理器接口。
         /// </summary>
-        public virtual ICryptogramManager Cryptogram
+        public virtual ICiphertextManager Ciphertext
         {
             get
             {
-                return SingletonManager.Resolve<ICryptogramManager>(key =>
+                return SingletonManager.Resolve<ICiphertextManager>(key =>
                 {
-                    return new CryptogramManager(Adapters);
+                    return new CiphertextManager(Adapters);
                 });
             }
         }
@@ -56,6 +56,34 @@ namespace Librame.Authorization
                 return SingletonManager.Resolve<IPasswdManager>(key =>
                 {
                     return new PasswdManager(Adapters);
+                });
+            }
+        }
+
+        /// <summary>
+        /// 存储管理器接口。
+        /// </summary>
+        public virtual IStorageManager Storage
+        {
+            get
+            {
+                return SingletonManager.Resolve<IStorageManager>(key =>
+                {
+                    return new StorageManager(Adapters);
+                });
+            }
+        }
+
+        /// <summary>
+        /// 令牌管理器接口。
+        /// </summary>
+        public virtual ITokenManager Token
+        {
+            get
+            {
+                return SingletonManager.Resolve<ITokenManager>(key =>
+                {
+                    return new TokenManager(Adapters);
                 });
             }
         }

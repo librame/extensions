@@ -15,9 +15,9 @@ namespace Librame.Adaptation
     using Utility;
 
     /// <summary>
-    /// 适配器管理器。
+    /// 适配器集合。
     /// </summary>
-    public class AdapterManager : IAdapterManager
+    public class AdapterCollection : IAdapterCollection
     {
         /// <summary>
         /// 获取容器适配器。
@@ -31,14 +31,14 @@ namespace Librame.Adaptation
 
 
         /// <summary>
-        /// 构造一个 <see cref="AdapterManager"/> 实例。
+        /// 构造一个 <see cref="AdapterCollection"/> 实例。
         /// </summary>
         /// <exception cref="System.ArgumentNullException">
         /// containerAdapter 或 loggingAdapter 为空。
         /// </exception>
         /// <param name="container">给定的容器适配器。</param>
         /// <param name="logging">给定的日志适配器。</param>
-        public AdapterManager(Container.IContainerAdapter container, Logging.ILoggingAdapter logging)
+        public AdapterCollection(Container.IContainerAdapter container, Logging.ILoggingAdapter logging)
         {
             Container = container.NotNull(nameof(container));
             Logging = logging.NotNull(nameof(logging));

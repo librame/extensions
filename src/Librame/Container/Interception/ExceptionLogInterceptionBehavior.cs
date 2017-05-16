@@ -43,7 +43,7 @@ namespace Librame.Container.Interception
         /// <returns>返回 <see cref="ILog"/>。</returns>
         protected virtual ILog GetLogger(MethodBase method)
         {
-            return LibrameArchitecture.LoggingAdapter.GetLogger(method.DeclaringType);
+            return LibrameArchitecture.Logging.GetLogger(method.DeclaringType);
         }
 
         /// <summary>

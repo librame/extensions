@@ -36,32 +36,28 @@ namespace Librame.Authorization
         /// 构造一个 <see cref="AuthenticateTicket"/> 实例。
         /// </summary>
         /// <param name="account">给定的帐户描述符。</param>
+        /// <param name="token">给定的令牌。</param>
         /// <param name="issueDate">给定的签发日期。</param>
-        /// <param name="expirationFactory">给定的过期时间方法（可选；默认为配置的过期天数过失效）。</param>
         /// <param name="isPersistent">给定是否持久化存储（可选；默认使用）。</param>
-        /// <param name="token">给定的令牌（可选；默认自行生成）。</param>
+        /// <param name="expirationFactory">给定的过期时间方法（可选；默认为配置的过期天数过失效）。</param>
         /// <param name="userData">给定的自定义数据（可选；默认空字符串）。</param>
         /// <param name="path">给定的 Cookie 路径（可选；默认为 <see cref="FormsAuthentication.FormsCookiePath"/>）。</param>
         /// <param name="version">给定的 Cookie 版本（可选）。</param>
-        public AuthenticateTicket(IAccountDescriptor account, DateTime issueDate,
-            Func<DateTime, DateTime> expirationFactory = null,
+        public AuthenticateTicket(IAccountDescriptor account, string token, DateTime issueDate,
             bool isPersistent = true,
-            string token = null,
+            Func<DateTime, DateTime> expirationFactory = null,
             string userData = null,
             string path = null,
             int version = 1)
         {
-            account.NotNull(nameof(account));
-            
             if (ReferenceEquals(expirationFactory, null))
             {
-                var authSettings = LibrameArchitecture.AdapterManager.Authorization.AuthSettings;
+                var authSettings = LibrameArchitecture.Adapters.Authorization.AuthSettings;
                 expirationFactory = dt => dt.AddDays(authSettings.ExpirationDays);
             }
 
-            Account = account;
-            Token = token ?? AuthorizeHelper.GenerateToken(LibrameArchitecture.AdapterManager.Algorithm);
-
+            Account = account.NotNull(nameof(account));
+            Token = token.NotEmpty(nameof(token));
             Name = account.Name;
             IssueDate = issueDate;
             Expiration = expirationFactory.Invoke(issueDate);
