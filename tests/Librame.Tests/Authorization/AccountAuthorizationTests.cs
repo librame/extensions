@@ -58,12 +58,11 @@ namespace Librame.Tests.Authorization
             var ticket = (System.Threading.Thread.CurrentPrincipal.Identity as AccountIdentity).Ticket;
 
             // 加密票根
-            //var encrypt = _adapter.Strategy.EncryptTicket(ticket);
-            var json = ticket.AsJson();
-            var bytes = System.Text.Encoding.UTF8.GetBytes(json);
-            var encrypt = System.Convert.ToBase64String(bytes);
+            var ticketString = _adapter.Managers.Storage.ToString(ticket);
+            //var ticketString = "0C007205388CDF07BE58198A2FEFE440BE58198A0FEFE440000000000100000068E5FB07C8E2FB07D8E2FB0701000000";
+            var ticketFromString = _adapter.Managers.Storage.FromString<AuthenticateTicket>(ticketString);
 
-            Assert.IsTrue(!string.IsNullOrEmpty(encrypt));
+            Assert.IsTrue(!string.IsNullOrEmpty(ticketString));
         }
 
         [TestMethod()]

@@ -20,6 +20,16 @@ namespace Librame.Authorization.Descriptors
     public interface IAccountDescriptor : IEntityAutomapping
     {
         /// <summary>
+        /// 编号。
+        /// </summary>
+        int Id { get; }
+
+        /// <summary>
+        /// 应用编号。
+        /// </summary>
+        int AppId { get; }
+
+        /// <summary>
         /// 名称。
         /// </summary>
         string Name { get; }

@@ -37,9 +37,17 @@ namespace Librame.Authorization.Managers
         /// </summary>
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回字符串。</returns>
-        public virtual string AsString(object obj)
+        public virtual string ToString(object obj)
         {
-            return obj.AsBytes().AsHex();
+            return Adapters.Algorithm.StandardAes.Encrypt(obj.AsJson());
+
+            // 此方法在不同环境可能会不能还原
+            //return obj.AsBytes().AsHex();
+
+            // 此方法字符串比 JSON + AES 更长
+            //return obj.SerializeBytes().AsHex();
+
+            //return obj.SerializeBytes().AsBase64();
         }
 
 
@@ -51,7 +59,7 @@ namespace Librame.Authorization.Managers
         /// <returns>返回对象。</returns>
         public virtual T FromString<T>(string str)
         {
-            return str.FromHex().FromBytes<T>();
+            return (T)FromString(str, typeof(T));
         }
 
         /// <summary>
@@ -62,7 +70,15 @@ namespace Librame.Authorization.Managers
         /// <returns>返回对象。</returns>
         public virtual object FromString(string str, Type type)
         {
-            return str.FromHex().FromBytes(type);
+            return Adapters.Algorithm.StandardAes.Decrypt(str).FromJson(type);
+
+            // 此方法在不同环境可能会不能还原
+            //return str.FromHex().FromBytes(type);
+
+            // 此方法字符串比 JSON + AES 更长
+            //return str.FromHex().DeserializeBytes();
+            
+            //return str.FromBase64().DeserializeBytes();
         }
 
     }

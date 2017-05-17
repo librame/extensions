@@ -30,7 +30,7 @@ namespace Librame.Utility
         static AssemblyUtility()
         {
             if (CurrentAssembly == null)
-                CurrentAssembly = typeof(LibrameArchitecture).Assembly;
+                CurrentAssembly = typeof(UriStream).Assembly;
         }
 
 

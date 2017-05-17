@@ -36,12 +36,10 @@ namespace Librame.Algorithm
         /// <returns>返回 MD5 字符串。</returns>
         public virtual string ToMd5(string str)
         {
+            var hash = new MD5CryptoServiceProvider();
+
             var buffer = GetBytes(str);
-
-            var md5 = new MD5CryptoServiceProvider();
-            buffer = md5.ComputeHash(buffer);
-
-            return EncodeBit(buffer);
+            return EncodeBit(hash.ComputeHash(buffer));
         }
 
 
@@ -52,12 +50,10 @@ namespace Librame.Algorithm
         /// <returns>返回 SHA1 字符串。</returns>
         public virtual string ToSha1(string str)
         {
+            var hash = new SHA1CryptoServiceProvider();
+
             var buffer = GetBytes(str);
-
-            var sha1 = new SHA1CryptoServiceProvider();
-            buffer = sha1.ComputeHash(buffer);
-
-            return EncodeBit(buffer);
+            return EncodeBit(hash.ComputeHash(buffer));
         }
 
 
@@ -68,12 +64,10 @@ namespace Librame.Algorithm
         /// <returns>返回 SHA256 字符串。</returns>
         public virtual string ToSha256(string str)
         {
+            var hash = new SHA256CryptoServiceProvider();
+
             var buffer = GetBytes(str);
-
-            var sha256 = new SHA256CryptoServiceProvider();
-            buffer = sha256.ComputeHash(buffer);
-
-            return EncodeBit(buffer);
+            return EncodeBit(hash.ComputeHash(buffer));
         }
 
 
@@ -84,12 +78,10 @@ namespace Librame.Algorithm
         /// <returns>返回 SHA384 字符串。</returns>
         public virtual string ToSha384(string str)
         {
+            var hash = new SHA384CryptoServiceProvider();
+
             var buffer = GetBytes(str);
-
-            var sha384 = new SHA384CryptoServiceProvider();
-            buffer = sha384.ComputeHash(buffer);
-
-            return EncodeBit(buffer);
+            return EncodeBit(hash.ComputeHash(buffer));
         }
 
 
@@ -100,12 +92,10 @@ namespace Librame.Algorithm
         /// <returns>返回 SHA512 字符串。</returns>
         public virtual string ToSha512(string str)
         {
+            var hash = new SHA512CryptoServiceProvider();
+
             var buffer = GetBytes(str);
-
-            var sha512 = new SHA512CryptoServiceProvider();
-            buffer = sha512.ComputeHash(buffer);
-
-            return EncodeBit(buffer);
+            return EncodeBit(hash.ComputeHash(buffer));
         }
 
     }

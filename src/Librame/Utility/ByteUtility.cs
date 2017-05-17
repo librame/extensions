@@ -11,7 +11,9 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace Librame.Utility
@@ -70,6 +72,72 @@ namespace Librame.Utility
                 var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
 
                 return Marshal.PtrToStructure(ptr, type);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        /// <summary>
+        /// 序列化对象为字节数组。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] SerializeBytes(this object obj)
+        {
+            obj.NotNull(nameof(obj));
+
+            try
+            {
+                byte[] buffer = null;
+
+                var bf = new BinaryFormatter();
+                using (var ms = new MemoryStream())
+                {
+                    bf.Serialize(ms, obj);
+                    buffer = ms.GetBuffer();
+                }
+
+                return buffer;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 反序列化字节数组为对象。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回对象。</returns>
+        public static T DeserializeBytes<T>(this byte[] buffer)
+        {
+            return (T)DeserializeBytes(buffer);
+        }
+        /// <summary>
+        /// 反序列化字节数组为对象。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回对象。</returns>
+        public static object DeserializeBytes(this byte[] buffer)
+        {
+            buffer.NotNull(nameof(buffer));
+
+            try
+            {
+                object obj = null;
+
+                var bf = new BinaryFormatter();
+                using (var ms = new MemoryStream(buffer))
+                {
+                    obj = bf.Deserialize(ms);
+                    ms.Flush();
+                }
+
+                return obj;
             }
             catch (Exception ex)
             {

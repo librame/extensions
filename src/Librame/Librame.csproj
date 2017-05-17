@@ -368,7 +368,6 @@
     <Compile Include="Utility\Initializer.cs" />
     <Compile Include="Utility\JsonHelper.cs" />
     <Compile Include="Utility\MainframeUtility.cs" />
-    <Compile Include="Utility\Serializer.cs" />
     <Compile Include="Logging\DefaultLoggingAdapter.cs" />
     <Compile Include="Logging\ILoggingAdapter.cs" />
     <Compile Include="Logging\AbstractLoggingAdapter.cs" />

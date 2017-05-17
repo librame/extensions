@@ -42,13 +42,11 @@ namespace Librame.Algorithm.Symmetries
             aes.IV = GenerateIV(key);
             aes.Mode = CipherMode.ECB;
             aes.Padding = PaddingMode.PKCS7;
+            
+            var ct = aes.CreateEncryptor();
 
             var buffer = GetBytes(str);
-
-            var ct = aes.CreateEncryptor();
-            buffer = ct.TransformFinalBlock(buffer, 0, buffer.Length);
-
-            return EncodeBit(buffer);
+            return EncodeBit(ct.TransformFinalBlock(buffer, 0, buffer.Length));
         }
 
 
@@ -65,13 +63,11 @@ namespace Librame.Algorithm.Symmetries
             aes.IV = GenerateIV(key);
             aes.Mode = CipherMode.ECB;
             aes.Padding = PaddingMode.PKCS7;
+            
+            var ct = aes.CreateDecryptor();
 
             var buffer = DecodeBit(encrypt);
-
-            var ct = aes.CreateDecryptor();
-            buffer = ct.TransformFinalBlock(buffer, 0, buffer.Length);
-
-            return GetString(buffer);
+            return GetString(ct.TransformFinalBlock(buffer, 0, buffer.Length));
         }
 
 

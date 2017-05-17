@@ -35,7 +35,9 @@ namespace Librame.Authorization
         /// <summary>
         /// 构造一个 <see cref="AuthenticateTicket"/> 实例。
         /// </summary>
-        /// <param name="account">给定的帐户描述符。</param>
+        /// <param name="accountId">给定的帐户编号。</param>
+        /// <param name="appId">给定的应用编号。</param>
+        /// <param name="name">给定的用户名。</param>
         /// <param name="token">给定的令牌。</param>
         /// <param name="issueDate">给定的签发日期。</param>
         /// <param name="isPersistent">给定是否持久化存储（可选；默认使用）。</param>
@@ -43,7 +45,7 @@ namespace Librame.Authorization
         /// <param name="userData">给定的自定义数据（可选；默认空字符串）。</param>
         /// <param name="path">给定的 Cookie 路径（可选；默认为 <see cref="FormsAuthentication.FormsCookiePath"/>）。</param>
         /// <param name="version">给定的 Cookie 版本（可选）。</param>
-        public AuthenticateTicket(IAccountDescriptor account, string token, DateTime issueDate,
+        public AuthenticateTicket(int accountId, int appId, string name, string token, DateTime issueDate,
             bool isPersistent = true,
             Func<DateTime, DateTime> expirationFactory = null,
             string userData = null,
@@ -56,9 +58,10 @@ namespace Librame.Authorization
                 expirationFactory = dt => dt.AddDays(authSettings.ExpirationDays);
             }
 
-            Account = account.NotNull(nameof(account));
+            AccountId = accountId;
+            AppId = appId;
+            Name = name;
             Token = token.NotEmpty(nameof(token));
-            Name = account.Name;
             IssueDate = issueDate;
             Expiration = expirationFactory.Invoke(issueDate);
             Expired = (DateTime.Now > Expiration);
@@ -67,56 +70,73 @@ namespace Librame.Authorization
             Path = path ?? FormsAuthentication.FormsCookiePath;
             Version = version;
         }
-
-
         /// <summary>
-        /// 获取帐户。
+        /// 构造一个 <see cref="AuthenticateTicket"/> 实例。
         /// </summary>
-        public IAccountDescriptor Account { get; set; }
+        /// <param name="account">给定的帐户。</param>
+        /// <param name="token">给定的令牌。</param>
+        /// <param name="issueDate">给定的签发日期。</param>
+        /// <param name="isPersistent">给定是否持久化存储（可选；默认使用）。</param>
+        public AuthenticateTicket(IAccountDescriptor account, string token, DateTime issueDate,
+            bool isPersistent = true)
+            : this(account.Id, account.AppId, account.Name, token, issueDate, isPersistent)
+        {
+        }
+
 
         /// <summary>
-        /// 获取令牌。
+        /// 帐户编号。
+        /// </summary>
+        public int AccountId { get; set; }
+
+        /// <summary>
+        /// 应用编号。
+        /// </summary>
+        public int AppId { get; set; }
+
+        /// <summary>
+        /// 名称。
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 令牌。
         /// </summary>
         public string Token { get; set; }
         
 
         /// <summary>
-        /// 获取到期时间。
+        /// 到期时间。
         /// </summary>
         public DateTime Expiration { get; set; }
 
         /// <summary>
-        /// 获取签发日期。
+        /// 签发日期。
         /// </summary>
         public DateTime IssueDate { get; set; }
 
         /// <summary>
-        /// 获取是否过期。
+        /// 是否过期。
         /// </summary>
         public bool Expired { get; set; }
 
         /// <summary>
-        /// 获取是否持久化存储。
+        /// 是否持久化存储。
         /// </summary>
         public bool IsPersistent { get; set; }
-
+        
         /// <summary>
-        /// 获取名称。
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// 获取自定义数据。
+        /// 自定义数据。
         /// </summary>
         public string UserData { get; set; }
 
         /// <summary>
-        /// 获取 Cookie 路径。
+        /// Cookie 路径。
         /// </summary>
         public string Path { get; set; }
 
         /// <summary>
-        /// 获取 Cookie 版本。
+        /// Cookie 版本。
         /// </summary>
         public int Version { get; set; }
 

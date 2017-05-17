@@ -14,7 +14,6 @@ using Librame;
 using Librame.Data;
 using Librame.Utility;
 using Newtonsoft.Json;
-using System.Net;
 using System.Net.Http;
 
 namespace System.Web.Http
@@ -48,7 +47,7 @@ namespace System.Web.Http
         {
             get { return _service; }
         }
-
+        
 
         /// <summary>
         /// 响应 JSON 消息。
@@ -65,8 +64,7 @@ namespace System.Web.Http
             params JsonConverter[] converters)
             where TModel : class
         {
-            if (model == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+            (model == null).InvalidHttpRequest();
 
             var json = model.AsJson(formatting, serializerSettings, converters);
             var encoding = LibrameArchitecture.Adapters.Settings.Encoding;

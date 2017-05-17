@@ -50,9 +50,7 @@ namespace Librame.Algorithm.Symmetries
             engine.Init(true, new ParametersWithIV(new KeyParameter(key), iv));
 
             var buffer = GetBytes(str);
-            buffer = engine.DoFinal(buffer);
-
-            return EncodeBase64(buffer);
+            return EncodeBase64(engine.DoFinal(buffer));
         }
 
         
@@ -73,9 +71,8 @@ namespace Librame.Algorithm.Symmetries
             engine.Init(false, new ParametersWithIV(new KeyParameter(key), iv));
 
             var buffer = DecodeBase64(encrypt);
-            buffer = engine.DoFinal(buffer);
 
-            return GetString(buffer);
+            return GetString(engine.DoFinal(buffer));
         }
 
 

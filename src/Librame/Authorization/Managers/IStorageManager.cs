@@ -26,7 +26,7 @@ namespace Librame.Authorization.Managers
         /// </summary>
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回字符串。</returns>
-        string AsString(object obj);
+        string ToString(object obj);
 
 
         /// <summary>

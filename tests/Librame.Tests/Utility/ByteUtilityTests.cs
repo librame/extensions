@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Librame.Authorization;
-using Librame.Authorization.Descriptors;
 using Librame.Utility;
+using System;
 
 namespace Librame.Tests.Utility
 {
@@ -13,17 +13,14 @@ namespace Librame.Tests.Utility
         {
             // 必须在类名加 [StructLayout(LayoutKind.Sequential)] 属性特殊，否则会抛出异常
             // 此方法比 [Serializable] 序列化方法生成的字节数组短了很多，非常节省空间
-            var ticket = new AuthenticateTicket()
-            {
-                Account = new AccountDescriptor("Test Name", "123456", AccountStatus.Active)
-            };
+            var ticket = new AuthenticateTicket(1, 1, "Test Name", "Test Token", DateTime.Now);
 
             var buffer = ticket.AsBytes();
             Assert.IsTrue(buffer.Length > 0);
 
             var resolve = buffer.FromBytes<AuthenticateTicket>();
             Assert.IsNotNull(resolve);
-            Assert.AreEqual(ticket?.Account.Name, resolve?.Account.Name);
+            Assert.AreEqual(ticket.Name, resolve.Name);
         }
 
     }

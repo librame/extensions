@@ -263,6 +263,7 @@
     <Compile Include="SensitiveWord\SensitiveWordsFilterModelBinder.cs" />
     <Compile Include="Utility\EnumStyleUtility.cs" />
     <Compile Include="Extensions\RepositoryExtensions.cs" />
+    <Compile Include="Utility\HttpResponseExceptionUtility.cs" />
     <Compile Include="Utility\WebApiHelper.cs" />
   </ItemGroup>
   <ItemGroup>

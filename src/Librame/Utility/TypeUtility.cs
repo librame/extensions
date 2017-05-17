@@ -20,7 +20,7 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="Type"/> 实用工具。
     /// </summary>
-    public class TypeUtility
+    public static class TypeUtility
     {
         /// <summary>
         /// 如果指定对象的属性值。
@@ -28,7 +28,7 @@ namespace Librame.Utility
         /// <param name="obj">给定要获取属性值的对象。</param>
         /// <param name="propertyName">给定的属性名。</param>
         /// <returns>返回属性值。</returns>
-        public static object AsPropertyValue(object obj, string propertyName)
+        public static object AsPropertyValue(this object obj, string propertyName)
         {
             if (ReferenceEquals(obj, null))
                 return null;
@@ -52,7 +52,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string AssemblyQualifiedNameWithoutVCP(Type type)
+        public static string AssemblyQualifiedNameWithoutVCP(this Type type)
         {
             return (type.FullName + ", " + type.Assembly.GetName().Name);
         }
@@ -63,7 +63,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="types">给定的类型集合。</param>
         /// <returns>返回 <see cref="IList{T}"/>。</returns>
-        public static IList<object> CreateInstances(IEnumerable<Type> types)
+        public static IList<object> CreateInstances(this IEnumerable<Type> types)
         {
             if (ReferenceEquals(types, null))
                 return null;
@@ -96,7 +96,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="source">给定的源类型实例。</param>
         /// <returns>返回新实例。</returns>
-        public static T CopyToCreate<T>(T source)
+        public static T CopyToCreate<T>(this T source)
             where T : class, new()
         {
             var target = Activator.CreateInstance<T>();
@@ -109,21 +109,13 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="source">给定的源类型实例。</param>
         /// <param name="target">给定的目标类型实例。</param>
-        public static void CopyTo<T>(T source, T target)
+        public static void CopyTo<T>(this T source, T target)
             where T : class
         {
             source.NotNull(nameof(source));
             target.NotNull(nameof(target));
 
-            var properties = typeof(T).GetProperties();
-            if (properties.Length < 1)
-                return;
-
-            properties.Invoke(pi =>
-            {
-                var sourceValue = pi.GetValue(source);
-                pi.SetValue(target, sourceValue);
-            });
+            SetProperties(typeof(T), source, target);
         }
 
         /// <summary>
@@ -131,7 +123,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="source">给定的源对象。</param>
         /// <returns>返回新对象。</returns>
-        public static object CopyToCreate(object source)
+        public static object CopyToCreate(this object source)
         {
             var target = Activator.CreateInstance(source?.GetType());
             CopyTo(source, target);
@@ -143,7 +135,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="source">给定的源对象。</param>
         /// <param name="target">给定的目标对象。</param>
-        public static void CopyTo(object source, object target)
+        public static void CopyTo(this object source, object target)
         {
             source = source.NotNull(nameof(source));
             target = target.NotNull(nameof(target));
@@ -156,14 +148,20 @@ namespace Librame.Utility
                     sourceType.Name, targetType.Name));
             }
 
-            var properties = sourceType.GetProperties();
+            SetProperties(sourceType, source, target);
+        }
+
+        private static void SetProperties(Type propertyType, object source, object target)
+        {
+            var properties = propertyType.GetProperties();
             if (properties.Length < 1)
                 return;
 
             properties.Invoke(pi =>
             {
                 var sourceValue = pi.GetValue(source);
-                pi.SetValue(target, sourceValue);
+                if (sourceValue != null)
+                    pi.SetValue(target, sourceValue);
             });
         }
 
@@ -191,7 +189,7 @@ namespace Librame.Utility
         /// <param name="type">给定的类型。</param>
         /// <param name="inherit">搜索此成员的继承链以查找这些属性，则为 true；否则为 false。</param>
         /// <returns>返回属性对象。</returns>
-        public static TAttribute GetClassAttribute<TAttribute>(Type type, bool inherit = false)
+        public static TAttribute GetClassAttribute<TAttribute>(this Type type, bool inherit = false)
             where TAttribute : Attribute
         {
             type.NotNull(nameof(type));
@@ -209,7 +207,7 @@ namespace Librame.Utility
         /// <param name="member">指定的成员信息。</param>
         /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
         /// <returns>返回自定义属性对象。</returns>
-        public static TAttribute GetMemberAttribute<TAttribute>(MemberInfo member, bool inherit = false)
+        public static TAttribute GetMemberAttribute<TAttribute>(this MemberInfo member, bool inherit = false)
             where TAttribute : Attribute
         {
             member.NotNull(nameof(member));
@@ -243,7 +241,7 @@ namespace Librame.Utility
         /// <param name="withInstantiable">仅支持可实例化类型（可选）。</param>
         /// <param name="withoutBaseType">排除基础类型自身（可选）。</param>
         /// <returns>返回类型数组。</returns>
-        public static Type[] GetAssignableTypes(Type baseType,
+        public static Type[] GetAssignableTypes(this Type baseType,
             bool withInstantiable = true, bool withoutBaseType = true)
         {
             var assembly = Assembly.GetCallingAssembly();
@@ -259,7 +257,7 @@ namespace Librame.Utility
         /// <param name="withInstantiable">仅支持可实例化类型（可选）。</param>
         /// <param name="withoutBaseType">排除基础类型自身（可选）。</param>
         /// <returns>返回类型数组。</returns>
-        public static Type[] GetAssignableTypes<TBase>(Assembly assembly,
+        public static Type[] GetAssignableTypes<TBase>(this Assembly assembly,
             bool withInstantiable = true, bool withoutBaseType = true)
         {
             return GetAssignableTypes(assembly, typeof(TBase), withInstantiable, withoutBaseType);
@@ -272,7 +270,7 @@ namespace Librame.Utility
         /// <param name="withInstantiable">仅支持可实例化类型（可选）。</param>
         /// <param name="withoutBaseType">排除基础类型自身（可选）。</param>
         /// <returns>返回类型数组。</returns>
-        public static Type[] GetAssignableTypes(Assembly assembly, Type baseType,
+        public static Type[] GetAssignableTypes(this Assembly assembly, Type baseType,
             bool withInstantiable = true, bool withoutBaseType = true)
         {
             baseType.NotNull(nameof(baseType));
@@ -305,47 +303,6 @@ namespace Librame.Utility
         }
 
         #endregion
-
-    }
-
-
-    /// <summary>
-    /// <see cref="TypeUtility"/> 静态扩展。
-    /// </summary>
-    public static class TypeUtilityExtensions
-    {
-        /// <summary>
-        /// 如果指定对象的属性值。
-        /// </summary>
-        /// <param name="obj">给定要获取属性值的对象。</param>
-        /// <param name="propertyName">给定的属性名。</param>
-        /// <returns>返回属性值。</returns>
-        public static object AsPropertyValue(this object obj, string propertyName)
-        {
-            return TypeUtility.AsPropertyValue(obj, propertyName);
-        }
-
-
-        /// <summary>
-        /// 获取指定类型的程序集限定名，但不包括版本、文化、公钥标记等信息（如 Librame.Utility.TypeUtility, Librame）。
-        /// </summary>
-        /// <param name="type">给定的类型。</param>
-        /// <returns>返回字符串。</returns>
-        public static string AssemblyQualifiedNameWithoutVCP(Type type)
-        {
-            return TypeUtility.AssemblyQualifiedNameWithoutVCP(type);
-        }
-
-
-        /// <summary>
-        /// 创建实例集合。
-        /// </summary>
-        /// <param name="types">给定的类型集合。</param>
-        /// <returns>返回 <see cref="IList{T}"/>。</returns>
-        public static IList<object> CreateInstances(this IEnumerable<Type> types)
-        {
-            return TypeUtility.CreateInstances(types);
-        }
 
     }
 }

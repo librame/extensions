@@ -17,14 +17,14 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="Uri"/> 实用工具。
     /// </summary>
-    public class UriUtility
+    public static class UriUtility
     {
         /// <summary>
         /// 是否为 URL 格式。
         /// </summary>
         /// <param name="path">给定的路径。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsUrl(string path)
+        public static bool IsUrl(this string path)
         {
             path.NotEmpty(nameof(path));
 
@@ -37,7 +37,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="path">给定的路径。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsHttpOrHttpsUrl(string path)
+        public static bool IsHttpOrHttpsUrl(this string path)
         {
             path.NotEmpty(nameof(path));
 
@@ -57,7 +57,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="url">给定的 URL。</param>
         /// <returns>返回整数。</returns>
-        public static long ReadContentLength(string url)
+        public static long ReadContentLength(this string url)
         {
             var us = new UriStream(url);
             return us.GetContentLength();
@@ -68,59 +68,10 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="url">给定的 URL。</param>
         /// <returns>返回字符串。</returns>
-        public static string ReadContent(string url)
+        public static string ReadContent(this string url)
         {
             var us = new UriStream(url);
             return us.GetContent();
-        }
-
-    }
-
-
-    /// <summary>
-    /// <see cref="UriUtility"/> 静态扩展。
-    /// </summary>
-    public static class UriUtilityExtensions
-    {
-        /// <summary>
-        /// 是否为 URL 格式。
-        /// </summary>
-        /// <param name="path">给定的路径。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool IsUrl(this string path)
-        {
-            return UriUtility.IsUrl(path);
-        }
-
-        /// <summary>
-        /// 是否为 HTTP 或 HTTPS URL 格式。
-        /// </summary>
-        /// <param name="path">给定的路径。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool IsHttpOrHttpsUrl(this string path)
-        {
-            return UriUtility.IsHttpOrHttpsUrl(path);
-        }
-
-
-        /// <summary>
-        /// 获取内容长度。
-        /// </summary>
-        /// <param name="url">给定的 URL。</param>
-        /// <returns>返回整数。</returns>
-        public static long ReadContentLength(this string url)
-        {
-            return UriUtility.ReadContentLength(url);
-        }
-
-        /// <summary>
-        /// 读取指定 URL 链接的内容。
-        /// </summary>
-        /// <param name="url">给定的 URL。</param>
-        /// <returns>返回字符串。</returns>
-        public static string ReadContent(this string url)
-        {
-            return UriUtility.ReadContent(url);
         }
 
     }
