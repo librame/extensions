@@ -115,7 +115,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="manifestResourceName">给定的清单资源名。</param>
         /// <param name="outputFilePath">给定的输出文件路径。</param>
-        public static Task ManifestResourceSaveAsAsync(string manifestResourceName, string outputFilePath)
+        public static Task ManifestResourceSaveAsAsync(this string manifestResourceName, string outputFilePath)
         {
             return CurrentAssembly.ManifestResourceSaveAsAsync(manifestResourceName, outputFilePath);
         }

@@ -19,7 +19,7 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="Cache"/> 实用工具。
     /// </summary>
-    public class CacheUtility
+    public static class CacheUtility
     {
         private const string CAPTCHA_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         private const string CAPTCHA_KEY = LibrameAssemblyConstants.NAME + "Captcha";
@@ -31,7 +31,7 @@ namespace Librame.Utility
         /// <param name="cache">给定的缓存。</param>
         /// <param name="compareCaptcha">给定用于对比的验证码。</param>
         /// <returns>返回是否通过验证的布尔值。</returns>
-        public static bool ValidateCaptcha(Cache cache, string compareCaptcha)
+        public static bool ValidateCaptcha(this Cache cache, string compareCaptcha)
         {
             var captcha = (string)cache[CAPTCHA_KEY];
 
@@ -46,7 +46,7 @@ namespace Librame.Utility
         /// <param name="length">给定的验证码长度（可选；默认 5 位）。</param>
         /// <param name="captchaFactory">给定的验证码工厂方法（可选）。</param>
         /// <returns>返回图像。</returns>
-        public static Image GenerateCaptcha(Cache cache, int length = 5, Func<int, string> captchaFactory = null)
+        public static Image GenerateCaptcha(this Cache cache, int length = 5, Func<int, string> captchaFactory = null)
         {
             if (ReferenceEquals(captchaFactory, null))
                 captchaFactory = GenerateCaptcha;
@@ -72,38 +72,6 @@ namespace Librame.Utility
             }
 
             return captcha;
-        }
-
-    }
-
-
-    /// <summary>
-    /// <see cref="CacheUtility"/> 静态扩展。
-    /// </summary>
-    public static class CacheUtilityExtensions
-    {
-        /// <summary>
-        /// 验证图片验证码。
-        /// </summary>
-        /// <param name="cache">给定的缓存。</param>
-        /// <param name="compareCaptcha">给定用于对比的验证码。</param>
-        /// <returns>返回是否通过验证的布尔值。</returns>
-        public static bool ValidateCaptcha(this Cache cache, string compareCaptcha)
-        {
-            return CacheUtility.ValidateCaptcha(cache, compareCaptcha);
-        }
-
-
-        /// <summary>
-        /// 生成图片验证码。
-        /// </summary>
-        /// <param name="cache">给定的缓存。</param>
-        /// <param name="length">给定的验证码长度（可选；默认 5 位）。</param>
-        /// <param name="captchaFactory">给定的验证码工厂方法（可选）。</param>
-        /// <returns>返回图像。</returns>
-        public static Image GenerateCaptcha(this Cache cache, int length = 5, Func<int, string> captchaFactory = null)
-        {
-            return CacheUtility.GenerateCaptcha(cache, length, captchaFactory);
         }
 
     }

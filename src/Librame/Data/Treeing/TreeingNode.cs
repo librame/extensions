@@ -253,7 +253,7 @@ namespace System.Collections.Generic
             if (Childs.Count < 1) return string.Empty;
 
             if (ReferenceEquals(toStringFactory, null))
-                toStringFactory = node => this.AsString();
+                toStringFactory = node => this.AsPairsString();
             
             var sb = new StringBuilder();
             foreach (var child in Childs)

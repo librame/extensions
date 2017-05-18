@@ -116,7 +116,7 @@ namespace Librame.Authorization
         /// <param name="respondUrl">给定的应答链接。</param>
         /// <param name="serverSignInUrl">给定的服务器登入链接。</param>
         /// <returns>返回格式化后的字符串。</returns>
-        public static string FormatServerSignInUrl(string encryptAuthId,
+        internal static string FormatServerSignInUrl(string encryptAuthId,
             string respondUrl, string serverSignInUrl)
         {
             serverSignInUrl.NotEmpty(nameof(serverSignInUrl));
@@ -148,7 +148,7 @@ namespace Librame.Authorization
         /// <param name="respondUrl">给定的应答链接。</param>
         /// <param name="serverSignOutUrl">给定的服务器登出链接。</param>
         /// <returns>返回格式化后的字符串。</returns>
-        public static string FormatServerSignOutUrl(string encryptToken, string encryptAuthId,
+        internal static string FormatServerSignOutUrl(string encryptToken, string encryptAuthId,
             string respondUrl, string serverSignOutUrl)
         {
             serverSignOutUrl.NotEmpty(nameof(serverSignOutUrl));

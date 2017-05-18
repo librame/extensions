@@ -365,7 +365,6 @@
     <Compile Include="Utility\DriveInfoWrapper.cs" />
     <Compile Include="Utility\IInstanceFactory.cs" />
     <Compile Include="Utility\ImageUtility.cs" />
-    <Compile Include="Utility\Initializer.cs" />
     <Compile Include="Utility\JsonHelper.cs" />
     <Compile Include="Utility\MainframeUtility.cs" />
     <Compile Include="Logging\DefaultLoggingAdapter.cs" />
@@ -419,7 +418,6 @@
     <Compile Include="Thread\AbstractThreadAdapter.cs" />
     <Compile Include="Thread\IThreadAdapter.cs" />
     <Compile Include="Thread\DefaultThreadAdapter.cs" />
-    <Compile Include="Utility\ConversionHelper.cs" />
     <Compile Include="Utility\EnumUtility.cs" />
     <Compile Include="Utility\TextDrawDescriptor.cs" />
     <Compile Include="WinService\AbstractWinServiceAdapter.cs" />

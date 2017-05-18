@@ -23,7 +23,7 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="Image"/> 实用工具。
     /// </summary>
-    public class ImageUtility
+    public static class ImageUtility
     {
         /// <summary>
         /// JPEG 多用途互联网邮件扩展类型。
@@ -47,7 +47,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="image">给定的图像。</param>
         /// <param name="saveFileName">给定的另存为图片文件名。</param>
-        public static void AsProgressive(Image image, string saveFileName)
+        public static void AsProgressive(this Image image, string saveFileName)
         {
             var codec = GetCodecInfo();
 
@@ -70,7 +70,7 @@ namespace Librame.Utility
         /// <param name="saveFileName">给定的另存为图片文件名。</param>
         /// <param name="flag">给定的压缩比例（可选；默认80，范围在1-100之间）。</param>
         /// <param name="mimeType">给定的 MIME 类型（可选；默认为 JPEG 格式）。</param>
-        public static void Compress(Image image, string saveFileName, int flag = 80,
+        public static void Compress(this Image image, string saveFileName, int flag = 80,
             string mimeType = JPEG_MIME_TYPE)
         {
             flag = flag.Range(1, 100);
@@ -91,7 +91,7 @@ namespace Librame.Utility
         /// <param name="startP">给定绘制起点的坐标对。</param>
         /// <param name="descriptor">给定的文本绘制描述符。</param>
         /// <returns>返回 <see cref="Bitmap"/>。</returns>
-        public static Bitmap Captcha(string captcha, Point startP, TextDrawDescriptor descriptor = null)
+        public static Bitmap Captcha(this string captcha, Point startP, TextDrawDescriptor descriptor = null)
         {
             if (ReferenceEquals(descriptor, null))
                 descriptor = TextDrawDescriptor.Default;
@@ -157,7 +157,7 @@ namespace Librame.Utility
         /// <param name="rawImage">给定的原始图像。</param>
         /// <param name="cutRectangle">给定的剪切矩形。</param>
         /// <returns>返回 <see cref="Bitmap"/>。</returns>
-        public static Bitmap Cut(Image rawImage, Rectangle cutRectangle)
+        public static Bitmap Cut(this Image rawImage, Rectangle cutRectangle)
         {
             // 创建剪切图像
             var cutImage = new Bitmap(cutRectangle.Width, cutRectangle.Height);
@@ -203,7 +203,7 @@ namespace Librame.Utility
         /// <param name="rawImage">给定的原始图像。</param>
         /// <param name="angle">给定的旋转角度（仅支持 -180、-90、90、180 等四种角度）。</param>
         /// <returns>返回 <see cref="Bitmap"/>。</returns>
-        public static Bitmap Rotate(Image rawImage, int angle)
+        public static Bitmap Rotate(this Image rawImage, int angle)
         {
             // 旋转尺寸
             var rotateSize = RotateResize(rawImage.Size, angle);
@@ -244,7 +244,7 @@ namespace Librame.Utility
         /// <param name="rawSize">给定的原始尺寸。</param>
         /// <param name="angle">给定的旋转角度（仅支持 -180、-90、90、180 等四种角度）。</param>
         /// <returns>返回 <see cref="Size"/>。</returns>
-        public static Size RotateResize(Size rawSize, int angle)
+        public static Size RotateResize(this Size rawSize, int angle)
         {
             var absAngle = Math.Abs(angle);
             if (absAngle != 90 && absAngle != 180)
@@ -274,7 +274,7 @@ namespace Librame.Utility
         /// <param name="rawImage">给定的原图。</param>
         /// <param name="maxSize">给定的最大尺寸。</param>
         /// <param name="bgColor">给定的背景色。</param>
-        public static Bitmap ScaleByMaxSize(Image rawImage, Size maxSize, Color bgColor)
+        public static Bitmap ScaleByMaxSize(this Image rawImage, Size maxSize, Color bgColor)
         {
             // 缩略尺寸
             var scaleSize = ScaleResize(rawImage.Size, maxSize);
@@ -289,7 +289,7 @@ namespace Librame.Utility
         /// <param name="scaleSize">给定的缩放尺寸。</param>
         /// <param name="bgColor">给定的背景色。</param>
         /// <returns>返回 <see cref="Bitmap"/>。</returns>
-        public static Bitmap Scale(Image rawImage, Size scaleSize, Color bgColor)
+        public static Bitmap Scale(this Image rawImage, Size scaleSize, Color bgColor)
         {
             // 创建缩略图像
             var scaleImage = new Bitmap(scaleSize.Width, scaleSize.Height);
@@ -327,7 +327,7 @@ namespace Librame.Utility
         /// <param name="rawSize">给定的原始尺寸。</param>
         /// <param name="maxSize">给定的目标尺寸。</param>
         /// <returns>返回计算后的缩放尺寸。</returns>
-        public static Size ScaleResize(Size rawSize, Size maxSize)
+        public static Size ScaleResize(this Size rawSize, Size maxSize)
         {
             // 缩略图宽、高计算
             double zoomWidth = rawSize.Width;
@@ -371,7 +371,7 @@ namespace Librame.Utility
         /// <param name="wmSize">给定的水印尺寸。</param>
         /// <param name="startP">给定的起始坐标。</param>
         /// <returns>返回 <see cref="Point"/>。</returns>
-        public static Point CalcWatermarkStartP(Size imgSize, Size wmSize, Point startP)
+        public static Point CalcWatermarkStartP(this Size imgSize, Size wmSize, Point startP)
         {
             // 计算绘制的坐标
             int startX = startP.X;
@@ -394,7 +394,7 @@ namespace Librame.Utility
         /// <param name="watermark">给定的水印内容（文本或文件名）。</param>
         /// <param name="startP">给定的起始坐标。</param>
         /// <param name="descriptor">如果是文字水印，则需指定文本绘制描述符。</param>
-        public static void AppendWatermark(Image rawImage, string watermark, Point startP,
+        public static void AppendWatermark(this Image rawImage, string watermark, Point startP,
             TextDrawDescriptor descriptor = null)
         {
             if (ReferenceEquals(descriptor, null))
@@ -481,158 +481,4 @@ namespace Librame.Utility
         #endregion
 
     }
-
-
-    /// <summary>
-    /// <see cref="ImageUtility"/> 静态扩展。
-    /// </summary>
-    public static class ImageUtilityExtensions
-    {
-        /// <summary>
-        /// 转换为渐进式编码图片。
-        /// </summary>
-        /// <param name="image">给定的图像。</param>
-        /// <param name="saveFileName">给定的另存为图片文件名。</param>
-        public static void AsProgressive(this Image image, string saveFileName)
-        {
-            ImageUtility.AsProgressive(image, saveFileName);
-        }
-
-
-        /// <summary>
-        /// 压缩图像。
-        /// </summary>
-        /// <param name="image">给定的图像。</param>
-        /// <param name="saveFileName">给定的另存为图片文件名。</param>
-        /// <param name="flag">给定的压缩比例（可选；默认80，范围在1-100之间）。</param>
-        /// <param name="mimeType">给定的 MIME 类型（可选；默认为 JPEG 格式）。</param>
-        public static void Compress(this Image image, string saveFileName, int flag = 80,
-            string mimeType = ImageUtility.JPEG_MIME_TYPE)
-        {
-            ImageUtility.Compress(image, saveFileName, flag, mimeType);
-        }
-
-
-        /// <summary>
-        /// 绘制图像验证码。
-        /// </summary>
-        /// <param name="captcha">给定的验证码。</param>
-        /// <param name="startP">给定绘制起点的坐标对。</param>
-        /// <param name="descriptor">给定的文本绘制描述符。</param>
-        /// <returns>返回 <see cref="Bitmap"/>。</returns>
-        public static Bitmap Captcha(this string captcha, Point startP, TextDrawDescriptor descriptor = null)
-        {
-            return ImageUtility.Captcha(captcha, startP, descriptor);
-        }
-
-
-        /// <summary>
-        /// 剪切图像。
-        /// </summary>
-        /// <param name="rawImage">给定的原始图像。</param>
-        /// <param name="cutRectangle">给定的剪切矩形。</param>
-        /// <returns>返回 <see cref="Bitmap"/>。</returns>
-        public static Bitmap Cut(this Image rawImage, Rectangle cutRectangle)
-        {
-            return ImageUtility.Cut(rawImage, cutRectangle);
-        }
-
-
-        #region Rotate
-
-        /// <summary>
-        /// 旋转图像。
-        /// </summary>
-        /// <param name="rawImage">给定的原始图像。</param>
-        /// <param name="angle">给定的旋转角度（仅支持 -180、-90、90、180 等四种角度）。</param>
-        /// <returns>返回 <see cref="Bitmap"/>。</returns>
-        public static Bitmap Rotate(this Image rawImage, int angle)
-        {
-            return ImageUtility.Rotate(rawImage, angle);
-        }
-
-        /// <summary>
-        /// 旋转调整尺寸。
-        /// </summary>
-        /// <param name="rawSize">给定的原始尺寸。</param>
-        /// <param name="angle">给定的旋转角度（仅支持 -180、-90、90、180 等四种角度）。</param>
-        /// <returns>返回 <see cref="Size"/>。</returns>
-        public static Size RotateResize(this Size rawSize, int angle)
-        {
-            return ImageUtility.RotateResize(rawSize, angle);
-        }
-
-        #endregion
-
-
-        #region Scale
-
-        /// <summary>
-        /// 缩放图像。
-        /// </summary>
-        /// <param name="rawImage">给定的原图。</param>
-        /// <param name="maxSize">给定的最大尺寸。</param>
-        /// <param name="bgColor">给定的背景色。</param>
-        public static Bitmap ScaleByMaxSize(this Image rawImage, Size maxSize, Color bgColor)
-        {
-            return ImageUtility.ScaleByMaxSize(rawImage, maxSize, bgColor);
-        }
-
-        /// <summary>
-        /// 缩放图像。
-        /// </summary>
-        /// <param name="rawImage">给定的原图。</param>
-        /// <param name="scaleSize">给定的缩放尺寸。</param>
-        /// <param name="bgColor">给定的背景色。</param>
-        /// <returns>返回 <see cref="Bitmap"/>。</returns>
-        public static Bitmap Scale(this Image rawImage, Size scaleSize, Color bgColor)
-        {
-            return ImageUtility.Scale(rawImage, scaleSize, bgColor);
-        }
-
-        /// <summary>
-        /// 等比例缩放调整尺寸。
-        /// </summary>
-        /// <param name="rawSize">给定的原始尺寸。</param>
-        /// <param name="maxSize">给定的目标尺寸。</param>
-        /// <returns>返回计算后的缩放尺寸。</returns>
-        public static Size ScaleResize(this Size rawSize, Size maxSize)
-        {
-            return ImageUtility.ScaleResize(rawSize, maxSize);
-        }
-
-        #endregion
-
-
-        #region Watermark
-
-        /// <summary>
-        /// 计算水印起点坐标。
-        /// </summary>
-        /// <param name="imgSize">给定的图像尺寸。</param>
-        /// <param name="wmSize">给定的水印尺寸。</param>
-        /// <param name="startP">给定的起始坐标。</param>
-        /// <returns>返回 <see cref="Point"/>。</returns>
-        public static Point CalcWatermarkStartP(this Size imgSize, Size wmSize, Point startP)
-        {
-            return ImageUtility.CalcWatermarkStartP(imgSize, wmSize, startP);
-        }
-
-        /// <summary>
-        /// 附加水印。
-        /// </summary>
-        /// <param name="rawImage">给定的原图。</param>
-        /// <param name="watermark">给定的水印内容（文本或文件名）。</param>
-        /// <param name="startP">给定的起始坐标。</param>
-        /// <param name="descriptor">如果是文字水印，则需指定文本绘制描述符。</param>
-        public static void AppendWatermark(this Image rawImage, string watermark, Point startP,
-            TextDrawDescriptor descriptor = null)
-        {
-            ImageUtility.AppendWatermark(rawImage, watermark, startP, descriptor);
-        }
-
-        #endregion
-
-    }
-
 }

@@ -260,7 +260,6 @@
     <Compile Include="Utility\UriStreamTests.cs" />
     <Compile Include="Utility\UriUtilityTests.cs" />
     <Compile Include="Utility\PathUtilityTests.cs" />
-    <Compile Include="Utility\ConversionHelperTests.cs" />
     <Compile Include="Utility\FileUtilityTests.cs" />
     <Compile Include="Utility\ExceptionUtilityTests.cs" />
     <Compile Include="Data\Entities\Article.cs" />

@@ -42,7 +42,7 @@ namespace Librame.Utility
             {
                 formatFactory = (ei, sb) =>
                 {
-                    sb.Append(ei.AsString());
+                    sb.Append(ei.AsPairsString());
                 };
             }
 

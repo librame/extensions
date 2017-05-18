@@ -23,6 +23,40 @@ namespace Librame.Utility
     /// </summary>
     public static class ByteUtility
     {
+
+        #region Encoding
+
+        /// <summary>
+        /// 将字符串编码为字节序列。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的字符编码。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] EncodeBytes(this string str, Encoding encoding = null)
+        {
+            encoding = encoding.AsOrDefault(Encoding.UTF8);
+
+            return encoding.GetBytes(str);
+        }
+
+        /// <summary>
+        /// 将字节序列还原为字符串。
+        /// </summary>
+        /// <param name="bytes">给定的字节数组。</param>
+        /// <param name="encoding">给定的字符编码。</param>
+        /// <returns>返回字符串。</returns>
+        public static string DecodeBytes(this byte[] bytes, Encoding encoding = null)
+        {
+            encoding = encoding.AsOrDefault(Encoding.UTF8);
+
+            return encoding.GetString(bytes);
+        }
+
+        #endregion
+
+
+        #region Marshal
+
         /// <summary>
         /// 将对象转换为字节数组。
         /// </summary>
@@ -32,21 +66,28 @@ namespace Librame.Utility
         {
             obj.NotNull(nameof(obj));
 
+            // 对象类名需设置 [StructLayout(LayoutKind.Sequential)] 属性特性，否则会抛出异常
+            var size = Marshal.SizeOf(obj);
+            var ip = Marshal.AllocHGlobal(size);
+
+            // 此方法比 [Serializable] 序列化方法生成的字节数组短了很多，非常节省空间
+            var buffer = new byte[size];
+
             try
             {
-                // 对象类名需设置 [StructLayout(LayoutKind.Sequential)] 属性特性，否则会抛出异常
-                var buffer = new byte[Marshal.SizeOf(obj)];
-                var ip = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
-
-                // 此方法比 [Serializable] 序列化方法生成的字节数组短了很多，非常节省空间
-                Marshal.StructureToPtr(obj, ip, true);
-
-                return buffer;
+                Marshal.StructureToPtr(obj, ip, false /* 为 True 会出现进程卡死并退出 */);
+                Marshal.Copy(ip, buffer, 0, size);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+            finally
+            {
+                Marshal.FreeHGlobal(ip);
+            }
+
+            return buffer;
         }
 
         /// <summary>
@@ -67,18 +108,32 @@ namespace Librame.Utility
         /// <returns>返回对象。</returns>
         public static object FromBytes(this byte[] bytes, Type type)
         {
+            var size = Marshal.SizeOf(type);
+            var ip = Marshal.AllocHGlobal(size);
+
+            object obj = null;
+
             try
             {
-                var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(bytes, 0);
-
-                return Marshal.PtrToStructure(ptr, type);
+                Marshal.Copy(bytes, 0, ip, size);
+                obj = Marshal.PtrToStructure(ip, type);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+            finally
+            {
+                Marshal.FreeHGlobal(ip);
+            }
+
+            return obj;
         }
 
+        #endregion
+
+
+        #region Serialize
 
         /// <summary>
         /// 序列化对象为字节数组。
@@ -145,6 +200,10 @@ namespace Librame.Utility
             }
         }
 
+        #endregion
+
+
+        #region Base64
 
         /// <summary>
         /// 转换字节序列为 BASE64。
@@ -184,6 +243,10 @@ namespace Librame.Utility
             }
         }
 
+        #endregion
+
+
+        #region Hex
 
         /// <summary>
         /// 转换字节序列为十六进制。
@@ -246,6 +309,8 @@ namespace Librame.Utility
                 throw ex;
             }
         }
+
+        #endregion
 
     }
 }

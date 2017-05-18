@@ -12,8 +12,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace Librame.Utility
 {
@@ -22,22 +24,6 @@ namespace Librame.Utility
     /// </summary>
     public static class TypeUtility
     {
-        /// <summary>
-        /// 如果指定对象的属性值。
-        /// </summary>
-        /// <param name="obj">给定要获取属性值的对象。</param>
-        /// <param name="propertyName">给定的属性名。</param>
-        /// <returns>返回属性值。</returns>
-        public static object AsPropertyValue(this object obj, string propertyName)
-        {
-            if (ReferenceEquals(obj, null))
-                return null;
-
-            var pi = obj.GetType().GetProperty(propertyName);
-            return pi?.GetValue(obj);
-        }
-
-
         /// <summary>
         /// 获取指定类型的程序集限定名，但不包括版本、文化、公钥标记等信息（如 Librame.Utility.TypeUtility, Librame）。
         /// </summary>
@@ -59,34 +45,230 @@ namespace Librame.Utility
 
 
         /// <summary>
+        /// 如果指定对象的属性值。
+        /// </summary>
+        /// <param name="obj">给定要获取属性值的对象。</param>
+        /// <param name="propertyName">给定的属性名。</param>
+        /// <returns>返回属性值。</returns>
+        public static object AsPropertyValue(this object obj, string propertyName)
+        {
+            obj.NotNull(nameof(obj));
+
+            var pi = obj.GetType().GetProperty(propertyName);
+            return pi?.GetValue(obj);
+        }
+
+
+        /// <summary>
         /// 创建实例集合。
         /// </summary>
         /// <param name="types">给定的类型集合。</param>
         /// <returns>返回 <see cref="IList{T}"/>。</returns>
-        public static IList<object> CreateInstances(this IEnumerable<Type> types)
+        public static IEnumerable<object> AsInstances(this IEnumerable<Type> types)
         {
-            if (ReferenceEquals(types, null))
-                return null;
+            return types.Select(t => Activator.CreateInstance(t));
+        }
 
-            var list = new List<object>();
 
-            foreach (var t in types)
+        #region AsOrDefault
+
+        /// <summary>
+        /// 返回当前实例或默认值。
+        /// </summary>
+        /// <typeparam name="TSource">指定的源类型。</typeparam>
+        /// <param name="source">给定的源对象。</param>
+        /// <param name="defaultValue">给定的默认值。</param>
+        /// <returns>返回实例或默认值。</returns>
+        public static TSource AsOrDefault<TSource>(this TSource source, TSource defaultValue = default(TSource))
+        {
+            return source.AsOrDefault(c => c, defaultValue);
+        }
+
+        /// <summary>
+        /// 转换类型或返回默认值。
+        /// </summary>
+        /// <typeparam name="TSource">指定的源类型。</typeparam>
+        /// <typeparam name="TResult">指定的结果类型。</typeparam>
+        /// <param name="source">给定的源对象。</param>
+        /// <param name="convertFactory">给定的转换方法。</param>
+        /// <param name="defaultValue">给定的默认值。</param>
+        /// <returns>返回结果对象。</returns>
+        public static TResult AsOrDefault<TSource, TResult>(this TSource source, Func<TSource, TResult> convertFactory,
+            TResult defaultValue = default(TResult))
+        {
+            if (source == null || convertFactory == null)
+                return defaultValue;
+
+            try
             {
-                object obj = null;
+                return convertFactory(source);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
 
-                try
+        #endregion
+
+
+        #region AsPairsString
+
+        /// <summary>
+        /// 将对象转换为键值对集合的字符串形式。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <param name="searchMode">给定的搜索模式（可选；默认不进行成员名称筛选）。</param>
+        /// <param name="searchNames">要排除的成员名称数组。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AsPairsString(this object obj, SearchMode searchMode = SearchMode.Default,
+            params string[] searchNames)
+        {
+            obj.NotNull(nameof(obj));
+
+            var properties = obj.GetType().SearchProperties(searchMode, searchNames);
+
+            // 如果有需要处理的属性信息集合
+            if (properties.Length > 0)
+            {
+                var sb = new StringBuilder();
+
+                var last = properties.Last();
+                foreach (var p in properties)
                 {
-                    if (t.IsClass && !t.IsAbstract)
-                        obj = Activator.CreateInstance(t);
-                }
-                catch { }
+                    var o = p.GetValue(obj);
+                    var value = string.Empty;
 
-                if (!ReferenceEquals(obj, null))
-                    list.Add(obj);
+                    if (o != null)
+                    {
+                        // 字符串不属于值类型
+                        if (p.PropertyType.IsValueType || p.PropertyType.IsAnsiClass)
+                            value = o.ToString();
+                        else
+                            value = o.AsPairsString(SearchMode.Default);
+                    }
+
+                    sb.AppendFormat("{0}={1}", p.Name, value);
+
+                    if (p.Name != last.Name)
+                        sb.Append(",");
+                }
+
+                return sb.ToString();
             }
 
-            return list;
+            return string.Empty;
         }
+
+
+        /// <summary>
+        /// 将键值对集合的字符串还原为对象。
+        /// </summary>
+        /// <typeparam name="T">指定的对象类型。</typeparam>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="searchMode">给定的搜索模式（可选；默认不进行成员名称筛选）。</param>
+        /// <param name="searchNames">要排除的成员名称数组。</param>
+        /// <returns>返回对象。</returns>
+        public static T FromPairsString<T>(this string str, SearchMode searchMode = SearchMode.Default,
+            params string[] searchNames)
+        {
+            return (T)str.FromPairsString(typeof(T), searchMode, searchNames);
+        }
+        /// <summary>
+        /// 将键值对集合的字符串还原为对象。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="type">给定的对象类型。</param>
+        /// <param name="searchMode">给定的搜索模式（可选；默认不进行成员名称筛选）。</param>
+        /// <param name="searchNames">要排除的成员名称数组。</param>
+        /// <returns>返回对象。</returns>
+        public static object FromPairsString(this string str, Type type, SearchMode searchMode = SearchMode.Default,
+            params string[] searchNames)
+        {
+            str.NotEmpty(nameof(str));
+            type.NotNull(nameof(type));
+
+            var obj = Activator.CreateInstance(type);
+
+            var properties = type.SearchProperties(searchMode, searchNames);
+
+            // 如果有需要处理的属性信息集合
+            if (properties.Length > 0)
+            {
+                var pairs = str.Split(',');
+                foreach (var pair in pairs)
+                {
+                    if (string.IsNullOrEmpty(pair))
+                        continue;
+
+                    var part = pair.Split('=');
+                    if (part.Length < 1 || part.Length > 2)
+                        continue; // 不标准的键值对
+
+                    var name = part[0];
+                    var value = part[1];
+                    if (string.IsNullOrEmpty(value))
+                        continue; // 空字符串值
+
+                    var pi = properties.First(p => p.Name == name);
+                    var o = value.AsOrDefault(pi.PropertyType);// 转换值
+                    if (o != null)
+                        pi.SetValue(obj, o); // 更新值
+                }
+            }
+
+            return obj;
+        }
+
+
+        /// <summary>
+        /// 搜索指定类型的属性集合。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <param name="searchMode">给定的搜索模式（可选；默认不进行成员名称筛选）。</param>
+        /// <param name="searchNames">要排除的成员名称数组。</param>
+        /// <returns>返回属性数组。</returns>
+        public static PropertyInfo[] SearchProperties(this Type type, SearchMode searchMode = SearchMode.Default,
+            params string[] searchNames)
+        {
+            var properties = type.GetProperties();
+
+            // 如果需要成员名称筛选
+            if (searchNames.Length > 0)
+            {
+                // 排除模式
+                if (searchMode == SearchMode.Exclude)
+                {
+                    foreach (var key in searchNames)
+                    {
+                        // 越来越少
+                        properties = properties.Where(f => f.Name != key).ToArray();
+                    }
+                }
+                // 包含模式
+                else if (searchMode == SearchMode.Include)
+                {
+                    var list = new List<PropertyInfo>();
+
+                    foreach (var name in searchNames)
+                    {
+                        var p = properties.Where(f => f.Name == name);
+                        list.AddRange(p);
+                    }
+
+                    // 移除可能存在的重复项
+                    properties = list.Distinct().ToArray();
+                }
+                else
+                {
+                    // 默认不操作
+                }
+            }
+
+            return properties;
+        }
+
+        #endregion
 
 
         #region CopyTo
@@ -299,6 +481,148 @@ namespace Librame.Utility
             catch
             {
                 return null;
+            }
+        }
+
+        #endregion
+
+
+        #region Instantiation
+
+        /// <summary>
+        /// 实例化类型，并初始化对象公共属性的默认值。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <returns>返回类型实例。</returns>
+        public static T Instantiate<T>()
+        {
+            return (T)Initialize(Activator.CreateInstance<T>());
+        }
+
+        /// <summary>
+        /// 实例化类型，初始化对象公共属性的默认值。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回对象。</returns>
+        public static object Instantiate(this Type type)
+        {
+            return Initialize(Activator.CreateInstance(type));
+        }
+
+        /// <summary>
+        /// 初始化对象公共属性的默认值。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <returns>返回对象。</returns>
+        public static object Initialize(this object obj)
+        {
+            var properties = obj.NotNull(nameof(obj)).GetType().GetProperties();
+            if (properties == null || properties.Length < 1)
+                return obj;
+
+            foreach (var p in properties)
+            {
+                var value = GetDefaultValue(p);
+
+                if (value == null)
+                    value = p.PropertyType.AsDefault();
+
+                p.SetValue(obj, value, null);
+            }
+
+            return obj;
+        }
+        /// <summary>
+        /// 获取默认值属性特性。
+        /// </summary>
+        /// <param name="property">给定的属性信息。</param>
+        /// <returns>返回默认值对象。</returns>
+        private static object GetDefaultValue(PropertyInfo property)
+        {
+            var attrib = (DefaultValueAttribute)property.GetCustomAttribute(typeof(DefaultValueAttribute), false);
+            return attrib?.Value;
+        }
+
+
+        /// <summary>
+        /// 转换对象的默认值。
+        /// </summary>
+        /// <param name="type">给定的转换类型。</param>
+        /// <returns>返回对象。</returns>
+        public static object AsDefault(this Type type)
+        {
+            switch (type.FullName)
+            {
+                case "System.Boolean":
+                    return false;
+
+                case "System.Decimal":
+                    return decimal.One;
+
+                case "System.Double":
+                    return double.NaN;
+
+                case "System.DateTime":
+                    return DateTime.Now;
+
+                case "System.Guid":
+                    return Guid.Empty;
+
+                case "System.String":
+                    return string.Empty;
+
+                case "System.TimeSpan":
+                    return TimeSpan.Zero;
+
+                // Int
+                case "System.Byte":
+                    return byte.MinValue; // byte
+
+                case "System.Int16":
+                    return byte.MinValue; // short
+
+                case "System.Int32":
+                    return byte.MinValue; // int
+
+                case "System.Int64":
+                    return byte.MinValue; // long
+
+                case "System.SByte":
+                    return sbyte.MinValue; // sbyte
+
+                case "System.UInt16":
+                    return byte.MinValue; // ushort
+
+                case "System.UInt32":
+                    return byte.MinValue; // uint
+
+                case "System.UInt64":
+                    return byte.MinValue; // ulong
+
+                default:
+                    {
+                        if (type.IsGenericType)
+                        {
+                            try
+                            {
+                                var gts = type.GenericTypeArguments;
+                                // 链式转换
+                                var parameters = gts.Select(t => AsDefault(t)).ToArray();
+
+                                var ci = type.GetConstructor(type.GenericTypeArguments);
+                                return ci.Invoke(parameters);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw ex;
+                            }
+                        }
+
+                        if (type.IsClass && !type.IsAbstract)
+                            return Activator.CreateInstance(type);
+
+                        return null;
+                    }
             }
         }
 

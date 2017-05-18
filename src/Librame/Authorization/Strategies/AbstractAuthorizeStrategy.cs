@@ -137,7 +137,8 @@ namespace Librame.Authorization.Strategies
 
                 // 创建票根
                 var token = Authorize.Managers.Token.Generate();
-                var ticket = new AuthenticateTicket(authInfo.Account, token, DateTime.Now, isPersistent);
+                var ticket = new AuthenticateTicket(authInfo.Account, token, DateTime.Now, isPersistent,
+                    now => now.AddDays(Authorize.AuthSettings.ExpirationDays));
 
                 // 绑定用户
                 var identity = new AccountIdentity(ticket);

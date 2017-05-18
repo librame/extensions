@@ -17,7 +17,6 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Caching;
 using System.Web.Http.Controllers;
-using System.Web.Security;
 
 namespace System.Web.Http
 {
@@ -94,18 +93,7 @@ namespace System.Web.Http
         protected virtual void AuthorizeFailed(HttpActionContext actionContext, IAuthorizeAdapter authorize)
         {
             // 解析登陆链接
-            string loginUrl = FormsAuthentication.LoginUrl;
-
-            // 如果启用 SSO 且不是服务端模式
-            if (authorize.AuthSettings.EnableSso && !authorize.AuthSettings.IsSsoServerMode)
-            {
-                var encryptAuthId = authorize.Managers.Ciphertext
-                    .Encode(authorize.AuthSettings.AdapterSettings.AuthId);
-
-                loginUrl = AuthorizeHelper.FormatServerSignInUrl(encryptAuthId,
-                    authorize.AuthSettings.SsoSignInRespondUrl,
-                    authorize.AuthSettings.SsoServerSignInUrl);
-            }
+            string loginUrl = Session.ResolveLoginUrl();
 
             var obj = new
             {

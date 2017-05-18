@@ -17,7 +17,7 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="Guid"/> 实用工具。
     /// </summary>
-    public static class GuidUtility
+    public class GuidUtility
     {
         /// <summary>
         /// 转换为十六进制字符串。

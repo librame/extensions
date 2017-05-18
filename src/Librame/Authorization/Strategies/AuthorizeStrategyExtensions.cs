@@ -13,6 +13,7 @@
 using Librame;
 using Librame.Authorization;
 using Librame.Authorization.Strategies;
+using System.Web.Security;
 using System.Web.SessionState;
 
 namespace System.Web
@@ -22,75 +23,53 @@ namespace System.Web
     /// </summary>
     public static class AuthorizeStrategyExtensions
     {
-        ///// <summary>
-        ///// 用户登录。
-        ///// </summary>
-        ///// <param name="context">给定的 <see cref="HttpContext"/>。</param>
-        ///// <param name="name">给定的用户名。</param>
-        ///// <param name="passwd">给定的密码。</param>
-        ///// <param name="isPersistent">是否持久化存储。</param>
-        ///// <returns>返回认证信息。</returns>
-        //public static AuthenticateInfo SignIn(this HttpContext context, string name, string passwd, bool isPersistent)
-        //{
-        //    var stategy = LibrameArchitecture.Adapters.Authorization.Strategy;
+        /// <summary>
+        /// 解析登入链接（支持常规、SSO 客/服端模式）。
+        /// </summary>
+        /// <param name="session">给定的会话。</param>
+        /// <returns>返回登入链接字符串。</returns>
+        public static string ResolveLoginUrl(this HttpSessionStateBase session)
+        {
+            var authorize = LibrameArchitecture.Adapters.Authorization;
 
-        //    // SignIn
-        //    return stategy.SignIn(name, passwd, isPersistent,
-        //        (k, p) => context?.Session?.Add(k, p));
-        //}
-        ///// <summary>
-        ///// 用户登录。
-        ///// </summary>
-        ///// <param name="context">给定的 <see cref="HttpContextBase"/>。</param>
-        ///// <param name="name">给定的用户名。</param>
-        ///// <param name="passwd">给定的密码。</param>
-        ///// <param name="isPersistent">是否持久化存储。</param>
-        ///// <returns>返回认证信息。</returns>
-        //public static AuthenticateInfo SignIn(this HttpContextBase context, string name, string passwd, bool isPersistent)
-        //{
-        //    var stategy = LibrameArchitecture.Adapters.Authorization.Strategy;
+            // 如果未启用 SSO 或启用且是服务端模式
+            if (!authorize.AuthSettings.EnableSso || authorize.AuthSettings.IsSsoServerMode)
+                return FormsAuthentication.LoginUrl;
 
-        //    // SignIn
-        //    return stategy.SignIn(name, passwd, isPersistent,
-        //        (k, p) => context?.Session?.Add(k, p));
-        //}
+            var encryptAuthId = authorize.Managers.Ciphertext
+                .Encode(authorize.AuthSettings.AdapterSettings.AuthId);
 
-        ///// <summary>
-        ///// 用户登出。
-        ///// </summary>
-        ///// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
-        ///// <returns>返回用户票根。</returns>
-        //public static AuthenticateTicket SignOut(this HttpSessionState session)
-        //{
-        //    var stategy = LibrameArchitecture.Adapters.Authorization.Strategy;
+            return AuthorizeHelper.FormatServerSignInUrl(encryptAuthId,
+                authorize.AuthSettings.SsoSignInRespondUrl,
+                authorize.AuthSettings.SsoServerSignInUrl);
+        }
 
-        //    return stategy.SignOut((k) =>
-        //    {
-        //        var ticket = session.ResolveTicket();
+        /// <summary>
+        /// 解析登出链接。
+        /// </summary>
+        /// <param name="session">给定的会话。</param>
+        /// <returns>返回登出链接字符串。</returns>
+        public static string ResolveLogoutUrl(this HttpSessionStateBase session)
+        {
+            var authorize = LibrameArchitecture.Adapters.Authorization;
 
-        //        session?.Remove(k);
+            // 如果未启用 SSO 或启用且是服务端模式
+            if (!authorize.AuthSettings.EnableSso || authorize.AuthSettings.IsSsoServerMode)
+                return "#";
 
-        //        return ticket;
-        //    });
-        //}
-        ///// <summary>
-        ///// 用户登出。
-        ///// </summary>
-        ///// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
-        ///// <returns>返回用户票根。</returns>
-        //public static AuthenticateTicket SignOut(this HttpSessionStateBase session)
-        //{
-        //    var stategy = LibrameArchitecture.Adapters.Authorization.Strategy;
+            var ticket = session.ResolveTicket();
+            if (ticket == null)
+                return "#";
 
-        //    return stategy.SignOut((k) =>
-        //    {
-        //        var ticket = session.ResolveTicket();
+            var encryptToken = authorize.Managers.Ciphertext.Encode(ticket.Token);
+            var encryptAuthId = authorize.Managers.Ciphertext.Encode(authorize.Settings.AuthId);
 
-        //        session?.Remove(k);
+            var signOutUrl = AuthorizeHelper.FormatServerSignOutUrl(encryptToken, encryptAuthId,
+                authorize.AuthSettings.SsoSignOutRespondUrl,
+                authorize.AuthSettings.SsoServerSignOutUrl);
 
-        //        return ticket;
-        //    });
-        //}
+            return signOutUrl;
+        }
 
 
         /// <summary>
@@ -180,30 +159,6 @@ namespace System.Web
 
             return (!ReferenceEquals(principal, null) && principal.Identity.IsAuthenticated);
         }
-
-
-        ///// <summary>
-        ///// 开始认证。
-        ///// </summary>
-        ///// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
-        ///// <returns>返回布尔值。</returns>
-        //public static void OnAuthentication(this HttpSessionState session)
-        //{
-        //    var strategy = LibrameArchitecture.Adapters.Authorization.Strategy;
-
-        //    strategy.OnAuthentication(k => (AccountPrincipal)session?[k]);
-        //}
-        ///// <summary>
-        ///// 开始认证。
-        ///// </summary>
-        ///// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
-        ///// <returns>返回布尔值。</returns>
-        //public static void OnAuthentication(this HttpSessionStateBase session)
-        //{
-        //    var strategy = LibrameArchitecture.Adapters.Authorization.Strategy;
-
-        //    strategy.OnAuthentication(k => (AccountPrincipal)session?[k]);
-        //}
 
     }
 }

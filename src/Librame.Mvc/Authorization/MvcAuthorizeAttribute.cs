@@ -86,18 +86,7 @@ namespace System.Web.Mvc
         protected virtual void AuthorizeFailed(AuthorizationContext filterContext, IAuthorizeAdapter authorize)
         {
             // 解析登陆链接
-            string loginUrl = FormsAuthentication.LoginUrl;
-
-            // 如果启用 SSO 且不是服务端模式
-            if (authorize.AuthSettings.EnableSso && !authorize.AuthSettings.IsSsoServerMode)
-            {
-                var encryptAuthId = authorize.Managers.Ciphertext
-                    .Encode(authorize.AuthSettings.AdapterSettings.AuthId);
-
-                loginUrl = AuthorizeHelper.FormatServerSignInUrl(encryptAuthId,
-                    authorize.AuthSettings.SsoSignInRespondUrl,
-                    authorize.AuthSettings.SsoServerSignInUrl);
-            }
+            string loginUrl = Session.ResolveLoginUrl();
 
             // 转向登陆
             filterContext.HttpContext.Response.Redirect(loginUrl);

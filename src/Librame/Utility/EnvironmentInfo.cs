@@ -19,8 +19,6 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="Environment"/> 信息。
     /// </summary>
-    [Serializable]
-    [StructLayout(LayoutKind.Sequential)]
     public class EnvironmentInfo
     {
         /// <summary>

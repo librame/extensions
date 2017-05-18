@@ -18,7 +18,7 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="File"/> 实用工具。
     /// </summary>
-    public class FileUtility
+    public static class FileUtility
     {
         /// <summary>
         /// 读取内容。
@@ -26,7 +26,7 @@ namespace Librame.Utility
         /// <param name="path">给定的文件路径。</param>
         /// <param name="encoding">给定读取的字符编码。</param>
         /// <returns>返回字符串。</returns>
-        public static string ReadContent(string path, Encoding encoding)
+        public static string ReadContent(this string path, Encoding encoding)
         {
             // 仅用打开模式，当文件不存在时以便引发异常
             using (var fs = new FileStream(path, FileMode.Open))
@@ -50,7 +50,7 @@ namespace Librame.Utility
         /// <param name="path">给定的文件路径。</param>
         /// <param name="encoding">给定读取的字符编码。</param>
         /// <returns>返回字符串。</returns>
-        public static void WriteContent(string content, string path, Encoding encoding)
+        public static void WriteContent(this string content, string path, Encoding encoding)
         {
             // 如果使用 FileMode.OpenOrCreate 模式，则在 JSON 序列化保存时会莫名多出部分 JSON 字符串而导致加载发生异常
             using (var fs = new FileStream(path, FileMode.Create))
@@ -73,7 +73,7 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="fileSize">给定的文件大小。</param>
         /// <returns>返回字符串。</returns>
-        public static string FormatAdaptiveFileSize(long fileSize)
+        public static string FormatAdaptiveFileSize(this long fileSize)
         {
             if (fileSize < 1)
                 return IntUtility.FormatFileSizeUnit(fileSize);
@@ -89,24 +89,6 @@ namespace Librame.Utility
                 return IntUtility.FormatFileSizeUnit(fileSize, FileSizeUnit.KiB);
             else
                 return string.Format("{0} bytes", fileSize);
-        }
-
-    }
-
-
-    /// <summary>
-    /// <see cref="FileUtility"/> 静态扩展。
-    /// </summary>
-    public static class FileUtilityExtensions
-    {
-        /// <summary>
-        /// 格式化文件大小为自适应友好的字符串形式。
-        /// </summary>
-        /// <param name="fileSize">给定的文件大小。</param>
-        /// <returns>返回字符串。</returns>
-        public static string FormatAdaptiveFileSize(this long fileSize)
-        {
-            return FileUtility.FormatAdaptiveFileSize(fileSize);
         }
 
     }

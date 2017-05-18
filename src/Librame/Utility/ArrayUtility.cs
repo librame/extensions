@@ -18,7 +18,7 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="Array"/> 实用工具。
     /// </summary>
-    public class ArrayUtility
+    public static class ArrayUtility
     {
         /// <summary>
         /// 将源数组转换为结果数组。
@@ -27,7 +27,7 @@ namespace Librame.Utility
         /// <typeparam name="TResult">指定的目标类型。</typeparam>
         /// <param name="sources">给定的源数组。</param>
         /// <returns>返回结果数组。</returns>
-        public static TResult[] As<TSource, TResult>(TSource[] sources)
+        public static TResult[] As<TSource, TResult>(this TSource[] sources)
             where TResult : class
         {
             if (ReferenceEquals(sources, null)) return null;
@@ -58,7 +58,7 @@ namespace Librame.Utility
         /// 冒泡排序。
         /// </summary>
         /// <param name="array">给定的整数数组。</param>
-        public static void BubbleSort(int[] array)
+        public static void BubbleSort(this int[] array)
         {
             int i, j, temp;
             bool done = false;
@@ -86,7 +86,7 @@ namespace Librame.Utility
         /// 选择排序。
         /// </summary>
         /// <param name="array">给定的整数数组。</param>
-        public static void SelectionSort(int[] array)
+        public static void SelectionSort(this int[] array)
         {
             int min = 0;
             int pointer = min;
@@ -107,32 +107,6 @@ namespace Librame.Utility
         }
 
         #endregion
-
-    }
-
-
-    /// <summary>
-    /// <see cref="ArrayUtility"/> 静态扩展。
-    /// </summary>
-    public static class ArrayUtilityExtensions
-    {
-        /// <summary>
-        /// 冒泡排序。
-        /// </summary>
-        /// <param name="array">给定的整数数组。</param>
-        public static void BubbleSort(this int[] array)
-        {
-            ArrayUtility.BubbleSort(array);
-        }
-
-        /// <summary>
-        /// 选择排序。
-        /// </summary>
-        /// <param name="array">给定的整数数组。</param>
-        public static void SelectionSort(this int[] array)
-        {
-            ArrayUtility.SelectionSort(array);
-        }
 
     }
 }

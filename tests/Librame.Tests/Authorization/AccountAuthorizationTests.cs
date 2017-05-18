@@ -66,6 +66,17 @@ namespace Librame.Tests.Authorization
         }
 
         [TestMethod()]
+        public void CiphertextTest()
+        {
+            var str = "123456789";
+
+            var encode = _adapter.Managers.Ciphertext.Encode(str);
+            var decode = _adapter.Managers.Ciphertext.Decode(encode);
+
+            Assert.AreEqual(str, decode);
+        }
+
+        [TestMethod()]
         public void PasswdTest()
         {
             var passwdManager = _adapter.Managers.Passwd;

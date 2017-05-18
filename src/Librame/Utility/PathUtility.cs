@@ -19,8 +19,9 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="Path"/> 实用工具。
     /// </summary>
-    public class PathUtility
+    public static class PathUtility
     {
+
         #region Directory
 
         private static readonly bool _AtWebEnvironment = false;
@@ -184,14 +185,7 @@ namespace Librame.Utility
             return sb.ToString();
         }
 
-    }
 
-
-    /// <summary>
-    /// <see cref="PathUtility"/> 静态扩展。
-    /// </summary>
-    public static class PathUtilityExtensions
-    {
         /// <summary>
         /// 将指定相对路径附加到当前基础路径。
         /// </summary>
@@ -293,6 +287,6 @@ namespace Librame.Utility
                 throw ex;
             }
         }
-        
+
     }
 }

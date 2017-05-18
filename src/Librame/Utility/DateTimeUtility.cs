@@ -19,14 +19,14 @@ namespace Librame.Utility
     /// <summary>
     /// <see cref="DateTime"/> 实用工具。
     /// </summary>
-    public class DateTimeUtility
+    public static class DateTimeUtility
     {
         /// <summary>
         /// 计算指定日期的当周起止日期键值对（键表示开始日期，值表示结束日期）。
         /// </summary>
         /// <param name="day">要计算的日期。</param>
         /// <returns>返回 <see cref="KeyValuePair{TKey, TValue}"/>。</returns>
-        public static KeyValuePair<DateTime, DateTime> ComputeStartAndFinishDatePairByWeek(DateTime day)
+        public static KeyValuePair<DateTime, DateTime> ComputeStartAndFinishDatePairByWeek(this DateTime day)
         {
             int dow = (int)day.DayOfWeek;
             dow = (dow == 0) ? 7 : dow;
@@ -44,7 +44,7 @@ namespace Librame.Utility
         /// <param name="milliseconds">给定的总毫秒数。</param>
         /// <param name="descriptor">给定的 <see cref="CountdownDescriptor"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string FormatCountdownByMilliseconds(int milliseconds, CountdownDescriptor descriptor)
+        public static string FormatCountdownByMilliseconds(this int milliseconds, CountdownDescriptor descriptor)
         {
             return FormatCountdown(new TimeSpan(0, 0, 0, 0, milliseconds), descriptor);
         }
@@ -54,7 +54,7 @@ namespace Librame.Utility
         /// <param name="seconds">给定的总秒数。</param>
         /// <param name="descriptor">给定的 <see cref="CountdownDescriptor"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string FormatCountdownBySeconds(int seconds, CountdownDescriptor descriptor)
+        public static string FormatCountdownBySeconds(this int seconds, CountdownDescriptor descriptor)
         {
             return FormatCountdown(new TimeSpan(0, 0, seconds), descriptor);
         }
@@ -64,7 +64,7 @@ namespace Librame.Utility
         /// <param name="ts">给定的时间间隔。</param>
         /// <param name="descriptor">给定的 <see cref="CountdownDescriptor"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string FormatCountdown(TimeSpan ts, CountdownDescriptor descriptor)
+        public static string FormatCountdown(this TimeSpan ts, CountdownDescriptor descriptor)
         {
             var sb = new StringBuilder();
             
@@ -89,7 +89,7 @@ namespace Librame.Utility
         /// <param name="day">给定的日期。</param>
         /// <param name="descriptor">给定的 <see cref="TimeSpanDescriptor"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string FormatTimeSpan(DateTime day, TimeSpanDescriptor descriptor)
+        public static string FormatTimeSpan(this DateTime day, TimeSpanDescriptor descriptor)
         {
             TimeSpan span = DateTime.Now - day;
             if (span.TotalDays > 1080)
@@ -119,67 +119,4 @@ namespace Librame.Utility
         }
 
     }
-
-
-    /// <summary>
-    /// <see cref="DateTimeUtility"/> 静态扩展。
-    /// </summary>
-    public static class DateTimeUtilityExtensions
-    {
-        /// <summary>
-        /// 计算指定日期的当周起止日期键值对（键表示开始日期，值表示结束日期）。
-        /// </summary>
-        /// <param name="day">要计算的日期。</param>
-        /// <returns>返回 <see cref="KeyValuePair{TKey, TValue}"/>。</returns>
-        public static KeyValuePair<DateTime, DateTime> ComputeStartAndFinishDatePairByWeek(this DateTime day)
-        {
-            return DateTimeUtility.ComputeStartAndFinishDatePairByWeek(day);
-        }
-
-
-        /// <summary>
-        /// 通过总毫秒数实现格式化倒计时。
-        /// </summary>
-        /// <param name="milliseconds">给定的总毫秒数。</param>
-        /// <param name="descriptor">给定的 <see cref="CountdownDescriptor"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string FormatCountdownByMilliseconds(this int milliseconds, CountdownDescriptor descriptor)
-        {
-            return DateTimeUtility.FormatCountdownByMilliseconds(milliseconds, descriptor);
-        }
-        /// <summary>
-        /// 通过总秒数实现格式化倒计时。
-        /// </summary>
-        /// <param name="seconds">给定的总秒数。</param>
-        /// <param name="descriptor">给定的 <see cref="CountdownDescriptor"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string FormatCountdownBySeconds(this int seconds, CountdownDescriptor descriptor)
-        {
-            return DateTimeUtility.FormatCountdownBySeconds(seconds, descriptor);
-        }
-        /// <summary>
-        /// 格式化倒计时。
-        /// </summary>
-        /// <param name="ts">给定的时间间隔。</param>
-        /// <param name="descriptor">给定的 <see cref="CountdownDescriptor"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string FormatCountdown(this TimeSpan ts, CountdownDescriptor descriptor)
-        {
-            return DateTimeUtility.FormatCountdown(ts, descriptor);
-        }
-
-
-        /// <summary>
-        /// 格式化指定时间间隔。
-        /// </summary>
-        /// <param name="day">给定的日期。</param>
-        /// <param name="descriptor">给定的 <see cref="TimeSpanDescriptor"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string FormatTimeSpan(this DateTime day, TimeSpanDescriptor descriptor)
-        {
-            return DateTimeUtility.FormatTimeSpan(day, descriptor);
-        }
-
-    }
-
 }

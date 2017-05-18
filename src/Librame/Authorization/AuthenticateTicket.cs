@@ -27,13 +27,24 @@ namespace Librame.Authorization
     public sealed class AuthenticateTicket
     {
         /// <summary>
-        /// 构造一个 <see cref="AuthenticateTicket"/> 实例。
+        /// 构造一个身份认证票根实例（主要用于反序列化）。
         /// </summary>
         public AuthenticateTicket()
         {
+            AccountId = 0;
+            AppId = 1;
+            Name = string.Empty;
+            Token = string.Empty;
+            IssueDate = DateTime.Now;
+            Expiration = DateTime.Now.AddDays(1);
+            Expired = (DateTime.Now > Expiration);
+            IsPersistent = true;
+            UserData = string.Empty;
+            Path = FormsAuthentication.FormsCookiePath;
+            Version = 1;
         }
         /// <summary>
-        /// 构造一个 <see cref="AuthenticateTicket"/> 实例。
+        /// 构造一个身份认证票根实例。
         /// </summary>
         /// <param name="accountId">给定的帐户编号。</param>
         /// <param name="appId">给定的应用编号。</param>
@@ -41,7 +52,7 @@ namespace Librame.Authorization
         /// <param name="token">给定的令牌。</param>
         /// <param name="issueDate">给定的签发日期。</param>
         /// <param name="isPersistent">给定是否持久化存储（可选；默认使用）。</param>
-        /// <param name="expirationFactory">给定的过期时间方法（可选；默认为配置的过期天数过失效）。</param>
+        /// <param name="expirationFactory">给定的过期时间方法（可选；默认为一天后过期失效）。</param>
         /// <param name="userData">给定的自定义数据（可选；默认空字符串）。</param>
         /// <param name="path">给定的 Cookie 路径（可选；默认为 <see cref="FormsAuthentication.FormsCookiePath"/>）。</param>
         /// <param name="version">给定的 Cookie 版本（可选）。</param>
@@ -52,11 +63,8 @@ namespace Librame.Authorization
             string path = null,
             int version = 1)
         {
-            if (ReferenceEquals(expirationFactory, null))
-            {
-                var authSettings = LibrameArchitecture.Adapters.Authorization.AuthSettings;
-                expirationFactory = dt => dt.AddDays(authSettings.ExpirationDays);
-            }
+            if (expirationFactory == null)
+                expirationFactory = dt => dt.AddDays(1);
 
             AccountId = accountId;
             AppId = appId;
@@ -71,15 +79,16 @@ namespace Librame.Authorization
             Version = version;
         }
         /// <summary>
-        /// 构造一个 <see cref="AuthenticateTicket"/> 实例。
+        /// 构造一个身份认证票根实例。
         /// </summary>
         /// <param name="account">给定的帐户。</param>
         /// <param name="token">给定的令牌。</param>
         /// <param name="issueDate">给定的签发日期。</param>
         /// <param name="isPersistent">给定是否持久化存储（可选；默认使用）。</param>
+        /// <param name="expirationFactory">给定的过期时间方法（可选；默认为一天后过期失效）。</param>
         public AuthenticateTicket(IAccountDescriptor account, string token, DateTime issueDate,
-            bool isPersistent = true)
-            : this(account.Id, account.AppId, account.Name, token, issueDate, isPersistent)
+            bool isPersistent = true, Func<DateTime, DateTime> expirationFactory = null)
+            : this(account.Id, account.AppId, account.Name, token, issueDate, isPersistent, expirationFactory)
         {
         }
 
