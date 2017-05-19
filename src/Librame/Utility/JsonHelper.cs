@@ -46,7 +46,8 @@ namespace Librame.Utility
         public static string AsJson(this object value, Formatting formatting = Formatting.None,
             JsonSerializerSettings serializerSettings = null, params JsonConverter[] converters)
         {
-            value.NotNull(nameof(value));
+            if (value == null)
+                return string.Empty;
 
             try
             {
@@ -90,6 +91,9 @@ namespace Librame.Utility
         public static object FromJson(this string json, Type type,
             JsonSerializerSettings serializerSettings = null, params JsonConverter[] converters)
         {
+            if (string.IsNullOrEmpty(json))
+                return null;
+
             try
             {
                 if (!ReferenceEquals(serializerSettings, null))

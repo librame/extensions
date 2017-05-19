@@ -10,10 +10,10 @@
 
 #endregion
 
+using Common.Logging;
 using Librame;
 using Librame.Authorization;
 using System.Web.Caching;
-using System.Web.Security;
 
 namespace System.Web.Mvc
 {
@@ -22,12 +22,16 @@ namespace System.Web.Mvc
     /// </summary>
     public class MvcAuthorizeAttribute : AuthorizeAttribute
     {
+        private readonly ILog _logger = null;
+
         /// <summary>
         /// 构造一个 <see cref="MvcAuthorizeAttribute"/> 实例。
         /// </summary>
         public MvcAuthorizeAttribute()
             : base()
         {
+            if (_logger == null)
+                _logger = Archit.Log.GetLogger<MvcAuthorizeAttribute>();
         }
 
         /// <summary>
@@ -44,6 +48,12 @@ namespace System.Web.Mvc
         /// 当前用户。
         /// </summary>
         protected AccountPrincipal CurrentUser = null;
+
+
+        /// <summary>
+        /// 当前日志接口。
+        /// </summary>
+        public ILog Logger => _logger;
 
 
         /// <summary>
@@ -87,7 +97,7 @@ namespace System.Web.Mvc
         {
             // 解析登陆链接
             string loginUrl = Session.ResolveLoginUrl();
-
+            
             // 转向登陆
             filterContext.HttpContext.Response.Redirect(loginUrl);
             return;

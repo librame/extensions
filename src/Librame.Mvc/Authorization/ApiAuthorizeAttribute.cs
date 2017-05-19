@@ -10,6 +10,7 @@
 
 #endregion
 
+using Common.Logging;
 using Librame;
 using Librame.Authorization;
 using Librame.Utility;
@@ -25,12 +26,16 @@ namespace System.Web.Http
     /// </summary>
     public class ApiAuthorizeAttribute : AuthorizeAttribute
     {
+        private readonly ILog _logger = null;
+
         /// <summary>
         /// 构造一个 <see cref="ApiAuthorizeAttribute"/> 实例。
         /// </summary>
         public ApiAuthorizeAttribute()
             : base()
         {
+            if (_logger == null)
+                _logger = Archit.Log.GetLogger<ApiAuthorizeAttribute>();
         }
 
         /// <summary>
@@ -52,6 +57,13 @@ namespace System.Web.Http
         /// 当前用户。
         /// </summary>
         protected AccountPrincipal CurrentUser = null;
+
+
+        /// <summary>
+        /// 当前日志接口。
+        /// </summary>
+        public ILog Logger => _logger;
+
 
         /// <summary>
         /// 开始认证。

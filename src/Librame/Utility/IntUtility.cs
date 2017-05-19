@@ -92,14 +92,14 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="integer">给定的整数。</param>
         /// <param name="max">给定的最大值。</param>
-        /// <param name="rtnMaxFactory">返回最大值的工厂方法（可选；默认为不大于最大值）。</param>
-        /// <returns>返回整数。</returns>
-        public static int Max(this int integer, int max, Func<int, int, bool> rtnMaxFactory = null)
+        /// <param name="returnMaxFactory">给定返回最大值的条件，反之返回当前整数（可选；默认为不大于最大值）。</param>
+        /// <returns>返回当前整数或最大值。</returns>
+        public static int Max(this int integer, int max, Func<int, int, bool> returnMaxFactory = null)
         {
-            if (ReferenceEquals(rtnMaxFactory, null))
-                rtnMaxFactory = (i, m) => i > max;
+            if (ReferenceEquals(returnMaxFactory, null))
+                returnMaxFactory = (i, m) => i > max;
 
-            if (rtnMaxFactory.Invoke(integer, max))
+            if (returnMaxFactory.Invoke(integer, max))
                 return max;
 
             return integer;
@@ -110,14 +110,14 @@ namespace Librame.Utility
         /// </summary>
         /// <param name="integer">给定的整数。</param>
         /// <param name="min">给定的最小值。</param>
-        /// <param name="rtnMinFactory">返回最小值的工厂方法（可选；默认为不小于最小值）。</param>
-        /// <returns>返回整数。</returns>
-        public static int Min(this int integer, int min, Func<int, int, bool> rtnMinFactory = null)
+        /// <param name="returnMinFactory">给定返回最小值的条件，反之返回当前整数（可选；默认为不小于最小值）。</param>
+        /// <returns>返回当前整数或最小值。</returns>
+        public static int Min(this int integer, int min, Func<int, int, bool> returnMinFactory = null)
         {
-            if (ReferenceEquals(rtnMinFactory, null))
-                rtnMinFactory = (i, m) => i < min;
+            if (ReferenceEquals(returnMinFactory, null))
+                returnMinFactory = (i, m) => i < min;
 
-            if (rtnMinFactory.Invoke(integer, min))
+            if (returnMinFactory.Invoke(integer, min))
                 return min;
 
             return integer;
@@ -132,11 +132,11 @@ namespace Librame.Utility
         /// <param name="integer">给定的整数。</param>
         /// <param name="min">给定的最小值。</param>
         /// <param name="max">给定的最大值。</param>
-        /// <param name="rtnMinFactory">返回最小值的工厂方法（可选；默认为不小于最小值）。</param>
-        /// <param name="rtnMaxFactory">返回最大值的工厂方法（可选；默认为不大于最大值）。</param>
+        /// <param name="returnMinFactory">返回最小值的工厂方法（可选；默认为不小于最小值）。</param>
+        /// <param name="returnMaxFactory">返回最大值的工厂方法（可选；默认为不大于最大值）。</param>
         /// <returns>返回整数。</returns>
         public static int Range(this int integer, int min, int max,
-            Func<int, int, bool> rtnMinFactory = null, Func<int, int, bool> rtnMaxFactory = null)
+            Func<int, int, bool> returnMinFactory = null, Func<int, int, bool> returnMaxFactory = null)
         {
             if (min >= max)
             {
@@ -146,9 +146,9 @@ namespace Librame.Utility
                 throw new ArgumentException(format);
             }
 
-            integer = Min(integer, min, rtnMinFactory);
+            integer = Min(integer, min, returnMinFactory);
 
-            return Max(integer, max, rtnMaxFactory);
+            return Max(integer, max, returnMaxFactory);
         }
 
     }

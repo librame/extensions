@@ -95,8 +95,10 @@ namespace Librame.Utility
             JsonSerializerSettings serializerSettings = null,
             params JsonConverter[] converters)
         {
+            configKey.NotEmpty(nameof(configKey));
+
             var requestUrl = ConfigurationManager.AppSettings[configKey];
-            requestUrl = requestUrlFormat(requestUrl);
+            requestUrl = requestUrlFormat(requestUrl.NotEmpty(nameof(requestUrl)));
 
             return new HttpSessionStateWrapper(session).AsWebApi(requestUrl,
                 s => s.FromJson(type, serializerSettings, converters));
@@ -189,8 +191,10 @@ namespace Librame.Utility
             JsonSerializerSettings serializerSettings = null,
             params JsonConverter[] converters)
         {
+            configKey.NotEmpty(nameof(configKey));
+
             var requestUrl = ConfigurationManager.AppSettings[configKey];
-            requestUrl = requestUrlFormat(requestUrl);
+            requestUrl = requestUrlFormat(requestUrl.NotEmpty(nameof(requestUrl)));
 
             return session.AsWebApi(requestUrl, s => s.FromJson(type, serializerSettings, converters));
         }
@@ -224,10 +228,15 @@ namespace Librame.Utility
         {
             // 以链接为缓存键名
             var obj = session[requestUrl];
+
             if (obj == null)
             {
                 // 获取 API 链接的响应内容
                 var content = UriUtility.ReadContent(requestUrl);
+
+                // 如果内容为空
+                if (string.IsNullOrEmpty(content))
+                    return obj;
 
                 // 解析对象
                 obj = resolveFactory.Invoke(content);
