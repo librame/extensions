@@ -9,21 +9,25 @@
  * **************************************************************************************/
 
 #endregion
+ 
+using System.Web.Routing;
+using System.Web.SessionState;
 
-using Librame.Data;
-
-namespace System.Web.Http
+namespace System.Web.Http.WebHost
 {
     /// <summary>
-    /// API 控制器接口。
+    /// 会话路由处理程序。
     /// </summary>
-    /// <typeparam name="T">指定的类型。</typeparam>
-    public interface IApiController<T>
-        where T : class
+    public class SessionRouteHandler : HttpControllerHandler, IRequiresSessionState
     {
         /// <summary>
-        /// 数据仓库。
+        /// 构造一个会话路由处理程序实例。
         /// </summary>
-        IRepository<T> Repository { get; }
+        /// <param name="routeData">给定的路由数据。</param>
+        public SessionRouteHandler(RouteData routeData)
+            : base(routeData)
+        {
+        }
+
     }
 }

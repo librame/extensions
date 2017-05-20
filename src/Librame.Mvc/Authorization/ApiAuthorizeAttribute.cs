@@ -16,7 +16,6 @@ using Librame.Authorization;
 using Librame.Utility;
 using System.Net;
 using System.Net.Http;
-using System.Web.Caching;
 using System.Web.Http.Controllers;
 
 namespace System.Web.Http
@@ -38,31 +37,37 @@ namespace System.Web.Http
                 _logger = Archit.Log.GetLogger<ApiAuthorizeAttribute>();
         }
 
-        /// <summary>
-        /// 当前认证上下文包含的 HTTP 会话状态（需调用 <see cref="OnAuthorization(HttpActionContext)"/> 开始认证方法）。
-        /// </summary>
-        protected HttpSessionStateBase Session { get; private set; }
 
         /// <summary>
-        /// 当前认证上下文包含的 Web 缓存（需调用 <see cref="OnAuthorization(HttpActionContext)"/> 开始认证方法）。
+        /// 启用认证功能。
         /// </summary>
-        protected Cache Cache { get; private set; }
-
-        /// <summary>
-        /// 当前 HTTP 上下文（需调用 <see cref="OnAuthorization(HttpActionContext)"/> 开始认证方法）。
-        /// </summary>
-        protected HttpContextBase HttpContext { get; private set; }
-
-        /// <summary>
-        /// 当前用户。
-        /// </summary>
-        protected AccountPrincipal CurrentUser = null;
-
+        public bool EnableAuthorized { get; set; }
 
         /// <summary>
         /// 当前日志接口。
         /// </summary>
         public ILog Logger => _logger;
+
+        /// <summary>
+        /// 当前认证适配器接口。
+        /// </summary>
+        public IAuthorizeAdapter AuthorizeAdapter => LibrameArchitecture.Adapters.Authorization;
+
+        /// <summary>
+        /// 当前 HTTP 上下文。
+        /// </summary>
+        public HttpContextBase HttpContext { get; protected set; }
+
+
+        /// <summary>
+        /// 解析 HTTP 上下文信息。
+        /// </summary>
+        /// <param name="actionContext">给定的 HTTP 动作上下文。</param>
+        /// <returns>返回 HTTP 上下文信息。</returns>
+        protected virtual HttpContextBase ResolveHttpContext(HttpActionContext actionContext)
+        {
+            return (HttpContextBase)actionContext.Request.Properties["MS_HttpContext"];
+        }
 
 
         /// <summary>
@@ -71,53 +76,44 @@ namespace System.Web.Http
         /// <param name="actionContext">给定的 HTTP 动作上下文。</param>
         public override void OnAuthorization(HttpActionContext actionContext)
         {
-            if (!IsAuthorized(actionContext))
+            HttpContext = ResolveHttpContext(actionContext);
+
+            if (IsAuthorized(actionContext))
             {
-                var authorize = Archit.Adapters.Authorization;
-
-                // 如果不启用认证
-                if (!authorize.AuthSettings.EnableAuthorize)
-                    return;
-
-                // 失败
-                AuthorizeFailed(actionContext, authorize);
+                base.IsAuthorized(actionContext);
             }
             else
             {
-                // 成功
-                AuthorizeSuccess(actionContext);
+                HandleUnauthorizedRequest(actionContext);
             }
         }
 
         /// <summary>
-        /// 认证成功。
+        /// 处理未授权请求。
         /// </summary>
-        /// <param name="actionContext">给定的 HTTP 动作上下文。</param>
-        protected virtual void AuthorizeSuccess(HttpActionContext actionContext)
+        /// <param name="filterContext">给定的 HTTP 动作上下文。</param>
+        protected override void HandleUnauthorizedRequest(HttpActionContext filterContext)
         {
-        }
+            base.HandleUnauthorizedRequest(filterContext);
 
-        /// <summary>
-        /// 认证失败。
-        /// </summary>
-        /// <param name="actionContext">给定的 HTTP 动作上下文。</param>
-        /// <param name="authorize">给定的认证适配器接口。</param>
-        protected virtual void AuthorizeFailed(HttpActionContext actionContext, IAuthorizeAdapter authorize)
-        {
             // 解析登陆链接
-            string loginUrl = Session.ResolveLoginUrl();
+            string loginUrl = HttpContext.Session.ResolveLoginUrl();
 
             var obj = new
             {
                 LoginUrl = loginUrl,
                 Message = "当前请求未获得授权！",
-                StatusCode = HttpStatusCode.Unauthorized
+                // 401 未授权会导致重定向
+                StatusCode = HttpStatusCode.Forbidden
             };
 
-            actionContext.Response = new HttpResponseMessage()
+            // 记录调试信息
+            Logger.Debug(obj.AsPairsString());
+
+            filterContext.Response = new HttpResponseMessage()
             {
                 StatusCode = obj.StatusCode,
-                Content = new StringContent(obj.AsJson())
+                Content = new StringContent(obj.AsJson(), Archit.Adapters.Settings.Encoding, "application/json")
             };
         }
 
@@ -128,26 +124,75 @@ namespace System.Web.Http
         /// <returns>返回布尔值。</returns>
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
-            HttpContext = ResolveHttpContext(actionContext);
+            // 如果未启用认证功能
+            if (!EnableAuthorized)
+            {
+                // 记录调试信息
+                Logger.Debug("当前未启用认证功能，默认返回已认证");
+                return true;
+            }
 
-            if (HttpContext == null)
+            // 如果启用 SSO 且处于服务器模式（无令牌）
+            if (AuthorizeAdapter.AuthSettings.EnableSso && AuthorizeAdapter.AuthSettings.IsSsoServerMode)
+                return HttpContext.Session.IsAuthenticated();
+
+            // 认证令牌
+            var token = string.Empty;
+
+            // 尝试从 HTTP 请求标头中包含的认证信息（Basic 基础认证）
+            var authorization = actionContext.Request.Headers.Authorization;
+            if (authorization != null && !string.IsNullOrEmpty(authorization.Parameter))
+            {
+                // 已加密
+                token = authorization.Parameter;
+
+                // 解码令牌
+                token = DecryptToken(token);
+            }
+            else
+            {
+                // 未加密
+                token = HttpContext.Session.ResolveTicket().Token;
+            }
+            if (string.IsNullOrEmpty(token))
+            {
+                // 记录调试信息
+                Logger.Debug("获取 HTTP 标头或会话状态中的认证信息失败，可能未登录");
                 return false;
+            }
 
-            Cache = HttpContext.Cache;
-            Session = HttpContext.Session;
+            // 验证令牌
+            var isAuthorized = ValidateToken(token);
+            if (!isAuthorized)
+            {
+                // 记录调试信息
+                Logger.DebugFormat("验证认证信息失败，请确认令牌信息 {0} 是否正确", token);
+            }
 
-            // 使用策略进行认证
-            return Session.IsAuthenticated(out CurrentUser);
+            return isAuthorized;
         }
-        
+
         /// <summary>
-        /// 解析 HTTP 上下文信息。
+        /// 解码令牌。
         /// </summary>
-        /// <param name="actionContext">给定的 HTTP 动作上下文。</param>
-        /// <returns>返回 HTTP 上下文信息。</returns>
-        protected virtual HttpContextBase ResolveHttpContext(HttpActionContext actionContext)
+        /// <param name="token">给定的令牌。</param>
+        /// <returns>返回字符串。</returns>
+        protected virtual string DecryptToken(string token)
         {
-            return (HttpContextBase)actionContext.Request.Properties["MS_HttpContext"];
+            return AuthorizeAdapter.Managers.Ciphertext.Decode(token);
+        }
+
+        /// <summary>
+        /// 验证令牌是否有效。
+        /// </summary>
+        /// <param name="token">给定的令牌。</param>
+        /// <returns>返回布尔值。</returns>
+        protected virtual bool ValidateToken(string token)
+        {
+            var descriptor = AuthorizeAdapter.Providers.Token.Authenticate(token);
+
+            return (descriptor != null && !string.IsNullOrEmpty(descriptor.Name)
+                && !string.IsNullOrEmpty(descriptor.Ticket));
         }
 
     }

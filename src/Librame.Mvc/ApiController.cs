@@ -22,12 +22,11 @@ namespace System.Web.Http
     /// API 控制器。
     /// </summary>
     /// <typeparam name="T">指定的类型。</typeparam>
-    /// <typeparam name="TId">指定的主键类型。</typeparam>
-    public class ApiController<T, TId> : ApiController, IApiController<T, TId>
+    //[ApiAuthorize]
+    public class ApiController<T> : ApiController, IApiController<T>
         where T : class
-        where TId : struct
     {
-        private readonly IRepository<T> _service = null;
+        private readonly IRepository<T> _repository = null;
 
         /// <summary>
         /// 构造一个 API 控制器实例。
@@ -36,7 +35,7 @@ namespace System.Web.Http
         public ApiController(IRepository<T> repository)
             : base()
         {
-            _service = repository;
+            _repository = repository;
         }
 
 
@@ -45,7 +44,7 @@ namespace System.Web.Http
         /// </summary>
         public virtual IRepository<T> Repository
         {
-            get { return _service; }
+            get { return _repository; }
         }
         
 
@@ -74,86 +73,6 @@ namespace System.Web.Http
                 Content = new StringContent(json, encoding, "application/json")
             };
         }
-
-
-        ///// <summary>
-        ///// 获取所有类型实例。
-        ///// </summary>
-        ///// <example>
-        ///// GET api/values
-        ///// </example>
-        ///// <returns>返回类型实例集合。</returns>
-        //[HttpGet]
-        //public virtual HttpResponseMessage Get()
-        //{
-        //    var items = Repository.GetMany();
-
-        //    return ResponseJsonMessage(items);
-        //}
-
-
-        /// <summary>
-        /// 获取指定主键的类型实例。
-        /// </summary>
-        /// <example>
-        /// GET api/values/5
-        /// </example>
-        /// <param name="id">给定的主键。</param>
-        /// <returns>返回类型实例。</returns>
-        [HttpGet]
-        public virtual HttpResponseMessage Get(TId id)
-        {
-            var model = Repository.Get(id);
-
-            return ResponseJsonMessage(model);
-        }
-
-
-        ///// <summary>
-        ///// 添加类型实例。
-        ///// </summary>
-        ///// <example>
-        ///// POST api/values
-        ///// </example>
-        ///// <param name="value"></param>
-        //public virtual void Post([FromBody]string value)
-        //{
-        //}
-
-
-        ///// <summary>
-        ///// 更新指定主键类型实例。
-        ///// </summary>
-        ///// <example>
-        ///// PUT api/values/5
-        ///// </example>
-        ///// <param name="id">给定的主键。</param>
-        ///// <param name="value"></param>
-        //public virtual void Put(int id, [FromBody]string value)
-        //{
-        //}
-
-        // PATCH api/values/5
-
-
-        ///// <summary>
-        ///// 删除指定主键类型实例。
-        ///// </summary>
-        ///// <example>
-        ///// DELETE api/values/5
-        ///// </example>
-        ///// <param name="id">给定的主键。</param>
-        //public virtual void Delete(TId id)
-        //{
-        //    var item = Repository.Get(id);
-
-        //    if (!ReferenceEquals(item, null))
-        //        Repository.Delete(item);
-        //}
-
-
-        // HEAD
-        // OPTIONS
 
     }
 }

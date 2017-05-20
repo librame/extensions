@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Net;
 
 namespace Librame.Utility
 {
@@ -56,22 +57,24 @@ namespace Librame.Utility
         /// 获取内容长度。
         /// </summary>
         /// <param name="url">给定的 URL。</param>
+        /// <param name="requestFactory">给定的请求动作（可选）。</param>
         /// <returns>返回整数。</returns>
-        public static long ReadContentLength(this string url)
+        public static long ReadContentLength(this string url, Action<HttpWebRequest> requestFactory = null)
         {
             var us = new UriStream(url);
-            return us.GetContentLength();
+            return us.GetContentLength(requestFactory);
         }
 
         /// <summary>
         /// 读取指定 URL 链接的内容。
         /// </summary>
         /// <param name="url">给定的 URL。</param>
+        /// <param name="requestFactory">给定的请求动作（可选）。</param>
         /// <returns>返回字符串。</returns>
-        public static string ReadContent(this string url)
+        public static string ReadContent(this string url, Action<HttpWebRequest> requestFactory = null)
         {
             var us = new UriStream(url);
-            return us.GetContent();
+            return us.GetContent(requestFactory);
         }
 
     }

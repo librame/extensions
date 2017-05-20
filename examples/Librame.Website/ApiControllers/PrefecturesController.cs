@@ -12,7 +12,7 @@ namespace Librame.Website.ApiControllers
     /// <summary>
     /// 行政区划应用程序接口控制器。
     /// </summary>
-    public class PrefecturesController : ApiController<Prefecture, int>
+    public class PrefecturesController : ApiController<Prefecture>
     {
         /// <summary>
         /// 构造一个行政区划控制器。
@@ -33,11 +33,28 @@ namespace Librame.Website.ApiControllers
         /// <param name="page">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
         /// <returns>返回分页集合。</returns>
+        [HttpGet]
         public HttpResponseMessage Get(int page, int size)
         {
-            var paging = Repository.GetPagingByIndex(page, size, (order) => order.Asc(s => s.Id));
+            var model = Repository.GetPagingByIndex(page, size, (order) => order.Asc(s => s.Id));
 
-            return ResponseJsonMessage(paging);
+            return ResponseJsonMessage(model);
+        }
+
+        /// <summary>
+        /// 获取指定编号的行政区划。
+        /// </summary>
+        /// <example>
+        /// GET api/Regions/1
+        /// </example>
+        /// <param name="id">给定的编号。</param>
+        /// <returns>返回行政区划。</returns>
+        [HttpGet]
+        public HttpResponseMessage Get(int id)
+        {
+            var model = Repository.Get(id);
+
+            return ResponseJsonMessage(model);
         }
 
     }

@@ -242,6 +242,8 @@
     <Compile Include="Attention\AttentionExtensions.cs" />
     <Compile Include="Attention\AttentionLevel.cs" />
     <Compile Include="Attention\AttentionResult.cs" />
+    <Compile Include="Handlers\SessionControllerRouteHandler.cs" />
+    <Compile Include="Handlers\SessionRouteHandler.cs" />
     <Compile Include="HandleError\ApiHandleErrorAttribute.cs" />
     <Compile Include="HandleError\MvcHandleErrorAttribute.cs" />
     <Compile Include="Authorization\ApiAuthorizeAttribute.cs" />

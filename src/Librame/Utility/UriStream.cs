@@ -20,7 +20,7 @@ namespace Librame.Utility
     /// <summary>
     /// URI 流。
     /// </summary>
-    public class UriStream
+    public class UriStream : LibrameBase<UriStream>
     {
         private readonly string _url = null;
 
@@ -41,8 +41,8 @@ namespace Librame.Utility
         /// 响应 URL 请求的值。
         /// </summary>
         /// <typeparam name="TValue">指定的响应类型。</typeparam>
-        /// <param name="responseFactory">给定的响应方法。</param>
-        /// <param name="requestFactory">给定的请求方法。</param>
+        /// <param name="responseFactory">给定的响应工厂方法。</param>
+        /// <param name="requestFactory">给定的请求动作（可选）。</param>
         /// <returns>返回值。</returns>
         protected virtual TValue Response<TValue>(Func<HttpWebResponse, TValue> responseFactory,
             Action<HttpWebRequest> requestFactory = null)
@@ -70,8 +70,10 @@ namespace Librame.Utility
                     return responseFactory.Invoke(response);
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Log.Error(ex.InnerMessage());
+
                 return default(TValue);
             }
         }
@@ -79,7 +81,7 @@ namespace Librame.Utility
         /// <summary>
         /// 获取当前请求的字符编码。
         /// </summary>
-        /// <param name="response">给定的 <see cref="HttpWebResponse"/>。</param>
+        /// <param name="response">给定的 HTTP 网络响应。</param>
         /// <returns>返回 <see cref="Encoding"/>。</returns>
         protected virtual Encoding GetEncoding(HttpWebResponse response)
         {
@@ -91,8 +93,9 @@ namespace Librame.Utility
         /// <summary>
         /// 获取 URL 请求的内容。
         /// </summary>
+        /// <param name="requestFactory">给定的请求动作（可选）。</param>
         /// <returns>返回字符串。</returns>
-        public virtual string GetContent()
+        public virtual string GetContent(Action<HttpWebRequest> requestFactory = null)
         {
             return Response(r =>
             {
@@ -120,14 +123,16 @@ namespace Librame.Utility
                 }
 
                 return sb.ToString();
-            });
+            },
+            requestFactory);
         }
 
         /// <summary>
         /// 获取 URL 请求的内容长度。
         /// </summary>
+        /// <param name="requestFactory">给定的请求动作（可选）。</param>
         /// <returns>返回 64 位整数。</returns>
-        public virtual long GetContentLength()
+        public virtual long GetContentLength(Action<HttpWebRequest> requestFactory = null)
         {
             return Response(r =>
             {
@@ -161,7 +166,8 @@ namespace Librame.Utility
                 {
                     return r.ContentLength;
                 }
-            });
+            },
+            requestFactory);
         }
 
     }

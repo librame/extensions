@@ -13,7 +13,6 @@
 using Common.Logging;
 using Librame;
 using Librame.Authorization;
-using System.Web.Caching;
 
 namespace System.Web.Mvc
 {
@@ -33,27 +32,38 @@ namespace System.Web.Mvc
             if (_logger == null)
                 _logger = Archit.Log.GetLogger<MvcAuthorizeAttribute>();
         }
-
-        /// <summary>
-        /// 当前认证上下文包含的 HTTP 会话状态（需调用 <see cref="OnAuthorization(AuthorizationContext)"/> 开始认证方法）。
-        /// </summary>
-        protected HttpSessionStateBase Session { get; private set; }
-
-        /// <summary>
-        /// 当前认证上下文包含的 Web 缓存（需调用 <see cref="OnAuthorization(AuthorizationContext)"/> 开始认证方法）。
-        /// </summary>
-        protected Cache Cache { get; private set; }
-
-        /// <summary>
-        /// 当前用户。
-        /// </summary>
-        protected AccountPrincipal CurrentUser = null;
-
-
+        
+        
         /// <summary>
         /// 当前日志接口。
         /// </summary>
         public ILog Logger => _logger;
+
+        /// <summary>
+        /// 当前认证适配器接口。
+        /// </summary>
+        public IAuthorizeAdapter AuthorizeAdapter => LibrameArchitecture.Adapters.Authorization;
+
+        /// <summary>
+        /// 当前 HTTP 上下文。
+        /// </summary>
+        public HttpContextBase HttpContext { get; protected set; }
+
+        /// <summary>
+        /// 当前票根。
+        /// </summary>
+        public AuthenticateTicket Ticket { get; protected set; }
+
+
+        /// <summary>
+        /// 解析 HTTP 上下文信息。
+        /// </summary>
+        /// <param name="actionContext">给定的 HTTP 动作上下文。</param>
+        /// <returns>返回 HTTP 上下文信息。</returns>
+        protected virtual HttpContextBase ResolveHttpContext(AuthorizationContext actionContext)
+        {
+            return actionContext.HttpContext;
+        }
 
 
         /// <summary>
@@ -62,43 +72,33 @@ namespace System.Web.Mvc
         /// <param name="filterContext">给定的认证上下文。</param>
         public override void OnAuthorization(AuthorizationContext filterContext)
         {
-            if (!AuthorizeCore(filterContext.HttpContext))
+            HttpContext = ResolveHttpContext(filterContext);
+
+            if (AuthorizeCore(HttpContext))
             {
-                var authorize = Archit.Adapters.Authorization;
-
-                // 如果不启用认证
-                if (!authorize.AuthSettings.EnableAuthorize)
-                    return;
-
-                // 失败
-                AuthorizeFailed(filterContext, authorize);
+                base.AuthorizeCore(HttpContext);
             }
             else
             {
-                // 成功
-                AuthorizeSuccess(filterContext);
+                HandleUnauthorizedRequest(filterContext);
             }
         }
 
         /// <summary>
-        /// 认证成功。
+        /// 处理未授权请求。
         /// </summary>
-        /// <param name="filterContext">给定的认证上下文。</param>
-        protected virtual void AuthorizeSuccess(AuthorizationContext filterContext)
+        /// <param name="filterContext">给定的 HTTP 动作上下文。</param>
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
-        }
+            base.HandleUnauthorizedRequest(filterContext);
 
-        /// <summary>
-        /// 认证失败。
-        /// </summary>
-        /// <param name="filterContext">给定的认证上下文。</param>
-        /// <param name="authorize">给定的认证适配器接口。</param>
-        protected virtual void AuthorizeFailed(AuthorizationContext filterContext, IAuthorizeAdapter authorize)
-        {
             // 解析登陆链接
-            string loginUrl = Session.ResolveLoginUrl();
-            
-            // 转向登陆
+            string loginUrl = HttpContext.Session.ResolveLoginUrl();
+
+            // 记录调试信息
+            Logger.Debug(loginUrl);
+
+            // 重定向登陆
             filterContext.HttpContext.Response.Redirect(loginUrl);
             return;
         }
@@ -106,18 +106,28 @@ namespace System.Web.Mvc
         /// <summary>
         /// 认证核心。
         /// </summary>
-        /// <param name="httpContext">给定的 <see cref="HttpContextBase"/>。</param>
+        /// <param name="httpContext">给定的 HTTP 上下文。</param>
         /// <returns>返回布尔值。</returns>
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
-            if (httpContext == null)
+            // 如果未启用认证功能
+            if (!AuthorizeAdapter.AuthSettings.EnableAuthorize)
+            {
+                // 记录调试信息
+                Logger.Debug("当前未启用认证功能，默认返回已认证");
+                return true;
+            }
+
+            // 解析票根
+            Ticket = httpContext.Session.ResolveTicket();
+            if (Ticket == null || Ticket.Expired || string.IsNullOrEmpty(Ticket?.Token))
+            {
+                // 记录调试信息
+                Logger.Debug("解析会话状态中的认证信息失败，可能未登录");
                 return false;
+            }
 
-            Cache = httpContext.Cache;
-            Session = httpContext.Session;
-
-            // 使用策略进行认证
-            return Session.IsAuthenticated(out CurrentUser);
+            return true;
         }
 
     }
