@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Web;
 
 namespace Librame.Authorization
@@ -183,15 +184,36 @@ namespace Librame.Authorization
         /// <returns>返回格式化后的字符串。</returns>
         public static string FormatRespondUrl(string encryptToken, string respondUrl)
         {
-            respondUrl.NotEmpty(nameof(respondUrl));
-
             encryptToken.NotEmpty(nameof(encryptToken));
-
+            respondUrl.NotEmpty(nameof(respondUrl));
+            
             // URL 编码
             encryptToken = HttpUtility.UrlEncode(encryptToken);
 
-            // 格式化链接
-            respondUrl = KeyBuilder.Formatting(respondUrl, TOKEN_KEY, encryptToken);
+            // 处理令牌参数
+            var hasQueryString = respondUrl.Contains("?");
+            if (hasQueryString)
+            {
+                var url = new UriBuilder(respondUrl);
+
+                // 如果查询参数不为空且存在令牌查询参数
+                if (!string.IsNullOrEmpty(url.Query) && url.Query.Contains(TOKEN_KEY + "="))
+                {
+                    // 格式化令牌
+                    respondUrl = KeyBuilder.Formatting(respondUrl, TOKEN_KEY, encryptToken);
+                }
+                else
+                {
+                    // 附加令牌
+                    respondUrl += string.Format("&{0}={1}", TOKEN_KEY, encryptToken);
+                }
+            }
+            else
+            {
+                // 附加令牌
+                respondUrl += string.Format("?{0}={1}", TOKEN_KEY, encryptToken);
+            }
+
             return respondUrl;
         }
 
