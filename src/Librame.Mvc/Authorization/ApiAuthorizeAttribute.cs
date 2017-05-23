@@ -13,6 +13,7 @@
 using Common.Logging;
 using Librame;
 using Librame.Authorization;
+using Librame.Authorization.Descriptors;
 using Librame.Utility;
 using System.Net;
 using System.Net.Http;
@@ -34,7 +35,7 @@ namespace System.Web.Http
             : base()
         {
             if (_logger == null)
-                _logger = Archit.Log.GetLogger<ApiAuthorizeAttribute>();
+                _logger = LibrameArchitecture.Logging.GetLogger<ApiAuthorizeAttribute>();
         }
 
 
@@ -51,7 +52,7 @@ namespace System.Web.Http
         /// <summary>
         /// 当前认证适配器接口。
         /// </summary>
-        public IAuthorizeAdapter AuthorizeAdapter => LibrameArchitecture.Adapters.Authorization;
+        public IAuthorizeAdapter Adapter => LibrameArchitecture.Adapters.Authorization;
 
         /// <summary>
         /// 当前 HTTP 上下文。
@@ -133,7 +134,7 @@ namespace System.Web.Http
             }
 
             // 如果启用 SSO 且处于服务器模式（无令牌）
-            if (AuthorizeAdapter.AuthSettings.EnableSso && AuthorizeAdapter.AuthSettings.IsSsoServerMode)
+            if (Adapter.AuthSettings.EnableSso && Adapter.AuthSettings.IsSsoServerMode)
                 return HttpContext.Session.IsAuthenticated();
 
             // 认证令牌
@@ -143,15 +144,12 @@ namespace System.Web.Http
             var authorization = actionContext.Request.Headers.Authorization;
             if (authorization != null && !string.IsNullOrEmpty(authorization.Parameter))
             {
-                // 已加密
-                token = authorization.Parameter;
-
                 // 解码令牌
-                token = DecryptToken(token);
+                token = DecodeToken(authorization.Parameter);
             }
             else
             {
-                // 未加密
+                // 从票根中解析令牌（兼容 .NET WEB 平台；未加密）
                 token = HttpContext.Session.ResolveTicket().Token;
             }
             if (string.IsNullOrEmpty(token))
@@ -175,11 +173,11 @@ namespace System.Web.Http
         /// <summary>
         /// 解码令牌。
         /// </summary>
-        /// <param name="token">给定的令牌。</param>
+        /// <param name="encodeToken">给定经过编码的令牌字符串。</param>
         /// <returns>返回字符串。</returns>
-        protected virtual string DecryptToken(string token)
+        protected virtual string DecodeToken(string encodeToken)
         {
-            return AuthorizeAdapter.Managers.Ciphertext.Decode(token);
+            return Adapter.Managers.Ciphertext.Decode(encodeToken);
         }
 
         /// <summary>
@@ -189,7 +187,19 @@ namespace System.Web.Http
         /// <returns>返回布尔值。</returns>
         protected virtual bool ValidateToken(string token)
         {
-            var descriptor = AuthorizeAdapter.Providers.Token.Authenticate(token);
+            ITokenDescriptor descriptor = null;
+            return ValidateToken(token, out descriptor);
+        }
+        /// <summary>
+        /// 验证令牌是否有效。
+        /// </summary>
+        /// <param name="token">给定的令牌。</param>
+        /// <param name="descriptor">输出令牌描述符。</param>
+        /// <returns>返回布尔值。</returns>
+        protected virtual bool ValidateToken(string token, out ITokenDescriptor descriptor)
+        {
+            // 默认通过管道进行数据库查询
+            descriptor = Adapter.Providers.Token.Authenticate(token);
 
             return (descriptor != null && !string.IsNullOrEmpty(descriptor.Name)
                 && !string.IsNullOrEmpty(descriptor.Ticket));

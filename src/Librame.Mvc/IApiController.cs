@@ -10,6 +10,8 @@
 
 #endregion
 
+using Common.Logging;
+using Librame.Authorization;
 using Librame.Data;
 
 namespace System.Web.Http
@@ -25,5 +27,20 @@ namespace System.Web.Http
         /// 数据仓库。
         /// </summary>
         IRepository<T> Repository { get; }
+
+        /// <summary>
+        /// 当前日志接口。
+        /// </summary>
+        ILog Logger { get; }
+
+        /// <summary>
+        /// 当前认证适配器接口。
+        /// </summary>
+        IAuthorizeAdapter Adapter { get; }
+
+        /// <summary>
+        /// 当前请求的 HTTP 上下文。
+        /// </summary>
+        HttpContextBase HttpContext { get; }
     }
 }
