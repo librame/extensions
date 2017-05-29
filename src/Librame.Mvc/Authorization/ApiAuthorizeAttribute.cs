@@ -77,6 +77,14 @@ namespace System.Web.Http
         /// <param name="actionContext">给定的 HTTP 动作上下文。</param>
         public override void OnAuthorization(HttpActionContext actionContext)
         {
+            // 支持预请求
+            if (actionContext.Request.Method == HttpMethod.Options)
+            {
+                // 响应 202
+                actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Accepted);
+                return;
+            }
+
             HttpContext = ResolveHttpContext(actionContext);
 
             if (IsAuthorized(actionContext))
@@ -133,10 +141,6 @@ namespace System.Web.Http
                 return true;
             }
 
-            // 如果启用 SSO 且处于服务器模式（无令牌）
-            if (Adapter.AuthSettings.EnableSso && Adapter.AuthSettings.IsSsoServerMode)
-                return HttpContext.Session.IsAuthenticated();
-
             // 认证令牌
             var token = string.Empty;
 
@@ -149,9 +153,18 @@ namespace System.Web.Http
             }
             else
             {
-                // 从票根中解析令牌（兼容 .NET WEB 平台；未加密）
-                token = HttpContext.Session.ResolveTicket().Token;
+                // 如果启用 SSO 且处于服务器模式
+                if (Adapter.AuthSettings.EnableSso && Adapter.AuthSettings.IsSsoServerMode)
+                {
+                    // 尝试解析会话中存储的认证信息
+                    return HttpContext.Session.IsAuthenticated();
+                }
+
+                // 其它模式则尝试从票根中解析令牌（兼容 .NET WEB 平台；未加密）
+                token = HttpContext.Session.ResolveTicket()?.Token;
             }
+
+            // 解析令牌失败
             if (string.IsNullOrEmpty(token))
             {
                 // 记录调试信息

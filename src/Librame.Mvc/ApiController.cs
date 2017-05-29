@@ -163,5 +163,19 @@ namespace System.Web.Http
                 && !string.IsNullOrEmpty(descriptor.Ticket));
         }
 
+
+        /// <summary>
+        /// 支持预请求（如谷歌浏览器）。
+        /// </summary>
+        /// <returns>返回状态 202 的响应消息。</returns>
+        [HttpOptions]
+        public virtual HttpResponseMessage Options()
+        {
+            return new HttpResponseMessage
+            {
+                StatusCode = Net.HttpStatusCode.Accepted
+            };
+        }
+
     }
 }

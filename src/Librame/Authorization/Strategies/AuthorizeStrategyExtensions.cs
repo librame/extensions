@@ -23,6 +23,16 @@ namespace System.Web
     /// </summary>
     public static class AuthorizeStrategyExtensions
     {
+
+        /// <summary>
+        /// 解析登入链接（支持常规、SSO 客/服端模式）。
+        /// </summary>
+        /// <param name="session">给定的会话。</param>
+        /// <returns>返回登入链接字符串。</returns>
+        public static string ResolveLoginUrl(this HttpSessionState session)
+        {
+            return ResolveLoginUrl(new HttpSessionStateWrapper(session));
+        }
         /// <summary>
         /// 解析登入链接（支持常规、SSO 客/服端模式）。
         /// </summary>
@@ -44,6 +54,15 @@ namespace System.Web
                 authorize.AuthSettings.SsoServerSignInUrl);
         }
 
+        /// <summary>
+        /// 解析登出链接。
+        /// </summary>
+        /// <param name="session">给定的会话。</param>
+        /// <returns>返回登出链接字符串。</returns>
+        public static string ResolveLogoutUrl(this HttpSessionState session)
+        {
+            return ResolveLogoutUrl(new HttpSessionStateWrapper(session));
+        }
         /// <summary>
         /// 解析登出链接。
         /// </summary>
@@ -75,16 +94,16 @@ namespace System.Web
         /// <summary>
         /// 解析用户信息。
         /// </summary>
-        /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
+        /// <param name="session">给定的会话状态。</param>
         /// <returns>返回 <see cref="AccountPrincipal"/>。</returns>
         public static AccountPrincipal ResolvePrincipal(this HttpSessionState session)
         {
-            return (AccountPrincipal)session?[AuthorizeHelper.AUTHORIZATION_KEY];
+            return ResolvePrincipal(new HttpSessionStateWrapper(session));
         }
         /// <summary>
         /// 解析用户信息。
         /// </summary>
-        /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
+        /// <param name="session">给定的会话状态。</param>
         /// <returns>返回 <see cref="AccountPrincipal"/>。</returns>
         public static AccountPrincipal ResolvePrincipal(this HttpSessionStateBase session)
         {
@@ -95,16 +114,16 @@ namespace System.Web
         /// <summary>
         /// 解析用户票根。
         /// </summary>
-        /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
+        /// <param name="session">给定的会话状态。</param>
         /// <returns>返回认证票根。</returns>
         public static AuthenticateTicket ResolveTicket(this HttpSessionState session)
         {
-            return session.ResolvePrincipal()?.AsTicket();
+            return ResolveTicket(new HttpSessionStateWrapper(session));
         }
         /// <summary>
         /// 解析用户票根。
         /// </summary>
-        /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
+        /// <param name="session">给定的会话状态。</param>
         /// <returns>返回认证票根。</returns>
         public static AuthenticateTicket ResolveTicket(this HttpSessionStateBase session)
         {
@@ -113,20 +132,53 @@ namespace System.Web
 
 
         /// <summary>
+        /// 解析经过编码的令牌。
+        /// </summary>
+        /// <param name="session">给定的会话状态。</param>
+        /// <param name="isEncode">是否编码（默认编码）。</param>
+        /// <returns>返回令牌或空字符串。</returns>
+        public static string ResolveEncodeToken(this HttpSessionState session, bool isEncode = true)
+        {
+            return ResolveToken(new HttpSessionStateWrapper(session), isEncode);
+        }
+        /// <summary>
+        /// 解析经过编码的令牌。
+        /// </summary>
+        /// <param name="session">给定的会话状态。</param>
+        /// <param name="isEncode">是否编码（默认编码）。</param>
+        /// <returns>返回令牌或空字符串。</returns>
+        public static string ResolveToken(this HttpSessionStateBase session, bool isEncode = true)
+        {
+            var ticket = session.ResolveTicket();
+
+            if (ticket == null || string.IsNullOrEmpty(ticket.Token))
+                return string.Empty;
+
+            if (isEncode)
+            {
+                var cipertext = LibrameArchitecture.Adapters.Authorization.Managers.Ciphertext;
+                return cipertext.Encode(ticket.Token);
+            }
+            else
+            {
+                return ticket.Token;
+            }
+        }
+
+
+        /// <summary>
         /// 是否已认证。
         /// </summary>
-        /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
+        /// <param name="session">给定的会话状态。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsAuthenticated(this HttpSessionState session)
         {
-            var strategy = LibrameArchitecture.Adapters.Authorization.Strategy;
-
-            return strategy.IsAuthenticated(k => (AccountPrincipal)session?[k]);
+            return IsAuthenticated(new HttpSessionStateWrapper(session));
         }
         /// <summary>
         /// 是否已认证。
         /// </summary>
-        /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
+        /// <param name="session">给定的会话状态。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsAuthenticated(this HttpSessionStateBase session)
         {
@@ -138,19 +190,17 @@ namespace System.Web
         /// <summary>
         /// 是否已认证。
         /// </summary>
-        /// <param name="session">给定的 <see cref="HttpSessionState"/>。</param>
+        /// <param name="session">给定的会话状态。</param>
         /// <param name="principal">输出当前用户。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsAuthenticated(this HttpSessionState session, out AccountPrincipal principal)
         {
-            principal = session.ResolvePrincipal();
-
-            return (!ReferenceEquals(principal, null) && principal.Identity.IsAuthenticated);
+            return IsAuthenticated(new HttpSessionStateWrapper(session), out principal);
         }
         /// <summary>
         /// 是否已认证。
         /// </summary>
-        /// <param name="session">给定的 <see cref="HttpSessionStateBase"/>。</param>
+        /// <param name="session">给定的会话状态。</param>
         /// <param name="principal">输出当前用户。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsAuthenticated(this HttpSessionStateBase session, out AccountPrincipal principal)
