@@ -106,7 +106,7 @@ namespace Librame.Utility
             requestUrl = requestUrlFormat(requestUrl.NotEmpty(nameof(requestUrl)));
 
             return new HttpSessionStateWrapper(session).AsWebApi(requestUrl,
-                s => s.FromJson(type, serializerSettings, converters), token);
+                s => s.FromJson(type, true, serializerSettings, converters), token);
         }
         /// <summary>
         /// 转换为 WebApi 对象（如果会话中不存在，则发起远程请求并解析对象）。
@@ -124,7 +124,7 @@ namespace Librame.Utility
             params JsonConverter[] converters)
         {
             return new HttpSessionStateWrapper(session).AsWebApi(requestUrl,
-                s => s.FromJson(type, serializerSettings, converters), token);
+                s => s.FromJson(type, true, serializerSettings, converters), token);
         }
 
 
@@ -209,7 +209,7 @@ namespace Librame.Utility
             requestUrl = requestUrlFormat(requestUrl.NotEmpty(nameof(requestUrl)));
 
             return session.AsWebApi(requestUrl,
-                s => s.FromJson(type, serializerSettings, converters), token);
+                s => s.FromJson(type, true, serializerSettings, converters), token);
         }
         /// <summary>
         /// 转换为 WebApi 对象（如果会话中不存在，则发起远程请求并解析对象）。
@@ -227,7 +227,7 @@ namespace Librame.Utility
             params JsonConverter[] converters)
         {
             return session.AsWebApi(requestUrl,
-                s => s.FromJson(type, serializerSettings, converters), token);
+                s => s.FromJson(type, true, serializerSettings, converters), token);
         }
 
         

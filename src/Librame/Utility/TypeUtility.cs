@@ -271,137 +271,6 @@ namespace Librame.Utility
         #endregion
 
 
-        #region CopyTo
-
-        /// <summary>
-        /// 将源类型实例复制到新实例。
-        /// </summary>
-        /// <param name="source">给定的源类型实例。</param>
-        /// <returns>返回新实例。</returns>
-        public static T CopyToCreate<T>(this T source)
-            where T : class, new()
-        {
-            var target = Activator.CreateInstance<T>();
-            CopyTo(source, target);
-
-            return target;
-        }
-        /// <summary>
-        /// 将源类型实例复制到目标类型实例。
-        /// </summary>
-        /// <param name="source">给定的源类型实例。</param>
-        /// <param name="target">给定的目标类型实例。</param>
-        public static void CopyTo<T>(this T source, T target)
-            where T : class
-        {
-            source.NotNull(nameof(source));
-            target.NotNull(nameof(target));
-
-            SetProperties(typeof(T), source, target);
-        }
-
-        /// <summary>
-        /// 将源对象复制到新对象。
-        /// </summary>
-        /// <param name="source">给定的源对象。</param>
-        /// <returns>返回新对象。</returns>
-        public static object CopyToCreate(this object source)
-        {
-            var target = Activator.CreateInstance(source?.GetType());
-            CopyTo(source, target);
-
-            return target;
-        }
-        /// <summary>
-        /// 将源对象复制到目标对象。
-        /// </summary>
-        /// <param name="source">给定的源对象。</param>
-        /// <param name="target">给定的目标对象。</param>
-        public static void CopyTo(this object source, object target)
-        {
-            source = source.NotNull(nameof(source));
-            target = target.NotNull(nameof(target));
-
-            var sourceType = source.GetType();
-            var targetType = target.GetType();
-            if (sourceType != targetType)
-            {
-                throw new ArgumentException(string.Format("源类型 {0} 与目标类型 {1} 不一致",
-                    sourceType.Name, targetType.Name));
-            }
-
-            SetProperties(sourceType, source, target);
-        }
-
-        private static void SetProperties(Type propertyType, object source, object target)
-        {
-            var properties = propertyType.GetProperties();
-            if (properties.Length < 1)
-                return;
-
-            properties.Invoke(pi =>
-            {
-                var sourceValue = pi.GetValue(source);
-                if (sourceValue != null)
-                    pi.SetValue(target, sourceValue);
-            });
-        }
-
-        #endregion
-
-
-        #region Attribute
-
-        /// <summary>
-        /// 获取类属性。
-        /// </summary>
-        /// <typeparam name="T">指定要获取的类型。</typeparam>
-        /// <typeparam name="TAttribute">指定要获取的属性类型。</typeparam>
-        /// <param name="inherit">搜索此成员的继承链以查找这些属性，则为 true；否则为 false。</param>
-        /// <returns>返回属性对象。</returns>
-        public static TAttribute GetClassAttribute<T, TAttribute>(bool inherit = false)
-            where TAttribute : Attribute
-        {
-            return GetClassAttribute<TAttribute>(typeof(T), inherit);
-        }
-        /// <summary>
-        /// 获取类属性。
-        /// </summary>
-        /// <typeparam name="TAttribute">指定要获取的属性类型。</typeparam>
-        /// <param name="type">给定的类型。</param>
-        /// <param name="inherit">搜索此成员的继承链以查找这些属性，则为 true；否则为 false。</param>
-        /// <returns>返回属性对象。</returns>
-        public static TAttribute GetClassAttribute<TAttribute>(this Type type, bool inherit = false)
-            where TAttribute : Attribute
-        {
-            type.NotNull(nameof(type));
-
-            var attribs = type.GetCustomAttributes(typeof(TAttribute), inherit);
-
-            return (TAttribute)attribs?.FirstOrDefault();
-        }
-
-
-        /// <summary>
-        /// 获取此成员包含的自定义属性。
-        /// </summary>
-        /// <typeparam name="TAttribute">指定的属性类型。</typeparam>
-        /// <param name="member">指定的成员信息。</param>
-        /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
-        /// <returns>返回自定义属性对象。</returns>
-        public static TAttribute GetMemberAttribute<TAttribute>(this MemberInfo member, bool inherit = false)
-            where TAttribute : Attribute
-        {
-            member.NotNull(nameof(member));
-            
-            var attribs = member.GetCustomAttributes(typeof(TAttribute), inherit);
-
-            return (TAttribute)attribs?.FirstOrDefault();
-        }
-
-        #endregion
-
-
         #region AssignableTypes
 
         /// <summary>
@@ -482,6 +351,137 @@ namespace Librame.Utility
             {
                 return null;
             }
+        }
+
+        #endregion
+
+
+        #region Attribute
+
+        /// <summary>
+        /// 获取类属性。
+        /// </summary>
+        /// <typeparam name="T">指定要获取的类型。</typeparam>
+        /// <typeparam name="TAttribute">指定要获取的属性类型。</typeparam>
+        /// <param name="inherit">搜索此成员的继承链以查找这些属性，则为 true；否则为 false。</param>
+        /// <returns>返回属性对象。</returns>
+        public static TAttribute GetClassAttribute<T, TAttribute>(bool inherit = false)
+            where TAttribute : Attribute
+        {
+            return GetClassAttribute<TAttribute>(typeof(T), inherit);
+        }
+        /// <summary>
+        /// 获取类属性。
+        /// </summary>
+        /// <typeparam name="TAttribute">指定要获取的属性类型。</typeparam>
+        /// <param name="type">给定的类型。</param>
+        /// <param name="inherit">搜索此成员的继承链以查找这些属性，则为 true；否则为 false。</param>
+        /// <returns>返回属性对象。</returns>
+        public static TAttribute GetClassAttribute<TAttribute>(this Type type, bool inherit = false)
+            where TAttribute : Attribute
+        {
+            type.NotNull(nameof(type));
+
+            var attribs = type.GetCustomAttributes(typeof(TAttribute), inherit);
+
+            return (TAttribute)attribs?.FirstOrDefault();
+        }
+
+
+        /// <summary>
+        /// 获取此成员包含的自定义属性。
+        /// </summary>
+        /// <typeparam name="TAttribute">指定的属性类型。</typeparam>
+        /// <param name="member">指定的成员信息。</param>
+        /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
+        /// <returns>返回自定义属性对象。</returns>
+        public static TAttribute GetMemberAttribute<TAttribute>(this MemberInfo member, bool inherit = false)
+            where TAttribute : Attribute
+        {
+            member.NotNull(nameof(member));
+            
+            var attribs = member.GetCustomAttributes(typeof(TAttribute), inherit);
+
+            return (TAttribute)attribs?.FirstOrDefault();
+        }
+
+        #endregion
+
+
+        #region CopyTo
+
+        /// <summary>
+        /// 将源类型实例复制到新实例。
+        /// </summary>
+        /// <param name="source">给定的源类型实例。</param>
+        /// <returns>返回新实例。</returns>
+        public static T CopyToCreate<T>(this T source)
+            where T : class, new()
+        {
+            var target = Activator.CreateInstance<T>();
+            CopyTo(source, target);
+
+            return target;
+        }
+        /// <summary>
+        /// 将源类型实例复制到目标类型实例。
+        /// </summary>
+        /// <param name="source">给定的源类型实例。</param>
+        /// <param name="target">给定的目标类型实例。</param>
+        public static void CopyTo<T>(this T source, T target)
+            where T : class
+        {
+            source.NotNull(nameof(source));
+            target.NotNull(nameof(target));
+
+            SetProperties(typeof(T), source, target);
+        }
+
+        /// <summary>
+        /// 将源对象复制到新对象。
+        /// </summary>
+        /// <param name="source">给定的源对象。</param>
+        /// <returns>返回新对象。</returns>
+        public static object CopyToCreate(this object source)
+        {
+            var target = Activator.CreateInstance(source?.GetType());
+            CopyTo(source, target);
+
+            return target;
+        }
+        /// <summary>
+        /// 将源对象复制到目标对象。
+        /// </summary>
+        /// <param name="source">给定的源对象。</param>
+        /// <param name="target">给定的目标对象。</param>
+        public static void CopyTo(this object source, object target)
+        {
+            source = source.NotNull(nameof(source));
+            target = target.NotNull(nameof(target));
+
+            var sourceType = source.GetType();
+            var targetType = target.GetType();
+            if (sourceType != targetType)
+            {
+                throw new ArgumentException(string.Format("源类型 {0} 与目标类型 {1} 不一致",
+                    sourceType.Name, targetType.Name));
+            }
+
+            SetProperties(sourceType, source, target);
+        }
+
+        private static void SetProperties(Type propertyType, object source, object target)
+        {
+            var properties = propertyType.GetProperties();
+            if (properties.Length < 1)
+                return;
+
+            properties.Invoke(pi =>
+            {
+                var sourceValue = pi.GetValue(source);
+                if (sourceValue != null)
+                    pi.SetValue(target, sourceValue);
+            });
         }
 
         #endregion
@@ -624,6 +624,31 @@ namespace Librame.Utility
                         return null;
                     }
             }
+        }
+
+        #endregion
+
+
+        #region Is
+
+        /// <summary>
+        /// 是否为字符串类型。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsString(this Type type)
+        {
+            return (type.NotNull(nameof(type)).FullName == "System.String");
+        }
+
+        /// <summary>
+        /// 是否为字符串类型。
+        /// </summary>
+        /// <param name="typeInfo">给定的类型信息。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsString(this TypeInfo typeInfo)
+        {
+            return (typeInfo.NotNull(nameof(typeInfo)).FullName == "System.String");
         }
 
         #endregion

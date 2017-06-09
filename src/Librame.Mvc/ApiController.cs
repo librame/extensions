@@ -83,13 +83,26 @@ namespace System.Web.Http
             where TModel : class
         {
             (model == null).InvalidHttpRequest();
-
-            var json = model.AsJson(formatting, serializerSettings, converters);
+            
             var encoding = LibrameArchitecture.Adapters.Settings.Encoding;
+
+            StringContent content = null;
+
+            var type = typeof(TModel);
+            if (type.IsValueType || type.IsString())
+            {
+                content = new StringContent(model.ToString(), encoding);
+            }
+            else
+            {
+                // 不绕过值类型与字符串类型（已作单独处理）
+                var json = model.AsJson(false, formatting, serializerSettings, converters);
+                content = new StringContent(json, encoding, JsonHelper.CONTENT_TYPE);
+            }
 
             return new HttpResponseMessage
             {
-                Content = new StringContent(json, encoding, "application/json")
+                Content = content
             };
         }
 

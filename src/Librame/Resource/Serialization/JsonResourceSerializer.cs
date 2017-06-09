@@ -54,7 +54,7 @@ namespace Librame.Resource.Serialization
         /// <returns>返回 <see cref="ResourceSchema"/>。</returns>
         protected override ResourceSchema DeserializeSchemaCore(string content, Type schemaType)
         {
-            return (ResourceSchema)content.FromJson(schemaType, SerializerSettings, Converters);
+            return (ResourceSchema)content.FromJson(schemaType, true, SerializerSettings, Converters);
         }
 
 
@@ -65,7 +65,7 @@ namespace Librame.Resource.Serialization
         /// <returns>返回字符串。</returns>
         protected override string SerializeSchemaCore(ResourceSchema schema)
         {
-            return schema.AsJson(Formatting, SerializerSettings, Converters);
+            return schema.AsJson(true, Formatting, SerializerSettings, Converters);
         }
 
         #endregion
