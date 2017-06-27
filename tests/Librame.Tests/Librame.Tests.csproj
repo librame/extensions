@@ -227,6 +227,7 @@
     <Compile Include="Data\Maps\ArticleEntityMap.cs" />
     <Compile Include="Data\Maps\ArticleHibernateMap.cs" />
     <Compile Include="Data\TestEntitySource.cs" />
+    <Compile Include="Data\Treeing\TreeingListTests.cs" />
     <Compile Include="Html\HtmlAdapterTests.cs" />
     <Compile Include="Http\HttpAdapterTests.cs" />
     <Compile Include="Logging\LoggingAdapterTests.cs" />

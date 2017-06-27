@@ -26,10 +26,13 @@ namespace System.Collections.Generic
     /// <typeparam name="TId">指定的主键类型。</typeparam>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public class TreeingNode<T, TId> : IEnumerable<TreeingNode<T, TId>>, IParentIdDescriptor<TId>
+    public class TreeingNode<T, TId> : IParentIdDescriptor<TId>
         where T : IParentIdDescriptor<TId>
         where TId : struct
     {
+        private IList<TreeingNode<T, TId>> _childs = null;
+
+
         /// <summary>
         /// 编号属性。
         /// </summary>
@@ -47,9 +50,9 @@ namespace System.Collections.Generic
         public T Item { get; }
 
         /// <summary>
-        /// 子节点列表。
+        /// 深度等级。
         /// </summary>
-        public IList<TreeingNode<T, TId>> Childs { get; set; }
+        public int DepthLevel { get; }
 
 
         /// <summary>
@@ -63,11 +66,14 @@ namespace System.Collections.Generic
         /// 构造一个 <see cref="TreeingNode{T, TId}"/> 实例。
         /// </summary>
         /// <param name="item">给定的项。</param>
+        /// <param name="depthLevel">给定的深度等级。</param>
         /// <param name="childs">给定的子节点列表。</param>
-        public TreeingNode(T item, IList<TreeingNode<T, TId>> childs = null)
+        public TreeingNode(T item, int depthLevel = 0, IList<TreeingNode<T, TId>> childs = null)
         {
             Item = item;
-            Childs = childs ?? new List<TreeingNode<T, TId>>();
+            DepthLevel = depthLevel;
+
+            _childs = childs ?? new List<TreeingNode<T, TId>>();
 
             // 绑定编号、父编号属性信息
             if (ReferenceEquals(IdProperty, null))
@@ -79,6 +85,25 @@ namespace System.Collections.Generic
 
                 IdProperty = properties.FirstOrDefault(pi => pi.Name == id);
                 ParentIdProperty = properties.FirstOrDefault(pi => pi.Name == parentId);
+            }
+        }
+
+
+        /// <summary>
+        /// 子节点列表。
+        /// </summary>
+        public IList<TreeingNode<T, TId>> Childs
+        {
+            get
+            {
+                return _childs;
+            }
+            set
+            {
+                if (value == null)
+                    value = new List<TreeingNode<T, TId>>();
+
+                _childs = value;
             }
         }
 
@@ -99,15 +124,11 @@ namespace System.Collections.Generic
             get { return (TId)ParentIdProperty.GetValue(Item, null); }
         }
 
-
+        
         /// <summary>
         /// 是否包含子孙节点。
         /// </summary>
-        /// <returns>返回布尔值。</returns>
-        public virtual bool ContainsChilds()
-        {
-            return (Childs.Count > 0);
-        }
+        public bool HasChilds => (Childs.Count > 0);
 
 
         /// <summary>
@@ -131,7 +152,7 @@ namespace System.Collections.Generic
         {
             child = GetChild(childId);
 
-            return (!ReferenceEquals(child, null));
+            return (child != null);
         }
 
 
@@ -142,8 +163,7 @@ namespace System.Collections.Generic
         /// <returns>返回当前子节点。</returns>
         public virtual TreeingNode<T, TId> GetChild(int childId)
         {
-            // 是否包含子孙节点
-            if (ContainsChilds())
+            if (HasChilds)
             {
                 foreach (var c in Childs)
                 {
@@ -164,15 +184,14 @@ namespace System.Collections.Generic
         /// <returns>返回树形节点列表。</returns>
         public virtual IList<TreeingNode<T, TId>> GetChilds(int parentId)
         {
-            // 是否包含子孙节点
-            if (ContainsChilds())
+            if (HasChilds)
             {
                 var allChilds = new List<TreeingNode<T, TId>>();
 
                 foreach (var c in Childs)
                 {
                     // 断定当前子节点编号
-                    if (c.ParentId.Equals(parentId) && c.ContainsChilds())
+                    if (c.ParentId.Equals(parentId) && c.HasChilds)
                     {
                         // 添加子节点的子孙节点集合
                         allChilds.AddRange(c.Childs);
@@ -184,27 +203,6 @@ namespace System.Collections.Generic
 
             return null;
         }
-
-
-        #region IEnumerable<T> Members
-
-        /// <summary>
-        /// 返回一个循环访问集合的枚举数。
-        /// </summary>
-        /// <returns>返回枚举数。</returns>
-        public IEnumerator<TreeingNode<T, TId>> GetEnumerator()
-        {
-            if (ReferenceEquals(Childs, null) || Childs.Count < 1) return null;
-
-            return Childs.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        #endregion
 
 
         /// <summary>
@@ -226,6 +224,7 @@ namespace System.Collections.Generic
             return false;
         }
 
+
         /// <summary>
         /// 已重载。
         /// </summary>
@@ -234,6 +233,7 @@ namespace System.Collections.Generic
         {
             return ParentId.GetHashCode() ^ ParentId.GetHashCode();
         }
+
 
         /// <summary>
         /// 已重载。
@@ -250,20 +250,26 @@ namespace System.Collections.Generic
         /// <returns>返回字符串。</returns>
         public virtual string ToString(Func<T, string> toStringFactory)
         {
-            if (Childs.Count < 1) return string.Empty;
+            if (toStringFactory == null)
+                toStringFactory = f => f.AsPairsString();
 
-            if (ReferenceEquals(toStringFactory, null))
-                toStringFactory = node => this.AsPairsString();
-            
             var sb = new StringBuilder();
+
+            sb.Append(toStringFactory.Invoke(Item));
+
+            if (Childs.Count < 1)
+                return sb.ToString();
+
+            sb.Append(";");
+
+            int i = 0;
             foreach (var child in Childs)
             {
-                // 循环转换子节点
-                if (!ReferenceEquals(child.Item, null))
-                    sb.Append(toStringFactory(child.Item));
-
-                // 循环转换可能存在的子孙节点
+                // 链式转换可能存在的子孙节点
                 sb.Append(child.ToString(toStringFactory));
+
+                if (i != Childs.Count - 1)
+                    sb.Append(";");
             }
 
             return sb.ToString();

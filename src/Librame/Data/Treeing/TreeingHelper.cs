@@ -23,30 +23,38 @@ namespace System.Collections.Generic
         /// <summary>
         /// 转换为树形节点列表。
         /// </summary>
-        /// <param name="list">给定的对象列表。</param>
+        /// <param name="items">给定的类型实例集合。</param>
         /// <returns>返回树形节点列表。</returns>
-        public static IList<TreeingNode<T, TId>> ToNodes<T, TId>(IList<T> list)
+        public static IList<TreeingNode<T, TId>> ToNodes<T, TId>(IEnumerable<T> items)
             where T : IParentIdDescriptor<TId>
             where TId : struct
         {
+            if (items == null) return null;
+
+            var rootParentId = items.Select(s => s.ParentId).Min();
+
+            return LookupNodes(items, rootParentId);
+        }
+
+        private static IList<TreeingNode<T, TId>> LookupNodes<T, TId>(IEnumerable<T> items,
+            TId parentId, int depthLevel = 0)
+            where T : IParentIdDescriptor<TId>
+            where TId : struct
+        {
+            var parents = items.Where(p => p.ParentId.Equals(parentId)).ToList();
+
+            if (parents.Count < 1)
+                return null;
+
             var nodes = new List<TreeingNode<T, TId>>();
-
-            // 提取所有不重复的编号集合
-            var ids = list.Select(s => s.Id).Distinct();
-            foreach (var id in ids)
+            foreach (var p in parents)
             {
-                // 查找当前列表项
-                var item = list.FirstOrDefault(p => p.Id.Equals(id));
+                var node = new TreeingNode<T, TId>(p, depthLevel);
+                
+                var childs = LookupNodes(items, p.Id, node.DepthLevel + 1);
+                node.Childs = childs;
 
-                // 查找所有子列表
-                var itemList = list.Where(p => p.ParentId.Equals(id)).ToList();
-
-                if (!ReferenceEquals(itemList, null) && itemList.Count > 0)
-                {
-                    // 将子列表转换为节点列表
-                    var childs = itemList.Select(s => new TreeingNode<T, TId>(s)).ToList();
-                    nodes.Add(new TreeingNode<T, TId>(item, childs));
-                }
+                nodes.Add(node);
             }
 
             return nodes;

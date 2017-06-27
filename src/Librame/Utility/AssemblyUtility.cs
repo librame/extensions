@@ -187,6 +187,9 @@ namespace Librame.Utility
             {
                 using (var fs = assembly.GetFile(manifestResourceName))
                 {
+                    if (fs == null)
+                        return false;
+
                     var resourceFileInfo = new FileInfo(fs.Name);
                     var outputFileInfo = new FileInfo(outputFileName);
 

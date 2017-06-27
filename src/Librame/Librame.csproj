@@ -349,7 +349,7 @@
     <Compile Include="Data\Mappings\HibernateAutomappingConfiguration.cs" />
     <Compile Include="Data\Mappings\HibernateMapping.cs" />
     <Compile Include="Data\Mappings\HibernateMappingExtensions.cs" />
-    <Compile Include="Data\Paging\IPagingable.cs" />
+    <Compile Include="Data\Paging\IPageable.cs" />
     <Compile Include="Data\Paging\PagingList.cs" />
     <Compile Include="Data\Paging\PagingHelper.cs" />
     <Compile Include="Data\Providers\HibernateProvider.cs" />
@@ -386,7 +386,7 @@
     <Compile Include="Data\Descriptors\IIdDescriptor.cs" />
     <Compile Include="Data\Descriptors\IParentIdDescriptor.cs" />
     <Compile Include="Data\Paging\PagingInfo.cs" />
-    <Compile Include="Data\Treeing\ITreeingable.cs" />
+    <Compile Include="Data\Treeing\ITreetable.cs" />
     <Compile Include="Data\Treeing\TreeingList.cs" />
     <Compile Include="Data\Treeing\TreeingNode.cs" />
     <Compile Include="Data\ValidationHelper.cs" />

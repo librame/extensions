@@ -132,8 +132,8 @@ namespace Librame.Data.Repositories
         /// <param name="createInfoFactory">给定创建分页信息的方法。</param>
         /// <param name="order">给定的排序方法。</param>
         /// <param name="predicate">给定的查询表达式（可选；如果为空，则查询所有数据）。</param>
-        /// <returns>返回 <see cref="IPagingable{T}"/>。</returns>
-        public virtual IPagingable<T> GetPaging(Func<int, PagingInfo> createInfoFactory,
+        /// <returns>返回 <see cref="IPageable{T}"/>。</returns>
+        public virtual IPageable<T> GetPaging(Func<int, PagingInfo> createInfoFactory,
             Action<Orderable<T>> order, Expression<Func<T, bool>> predicate = null)
         {
             return Ready(q => q.AsWhere(predicate).AsPaging(order, createInfoFactory));
@@ -186,7 +186,7 @@ namespace Librame.Data.Repositories
         }
 
 
-        IPagingable<T> IRepositoryReader<T>.GetPaging(Func<int, PagingInfo> createInfoFactory,
+        IPageable<T> IRepositoryReader<T>.GetPaging(Func<int, PagingInfo> createInfoFactory,
             Action<Orderable<T>> order, Expression<Func<T, bool>> predicate)
         {
             return GetPaging(createInfoFactory, order, predicate);

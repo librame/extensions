@@ -22,7 +22,7 @@ namespace System.Collections.Generic
     /// <typeparam name="T">要分页的对象类型。</typeparam>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public class PagingList<T> : IPagingable<T>
+    public class PagingList<T> : IPageable<T>
     {
         /// <summary>
         /// 获取行列表。
@@ -38,7 +38,7 @@ namespace System.Collections.Generic
         /// <summary>
         /// 构造一个 <see cref="PagingList{T}"/> 实例。
         /// </summary>
-        /// <param name="rows">给定的行集合。</param>
+        /// <param name="rows">给定的行列表。</param>
         /// <param name="info">给定的分页信息。</param>
         public PagingList(IList<T> rows, PagingInfo info)
         {
@@ -52,7 +52,7 @@ namespace System.Collections.Generic
         /// </summary>
         /// <param name="selector">给定的选择器。</param>
         /// <returns>返回结果类型的公开分页数。</returns>
-        public virtual IPagingable<T> UpdatePaging(Func<T, T> selector)
+        public virtual IPageable<T> UpdatePaging(Func<T, T> selector)
         {
             return AsPaging(selector);
         }
@@ -63,7 +63,7 @@ namespace System.Collections.Generic
         /// <typeparam name="TResult">指定的结果类型。</typeparam>
         /// <param name="selector">给定的选择器。</param>
         /// <returns>返回结果类型的公开分页数。</returns>
-        public virtual IPagingable<TResult> AsPaging<TResult>(Func<T, TResult> selector)
+        public virtual IPageable<TResult> AsPaging<TResult>(Func<T, TResult> selector)
         {
             try
             {

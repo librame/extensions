@@ -31,7 +31,7 @@ namespace Librame.Adaptation
         /// </summary>
         public virtual string ConfigDirectory
         {
-            get { return PathUtility.ConfigsDirectory.AppendDirectoryName(AdapterInfo.Name); }
+            get { return PathUtility.ConfigsDirectory.AppendPath(AdapterInfo.Name); }
         }
 
 
@@ -65,7 +65,7 @@ namespace Librame.Adaptation
             string manifestResourceName = null)
         {
             outputRelativeFilePath.NotEmpty(nameof(outputRelativeFilePath));
-
+            
             // 如果不是以适配器配置目录开始的，则添加配置目录
             if (!outputRelativeFilePath.StartsWith(ConfigDirectory))
             {
@@ -78,9 +78,12 @@ namespace Librame.Adaptation
 
             if (string.IsNullOrEmpty(manifestResourceName))
                 manifestResourceName = ToManifestResourceName(adapterAssembly, outputRelativeFilePath);
-            
+
+            // 尝试创建配置目录
+            System.IO.Directory.CreateDirectory(ConfigDirectory);
+
             // 导出嵌入的资源配置文件
-            AssemblyUtility.ManifestResourceSaveAs(manifestResourceName, outputRelativeFilePath);
+            adapterAssembly.ManifestResourceSaveAs(manifestResourceName, outputRelativeFilePath);
         }
 
         /// <summary>

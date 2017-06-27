@@ -71,8 +71,8 @@ namespace Librame.Data.Repositories
         /// <param name="createInfoFactory">给定创建分页信息的方法。</param>
         /// <param name="order">给定的排序方法。</param>
         /// <param name="predicate">给定的查询表达式（可选；如果为空，则查询所有数据）。</param>
-        /// <returns>返回 <see cref="IPagingable{T}"/>。</returns>
-        IPagingable<T> GetPaging(Func<int, PagingInfo> createInfoFactory,
+        /// <returns>返回 <see cref="IPageable{T}"/>。</returns>
+        IPageable<T> GetPaging(Func<int, PagingInfo> createInfoFactory,
             Action<Orderable<T>> order, Expression<Func<T, bool>> predicate = null);
 
 

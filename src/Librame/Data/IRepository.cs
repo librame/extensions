@@ -276,7 +276,7 @@ namespace Librame.Data
         /// <param name="order">给定的排序方法。</param>
         /// <param name="predicate">给定的查询表达式（可选；如果为空，则查询所有数据）。</param>
         /// <returns>返回一个分页集合。</returns>
-        public static IPagingable<T> GetPagingBySkip<T>(this IRepositoryReader<T> repotitory,
+        public static IPageable<T> GetPagingBySkip<T>(this IRepositoryReader<T> repotitory,
             int skip, int take, Action<Orderable<T>> order, Expression<Func<T, bool>> predicate = null)
             where T : class
         {
@@ -293,11 +293,11 @@ namespace Librame.Data
         /// <param name="order">给定的排序方法。</param>
         /// <param name="predicate">给定的查询表达式（可选；如果为空，则查询所有数据）。</param>
         /// <returns>返回一个带分页集合的异步操作。</returns>
-        public static Task<IPagingable<T>> GetPagingBySkipAsync<T>(this IRepositoryReader<T> repotitory,
+        public static Task<IPageable<T>> GetPagingBySkipAsync<T>(this IRepositoryReader<T> repotitory,
             int skip, int take, Action<Orderable<T>> order, Expression<Func<T, bool>> predicate = null)
             where T : class
         {
-            return Task<IPagingable<T>>.Factory.StartNew(() => repotitory.GetPagingBySkip(skip, take, order, predicate));
+            return Task<IPageable<T>>.Factory.StartNew(() => repotitory.GetPagingBySkip(skip, take, order, predicate));
         }
 
         /// <summary>
@@ -310,7 +310,7 @@ namespace Librame.Data
         /// <param name="order">给定的排序方法。</param>
         /// <param name="predicate">给定的查询表达式（可选；如果为空，则查询所有数据）。</param>
         /// <returns>返回一个分页集合。</returns>
-        public static IPagingable<T> GetPagingByIndex<T>(this IRepositoryReader<T> repotitory,
+        public static IPageable<T> GetPagingByIndex<T>(this IRepositoryReader<T> repotitory,
             int index, int size, Action<Orderable<T>> order, Expression<Func<T, bool>> predicate = null)
             where T : class
         {
@@ -327,11 +327,11 @@ namespace Librame.Data
         /// <param name="order">给定的排序方法。</param>
         /// <param name="predicate">给定的查询表达式（可选；如果为空，则查询所有数据）。</param>
         /// <returns>返回一个带分页集合的异步操作。</returns>
-        public static Task<IPagingable<T>> GetPagingByIndexAsync<T>(this IRepositoryReader<T> repotitory,
+        public static Task<IPageable<T>> GetPagingByIndexAsync<T>(this IRepositoryReader<T> repotitory,
             int index, int size, Action<Orderable<T>> order, Expression<Func<T, bool>> predicate = null)
             where T : class
         {
-            return Task<IPagingable<T>>.Factory.StartNew(() => repotitory.GetPagingByIndex(index, size, order, predicate));
+            return Task<IPageable<T>>.Factory.StartNew(() => repotitory.GetPagingByIndex(index, size, order, predicate));
         }
 
 

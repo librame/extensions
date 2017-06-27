@@ -23,6 +23,9 @@ namespace System.Web.Mvc
     /// </summary>
     public static class RepositoryExtensions
     {
+
+        #region SelectList
+
         /// <summary>
         /// 获取选择列表。
         /// </summary>
@@ -153,6 +156,163 @@ namespace System.Web.Mvc
             return items.AsSelectListItems(v => v.Id.ToString(), textSelector,
                 selectedFactory, null, addDefaultListItem);
         }
+
+        #endregion
+
+
+        #region TreeSelectList
+
+        /// <summary>
+        /// 获取选择列表。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="repository">给定的仓库。</param>
+        /// <param name="textSelector">给定的文本选择器。</param>
+        /// <param name="textPrefixFactory">给定的文本前缀方法（如果自定义深度等级文本）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <returns>返回选择列表项集合。</returns>
+        public static IList<SelectListItem> GetTreeSelectList<T>(this IRepository<T> repository,
+            Func<T, string> textSelector,
+            Func<TreeingNode<T, int>, string> textPrefixFactory = null,
+            bool addDefaultListItem = true)
+            where T : class, IParentIdDescriptor<int>
+        {
+            // 无选中项
+            return repository.GetTreeSelectList(textSelector,
+                (value, text) => false, textPrefixFactory, addDefaultListItem);
+        }
+        /// <summary>
+        /// 获取选择列表。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="repository">给定的仓库。</param>
+        /// <param name="textSelector">给定的文本选择器。</param>
+        /// <param name="selectedIds">给定的选中编号集合（多个编号以英文逗号分隔）。</param>
+        /// <param name="textPrefixFactory">给定的文本前缀方法（如果自定义深度等级文本）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <returns>返回选择列表项集合。</returns>
+        public static IList<SelectListItem> GetTreeSelectList<T>(this IRepository<T> repository,
+            Func<T, string> textSelector, string selectedIds,
+            Func<TreeingNode<T, int>, string> textPrefixFactory = null,
+            bool addDefaultListItem = true)
+            where T : class, IParentIdDescriptor<int>
+        {
+            // 默认选中项
+            var selectedValues = new string[] { "0" };
+
+            if (!string.IsNullOrEmpty(selectedIds))
+                selectedValues = selectedIds.Split(',');
+
+            return repository.GetTreeSelectList(textSelector,
+                (value, text) => selectedValues.Contains(value), textPrefixFactory, addDefaultListItem);
+        }
+        /// <summary>
+        /// 获取选择列表。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="repository">给定的仓库。</param>
+        /// <param name="textSelector">给定的文本选择器。</param>
+        /// <param name="selectedId">给定的选中编号。</param>
+        /// <param name="textPrefixFactory">给定的文本前缀方法（如果自定义深度等级文本）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <returns>返回选择列表项集合。</returns>
+        public static IList<SelectListItem> GetTreeSelectList<T>(this IRepository<T> repository,
+            Func<T, string> textSelector, int selectedId,
+            Func<TreeingNode<T, int>, string> textPrefixFactory = null,
+            bool addDefaultListItem = true)
+            where T : class, IParentIdDescriptor<int>
+        {
+            var selectedValue = selectedId.ToString();
+
+            return repository.GetTreeSelectList(textSelector,
+                (value, text) => selectedValue == value, textPrefixFactory, addDefaultListItem);
+        }
+        /// <summary>
+        /// 获取选择列表。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="repository">给定的仓库。</param>
+        /// <param name="textSelector">给定的文本选择器。</param>
+        /// <param name="selectedFactory">给定的选中方法。</param>
+        /// <param name="textPrefixFactory">给定的文本前缀方法（如果自定义深度等级文本）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <returns>返回选择列表项集合。</returns>
+        public static IList<SelectListItem> GetTreeSelectList<T>(this IRepository<T> repository,
+            Func<T, string> textSelector, Func<string, string, bool> selectedFactory,
+            Func<TreeingNode<T, int>, string> textPrefixFactory = null,
+            bool addDefaultListItem = true)
+            where T : class, IParentIdDescriptor<int>
+        {
+            var items = repository.GetMany();
+
+            return items.AsTreeSelectListItems(v => v.Id.ToString(), textSelector,
+                selectedFactory, textPrefixFactory, null, addDefaultListItem);
+        }
+
+
+        /// <summary>
+        /// 获取数据状态为开放的选择列表。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="repository">给定的仓库。</param>
+        /// <param name="textSelector">给定的文本选择器。</param>
+        /// <param name="textPrefixFactory">给定的文本前缀方法（如果自定义深度等级文本）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <returns>返回选择列表项集合。</returns>
+        public static IList<SelectListItem> GetDataStatusTreeSelectList<T>(this IRepository<T> repository,
+            Func<T, string> textSelector,
+            Func<TreeingNode<T, int>, string> textPrefixFactory = null,
+            bool addDefaultListItem = true)
+            where T : class, IDataIdDescriptor<int>, IParentIdDescriptor<int>
+        {
+            // 无选中项
+            return repository.GetDataStatusTreeSelectList(textSelector,
+                (value, text) => false, textPrefixFactory, addDefaultListItem);
+        }
+        /// <summary>
+        /// 获取数据状态为开放的选择列表。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="repository">给定的仓库。</param>
+        /// <param name="textSelector">给定的文本选择器。</param>
+        /// <param name="selectedId">给定的选中编号。</param>
+        /// <param name="textPrefixFactory">给定的文本前缀方法（如果自定义深度等级文本）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <returns>返回选择列表项集合。</returns>
+        public static IList<SelectListItem> GetDataStatusTreeSelectList<T>(this IRepository<T> repository,
+            Func<T, string> textSelector, int selectedId,
+            Func<TreeingNode<T, int>, string> textPrefixFactory = null,
+            bool addDefaultListItem = true)
+            where T : class, IDataIdDescriptor<int>, IParentIdDescriptor<int>
+        {
+            var selectedValue = selectedId.ToString();
+
+            return repository.GetDataStatusTreeSelectList(textSelector,
+                (value, text) => selectedValue == value, textPrefixFactory, addDefaultListItem);
+        }
+        /// <summary>
+        /// 获取数据状态为开放的选择列表。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="repository">给定的仓库。</param>
+        /// <param name="textSelector">给定的文本选择器。</param>
+        /// <param name="selectedFactory">给定的选中方法。</param>
+        /// <param name="textPrefixFactory">给定的文本前缀方法（如果自定义深度等级文本）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <returns>返回选择列表项集合。</returns>
+        public static IList<SelectListItem> GetDataStatusTreeSelectList<T>(this IRepository<T> repository,
+            Func<T, string> textSelector, Func<string, string, bool> selectedFactory,
+            Func<TreeingNode<T, int>, string> textPrefixFactory = null,
+            bool addDefaultListItem = true)
+            where T : class, IDataIdDescriptor<int>, IParentIdDescriptor<int>
+        {
+            var items = repository.GetMany(p => p.DataStatus == DataStatus.Public);
+
+            return items.AsTreeSelectListItems(v => v.Id.ToString(), textSelector,
+                selectedFactory, textPrefixFactory, null, addDefaultListItem);
+        }
+
+        #endregion
 
     }
 }

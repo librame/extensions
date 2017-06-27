@@ -119,7 +119,7 @@ namespace System.Linq
         /// <param name="order">给定的排序方法。</param>
         /// <param name="createInfoFactory">给定创建分页信息的工厂方法。</param>
         /// <returns>返回一个分页接口。</returns>
-        public static IPagingable<T> AsPaging<T>(this IQueryable<T> query, Action<Orderable<T>> order,
+        public static IPageable<T> AsPaging<T>(this IQueryable<T> query, Action<Orderable<T>> order,
             Func<int, PagingInfo> createInfoFactory)
         {
             // 分页必须启用排序
