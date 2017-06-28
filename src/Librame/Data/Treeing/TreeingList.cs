@@ -12,6 +12,7 @@
 
 using Librame.Data.Descriptors;
 using Librame.Utility;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
@@ -42,21 +43,25 @@ namespace System.Collections.Generic
         /// 构造一个 <see cref="TreeingList{T, TId}"/> 实例。
         /// </summary>
         /// <param name="items">给定的类型实例集合。</param>
-        public TreeingList(IEnumerable<T> items)
+        /// <param name="orderBy">给定的排序工厂方法（可选）。</param>
+        public TreeingList(IEnumerable<T> items,
+            Func<IEnumerable<TreeingNode<T, TId>>, IOrderedEnumerable<TreeingNode<T, TId>>> orderBy = null)
         {
             items.NotNull(nameof(items));
 
             Nodes = ToNodes(items);
-            NonstratifiedNodes = ToNonstratifiedNodes(Nodes);
+            NonstratifiedNodes = ToNonstratifiedNodes(Nodes, orderBy);
         }
         /// <summary>
         /// 构造一个 <see cref="TreeingList{T, TId}"/> 实例。
         /// </summary>
         /// <param name="nodes">给定的节点列表。</param>
-        public TreeingList(IList<TreeingNode<T, TId>> nodes)
+        /// <param name="orderBy">给定的排序工厂方法（可选）。</param>
+        public TreeingList(IList<TreeingNode<T, TId>> nodes,
+            Func<IEnumerable<TreeingNode<T, TId>>, IOrderedEnumerable<TreeingNode<T, TId>>> orderBy = null)
         {
             Nodes = nodes.NotNull(nameof(nodes));
-            NonstratifiedNodes = ToNonstratifiedNodes(nodes);
+            NonstratifiedNodes = ToNonstratifiedNodes(nodes, orderBy);
         }
 
 
@@ -74,8 +79,10 @@ namespace System.Collections.Generic
         /// 转换为无层级树形节点列表。
         /// </summary>
         /// <param name="nodes">给定的节点列表。</param>
+        /// <param name="orderBy">给定的排序工厂方法（可选）。</param>
         /// <returns>返回无层级树形节点列表。</returns>
-        protected virtual IList<TreeingNode<T, TId>> ToNonstratifiedNodes(IList<TreeingNode<T, TId>> nodes)
+        protected virtual IList<TreeingNode<T, TId>> ToNonstratifiedNodes(IList<TreeingNode<T, TId>> nodes,
+            Func<IEnumerable<TreeingNode<T, TId>>, IOrderedEnumerable<TreeingNode<T, TId>>> orderBy = null)
         {
             List<TreeingNode<T, TId>> nonstratifiedNodes = null;
 
@@ -91,6 +98,9 @@ namespace System.Collections.Generic
                     {
                         // 链式查询
                         var lookupNodes = ToNonstratifiedNodes(n.Childs);
+
+                        orderBy?.Invoke(lookupNodes);
+
                         nonstratifiedNodes.AddRange(lookupNodes);
                     }
                 }

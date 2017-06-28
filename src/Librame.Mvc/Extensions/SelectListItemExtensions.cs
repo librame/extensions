@@ -23,24 +23,51 @@ namespace System.Web.Mvc
     {
 
         /// <summary>
-        /// 将序列中的每个元素投射到选择项列表中。
+        /// 默认列表项。
+        /// </summary>
+        public static readonly SelectListItem DefaultListItem = new SelectListItem()
+        {
+            Text = "默认",
+            Value = "0"
+        };
+
+
+        /// <summary>
+        /// 将序列中的每个元素转换为选择列表项集合。
         /// </summary>
         /// <typeparam name="TSource">指定的源类型。</typeparam>
         /// <param name="sources">给定的源集合。</param>
         /// <param name="valueSelector">给定的值选择器。</param>
         /// <param name="textSelector">给定的文本选择器。</param>
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
-        /// <param name="defaultResults">给定的默认结果集合。</param>
+        /// <param name="defaultSelectListItems">给定的默认结果集合。</param>
         /// <param name="addDefaultListItem">增加默认列表项。</param>
         /// <returns>返回结果集合。</returns>
         public static IList<SelectListItem> AsSelectListItems<TSource>(this IEnumerable<TSource> sources,
-            Func<TSource, string> valueSelector, Func<TSource, string> textSelector,
-            Func<string, string, bool> selectedFactory, IList<SelectListItem> defaultResults = null,
+            Func<TSource, string> valueSelector,
+            Func<TSource, string> textSelector,
+            Func<string, string, bool> selectedFactory,
+            IList<SelectListItem> defaultSelectListItems = null,
             bool addDefaultListItem = true)
         {
+            // 如果源集合为空
             if (ReferenceEquals(sources, null) || sources.Count() < 1)
-                return defaultResults;
+            {
+                // 如果默认结果集合不为空
+                if (defaultSelectListItems != null)
+                {
+                    // 如果添加默认项且默认结果集合初始项不是默认项
+                    if (addDefaultListItem && !DefaultListItem.Equals(defaultSelectListItems.First()))
+                        defaultSelectListItems.Insert(0, DefaultListItem);
 
+                    return defaultSelectListItems;
+                }
+
+                defaultSelectListItems = new List<SelectListItem>() { DefaultListItem };
+                return defaultSelectListItems;
+            }
+
+            // 转换为选择列表项集合
             var list = sources.Select(s =>
             {
                 var text = textSelector.Invoke(s);
@@ -56,13 +83,7 @@ namespace System.Web.Mvc
 
             // 如果添加默认项
             if (addDefaultListItem)
-            {
-                list.Insert(0, new SelectListItem()
-                {
-                    Text = "默认",
-                    Value = "0",
-                });
-            }
+                list.Insert(0, DefaultListItem);
 
             return list;
         }
@@ -76,18 +97,28 @@ namespace System.Web.Mvc
         /// <param name="valueSelector">给定的值选择器。</param>
         /// <param name="textSelector">给定的文本选择器。</param>
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
-        /// <param name="textPrefixFactory">给定的文本前缀方法（如果自定义深度等级文本）。</param>
-        /// <param name="defaultResults">给定的默认结果集合。</param>
-        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <param name="textPrefixFactory">给定的文本前缀方法（可选；如自定义深度等级文本）。</param>
+        /// <param name="defaultSelectListItems">给定的默认结果集合（可选）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项（可选）。</param>
+        /// <param name="orderBy">给定的排序工厂方法（可选）。</param>
         /// <returns>返回结果集合。</returns>
         public static IList<SelectListItem> AsTreeSelectListItems<TSource>(this IEnumerable<TSource> sources,
-            Func<TSource, string> valueSelector, Func<TSource, string> textSelector,
-            Func<string, string, bool> selectedFactory, Func<TreeingNode<TSource, int>, string> textPrefixFactory = null,
-            IList<SelectListItem> defaultResults = null, bool addDefaultListItem = true)
+            Func<TSource, string> valueSelector,
+            Func<TSource, string> textSelector,
+            Func<string, string, bool> selectedFactory,
+            Func<TreeingNode<TSource, int>, string> textPrefixFactory = null,
+            IList<SelectListItem> defaultSelectListItems = null,
+            bool addDefaultListItem = true,
+            Func<IEnumerable<TreeingNode<TSource, int>>, IOrderedEnumerable<TreeingNode<TSource, int>>> orderBy = null)
             where TSource : class, IParentIdDescriptor<int>
         {
-            return sources.AsTreeSelectListItems<TSource, int>(valueSelector, textSelector,
-                selectedFactory, textPrefixFactory, defaultResults, addDefaultListItem);
+            return sources.AsTreeSelectListItems<TSource, int>(valueSelector,
+                textSelector,
+                selectedFactory,
+                textPrefixFactory,
+                defaultSelectListItems,
+                addDefaultListItem,
+                orderBy);
         }
         /// <summary>
         /// 将序列中的每个元素投射到选择项列表中。
@@ -98,20 +129,40 @@ namespace System.Web.Mvc
         /// <param name="valueSelector">给定的值选择器。</param>
         /// <param name="textSelector">给定的文本选择器。</param>
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
-        /// <param name="textPrefixFactory">给定的文本前缀方法（如果自定义深度等级文本）。</param>
-        /// <param name="defaultResults">给定的默认结果集合。</param>
-        /// <param name="addDefaultListItem">增加默认列表项。</param>
+        /// <param name="textPrefixFactory">给定的文本前缀方法（可选；如自定义深度等级文本）。</param>
+        /// <param name="defaultSelectListItems">给定的默认结果集合（可选）。</param>
+        /// <param name="addDefaultListItem">增加默认列表项（可选）。</param>
+        /// <param name="orderBy">给定的排序工厂方法（可选）。</param>
         /// <returns>返回结果集合。</returns>
         public static IList<SelectListItem> AsTreeSelectListItems<TSource, TId>(this IEnumerable<TSource> sources,
-            Func<TSource, string> valueSelector, Func<TSource, string> textSelector,
-            Func<string, string, bool> selectedFactory, Func<TreeingNode<TSource, TId>, string> textPrefixFactory = null,
-            IList<SelectListItem> defaultResults = null, bool addDefaultListItem = true)
+            Func<TSource, string> valueSelector,
+            Func<TSource, string> textSelector,
+            Func<string, string, bool> selectedFactory,
+            Func<TreeingNode<TSource, TId>, string> textPrefixFactory = null,
+            IList<SelectListItem> defaultSelectListItems = null,
+            bool addDefaultListItem = true,
+            Func<IEnumerable<TreeingNode<TSource, TId>>, IOrderedEnumerable<TreeingNode<TSource, TId>>> orderBy = null)
             where TSource : class, IParentIdDescriptor<TId>
             where TId : struct
         {
-            if (sources == null || sources.Count() < 1)
-                return defaultResults;
+            // 如果源集合为空
+            if (ReferenceEquals(sources, null) || sources.Count() < 1)
+            {
+                // 如果默认结果集合不为空
+                if (defaultSelectListItems != null)
+                {
+                    // 如果添加默认项且默认结果集合初始项不是默认项
+                    if (addDefaultListItem && !DefaultListItem.Equals(defaultSelectListItems.First()))
+                        defaultSelectListItems.Insert(0, DefaultListItem);
 
+                    return defaultSelectListItems;
+                }
+
+                defaultSelectListItems = new List<SelectListItem>() { DefaultListItem };
+                return defaultSelectListItems;
+            }
+
+            // 文本前缀工厂方法
             if (textPrefixFactory == null)
             {
                 textPrefixFactory = node =>
@@ -123,8 +174,10 @@ namespace System.Web.Mvc
                 };
             }
 
-            var treeSources = new TreeingList<TSource, TId>(sources);
+            // 树形化源集合（分组排序）
+            var treeSources = new TreeingList<TSource, TId>(sources, orderBy);
 
+            // 用无层级节点列表转换为选择列表项
             var list = treeSources.NonstratifiedNodes.Select(s =>
             {
                 var textPrefix = textPrefixFactory.Invoke(s);
@@ -141,13 +194,7 @@ namespace System.Web.Mvc
 
             // 如果添加默认项
             if (addDefaultListItem)
-            {
-                list.Insert(0, new SelectListItem()
-                {
-                    Text = "默认",
-                    Value = "0",
-                });
-            }
+                list.Insert(0, DefaultListItem);
 
             return list;
         }
