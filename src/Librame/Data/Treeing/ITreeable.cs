@@ -20,7 +20,7 @@ namespace System.Collections.Generic
     /// <typeparam name="T">列表中元素的类型。</typeparam>
     /// <typeparam name="TId">指定的主键类型。</typeparam>
     /// <author>Librame Pang</author>
-    public interface ITreetable<T, TId> : IEnumerable<TreeingNode<T, TId>>
+    public interface ITreeable<T, TId> : IEnumerable<TreeingNode<T, TId>>
         where T : IParentIdDescriptor<TId>
         where TId : struct
     {
@@ -48,7 +48,7 @@ namespace System.Collections.Generic
         /// <typeparam name="T">列表中元素的类型。</typeparam>
         /// <param name="items">给定的项集合。</param>
         /// <returns>返回树形化接口。</returns>
-        public static ITreetable<T, int> AsTreeing<T>(this IEnumerable<T> items)
+        public static ITreeable<T, int> AsTreeing<T>(this IEnumerable<T> items)
             where T : IParentIdDescriptor<int>
         {
             return new TreeingList<T, int>(items);
@@ -61,7 +61,7 @@ namespace System.Collections.Generic
         /// <typeparam name="TId">指定的主键类型。</typeparam>
         /// <param name="items">给定的项集合。</param>
         /// <returns>返回树形化接口。</returns>
-        public static ITreetable<T, TId> AsTreeing<T, TId>(this IEnumerable<T> items)
+        public static ITreeable<T, TId> AsTreeing<T, TId>(this IEnumerable<T> items)
             where T : IParentIdDescriptor<TId>
             where TId : struct
         {

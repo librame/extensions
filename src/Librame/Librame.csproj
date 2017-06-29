@@ -386,7 +386,7 @@
     <Compile Include="Data\Descriptors\IIdDescriptor.cs" />
     <Compile Include="Data\Descriptors\IParentIdDescriptor.cs" />
     <Compile Include="Data\Paging\PagingInfo.cs" />
-    <Compile Include="Data\Treeing\ITreetable.cs" />
+    <Compile Include="Data\Treeing\ITreeable.cs" />
     <Compile Include="Data\Treeing\TreeingList.cs" />
     <Compile Include="Data\Treeing\TreeingNode.cs" />
     <Compile Include="Data\ValidationHelper.cs" />

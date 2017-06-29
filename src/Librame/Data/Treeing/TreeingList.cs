@@ -24,7 +24,7 @@ namespace System.Collections.Generic
     /// <typeparam name="TId">指定的主键类型。</typeparam>
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
-    public class TreeingList<T, TId> : ITreetable<T, TId>, IEnumerable<TreeingNode<T, TId>>
+    public class TreeingList<T, TId> : ITreeable<T, TId>, IEnumerable<TreeingNode<T, TId>>
         where T : IParentIdDescriptor<TId>
         where TId : struct
     {
