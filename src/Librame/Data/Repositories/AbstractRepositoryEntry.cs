@@ -25,10 +25,10 @@ namespace Librame.Data.Repositories
         where T : class
     {
         /// <summary>
-        /// 实体绑定接口。
+        /// 属性绑定器（主要用于存储表单模型中要更新的属性列表）。
         /// </summary>
-        public IEntityBinding<T> Binding
-            => SingletonManager.Regist<IEntityBinding<T>>(key => new EntityBinding<T>());
+        public IPropertyBinder<T> PropertyBinder
+            => SingletonManager.Regist<IPropertyBinder<T>>(key => new PropertyBinder<T>());
 
 
         /// <summary>

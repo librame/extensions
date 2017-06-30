@@ -226,8 +226,9 @@
     <Compile Include="Data\BindingMarkup.cs" />
     <Compile Include="Data\Descriptors\AbstractCreateDataIdDescriptor.cs" />
     <Compile Include="Data\Descriptors\AbstractUpdateAndCreateDataIdDescriptor.cs" />
-    <Compile Include="Data\EntityBinding.cs" />
-    <Compile Include="Data\IEntityBinding.cs" />
+    <Compile Include="Data\PropertyBinder.cs" />
+    <Compile Include="Data\IPropertyBinder.cs" />
+    <Compile Include="Data\PropertyBinderExtensions.cs" />
     <Compile Include="Data\Repositories\AbstractRepositoryEntry.cs" />
     <Compile Include="MediaInfo\Engines\AbstractMediaInfoEngine.cs" />
     <Compile Include="MediaInfo\Engines\IMediaInfoListEngine.cs" />

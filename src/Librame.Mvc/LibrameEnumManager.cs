@@ -31,12 +31,12 @@ namespace Librame
         /// <param name="status">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetAccountStatusList(Authorization.AccountStatus status,
+        public static SelectList GetAccountStatusSelectList(Authorization.AccountStatus status,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)status).ToString();
 
-            return GetAccountStatusList((value, text) => selectedValue == value, predicate);
+            return GetAccountStatusSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取帐户状态枚举项列表。
@@ -44,7 +44,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetAccountStatusList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetAccountStatusSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<Authorization.AccountStatus>(selectedFactory, predicate);
@@ -57,12 +57,12 @@ namespace Librame
         /// <param name="status">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetAuthenticateStatusList(Authorization.AuthenticateStatus status,
+        public static SelectList GetAuthenticateStatusSelectList(Authorization.AuthenticateStatus status,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)status).ToString();
 
-            return GetAuthenticateStatusList((value, text) => selectedValue == value, predicate);
+            return GetAuthenticateStatusSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取认证状态枚举项列表。
@@ -70,7 +70,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetAuthenticateStatusList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetAuthenticateStatusSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<Authorization.AuthenticateStatus>(selectedFactory, predicate);
@@ -87,12 +87,12 @@ namespace Librame
         /// <param name="markup">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetBindingMarkupList(Data.BindingMarkup markup,
+        public static SelectList GetBindingMarkupSelectList(Data.BindingMarkup markup,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)markup).ToString();
 
-            return GetBindingMarkupList((value, text) => selectedValue == value, predicate);
+            return GetBindingMarkupSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取绑定标记枚举项列表。
@@ -100,7 +100,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetBindingMarkupList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetBindingMarkupSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<Data.BindingMarkup>(selectedFactory, predicate);
@@ -113,12 +113,12 @@ namespace Librame
         /// <param name="status">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetDataStatusList(Data.DataStatus status,
+        public static SelectList GetDataStatusSelectList(Data.DataStatus status,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)status).ToString();
 
-            return GetDataStatusList((value, text) => selectedValue == value, predicate);
+            return GetDataStatusSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取数据状态枚举项列表。
@@ -126,7 +126,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetDataStatusList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetDataStatusSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<Data.DataStatus>(selectedFactory, predicate);
@@ -139,12 +139,12 @@ namespace Librame
         /// <param name="status">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetPositionStatusList(Data.PositionStatus status,
+        public static SelectList GetPositionStatusSelectList(Data.PositionStatus status,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)status).ToString();
 
-            return GetPositionStatusList((value, text) => selectedValue == value, predicate);
+            return GetPositionStatusSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取定位状态枚举项列表。
@@ -152,7 +152,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetPositionStatusList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetPositionStatusSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<Data.PositionStatus>(selectedFactory, predicate);
@@ -169,12 +169,12 @@ namespace Librame
         /// <param name="state">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetMouseStateList(Forms.MouseState state,
+        public static SelectList GetMouseStateSelectList(Forms.MouseState state,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)state).ToString();
 
-            return GetMouseStateList((value, text) => selectedValue == value, predicate);
+            return GetMouseStateSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取鼠标状态枚举项列表。
@@ -182,7 +182,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetMouseStateList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetMouseStateSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<Forms.MouseState>(selectedFactory, predicate);
@@ -199,12 +199,12 @@ namespace Librame
         /// <param name="kind">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetInfoKindList(MediaInfo.InfoKind kind,
+        public static SelectList GetInfoKindSelectList(MediaInfo.InfoKind kind,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)kind).ToString();
 
-            return GetInfoKindList((value, text) => selectedValue == value, predicate);
+            return GetInfoKindSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取信息种类枚举项列表。
@@ -212,7 +212,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetInfoKindList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetInfoKindSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<MediaInfo.InfoKind>(selectedFactory, predicate);
@@ -225,12 +225,12 @@ namespace Librame
         /// <param name="kind">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetStreamKindList(MediaInfo.StreamKind kind,
+        public static SelectList GetStreamKindSelectList(MediaInfo.StreamKind kind,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)kind).ToString();
 
-            return GetStreamKindList((value, text) => selectedValue == value, predicate);
+            return GetStreamKindSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取流种类枚举项列表。
@@ -238,7 +238,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetStreamKindList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetStreamKindSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<MediaInfo.StreamKind>(selectedFactory, predicate);
@@ -255,12 +255,12 @@ namespace Librame
         /// <param name="unit">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetCapacitySizeUnitList(FileSizeUnit unit,
+        public static SelectList GetCapacitySizeUnitSelectList(FileSizeUnit unit,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)unit).ToString();
 
-            return GetCapacitySizeUnitList((value, text) => selectedValue == value, predicate);
+            return GetCapacitySizeUnitSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取容量大小单位枚举项列表。
@@ -268,7 +268,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetCapacitySizeUnitList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetCapacitySizeUnitSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<FileSizeUnit>(selectedFactory, predicate);
@@ -281,12 +281,12 @@ namespace Librame
         /// <param name="mode">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetSearchModeList(SearchMode mode,
+        public static SelectList GetSearchModeSelectList(SearchMode mode,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)mode).ToString();
 
-            return GetSearchModeList((value, text) => selectedValue == value, predicate);
+            return GetSearchModeSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取查找方式枚举项列表。
@@ -294,7 +294,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetSearchModeList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetSearchModeSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<SearchMode>(selectedFactory, predicate);
@@ -311,12 +311,12 @@ namespace Librame
         /// <param name="level">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetAttentionLevelList(AttentionLevel level,
+        public static SelectList GetAttentionLevelSelectList(AttentionLevel level,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)level).ToString();
 
-            return GetAttentionLevelList((value, text) => selectedValue == value, predicate);
+            return GetAttentionLevelSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取注意级别枚举项列表。
@@ -324,7 +324,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetAttentionLevelList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetAttentionLevelSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<AttentionLevel>(selectedFactory, predicate);
@@ -337,12 +337,12 @@ namespace Librame
         /// <param name="status">给定的默认选中项。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetActionStatusList(ActionStatus status,
+        public static SelectList GetActionStatusSelectList(ActionStatus status,
             Func<SelectListItem, bool> predicate = null)
         {
             string selectedValue = ((int)status).ToString();
 
-            return GetAttentionLevelList((value, text) => selectedValue == value, predicate);
+            return GetAttentionLevelSelectList((value, text) => selectedValue == value, predicate);
         }
         /// <summary>
         /// 获取动作状态枚举项列表。
@@ -350,7 +350,7 @@ namespace Librame
         /// <param name="selectedFactory">给定的默认选中项方法。</param>
         /// <param name="predicate">给定的筛选方法（可选）。</param>
         /// <returns>返回项列表。</returns>
-        public static SelectList GetActionStatusList(Func<string, string, bool> selectedFactory,
+        public static SelectList GetActionStatusSelectList(Func<string, string, bool> selectedFactory,
             Func<SelectListItem, bool> predicate = null)
         {
             return ResolveSelectList<ActionStatus>(selectedFactory, predicate);

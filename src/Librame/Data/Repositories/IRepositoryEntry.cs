@@ -23,9 +23,9 @@ namespace Librame.Data.Repositories
         where T : class
     {
         /// <summary>
-        /// 实体绑定接口。
+        /// 属性绑定器（主要用于存储表单模型中要更新的属性列表）。
         /// </summary>
-        IEntityBinding<T> Binding { get; }
+        IPropertyBinder<T> PropertyBinder { get; }
 
 
         /// <summary>
