@@ -32,7 +32,6 @@ namespace Librame.Data.Descriptors
             : base()
         {
             CreateTime = DateTime.Now;
-            CreatorId = Id;
         }
 
 
@@ -46,6 +45,6 @@ namespace Librame.Data.Descriptors
         /// 创建者主键。
         /// </summary>
         [DisplayName("创建者")]
-        public virtual TId CreatorId { get; set; }
+        public virtual TId CreatorId { get; set; } = default(TId);
     }
 }

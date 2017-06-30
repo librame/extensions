@@ -26,18 +26,9 @@ namespace Librame.Data.Descriptors
         where TId : struct
     {
         /// <summary>
-        /// 构建一个 <see cref="AbstractIdDescriptor{TId}"/> 实例。
-        /// </summary>
-        public AbstractIdDescriptor()
-        {
-            Id = default(TId);
-        }
-
-
-        /// <summary>
         /// 主键。
         /// </summary>
         [DisplayName("编号")]
-        public virtual TId Id { get; set; }
+        public virtual TId Id { get; set; } = default(TId);
     }
 }

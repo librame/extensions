@@ -26,17 +26,6 @@ namespace Librame.Data.Descriptors
         where TId : struct
     {
         /// <summary>
-        /// 构建一个 <see cref="AbstractDataIdDescriptor{TId}"/> 实例。
-        /// </summary>
-        public AbstractDataIdDescriptor()
-            : base()
-        {
-            DataRank = 1;
-            DataStatus = DataStatus.Public;
-        }
-
-
-        /// <summary>
         /// 数据排序。
         /// </summary>
         [DisplayName("数据排序")]
@@ -48,6 +37,6 @@ namespace Librame.Data.Descriptors
         /// </summary>
         [DisplayName("数据状态")]
         [DefaultValue(DataStatus.Public)]
-        public virtual DataStatus DataStatus { get; set; }
+        public virtual DataStatus DataStatus { get; set; } = DataStatus.Public;
     }
 }
