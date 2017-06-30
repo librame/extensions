@@ -103,7 +103,7 @@ namespace Librame.Data
 
 
         /// <summary>
-        /// 导出用于创建标记的属性集合。
+        /// 导出用于创建、所有标记的属性集合。
         /// </summary>
         /// <returns>返回属性名称数组。</returns>
         public static string[] ExportCreate<TEntity>(this IPropertyBinder<TEntity> propertyBinder)
@@ -112,7 +112,7 @@ namespace Librame.Data
         }
 
         /// <summary>
-        /// 导出用于修改标记的属性集合。
+        /// 导出用于修改、所有标记的属性集合。
         /// </summary>
         /// <returns>返回属性名称数组。</returns>
         public static string[] ExportEdit<TEntity>(this IPropertyBinder<TEntity> propertyBinder)
@@ -121,7 +121,7 @@ namespace Librame.Data
         }
 
         /// <summary>
-        /// 导出用于删除标记的属性集合。
+        /// 导出用于删除、所有标记的属性集合。
         /// </summary>
         /// <returns>返回属性名称数组。</returns>
         public static string[] ExportDelete<TEntity>(this IPropertyBinder<TEntity> propertyBinder)

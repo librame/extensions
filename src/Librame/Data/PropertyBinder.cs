@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -83,7 +84,17 @@ namespace Librame.Data
         public virtual string[] Export(BindingMarkup markup = BindingMarkup.All)
         {
             if (markup != BindingMarkup.All)
-                return _properties.Where(pair => pair.Value == markup).Select(s => s.Key).ToArray();
+            {
+                var list = new List<string>();
+
+                foreach (var p in _properties)
+                {
+                    if (p.Value == markup || p.Value == BindingMarkup.All)
+                        list.Add(p.Key);
+                }
+
+                return list.ToArray();
+            }
 
             return _properties.Select(s => s.Key).ToArray();
         }
