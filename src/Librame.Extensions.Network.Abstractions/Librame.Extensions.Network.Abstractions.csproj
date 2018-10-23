@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>5.20.1810.231</Version>
+    <Authors>Librame Pang</Authors>
+    <Company>librame.net</Company>
+    <Description>Librame.Extensions.Network.Abstractions</Description>
+    <Copyright>Copyright © 2012-2018</Copyright>
+    <PackageLicenseUrl>https://github.com/librame/Librame/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/librame/Librame</PackageProjectUrl>
+    <PackageIconUrl>https://avatars0.githubusercontent.com/u/10363349?v=3&amp;s=460</PackageIconUrl>
+    <RepositoryUrl>https://github.com/librame</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Librame,Librame,NETCore,NETStandard,Network</PackageTags>
+    <PackageReleaseNotes>Librame.Extensions.Network.Abstractions</PackageReleaseNotes>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>5.20.1810.231</AssemblyVersion>
+    <FileVersion>5.20.1810.231</FileVersion>
+    <NeutralLanguage>zh-CN</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\bin\</OutputPath>
+    <DocumentationFile>..\..\bin\netstandard2.0\Librame.Extensions.Network.Abstractions.xml</DocumentationFile>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Pipelines" Version="4.5.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Librame.Extensions.Encryption.Abstractions\Librame.Extensions.Encryption.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
