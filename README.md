@@ -1,7 +1,26 @@
-Librame Series (The New Version: 5.20.1810.191)
+Librame Series (The New Version: 5.20.1810.231)
 ======================================================
 
-1 Librame.Extensions.Encryption
+Librame
+------------------------------------------------------
+
+### Install Extension
+
+    PM> Install-Package Librame
+
+### Register Extension
+
+    // Use DependencyInjection
+    var services = new ServiceCollection();
+    
+    // Register Librame
+    services.AddLibrame();
+    
+    // Build ServiceProvider
+    var serviceProvider = services.BuildServiceProvider();
+    ......
+
+Librame.Extensions.Encryption
 ------------------------------------------------------
 
 ### Install Extension
@@ -61,7 +80,7 @@ Librame Series (The New Version: 5.20.1810.191)
         }
     }
 
-2 Librame.Extensions.Data (based EntityFrameworkCore)
+Librame.Extensions.Data (based EntityFrameworkCore)
 ------------------------------------------------------
 
 ### Install Extension
@@ -185,7 +204,7 @@ Librame Series (The New Version: 5.20.1810.191)
         }
     }
 
-3 Librame.Extensions.Drawing (based SkiaSharp)
+Librame.Extensions.Drawing (based SkiaSharp)
 ------------------------------------------------------
 
 ### Install Extension
@@ -294,7 +313,7 @@ Librame Series (The New Version: 5.20.1810.191)
         }
     }
 
-4 Librame.Extensions.Network
+Librame.Extensions.Network
 ------------------------------------------------------
 
 ### Install Extension
@@ -384,7 +403,7 @@ Librame Series (The New Version: 5.20.1810.191)
         }
     }
 
-5 Librame.Extensions.Storage
+Librame.Extensions.Storage
 ------------------------------------------------------
 
 ### Install Extension
