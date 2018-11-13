@@ -21,11 +21,11 @@ namespace Librame.Extensions.Network
     public interface INetworkBuilder : IBuilder
     {
         /// <summary>
-        /// 密码构建器。
+        /// 加密构建器。
         /// </summary>
         /// <value>
         /// 返回 <see cref="IEncryptionBuilder"/>。
         /// </value>
-        IEncryptionBuilder Cryptography { get; }
+        IEncryptionBuilder Encryption { get; }
     }
 }

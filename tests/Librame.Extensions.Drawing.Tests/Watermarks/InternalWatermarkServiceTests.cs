@@ -1,10 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Xunit;
+﻿using Xunit;
 
 namespace Librame.Extensions.Drawing.Tests
 {
-    using Locators;
-
     public class InternalWatermarkServiceTests
     {
         private IWatermarkService _drawing = null;
@@ -19,11 +16,8 @@ namespace Librame.Extensions.Drawing.Tests
         public async void DrawWatermarkTest()
         {
             // 5K 2.21MB
-            var imageFile = new DefaultFileLocator("eso1004a.jpg")
-                .ChangeBasePath(TestServiceProvider.ResourcesPath);
-
-            var saveFile = new DefaultFileLocator("eso1004a-watermark.png")
-                .ChangeBasePath(imageFile.BasePath);
+            var imageFile = "eso1004a.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
+            var saveFile = imageFile.NewFileName("eso1004a-watermark.png");
             
             var succeed = await _drawing.DrawFile(imageFile.ToString(), saveFile.ToString());
             Assert.True(succeed);

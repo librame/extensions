@@ -104,7 +104,7 @@ namespace Librame.Extensions
         /// <returns>返回集合或抛出异常。</returns>
         public static IEnumerable<T> NotEmpty<T>(this IEnumerable<T> items, string paramName)
         {
-            if (items.IsDefault())
+            if (items.IsEmpty())
                 throw new ArgumentNullException(paramName);
 
             return items;
@@ -220,6 +220,26 @@ namespace Librame.Extensions
             }
 
             return value;
+        }
+
+        /// <summary>
+        /// 得到不超出端口号范围的值。
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// portNumber is out of range.
+        /// </exception>
+        /// <param name="portNumber">给定的端口号。</param>
+        /// <param name="paramName">给定的参数名。</param>
+        /// <returns>返回值或抛出异常。</returns>
+        public static int NotOutOfPortNumberRange(this int portNumber, string paramName)
+        {
+            if (portNumber.IsOutOfPortNumberRange())
+            {
+                var message = $"The \"{paramName}\" port number \"{portNumber}\" is out of range (min: \"0\", max: \"65535\").";
+                throw new ArgumentOutOfRangeException(paramName, message);
+            }
+
+            return portNumber;
         }
 
 

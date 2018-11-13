@@ -163,6 +163,17 @@ namespace Librame.Extensions
         }
 
         /// <summary>
+        /// 是否超出端口号范围值（即 0~65535）。
+        /// </summary>
+        /// <param name="portNumber">给定的端口号。</param>
+        /// <returns>返回是否超出的布尔值。</returns>
+        public static bool IsOutOfPortNumberRange(this int portNumber)
+        {
+            // 超出 0~65535 范围返回 TRUE（不验证等于）
+            return portNumber.IsOutOfRange(0, 65535);
+        }
+
+        /// <summary>
         /// 是否为倍数。
         /// </summary>
         /// <param name="value">给定的数字。</param>

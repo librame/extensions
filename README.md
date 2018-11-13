@@ -1,14 +1,19 @@
-Librame Series (The New Version: 5.20.1810.231)
-======================================================
+## Librame Project
 
-Librame
-------------------------------------------------------
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/librame/Librame/blob/master/LICENSE)
+[![Available on NuGet https://www.nuget.org/packages?q=Librame](https://img.shields.io/nuget/v/Librame.svg?style=flat-square)](https://www.nuget.org/packages?q=Librame)
 
-### Install Extension
+## Use
+
+* Official releases are on [NuGet](https://www.nuget.org/packages?q=Librame).
+
+### Librame
+
+## Install Extension
 
     PM> Install-Package Librame
 
-### Register Extension
+## Register Extension
 
     // Use DependencyInjection
     var services = new ServiceCollection();
@@ -20,74 +25,13 @@ Librame
     var serviceProvider = services.BuildServiceProvider();
     ......
 
-Librame.Extensions.Encryption
-------------------------------------------------------
+### Librame.Extensions.Data (based EntityFrameworkCore)
 
-### Install Extension
-
-    PM> Install-Package Librame.Extensions.Encryption
-
-### Register Extension
-
-    // Use DependencyInjection
-    var services = new ServiceCollection();
-    
-    // Register Librame
-    services.AddLibrame()
-        .AddEncryption();
-    
-    // Build ServiceProvider
-    var serviceProvider = services.BuildServiceProvider();
-
-### Test Extension
-
-    public class EncryptionBuilderExtensionsTests
-    {
-        [Fact]
-        public void JointTest()
-        {
-            var str = nameof(EncryptionBuilderExtensionsTests);
-            var plaintextBuffer = str.AsPlaintextBuffer(TestServiceProvider.Current);
-            
-            var hashString = plaintextBuffer.ApplyServiceProvider(TestServiceProvider.Current)
-                .Md5()
-                .Sha1()
-                .Sha256()
-                .Sha384()
-                .Sha512()
-                .HmacMd5()
-                .HmacSha1()
-                .HmacSha256()
-                .HmacSha384()
-                .HmacSha512()
-                .AsCiphertextString();
-
-            var plaintextBufferCopy = plaintextBuffer.Copy();
-            var ciphertextString = plaintextBufferCopy
-                .AsDes()
-                .AsTripleDes()
-                .AsAes()
-                .AsRsa()
-                .AsCiphertextString();
-            Assert.NotEmpty(ciphertextString);
-
-            var ciphertextBuffer = ciphertextString.AsCiphertextBuffer(TestServiceProvider.Current)
-                .FromRsa()
-                .FromAes()
-                .FromTripleDes()
-                .FromDes();
-            Assert.Equal(hashString, ciphertextBuffer.AsCiphertextString());
-        }
-    }
-
-Librame.Extensions.Data (based EntityFrameworkCore)
-------------------------------------------------------
-
-### Install Extension
+## Install Extension
 
     PM> Install-Package Librame.Extensions.Data
 
-### Register Extension
+## Register Extension
 
     // Use DependencyInjection
     var services = new ServiceCollection();
@@ -113,7 +57,7 @@ Librame.Extensions.Data (based EntityFrameworkCore)
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();
 
-### Test Extension
+## Test Extension
 
     // DbContext
     public interface ITestDbContext : IDbContext
@@ -204,14 +148,13 @@ Librame.Extensions.Data (based EntityFrameworkCore)
         }
     }
 
-Librame.Extensions.Drawing (based SkiaSharp)
-------------------------------------------------------
+### Librame.Extensions.Drawing (based SkiaSharp)
 
-### Install Extension
+## Install Extension
 
     PM> Install-Package Librame.Extensions.Drawing
 
-### Register Extension
+## Register Extension
 
     // Use DependencyInjection
     var services = new ServiceCollection();
@@ -223,7 +166,7 @@ Librame.Extensions.Drawing (based SkiaSharp)
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();
 
-### Test Extension
+## Test Extension
 
     // Captcha
     public class InternalCaptchaServiceTests
@@ -245,8 +188,7 @@ Librame.Extensions.Drawing (based SkiaSharp)
         [Fact]
         public async void DrawCaptchaFileTest()
         {
-            var saveFile = new DefaultFileLocator("captcha.png")
-                .ChangeBasePath("TempPath");
+            var saveFile = "captcha.png".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
 
             var succeed = await _drawing.DrawFile("1234", saveFile.ToString());
             Assert.True(succeed);
@@ -267,8 +209,7 @@ Librame.Extensions.Drawing (based SkiaSharp)
         public async void DrawScaleTest()
         {
             // 5K 2.21MB
-            var imageFile = new DefaultFileLocator("eso1004a.jpg")
-                .ChangeBasePath("TempPath");
+            var imageFile = "eso1004a.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
             
             var succeed = await _drawing.DrawFile(imageFile.ToString());
             Assert.True(succeed);
@@ -278,7 +219,7 @@ Librame.Extensions.Drawing (based SkiaSharp)
         public async void DrawScalesByDirectoryTest()
         {
             // 5K 2.21MB
-            var directory = "TempPath".CombinePath(@"pictures");
+            var directory = TestServiceProvider.ResourcesPath.CombinePath(@"pictures");
             
             // Clear
             var count = _drawing.DeleteScalesByDirectory(directory);
@@ -302,37 +243,97 @@ Librame.Extensions.Drawing (based SkiaSharp)
         public async void DrawWatermarkTest()
         {
             // 5K 2.21MB
-            var imageFile = new DefaultFileLocator("eso1004a.jpg")
-                .ChangeBasePath("TempPath");
-
-            var saveFile = new DefaultFileLocator("eso1004a-watermark.png")
-                .ChangeBasePath(imageFile.BasePath);
+            var imageFile = "eso1004a.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
+            var saveFile = imageFile.NewFileName("eso1004a-watermark.png");
             
             var succeed = await _drawing.DrawFile(imageFile.ToString(), saveFile.ToString());
             Assert.True(succeed);
         }
     }
 
-Librame.Extensions.Network
-------------------------------------------------------
+### Librame.Extensions.Encryption
 
-### Install Extension
+## Install Extension
 
-    PM> Install-Package Librame.Extensions.Network
+    PM> Install-Package Librame.Extensions.Encryption
 
-### Register Extension
+## Register Extension
 
     // Use DependencyInjection
     var services = new ServiceCollection();
     
     // Register Librame
     services.AddLibrame()
-        .AddNetwork();
+        .AddEncryption()
+        .AddDeveloperGlobalSigningCredentials(); //.AddSigningCredentials();
     
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();
 
-### Test Extension
+## Test Extension
+
+    public class EncryptionBuilderExtensionsTests
+    {
+        [Fact]
+        public void JointTest()
+        {
+            var str = nameof(EncryptionBuilderExtensionsTests);
+            var plaintextBuffer = str.AsPlaintextBuffer(TestServiceProvider.Current);
+            
+            var hashString = plaintextBuffer.ApplyServiceProvider(TestServiceProvider.Current)
+                .Md5()
+                .Sha1()
+                .Sha256()
+                .Sha384()
+                .Sha512()
+                .HmacMd5()
+                .HmacSha1()
+                .HmacSha256()
+                .HmacSha384()
+                .HmacSha512()
+                .AsCiphertextString();
+
+            var plaintextBufferCopy = plaintextBuffer.Copy();
+            var ciphertextString = plaintextBufferCopy
+                .AsDes()
+                .AsTripleDes()
+                .AsAes()
+                .AsRsa()
+                .AsCiphertextString();
+            Assert.NotEmpty(ciphertextString);
+
+            var ciphertextBuffer = ciphertextString.AsCiphertextBuffer(TestServiceProvider.Current)
+                .FromRsa()
+                .FromAes()
+                .FromTripleDes()
+                .FromDes();
+            Assert.Equal(hashString, ciphertextBuffer.AsCiphertextString());
+        }
+    }
+
+### Librame.Extensions.Network
+
+## Install Extension
+
+    PM> Install-Package Librame.Extensions.Network
+
+## Register Extension
+
+    // Use DependencyInjection
+    var services = new ServiceCollection();
+    
+    // Register Librame
+    services.AddLibrame()
+        .AddNetwork()
+        .ConfigureEncryption(builder =>
+        {
+            builder.AddDeveloperSigningCredentials();
+        });
+    
+    // Build ServiceProvider
+    var serviceProvider = services.BuildServiceProvider();
+
+## Test Extension
 
     // Crawler
     public class InternalCrawlerServiceTests
@@ -377,9 +378,9 @@ Librame.Extensions.Network
         }
         
         [Fact]
-        public void SendAsyncTest()
+        public async void SendAsyncTest()
         {
-            _sender.SendAsync("receiver@domain.com",
+            async _sender.SendAsync("receiver@domain.com",
                 "Email Subject",
                 "Email Body");
         }
@@ -396,21 +397,84 @@ Librame.Extensions.Network
         }
 
         [Fact]
-        public void SendAsyncTest()
+        public async void SendAsyncTest()
         {
-            var result = _sender.SendAsync("TestData: 123456").Result;
+            var result = async _sender.SendAsync("TestData: 123456");
             Assert.Empty(result);
         }
     }
 
-Librame.Extensions.Storage
-------------------------------------------------------
+### Librame.Extensions.Network.DotNetty
 
-### Install Extension
+## Install Extension
+
+    PM> Install-Package Librame.Extensions.Network.DotNetty
+
+## Register Extension
+
+    // Use DependencyInjection
+    var services = new ServiceCollection();
+    
+    // Register Librame
+    services.AddLibrame()
+        .AddNetwork()
+        .AddDotNetty()
+        .ConfigureEncryption(builder =>
+        {
+            var locator = "dotnetty.com.pfx".AsDefaultFileLocator("BasePath");
+            builder.AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"));
+        });
+    
+    // Build ServiceProvider
+    var serviceProvider = services.BuildServiceProvider();
+
+## Test Extension
+
+    // WebSocketServer Console
+    var server = serviceProvider.GetRequiredService<IWebSocketServer>();
+    server.StartAsync(channel =>
+    {
+        Console.ReadLine();
+    })
+    .Wait();
+    
+    // WebSocketClient Console
+    var client = serviceProvider.GetRequiredService<IWebSocketClient>();
+    client.StartAsync(async channel =>
+    {
+        while (true)
+        {
+            string msg = Console.ReadLine();
+            if (msg == null)
+            {
+                break;
+            }
+            else if ("bye".Equals(msg.ToLower()))
+            {
+                await channel.WriteAndFlushAsync(new CloseWebSocketFrame());
+                break;
+            }
+            else if ("ping".Equals(msg.ToLower()))
+            {
+                var frame = new PingWebSocketFrame(Unpooled.WrappedBuffer(new byte[] { 8, 1, 8, 1 }));
+                await channel.WriteAndFlushAsync(frame);
+            }
+            else
+            {
+                WebSocketFrame frame = new TextWebSocketFrame(msg);
+                await channel.WriteAndFlushAsync(frame);
+            }
+        }
+    })
+    .Wait();
+
+### Librame.Extensions.Storage
+
+## Install Extension
 
     PM> Install-Package Librame.Extensions.Storage
 
-### Register Extension
+## Register Extension
 
     // Use DependencyInjection
     var services = new ServiceCollection();
@@ -422,7 +486,7 @@ Librame.Extensions.Storage
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();
 
-### Test Extension
+## Test Extension
 
     // FileSystem
     public class InternalFileSystemServiceTests

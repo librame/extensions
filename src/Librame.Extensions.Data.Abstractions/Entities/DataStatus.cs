@@ -29,27 +29,14 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 默认。
         /// </summary>
-        //[Display(Name = "DefaultName",
-        //    ShortName = "DefaultShortName",
-        //    Description = "DefaultDescription",
-        //    Prompt = "DefaultPrompt",
-        //    GroupName = "GlobalGroup",
-        //    ResourceType = typeof(Resources.DataStatus),
-        //    Order = -9
-        //)]
-        None = -1,
+        [Display(Name = nameof(Default), GroupName = "GlobalGroup", ResourceType = typeof(DataStatusResource))]
+        Default = -1,
 
         /// <summary>
-        /// 删除的。
+        /// 删除。
         /// </summary>
-        //[Display(Name = "DeletedName",
-        //    ShortName = "DeletedShortName",
-        //    Description = "DeletedDescription",
-        //    Prompt = "DeletedPrompt",
-        //    GroupName = "StateGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
-        Deleted = 0,
+        [Display(Name = nameof(Delete), GroupName = "GlobalGroup", ResourceType = typeof(DataStatusResource))]
+        Delete = 0,
 
         #endregion
 
@@ -57,51 +44,27 @@ namespace Librame.Extensions.Data
         #region Scope
 
         /// <summary>
-        /// 公开的。
+        /// 公开。
         /// </summary>
-        //[Display(Name = "PublicName",
-        //    ShortName = "PublicShortName",
-        //    Description = "PublicDescription",
-        //    Prompt = "PublicPrompt",
-        //    GroupName = "ScopeGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
+        [Display(Name = nameof(Public), GroupName = "ScopeGroup", ResourceType = typeof(DataStatusResource))]
         Public = 1,
 
         /// <summary>
-        /// 受保护。
+        /// 保护。
         /// </summary>
-        //[Display(Name = "ProtectedName",
-        //    ShortName = "ProtectedShortName",
-        //    Description = "ProtectedDescription",
-        //    Prompt = "ProtectedPrompt",
-        //    GroupName = "ScopeGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
-        Protected = 2,
+        [Display(Name = nameof(Protect), GroupName = "ScopeGroup", ResourceType = typeof(DataStatusResource))]
+        Protect = 2,
 
         /// <summary>
-        /// 内部的。
+        /// 内部。
         /// </summary>
-        //[Display(Name = "InternalName",
-        //    ShortName = "InternalShortName",
-        //    Description = "InternalDescription",
-        //    Prompt = "InternalPrompt",
-        //    GroupName = "ScopeGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
+        [Display(Name = nameof(Internal), GroupName = "ScopeGroup", ResourceType = typeof(DataStatusResource))]
         Internal = 4,
 
         /// <summary>
-        /// 私有的。
+        /// 私有。
         /// </summary>
-        //[Display(Name = "PrivateName",
-        //    ShortName = "PrivateShortName",
-        //    Description = "PrivateDescription",
-        //    Prompt = "PrivatePrompt",
-        //    GroupName = "ScopeGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
+        [Display(Name = nameof(Private), GroupName = "ScopeGroup", ResourceType = typeof(DataStatusResource))]
         Private = 8,
 
         #endregion
@@ -110,76 +73,40 @@ namespace Librame.Extensions.Data
         #region State
 
         /// <summary>
-        /// 活跃的。
+        /// 活动。
         /// </summary>
-        //[Display(Name = "ActiveName",
-        //    ShortName = "ActiveShortName",
-        //    Description = "ActiveDescription",
-        //    Prompt = "ActivePrompt",
-        //    GroupName = "StateGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
+        [Display(Name = nameof(Active), GroupName = "StateGroup", ResourceType = typeof(DataStatusResource))]
         Active = 16,
 
         /// <summary>
-        /// 挂起的。
+        /// 挂起。
         /// </summary>
-        //[Display(Name = "PendingName",
-        //    ShortName = "PendingShortName",
-        //    Description = "PendingDescription",
-        //    Prompt = "PendingPrompt",
-        //    GroupName = "StateGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
+        [Display(Name = nameof(Pending), GroupName = "StateGroup", ResourceType = typeof(DataStatusResource))]
         Pending = 32,
 
         /// <summary>
-        /// 闲置的。
+        /// 闲置。
         /// </summary>
-        //[Display(Name = "InactiveName",
-        //    ShortName = "InactiveShortName",
-        //    Description = "InactiveDescription",
-        //    Prompt = "InactivePrompt",
-        //    GroupName = "StateGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
+        [Display(Name = nameof(Inactive), GroupName = "StateGroup", ResourceType = typeof(DataStatusResource))]
         Inactive = 64,
 
         /// <summary>
-        /// 锁定的。
+        /// 锁定。
         /// </summary>
-        //[Display(Name = "LockedName",
-        //    ShortName = "LockedShortName",
-        //    Description = "LockedDescription",
-        //    Prompt = "LockedPrompt",
-        //    GroupName = "StateGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
-        Locked = 128,
+        [Display(Name = nameof(Locking), GroupName = "StateGroup", ResourceType = typeof(DataStatusResource))]
+        Locking = 128,
 
         /// <summary>
-        /// 被禁的。
+        /// 禁止。
         /// </summary>
-        //[Display(Name = "BannedName",
-        //    ShortName = "BannedShortName",
-        //    Description = "BannedDescription",
-        //    Prompt = "BannedPrompt",
-        //    GroupName = "StateGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
-        Banned = 256,
+        [Display(Name = nameof(Ban), GroupName = "StateGroup", ResourceType = typeof(DataStatusResource))]
+        Ban = 256,
 
         /// <summary>
-        /// 废弃的。
+        /// 废弃。
         /// </summary>
-        //[Display(Name = "ObsoletedName",
-        //    ShortName = "ObsoletedShortName",
-        //    Description = "ObsoletedDescription",
-        //    Prompt = "ObsoletedPrompt",
-        //    GroupName = "StateGroup",
-        //    ResourceType = typeof(Resources.DataStatus)
-        //)]
-        Obsoleted = 512
+        [Display(Name = nameof(Obsolete), GroupName = "StateGroup", ResourceType = typeof(DataStatusResource))]
+        Obsolete = 512
         
         #endregion
         

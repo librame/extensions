@@ -115,6 +115,17 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
+        public void NotOutOfPortNumberRangeTest()
+        {
+            var num = -1;
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                return num.NotOutOfPortNumberRange(nameof(num));
+            });
+        }
+
+
+        [Fact]
         public void FileExistsTest()
         {
             var fileName = Path.Combine(Directory.GetCurrentDirectory().ToString(), "nofile.txt");

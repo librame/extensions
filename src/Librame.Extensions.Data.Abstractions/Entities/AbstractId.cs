@@ -25,14 +25,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 标识。
         /// </summary>
-        //[Display(Name = "IdName",
-        //    ShortName = "IdShortName",
-        //    Description = "IdDescription",
-        //    Prompt = "IdPrompt",
-        //    GroupName = "GlobalGroup",
-        //    ResourceType = typeof(Resources.EntityStores),
-        //    Order = -9
-        //)]
+        [Display(Name = nameof(Id), GroupName = "GlobalGroup", ResourceType = typeof(AbstractEntityResource))]
         public virtual TId Id { get; set; }
     }
 }

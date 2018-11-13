@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Xunit;
+﻿using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {
@@ -14,9 +13,9 @@ namespace Librame.Extensions.Network.Tests
 
 
         [Fact]
-        public void SendAsyncTest()
+        public async void SendAsyncTest()
         {
-            var result = _sender.SendAsync("TestData: 123456").Result;
+            var result = await _sender.SendAsync("TestData: 123456");
             Assert.Empty(result);
         }
 

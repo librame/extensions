@@ -10,43 +10,39 @@
 
 #endregion
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Librame.Builders
 {
+    using Extensions;
+
     /// <summary>
     /// 构建器静态扩展。
     /// </summary>
     public static class BuilderExtensions
     {
 
-        private static IServiceCollection AddDependencies(this IServiceCollection services)
-        {
-            return services.AddLogging()
-                .AddOptions();
-        }
-
         /// <summary>
-        /// 注册 Librame 服务集合。
+        /// 预配置构建器。
         /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{TBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
-        public static IBuilder AddLibrame(this IServiceCollection services)
+        public static IBuilder PreConfigureBuilder<TBuilderOptions>(this IBuilder builder,
+            IConfiguration configuration = null, Action<TBuilderOptions> configureOptions = null)
+             where TBuilderOptions : class, IBuilderOptions
         {
-            return services.AddDependencies()
-                .AsDefaultBuilder()
-                .AddBuffers()
-                .AddConverters();
-        }
+            if (configuration.IsNotDefault())
+                builder.Services.Configure<TBuilderOptions>(configuration);
 
-        /// <summary>
-        /// 转换为默认构建器。
-        /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <returns>返回 <see cref="IBuilder"/>。</returns>
-        public static IBuilder AsDefaultBuilder(this IServiceCollection services)
-        {
-            return new DefaultBuilder(services);
+            if (configureOptions.IsNotDefault())
+                builder.Services.Configure(configureOptions);
+
+            return builder;
         }
 
     }

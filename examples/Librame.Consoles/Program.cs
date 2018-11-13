@@ -5,8 +5,8 @@ using System;
 
 namespace Librame.Consoles
 {
-    using Buffers;
     using Builders;
+    using Extensions;
     using Extensions.Encryption;
 
     class Program
@@ -16,7 +16,8 @@ namespace Librame.Consoles
             var services = new ServiceCollection();
 
             services.AddLibrame()
-                .AddEncryption();
+                .AddEncryption()
+                .AddDeveloperGlobalSigningCredentials();
 
             var serviceProvider = services.BuildServiceProvider();
 

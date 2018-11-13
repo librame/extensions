@@ -24,9 +24,9 @@ namespace Librame.Extensions.Drawing
         /// 绘图选项。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="DefaultDrawingBuilderOptions"/>。
+        /// 返回 <see cref="DrawingBuilderOptions"/>。
         /// </value>
-        DefaultDrawingBuilderOptions Options { get; }
+        DrawingBuilderOptions Options { get; }
 
 
         /// <summary>

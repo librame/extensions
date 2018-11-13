@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>5.20.1810.231</Version>
+    <Version>5.20.1811.131</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Librame.Extensions.Data.Abstractions</Description>
@@ -19,9 +19,9 @@
     <PackageReleaseNotes>Librame.Extensions.Data.Abstractions</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>5.20.1810.231</AssemblyVersion>
-    <FileVersion>5.20.1810.231</FileVersion>
-    <NeutralLanguage>zh-CN</NeutralLanguage>
+    <AssemblyVersion>5.20.1811.131</AssemblyVersion>
+    <FileVersion>5.20.1811.131</FileVersion>
+    <RootNamespace>Librame.Extensions.Data</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -31,6 +31,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="2.1.1" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
   </ItemGroup>
 

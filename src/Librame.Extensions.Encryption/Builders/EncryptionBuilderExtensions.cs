@@ -12,13 +12,15 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Librame.Builders
 {
     using Extensions;
     using Extensions.Encryption;
-    using Extensions.Encryption.RsaKeySerializers;
 
     /// <summary>
     /// 加密构建器静态扩展。
@@ -27,43 +29,28 @@ namespace Librame.Builders
     {
 
         /// <summary>
-        /// 添加加密。
+        /// 添加加密扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{ICryptographyBuilderOptions}"/>。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{EncryptionBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddEncryption(this IBuilder builder,
-            IConfiguration configuration = null, Action<IEncryptionBuilderOptions> configureOptions = null)
+            IConfiguration configuration = null, Action<EncryptionBuilderOptions> configureOptions = null)
         {
-            return builder.AddEncryption<DefaultEncryptionBuilderOptions>(configuration, configureOptions);
-        }
-        /// <summary>
-        /// 添加加密。
-        /// </summary>
-        /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{TBuilderOptions}"/>。</param>
-        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddEncryption<TBuilderOptions>(this IBuilder builder,
-            IConfiguration configuration = null, Action<TBuilderOptions> configureOptions = null)
-            where TBuilderOptions : class, IEncryptionBuilderOptions
-        {
-            if (configuration.IsNotDefault())
-                builder.Services.Configure<TBuilderOptions>(configuration);
-
-            if (configureOptions.IsNotDefault())
-                builder.Services.Configure(configureOptions);
+            builder.PreConfigureBuilder(configuration, configureOptions);
 
             var encryptionBuilder = builder.AsEncryptionBuilder();
 
-            encryptionBuilder.AddKeyGenerator()
-                .AddRsaAlgorithm()
-                .AddHashAlgorithm()
-                .AddSymmetricAlgorithm()
-                .AddConverter()
-                .AddBuffer();
+            encryptionBuilder.AddKeyGenerators()
+                .AddRsaAlgorithms()
+                .AddHashAlgorithms()
+                .AddSymmetricAlgorithms()
+                .AddConverters()
+                .AddBuffers();
+
+            // Add SigningCredentials
+            //encryptionBuilder.AddDeveloperGlobalSigningCredentials();
 
             return encryptionBuilder;
         }
@@ -84,14 +71,9 @@ namespace Librame.Builders
         /// </summary>
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddKeyGenerator(this IEncryptionBuilder builder)
+        public static IEncryptionBuilder AddKeyGenerators(this IEncryptionBuilder builder)
         {
-            builder.Services.AddSingleton<IRsaKeySerializer, JsonFileRsaKeySerializer>();
-            builder.Services.AddSingleton<IRsaKeySerializer, PemFileRsaKeySerializer>();
-            builder.Services.AddSingleton<IRsaKeySerializer, XmlFileRsaKeySerializer>();
-
             builder.Services.AddSingleton<IKeyGenerator, InternalKeyGenerator>();
-            builder.Services.AddSingleton<IRsaKeyGenerator, InternalRsaKeyGenerator>();
 
             return builder;
         }
@@ -101,7 +83,7 @@ namespace Librame.Builders
         /// </summary>
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddHashAlgorithm(this IEncryptionBuilder builder)
+        public static IEncryptionBuilder AddHashAlgorithms(this IEncryptionBuilder builder)
         {
             builder.Services.AddSingleton<IHashAlgorithmService, InternalHashAlgorithmService>();
             builder.Services.AddSingleton<IKeyedHashAlgorithmService, InternalKeyedHashAlgorithmService>();
@@ -114,7 +96,7 @@ namespace Librame.Builders
         /// </summary>
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddRsaAlgorithm(this IEncryptionBuilder builder)
+        public static IEncryptionBuilder AddRsaAlgorithms(this IEncryptionBuilder builder)
         {
             builder.Services.AddSingleton<IRsaAlgorithmService, InternalRsaAlgorithmService>();
 
@@ -126,7 +108,7 @@ namespace Librame.Builders
         /// </summary>
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddSymmetricAlgorithm(this IEncryptionBuilder builder)
+        public static IEncryptionBuilder AddSymmetricAlgorithms(this IEncryptionBuilder builder)
         {
             builder.Services.AddSingleton<ISymmetricAlgorithmService, InternalSymmetricAlgorithmService>();
 
@@ -138,7 +120,7 @@ namespace Librame.Builders
         /// </summary>
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddConverter(this IEncryptionBuilder builder)
+        public static IEncryptionBuilder AddConverters(this IEncryptionBuilder builder)
         {
             builder.Services.AddSingleton<ICiphertextAlgorithmConverter, DefaultCiphertextAlgorithmConverter>();
             builder.Services.AddSingleton<IPlaintextAlgorithmConverter, DefaultPlaintextAlgorithmConverter>();
@@ -151,12 +133,92 @@ namespace Librame.Builders
         /// </summary>
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddBuffer(this IEncryptionBuilder builder)
+        public static IEncryptionBuilder AddBuffers(this IEncryptionBuilder builder)
         {
-            builder.Services.AddSingleton(typeof(IEncryptionBuffer<,>), typeof(InternalEncryptionBuffer<,>));
+            builder.Services.AddTransient(typeof(IEncryptionBuffer<,>), typeof(InternalEncryptionBuffer<,>));
 
             return builder;
         }
+
+
+        #region SigningCredentials
+
+        /// <summary>
+        /// 添加签名证书集合。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
+        /// <param name="credentials">给定的签名证书集合。</param>
+        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        public static IEncryptionBuilder AddSigningCredentials(this IEncryptionBuilder builder, params KeyValuePair<string, SigningCredentials>[] credentials)
+        {
+            foreach (var cred in credentials)
+            {
+                if (!(cred.Value.Key is AsymmetricSecurityKey
+                    || cred.Value.Key is JsonWebKey && ((JsonWebKey)cred.Value.Key).HasPrivateKey))
+                    //&& !credential.Key.IsSupportedAlgorithm(SecurityAlgorithms.RsaSha256Signature))
+                    throw new InvalidOperationException("Signing key is not asymmetric");
+            }
+
+            builder.Services.AddSingleton<ISigningCredentialsProvider>(new InternalSigningCredentialsProvider(credentials));
+
+            return builder;
+        }
+
+        /// <summary>
+        /// 添加全局签名证书。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
+        /// <param name="credentials">给定的 <see cref="SigningCredentials"/>。</param>
+        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        public static IEncryptionBuilder AddGlobalSigningCredentials(this IEncryptionBuilder builder, SigningCredentials credentials)
+        {
+            return builder.AddSigningCredentials(new KeyValuePair<string, SigningCredentials>(EncryptionBuilderOptions.GLOBAL_KEY, credentials));
+        }
+
+        /// <summary>
+        /// 添加全局签名证书。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
+        /// <param name="certificate">给定的 <see cref="X509Certificate2"/>。</param>
+        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        public static IEncryptionBuilder AddGlobalSigningCredentials(this IEncryptionBuilder builder, X509Certificate2 certificate)
+        {
+            if (!certificate.NotDefault(nameof(certificate)).HasPrivateKey)
+                throw new InvalidOperationException("X509 certificate does not have a private key.");
+
+            var credentials = new SigningCredentials(new X509SecurityKey(certificate), SecurityAlgorithms.RsaSha256);
+            return builder.AddGlobalSigningCredentials(credentials);
+        }
+
+        /// <summary>
+        /// 添加全局签名证书。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
+        /// <param name="rsaKey">给定的 <see cref="RsaSecurityKey"/>。</param>
+        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        public static IEncryptionBuilder AddGlobalSigningCredentials(this IEncryptionBuilder builder, RsaSecurityKey rsaKey)
+        {
+            if (rsaKey.PrivateKeyStatus == PrivateKeyStatus.DoesNotExist)
+                throw new InvalidOperationException("RSA key does not have a private key.");
+
+            var credential = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
+            return builder.AddGlobalSigningCredentials(credential);
+        }
+
+        /// <summary>
+        /// 添加开发者全局签名证书。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
+        /// <param name="persistKey">是否持久化密钥（可选；默认持久化）。</param>
+        /// <param name="fileName">给定的文件名（可选；默认兼容 IdentityServer4 生成的临时密钥文件）。</param>
+        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        public static IEncryptionBuilder AddDeveloperGlobalSigningCredentials(this IEncryptionBuilder builder, bool persistKey = true, string fileName = null)
+        {
+            var rsaKey = RsaSecurityKeyHelper.LoadRsaSecurityKey(fileName, persistKey);
+            return builder.AddGlobalSigningCredentials(rsaKey);
+        }
+
+        #endregion
 
     }
 }

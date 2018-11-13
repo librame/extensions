@@ -18,7 +18,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 分表选项接口。
     /// </summary>
-    public interface IShardingOptions : ISchemaOptions
+    public interface IShardingOptions : IOptions
     {
         /// <summary>
         /// 表名格式化器。

@@ -18,7 +18,6 @@ namespace Librame.Builders
 {
     using Extensions;
     using Extensions.Drawing;
-    using Locators;
 
     /// <summary>
     /// 图画构建器静态扩展。
@@ -27,50 +26,32 @@ namespace Librame.Builders
     {
 
         /// <summary>
-        /// 添加图画。
+        /// 添加图画扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{IDrawingBuilderOptions}"/>。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{DrawingBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
         public static IDrawingBuilder AddDrawing(this IBuilder builder,
-            IConfiguration configuration = null, Action<IDrawingBuilderOptions> configureOptions = null)
+            IConfiguration configuration = null, Action<DrawingBuilderOptions> configureOptions = null)
         {
-            return builder.AddDrawing<DefaultDrawingBuilderOptions>(configuration, configureOptions);
-        }
-        /// <summary>
-        /// 添加图画。
-        /// </summary>
-        /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{TBuilderOptions}"/>。</param>
-        /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        public static IDrawingBuilder AddDrawing<TBuilderOptions>(this IBuilder builder,
-            IConfiguration configuration = null, Action<TBuilderOptions> configureOptions = null)
-            where TBuilderOptions : class, IDrawingBuilderOptions
-        {
-            if (configuration.IsNotDefault())
-                builder.Services.Configure<TBuilderOptions>(configuration);
-
-            if (configureOptions.IsDefault())
-                configureOptions = (options) => { };
-
-            builder.Services.Configure<TBuilderOptions>(options =>
+            Action<DrawingBuilderOptions> _configureOptions = options =>
             {
-                var fontFileLocator = new DefaultFileLocator("font.ttf");
+                var fontFileLocator = "font.ttf".AsDefaultFileLocator();
                 options.Captcha.Font.FileLocator = fontFileLocator;
                 options.Watermark.Font.FileLocator = fontFileLocator;
-                options.Watermark.ImageFileLocator = new DefaultFileLocator("watermark.png");
+                options.Watermark.ImageFileLocator = "watermark.png".AsDefaultFileLocator();
 
-                configureOptions.Invoke(options);
-            });
+                configureOptions?.Invoke(options);
+            };
+
+            builder.PreConfigureBuilder(configuration, _configureOptions);
 
             var drawingBuilder = builder.AsDrawingBuilder();
 
-            drawingBuilder.AddCaptcha()
-                .AddScale()
-                .AddWatermark();
+            drawingBuilder.AddCaptchas()
+                .AddScales()
+                .AddWatermarks();
 
             return drawingBuilder;
         }
@@ -91,7 +72,7 @@ namespace Librame.Builders
         /// </summary>
         /// <param name="builder">给定的 <see cref="IDrawingBuilder"/>。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        public static IDrawingBuilder AddCaptcha(this IDrawingBuilder builder)
+        public static IDrawingBuilder AddCaptchas(this IDrawingBuilder builder)
         {
             builder.Services.AddSingleton<ICaptchaService, InternalCaptchaService>();
 
@@ -103,7 +84,7 @@ namespace Librame.Builders
         /// </summary>
         /// <param name="builder">给定的 <see cref="IDrawingBuilder"/>。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        public static IDrawingBuilder AddScale(this IDrawingBuilder builder)
+        public static IDrawingBuilder AddScales(this IDrawingBuilder builder)
         {
             builder.Services.AddSingleton<IScaleService, InternalScaleService>();
 
@@ -115,7 +96,7 @@ namespace Librame.Builders
         /// </summary>
         /// <param name="builder">给定的 <see cref="IDrawingBuilder"/>。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        public static IDrawingBuilder AddWatermark(this IDrawingBuilder builder)
+        public static IDrawingBuilder AddWatermarks(this IDrawingBuilder builder)
         {
             builder.Services.AddSingleton<IWatermarkService, InternalWatermarkService>();
 

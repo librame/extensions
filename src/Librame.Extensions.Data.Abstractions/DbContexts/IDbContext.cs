@@ -26,7 +26,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 构建器选项。
         /// </summary>
-        IDataBuilderOptions BuilderOptions { get; }
+        DataBuilderOptions BuilderOptions { get; }
 
         /// <summary>
         /// 提供程序名称。

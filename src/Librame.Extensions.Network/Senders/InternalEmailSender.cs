@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net.Mail;
 using System.Net.Mime;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
@@ -31,18 +32,16 @@ namespace Librame.Extensions.Network
         /// 构造一个 <see cref="InternalEmailSender"/> 实例。
         /// </summary>
         /// <param name="hash">给定的 <see cref="IHashAlgorithmService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{MailService}"/>。</param>
-        public InternalEmailSender(IHashAlgorithmService hash, IOptions<DefaultNetworkBuilderOptions> options, ILogger<InternalEmailSender> logger)
+        /// <param name="options">给定的 <see cref="IOptions{DefaultNetworkBuilderOptions}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalEmailSender}"/>。</param>
+        public InternalEmailSender(IHashAlgorithmService hash, IOptions<NetworkBuilderOptions> options, ILogger<InternalEmailSender> logger)
             : base(hash, options, logger)
         {
             SendCompletedCallback = (sender, e) =>
             {
                 // e.UserState = userToken
                 if (e.Error.IsNotDefault())
-                {
-                    Logger.LogError(e.Error.AsInnerMessage());
-                }
+                    Logger.LogError(e.Error, e.Error.AsInnerMessage());
             };
         }
 
@@ -82,10 +81,10 @@ namespace Librame.Extensions.Network
         /// <param name="toAddress">给定的邮箱接收地址。</param>
         /// <param name="subject">给定的主题。</param>
         /// <param name="body">给定的内容。</param>
-        /// <param name="userToken">给定的自定义对象（可选）。</param>
         /// <param name="configureMessage">给定的邮箱信息配置方法（可选）。</param>
         /// <param name="configureClient">给定的 SMTP 客户端配置方法（可选）。</param>
-        public void SendAsync(string toAddress, string subject, string body, object userToken = null,
+        /// <returns>返回一个异步操作。</returns>
+        public async Task SendAsync(string toAddress, string subject, string body,
             Action<MailMessage> configureMessage = null,
             Action<SmtpClient> configureClient = null)
         {
@@ -123,14 +122,14 @@ namespace Librame.Extensions.Network
                         configureClient?.Invoke(client);
 
                         // SendAsync
-                        client.SendAsync(message, userToken);
+                        await client.SendMailAsync(message);
                         Logger.LogDebug($"Send mail.");
                     }
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex.AsInnerMessage());
+                Logger.LogError(ex, ex.AsInnerMessage());
             }
         }
 

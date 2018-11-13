@@ -13,9 +13,9 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Librame.Buffers
+namespace Librame.Extensions
 {
-    using Extensions;
+    using Buffers;
 
     /// <summary>
     /// 缓冲区静态扩展。

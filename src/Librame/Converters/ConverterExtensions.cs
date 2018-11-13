@@ -13,9 +13,9 @@
 using Microsoft.Extensions.Logging;
 using System.Text;
 
-namespace Librame.Converters
+namespace Librame.Extensions
 {
-    using Extensions;
+    using Converters;
 
     /// <summary>
     /// 转换器静态扩展。
@@ -27,10 +27,12 @@ namespace Librame.Converters
         /// 转换为默认字符编码转换器。
         /// </summary>
         /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{DefaultEncodingConverter}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <returns>返回 <see cref="IEncodingConverter"/>。</returns>
-        public static IEncodingConverter AsDefaultEncodingConverter(this Encoding encoding, ILogger<DefaultEncodingConverter> logger)
+        public static IEncodingConverter AsDefaultEncodingConverter(this Encoding encoding, ILoggerFactory loggerFactory)
         {
+            var logger = loggerFactory.CreateLogger<DefaultEncodingConverter>();
+
             return new DefaultEncodingConverter(logger)
             {
                 Encoding = encoding.NotDefault(nameof(encoding))

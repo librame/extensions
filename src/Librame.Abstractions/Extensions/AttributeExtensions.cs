@@ -25,13 +25,15 @@ namespace Librame.Extensions
         /// 得到此成员信息包含的自定义特性。
         /// </summary>
         /// <typeparam name="TAttribute">指定的特性类型。</typeparam>
-        /// <param name="member">指定的成员信息。</param>
+        /// <param name="provider">指定的 <see cref="ICustomAttributeProvider"/>。</param>
         /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
         /// <returns>返回自定义特性对象。</returns>
-        public static TAttribute Attribute<TAttribute>(this MemberInfo member, bool inherit = false)
+        public static TAttribute Attribute<TAttribute>(this ICustomAttributeProvider provider, bool inherit = false)
             where TAttribute : Attribute
         {
-            return member.GetCustomAttribute<TAttribute>(inherit);
+            var attributes = provider.GetCustomAttributes(typeof(TAttribute), inherit);
+
+            return attributes.IsNotEmpty() ? (TAttribute)attributes[0] : default;
         }
 
 
@@ -39,26 +41,26 @@ namespace Librame.Extensions
         /// 包含指定特性。
         /// </summary>
         /// <typeparam name="TAttribute">指定的特性类型。</typeparam>
-        /// <param name="member">指定的成员信息。</param>
+        /// <param name="provider">指定的 <see cref="ICustomAttributeProvider"/>。</param>
         /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
         /// <returns>返回是否包含的布尔值。</returns>
-        public static bool HasAttribute<TAttribute>(this MemberInfo member, bool inherit = false)
+        public static bool HasAttribute<TAttribute>(this ICustomAttributeProvider provider, bool inherit = false)
             where TAttribute : Attribute
         {
-            return member.HasAttribute(out TAttribute attribute, inherit);
+            return provider.HasAttribute(out TAttribute attribute, inherit);
         }
         /// <summary>
         /// 包含指定特性。
         /// </summary>
         /// <typeparam name="TAttribute">指定的特性类型。</typeparam>
-        /// <param name="member">指定的成员信息。</param>
+        /// <param name="provider">指定的 <see cref="ICustomAttributeProvider"/>。</param>
         /// <param name="attribute">输出包含的特性。</param>
         /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
         /// <returns>返回是否包含的布尔值。</returns>
-        public static bool HasAttribute<TAttribute>(this MemberInfo member, out TAttribute attribute, bool inherit = false)
+        public static bool HasAttribute<TAttribute>(this ICustomAttributeProvider provider, out TAttribute attribute, bool inherit = false)
             where TAttribute : Attribute
         {
-            attribute = member.Attribute<TAttribute>(inherit);
+            attribute = provider.Attribute<TAttribute>(inherit);
 
             return attribute.IsNotDefault();
         }

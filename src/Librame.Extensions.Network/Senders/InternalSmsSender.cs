@@ -31,9 +31,9 @@ namespace Librame.Extensions.Network
         /// 构造一个 <see cref="InternalSmsSender"/> 实例。
         /// </summary>
         /// <param name="hash">给定的 <see cref="IHashAlgorithmService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{MessageService}"/>。</param>
-        public InternalSmsSender(IHashAlgorithmService hash, IOptions<DefaultNetworkBuilderOptions> options, ILogger<InternalSmsSender> logger)
+        /// <param name="options">给定的 <see cref="IOptions{DefaultNetworkBuilderOptions}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalSmsSender}"/>。</param>
+        public InternalSmsSender(IHashAlgorithmService hash, IOptions<NetworkBuilderOptions> options, ILogger<InternalSmsSender> logger)
             : base(hash, options, logger)
         {
         }
@@ -43,17 +43,37 @@ namespace Librame.Extensions.Network
         /// 异步发送。
         /// </summary>
         /// <param name="message">给定要发送的消息。</param>
+        /// <param name="gatewayUrlFactory">给定的短信网关选项设定工厂方法。</param>
+        /// <returns>返回响应的字符串。</returns>
+        public async Task<string> SendAsync(string message, Func<string, Uri> gatewayUrlFactory)
+        {
+            var url = gatewayUrlFactory.Invoke(Options.Sms.GetewayUrl);
+            
+            return await SendCoreAsync(message, url);
+        }
+
+        /// <summary>
+        /// 异步发送。
+        /// </summary>
+        /// <param name="message">给定要发送的消息。</param>
         /// <param name="gatewayUrl">给定的短信网关 URL（可选；默认为选项设定）。</param>
         /// <returns>返回响应的字符串。</returns>
         public async Task<string> SendAsync(string message, string gatewayUrl = null)
+        {
+            var url = new Uri(gatewayUrl.AsValueOrDefault(Options.Sms.GetewayUrl));
+
+            return await SendCoreAsync(message, url);
+        }
+
+
+        private async Task<string> SendCoreAsync(string message, Uri url)
         {
             var result = string.Empty;
 
             try
             {
-                var url = new Uri(gatewayUrl.AsValueOrDefault(Options.Sms.GetewayUrl));
                 var hwr = WebRequest.CreateHttp(url);
-                Logger.LogDebug($"Create http web request for gateway: {gatewayUrl}");
+                Logger.LogDebug($"Create http web request for gateway: {url.ToString()}");
 
                 hwr.ContentType = $"application/x-www-form-urlencoded;charset={Encoding.AsName()}";
                 Logger.LogDebug($"Set content type: {hwr.ContentType}");
@@ -87,7 +107,7 @@ namespace Librame.Extensions.Network
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex.AsInnerMessage());
+                Logger.LogError(ex, ex.AsInnerMessage());
             }
 
             return result;

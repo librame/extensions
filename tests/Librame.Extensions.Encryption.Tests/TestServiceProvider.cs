@@ -14,7 +14,8 @@ namespace Librame.Extensions.Encryption.Tests
                 var services = new ServiceCollection();
 
                 services.AddLibrame()
-                    .AddEncryption();
+                    .AddEncryption()
+                    .AddDeveloperGlobalSigningCredentials();
 
                 Current = services.BuildServiceProvider();
             }

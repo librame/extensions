@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>5.20.1811.131</Version>
+    <Authors>Librame Pang</Authors>
+    <Company>librame.net</Company>
+    <Description>Librame.Extensions.Network.DotNetty</Description>
+    <Copyright>Copyright © 2012-2018</Copyright>
+    <PackageLicenseUrl>https://github.com/librame/Librame/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/librame/Librame</PackageProjectUrl>
+    <PackageIconUrl>https://avatars0.githubusercontent.com/u/10363349?v=3&amp;s=460</PackageIconUrl>
+    <RepositoryUrl>https://github.com/librame</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Librame,Librame,NETCore,NETStandard,Network,DotNetty</PackageTags>
+    <PackageReleaseNotes>Librame.Extensions.Network.DotNetty</PackageReleaseNotes>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>5.20.1811.131</AssemblyVersion>
+    <FileVersion>5.20.1811.131</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\bin\</OutputPath>
+    <DocumentationFile>..\..\bin\netstandard2.0\Librame.Extensions.Network.DotNetty.xml</DocumentationFile>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetty.Codecs.Http" Version="0.6.0" />
+    <PackageReference Include="DotNetty.Transport.Libuv" Version="0.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Librame.Extensions.Network.DotNetty.Abstractions\Librame.Extensions.Network.DotNetty.Abstractions.csproj" />
+    <ProjectReference Include="..\Librame.Extensions.Network\Librame.Extensions.Network.csproj" />
+  </ItemGroup>
+
+</Project>

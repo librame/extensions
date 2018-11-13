@@ -93,6 +93,17 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
+        public void IsOutOfPortNumberRangeTest()
+        {
+            Assert.True((-1).IsOutOfPortNumberRange());
+            Assert.False(0.IsOutOfPortNumberRange());
+            Assert.True(65536.IsOutOfPortNumberRange());
+            Assert.False(65535.IsOutOfPortNumberRange());
+            Assert.False(80.IsOutOfPortNumberRange());
+        }
+
+
+        [Fact]
         public void IsMultiplesTest()
         {
             Assert.True(4.IsMultiples(2));

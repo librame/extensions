@@ -29,75 +29,39 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 数据排序。
         /// </summary>
-        //[Display(Name = "DataRankName",
-        //    ShortName = "DataRankShortName",
-        //    Description = "DataRankDescription",
-        //    Prompt = "DataRankPrompt",
-        //    GroupName = "DataGroup",
-        //    ResourceType = typeof(Resources.EntityStores)
-        //)]
+        [Display(Name = nameof(DataRank), GroupName = "DataGroup", ResourceType = typeof(AbstractEntityResource))]
         public virtual int DataRank { get; set; }
 
         /// <summary>
         /// 数据状态。
         /// </summary>
-        //[Display(Name = "DataStatusName",
-        //    ShortName = "DataStatusShortName",
-        //    Description = "DataStatusDescription",
-        //    Prompt = "DataStatusPrompt",
-        //    GroupName = "DataGroup",
-        //    ResourceType = typeof(Resources.EntityStores)
-        //)]
+        [Display(Name = nameof(DataStatus), GroupName = "DataGroup", ResourceType = typeof(AbstractEntityResource))]
         public virtual TStatus DataStatus { get; set; }
 
         /// <summary>
         /// 创建时间。
         /// </summary>
-        //[Display(Name = "CreateTimeName",
-        //    ShortName = "CreateTimeShortName",
-        //    Description = "CreateTimeDescription",
-        //    Prompt = "CreateTimePrompt",
-        //    GroupName = "CreateGroup",
-        //    ResourceType = typeof(Resources.EntityStores)
-        //)]
+        [Display(Name = nameof(CreateTime), GroupName = "CreateGroup", ResourceType = typeof(AbstractEntityResource))]
         [DataType(DataType.DateTime)]
         public virtual TDateTime CreateTime { get; set; }
 
         /// <summary>
-        /// 创建者身份。
+        /// 创建者标识。
         /// </summary>
-        //[Display(Name = "CreatorIdName",
-        //    ShortName = "CreatorIdShortName",
-        //    Description = "CreatorIdDescription",
-        //    Prompt = "CreatorIdPrompt",
-        //    GroupName = "CreateGroup",
-        //    ResourceType = typeof(Resources.EntityStores)
-        //)]
+        [Display(Name = nameof(CreatorId), GroupName = "CreateGroup", ResourceType = typeof(AbstractEntityResource))]
         public virtual TId CreatorId { get; set; }
 
         /// <summary>
         /// 更新时间。
         /// </summary>
-        //[Display(Name = "CreateTimeName",
-        //    ShortName = "CreateTimeShortName",
-        //    Description = "CreateTimeDescription",
-        //    Prompt = "CreateTimePrompt",
-        //    GroupName = "UpdateGroup",
-        //    ResourceType = typeof(Resources.EntityStores)
-        //)]
+        [Display(Name = nameof(UpdateTime), GroupName = "UpdateGroup", ResourceType = typeof(AbstractEntityResource))]
         [DataType(DataType.DateTime)]
         public virtual TDateTime UpdateTime { get; set; }
 
         /// <summary>
-        /// 更新者身份。
+        /// 更新者标识。
         /// </summary>
-        //[Display(Name = "CreatorIdName",
-        //    ShortName = "CreatorIdShortName",
-        //    Description = "CreatorIdDescription",
-        //    Prompt = "CreatorIdPrompt",
-        //    GroupName = "UpdateGroup",
-        //    ResourceType = typeof(Resources.EntityStores)
-        //)]
+        [Display(Name = nameof(UpdatorId), GroupName = "UpdateGroup", ResourceType = typeof(AbstractEntityResource))]
         public virtual TId UpdatorId { get; set; }
     }
 }

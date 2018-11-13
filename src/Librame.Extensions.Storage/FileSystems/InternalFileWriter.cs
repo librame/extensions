@@ -24,15 +24,15 @@ namespace Librame.Extensions.Storage
     /// </summary>
     internal class InternalFileWriter : AbstractService<InternalFileWriter>, IFileWriter
     {
-        private readonly DefaultStorageBuilderOptions _options;
+        private readonly StorageBuilderOptions _options;
 
 
         /// <summary>
         /// 构造一个 <see cref="InternalFileWriter"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{StorageBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{LocalFileWriter}"/>。</param>
-        public InternalFileWriter(IOptions<DefaultStorageBuilderOptions> options, ILogger<InternalFileWriter> logger)
+        /// <param name="options">给定的 <see cref="IOptions{DefaultStorageBuilderOptions}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalFileWriter}"/>。</param>
+        public InternalFileWriter(IOptions<StorageBuilderOptions> options, ILogger<InternalFileWriter> logger)
             : base(logger)
         {
             _options = options.Value;

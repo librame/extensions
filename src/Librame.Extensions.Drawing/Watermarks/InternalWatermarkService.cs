@@ -31,16 +31,16 @@ namespace Librame.Extensions.Drawing
         /// <summary>
         /// 构造一个 <see cref="InternalWatermarkService"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
-        /// <param name="logger">给定的 <see cref="ILogger{WatermarkService}"/>。</param>
-        public InternalWatermarkService(IOptions<DefaultDrawingBuilderOptions> options, ILogger<InternalWatermarkService> logger)
+        /// <param name="options">给定的 <see cref="IOptions{DefaultDrawingBuilderOptions}"/></param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalWatermarkService}"/>。</param>
+        public InternalWatermarkService(IOptions<DrawingBuilderOptions> options, ILogger<InternalWatermarkService> logger)
             : base(logger)
         {
             Options = options.Value;
             ImageFileLocator = Options.Watermark.ImageFileLocator
-                .NotDefault(nameof(DefaultDrawingBuilderOptions.Watermark.ImageFileLocator));
+                .NotDefault(nameof(DrawingBuilderOptions.Watermark.ImageFileLocator));
             FontFileLocator = Options.Watermark.Font.FileLocator
-                .NotDefault(nameof(DefaultDrawingBuilderOptions.Watermark.Font.FileLocator));
+                .NotDefault(nameof(DrawingBuilderOptions.Watermark.Font.FileLocator));
         }
 
 
@@ -48,9 +48,9 @@ namespace Librame.Extensions.Drawing
         /// 绘图选项。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="DefaultDrawingBuilderOptions"/>。
+        /// 返回 <see cref="DrawingBuilderOptions"/>。
         /// </value>
-        public DefaultDrawingBuilderOptions Options { get; }
+        public DrawingBuilderOptions Options { get; }
 
         /// <summary>
         /// 水印图片文件定位器。

@@ -29,8 +29,8 @@ namespace Librame.Builders
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddBuffers(this IBuilder builder)
         {
-            builder.Services.AddSingleton(typeof(IReadOnlyBuffer<>), typeof(DefaultReadOnlyBuffer<>));
-            builder.Services.AddSingleton(typeof(IBuffer<>), typeof(DefaultBuffer<>));
+            builder.Services.AddTransient(typeof(IReadOnlyBuffer<>), typeof(DefaultReadOnlyBuffer<>));
+            builder.Services.AddTransient(typeof(IBuffer<>), typeof(DefaultBuffer<>));
 
             return builder;
         }

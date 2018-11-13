@@ -13,6 +13,7 @@
 using System;
 using System.ComponentModel;
 using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
@@ -41,10 +42,10 @@ namespace Librame.Extensions.Network
         /// <param name="toAddress">给定的邮箱接收地址。</param>
         /// <param name="subject">给定的主题。</param>
         /// <param name="body">给定的内容。</param>
-        /// <param name="userToken">给定的自定义对象（可选）。</param>
         /// <param name="configureMessage">给定的邮箱信息配置方法（可选）。</param>
         /// <param name="configureClient">给定的 SMTP 客户端配置方法（可选）。</param>
-        void SendAsync(string toAddress, string subject, string body, object userToken = null,
+        /// <returns>返回一个异步操作。</returns>
+        Task SendAsync(string toAddress, string subject, string body,
             Action<MailMessage> configureMessage = null,
             Action<SmtpClient> configureClient = null);
     }

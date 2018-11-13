@@ -15,7 +15,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 架构选项接口。
     /// </summary>
-    public interface ISchemaOptions
+    public interface IOptions
     {
         /// <summary>
         /// 架构。

@@ -12,6 +12,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -31,17 +32,17 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 构造一个 <see cref="AbstractDbContext{TDbContext}"/> 实例。
         /// </summary>
-        /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
+        /// <param name="auditResolver">给定的 <see cref="IAuditResolver"/>。</param>
+        /// <param name="builderOptions">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{TDbContext}"/>。</param>
-        /// <param name="builderOptions">给定的 <see cref="IEfCoreDataBuilderOptions"/>。</param>
-        /// <param name="auditResolver">给定的 <see cref="IAuditResolverService"/>。</param>
-        public AbstractDbContext(DbContextOptions<TDbContext> dbContextOptions, ILogger<TDbContext> logger,
-            IEfCoreDataBuilderOptions builderOptions, IAuditResolverService auditResolver)
+        /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
+        public AbstractDbContext(IAuditResolver auditResolver, IOptions<DataBuilderOptions> builderOptions,
+            ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
             : base(dbContextOptions)
         {
             Logger = logger.NotDefault(nameof(logger));
             AuditResolver = auditResolver.NotDefault(nameof(auditResolver));
-            BuilderOptions = builderOptions.NotDefault(nameof(builderOptions));
+            BuilderOptions = builderOptions.NotDefault(nameof(builderOptions)).Value;
             
             if (BuilderOptions.EnsureDbCreated)
                 DatabaseCreated();
@@ -55,14 +56,14 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        public IDataBuilderOptions BuilderOptions { get; }
-
-        /// <summary>
         /// 审计解析器。
         /// </summary>
-        public IAuditResolverService AuditResolver { get; }
+        public IAuditResolver AuditResolver { get; }
+
+        /// <summary>
+        /// 构建器选项。
+        /// </summary>
+        public DataBuilderOptions BuilderOptions { get; }
         
 
         /// <summary>
@@ -238,8 +239,7 @@ namespace Librame.Extensions.Data
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            if (BuilderOptions is IEfCoreDataBuilderOptions builderOptions)
-                modelBuilder.ConfigureAbstractDbContext(builderOptions);
+            modelBuilder.ConfigureAbstractDbContext(BuilderOptions);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -301,7 +301,7 @@ namespace Librame.Extensions.Data
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogError(ex.AsInnerMessage());
+                            Logger.LogError(ex, ex.AsInnerMessage());
 
                             return false;
                         }
@@ -317,7 +317,7 @@ namespace Librame.Extensions.Data
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogError(ex.AsInnerMessage());
+                            Logger.LogError(ex, ex.AsInnerMessage());
 
                             return false;
                         }

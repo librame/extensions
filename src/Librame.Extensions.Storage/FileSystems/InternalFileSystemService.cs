@@ -12,9 +12,11 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions.Storage
 {
@@ -66,15 +68,27 @@ namespace Librame.Extensions.Storage
         public virtual PlatformDescriptor Platform => new PlatformDescriptor();
 
 
-        private static IDictionary<string, DriverDescriptor> _drivers
-            = new Dictionary<string, DriverDescriptor>();
+        /// <summary>
+        /// 异步加载存储磁盘信息。
+        /// </summary>
+        /// <param name="format">给定的 <see cref="CapacityUnitFormat"/>（可选；默认使用吉字节单位）。</param>
+        /// <param name="notation">给定的 <see cref="CapacityUnitNotation"/>（可选；默认使用二进制）。</param>
+        /// <returns>返回一个包含 <see cref="IReadOnlyList{DriverDescriptor}"/> 的异步操作。</returns>
+        public Task<IReadOnlyList<DriverDescriptor>> LoadDriversAsync(CapacityUnitFormat format = CapacityUnitFormat.GByte,
+            CapacityUnitNotation notation = CapacityUnitNotation.Binary)
+        {
+            return Task.Factory.StartNew(() => LoadDrivers(format, notation));
+        }
+
+        private static ConcurrentDictionary<string, DriverDescriptor> _drivers
+            = new ConcurrentDictionary<string, DriverDescriptor>();
         /// <summary>
         /// 加载存储磁盘信息。
         /// </summary>
         /// <param name="format">给定的 <see cref="CapacityUnitFormat"/>（可选；默认使用吉字节单位）。</param>
         /// <param name="notation">给定的 <see cref="CapacityUnitNotation"/>（可选；默认使用二进制）。</param>
         /// <returns>返回 <see cref="IReadOnlyList{DriverDescriptor}"/>。</returns>
-        public virtual IReadOnlyList<DriverDescriptor> LoadDrivers(CapacityUnitFormat format = CapacityUnitFormat.GByte,
+        public IReadOnlyList<DriverDescriptor> LoadDrivers(CapacityUnitFormat format = CapacityUnitFormat.GByte,
             CapacityUnitNotation notation = CapacityUnitNotation.Binary)
         {
             if (_drivers.IsEmpty())
@@ -87,7 +101,7 @@ namespace Librame.Extensions.Storage
                         if (!_drivers.ContainsKey(drive.Name))
                         {
                             var descriptor = new DriverDescriptor(drive, format, notation);
-                            _drivers.Add(drive.Name, descriptor);
+                            _drivers.AddOrUpdate(drive.Name, descriptor, (n, d) => descriptor);
                             Logger.LogDebug($"Name={drive.Name},TotalSize={descriptor.FormatTotalSize},TotalUsageSpace={descriptor.FormatTotalUsageSpace},TotalFreeSpace={descriptor.FormatTotalFreeSpace}");
                         }
                     }
@@ -97,16 +111,27 @@ namespace Librame.Extensions.Storage
             return _drivers.Values.AsReadOnlyList();
         }
 
+
+        /// <summary>
+        /// 异步加载指定目录集合信息。
+        /// </summary>
+        /// <param name="filter">给定的文件过滤规则。</param>
+        /// <param name="directories">给定的目录集合。</param>
+        /// <returns>返回一个包含 <see cref="IReadOnlyList{DirectoryDescriptor}"/> 的异步操作。</returns>
+        public Task<IReadOnlyList<DirectoryDescriptor>> LoadDirectoriesAsync(string filter, params string[] directories)
+        {
+            return Task.Factory.StartNew(() => LoadDirectories(filter, directories));
+        }
         
-        private static IDictionary<string, KeyValuePair<DirectoryDescriptor, FileSystemWatcher>> _directories
-            = new Dictionary<string, KeyValuePair<DirectoryDescriptor, FileSystemWatcher>>();
+        private static ConcurrentDictionary<string, KeyValuePair<DirectoryDescriptor, FileSystemWatcher>> _directories
+            = new ConcurrentDictionary<string, KeyValuePair<DirectoryDescriptor, FileSystemWatcher>>();
         /// <summary>
         /// 加载指定目录集合信息。
         /// </summary>
         /// <param name="filter">给定的文件过滤规则。</param>
         /// <param name="directories">给定的目录集合。</param>
         /// <returns>返回 <see cref="IReadOnlyList{DirectoryDescriptor}"/>。</returns>
-        public virtual IReadOnlyList<DirectoryDescriptor> LoadDirectories(string filter, params string[] directories)
+        public IReadOnlyList<DirectoryDescriptor> LoadDirectories(string filter, params string[] directories)
         {
             if (directories.IsEmpty())
                 directories = new string[] { AppDomain.CurrentDomain.BaseDirectory };
@@ -117,8 +142,8 @@ namespace Librame.Extensions.Storage
                 {
                     var descriptor = new DirectoryDescriptor(dir, filter);
                     var pair = new KeyValuePair<DirectoryDescriptor, FileSystemWatcher>(descriptor, CreateWatcher(descriptor, filter));
-
-                    _directories.Add(dir.FullName, pair);
+                    
+                    _directories.AddOrUpdate(dir.FullName, pair, (n, p) => pair);
                     Logger.LogDebug($"FullName={dir.FullName},Size={descriptor.FormatSize}");
                 }
             }
@@ -135,7 +160,7 @@ namespace Librame.Extensions.Storage
         /// <param name="directory">给定的目录。</param>
         /// <param name="filter">给定的文件过滤规则。</param>
         /// <returns>返回 <see cref="FileSystemWatcher"/>。</returns>
-        protected virtual FileSystemWatcher CreateWatcher(DirectoryDescriptor directory, string filter)
+        private FileSystemWatcher CreateWatcher(DirectoryDescriptor directory, string filter)
         {
             var watcher = new FileSystemWatcher(directory.Path, filter);
 

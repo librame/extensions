@@ -6,7 +6,7 @@ namespace Librame.Extensions.Encryption.Tests
     public class InternalEncryptionBuilderTests
     {
         [Fact]
-        public void CryptographyBuilderTest()
+        public void EncryptionBuilderTest()
         {
             var algorithmBuilder = TestServiceProvider.Current.GetRequiredService<IEncryptionBuilder>();
             Assert.NotNull(algorithmBuilder);

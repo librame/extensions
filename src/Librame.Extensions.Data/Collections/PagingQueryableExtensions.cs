@@ -10,10 +10,13 @@
 
 #endregion
 
-using Librame.Extensions.Data;
+using System;
+using System.Linq;
 
-namespace System.Linq
+namespace Librame.Extensions
 {
+    using Data;
+
     /// <summary>
     /// 分页查询静态扩展。
     /// </summary>

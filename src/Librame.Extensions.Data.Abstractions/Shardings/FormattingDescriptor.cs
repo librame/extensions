@@ -33,7 +33,7 @@ namespace Librame.Extensions.Data
             Key = key.NotEmpty(nameof(key));
 
             if (value.IsEmpty() && format.IsEmpty())
-                throw new ArgumentNullException("value/format");
+                throw new ArgumentNullException("value or format");
 
             Value = value;
             Format = format;

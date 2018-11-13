@@ -1,21 +1,26 @@
-﻿using Xunit;
+﻿using System.Security.Cryptography;
+using Xunit;
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    using Services;
-
     public class InternalRsaKeyGeneratorTests
     {
         [Fact]
         public void InternalRsaKeyGeneratorServiceTest()
         {
-            var keyGenerator = TestServiceProvider.Current.GetRequiredService<IRsaKeyGenerator>();
-            var key = keyGenerator.GenerateKeyParameters();
+            var provider = TestServiceProvider.Current.GetRequiredService<ISigningCredentialsProvider>();
+            var credentials = provider.GetGlobalSigningCredentials();
+
+            var rsa = credentials.ResolveRsa();
 
             var str = nameof(InternalRsaKeyGeneratorTests);
-            var rsa = str.AsRsaBase64String(key.Parameters);
 
-            Assert.Equal(str, rsa.FromRsaBase64String(key.Parameters));
+            var encryptString = rsa.Encrypt(str.AsEncodingBytes(), RSAEncryptionPadding.Pkcs1)
+                .AsBase64String();
+
+            var decryptBuffer = rsa.Decrypt(encryptString.FromBase64String(), RSAEncryptionPadding.Pkcs1);
+
+            Assert.Equal(str, decryptBuffer.FromEncodingBytes());
         }
 
     }

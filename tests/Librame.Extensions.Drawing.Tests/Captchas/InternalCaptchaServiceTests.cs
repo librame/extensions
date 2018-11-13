@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using Xunit;
 
 namespace Librame.Extensions.Drawing.Tests
 {
-    using Locators;
-
     public class InternalCaptchaServiceTests
     {
         private ICaptchaService _drawing = null;
@@ -34,8 +31,7 @@ namespace Librame.Extensions.Drawing.Tests
         public async void DrawCaptchaFileTest()
         {
             var captcha = _captchas[new Random().Next(0, _captchas.Length)];
-            var saveFile = new DefaultFileLocator("captcha.png")
-                .ChangeBasePath(TestServiceProvider.ResourcesPath);
+            var saveFile = "captcha.png".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
 
             var succeed = await _drawing.DrawFile(captcha, saveFile.ToString());
             Assert.True(succeed);

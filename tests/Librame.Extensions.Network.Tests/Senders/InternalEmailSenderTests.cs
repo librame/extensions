@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Xunit;
+﻿using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {
@@ -14,15 +13,15 @@ namespace Librame.Extensions.Network.Tests
 
 
         [Fact]
-        public void SendAsyncTest()
+        public async void SendAsyncTest()
         {
-            _sender.SendAsync("receiver@domain.com",
-                "Email Subject",
-                "Email Body");
+            await _sender.SendAsync("receiver@domain.com",
+                    "Email Subject",
+                    "Email Body");
 
             //var file = _sender.CreateAttachment("fileName");
 
-            //_sender.SendAsync("toAddress",
+            //await _sender.SendAsync("toAddress",
             //    "subject",
             //    "body",
             //    configureMessage: msg =>

@@ -2,6 +2,8 @@
 
 namespace Librame.Buffers.Tests
 {
+    using Extensions;
+
     public class BufferExtensionsTests
     {
 

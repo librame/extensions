@@ -2,6 +2,8 @@
 
 namespace Librame.Locators.Tests
 {
+    using Extensions;
+
     public class DefaultFileLocatorTests
     {
 
@@ -10,7 +12,7 @@ namespace Librame.Locators.Tests
         {
             var path = @"c:\test\file.ext";
 
-            var locator = new DefaultFileLocator(path);
+            var locator = path.AsDefaultFileLocator();
             Assert.Equal(@"c:\test", locator.BasePath);
             Assert.Equal("file.ext", locator.FileName);
 

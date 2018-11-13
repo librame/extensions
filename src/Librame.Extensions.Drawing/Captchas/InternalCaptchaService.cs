@@ -32,14 +32,14 @@ namespace Librame.Extensions.Drawing
         /// <summary>
         /// 构造一个 <see cref="InternalCaptchaService"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
-        /// <param name="logger">给定的 <see cref="ILogger{WatermarkDrawing}"/>。</param>
-        public InternalCaptchaService(IOptions<DefaultDrawingBuilderOptions> options, ILogger<InternalCaptchaService> logger)
+        /// <param name="options">给定的 <see cref="IOptions{DefaultDrawingBuilderOptions}"/></param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalCaptchaService}"/>。</param>
+        public InternalCaptchaService(IOptions<DrawingBuilderOptions> options, ILogger<InternalCaptchaService> logger)
             : base(logger)
         {
             Options = options.Value;
             FontFileLocator = Options.Watermark.Font.FileLocator
-                .NotDefault(nameof(DefaultDrawingBuilderOptions.Watermark.Font.FileLocator));
+                .NotDefault(nameof(DrawingBuilderOptions.Watermark.Font.FileLocator));
         }
 
 
@@ -47,9 +47,9 @@ namespace Librame.Extensions.Drawing
         /// 绘图选项。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="DefaultDrawingBuilderOptions"/>。
+        /// 返回 <see cref="DrawingBuilderOptions"/>。
         /// </value>
-        public DefaultDrawingBuilderOptions Options { get; }
+        public DrawingBuilderOptions Options { get; }
 
         /// <summary>
         /// 水印字体文件定位器。

@@ -12,8 +12,10 @@
 
 using System.Linq;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Extensions
 {
+    using Storage;
+
     /// <summary>
     /// 容量单位静态扩展。
     /// </summary>

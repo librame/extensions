@@ -12,10 +12,10 @@
 
 using System.Security.Cryptography;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions
 {
     using Buffers;
-    using Services;
+    using Encryption;
 
     /// <summary>
     /// 抽象算法缓冲区静态扩展。
@@ -621,16 +621,13 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认为 <see cref="IRsaAlgorithmService.EncryptionPadding"/>）。</param>
-        /// <param name="parameters">给定的 <see cref="RSAParameters"/>（可选；默认使用 <see cref="IRsaAlgorithmService.KeyGenerator"/>）。</param>
         /// <returns>返回算法缓冲区。</returns>
-        public static IEncryptionBuffer<TConverter, TSource> AsRsa<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            RSAEncryptionPadding padding = null, RSAParameters? parameters = null)
+        public static IEncryptionBuffer<TConverter, TSource> AsRsa<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer)
             where TConverter : IAlgorithmConverter<TSource>
         {
             var rsa = buffer.ServiceProvider.GetRequiredService<IRsaAlgorithmService>();
 
-            return buffer.AsRsa(rsa, padding, parameters);
+            return buffer.AsRsa(rsa);
         }
         /// <summary>
         /// RSA 加密。
@@ -638,14 +635,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="rsa">给定的 <see cref="IRsaAlgorithmService"/>。</param>
-        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认为 <see cref="IRsaAlgorithmService.EncryptionPadding"/>）。</param>
-        /// <param name="parameters">给定的 <see cref="RSAParameters"/>（可选；默认使用 <see cref="IRsaAlgorithmService.KeyGenerator"/>）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer AsRsa<TBuffer>(this TBuffer buffer, IRsaAlgorithmService rsa,
-            RSAEncryptionPadding padding = null, RSAParameters? parameters = null)
+        public static TBuffer AsRsa<TBuffer>(this TBuffer buffer, IRsaAlgorithmService rsa)
             where TBuffer : IBuffer<byte>
         {
-            rsa.Encrypt(buffer, padding, parameters);
+            rsa.Encrypt(buffer);
 
             return buffer;
         }
@@ -656,16 +650,13 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认为 <see cref="IRsaAlgorithmService.EncryptionPadding"/>）。</param>
-        /// <param name="parameters">给定的 <see cref="RSAParameters"/>（可选；默认使用 <see cref="IRsaAlgorithmService.KeyGenerator"/>）。</param>
         /// <returns>返回算法缓冲区。</returns>
-        public static IEncryptionBuffer<TConverter, TSource> FromRsa<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            RSAEncryptionPadding padding = null, RSAParameters? parameters = null)
+        public static IEncryptionBuffer<TConverter, TSource> FromRsa<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer)
             where TConverter : IAlgorithmConverter<TSource>
         {
             var rsa = buffer.ServiceProvider.GetRequiredService<IRsaAlgorithmService>();
 
-            return buffer.FromRsa(rsa, padding, parameters);
+            return buffer.FromRsa(rsa);
         }
         /// <summary>
         /// RSA 解密。
@@ -673,14 +664,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="rsa">给定的 <see cref="IRsaAlgorithmService"/>。</param>
-        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认为 <see cref="IRsaAlgorithmService.EncryptionPadding"/>）。</param>
-        /// <param name="parameters">给定的 <see cref="RSAParameters"/>（可选；默认使用 <see cref="IRsaAlgorithmService.KeyGenerator"/>）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer FromRsa<TBuffer>(this TBuffer buffer, IRsaAlgorithmService rsa,
-            RSAEncryptionPadding padding = null, RSAParameters? parameters = null)
+        public static TBuffer FromRsa<TBuffer>(this TBuffer buffer, IRsaAlgorithmService rsa)
             where TBuffer : IBuffer<byte>
         {
-            rsa.Decrypt(buffer, padding, parameters);
+            rsa.Decrypt(buffer);
 
             return buffer;
         }

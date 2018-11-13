@@ -14,8 +14,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions
 {
+    using Data;
+
     /// <summary>
     /// 实体类型构建器静态扩展。
     /// </summary>

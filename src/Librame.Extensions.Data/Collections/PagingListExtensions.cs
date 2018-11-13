@@ -12,8 +12,10 @@
 
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions
 {
+    using Data;
+
     /// <summary>
     /// 分页列表静态扩展。
     /// </summary>

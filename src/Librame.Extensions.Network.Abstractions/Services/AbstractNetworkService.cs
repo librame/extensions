@@ -30,9 +30,9 @@ namespace Librame.Extensions.Network
         /// 构造一个 <see cref="AbstractNetworkService{TService}"/> 实例。
         /// </summary>
         /// <param name="hash">给定的 <see cref="IHashAlgorithmService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{MessageService}"/>。</param>
-        public AbstractNetworkService(IHashAlgorithmService hash, IOptions<DefaultNetworkBuilderOptions> options, ILogger<TService> logger)
+        /// <param name="options">给定的 <see cref="IOptions{DefaultNetworkBuilderOptions}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{TService}"/>。</param>
+        public AbstractNetworkService(IHashAlgorithmService hash, IOptions<NetworkBuilderOptions> options, ILogger<TService> logger)
             : base(logger)
         {
             Hash = hash;
@@ -52,9 +52,9 @@ namespace Librame.Extensions.Network
         /// 构建器选项。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="DefaultNetworkBuilderOptions"/>。
+        /// 返回 <see cref="NetworkBuilderOptions"/>。
         /// </value>
-        public DefaultNetworkBuilderOptions Options { get; }
+        public NetworkBuilderOptions Options { get; }
 
         /// <summary>
         /// 字符编码（默认使用 <see cref="Encoding.UTF8"/>）。

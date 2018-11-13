@@ -25,15 +25,15 @@ namespace Librame.Extensions.Storage
     /// </summary>
     internal class InternalFileReader : AbstractService<InternalFileReader>, IFileReader
     {
-        private readonly DefaultStorageBuilderOptions _options;
+        private readonly StorageBuilderOptions _options;
 
 
         /// <summary>
         /// 构造一个 <see cref="InternalFileReader"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{StorageBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{LocalFileReader}"/>。</param>
-        public InternalFileReader(IOptions<DefaultStorageBuilderOptions> options, ILogger<InternalFileReader> logger)
+        /// <param name="options">给定的 <see cref="IOptions{DefaultStorageBuilderOptions}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalFileReader}"/>。</param>
+        public InternalFileReader(IOptions<StorageBuilderOptions> options, ILogger<InternalFileReader> logger)
             : base(logger)
         {
             _options = options.Value;

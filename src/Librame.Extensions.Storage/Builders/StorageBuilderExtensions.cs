@@ -16,7 +16,6 @@ using System;
 
 namespace Librame.Builders
 {
-    using Extensions;
     using Extensions.Storage;
 
     /// <summary>
@@ -26,34 +25,16 @@ namespace Librame.Builders
     {
 
         /// <summary>
-        /// 添加存储。
+        /// 添加存储扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{IStorageBuilderOptions}"/>。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{StorageBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
         public static IStorageBuilder AddStorage(this IBuilder builder,
-            IConfiguration configuration = null, Action<IStorageBuilderOptions> configureOptions = null)
+            IConfiguration configuration = null, Action<StorageBuilderOptions> configureOptions = null)
         {
-            return builder.AddStorage<DefaultStorageBuilderOptions>(configuration, configureOptions);
-        }
-        /// <summary>
-        /// 添加存储。
-        /// </summary>
-        /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{TBuilderOptions}"/>。</param>
-        /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
-        public static IStorageBuilder AddStorage<TBuilderOptions>(this IBuilder builder,
-            IConfiguration configuration = null, Action<TBuilderOptions> configureOptions = null)
-            where TBuilderOptions : class, IStorageBuilderOptions
-        {
-            if (configuration.IsNotDefault())
-                builder.Services.Configure<TBuilderOptions>(configuration);
-
-            if (configureOptions.IsNotDefault())
-                builder.Services.Configure(configureOptions);
+            builder.PreConfigureBuilder(configuration, configureOptions);
 
             var storageBuilder = builder.AsStorageBuilder();
 

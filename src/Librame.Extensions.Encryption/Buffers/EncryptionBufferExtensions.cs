@@ -12,9 +12,9 @@
 
 using System;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions
 {
-    using Services;
+    using Encryption;
 
     /// <summary>
     /// 加密缓冲区静态扩展。
@@ -47,7 +47,7 @@ namespace Librame.Extensions.Encryption
         public static IEncryptionBuffer<ICiphertextAlgorithmConverter, string> AsCiphertextBuffer(this string str,
             ICiphertextAlgorithmConverter converter)
         {
-            return converter.AsCryptographyBuffer(str);
+            return converter.AsEncryptionBuffer(str);
         }
 
         #endregion
@@ -78,7 +78,7 @@ namespace Librame.Extensions.Encryption
         public static IEncryptionBuffer<IPlaintextAlgorithmConverter, string> AsPlaintextBuffer(this string str,
             IPlaintextAlgorithmConverter converter)
         {
-            return converter.AsCryptographyBuffer(str);
+            return converter.AsEncryptionBuffer(str);
         }
 
         #endregion
@@ -92,7 +92,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="converter">给定的转换器。</param>
         /// <param name="source">给定的来源实例。</param>
         /// <returns>返回 <see cref="IEncryptionBuffer{TConverter, TSource}"/>。</returns>
-        public static IEncryptionBuffer<TConverter, TSource> AsCryptographyBuffer<TConverter, TSource>(this TConverter converter, TSource source)
+        public static IEncryptionBuffer<TConverter, TSource> AsEncryptionBuffer<TConverter, TSource>(this TConverter converter, TSource source)
             where TConverter : IAlgorithmConverter<TSource>
         {
             return new InternalEncryptionBuffer<TConverter, TSource>(converter, source);

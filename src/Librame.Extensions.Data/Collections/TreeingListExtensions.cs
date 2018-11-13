@@ -13,8 +13,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions
 {
+    using Data;
+
     /// <summary>
     /// 树形列表静态扩展。
     /// </summary>

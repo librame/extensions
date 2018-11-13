@@ -4,13 +4,15 @@ using Xunit;
 
 namespace Librame.Converters.Tests
 {
+    using Librame.Extensions;
+
     public class DefaultEncodingConverterTests
     {
 
         [Fact]
         public void EncodingConverterTest()
         {
-            var converter = Encoding.UTF8.AsDefaultEncodingConverter(new LoggerFactory().CreateLogger<DefaultEncodingConverter>());
+            var converter = Encoding.UTF8.AsDefaultEncodingConverter(new LoggerFactory());
 
             var str = nameof(DefaultEncodingConverterTests);
 

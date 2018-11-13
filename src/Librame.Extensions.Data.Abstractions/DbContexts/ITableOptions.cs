@@ -15,7 +15,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 表选项接口。
     /// </summary>
-    public interface ITableOptions : ISchemaOptions
+    public interface ITableOptions : IOptions
     {
         /// <summary>
         /// 名称。

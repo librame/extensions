@@ -33,9 +33,9 @@ namespace Librame.Extensions.Network
         /// 构造一个 <see cref="InternalCrawlerService"/> 实例。
         /// </summary>
         /// <param name="hash">给定的 <see cref="IHashAlgorithmService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{CrawlerService}"/>。</param>
-        public InternalCrawlerService(IHashAlgorithmService hash, IOptions<DefaultNetworkBuilderOptions> options, ILogger<InternalCrawlerService> logger)
+        /// <param name="options">给定的 <see cref="IOptions{DefaultNetworkBuilderOptions}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalCrawlerService}"/>。</param>
+        public InternalCrawlerService(IHashAlgorithmService hash, IOptions<NetworkBuilderOptions> options, ILogger<InternalCrawlerService> logger)
             : base(hash, options, logger)
         {
             ImageExtensions = Options.Crawler.ImageExtensions.Split(',');
@@ -245,7 +245,7 @@ namespace Librame.Extensions.Network
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex.AsInnerMessage());
+                Logger.LogError(ex, ex.AsInnerMessage());
                 throw ex;
             }
         }

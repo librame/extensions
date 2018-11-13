@@ -1,11 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using Xunit;
+﻿using Xunit;
 
 namespace Librame.Extensions.Drawing.Tests
 {
-    using Locators;
-
     public class InternalScaleServiceTests
     {
         private IScaleService _drawing = null;
@@ -20,8 +16,7 @@ namespace Librame.Extensions.Drawing.Tests
         public async void DrawScaleTest()
         {
             // 5K 2.21MB
-            var imageFile = new DefaultFileLocator("eso1004a.jpg")
-                .ChangeBasePath(TestServiceProvider.ResourcesPath);
+            var imageFile = "eso1004a.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
             
             var succeed = await _drawing.DrawFile(imageFile.ToString());
             Assert.True(succeed);

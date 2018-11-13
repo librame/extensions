@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Librame.Extensions.Data.Tests
 {
@@ -7,9 +8,9 @@ namespace Librame.Extensions.Data.Tests
 
     public class TestDbContext : AbstractDbContext<TestDbContext>, ITestDbContext
     {
-        public TestDbContext(DbContextOptions<TestDbContext> dbContextOptions, ILogger<TestDbContext> logger,
-            IEfCoreDataBuilderOptions dataBuilderOptions, IAuditResolverService auditResolver)
-            : base(dbContextOptions, logger, dataBuilderOptions, auditResolver)
+        public TestDbContext(IAuditResolver auditResolver, IOptions<DataBuilderOptions> builderOptions,
+            ILogger<TestDbContext> logger, DbContextOptions<TestDbContext> dbContextOptions)
+            : base(auditResolver, builderOptions, logger, dbContextOptions)
         {
         }
 

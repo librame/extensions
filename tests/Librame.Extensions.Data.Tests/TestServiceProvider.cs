@@ -15,18 +15,18 @@ namespace Librame.Extensions.Data.Tests
                 var services = new ServiceCollection();
 
                 services.AddLibrame()
-                    .AddData()
-                    .AddDbContext<ITestDbContext, TestDbContext>(options =>
-                    {
-                        options.Connection.DefaultString = "Data Source=PC-CLOUD\\SQLEXPRESS;Initial Catalog=librame_default;Integrated Security=True";
-                        options.Connection.WriteString = "Data Source=PC-CLOUD\\SQLEXPRESS;Initial Catalog=librame_write;Integrated Security=True";
-                        options.Connection.WriteSeparation = true;
-
-                        var migrationsAssembly = typeof(TestServiceProvider).Assembly.GetName().Name;
-                        options.ConfigureDbContext = builder =>
-                            builder.UseSqlServer(options.Connection.DefaultString,
-                                sql => sql.MigrationsAssembly(migrationsAssembly));
-                    });
+                .AddData(configureOptions: options =>
+                {
+                    options.Connection.DefaultString = "Data Source=PC-CLOUD\\SQLEXPRESS;Initial Catalog=librame_default;Integrated Security=True";
+                    options.Connection.WriteString = "Data Source=PC-CLOUD\\SQLEXPRESS;Initial Catalog=librame_write;Integrated Security=True";
+                    options.Connection.WriteSeparation = true;
+                })
+                .AddDbContext<ITestDbContext, TestDbContext>((options, builder) =>
+                {
+                    var migrationsAssembly = typeof(TestServiceProvider).Assembly.GetName().Name;
+                    builder.UseSqlServer(options.Connection.DefaultString,
+                        sql => sql.MigrationsAssembly(migrationsAssembly));
+                });
 
                 services.AddTransient<ITestStore, TestStore>();
 

@@ -12,8 +12,10 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions
 {
+    using Data;
+
     /// <summary>
     /// 模型构建器静态扩展。
     /// </summary>
@@ -24,15 +26,15 @@ namespace Librame.Extensions.Data
         /// 配置抽象数据库上下文。
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        /// <param name="builderOptions">给定的 <see cref="DefaultDataBuilderOptions"/>。</param>
-        public static void ConfigureAbstractDbContext(this ModelBuilder modelBuilder, IEfCoreDataBuilderOptions builderOptions)
+        /// <param name="builderOptions">给定的 <see cref="DataBuilderOptions"/>。</param>
+        public static void ConfigureAbstractDbContext(this ModelBuilder modelBuilder, DataBuilderOptions builderOptions)
         {
             if (builderOptions.DefaultSchema.IsNotEmpty())
                 modelBuilder.HasDefaultSchema(builderOptions.DefaultSchema);
 
             modelBuilder.Entity<Audit>(audit =>
             {
-                audit.ToTable(builderOptions.AuditTable ?? new TableOptions<Audit>());
+                audit.ToTable(builderOptions.AuditTable);
 
                 audit.HasKey(x => x.Id);
 
@@ -50,7 +52,7 @@ namespace Librame.Extensions.Data
 
             modelBuilder.Entity<AuditProperty>(auditProperty =>
             {
-                auditProperty.ToShardingTable(builderOptions.AuditPropertyTable ?? new EveryWeekShardingOptions());
+                auditProperty.ToShardingTable(builderOptions.AuditPropertyTable);
 
                 auditProperty.HasKey(x => x.Id);
 

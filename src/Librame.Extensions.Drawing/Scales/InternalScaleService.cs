@@ -31,7 +31,7 @@ namespace Librame.Extensions.Drawing
         /// 构造一个 <see cref="InternalScaleService"/> 实例。
         /// </summary>
         /// <param name="watermark">给定的 <see cref="IWatermarkService"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{ScaleDrawing}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalScaleService}"/>。</param>
         public InternalScaleService(IWatermarkService watermark, ILogger<InternalScaleService> logger)
             : base(logger)
         {
@@ -51,9 +51,9 @@ namespace Librame.Extensions.Drawing
         /// 绘图选项。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="DefaultDrawingBuilderOptions"/>。
+        /// 返回 <see cref="DrawingBuilderOptions"/>。
         /// </value>
-        public DefaultDrawingBuilderOptions Options => Watermark.Options;
+        public DrawingBuilderOptions Options => Watermark.Options;
 
         /// <summary>
         /// 图像文件扩展名集合。

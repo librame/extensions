@@ -13,9 +13,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Librame.Buffers
+namespace Librame.Extensions
 {
-    using Extensions;
+    using Buffers;
 
     /// <summary>
     /// 抽象缓冲器静态扩展。

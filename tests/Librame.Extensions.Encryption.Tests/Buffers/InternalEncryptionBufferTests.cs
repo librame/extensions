@@ -5,7 +5,7 @@ namespace Librame.Extensions.Encryption.Tests
     public class InternalEncryptionBufferTests
     {
         [Fact]
-        public void InternalCryptographyBufferTest()
+        public void InternalEncryptionBufferTest()
         {
             var rawPlaintextString = nameof(InternalEncryptionBufferTests);
 

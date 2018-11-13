@@ -29,19 +29,19 @@ namespace Librame.Extensions.Network
         public InternalNetworkBuilder(IEncryptionBuilder builder)
             : base(builder)
         {
-            Cryptography = builder;
+            Encryption = builder;
 
             Services.AddSingleton<INetworkBuilder>(this);
         }
 
 
         /// <summary>
-        /// 密码构建器。
+        /// 加密构建器。
         /// </summary>
         /// <value>
         /// 返回 <see cref="IEncryptionBuilder"/>。
         /// </value>
-        public IEncryptionBuilder Cryptography { get; private set; }
+        public IEncryptionBuilder Encryption { get; private set; }
 
     }
 }

@@ -34,9 +34,9 @@ namespace Librame.Extensions.Network
         /// 构建器选项。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="DefaultNetworkBuilderOptions"/>。
+        /// 返回 <see cref="NetworkBuilderOptions"/>。
         /// </value>
-        DefaultNetworkBuilderOptions Options { get; }
+        NetworkBuilderOptions Options { get; }
 
         /// <summary>
         /// 字符编码（默认使用 <see cref="Encoding.UTF8"/>）。
