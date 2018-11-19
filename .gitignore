@@ -289,6 +289,5 @@ __pycache__/
 
 # Custom
 .sonarqube/
-/resources
 /*.pfx
 /resources
