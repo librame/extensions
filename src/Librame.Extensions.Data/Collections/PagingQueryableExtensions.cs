@@ -12,6 +12,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions
 {
@@ -22,6 +23,22 @@ namespace Librame.Extensions
     /// </summary>
     public static class PagingQueryableExtensions
     {
+
+        /// <summary>
+        /// 异步当作索引分页（符合指定查询表达式的）实体集合。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="order">给定的排序方式。</param>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的显示条数。</param>
+        /// <returns>返回一个包含 <see cref="IPagingList{TEntity}"/> 的异步操作。</returns>
+        public static Task<IPagingList<TEntity>> AsPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order, int index, int size)
+            where TEntity : class
+        {
+            return Task.Factory.StartNew(() => query.AsPagingByIndex(order, index, size));
+        }
 
         /// <summary>
         /// 当作索引分页（符合指定查询表达式的）实体集合。
@@ -39,6 +56,23 @@ namespace Librame.Extensions
             return query.AsPaging(order, total => PagingDescriptor.CreateByIndex(index, size, total));
         }
 
+
+        /// <summary>
+        /// 异步当作跳过分页（符合指定查询表达式的）实体集合。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="order">给定的排序方式。</param>
+        /// <param name="skip">给定的跳过条数。</param>
+        /// <param name="take">给定的取得条数。</param>
+        /// <returns>返回一个包含 <see cref="IPagingList{TEntity}"/> 的异步操作。</returns>
+        public static Task<IPagingList<TEntity>> AsPagingBySkipAsync<TEntity>(this IQueryable<TEntity> query,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order, int skip, int take)
+            where TEntity : class
+        {
+            return Task.Factory.StartNew(() => query.AsPagingBySkip(order, skip, take));
+        }
+
         /// <summary>
         /// 当作跳过分页（符合指定查询表达式的）实体集合。
         /// </summary>
@@ -53,6 +87,22 @@ namespace Librame.Extensions
             where TEntity : class
         {
             return query.AsPaging(order, total => PagingDescriptor.CreateBySkip(skip, take, total));
+        }
+
+
+        /// <summary>
+        /// 异步当作分页（符合指定查询表达式的）实体集合。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="order">给定的排序方式。</param>
+        /// <param name="createDescriptorFactory">给定创建分页描述符的方法（输入参数为数据总条数）。</param>
+        /// <returns>返回一个包含 <see cref="IPagingList{TEntity}"/> 的异步操作。</returns>
+        public static Task<IPagingList<TEntity>> AsPagingAsync<TEntity>(this IQueryable<TEntity> query,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order, Func<int, PagingDescriptor> createDescriptorFactory)
+            where TEntity : class
+        {
+            return Task.Factory.StartNew(() => query.AsPaging(order, createDescriptorFactory));
         }
 
         /// <summary>

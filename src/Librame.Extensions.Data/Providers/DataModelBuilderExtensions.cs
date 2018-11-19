@@ -32,6 +32,7 @@ namespace Librame.Extensions
             if (builderOptions.DefaultSchema.IsNotEmpty())
                 modelBuilder.HasDefaultSchema(builderOptions.DefaultSchema);
 
+            // 审计
             modelBuilder.Entity<Audit>(audit =>
             {
                 audit.ToTable(builderOptions.AuditTable);
@@ -50,6 +51,7 @@ namespace Librame.Extensions
                 audit.HasMany(x => x.Properties).WithOne(x => x.Audit).IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
 
+            // 审计属性
             modelBuilder.Entity<AuditProperty>(auditProperty =>
             {
                 auditProperty.ToShardingTable(builderOptions.AuditPropertyTable);
@@ -62,6 +64,18 @@ namespace Librame.Extensions
                 auditProperty.Property(x => x.OldValue);
                 auditProperty.Property(x => x.NewValue);
                 auditProperty.Property(x => x.AuditId);
+            });
+
+            // 租户
+            modelBuilder.Entity<Tenant>(tenant =>
+            {
+                tenant.ToTable(builderOptions.TenantTable);
+
+                tenant.HasKey(x => x.Id);
+
+                tenant.Property(x => x.Id).ValueGeneratedOnAdd();
+                tenant.Property(x => x.Name).HasMaxLength(100).IsRequired();
+                tenant.Property(x => x.Host).HasMaxLength(200).IsRequired();
             });
         }
 

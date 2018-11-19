@@ -24,10 +24,10 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 转换为表特性。
         /// </summary>
-        /// <param name="sharding">给定的 <see cref="IShardingOptions"/>。</param>
+        /// <param name="sharding">给定的 <see cref="IShardingSchema"/>。</param>
         /// <param name="entityType">给定的实体类型。</param>
         /// <returns>返回 <see cref="TableAttribute"/>。</returns>
-        public virtual ITableOptions ToTable(IShardingOptions sharding, Type entityType)
+        public virtual ITableSchema ToTable(IShardingSchema sharding, Type entityType)
         {
             AddDefaultKeyValues(sharding, entityType);
             
@@ -40,9 +40,9 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 格式化键值对集合为表名。
         /// </summary>
-        /// <param name="sharding">给定的 <see cref="IShardingOptions"/>。</param>
+        /// <param name="sharding">给定的 <see cref="IShardingSchema"/>。</param>
         /// <returns>返回字符串。</returns>
-        protected virtual string FormatKeyValues(IShardingOptions sharding)
+        protected virtual string FormatKeyValues(IShardingSchema sharding)
         {
             var formatter = sharding.Formatter;
 
@@ -55,9 +55,9 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 添加默认键值对。
         /// </summary>
-        /// <param name="sharding">给定的 <see cref="IShardingOptions"/>。</param>
+        /// <param name="sharding">给定的 <see cref="IShardingSchema"/>。</param>
         /// <param name="entityType">给定的实体类型。</param>
-        protected virtual void AddDefaultKeyValues(IShardingOptions sharding, Type entityType)
+        protected virtual void AddDefaultKeyValues(IShardingSchema sharding, Type entityType)
         {
             if (sharding.Formattings.IsDefault())
                 sharding.Formattings = new List<FormattingDescriptor>();

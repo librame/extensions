@@ -41,30 +41,36 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 发布审计事件动作方法。
         /// </summary>
-        public Action<IDbContext, IList<Audit>> PublishAuditEvent { get; set; }
+        public Action<IDbProvider, IList<Audit>> PublishAuditEvent { get; set; }
 
 
         /// <summary>
         /// 连接选项。
         /// </summary>
-        public ConnectionOptions Connection { get; set; } = new ConnectionOptions();
+        public IConnection Connection { get; set; } = new ConnectionOptions();
+
 
         /// <summary>
         /// 审计表选项。
         /// </summary>
-        public ITableOptions AuditTable { get; set; } = new TableOptions<Audit>();
+        public ITableSchema AuditTable { get; set; } = new TableOptions<Audit>();
 
         /// <summary>
         /// 审计属性表选项。
         /// </summary>
-        public IShardingOptions AuditPropertyTable { get; set; }
+        public IShardingSchema AuditPropertyTable { get; set; }
+        
+        /// <summary>
+        /// 租户表选项。
+        /// </summary>
+        public ITableSchema TenantTable { get; set; } = new TableOptions<Tenant>();
     }
 
 
     /// <summary>
     /// 连接选项。
     /// </summary>
-    public class ConnectionOptions
+    public class ConnectionOptions : IConnection
     {
         /// <summary>
         /// 默认连接字符串。
@@ -86,7 +92,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 分表选项。
     /// </summary>
-    public class ShardingOptions : IShardingOptions
+    public class ShardingOptions : IShardingSchema
     {
         /// <summary>
         /// 构造一个 <see cref="ShardingOptions"/> 实例。
@@ -135,8 +141,8 @@ namespace Librame.Extensions.Data
         /// 尝试应用架构（如果架构不为空，否则直接返回）。
         /// </summary>
         /// <param name="schema">给定的架构。</param>
-        /// <returns>返回 <see cref="IShardingOptions"/>。</returns>
-        public IShardingOptions TryApplySchema(string schema)
+        /// <returns>返回 <see cref="IShardingSchema"/>。</returns>
+        public IShardingSchema TryApplySchema(string schema)
         {
             if (schema.IsNotEmpty())
                 Schema = schema;
@@ -149,7 +155,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 表选项。
     /// </summary>
-    public class TableOptions : ITableOptions
+    public class TableOptions : ITableSchema
     {
         /// <summary>
         /// 构造一个 <see cref="TableOptions"/> 实例。
@@ -179,8 +185,8 @@ namespace Librame.Extensions.Data
         /// 尝试应用架构（如果架构不为空，否则直接返回）。
         /// </summary>
         /// <param name="schema">给定的架构。</param>
-        /// <returns>返回 <see cref="ITableOptions"/>。</returns>
-        public ITableOptions TryApplySchema(string schema)
+        /// <returns>返回 <see cref="ITableSchema"/>。</returns>
+        public ITableSchema TryApplySchema(string schema)
         {
             if (schema.IsNotEmpty())
                 Schema = schema;

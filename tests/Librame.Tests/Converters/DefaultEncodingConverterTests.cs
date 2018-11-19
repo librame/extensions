@@ -12,7 +12,7 @@ namespace Librame.Converters.Tests
         [Fact]
         public void EncodingConverterTest()
         {
-            var converter = Encoding.UTF8.AsDefaultEncodingConverter(new LoggerFactory());
+            var converter = Encoding.UTF8.AsEncodingConverter(new LoggerFactory());
 
             var str = nameof(DefaultEncodingConverterTests);
 

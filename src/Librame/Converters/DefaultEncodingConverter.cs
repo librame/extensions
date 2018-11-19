@@ -52,7 +52,7 @@ namespace Librame.Converters
         /// <returns>返回缓冲区。</returns>
         public override IBuffer<byte> ToResult(string source)
         {
-            var buffer = source.AsEncodingBytes(Encoding).AsDefaultBuffer();
+            var buffer = source.AsEncodingBytes(Encoding).AsBuffer();
             Logger.LogDebug($"Encoding to bytes: {source}");
 
             return buffer;

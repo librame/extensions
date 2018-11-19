@@ -23,9 +23,9 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 转换为表选项。
         /// </summary>
-        /// <param name="sharding">给定的 <see cref="IShardingOptions"/>。</param>
+        /// <param name="sharding">给定的 <see cref="IShardingSchema"/>。</param>
         /// <param name="entityType">给定的实体类型。</param>
         /// <returns>返回 <see cref="TableAttribute"/>。</returns>
-        ITableOptions ToTable(IShardingOptions sharding, Type entityType);
+        ITableSchema ToTable(IShardingSchema sharding, Type entityType);
     }
 }

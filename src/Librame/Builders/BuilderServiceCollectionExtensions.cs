@@ -32,9 +32,10 @@ namespace Librame.Builders
         public static IServiceCollection PreConfigureBuilderDependencies(this IServiceCollection services,
             Action<DependenciesOptions> configureOptions = null)
         {
-            services.AddOptions();
+            //services.AddOptions();
 
-            var options = configureOptions.Newly();
+            var options = new DependenciesOptions();
+            configureOptions?.Invoke(options);
 
             // Add Logging
             if (options.ConfigureLogging.IsDefault())
@@ -63,7 +64,7 @@ namespace Librame.Builders
         {
             services.PreConfigureBuilderDependencies(configureOptions);
 
-            var builder = services.AsDefaultBuilder();
+            var builder = services.AsBuilder();
 
             return builder.AddBuffers()
                 .AddConverters()
@@ -72,11 +73,11 @@ namespace Librame.Builders
 
 
         /// <summary>
-        /// 转换为默认构建器。
+        /// 转换为构建器。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
-        public static IBuilder AsDefaultBuilder(this IServiceCollection services)
+        public static IBuilder AsBuilder(this IServiceCollection services)
         {
             return new DefaultBuilder(services);
         }

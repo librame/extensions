@@ -5,8 +5,16 @@ using Microsoft.Extensions.Options;
 namespace Librame.Extensions.Data.Tests
 {
     using Models;
+    
+    public interface ITestDbContext : IDbContext<DataBuilderOptions>
+    {
+        DbSet<Category> Categories { get; set; }
 
-    public class TestDbContext : AbstractDbContext<TestDbContext>, ITestDbContext
+        DbSet<Article> Articles { get; set; }
+    }
+
+
+    public class TestDbContext : AbstractDbContext<TestDbContext, DataBuilderOptions>, ITestDbContext
     {
         public TestDbContext(IAuditResolver auditResolver, IOptions<DataBuilderOptions> builderOptions,
             ILogger<TestDbContext> logger, DbContextOptions<TestDbContext> dbContextOptions)
@@ -61,12 +69,5 @@ namespace Librame.Extensions.Data.Tests
 
             base.OnModelCreating(modelBuilder);
         }
-    }
-    
-    public interface ITestDbContext : IDbContext
-    {
-        DbSet<Category> Categories { get; set; }
-
-        DbSet<Article> Articles { get; set; }
     }
 }

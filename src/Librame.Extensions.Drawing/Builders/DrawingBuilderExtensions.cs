@@ -29,31 +29,47 @@ namespace Librame.Builders
         /// 添加图画扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builderOptions">给定的 <see cref="DrawingBuilderOptions"/>（可选）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{DrawingBuilderOptions}"/>（可选）。</param>
+        /// <param name="postConfigureOptions">给定的 <see cref="Action{DrawingBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        public static IDrawingBuilder AddDrawing(this IBuilder builder,
-            IConfiguration configuration = null, Action<DrawingBuilderOptions> configureOptions = null)
+        public static IDrawingBuilder AddDrawing(this IBuilder builder, DrawingBuilderOptions builderOptions = null,
+            IConfiguration configuration = null, Action<DrawingBuilderOptions> postConfigureOptions = null)
         {
-            Action<DrawingBuilderOptions> _configureOptions = options =>
+            return builder.AddDrawing<DrawingBuilderOptions>(builderOptions ?? new DrawingBuilderOptions(),
+                configuration, postConfigureOptions);
+        }
+        /// <summary>
+        /// 添加图画扩展。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builderOptions">给定的构建器选项。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
+        /// <param name="postConfigureOptions">给定的 <see cref="Action{TBuilderOptions}"/>（可选）。</param>
+        /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
+        public static IDrawingBuilder AddDrawing<TBuilderOptions>(this IBuilder builder, TBuilderOptions builderOptions,
+            IConfiguration configuration = null, Action<TBuilderOptions> postConfigureOptions = null)
+            where TBuilderOptions : DrawingBuilderOptions
+        {
+            var fontFileLocator = "font.ttf".AsFileLocator();
+
+            if (builderOptions.Captcha.Font.FileLocator.IsDefault())
+                builderOptions.Captcha.Font.FileLocator = fontFileLocator;
+
+            if (builderOptions.Watermark.Font.FileLocator.IsDefault())
+                builderOptions.Watermark.Font.FileLocator = fontFileLocator;
+
+            if (builderOptions.Watermark.ImageFileLocator.IsDefault())
+                builderOptions.Watermark.ImageFileLocator = "watermark.png".AsFileLocator();
+
+            return builder.AddBuilder(b =>
             {
-                var fontFileLocator = "font.ttf".AsDefaultFileLocator();
-                options.Captcha.Font.FileLocator = fontFileLocator;
-                options.Watermark.Font.FileLocator = fontFileLocator;
-                options.Watermark.ImageFileLocator = "watermark.png".AsDefaultFileLocator();
-
-                configureOptions?.Invoke(options);
-            };
-
-            builder.PreConfigureBuilder(configuration, _configureOptions);
-
-            var drawingBuilder = builder.AsDrawingBuilder();
-
-            drawingBuilder.AddCaptchas()
-                .AddScales()
-                .AddWatermarks();
-
-            return drawingBuilder;
+                return b.AsDrawingBuilder()
+                    .AddCaptchas()
+                    .AddScales()
+                    .AddWatermarks();
+            },
+            builderOptions, configuration, postConfigureOptions);
         }
 
 

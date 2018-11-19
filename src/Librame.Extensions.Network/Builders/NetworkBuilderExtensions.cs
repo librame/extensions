@@ -29,25 +29,37 @@ namespace Librame.Builders
         /// 添加网络扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builderOptions">给定的 <see cref="NetworkBuilderOptions"/>（可选）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{NetworkBuilderOptions}"/>（可选）。</param>
-        /// <param name="configureEncryption">给定的 <see cref="Action{EncryptionBuilderOptions}"/>（可选）。</param>
+        /// <param name="postConfigureOptions">给定的 <see cref="Action{NetworkBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddNetwork(this IBuilder builder,
-            IConfiguration configuration = null, Action<NetworkBuilderOptions> configureOptions = null,
-            Action<EncryptionBuilderOptions> configureEncryption = null)
+        public static INetworkBuilder AddNetwork(this IBuilder builder, NetworkBuilderOptions builderOptions = null,
+            IConfiguration configuration = null, Action<NetworkBuilderOptions> postConfigureOptions = null)
         {
-            builder.PreConfigureBuilder(configuration, configureOptions);
+            return builder.AddNetwork<NetworkBuilderOptions>(builderOptions ?? new NetworkBuilderOptions(),
+                configuration, postConfigureOptions);
+        }
+        /// <summary>
+        /// 添加网络扩展。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builderOptions">给定的构建器选项。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
+        /// <param name="postConfigureOptions">给定的 <see cref="Action{TBuilderOptions}"/>（可选）。</param>
+        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
+        public static INetworkBuilder AddNetwork<TBuilderOptions>(this IBuilder builder, TBuilderOptions builderOptions,
+            IConfiguration configuration = null, Action<TBuilderOptions> postConfigureOptions = null)
+            where TBuilderOptions : NetworkBuilderOptions
+        {
+            var encryptionBuilder = builder.AddEncryption(builderOptions, configuration, postConfigureOptions);
 
-            // 引入加密扩展
-            var encryptionBuilder = builder.AddEncryption(configureOptions: configureEncryption);
-            
-            var networkBuilder = encryptionBuilder.AsNetworkBuilder();
-
-            networkBuilder.AddCrawlers()
-                .AddSenders();
-
-            return networkBuilder;
+            return encryptionBuilder.AddBuilder(b =>
+            {
+                return b.AsNetworkBuilder()
+                    .AddCrawlers()
+                    .AddSenders();
+            },
+            builderOptions, configuration, postConfigureOptions);
         }
 
 
@@ -82,19 +94,6 @@ namespace Librame.Builders
         {
             builder.Services.AddSingleton<IEmailSender, InternalEmailSender>();
             builder.Services.AddSingleton<ISmsSender, InternalSmsSender>();
-
-            return builder;
-        }
-
-        /// <summary>
-        /// 配置加密构建器。
-        /// </summary>
-        /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
-        /// <param name="configureAction">给定的 <see cref="Action{IEncryptionBuilder}"/>。</param>
-        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder ConfigureEncryption(this INetworkBuilder builder, Action<IEncryptionBuilder> configureAction)
-        {
-            configureAction?.Invoke(builder.Encryption);
 
             return builder;
         }

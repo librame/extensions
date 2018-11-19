@@ -32,27 +32,39 @@ namespace Librame.Builders
         /// 添加加密扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builderOptions">给定的 <see cref="EncryptionBuilderOptions"/>（可选）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{EncryptionBuilderOptions}"/>（可选）。</param>
+        /// <param name="postConfigureOptions">给定的 <see cref="Action{EncryptionBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddEncryption(this IBuilder builder,
-            IConfiguration configuration = null, Action<EncryptionBuilderOptions> configureOptions = null)
+        public static IEncryptionBuilder AddEncryption(this IBuilder builder, EncryptionBuilderOptions builderOptions = null,
+            IConfiguration configuration = null, Action<EncryptionBuilderOptions> postConfigureOptions = null)
         {
-            builder.PreConfigureBuilder(configuration, configureOptions);
-
-            var encryptionBuilder = builder.AsEncryptionBuilder();
-
-            encryptionBuilder.AddKeyGenerators()
-                .AddRsaAlgorithms()
-                .AddHashAlgorithms()
-                .AddSymmetricAlgorithms()
-                .AddConverters()
-                .AddBuffers();
-
-            // Add SigningCredentials
-            //encryptionBuilder.AddDeveloperGlobalSigningCredentials();
-
-            return encryptionBuilder;
+            return builder.AddEncryption<EncryptionBuilderOptions>(builderOptions ?? new EncryptionBuilderOptions(),
+                configuration, postConfigureOptions);
+        }
+        /// <summary>
+        /// 添加加密扩展。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builderOptions">给定的构建器选项。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
+        /// <param name="postConfigureOptions">给定的 <see cref="Action{TBuilderOptions}"/>（可选）。</param>
+        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        public static IEncryptionBuilder AddEncryption<TBuilderOptions>(this IBuilder builder, TBuilderOptions builderOptions,
+            IConfiguration configuration = null, Action<TBuilderOptions> postConfigureOptions = null)
+            where TBuilderOptions : EncryptionBuilderOptions
+        {
+            return builder.AddBuilder(b =>
+            {
+                return b.AsEncryptionBuilder()
+                    .AddKeyGenerators()
+                    .AddRsaAlgorithms()
+                    .AddHashAlgorithms()
+                    .AddSymmetricAlgorithms()
+                    .AddConverters()
+                    .AddBuffers();
+            },
+            builderOptions, configuration, postConfigureOptions);
         }
 
 

@@ -20,7 +20,7 @@ namespace Librame.Extensions.Data
     /// 分表特性。
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class ShardingAttribute : Attribute, IShardingOptions
+    public class ShardingAttribute : Attribute, IShardingSchema
     {
         /// <summary>
         /// 构造一个 <see cref="ShardingAttribute"/> 实例。

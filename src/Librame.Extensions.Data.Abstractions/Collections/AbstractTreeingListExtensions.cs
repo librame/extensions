@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions
 {
@@ -23,7 +24,19 @@ namespace Librame.Extensions
     /// </summary>
     public static class AbstractTreeingListExtensions
     {
-        
+
+        /// <summary>
+        /// 异步转换为树形节点列表。
+        /// </summary>
+        /// <param name="items">给定的类型实例集合。</param>
+        /// <returns>返回一个包含树形节点列表的异步操作。</returns>
+        public static Task<IList<TreeingNode<T, TId>>> AsTreeingNodesAsync<T, TId>(this IEnumerable<T> items)
+            where T : IParentId<TId>
+            where TId : IEquatable<TId>
+        {
+            return Task.Factory.StartNew(() => items.AsTreeingNodes<T, TId>());
+        }
+
         /// <summary>
         /// 转换为树形节点列表。
         /// </summary>
@@ -39,6 +52,7 @@ namespace Librame.Extensions
 
             return LookupNodes(items, rootParentId);
         }
+
 
         private static IList<TreeingNode<T, TId>> LookupNodes<T, TId>(IEnumerable<T> items,
             TId parentId, int depthLevel = 0)

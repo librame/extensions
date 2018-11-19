@@ -22,9 +22,9 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 添加默认键值对。
         /// </summary>
-        /// <param name="sharding">给定的 <see cref="IShardingOptions"/>。</param>
+        /// <param name="sharding">给定的 <see cref="IShardingSchema"/>。</param>
         /// <param name="entityType">给定的实体类型。</param>
-        protected override void AddDefaultKeyValues(IShardingOptions sharding, Type entityType)
+        protected override void AddDefaultKeyValues(IShardingSchema sharding, Type entityType)
         {
             base.AddDefaultKeyValues(sharding, entityType);
 

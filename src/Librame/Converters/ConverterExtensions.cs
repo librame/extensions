@@ -24,12 +24,12 @@ namespace Librame.Extensions
     {
 
         /// <summary>
-        /// 转换为默认字符编码转换器。
+        /// 转换为字符编码转换器。
         /// </summary>
         /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <returns>返回 <see cref="IEncodingConverter"/>。</returns>
-        public static IEncodingConverter AsDefaultEncodingConverter(this Encoding encoding, ILoggerFactory loggerFactory)
+        public static IEncodingConverter AsEncodingConverter(this Encoding encoding, ILoggerFactory loggerFactory)
         {
             var logger = loggerFactory.CreateLogger<DefaultEncodingConverter>();
 

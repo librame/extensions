@@ -26,17 +26,19 @@ namespace Librame.Extensions.Data
     /// 抽象数据库上下文。
     /// </summary>
     /// <typeparam name="TDbContext">指定的数据库上下文类型。</typeparam>
-    public abstract class AbstractDbContext<TDbContext> : DbContext, IDbContext
-        where TDbContext : DbContext, IDbContext
+    /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
+    public abstract class AbstractDbContext<TDbContext, TBuilderOptions> : DbContext, IDbContext<TBuilderOptions>
+        where TDbContext : DbContext, IDbContext<TBuilderOptions>
+        where TBuilderOptions : DataBuilderOptions, new()
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractDbContext{TDbContext}"/> 实例。
+        /// 构造一个 <see cref="AbstractDbContext{TDbContext, TBuilderOptions}"/> 实例。
         /// </summary>
         /// <param name="auditResolver">给定的 <see cref="IAuditResolver"/>。</param>
-        /// <param name="builderOptions">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
+        /// <param name="builderOptions">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{TDbContext}"/>。</param>
         /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
-        public AbstractDbContext(IAuditResolver auditResolver, IOptions<DataBuilderOptions> builderOptions,
+        public AbstractDbContext(IAuditResolver auditResolver, IOptions<TBuilderOptions> builderOptions,
             ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
             : base(dbContextOptions)
         {
@@ -63,7 +65,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 构建器选项。
         /// </summary>
-        public DataBuilderOptions BuilderOptions { get; }
+        public TBuilderOptions BuilderOptions { get; }
         
 
         /// <summary>
@@ -75,6 +77,11 @@ namespace Librame.Extensions.Data
         /// 审计属性数据集。
         /// </summary>
         public DbSet<AuditProperty> AuditProperties { get; set; }
+
+        /// <summary>
+        /// 租户数据集。
+        /// </summary>
+        public DbSet<Tenant> Tenants { get; set; }
 
 
         /// <summary>
@@ -250,7 +257,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="connectionStringFactory">给定的数据库连接字符串工厂方法。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        public virtual bool TrySwitchConnection(Func<ConnectionOptions, string> connectionStringFactory)
+        public virtual bool TrySwitchConnection(Func<IConnection, string> connectionStringFactory)
         {
             return TrySwitchConnection(connectionStringFactory.Invoke(BuilderOptions.Connection));
         }

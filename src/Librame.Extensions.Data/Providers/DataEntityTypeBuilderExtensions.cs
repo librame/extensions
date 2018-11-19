@@ -29,9 +29,9 @@ namespace Librame.Extensions
         /// </summary>
         /// <typeparam name="TEntity">指定的实体类型。</typeparam>
         /// <param name="entityTypeBuilder">给定的 <see cref="EntityTypeBuilder{TEntity}"/>。</param>
-        /// <param name="table">给定的 <see cref="ITableOptions"/>。</param>
+        /// <param name="table">给定的 <see cref="ITableSchema"/>。</param>
         /// <returns>返回 <see cref="EntityTypeBuilder{TEntity}"/>。</returns>
-        public static EntityTypeBuilder<TEntity> ToTable<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder, ITableOptions table)
+        public static EntityTypeBuilder<TEntity> ToTable<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder, ITableSchema table)
             where TEntity : class
         {
             table.NotDefault(nameof(table));
@@ -47,11 +47,11 @@ namespace Librame.Extensions
         /// </summary>
         /// <typeparam name="TEntity">指定的实体类型。</typeparam>
         /// <param name="entityTypeBuilder">给定的 <see cref="EntityTypeBuilder{TEntity}"/>。</param>
-        /// <param name="sharding">给定的 <see cref="IShardingOptions"/>。</param>
+        /// <param name="sharding">给定的 <see cref="IShardingSchema"/>。</param>
         /// <param name="createRuleFactory">给定的创建分表规则工厂方法。</param>
         /// <returns>返回 <see cref="EntityTypeBuilder{TEntity}"/>。</returns>
-        public static EntityTypeBuilder<TEntity> ToShardingTable<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder, IShardingOptions sharding,
-            Func<IShardingOptions, IShardingRule> createRuleFactory = null)
+        public static EntityTypeBuilder<TEntity> ToShardingTable<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder, IShardingSchema sharding,
+            Func<IShardingSchema, IShardingRule> createRuleFactory = null)
             where TEntity : class
         {
             sharding.NotDefault(nameof(sharding));

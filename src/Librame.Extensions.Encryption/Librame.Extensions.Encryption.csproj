@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>5.20.1811.131</Version>
+    <Version>5.20.1811.161</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Librame.Extensions.Encryption</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Librame.Extensions.Encryption</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>5.20.1811.131</AssemblyVersion>
-    <FileVersion>5.20.1811.131</FileVersion>
+    <AssemblyVersion>5.20.1811.161</AssemblyVersion>
+    <FileVersion>5.20.1811.161</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

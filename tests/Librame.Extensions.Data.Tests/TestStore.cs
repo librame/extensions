@@ -4,15 +4,25 @@ using System.Linq;
 namespace Librame.Extensions.Data.Tests
 {
     using Models;
-
-    public class TestStore : ITestStore
+    
+    public interface ITestStore : IStore<DataBuilderOptions>
     {
-        private readonly ITestDbContext _dbContext;
+        IList<Category> GetCategories();
 
+        IPagingList<Article> GetArticles();
+
+
+        ITestStore UseDefaultStore();
+
+        ITestStore UseWriteStore();
+    }
+
+
+    public class TestStore : AbstractStore<ITestDbContext, DataBuilderOptions>, ITestStore
+    {
         public TestStore(ITestDbContext dbContext)
+            : base(dbContext)
         {
-            _dbContext = dbContext;
-
             Initialize();
         }
 
@@ -20,8 +30,8 @@ namespace Librame.Extensions.Data.Tests
         {
             UseWriteStore();
 
-            var hasCategories = _dbContext.Categories.IsNotEmpty();
-            var hasArticles = _dbContext.Articles.IsNotEmpty();
+            var hasCategories = DbContext.Categories.IsNotEmpty();
+            var hasArticles = DbContext.Articles.IsNotEmpty();
 
             if (hasCategories && hasCategories)
             {
@@ -43,12 +53,12 @@ namespace Librame.Extensions.Data.Tests
                     Name = "Last Category"
                 };
 
-                _dbContext.Categories.AddRange(lastCategory, firstCategory);
+                DbContext.Categories.AddRange(lastCategory, firstCategory);
             }
             else
             {
-                firstCategory = _dbContext.Categories.First();
-                lastCategory = _dbContext.Categories.Last();
+                firstCategory = DbContext.Categories.First();
+                lastCategory = DbContext.Categories.Last();
             }
 
             if (!hasArticles)
@@ -64,50 +74,37 @@ namespace Librame.Extensions.Data.Tests
                         Category = (i < 50) ? firstCategory : lastCategory
                     });
                 }
-                
-                _dbContext.Articles.AddRange(articles);
+
+                DbContext.Articles.AddRange(articles);
             }
 
-            _dbContext.SaveChanges();
+            DbContext.SaveChanges();
         }
 
 
         public IList<Category> GetCategories()
         {
-            return _dbContext.Categories.ToList();
+            return DbContext.Categories.ToList();
         }
 
         public IPagingList<Article> GetArticles()
         {
-            return _dbContext.Articles.AsPagingByIndex(order => order.OrderBy(a => a.Id), 1, 10);
+            return DbContext.Articles.AsPagingByIndex(order => order.OrderBy(a => a.Id), 1, 10);
         }
 
 
         public ITestStore UseDefaultStore()
         {
-            _dbContext.TrySwitchConnection(options => options.DefaultString);
+            DbContext.TrySwitchConnection(options => options.DefaultString);
 
             return this;
         }
 
         public ITestStore UseWriteStore()
         {
-            _dbContext.TrySwitchConnection(options => options.WriteString);
+            DbContext.TrySwitchConnection(options => options.WriteString);
 
             return this;
         }
-    }
-
-
-    public interface ITestStore
-    {
-        IList<Category> GetCategories();
-
-        IPagingList<Article> GetArticles();
-
-
-        ITestStore UseDefaultStore();
-
-        ITestStore UseWriteStore();
     }
 }

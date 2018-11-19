@@ -23,7 +23,7 @@ namespace Librame.Extensions.Factorial.Server
                 .AddDotNetty()
                 .ConfigureEncryption(builder =>
                 {
-                    var locator = "dotnetty.com.pfx".AsDefaultFileLocator(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
+                    var locator = "dotnetty.com.pfx".AsFileLocator(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
                     builder.AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"));
                 });
 

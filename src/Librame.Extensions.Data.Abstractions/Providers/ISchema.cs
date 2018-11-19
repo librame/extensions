@@ -13,13 +13,13 @@
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 表选项接口。
+    /// 架构接口。
     /// </summary>
-    public interface ITableOptions : IOptions
+    public interface ISchema
     {
         /// <summary>
-        /// 名称。
+        /// 架构。
         /// </summary>
-        string Name { get; }
+        string Schema { get; set; }
     }
 }

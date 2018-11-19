@@ -31,8 +31,8 @@ namespace Librame.Builders
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddResources(this IBuilder builder)
         {
-            builder.Services.Replace(ServiceDescriptor.Singleton<IStringLocalizerFactory, DefaultEnhancedStringLocalizerFactory>());
-            builder.Services.AddTransient(typeof(IEnhancedStringLocalizer<>), typeof(DefaultEnhancedStringLocalizer<>));
+            builder.Services.Replace(ServiceDescriptor.Singleton<IStringLocalizerFactory, EnhancedStringLocalizerFactory>());
+            builder.Services.AddTransient(typeof(IEnhancedStringLocalizer<>), typeof(EnhancedStringLocalizer<>));
 
             return builder;
         }

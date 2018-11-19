@@ -11,7 +11,7 @@ namespace Librame.Builders.Tests
         {
             var services = new ServiceCollection();
 
-            services.AsDefaultBuilder();
+            services.AsBuilder();
 
             var serviceProvider = services.BuildServiceProvider();
 

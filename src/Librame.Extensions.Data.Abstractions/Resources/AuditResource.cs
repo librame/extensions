@@ -12,12 +12,10 @@
 
 namespace Librame.Extensions.Data
 {
-    using Resources;
-
     /// <summary>
     /// 审计资源。
     /// </summary>
-    public class AuditResource : IResource
+    public class AuditResource : Resources.IResource
     {
         /// <summary>
         /// 实体标识。

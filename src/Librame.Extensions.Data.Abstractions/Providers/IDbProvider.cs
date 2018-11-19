@@ -19,15 +19,24 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 数据库上下文接口。
+    /// 数据库提供程序接口。
     /// </summary>
-    public interface IDbContext : IDisposable
+    /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
+    public interface IDbProvider<TBuilderOptions> : IDbProvider
+        where TBuilderOptions : DataBuilderOptions
     {
         /// <summary>
         /// 构建器选项。
         /// </summary>
-        DataBuilderOptions BuilderOptions { get; }
+        TBuilderOptions BuilderOptions { get; }
+    }
 
+
+    /// <summary>
+    /// 数据库提供程序接口。
+    /// </summary>
+    public interface IDbProvider : IDisposable
+    {
         /// <summary>
         /// 提供程序名称。
         /// </summary>
@@ -96,7 +105,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="connectionStringFactory">给定的数据库连接字符串工厂方法。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        bool TrySwitchConnection(Func<ConnectionOptions, string> connectionStringFactory);
+        bool TrySwitchConnection(Func<IConnection, string> connectionStringFactory);
         /// <summary>
         /// 尝试切换数据库连接。
         /// </summary>

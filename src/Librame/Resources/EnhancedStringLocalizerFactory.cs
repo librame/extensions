@@ -20,19 +20,19 @@ namespace Librame.Resources
     using Extensions;
 
     /// <summary>
-    /// 默认增强型字符串定位器工厂接口。
+    /// 增强型资源管理器字符串定位器工厂接口。
     /// </summary>
-    public class DefaultEnhancedStringLocalizerFactory : ResourceManagerStringLocalizerFactory, IStringLocalizerFactory
+    public class EnhancedStringLocalizerFactory : ResourceManagerStringLocalizerFactory, IStringLocalizerFactory
     {
         /// <summary>
-        /// 构造一个 <see cref="DefaultEnhancedStringLocalizerFactory"/> 实例。
+        /// 构造一个 <see cref="EnhancedStringLocalizerFactory"/> 实例。
         /// </summary>
         /// <param name="localizationOptions">给定的 <see cref="IOptions{LocalizationOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public DefaultEnhancedStringLocalizerFactory(IOptions<LocalizationOptions> localizationOptions, ILoggerFactory loggerFactory)
+        public EnhancedStringLocalizerFactory(IOptions<LocalizationOptions> localizationOptions, ILoggerFactory loggerFactory)
             : base(localizationOptions, loggerFactory)
         {
-            Logger = loggerFactory.CreateLogger<DefaultEnhancedStringLocalizerFactory>();
+            Logger = loggerFactory.CreateLogger<EnhancedStringLocalizerFactory>();
         }
 
 
@@ -61,7 +61,7 @@ namespace Librame.Resources
                 // resourcesRelativePath 已格式化为 Resources. 模式
                 prefix = $"{baseNamespace}.{resourcesRelativePath}{typeInfo.Name}";
 
-                Logger.LogInformation($"{typeInfo.FullName} resource prefix is {prefix} from {nameof(DefaultEnhancedStringLocalizerFactory)}({nameof(attribute.UseEnhanced)}={attribute.UseEnhanced})");
+                Logger.LogInformation($"{typeInfo.FullName} resource prefix is {prefix} from {nameof(EnhancedStringLocalizerFactory)}({nameof(attribute.UseEnhanced)}={attribute.UseEnhanced})");
             }
             else
             {

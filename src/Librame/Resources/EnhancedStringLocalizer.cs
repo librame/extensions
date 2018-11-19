@@ -22,13 +22,13 @@ namespace Librame.Resources
     /// 增强型字符串定位器。
     /// </summary>
     /// <typeparam name="TResource">指定的资源类型。</typeparam>
-    public class DefaultEnhancedStringLocalizer<TResource> : StringLocalizer<TResource>, IEnhancedStringLocalizer<TResource>
+    public class EnhancedStringLocalizer<TResource> : StringLocalizer<TResource>, IEnhancedStringLocalizer<TResource>
     {
         /// <summary>
-        /// 构造一个 <see cref="DefaultEnhancedStringLocalizer{TResource}"/> 实例。
+        /// 构造一个 <see cref="EnhancedStringLocalizer{TResource}"/> 实例。
         /// </summary>
         /// <param name="factory">给定的 <see cref="IStringLocalizerFactory"/>。</param>
-        public DefaultEnhancedStringLocalizer(IStringLocalizerFactory factory)
+        public EnhancedStringLocalizer(IStringLocalizerFactory factory)
             : base(factory)
         {
         }

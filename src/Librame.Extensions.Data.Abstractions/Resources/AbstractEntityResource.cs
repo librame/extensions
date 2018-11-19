@@ -12,12 +12,10 @@
 
 namespace Librame.Extensions.Data
 {
-    using Resources;
-
     /// <summary>
     /// 抽象实体资源。
     /// </summary>
-    public class AbstractEntityResource : IResource
+    public class AbstractEntityResource : Resources.IResource
     {
 
         #region Global Group

@@ -11,7 +11,7 @@ namespace Librame.Buffers.Tests
         public void BufferStringTest()
         {
             var str = "123:456=789:987";
-            var bs = str.AsDefaultStringBuffer();
+            var bs = str.AsStringBuffer();
 
             // IndexOf: char separator
             var pair = bs.SplitKeyValueStringByIndexOf(':');

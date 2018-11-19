@@ -26,7 +26,7 @@ namespace Librame.Extensions
         /// <param name="fileName">给定的文件名。</param>
         /// <param name="basePath">给定的基础路径。</param>
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
-        public static IFileLocator AsDefaultFileLocator(this string fileName, string basePath = null)
+        public static IFileLocator AsFileLocator(this string fileName, string basePath = null)
         {
             var locator = new DefaultFileLocator(fileName);
 
@@ -45,7 +45,7 @@ namespace Librame.Extensions
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
         public static IFileLocator NewBasePath(this IFileLocator locator, string basePath)
         {
-            return locator.FileName.AsDefaultFileLocator(basePath);
+            return locator.FileName.AsFileLocator(basePath);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Librame.Extensions
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
         public static IFileLocator NewFileName(this IFileLocator locator, string fileName)
         {
-            return fileName.AsDefaultFileLocator(locator.BasePath);
+            return fileName.AsFileLocator(locator.BasePath);
         }
 
     }

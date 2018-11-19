@@ -28,19 +28,34 @@ namespace Librame.Builders
         /// 添加存储扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builderOptions">给定的 <see cref="StorageBuilderOptions"/>（可选）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{StorageBuilderOptions}"/>（可选）。</param>
+        /// <param name="postConfigureOptions">给定的 <see cref="Action{StorageBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
-        public static IStorageBuilder AddStorage(this IBuilder builder,
-            IConfiguration configuration = null, Action<StorageBuilderOptions> configureOptions = null)
+        public static IStorageBuilder AddStorage(this IBuilder builder, StorageBuilderOptions builderOptions = null,
+            IConfiguration configuration = null, Action<StorageBuilderOptions> postConfigureOptions = null)
         {
-            builder.PreConfigureBuilder(configuration, configureOptions);
-
-            var storageBuilder = builder.AsStorageBuilder();
-
-            storageBuilder.AddFileSystem();
-
-            return storageBuilder;
+            return builder.AddStorage<StorageBuilderOptions>(builderOptions ?? new StorageBuilderOptions(),
+                configuration, postConfigureOptions);
+        }
+        /// <summary>
+        /// 添加存储扩展。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builderOptions">给定的构建器选项。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
+        /// <param name="postConfigureOptions">给定的 <see cref="Action{TBuilderOptions}"/>（可选）。</param>
+        /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
+        public static IStorageBuilder AddStorage<TBuilderOptions>(this IBuilder builder, TBuilderOptions builderOptions,
+            IConfiguration configuration = null, Action<TBuilderOptions> postConfigureOptions = null)
+            where TBuilderOptions : StorageBuilderOptions
+        {
+            return builder.AddBuilder(b =>
+            {
+                return b.AsStorageBuilder()
+                    .AddFileSystem();
+            },
+            builderOptions, configuration, postConfigureOptions);
         }
 
 
