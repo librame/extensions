@@ -32,22 +32,23 @@ namespace Librame.Builders
         public static IServiceCollection PreConfigureBuilderDependencies(this IServiceCollection services,
             Action<DependenciesOptions> configureOptions = null)
         {
-            //services.AddOptions();
+            // Add Options
+            services.AddOptions();
 
             var options = new DependenciesOptions();
             configureOptions?.Invoke(options);
-
-            // Add Logging
-            if (options.ConfigureLogging.IsDefault())
-                services.AddLogging();
-            else
-                services.AddLogging(options.ConfigureLogging);
 
             // Add Localization
             if (options.ConfigureLocalization.IsDefault())
                 services.AddLocalization();
             else
                 services.AddLocalization(options.ConfigureLocalization);
+
+            // Add Logging
+            if (options.ConfigureLogging.IsDefault())
+                services.AddLogging();
+            else
+                services.AddLogging(options.ConfigureLogging);
 
             return services;
         }

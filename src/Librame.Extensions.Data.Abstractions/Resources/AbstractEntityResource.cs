@@ -25,6 +25,11 @@ namespace Librame.Extensions.Data
         /// </summary>
         public string Id { get; set; }
 
+        /// <summary>
+        /// 租户标识。
+        /// </summary>
+        public string TenantId { get; set; }
+
         #endregion
 
 

@@ -150,4 +150,7 @@
   <data name="UpdateGroup" xml:space="preserve">
     <value>更新組</value>
   </data>
+  <data name="TenantId" xml:space="preserve">
+    <value>租戶標識</value>
+  </data>
 </root>

@@ -30,9 +30,9 @@ namespace Librame.Extensions.Data
     public interface IDbContext : IDbProvider
     {
         /// <summary>
-        /// 审计解析器。
+        /// 变化跟踪器上下文。
         /// </summary>
-        IAuditResolver AuditResolver { get; }
+        IChangeTrackerContext TrackerContext { get; }
 
 
         /// <summary>

@@ -95,14 +95,14 @@ namespace Librame.Extensions.Data.Tests
 
         public ITestStore UseDefaultStore()
         {
-            DbContext.TrySwitchConnection(options => options.DefaultString);
+            DbContext.TrySwitchConnection(options => options.DefaultConnectionString);
 
             return this;
         }
 
         public ITestStore UseWriteStore()
         {
-            DbContext.TrySwitchConnection(options => options.WriteString);
+            DbContext.TrySwitchConnection(options => options.WriteConnectionString);
 
             return this;
         }

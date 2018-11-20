@@ -34,16 +34,16 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 构造一个 <see cref="AbstractDbContext{TDbContext, TBuilderOptions}"/> 实例。
         /// </summary>
-        /// <param name="auditResolver">给定的 <see cref="IAuditResolver"/>。</param>
+        /// <param name="trackerContext">给定的 <see cref="IChangeTrackerContext"/>。</param>
         /// <param name="builderOptions">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{TDbContext}"/>。</param>
         /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
-        public AbstractDbContext(IAuditResolver auditResolver, IOptions<TBuilderOptions> builderOptions,
+        public AbstractDbContext(IChangeTrackerContext trackerContext, IOptions<TBuilderOptions> builderOptions,
             ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
             : base(dbContextOptions)
         {
             Logger = logger.NotDefault(nameof(logger));
-            AuditResolver = auditResolver.NotDefault(nameof(auditResolver));
+            TrackerContext = trackerContext.NotDefault(nameof(trackerContext));
             BuilderOptions = builderOptions.NotDefault(nameof(builderOptions)).Value;
             
             if (BuilderOptions.EnsureDbCreated)
@@ -58,9 +58,9 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 审计解析器。
+        /// 变化跟踪器上下文。
         /// </summary>
-        public IAuditResolver AuditResolver { get; }
+        public IChangeTrackerContext TrackerContext { get; }
 
         /// <summary>
         /// 构建器选项。
@@ -171,7 +171,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回受影响的行数。</returns>
         public override int SaveChanges()
         {
-            return AuditEntities(() => base.SaveChanges());
+            return ChangeTracking(() => base.SaveChanges());
         }
         /// <summary>
         /// 保存变化。
@@ -180,7 +180,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回受影响的行数。</returns>
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            return AuditEntities(() => base.SaveChanges(acceptAllChangesOnSuccess));
+            return ChangeTracking(() => base.SaveChanges(acceptAllChangesOnSuccess));
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Librame.Extensions.Data
         {
             return Task.Factory.StartNew(() =>
             {
-                return AuditEntities(() => base.SaveChangesAsync(cancellationToken).Result);
+                return ChangeTracking(() => base.SaveChangesAsync(cancellationToken).Result);
             });
         }
         /// <summary>
@@ -205,35 +205,49 @@ namespace Librame.Extensions.Data
         {
             return Task.Factory.StartNew(() =>
             {
-                return AuditEntities(() => base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken).Result);
+                return ChangeTracking(() => base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken).Result);
             });
         }
 
 
         /// <summary>
-        /// 审计实体集合。
+        /// 变化跟踪。
         /// </summary>
         /// <param name="saveChangesFactory">给定的保存变化工厂方法。</param>
         /// <returns>返回受影响的行数。</returns>
-        protected virtual int AuditEntities(Func<int> saveChangesFactory)
+        protected virtual int ChangeTracking(Func<int> saveChangesFactory)
         {
+            ChangeTracker.DetectChanges();
+            TrackerContext.Process(ChangeTracker);
+
+            Tenant tenant = null;
             IList<Audit> audits = null;
 
-            if (BuilderOptions.AuditEnabled)
+            foreach (var handler in TrackerContext.ChangeHandlers)
             {
-                audits = AuditResolver.GetAudits(ChangeTracker);
-                Audits.AddRange(audits);
+                if (BuilderOptions.AuditEnabled && handler is AuditEntityChangeHandler auditHandler)
+                {
+                    audits = auditHandler.ChangeAudits;
+                    Audits.AddRange(audits);
+                }
+
+                if (BuilderOptions.TenantEnabled && handler is TenantEntityChangeHandler tenantHandler)
+                {
+                    tenant = tenantHandler.Tenant;
+                }
             }
 
             // Switch Write Connection
-            TrySwitchConnection(BuilderOptions.Connection.WriteString);
+            if (tenant.WriteConnectionSeparation)
+                TrySwitchConnection(tenant.WriteConnectionString);
 
             var count = saveChangesFactory.Invoke();
 
             // Restore Default Connection
-            TrySwitchConnection(BuilderOptions.Connection.DefaultString);
+            if (tenant.WriteConnectionSeparation)
+                TrySwitchConnection(tenant.DefaultConnectionString);
 
-            if (count > 0 && audits?.Count > 0)
+            if (audits?.Count > 0)
                 BuilderOptions.PublishAuditEvent?.Invoke(this, audits);
 
             return count;
@@ -257,7 +271,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="connectionStringFactory">给定的数据库连接字符串工厂方法。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        public virtual bool TrySwitchConnection(Func<IConnection, string> connectionStringFactory)
+        public virtual bool TrySwitchConnection(Func<IConnectionStrings, string> connectionStringFactory)
         {
             return TrySwitchConnection(connectionStringFactory.Invoke(BuilderOptions.Connection));
         }

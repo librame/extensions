@@ -105,7 +105,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="connectionStringFactory">给定的数据库连接字符串工厂方法。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        bool TrySwitchConnection(Func<IConnection, string> connectionStringFactory);
+        bool TrySwitchConnection(Func<IConnectionStrings, string> connectionStringFactory);
         /// <summary>
         /// 尝试切换数据库连接。
         /// </summary>

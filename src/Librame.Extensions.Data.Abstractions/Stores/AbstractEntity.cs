@@ -64,4 +64,26 @@ namespace Librame.Extensions.Data
         [Display(Name = nameof(UpdatorId), GroupName = "UpdateGroup", ResourceType = typeof(AbstractEntityResource))]
         public virtual TId UpdatorId { get; set; }
     }
+
+
+    /// <summary>
+    /// 抽象实体。
+    /// </summary>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
+    /// <typeparam name="TTenantId">指定的租户标识类型。</typeparam>
+    /// <typeparam name="TDateTime">指定的日期与时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
+    /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
+    public abstract class AbstractEntity<TId, TTenantId, TDateTime, TStatus> : AbstractEntity<TId, TDateTime, TStatus>, ITenantId<TTenantId>
+        where TId : IEquatable<TId>
+        where TTenantId : IEquatable<TTenantId>
+        where TDateTime : struct
+        where TStatus : struct
+    {
+        /// <summary>
+        /// 租户标识。
+        /// </summary>
+        [Display(Name = nameof(TenantId), GroupName = "GlobalGroup", ResourceType = typeof(AbstractEntityResource))]
+        public TTenantId TenantId { get; set; }
+    }
+
 }

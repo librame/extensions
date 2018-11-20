@@ -150,4 +150,7 @@
   <data name="DataGroup" xml:space="preserve">
     <value>Data group</value>
   </data>
+  <data name="TenantId" xml:space="preserve">
+    <value>Tenant id</value>
+  </data>
 </root>

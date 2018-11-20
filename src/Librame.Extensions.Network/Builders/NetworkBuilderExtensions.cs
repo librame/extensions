@@ -59,7 +59,7 @@ namespace Librame.Builders
                     .AddCrawlers()
                     .AddSenders();
             },
-            builderOptions, configuration, postConfigureOptions);
+            typeof(NetworkBuilderOptions), builderOptions, configuration, postConfigureOptions);
         }
 
 

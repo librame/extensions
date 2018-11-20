@@ -61,7 +61,7 @@ namespace Librame.Builders
                 return b.AsDataBuilder()
                     .AddAudits();
             },
-            builderOptions, configuration, postConfigureOptions);
+            typeof(DataBuilderOptions), builderOptions, configuration, postConfigureOptions);
         }
 
 

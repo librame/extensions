@@ -69,7 +69,7 @@ namespace Librame.Builders
                     .AddScales()
                     .AddWatermarks();
             },
-            builderOptions, configuration, postConfigureOptions);
+            typeof(DrawingBuilderOptions), builderOptions, configuration, postConfigureOptions);
         }
 
 

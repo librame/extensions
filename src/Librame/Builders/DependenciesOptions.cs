@@ -24,14 +24,14 @@ namespace Librame.Builders
     public class DependenciesOptions
     {
         /// <summary>
-        /// 配置日志构建器（可选）。
-        /// </summary>
-        public Action<ILoggingBuilder> ConfigureLogging { get; set; }
-
-        /// <summary>
         /// 配置本地化选项（可选）。
         /// </summary>
         public Action<LocalizationOptions> ConfigureLocalization { get; set; }
+
+        /// <summary>
+        /// 配置日志构建器（可选）。
+        /// </summary>
+        public Action<ILoggingBuilder> ConfigureLogging { get; set; }
 
 
         /// <summary>

@@ -10,26 +10,29 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 连接接口。
+    /// 租户标识接口。
     /// </summary>
-    public interface IConnection
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
+    public interface ITenantId<TId> : ITenantId
+        where TId : IEquatable<TId>
     {
         /// <summary>
-        /// 默认连接字符串。
+        /// 租户标识。
         /// </summary>
-        string DefaultString { get; set; }
-
-        /// <summary>
-        /// 写入连接字符串。
-        /// </summary>
-        string WriteString { get; set; }
-
-        /// <summary>
-        /// 写入分离（默认不启用）。
-        /// </summary>
-        bool WriteSeparation { get; set; }
+        TId TenantId { get; set; }
     }
+
+
+    /// <summary>
+    /// 租户标识接口。
+    /// </summary>
+    public interface ITenantId
+    {
+    }
+
 }

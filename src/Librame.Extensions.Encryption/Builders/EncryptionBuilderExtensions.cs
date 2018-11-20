@@ -64,7 +64,7 @@ namespace Librame.Builders
                     .AddConverters()
                     .AddBuffers();
             },
-            builderOptions, configuration, postConfigureOptions);
+            typeof(EncryptionBuilderOptions), builderOptions, configuration, postConfigureOptions);
         }
 
 

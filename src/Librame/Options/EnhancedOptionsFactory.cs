@@ -18,6 +18,7 @@ namespace Librame.Options
     /// <summary>
     /// 增强型选项工厂。
     /// </summary>
+    /// <typeparam name="TOptions">指定的选项类型。</typeparam>
     public class EnhancedOptionsFactory<TOptions> : IOptionsFactory<TOptions>
         where TOptions : class, new()
     {
@@ -44,7 +45,7 @@ namespace Librame.Options
         /// <returns>返回选项实例。</returns>
         public TOptions Create(string name)
         {
-            var options = new TOptions();
+            var options = OptionsRegistration.GetOrCreate<TOptions>();
 
             foreach (var setup in _setups)
             {

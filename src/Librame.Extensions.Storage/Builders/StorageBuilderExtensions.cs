@@ -55,7 +55,7 @@ namespace Librame.Builders
                 return b.AsStorageBuilder()
                     .AddFileSystem();
             },
-            builderOptions, configuration, postConfigureOptions);
+            typeof(StorageBuilderOptions), builderOptions, configuration, postConfigureOptions);
         }
 
 
