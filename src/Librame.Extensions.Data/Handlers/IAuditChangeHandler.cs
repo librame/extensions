@@ -10,19 +10,21 @@
 
 #endregion
 
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Collections.Generic;
 
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 实体变化处理程序。
+    /// 审计变化处理程序接口。
     /// </summary>
-    public interface IEntityChangeHandler
+    public interface IAuditChangeHandler : IChangeHandler
     {
         /// <summary>
-        /// 处理实体。
+        /// 变化的审计实体列表。
         /// </summary>
-        /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
-        void Process(EntityEntry entry);
+        /// <value>
+        /// 返回 <see cref="IList{Audit}"/>。
+        /// </value>
+        IList<Audit> ChangeAudits { get; }
     }
 }

@@ -35,15 +35,18 @@ namespace Librame.Extensions.Data
         /// 构造一个 <see cref="AbstractDbContext{TDbContext, TBuilderOptions}"/> 实例。
         /// </summary>
         /// <param name="trackerContext">给定的 <see cref="IChangeTrackerContext"/>。</param>
+        /// <param name="tenantContext">给定的 <see cref="ITenantContext"/>。</param>
         /// <param name="builderOptions">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{TDbContext}"/>。</param>
         /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
-        public AbstractDbContext(IChangeTrackerContext trackerContext, IOptions<TBuilderOptions> builderOptions,
-            ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
+        public AbstractDbContext(IChangeTrackerContext trackerContext, ITenantContext tenantContext,
+            IOptions<TBuilderOptions> builderOptions, ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
             : base(dbContextOptions)
         {
             Logger = logger.NotDefault(nameof(logger));
+
             TrackerContext = trackerContext.NotDefault(nameof(trackerContext));
+            TenantContext = tenantContext.NotDefault(nameof(tenantContext));
             BuilderOptions = builderOptions.NotDefault(nameof(builderOptions)).Value;
             
             if (BuilderOptions.EnsureDbCreated)
@@ -61,6 +64,11 @@ namespace Librame.Extensions.Data
         /// 变化跟踪器上下文。
         /// </summary>
         public IChangeTrackerContext TrackerContext { get; }
+
+        /// <summary>
+        /// 租户上下文。
+        /// </summary>
+        public ITenantContext TenantContext { get; }
 
         /// <summary>
         /// 构建器选项。
@@ -82,6 +90,12 @@ namespace Librame.Extensions.Data
         /// 租户数据集。
         /// </summary>
         public DbSet<Tenant> Tenants { get; set; }
+
+
+        /// <summary>
+        /// 当前租户。
+        /// </summary>
+        public Tenant CurrentTenant => TenantContext.GetTenant(Tenants, BuilderOptions);
 
 
         /// <summary>
@@ -218,34 +232,34 @@ namespace Librame.Extensions.Data
         protected virtual int ChangeTracking(Func<int> saveChangesFactory)
         {
             ChangeTracker.DetectChanges();
-            TrackerContext.Process(ChangeTracker);
 
-            Tenant tenant = null;
+            // 尝试绑定当前租户
+            if (TrackerContext.TryGetChangeHandler(out ITenantChangeHandler tenantChange))
+                tenantChange.SetTenant = CurrentTenant;
+
+            TrackerContext.Process(ChangeTracker, BuilderOptions);
+            
+            // 处理变化的审计列表
             IList<Audit> audits = null;
 
             foreach (var handler in TrackerContext.ChangeHandlers)
             {
-                if (BuilderOptions.AuditEnabled && handler is AuditEntityChangeHandler auditHandler)
+                if (handler is IAuditChangeHandler auditHandler && BuilderOptions.AuditEnabled)
                 {
                     audits = auditHandler.ChangeAudits;
                     Audits.AddRange(audits);
                 }
-
-                if (BuilderOptions.TenantEnabled && handler is TenantEntityChangeHandler tenantHandler)
-                {
-                    tenant = tenantHandler.Tenant;
-                }
             }
 
             // Switch Write Connection
-            if (tenant.WriteConnectionSeparation)
-                TrySwitchConnection(tenant.WriteConnectionString);
+            if (CurrentTenant.WriteConnectionSeparation)
+                TrySwitchConnection(CurrentTenant.WriteConnectionString);
 
             var count = saveChangesFactory.Invoke();
 
             // Restore Default Connection
-            if (tenant.WriteConnectionSeparation)
-                TrySwitchConnection(tenant.DefaultConnectionString);
+            if (CurrentTenant.WriteConnectionSeparation)
+                TrySwitchConnection(CurrentTenant.DefaultConnectionString);
 
             if (audits?.Count > 0)
                 BuilderOptions.PublishAuditEvent?.Invoke(this, audits);
@@ -273,7 +287,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回是否切换的布尔值。</returns>
         public virtual bool TrySwitchConnection(Func<IConnectionStrings, string> connectionStringFactory)
         {
-            return TrySwitchConnection(connectionStringFactory.Invoke(BuilderOptions.Connection));
+            return TrySwitchConnection(connectionStringFactory.Invoke(CurrentTenant));
         }
         /// <summary>
         /// 尝试切换数据库连接。
@@ -282,16 +296,16 @@ namespace Librame.Extensions.Data
         /// <returns>返回是否切换的布尔值。</returns>
         public virtual bool TrySwitchConnection(string connectionString)
         {
-            if (!BuilderOptions.Connection.WriteSeparation)
+            if (!CurrentTenant.WriteConnectionSeparation)
             {
-                Logger.LogInformation("Connection write separation is disable");
+                Logger.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) connection write separation is disable");
                 return false;
             }
 
             var connection = GetDbConnection();
             if (connection.ConnectionString == connectionString)
             {
-                Logger.LogInformation("Same as the current connection string");
+                Logger.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) same as the current connection string");
                 return false;
             }
 
@@ -303,7 +317,7 @@ namespace Librame.Extensions.Data
                         {
                             //connection.ChangeDatabase(connectionString);
                             connection.ConnectionString = connectionString;
-                            Logger.LogInformation($"Change connection string: {connectionString}");
+                            Logger.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) change connection string: {connectionString}");
 
                             // MySql Bug: System.InvalidOperationException
                             //  HResult = 0x80131509

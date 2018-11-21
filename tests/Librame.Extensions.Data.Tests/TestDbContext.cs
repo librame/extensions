@@ -16,9 +16,9 @@ namespace Librame.Extensions.Data.Tests
 
     public class TestDbContext : AbstractDbContext<TestDbContext, DataBuilderOptions>, ITestDbContext
     {
-        public TestDbContext(IAuditResolver auditResolver, IOptions<DataBuilderOptions> builderOptions,
-            ILogger<TestDbContext> logger, DbContextOptions<TestDbContext> dbContextOptions)
-            : base(auditResolver, builderOptions, logger, dbContextOptions)
+        public TestDbContext(IChangeTrackerContext trackerContext, ITenantContext tenantContext,
+            IOptions<DataBuilderOptions> builderOptions, ILogger<TestDbContext> logger, DbContextOptions<TestDbContext> dbContextOptions)
+            : base(trackerContext, tenantContext, builderOptions, logger, dbContextOptions)
         {
         }
 

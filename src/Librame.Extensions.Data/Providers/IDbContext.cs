@@ -34,20 +34,31 @@ namespace Librame.Extensions.Data
         /// </summary>
         IChangeTrackerContext TrackerContext { get; }
 
+        /// <summary>
+        /// 租户上下文。
+        /// </summary>
+        ITenantContext TenantContext { get; }
+
 
         /// <summary>
         /// 审计数据集。
         /// </summary>
-        DbSet<Audit> Audits { get; set; }
+        DbSet<Audit> Audits { get; }
 
         /// <summary>
         /// 审计属性数据集。
         /// </summary>
-        DbSet<AuditProperty> AuditProperties { get; set; }
+        DbSet<AuditProperty> AuditProperties { get; }
 
         /// <summary>
         /// 租户数据集。
         /// </summary>
-        DbSet<Tenant> Tenants { get; set; }
+        DbSet<Tenant> Tenants { get; }
+
+
+        /// <summary>
+        /// 当前租户。
+        /// </summary>
+        Tenant CurrentTenant { get; }
     }
 }

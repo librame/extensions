@@ -49,10 +49,15 @@ namespace Librame.Extensions.Data
         public Action<IDbProvider, IList<Audit>> PublishAuditEvent { get; set; }
 
 
-        ///// <summary>
-        ///// 连接选项。
-        ///// </summary>
-        //public IConnection Connection { get; set; } = new ConnectionOptions();
+        /// <summary>
+        /// 本机租户。
+        /// </summary>
+        public Tenant LocalTenant { get; set; } = new Tenant
+        {
+            Id = Guid.Empty.ToString(),
+            Name = "Local",
+            Host = "localhost"
+        };
 
 
         /// <summary>
@@ -70,28 +75,6 @@ namespace Librame.Extensions.Data
         /// </summary>
         public ITableSchema TenantTable { get; set; } = new TableOptions<Tenant>();
     }
-
-
-    ///// <summary>
-    ///// 连接选项。
-    ///// </summary>
-    //public class ConnectionOptions : IConnection
-    //{
-    //    /// <summary>
-    //    /// 默认连接字符串。
-    //    /// </summary>
-    //    public string DefaultString { get; set; } = "librame_default";
-
-    //    /// <summary>
-    //    /// 写入连接字符串。
-    //    /// </summary>
-    //    public string WriteString { get; set; } = "librame_writer";
-
-    //    /// <summary>
-    //    /// 写入分离（默认不启用）。
-    //    /// </summary>
-    //    public bool WriteSeparation { get; set; } = false;
-    //}
 
 
     /// <summary>

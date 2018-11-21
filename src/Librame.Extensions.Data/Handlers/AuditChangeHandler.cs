@@ -21,9 +21,9 @@ using System.Linq;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 审计实体变化处理程序。
+    /// 审计变化处理程序。
     /// </summary>
-    public class AuditEntityChangeHandler : IEntityChangeHandler
+    public class AuditChangeHandler : IAuditChangeHandler
     {
         /// <summary>
         /// 创建者名工厂方法。
@@ -63,8 +63,11 @@ namespace Librame.Extensions.Data
         /// 处理变化。
         /// </summary>
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
-        public virtual void Process(EntityEntry entry)
+        /// <param name="builderOptions">给定的 <see cref="DataBuilderOptions"/>。</param>
+        public virtual void Process(EntityEntry entry, DataBuilderOptions builderOptions)
         {
+            if (!builderOptions.AuditEnabled) return;
+
             ChangeAudits = new List<Audit>();
 
             // 如果不审计，则忽略

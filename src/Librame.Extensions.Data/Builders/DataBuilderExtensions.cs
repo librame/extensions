@@ -59,7 +59,7 @@ namespace Librame.Builders
             return builder.AddBuilder(b =>
             {
                 return b.AsDataBuilder()
-                    .AddAudits();
+                    .AddChangeHandlers();
             },
             typeof(DataBuilderOptions), builderOptions, configuration, postConfigureOptions);
         }
@@ -76,13 +76,17 @@ namespace Librame.Builders
         }
 
         /// <summary>
-        /// 添加审计。
+        /// 添加变化处理程序集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddAudits(this IDataBuilder builder)
+        public static IDataBuilder AddChangeHandlers(this IDataBuilder builder)
         {
-            builder.Services.AddSingleton<IAuditResolver, DefaultAuditResolver>();
+            builder.Services.AddScoped<IChangeHandler, AuditChangeHandler>();
+            builder.Services.AddScoped<IChangeHandler, TenantChangeHandler>();
+
+            builder.Services.AddScoped<IChangeTrackerContext, ChangeTrackerContext>();
+            builder.Services.AddScoped<ITenantContext, TenantContext>();
 
             return builder;
         }
