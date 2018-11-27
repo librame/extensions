@@ -37,9 +37,9 @@ namespace Librame.Extensions.Encryption.Tests
                 .FromAes()
                 .FromTripleDes()
                 .FromDes();
-
-            // 值虽相同但引用地址不同，不适合用 Equals 比较
-            //Assert.Equal(plaintextBufferCopy.Memory, ciphertextBuffer.Memory);
+            
+            // 明文的只读副本与解密后的缓冲区数据一致
+            // plaintextBufferCopy.ReadOnlyMemory == ciphertextBuffer.Memory
             Assert.Equal(hashString, ciphertextBuffer.AsCiphertextString());
         }
 

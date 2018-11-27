@@ -18,24 +18,25 @@ namespace Librame.Extensions.Encryption
     using Converters;
 
     /// <summary>
-    /// 默认密文算法转换器。
+    /// 密文算法转换器。
     /// </summary>
-    public class DefaultCiphertextAlgorithmConverter : AbstractConverter<string, IBuffer<byte>>, ICiphertextAlgorithmConverter
+    public class CiphertextAlgorithmConverter : AbstractConverter<string, IByteBuffer>, ICiphertextAlgorithmConverter
     {
         /// <summary>
-        /// 记录器。
+        /// 构造一个 <see cref="CiphertextAlgorithmConverter"/> 实例。
         /// </summary>
-        protected ILogger Logger;
-
-
-        /// <summary>
-        /// 构造一个 <see cref="DefaultCiphertextAlgorithmConverter"/> 实例。
-        /// </summary>
-        /// <param name="logger">给定的 <see cref="ILogger{DefaultCiphertextAlgorithmConverter}"/>。</param>
-        public DefaultCiphertextAlgorithmConverter(ILogger<DefaultCiphertextAlgorithmConverter> logger)
+        /// <param name="logger">给定的 <see cref="ILogger{CiphertextAlgorithmConverter}"/>。</param>
+        public CiphertextAlgorithmConverter(ILogger<CiphertextAlgorithmConverter> logger)
         {
             Logger = logger;
         }
+
+
+        /// <summary>
+        /// 记录器。
+        /// </summary>
+        /// <value>返回 <see cref="ILogger"/>。</value>
+        protected ILogger Logger { get; }
 
 
         /// <summary>
@@ -43,9 +44,9 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="source">给定的密文字符串。</param>
         /// <returns>返回缓冲区。</returns>
-        public override IBuffer<byte> ToResult(string source)
+        public override IByteBuffer ToResult(string source)
         {
-            var buffer = source.FromBase64StringAsBuffer();
+            var buffer = source.AsByteBufferFromBase64String();
             Logger.LogDebug($"From BASE64 String: {source}");
 
             return buffer;
@@ -56,7 +57,7 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="result">给定的缓冲区。</param>
         /// <returns>返回字符串。</returns>
-        public override string ToSource(IBuffer<byte> result)
+        public override string ToSource(IByteBuffer result)
         {
             string str = result.AsBase64String();
             Logger.LogDebug($"Convert to BASE64 String: {str}");

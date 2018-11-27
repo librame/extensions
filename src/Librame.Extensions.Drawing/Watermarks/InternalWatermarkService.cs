@@ -26,41 +26,31 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部水印服务。
     /// </summary>
-    internal class InternalWatermarkService : AbstractService<InternalWatermarkService>, IWatermarkService
+    internal class InternalWatermarkService : AbstractService<InternalWatermarkService, DrawingBuilderOptions>, IWatermarkService
     {
+        private readonly WatermarkOptions _options;
+
         /// <summary>
         /// 构造一个 <see cref="InternalWatermarkService"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{DefaultDrawingBuilderOptions}"/></param>
+        /// <param name="builderOptions">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalWatermarkService}"/>。</param>
-        public InternalWatermarkService(IOptions<DrawingBuilderOptions> options, ILogger<InternalWatermarkService> logger)
-            : base(logger)
+        public InternalWatermarkService(IOptions<DrawingBuilderOptions> builderOptions, ILogger<InternalWatermarkService> logger)
+            : base(builderOptions, logger)
         {
-            Options = options.Value;
-            ImageFileLocator = Options.Watermark.ImageFileLocator
-                .NotDefault(nameof(DrawingBuilderOptions.Watermark.ImageFileLocator));
-            FontFileLocator = Options.Watermark.Font.FileLocator
-                .NotDefault(nameof(DrawingBuilderOptions.Watermark.Font.FileLocator));
+            _options = BuilderOptions.Watermark;
         }
 
-
-        /// <summary>
-        /// 绘图选项。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="DrawingBuilderOptions"/>。
-        /// </value>
-        public DrawingBuilderOptions Options { get; }
-
+        
         /// <summary>
         /// 水印图片文件定位器。
         /// </summary>
-        public IFileLocator ImageFileLocator { get; }
+        public IFileLocator ImageFileLocator => _options.ImageFileLocator;
 
         /// <summary>
         /// 水印字体文件定位器。
         /// </summary>
-        public IFileLocator FontFileLocator { get; }
+        public IFileLocator FontFileLocator => _options.Font.FileLocator;
 
 
         /// <summary>
@@ -143,7 +133,7 @@ namespace Librame.Extensions.Drawing
             Logger.LogDebug($"Watermark image file: {imagePath}");
             Logger.LogDebug($"Watermark mode: {mode.AsEnumName()}");
             
-            var skFormat = Options.ImageFormat.AsOutputEnumFieldByName<ImageFormat, SKEncodedImageFormat>();
+            var skFormat = BuilderOptions.ImageFormat.AsOutputEnumFieldByName<ImageFormat, SKEncodedImageFormat>();
             
             using (var bmp = SKBitmap.Decode(imagePath))
             {
@@ -156,7 +146,7 @@ namespace Librame.Extensions.Drawing
 
                 using (var img = SKImage.FromBitmap(bmp))
                 {
-                    using (var data = img.Encode(skFormat, Options.Quality))
+                    using (var data = img.Encode(skFormat, BuilderOptions.Quality))
                     {
                         postAction.Invoke(data);
                     }
@@ -173,8 +163,8 @@ namespace Librame.Extensions.Drawing
         /// <param name="mode">给定的水印模式。</param>
         public void DrawCore(SKCanvas canvas, Size imageSize, WatermarkMode mode)
         {
-            var startX = Options.Watermark.Location.X;
-            var startY = Options.Watermark.Location.Y;
+            var startX = _options.Location.X;
+            var startY = _options.Location.Y;
             var isReverseX = false;
             var isReverseY = false;
 
@@ -192,7 +182,7 @@ namespace Librame.Extensions.Drawing
             }
 
             // 如果使用随机位置水印
-            if (Options.Watermark.IsRandom)
+            if (_options.IsRandom)
             {
                 var random = new Random();
 
@@ -211,11 +201,11 @@ namespace Librame.Extensions.Drawing
             {
                 case WatermarkMode.Text:
                     {
-                        using (var foreFont = CreateFontPaint(Options.Watermark.Colors.ForeHex))
-                        using (var alterFont = string.IsNullOrEmpty(Options.Watermark.Colors.AlternateHex)
-                            ? foreFont : CreateFontPaint(Options.Watermark.Colors.AlternateHex))
+                        using (var foreFont = CreateFontPaint(_options.Colors.ForeHex))
+                        using (var alterFont = string.IsNullOrEmpty(_options.Colors.AlternateHex)
+                            ? foreFont : CreateFontPaint(_options.Colors.AlternateHex))
                         {
-                            var text = Options.Watermark.Text;
+                            var text = _options.Text;
 
                             for (int i = 0; i < text.Length; i++)
                             {
@@ -265,7 +255,7 @@ namespace Librame.Extensions.Drawing
             paint.Color = SKColor.Parse(colorHexString);
             // paint.StrokeCap = SKStrokeCap.Round;
             paint.Typeface = SKTypeface.FromFile(FontFileLocator.Source);
-            paint.TextSize = Options.Watermark.Font.Size;
+            paint.TextSize = _options.Font.Size;
 
             return paint;
         }

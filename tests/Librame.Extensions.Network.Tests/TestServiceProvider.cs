@@ -14,11 +14,8 @@ namespace Librame.Extensions.Network.Tests
                 var services = new ServiceCollection();
 
                 services.AddLibrame()
-                    .AddNetwork()
-                    .ConfigureEncryption(builder =>
-                    {
-                        builder.AddDeveloperGlobalSigningCredentials();
-                    });
+                    .AddEncryption().AddDeveloperGlobalSigningCredentials()
+                    .AddNetwork();
 
                 Current = services.BuildServiceProvider();
             }

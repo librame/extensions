@@ -14,18 +14,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Librame.Extensions.Data
 {
+    using Builders;
+    using Services;
+    
     /// <summary>
-    /// 数据库提供程序接口。
+    /// 数据库上下文接口。
     /// </summary>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public interface IDbContext<TBuilderOptions> : IDbContext, IDbProvider<TBuilderOptions>
-        where TBuilderOptions : DataBuilderOptions
+    public interface IDbContext<TBuilderOptions> : IDbContext, IService<TBuilderOptions>
+        where TBuilderOptions : class, IBuilderOptions, new()
     {
     }
 
 
     /// <summary>
-    /// 数据库提供程序接口。
+    /// 数据库上下文接口。
     /// </summary>
     public interface IDbContext : IDbProvider
     {
@@ -61,4 +64,5 @@ namespace Librame.Extensions.Data
         /// </summary>
         Tenant CurrentTenant { get; }
     }
+
 }

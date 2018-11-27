@@ -29,52 +29,33 @@ namespace Librame.Builders
         /// 添加图画扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="builderOptions">给定的 <see cref="DrawingBuilderOptions"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{DrawingBuilderOptions}"/>（可选）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="postConfigureOptions">给定的 <see cref="Action{DrawingBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        public static IDrawingBuilder AddDrawing(this IBuilder builder, DrawingBuilderOptions builderOptions = null,
-            IConfiguration configuration = null, Action<DrawingBuilderOptions> postConfigureOptions = null)
-        {
-            return builder.AddDrawing<DrawingBuilderOptions>(builderOptions ?? new DrawingBuilderOptions(),
-                configuration, postConfigureOptions);
-        }
-        /// <summary>
-        /// 添加图画扩展。
-        /// </summary>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="builderOptions">给定的构建器选项。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="postConfigureOptions">给定的 <see cref="Action{TBuilderOptions}"/>（可选）。</param>
-        /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        public static IDrawingBuilder AddDrawing<TBuilderOptions>(this IBuilder builder, TBuilderOptions builderOptions,
-            IConfiguration configuration = null, Action<TBuilderOptions> postConfigureOptions = null)
-            where TBuilderOptions : DrawingBuilderOptions
+        public static IDrawingBuilder AddDrawing(this IBuilder builder,
+            Action<DrawingBuilderOptions> configureOptions = null, IConfiguration configuration = null)
         {
             var fontFileLocator = "font.ttf".AsFileLocator();
 
-            if (builderOptions.Captcha.Font.FileLocator.IsDefault())
-                builderOptions.Captcha.Font.FileLocator = fontFileLocator;
-
-            if (builderOptions.Watermark.Font.FileLocator.IsDefault())
-                builderOptions.Watermark.Font.FileLocator = fontFileLocator;
-
-            if (builderOptions.Watermark.ImageFileLocator.IsDefault())
-                builderOptions.Watermark.ImageFileLocator = "watermark.png".AsFileLocator();
-
-            return builder.AddBuilder(b =>
+            Action<DrawingBuilderOptions> _configureOptions = options =>
             {
-                return b.AsDrawingBuilder()
+                options.Captcha.Font.FileLocator = fontFileLocator;
+                options.Watermark.Font.FileLocator = fontFileLocator;
+                options.Watermark.ImageFileLocator = "watermark.png".AsFileLocator();
+            };
+            
+            return builder.AddBuilder(_configureOptions, configuration, _builder =>
+            {
+                return _builder.AsDrawingBuilder()
                     .AddCaptchas()
                     .AddScales()
                     .AddWatermarks();
-            },
-            typeof(DrawingBuilderOptions), builderOptions, configuration, postConfigureOptions);
+            });
         }
 
 
         /// <summary>
-        /// 转换为内部图画构建器。
+        /// 转换为图画构建器。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>

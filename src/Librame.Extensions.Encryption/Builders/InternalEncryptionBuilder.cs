@@ -19,7 +19,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部加密构建器。
     /// </summary>
-    internal class InternalEncryptionBuilder : DefaultBuilder, IEncryptionBuilder
+    internal class InternalEncryptionBuilder : Builder, IEncryptionBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalEncryptionBuilder"/> 实例。

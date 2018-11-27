@@ -36,7 +36,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定待加密的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        IBuffer<byte> ToAes(IBuffer<byte> buffer, string identifier = null);
+        IByteBuffer ToAes(IByteBuffer buffer, string identifier = null);
 
         /// <summary>
         /// 还原 AES。
@@ -44,7 +44,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        IBuffer<byte> FromAes(IBuffer<byte> buffer, string identifier = null);
+        IByteBuffer FromAes(IByteBuffer buffer, string identifier = null);
 
         #endregion
 
@@ -57,7 +57,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定待加密的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        IBuffer<byte> ToDes(IBuffer<byte> buffer, string identifier = null);
+        IByteBuffer ToDes(IByteBuffer buffer, string identifier = null);
 
         /// <summary>
         /// 还原 DES。
@@ -65,7 +65,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        IBuffer<byte> FromDes(IBuffer<byte> buffer, string identifier = null);
+        IByteBuffer FromDes(IByteBuffer buffer, string identifier = null);
 
         #endregion
 
@@ -78,7 +78,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定待加密的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        IBuffer<byte> ToTripleDes(IBuffer<byte> buffer, string identifier = null);
+        IByteBuffer ToTripleDes(IByteBuffer buffer, string identifier = null);
 
         /// <summary>
         /// 还原 TripleDES。
@@ -86,7 +86,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        IBuffer<byte> FromTripleDes(IBuffer<byte> buffer, string identifier = null);
+        IByteBuffer FromTripleDes(IByteBuffer buffer, string identifier = null);
 
         #endregion
 

@@ -20,8 +20,6 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
-    using Encryption;
-
     /// <summary>
     /// 内部短信服务发送器。
     /// </summary>
@@ -30,11 +28,10 @@ namespace Librame.Extensions.Network
         /// <summary>
         /// 构造一个 <see cref="InternalSmsSender"/> 实例。
         /// </summary>
-        /// <param name="hash">给定的 <see cref="IHashAlgorithmService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DefaultNetworkBuilderOptions}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalSmsSender}"/>。</param>
-        public InternalSmsSender(IHashAlgorithmService hash, IOptions<NetworkBuilderOptions> options, ILogger<InternalSmsSender> logger)
-            : base(hash, options, logger)
+        public InternalSmsSender(IOptions<NetworkBuilderOptions> options, ILogger<InternalSmsSender> logger)
+            : base(options, logger)
         {
         }
 
@@ -47,7 +44,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回响应的字符串。</returns>
         public async Task<string> SendAsync(string message, Func<string, Uri> gatewayUrlFactory)
         {
-            var url = gatewayUrlFactory.Invoke(Options.Sms.GetewayUrl);
+            var url = gatewayUrlFactory.Invoke(BuilderOptions.Sms.GetewayUrl);
             
             return await SendCoreAsync(message, url);
         }
@@ -60,7 +57,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回响应的字符串。</returns>
         public async Task<string> SendAsync(string message, string gatewayUrl = null)
         {
-            var url = new Uri(gatewayUrl.AsValueOrDefault(Options.Sms.GetewayUrl));
+            var url = new Uri(gatewayUrl.AsValueOrDefault(BuilderOptions.Sms.GetewayUrl));
 
             return await SendCoreAsync(message, url);
         }
@@ -84,13 +81,18 @@ namespace Librame.Extensions.Network
                 hwr.Accept = "text/xml,text/javascript";
                 Logger.LogDebug($"Set accept: {hwr.Accept}");
 
-                hwr.ContinueTimeout = Options.Sms.ContinueTimeout;
+                hwr.ContinueTimeout = BuilderOptions.Sms.ContinueTimeout;
                 Logger.LogDebug($"Set continue timeout: {hwr.ContinueTimeout}");
 
                 using (var s = await hwr.GetRequestStreamAsync())
                 {
-                    var buffer = Encoding.GetBytes(message);
-                    s.Write(buffer, 0, buffer.Length);
+                    var bytes = Encoding.GetBytes(message);
+                    var buffer = bytes.AsByteBuffer();
+
+                    if (TryEncryptBuffer(buffer))
+                        bytes = buffer.Memory.ToArray();
+                    
+                    s.Write(bytes, 0, bytes.Length);
                     Logger.LogDebug($"Send message: {message}");
                 }
 

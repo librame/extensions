@@ -17,15 +17,15 @@ namespace Librame.Builders
     using Extensions;
     
     /// <summary>
-    /// 默认构建器。
+    /// 构建器。
     /// </summary>
-    public class DefaultBuilder : IBuilder
+    public class Builder : IBuilder
     {
         /// <summary>
-        /// 构造一个 <see cref="DefaultBuilder"/> 实例。
+        /// 构造一个 <see cref="Builder"/> 实例。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        public DefaultBuilder(IServiceCollection services)
+        public Builder(IServiceCollection services)
         {
             Services = services.NotDefault(nameof(services));
 
@@ -33,10 +33,10 @@ namespace Librame.Builders
         }
 
         /// <summary>
-        /// 构造一个 <see cref="DefaultBuilder"/> 实例。
+        /// 构造一个 <see cref="Builder"/> 实例。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        protected DefaultBuilder(IBuilder builder)
+        protected Builder(IBuilder builder)
         {
             Services = builder.NotDefault(nameof(builder)).Services;
         }

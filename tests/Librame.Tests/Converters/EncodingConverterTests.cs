@@ -6,15 +6,15 @@ namespace Librame.Converters.Tests
 {
     using Librame.Extensions;
 
-    public class DefaultEncodingConverterTests
+    public class EncodingConverterTests
     {
 
         [Fact]
-        public void EncodingConverterTest()
+        public void ConverterTest()
         {
             var converter = Encoding.UTF8.AsEncodingConverter(new LoggerFactory());
 
-            var str = nameof(DefaultEncodingConverterTests);
+            var str = nameof(EncodingConverterTests);
 
             var buffer = converter.ToResult(str);
             Assert.NotEmpty(buffer.Memory.ToArray());

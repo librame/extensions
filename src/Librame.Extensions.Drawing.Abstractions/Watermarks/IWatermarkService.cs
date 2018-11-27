@@ -21,15 +21,6 @@ namespace Librame.Extensions.Drawing
     public interface IWatermarkService : IDrawingService
     {
         /// <summary>
-        /// 绘图选项。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="DrawingBuilderOptions"/>。
-        /// </value>
-        DrawingBuilderOptions Options { get; }
-
-
-        /// <summary>
         /// 绘制水印文件。
         /// </summary>
         /// <param name="imagePath">给定的图像路径。</param>

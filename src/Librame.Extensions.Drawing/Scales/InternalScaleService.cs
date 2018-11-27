@@ -48,17 +48,14 @@ namespace Librame.Extensions.Drawing
         public IWatermarkService Watermark { get; }
 
         /// <summary>
-        /// 绘图选项。
+        /// 构建器选项。
         /// </summary>
-        /// <value>
-        /// 返回 <see cref="DrawingBuilderOptions"/>。
-        /// </value>
-        public DrawingBuilderOptions Options => Watermark.Options;
+        public DrawingBuilderOptions BuilderOptions => Watermark.BuilderOptions;
 
         /// <summary>
         /// 图像文件扩展名集合。
         /// </summary>
-        public string[] ImageExtensions => Options.ImageExtensions.Split(',');
+        public string[] ImageExtensions => BuilderOptions.ImageExtensions.Split(',');
 
 
         /// <summary>
@@ -76,7 +73,7 @@ namespace Librame.Extensions.Drawing
             {
                 var fileName = Path.GetFileName(file);
 
-                foreach (var scale in Options.Scales)
+                foreach (var scale in BuilderOptions.Scales)
                 {
                     if (fileName.Contains(scale.Suffix))
                     {
@@ -147,7 +144,7 @@ namespace Librame.Extensions.Drawing
         /// <returns>返回一个包含布尔值的异步操作。</returns>
         public Task<bool> DrawFile(string imagePath, string savePathTemplate = null)
         {
-            if (Options.Scales.Count < 1)
+            if (BuilderOptions.Scales.Count < 1)
             {
                 Logger.LogWarning("Scale options is not found.");
                 return Task.FromResult(false);
@@ -158,7 +155,7 @@ namespace Librame.Extensions.Drawing
                 var imageSize = new Size(srcBmp.Width, srcBmp.Height);
 
                 // 循环缩放方案
-                foreach (var s in Options.Scales)
+                foreach (var s in BuilderOptions.Scales)
                 {
                     // 如果源图尺寸小于缩放尺寸，则跳过当前方案
                     if (imageSize.Width <= s.MaxSize.Width && imageSize.Height <= s.MaxSize.Height)
@@ -187,10 +184,10 @@ namespace Librame.Extensions.Drawing
                             }
                         }
                         
-                        var skFormat = Options.ImageFormat.AsOutputEnumFieldByName<ImageFormat, SKEncodedImageFormat>();
+                        var skFormat = BuilderOptions.ImageFormat.AsOutputEnumFieldByName<ImageFormat, SKEncodedImageFormat>();
 
                         using (var img = SKImage.FromBitmap(bmp))
-                        using (var data = img.Encode(skFormat, Options.Quality))
+                        using (var data = img.Encode(skFormat, BuilderOptions.Quality))
                         {
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
                             var middleName = s.Suffix.AsValueOrDefault(() => DateTime.Now.Ticks.ToString());

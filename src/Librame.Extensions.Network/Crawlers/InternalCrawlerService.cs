@@ -22,8 +22,6 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
-    using Encryption;
-
     /// <summary>
     /// 抓取器服务。
     /// </summary>
@@ -32,13 +30,12 @@ namespace Librame.Extensions.Network
         /// <summary>
         /// 构造一个 <see cref="InternalCrawlerService"/> 实例。
         /// </summary>
-        /// <param name="hash">给定的 <see cref="IHashAlgorithmService"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DefaultNetworkBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalCrawlerService}"/>。</param>
-        public InternalCrawlerService(IHashAlgorithmService hash, IOptions<NetworkBuilderOptions> options, ILogger<InternalCrawlerService> logger)
-            : base(hash, options, logger)
+        public InternalCrawlerService(IOptions<NetworkBuilderOptions> options, ILogger<InternalCrawlerService> logger)
+            : base(options, logger)
         {
-            ImageExtensions = Options.Crawler.ImageExtensions.Split(',');
+            ImageExtensions = BuilderOptions.Crawler.ImageExtensions.Split(',');
         }
 
         
@@ -209,16 +206,16 @@ namespace Librame.Extensions.Network
                 var hwr = WebRequest.CreateHttp(url);
                 Logger.LogDebug($"Create http web request: {url}");
 
-                hwr.AllowAutoRedirect = Options.Crawler.AllowAutoRedirect;
+                hwr.AllowAutoRedirect = BuilderOptions.Crawler.AllowAutoRedirect;
                 Logger.LogDebug($"Set allow auto redirect: {hwr.AllowAutoRedirect}");
 
-                hwr.Referer = Options.Crawler.Referer;
+                hwr.Referer = BuilderOptions.Crawler.Referer;
                 Logger.LogDebug($"Set referer: {hwr.Referer}");
 
-                hwr.Timeout = Options.Crawler.Timeout;
+                hwr.Timeout = BuilderOptions.Crawler.Timeout;
                 Logger.LogDebug($"Set timeout: {hwr.Timeout}");
 
-                hwr.UserAgent = Options.Crawler.UserAgent;
+                hwr.UserAgent = BuilderOptions.Crawler.UserAgent;
                 Logger.LogDebug($"Set user agent: {hwr.UserAgent}");
 
                 if (postData.IsNotEmpty())

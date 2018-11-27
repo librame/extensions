@@ -19,7 +19,7 @@ namespace Librame.Extensions.Encryption
     /// 算法转换器接口。
     /// </summary>
     /// <typeparam name="TSource">指定的来源类型。</typeparam>
-    public interface IAlgorithmConverter<TSource> : IConverter<TSource, IBuffer<byte>>
+    public interface IAlgorithmConverter<TSource> : IConverter<TSource, IByteBuffer>
     {
     }
 }

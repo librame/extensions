@@ -27,8 +27,8 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TDbContext">指定的数据库上下文类型。</typeparam>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public abstract class AbstractDbContext<TDbContext, TBuilderOptions> : DbContext, IDbContext<TBuilderOptions>
-        where TDbContext : DbContext, IDbContext<TBuilderOptions>
+    public abstract class AbstractDbContext<TDbContext, TBuilderOptions> : AbstractDbContext<TDbContext>, IDbContext<TBuilderOptions>
+        where TDbContext : DbContext, IDbContext
         where TBuilderOptions : DataBuilderOptions, new()
     {
         /// <summary>
@@ -36,21 +36,103 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="trackerContext">给定的 <see cref="IChangeTrackerContext"/>。</param>
         /// <param name="tenantContext">给定的 <see cref="ITenantContext"/>。</param>
-        /// <param name="builderOptions">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
+        /// <param name="builderOptions">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{TDbContext}"/>。</param>
+        /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
+        public AbstractDbContext(IOptions<TBuilderOptions> builderOptions,
+            IChangeTrackerContext trackerContext, ITenantContext tenantContext,
+            ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
+            : base(trackerContext, tenantContext, logger, dbContextOptions)
+        {
+            BuilderOptions = builderOptions.NotDefault(nameof(builderOptions)).Value;
+
+            if (BuilderOptions.EnsureDbCreated)
+                DatabaseCreated();
+        }
+
+        
+        /// <summary>
+        /// 构建器选项。
+        /// </summary>
+        public TBuilderOptions BuilderOptions { get; }
+        
+        /// <summary>
+        /// 当前租户。
+        /// </summary>
+        public override Tenant CurrentTenant => TenantContext.GetTenant(Tenants, BuilderOptions);
+
+        
+        /// <summary>
+        /// 变化跟踪。
+        /// </summary>
+        /// <param name="saveChangesFactory">给定的保存变化工厂方法。</param>
+        /// <returns>返回受影响的行数。</returns>
+        protected override int ChangeTracking(Func<int> saveChangesFactory)
+        {
+            ChangeTracker.DetectChanges();
+
+            // 尝试绑定当前租户
+            if (TrackerContext.TryGetChangeHandler(out ITenantChangeHandler tenantChange))
+                tenantChange.SetTenant = CurrentTenant;
+
+            TrackerContext.Process(ChangeTracker, BuilderOptions);
+            
+            // 处理变化的审计列表
+            IList<Audit> audits = null;
+
+            foreach (var handler in TrackerContext.ChangeHandlers)
+            {
+                if (handler is IAuditChangeHandler auditHandler && BuilderOptions.AuditEnabled)
+                {
+                    audits = auditHandler.ChangeAudits;
+                    Audits.AddRange(audits);
+                }
+            }
+
+            var count = SwitchConnectionProcess(saveChangesFactory);
+            
+            if (audits?.Count > 0 && count > 0)
+                BuilderOptions.PublishAuditEvent?.Invoke(this, audits);
+
+            return count;
+        }
+
+        
+        /// <summary>
+        /// 开始创建模型。
+        /// </summary>
+        /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ConfigureAbstractDbContext(BuilderOptions);
+
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+
+
+    /// <summary>
+    /// 抽象数据库上下文。
+    /// </summary>
+    /// <typeparam name="TDbContext">指定的数据库上下文类型。</typeparam>
+    public abstract class AbstractDbContext<TDbContext> : DbContext, IDbContext
+        where TDbContext : DbContext, IDbContext
+    {
+        /// <summary>
+        /// 构造一个 <see cref="AbstractDbContext{TDbContext}"/> 实例。
+        /// </summary>
+        /// <param name="trackerContext">给定的 <see cref="IChangeTrackerContext"/>。</param>
+        /// <param name="tenantContext">给定的 <see cref="ITenantContext"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{TDbContext}"/>。</param>
         /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
         public AbstractDbContext(IChangeTrackerContext trackerContext, ITenantContext tenantContext,
-            IOptions<TBuilderOptions> builderOptions, ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
+            ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
             : base(dbContextOptions)
         {
             Logger = logger.NotDefault(nameof(logger));
 
             TrackerContext = trackerContext.NotDefault(nameof(trackerContext));
             TenantContext = tenantContext.NotDefault(nameof(tenantContext));
-            BuilderOptions = builderOptions.NotDefault(nameof(builderOptions)).Value;
-            
-            if (BuilderOptions.EnsureDbCreated)
-                DatabaseCreated();
         }
 
 
@@ -70,11 +152,6 @@ namespace Librame.Extensions.Data
         /// </summary>
         public ITenantContext TenantContext { get; }
 
-        /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        public TBuilderOptions BuilderOptions { get; }
-        
 
         /// <summary>
         /// 审计数据集。
@@ -95,7 +172,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 当前租户。
         /// </summary>
-        public Tenant CurrentTenant => TenantContext.GetTenant(Tenants, BuilderOptions);
+        public abstract Tenant CurrentTenant { get; }
 
 
         /// <summary>
@@ -103,7 +180,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         public string DbProviderName
         {
-           get { return Database.ProviderName; }
+            get { return Database.ProviderName; }
         }
 
         /// <summary>
@@ -114,6 +191,14 @@ namespace Librame.Extensions.Data
             get { return Database.AutoTransactionsEnabled; }
             set { Database.AutoTransactionsEnabled = value; }
         }
+
+
+        /// <summary>
+        /// 变化跟踪。
+        /// </summary>
+        /// <param name="saveChangesFactory">给定的保存变化工厂方法。</param>
+        /// <returns>返回受影响的行数。</returns>
+        protected abstract int ChangeTracking(Func<int> saveChangesFactory);
 
 
         /// <summary>
@@ -225,58 +310,40 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 变化跟踪。
+        /// 切换数据库连接执行。
         /// </summary>
-        /// <param name="saveChangesFactory">给定的保存变化工厂方法。</param>
-        /// <returns>返回受影响的行数。</returns>
-        protected virtual int ChangeTracking(Func<int> saveChangesFactory)
+        /// <param name="processAction">给定的处理动作。</param>
+        public virtual void SwitchConnectionProcess(Action processAction)
         {
-            ChangeTracker.DetectChanges();
-
-            // 尝试绑定当前租户
-            if (TrackerContext.TryGetChangeHandler(out ITenantChangeHandler tenantChange))
-                tenantChange.SetTenant = CurrentTenant;
-
-            TrackerContext.Process(ChangeTracker, BuilderOptions);
-            
-            // 处理变化的审计列表
-            IList<Audit> audits = null;
-
-            foreach (var handler in TrackerContext.ChangeHandlers)
-            {
-                if (handler is IAuditChangeHandler auditHandler && BuilderOptions.AuditEnabled)
-                {
-                    audits = auditHandler.ChangeAudits;
-                    Audits.AddRange(audits);
-                }
-            }
-
             // Switch Write Connection
             if (CurrentTenant.WriteConnectionSeparation)
                 TrySwitchConnection(CurrentTenant.WriteConnectionString);
 
-            var count = saveChangesFactory.Invoke();
+            processAction.Invoke();
+
+            // Restore Default Connection
+            if (CurrentTenant.WriteConnectionSeparation)
+                TrySwitchConnection(CurrentTenant.DefaultConnectionString);
+        }
+        /// <summary>
+        /// 切换数据库连接执行。
+        /// </summary>
+        /// <typeparam name="TResult">指定的结果类型。</typeparam>
+        /// <param name="processFactory">给定的处理工厂方法。</param>
+        /// <returns>返回结果实例。</returns>
+        public virtual TResult SwitchConnectionProcess<TResult>(Func<TResult> processFactory)
+        {
+            // Switch Write Connection
+            if (CurrentTenant.WriteConnectionSeparation)
+                TrySwitchConnection(CurrentTenant.WriteConnectionString);
+
+            var output = processFactory.Invoke();
 
             // Restore Default Connection
             if (CurrentTenant.WriteConnectionSeparation)
                 TrySwitchConnection(CurrentTenant.DefaultConnectionString);
 
-            if (audits?.Count > 0)
-                BuilderOptions.PublishAuditEvent?.Invoke(this, audits);
-
-            return count;
-        }
-
-
-        /// <summary>
-        /// 开始创建模型。
-        /// </summary>
-        /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ConfigureAbstractDbContext(BuilderOptions);
-
-            base.OnModelCreating(modelBuilder);
+            return output;
         }
 
 
@@ -363,6 +430,6 @@ namespace Librame.Extensions.Data
                     goto case ConnectionState.Open;
             }
         }
-
     }
+
 }

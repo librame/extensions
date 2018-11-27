@@ -27,34 +27,23 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部验证码服务。
     /// </summary>
-    internal class InternalCaptchaService : AbstractService<InternalCaptchaService>, ICaptchaService
+    internal class InternalCaptchaService : AbstractService<InternalCaptchaService, DrawingBuilderOptions>, ICaptchaService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalCaptchaService"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{DefaultDrawingBuilderOptions}"/></param>
+        /// <param name="builderOptions">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalCaptchaService}"/>。</param>
-        public InternalCaptchaService(IOptions<DrawingBuilderOptions> options, ILogger<InternalCaptchaService> logger)
-            : base(logger)
+        public InternalCaptchaService(IOptions<DrawingBuilderOptions> builderOptions, ILogger<InternalCaptchaService> logger)
+            : base(builderOptions, logger)
         {
-            Options = options.Value;
-            FontFileLocator = Options.Watermark.Font.FileLocator
-                .NotDefault(nameof(DrawingBuilderOptions.Watermark.Font.FileLocator));
         }
 
 
         /// <summary>
-        /// 绘图选项。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="DrawingBuilderOptions"/>。
-        /// </value>
-        public DrawingBuilderOptions Options { get; }
-
-        /// <summary>
         /// 水印字体文件定位器。
         /// </summary>
-        public IFileLocator FontFileLocator { get; }
+        public IFileLocator FontFileLocator => BuilderOptions.Captcha.Font.FileLocator;
 
 
         /// <summary>
@@ -132,14 +121,15 @@ namespace Librame.Extensions.Drawing
         {
             Logger.LogDebug($"Captcha text: {captcha}");
 
-            var bgColor = SKColor.Parse(Options.Captcha.Colors.BackgroundHex);
+            var colorOptions = BuilderOptions.Captcha.Colors;
+            var bgColor = SKColor.Parse(colorOptions.BackgroundHex);
 
             var sizeAndPoints = ComputeSizeAndPoints(captcha);
             var imageSize = sizeAndPoints.Size;
             var imageInfo = new SKImageInfo(imageSize.Width, imageSize.Height,
                 SKColorType.Bgra8888, SKAlphaType.Premul);
             
-            var skFormat = Options.ImageFormat.AsOutputEnumFieldByName<ImageFormat, SKEncodedImageFormat>();
+            var skFormat = BuilderOptions.ImageFormat.AsOutputEnumFieldByName<ImageFormat, SKEncodedImageFormat>();
 
             using (var bmp = new SKBitmap(imageInfo))
             {
@@ -157,10 +147,10 @@ namespace Librame.Extensions.Drawing
                     }
 
                     // 绘制验证码
-                    using (var foreFont = CreateFontPaint(Options.Captcha.Colors.ForeHex))
+                    using (var foreFont = CreateFontPaint(colorOptions.ForeHex))
                     {
-                        using (var alterFont = string.IsNullOrEmpty(Options.Captcha.Colors.AlternateHex)
-                            ? foreFont : CreateFontPaint(Options.Captcha.Colors.AlternateHex))
+                        using (var alterFont = string.IsNullOrEmpty(colorOptions.AlternateHex)
+                            ? foreFont : CreateFontPaint(colorOptions.AlternateHex))
                         {
                             foreach (var p in sizeAndPoints.Points)
                             {
@@ -176,7 +166,7 @@ namespace Librame.Extensions.Drawing
 
                     using (var img = SKImage.FromBitmap(bmp))
                     {
-                        using (var data = img.Encode(skFormat, Options.Quality))
+                        using (var data = img.Encode(skFormat, BuilderOptions.Quality))
                         {
                             postAction.Invoke(data);
                         }
@@ -196,7 +186,7 @@ namespace Librame.Extensions.Drawing
             var points = new Dictionary<int, KeyValuePair<string, SKPoint>>();
             var size = new Size();
 
-            using (var foreFont = CreateFontPaint(Options.Captcha.Colors.ForeHex))
+            using (var foreFont = CreateFontPaint(BuilderOptions.Captcha.Colors.ForeHex))
             {
                 var paddingHeight = (int)foreFont.TextSize;
                 var paddingWidth = paddingHeight / 2;
@@ -250,7 +240,7 @@ namespace Librame.Extensions.Drawing
             paint.Color = SKColor.Parse(colorHexString);
             // paint.StrokeCap = SKStrokeCap.Round;
             paint.Typeface = SKTypeface.FromFile(FontFileLocator.Source);
-            paint.TextSize = Options.Watermark.Font.Size;
+            paint.TextSize = BuilderOptions.Watermark.Font.Size;
 
             return paint;
         }
@@ -262,8 +252,8 @@ namespace Librame.Extensions.Drawing
         /// <returns>返回字体对象。</returns>
         private SKPaint CreateNoiseFontPaint()
         {
-            var colors = Options.Captcha.Colors;
-            var noises = Options.Captcha.Noise;
+            var colors = BuilderOptions.Captcha.Colors;
+            var noises = BuilderOptions.Captcha.Noise;
 
             var paint = new SKPaint();
             paint.IsAntialias = true;
@@ -282,7 +272,7 @@ namespace Librame.Extensions.Drawing
         /// <returns>返回噪点集合。</returns>
         private SKPoint[] CreateNoisePoints(Size imageSize)
         {
-            var noises = Options.Captcha.Noise;
+            var noises = BuilderOptions.Captcha.Noise;
 
             var points = new List<SKPoint>();
 

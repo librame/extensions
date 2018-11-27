@@ -10,20 +10,17 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Buffers
 {
     /// <summary>
-    /// 每月分表选项。
+    /// 只读字节缓冲区接口。
     /// </summary>
-    public class EveryMonthShardingOptions : ShardingOptions
+    public interface IReadOnlyByteBuffer : IReadOnlyBuffer<byte>
     {
         /// <summary>
-        /// 构造一个 <see cref="EveryMonthShardingOptions"/> 实例。
+        /// 创建只读副本。
         /// </summary>
-        public EveryMonthShardingOptions()
-            : base(EveryMonthShardingRule.Keys.EntitiesMonth, typeof(EveryMonthShardingRule))
-        {
-        }
-
+        /// <returns>返回 <see cref="IReadOnlyByteBuffer"/>。</returns>
+        new IReadOnlyByteBuffer CopyReadOnly();
     }
 }

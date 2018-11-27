@@ -18,54 +18,44 @@ namespace Librame.Buffers
     /// 缓冲区接口。
     /// </summary>
     /// <typeparam name="T">指定的类型。</typeparam>
-    public interface IBuffer<T> : IReadOnlyBuffer<T>
+    public interface IBuffer<T> : IReadOnlyBuffer<T>, IEquatable<IBuffer<T>>
     {
         /// <summary>
         /// 存储器。
         /// </summary>
-        new Memory<T> Memory { get; }
+        /// <value>返回 <see cref="Memory{T}"/>。</value>
+        Memory<T> Memory { get; set; }
 
 
         /// <summary>
         /// 创建副本。
         /// </summary>
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        new IBuffer<T> Copy();
+        IBuffer<T> Copy();
 
-
+        
         /// <summary>
-        /// 改变存储器。
+        /// 是否相等。
         /// </summary>
-        /// <param name="changeFactory">给定改变存储器的工厂方法。</param>
-        /// <returns>返回 <see cref="IBuffer{TBuffer}"/>。</returns>
-        IBuffer<T> ChangeMemory(Func<Memory<T>, ReadOnlyMemory<T>> changeFactory);
-
+        /// <param name="other">给定的 <see cref="IBuffer{T}"/>。</param>
+        /// <param name="compareReadOnly">是否同时比较只读缓冲区。</param>
+        /// <returns>返回 <see cref="bool"/>。</returns>
+        bool Equals(IBuffer<T> other, bool compareReadOnly);
+        
         /// <summary>
-        /// 改变存储器。
+        /// 是否相等。
         /// </summary>
-        /// <param name="readOnlyMemory">给定的 <see cref="ReadOnlyMemory{T}"/>。</param>
-        /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        IBuffer<T> ChangeMemory(ReadOnlyMemory<T> readOnlyMemory);
+        /// <param name="obj">给定的对象。</param>
+        /// <param name="compareReadOnly">是否同时比较只读缓冲区。</param>
+        /// <returns>返回 <see cref="bool"/>。</returns>
+        bool Equals(object obj, bool compareReadOnly);
 
+        
         /// <summary>
-        /// 改变存储器。
+        /// 获取哈希码。
         /// </summary>
-        /// <param name="changeFactory">给定改变存储器的工厂方法。</param>
-        /// <returns>返回 <see cref="IBuffer{TBuffer}"/>。</returns>
-        IBuffer<T> ChangeMemory(Func<Memory<T>, Memory<T>> changeFactory);
-
-        /// <summary>
-        /// 改变存储器。
-        /// </summary>
-        /// <param name="memory">给定的存储器。</param>
-        /// <returns>返回 <see cref="IBuffer{TBuffer}"/>。</returns>
-        IBuffer<T> ChangeMemory(Memory<T> memory);
-
-
-        /// <summary>
-        /// 清空存储器。
-        /// </summary>
-        /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        IBuffer<T> ClearMemory();
+        /// <param name="andReadOnly">是否加入只读缓冲区。</param>
+        /// <returns>返回 <see cref="int"/>。</returns>
+        int GetHashCode(bool andReadOnly);
     }
 }

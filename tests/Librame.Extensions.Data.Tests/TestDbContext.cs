@@ -6,7 +6,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
     
-    public interface ITestDbContext : IDbContext<DataBuilderOptions>
+    public interface ITestDbContext : IDbContext<TestBuilderOptions>
     {
         DbSet<Category> Categories { get; set; }
 
@@ -14,11 +14,12 @@ namespace Librame.Extensions.Data.Tests
     }
 
 
-    public class TestDbContext : AbstractDbContext<TestDbContext, DataBuilderOptions>, ITestDbContext
+    public class TestDbContext : AbstractDbContext<TestDbContext, TestBuilderOptions>, ITestDbContext
     {
-        public TestDbContext(IChangeTrackerContext trackerContext, ITenantContext tenantContext,
-            IOptions<DataBuilderOptions> builderOptions, ILogger<TestDbContext> logger, DbContextOptions<TestDbContext> dbContextOptions)
-            : base(trackerContext, tenantContext, builderOptions, logger, dbContextOptions)
+        public TestDbContext(IOptions<TestBuilderOptions> builderOptions,
+            IChangeTrackerContext trackerContext, ITenantContext tenantContext,
+            ILogger<TestDbContext> logger, DbContextOptions<TestDbContext> dbContextOptions)
+            : base(builderOptions, trackerContext, tenantContext, logger, dbContextOptions)
         {
         }
 
@@ -32,7 +33,7 @@ namespace Librame.Extensions.Data.Tests
         {
             modelBuilder.Entity<Category>(category =>
             {
-                category.ToTable(new TableOptions(typeof(Category).Name.AsPluralize()));
+                category.ToTable(BuilderOptions.CategoryTable ?? new TableSchema<Category>());
 
                 category.HasKey(x => x.Id);
 
@@ -51,7 +52,7 @@ namespace Librame.Extensions.Data.Tests
 
             modelBuilder.Entity<Article>(article =>
             {
-                article.ToShardingTable(new EveryYearShardingOptions());
+                article.ToShardingTable(BuilderOptions.ArticleTable ?? new EveryYearShardingSchema());
 
                 article.HasKey(x => x.Id);
 

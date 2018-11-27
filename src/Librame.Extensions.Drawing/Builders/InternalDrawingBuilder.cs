@@ -19,7 +19,7 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部图画构建器。
     /// </summary>
-    internal class InternalDrawingBuilder : DefaultBuilder, IDrawingBuilder
+    internal class InternalDrawingBuilder : Builder, IDrawingBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalDrawingBuilder"/> 实例。

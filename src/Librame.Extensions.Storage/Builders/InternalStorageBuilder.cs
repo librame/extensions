@@ -19,7 +19,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 内部存储构建器。
     /// </summary>
-    internal class InternalStorageBuilder : DefaultBuilder, IStorageBuilder
+    internal class InternalStorageBuilder : Builder, IStorageBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalStorageBuilder"/> 实例。

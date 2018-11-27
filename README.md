@@ -38,17 +38,16 @@
     
     // Register Librame
     services.AddLibrame()
-        .AddData()
-        .AddDbContext<ITestDbContext, TestDbContext>(options =>
+        .AddData(options =>
         {
-            options.Connection.DefaultString = "default database connection string";
-            options.Connection.WriteString = "write database connection string";
-            options.Connection.WriteSeparation = true;
-
-            var migrationsAssembly = "AssemblyName";
-            options.ConfigureDbContext = builder =>
-                builder.UseSqlServer(options.Connection.DefaultString,
-                    sql => sql.MigrationsAssembly(migrationsAssembly));
+            options.LocalTenant.DefaultConnectionString = "default database connection string";
+            options.LocalTenant.WriteConnectionString = "write database connection string";
+            options.LocalTenant.WriteConnectionSeparation = true;
+        })
+        .AddDbContext<ITestDbContext, TestDbContext>((options, optionsBuilder) =>
+        {
+            optionsBuilder.UseSqlServer(options.LocalTenant.DefaultConnectionString,
+                sql => sql.MigrationsAssembly("AssemblyName"));
         });
     
     // Use Store
@@ -74,7 +73,7 @@
     }
     
     // Store
-    public interface ITestStore
+    public interface ITestStore : IStore
     {
         IList<Category> GetCategories();
 
@@ -85,35 +84,33 @@
 
         ITestStore UseWriteStore();
     }
-    public class TestStore : ITestStore
+    public class TestStore : AbstractStore<ITestDbContext>, ITestStore
     {
-        private readonly ITestDbContext _dbContext;
-
         public TestStore(ITestDbContext dbContext)
+            : base(dbContext)
         {
-            _dbContext = dbContext;
         }
         
         public IList<Category> GetCategories()
         {
-            return _dbContext.Categories.ToList();
+            return DbContext.Categories.ToList();
         }
 
         public IPagingList<Article> GetArticles()
         {
-            return _dbContext.Articles.AsPagingByIndex(order => order.OrderBy(a => a.Id), 1, 10);
+            return DbContext.Articles.AsPagingByIndex(order => order.OrderBy(a => a.Id), 1, 10);
         }
 
 
         public ITestStore UseDefaultStore()
         {
-            _dbContext.TrySwitchConnection(options => options.DefaultString);
+            DbContext.TrySwitchConnection(options => options.DefaultString);
             return this;
         }
 
         public ITestStore UseWriteStore()
         {
-            _dbContext.TrySwitchConnection(options => options.WriteString);
+            DbContext.TrySwitchConnection(options => options.WriteString);
             return this;
         }
     }
@@ -324,11 +321,8 @@
     
     // Register Librame
     services.AddLibrame()
-        .AddNetwork()
-        .ConfigureEncryption(builder =>
-        {
-            builder.AddDeveloperSigningCredentials();
-        });
+        .AddEncryption().AddDeveloperGlobalSigningCredentials()
+        .AddNetwork();
     
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();
@@ -415,15 +409,12 @@
     // Use DependencyInjection
     var services = new ServiceCollection();
     
+    var locator = "dotnetty.com.pfx".AsDefaultFileLocator("BasePath");
+    
     // Register Librame
     services.AddLibrame()
-        .AddNetwork()
-        .AddDotNetty()
-        .ConfigureEncryption(builder =>
-        {
-            var locator = "dotnetty.com.pfx".AsDefaultFileLocator("BasePath");
-            builder.AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"));
-        });
+        .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
+        .AddNetwork().AddDotNetty();
     
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();

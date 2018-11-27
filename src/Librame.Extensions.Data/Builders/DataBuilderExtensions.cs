@@ -31,37 +31,40 @@ namespace Librame.Builders
         /// 添加数据扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="builderOptions">给定的 <see cref="DataBuilderOptions"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{DataBuilderOptions}"/>（可选）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="postConfigureOptions">给定的 <see cref="Action{DataBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddData(this IBuilder builder, DataBuilderOptions builderOptions = null,
-            IConfiguration configuration = null, Action<DataBuilderOptions> postConfigureOptions = null)
+        public static IDataBuilder AddData(this IBuilder builder,
+            Action<DataBuilderOptions> configureOptions = null, IConfiguration configuration = null)
         {
-            return builder.AddData<DataBuilderOptions>(builderOptions ?? new DataBuilderOptions(),
-                configuration, postConfigureOptions);
+            return builder.AddData<DataBuilderOptions>(configureOptions, configuration);
         }
         /// <summary>
         /// 添加数据扩展。
         /// </summary>
+        /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="builderOptions">给定的构建器选项。</param>
+        /// <param name="configureOptions">给定的构建器选项配置动作（可选）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="postConfigureOptions">给定的 <see cref="Action{TBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddData<TBuilderOptions>(this IBuilder builder, TBuilderOptions builderOptions,
-            IConfiguration configuration = null, Action<TBuilderOptions> postConfigureOptions = null)
-            where TBuilderOptions : DataBuilderOptions
+        public static IDataBuilder AddData<TBuilderOptions>(this IBuilder builder,
+            Action<TBuilderOptions> configureOptions = null, IConfiguration configuration = null)
+            where TBuilderOptions : DataBuilderOptions, new()
         {
-            if (builderOptions.AuditPropertyTable.IsDefault())
-                builderOptions.AuditPropertyTable = new EveryWeekShardingOptions();
-
-            return builder.AddBuilder(b =>
+            Action<TBuilderOptions> _configureOptions = options =>
             {
-                return b.AsDataBuilder()
+                options.AuditTable = new TableSchema<Audit>();
+                options.AuditPropertyTable = new EveryWeekShardingSchema();
+                options.TenantTable = new TableSchema<Tenant>();
+
+                configureOptions?.Invoke(options);
+            };
+
+            return builder.AddBuilder(_configureOptions, configuration, _builder =>
+            {
+                return _builder.AsDataBuilder()
                     .AddChangeHandlers();
-            },
-            typeof(DataBuilderOptions), builderOptions, configuration, postConfigureOptions);
+            });
         }
 
 
@@ -103,9 +106,24 @@ namespace Librame.Builders
             Action<DataBuilderOptions, DbContextOptionsBuilder> configureOptions = null)
             where TDbContext : DbContext, IDbContext
         {
+            return builder.AddDbContext<TDbContext, DataBuilderOptions>(configureOptions);
+        }
+        /// <summary>
+        /// 添加数据库上下文。
+        /// </summary>
+        /// <typeparam name="TDbContext">指定的数据库上下文类型。</typeparam>
+        /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{TBuilderOptions, DbContextOptionsBuilder}"/>（可选）。</param>
+        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        public static IDataBuilder AddDbContext<TDbContext, TBuilderOptions>(this IDataBuilder builder,
+            Action<TBuilderOptions, DbContextOptionsBuilder> configureOptions = null)
+            where TDbContext : DbContext, IDbContext
+            where TBuilderOptions : DataBuilderOptions, new()
+        {
             builder.Services.AddDbContext<TDbContext>((provider, optionsBuilder) =>
             {
-                var options = provider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
+                var options = provider.GetRequiredService<IOptions<TBuilderOptions>>().Value;
                 configureOptions?.Invoke(options, optionsBuilder);
             });
 
@@ -125,7 +143,24 @@ namespace Librame.Builders
             where TDbContextService : class, IDbContext
             where TDbContextImplementation : DbContext, TDbContextService
         {
-            builder.AddDbContext<TDbContextImplementation>(configureOptions);
+            return builder.AddDbContext<TDbContextService, TDbContextImplementation, DataBuilderOptions>(configureOptions);
+        }
+        /// <summary>
+        /// 添加数据库上下文。
+        /// </summary>
+        /// <typeparam name="TDbContextService">指定的数据库上下文服务类型。</typeparam>
+        /// <typeparam name="TDbContextImplementation">指定的数据库上下文实现类型。</typeparam>
+        /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{TBuilderOptions, DbContextOptionsBuilder}"/>（可选）。</param>
+        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        public static IDataBuilder AddDbContext<TDbContextService, TDbContextImplementation, TBuilderOptions>(this IDataBuilder builder,
+            Action<TBuilderOptions, DbContextOptionsBuilder> configureOptions = null)
+            where TDbContextService : class, IDbContext
+            where TDbContextImplementation : DbContext, TDbContextService
+            where TBuilderOptions : DataBuilderOptions, new()
+        {
+            builder.AddDbContext<TDbContextImplementation, TBuilderOptions>(configureOptions);
 
             builder.Services.AddScoped<TDbContextService>(provider =>
             {

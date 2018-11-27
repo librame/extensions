@@ -25,17 +25,22 @@ namespace Librame.Extensions
         /// <summary>
         /// 配置抽象数据库上下文。
         /// </summary>
+        /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        /// <param name="builderOptions">给定的 <see cref="DataBuilderOptions"/>。</param>
-        public static void ConfigureAbstractDbContext(this ModelBuilder modelBuilder, DataBuilderOptions builderOptions)
+        /// <param name="builderOptions">给定的构建器选项（可选）。</param>
+        public static void ConfigureAbstractDbContext<TBuilderOptions>(this ModelBuilder modelBuilder, TBuilderOptions builderOptions = null)
+            where TBuilderOptions : DataBuilderOptions, new()
         {
+            if (builderOptions.IsDefault())
+                builderOptions = new TBuilderOptions();
+
             if (builderOptions.DefaultSchema.IsNotEmpty())
                 modelBuilder.HasDefaultSchema(builderOptions.DefaultSchema);
 
             // 审计
             modelBuilder.Entity<Audit>(audit =>
             {
-                audit.ToTable(builderOptions.AuditTable);
+                audit.ToTable(builderOptions.AuditTable ?? new TableSchema<Audit>());
 
                 audit.HasKey(x => x.Id);
 
@@ -54,7 +59,7 @@ namespace Librame.Extensions
             // 审计属性
             modelBuilder.Entity<AuditProperty>(auditProperty =>
             {
-                auditProperty.ToShardingTable(builderOptions.AuditPropertyTable);
+                auditProperty.ToShardingTable(builderOptions.AuditPropertyTable ?? new EveryWeekShardingSchema());
 
                 auditProperty.HasKey(x => x.Id);
 
@@ -69,7 +74,7 @@ namespace Librame.Extensions
             // 租户
             modelBuilder.Entity<Tenant>(tenant =>
             {
-                tenant.ToTable(builderOptions.TenantTable);
+                tenant.ToTable(builderOptions.TenantTable ?? new TableSchema<Tenant>());
 
                 tenant.HasKey(x => x.Id);
 

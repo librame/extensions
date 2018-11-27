@@ -15,12 +15,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Storage
 {
-    using Services;
-
     /// <summary>
     /// 文件写入器接口。
     /// </summary>
-    public interface IFileWriter : IService
+    public interface IFileWriter : IStorageService
     {
         /// <summary>
         /// 异步另存为文件。

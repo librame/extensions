@@ -10,20 +10,17 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Buffers
 {
     /// <summary>
-    /// 每年分表选项。
+    /// 字节缓冲区接口。
     /// </summary>
-    public class EveryYearShardingOptions : ShardingOptions
+    public interface IByteBuffer : IBuffer<byte>, IReadOnlyByteBuffer
     {
         /// <summary>
-        /// 构造一个 <see cref="EveryYearShardingOptions"/> 实例。
+        /// 创建副本。
         /// </summary>
-        public EveryYearShardingOptions()
-            : base(EveryYearShardingRule.Keys.EntitiesYear, typeof(EveryYearShardingRule))
-        {
-        }
-
+        /// <returns>返回 <see cref="ICharBuffer"/>。</returns>
+        new IByteBuffer Copy();
     }
 }

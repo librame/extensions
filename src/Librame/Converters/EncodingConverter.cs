@@ -19,25 +19,25 @@ namespace Librame.Converters
     using Extensions;
 
     /// <summary>
-    /// 默认字符编码转换器。
+    /// 字符编码转换器。
     /// </summary>
-    public class DefaultEncodingConverter : AbstractConverter<string, IBuffer<byte>>, IEncodingConverter
+    public class EncodingConverter : AbstractConverter<string, IByteBuffer>, IEncodingConverter
     {
         /// <summary>
-        /// 记录器。
+        /// 构造一个 <see cref="EncodingConverter"/> 实例。
         /// </summary>
-        protected ILogger Logger;
-
-
-        /// <summary>
-        /// 构造一个 <see cref="DefaultEncodingConverter"/> 实例。
-        /// </summary>
-        /// <param name="logger">给定的 <see cref="ILogger{DefaultEncodingConverter}"/>。</param>
-        public DefaultEncodingConverter(ILogger<DefaultEncodingConverter> logger)
+        /// <param name="logger">给定的 <see cref="ILogger{EncodingConverter}"/>。</param>
+        public EncodingConverter(ILogger<EncodingConverter> logger)
         {
             Logger = logger;
         }
 
+
+        /// <summary>
+        /// 记录器。
+        /// </summary>
+        /// <value>返回 <see cref="ILogger"/>。</value>
+        protected ILogger Logger { get; }
 
         /// <summary>
         /// 字符编码（默认使用 <see cref="Encoding.UTF8"/>）。
@@ -50,9 +50,9 @@ namespace Librame.Converters
         /// </summary>
         /// <param name="source">给定的明文字符串。</param>
         /// <returns>返回缓冲区。</returns>
-        public override IBuffer<byte> ToResult(string source)
+        public override IByteBuffer ToResult(string source)
         {
-            var buffer = source.AsEncodingBytes(Encoding).AsBuffer();
+            var buffer = source.AsEncodingBytes(Encoding).AsByteBuffer();
             Logger.LogDebug($"Encoding to bytes: {source}");
 
             return buffer;
@@ -63,7 +63,7 @@ namespace Librame.Converters
         /// </summary>
         /// <param name="result">给定的缓冲区。</param>
         /// <returns>返回字符串。</returns>
-        public override string ToSource(IBuffer<byte> result)
+        public override string ToSource(IByteBuffer result)
         {
             var str = result.Memory.ToArray().FromEncodingBytes(Encoding);
             Logger.LogDebug($"Encoding to string: {str}");

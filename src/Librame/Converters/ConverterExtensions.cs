@@ -31,9 +31,9 @@ namespace Librame.Extensions
         /// <returns>返回 <see cref="IEncodingConverter"/>。</returns>
         public static IEncodingConverter AsEncodingConverter(this Encoding encoding, ILoggerFactory loggerFactory)
         {
-            var logger = loggerFactory.CreateLogger<DefaultEncodingConverter>();
+            var logger = loggerFactory.CreateLogger<EncodingConverter>();
 
-            return new DefaultEncodingConverter(logger)
+            return new EncodingConverter(logger)
             {
                 Encoding = encoding.NotDefault(nameof(encoding))
             };

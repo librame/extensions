@@ -10,21 +10,24 @@
 
 #endregion
 
-namespace Librame.Locators
+namespace Librame.Buffers
 {
     /// <summary>
-    /// 默认文件定位器。
+    /// 字符缓冲区接口。
     /// </summary>
-    public class DefaultFileLocator : AbstractFileLocator, IFileLocator
+    public interface ICharBuffer : IBuffer<char>, IReadOnlyCharBuffer
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractFileLocator"/> 实例。
+        /// 创建副本。
         /// </summary>
-        /// <param name="fileName">给定的文件名。</param>
-        public DefaultFileLocator(string fileName)
-            : base(fileName)
-        {
-        }
+        /// <returns>返回 <see cref="ICharBuffer"/>。</returns>
+        new ICharBuffer Copy();
 
+
+        /// <summary>
+        /// 获取字符串。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        string GetString();
     }
 }

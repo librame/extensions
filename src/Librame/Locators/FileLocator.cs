@@ -10,23 +10,21 @@
 
 #endregion
 
-namespace Librame.Buffers
+namespace Librame.Locators
 {
     /// <summary>
-    /// 字符串只读缓冲区接口。
+    /// 文件定位器。
     /// </summary>
-    public interface IStringReadOnlyBuffer : IReadOnlyBuffer<char>
+    public class FileLocator : AbstractFileLocator, IFileLocator
     {
         /// <summary>
-        /// 原始字符串。
+        /// 构造一个 <see cref="AbstractFileLocator"/> 实例。
         /// </summary>
-        string RawString { get; }
+        /// <param name="fileName">给定的文件名。</param>
+        public FileLocator(string fileName)
+            : base(fileName)
+        {
+        }
 
-
-        /// <summary>
-        /// 创建副本。
-        /// </summary>
-        /// <returns>返回 <see cref="IStringReadOnlyBuffer"/>。</returns>
-        new IStringReadOnlyBuffer Copy();
     }
 }

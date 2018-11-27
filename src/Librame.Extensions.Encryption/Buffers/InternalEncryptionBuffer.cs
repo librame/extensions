@@ -21,7 +21,7 @@ namespace Librame.Extensions.Encryption
     /// </summary>
     /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
     /// <typeparam name="TSource">指定的来源类型。</typeparam>
-    internal class InternalEncryptionBuffer<TConverter, TSource> : DefaultBuffer<byte>, IEncryptionBuffer<TConverter, TSource>
+    internal class InternalEncryptionBuffer<TConverter, TSource> : ByteBuffer, IEncryptionBuffer<TConverter, TSource>
         where TConverter : IAlgorithmConverter<TSource>
     {
         /// <summary>
@@ -30,7 +30,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="converter">给定的转换器。</param>
         /// <param name="source">给定的来源实例。</param>
         public InternalEncryptionBuffer(TConverter converter, TSource source)
-            : this(converter, source, converter.ToResult(source).Memory)
+            : this(converter, source, converter.ToResult(source))
         {
         }
 
@@ -39,13 +39,12 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="converter">给定的转换器。</param>
         /// <param name="source">给定的来源实例。</param>
-        /// <param name="memory">给定的存储器。</param>
-        internal InternalEncryptionBuffer(TConverter converter, TSource source, Memory<byte> memory)
+        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
+        internal InternalEncryptionBuffer(TConverter converter, TSource source, IByteBuffer buffer)
+            : base(buffer.Memory)
         {
             Converter = converter;
             Source = source;
-
-            ChangeMemory(memory);
         }
 
 
@@ -84,7 +83,6 @@ namespace Librame.Extensions.Encryption
         public IEncryptionBuffer<TConverter, TSource> ApplyServiceProvider(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-
             return this;
         }
 
@@ -95,8 +93,12 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IEncryptionBuffer{TConverter, TSource}"/>。</returns>
         public new IEncryptionBuffer<TConverter, TSource> Copy()
         {
-            return new InternalEncryptionBuffer<TConverter, TSource>(Converter, Source, Memory)
-                .ApplyServiceProvider(ServiceProvider);
+            var buffer = new InternalEncryptionBuffer<TConverter, TSource>(Converter, Source, this);
+
+            if (_serviceProvider.IsNotDefault())
+                buffer.ApplyServiceProvider(_serviceProvider);
+
+            return buffer;
         }
 
     }

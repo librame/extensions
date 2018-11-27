@@ -20,23 +20,12 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 网络服务接口。
     /// </summary>
-    public interface INetworkService : IService
+    public interface INetworkService : IService<NetworkBuilderOptions>
     {
         /// <summary>
-        /// 散列算法。
+        /// 散列算法（默认不使用）。
         /// </summary>
-        /// <value>
-        /// 返回 <see cref="IHashAlgorithmService"/>。
-        /// </value>
-        IHashAlgorithmService Hash { get; }
-
-        /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="NetworkBuilderOptions"/>。
-        /// </value>
-        NetworkBuilderOptions Options { get; }
+        IHashAlgorithmService Hash { get; set; }
 
         /// <summary>
         /// 字符编码（默认使用 <see cref="Encoding.UTF8"/>）。

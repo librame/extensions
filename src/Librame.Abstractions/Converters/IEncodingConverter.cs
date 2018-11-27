@@ -19,7 +19,7 @@ namespace Librame.Converters
     /// <summary>
     /// 字符编码转换器接口。
     /// </summary>
-    public interface IEncodingConverter : IConverter<string, IBuffer<byte>>
+    public interface IEncodingConverter : IConverter<string, IByteBuffer>
     {
         /// <summary>
         /// 字符编码。

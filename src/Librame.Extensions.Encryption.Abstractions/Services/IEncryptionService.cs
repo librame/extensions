@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 加密服务接口。
     /// </summary>
-    public interface IEncryptionService : IService
+    public interface IEncryptionService : IService<EncryptionBuilderOptions>
     {
     }
 }

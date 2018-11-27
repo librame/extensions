@@ -4,11 +4,11 @@ namespace Librame.Locators.Tests
 {
     using Extensions;
 
-    public class DefaultFileLocatorTests
+    public class FileLocatorTests
     {
 
         [Fact]
-        public void FileLocatorTest()
+        public void ChangeBasePathTest()
         {
             var path = @"c:\test\file.ext";
 

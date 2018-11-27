@@ -16,12 +16,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Storage
 {
-    using Services;
-
     /// <summary>
     /// 文件读取器接口。
     /// </summary>
-    public interface IFileReader : IService
+    public interface IFileReader : IStorageService
     {
         /// <summary>
         /// 异步复制文件。

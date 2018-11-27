@@ -28,39 +28,22 @@ namespace Librame.Builders
         /// 添加存储扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="builderOptions">给定的 <see cref="StorageBuilderOptions"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{StorageBuilderOptions}"/>（可选）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="postConfigureOptions">给定的 <see cref="Action{StorageBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
-        public static IStorageBuilder AddStorage(this IBuilder builder, StorageBuilderOptions builderOptions = null,
-            IConfiguration configuration = null, Action<StorageBuilderOptions> postConfigureOptions = null)
+        public static IStorageBuilder AddStorage(this IBuilder builder,
+            Action<StorageBuilderOptions> configureOptions = null, IConfiguration configuration = null)
         {
-            return builder.AddStorage<StorageBuilderOptions>(builderOptions ?? new StorageBuilderOptions(),
-                configuration, postConfigureOptions);
-        }
-        /// <summary>
-        /// 添加存储扩展。
-        /// </summary>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="builderOptions">给定的构建器选项。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选）。</param>
-        /// <param name="postConfigureOptions">给定的 <see cref="Action{TBuilderOptions}"/>（可选）。</param>
-        /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
-        public static IStorageBuilder AddStorage<TBuilderOptions>(this IBuilder builder, TBuilderOptions builderOptions,
-            IConfiguration configuration = null, Action<TBuilderOptions> postConfigureOptions = null)
-            where TBuilderOptions : StorageBuilderOptions
-        {
-            return builder.AddBuilder(b =>
+            return builder.AddBuilder(configureOptions, configuration, _builder =>
             {
-                return b.AsStorageBuilder()
+                return _builder.AsStorageBuilder()
                     .AddFileSystem();
-            },
-            typeof(StorageBuilderOptions), builderOptions, configuration, postConfigureOptions);
+            });
         }
 
 
         /// <summary>
-        /// 转换为内部存储构建器。
+        /// 转换为存储构建器。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>

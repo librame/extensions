@@ -13,16 +13,19 @@
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 每周分表选项。
+    /// 抽象日期分表规则。
     /// </summary>
-    public class EveryWeekShardingOptions : ShardingOptions
+    public abstract class AbstractDateShardingRule : AbstractShardingRule
     {
         /// <summary>
-        /// 构造一个 <see cref="EveryWeekShardingOptions"/> 实例。
+        /// 转换为表架构。
         /// </summary>
-        public EveryWeekShardingOptions()
-            : base(EveryWeekShardingRule.Keys.EntitiesWeek, typeof(EveryWeekShardingRule))
+        /// <param name="name">给定的表名。</param>
+        /// <param name="schema">给定的架构。</param>
+        /// <returns>返回 <see cref="ITableSchema"/>。</returns>
+        protected override ITableSchema ToTable(string name, string schema)
         {
+            return new TableSchema(name).TryApplySchema(schema);
         }
 
     }

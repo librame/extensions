@@ -67,7 +67,7 @@ namespace Librame.Builders
 
             var builder = services.AsBuilder();
 
-            return builder.AddBuffers()
+            return builder
                 .AddConverters()
                 .AddResources();
         }
@@ -80,7 +80,7 @@ namespace Librame.Builders
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AsBuilder(this IServiceCollection services)
         {
-            return new DefaultBuilder(services);
+            return new Builder(services);
         }
 
     }

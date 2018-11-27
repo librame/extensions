@@ -5,7 +5,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
     
-    public interface ITestStore : IStore<DataBuilderOptions>
+    public interface ITestStore : IStore<TestBuilderOptions>
     {
         IList<Category> GetCategories();
 
@@ -18,7 +18,7 @@ namespace Librame.Extensions.Data.Tests
     }
 
 
-    public class TestStore : AbstractStore<ITestDbContext, DataBuilderOptions>, ITestStore
+    public class TestStore : AbstractStore<ITestDbContext, TestBuilderOptions>, ITestStore
     {
         public TestStore(ITestDbContext dbContext)
             : base(dbContext)

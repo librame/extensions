@@ -22,7 +22,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部 RSA 非对称算法服务。
     /// </summary>
-    internal class InternalRsaAlgorithmService : AbstractService<InternalRsaAlgorithmService>, IRsaAlgorithmService
+    internal class InternalRsaAlgorithmService : AbstractService<InternalRsaAlgorithmService, EncryptionBuilderOptions>, IRsaAlgorithmService
     {
         private RSA _rsa = null;
 
@@ -31,14 +31,13 @@ namespace Librame.Extensions.Encryption
         /// 构造一个 <see cref="InternalRsaAlgorithmService"/> 实例。
         /// </summary>
         /// <param name="provider">给定的 <see cref="ISigningCredentialsProvider"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DefaultEncryptionBuilderOptions}"/>。</param>
+        /// <param name="builderOptions">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalRsaAlgorithmService}"/>。</param>
-        public InternalRsaAlgorithmService(ISigningCredentialsProvider provider, IOptions<EncryptionBuilderOptions> options,
-            ILogger<InternalRsaAlgorithmService> logger)
-            : base(logger)
+        public InternalRsaAlgorithmService(ISigningCredentialsProvider provider,
+            IOptions<EncryptionBuilderOptions> builderOptions, ILogger<InternalRsaAlgorithmService> logger)
+            : base(builderOptions, logger)
         {
             Provider = provider.NotDefault(nameof(provider));
-            Options = options.NotDefault(nameof(options)).Value;
 
             InitializeRsa();
         }
@@ -47,7 +46,7 @@ namespace Librame.Extensions.Encryption
         {
             if (_rsa.IsDefault())
             {
-                var credentials = Provider.GetSigningCredentials(Options.SigningCredentialsKey);
+                var credentials = Provider.GetSigningCredentials(BuilderOptions.SigningCredentialsKey);
                 _rsa = credentials.ResolveRsa();
             }
         }
@@ -60,14 +59,6 @@ namespace Librame.Extensions.Encryption
         /// 返回 <see cref="ISigningCredentialsProvider"/>。
         /// </value>
         public ISigningCredentialsProvider Provider { get; }
-
-        /// <summary>
-        /// 加密构建器选项。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="EncryptionBuilderOptions"/>。
-        /// </value>
-        public EncryptionBuilderOptions Options { get; }
 
 
         /// <summary>
@@ -89,66 +80,66 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 签名数据。
         /// </summary>
-        /// <param name="buffer">给定要签名的 <see cref="IBuffer{Byte}"/>。</param>
-        /// <returns>返回签名后的 <see cref="IBuffer{Byte}"/>。</returns>
-        public virtual IBuffer<byte> SignData(IBuffer<byte> buffer)
+        /// <param name="buffer">给定要签名的 <see cref="IByteBuffer"/>。</param>
+        /// <returns>返回签名后的 <see cref="IByteBuffer"/>。</returns>
+        public virtual IByteBuffer SignData(IByteBuffer buffer)
         {
-            return buffer.ChangeMemory(memory => _rsa.SignData(memory.ToArray(), SignHashAlgorithm, SignaturePadding));
+            return buffer.Change(memory => _rsa.SignData(memory.ToArray(), SignHashAlgorithm, SignaturePadding));
         }
 
         /// <summary>
         /// 签名散列。
         /// </summary>
-        /// <param name="buffer">给定要签名的 <see cref="IBuffer{Byte}"/>。</param>
-        /// <returns>返回签名后的 <see cref="IBuffer{Byte}"/>。</returns>
-        public virtual IBuffer<byte> SignHash(IBuffer<byte> buffer)
+        /// <param name="buffer">给定要签名的 <see cref="IByteBuffer"/>。</param>
+        /// <returns>返回签名后的 <see cref="IByteBuffer"/>。</returns>
+        public virtual IByteBuffer SignHash(IByteBuffer buffer)
         {
-            return buffer.ChangeMemory(memory => _rsa.SignHash(memory.ToArray(), SignHashAlgorithm, SignaturePadding));
+            return buffer.Change(memory => _rsa.SignHash(memory.ToArray(), SignHashAlgorithm, SignaturePadding));
         }
 
 
         /// <summary>
         /// 验证数据。
         /// </summary>
-        /// <param name="buffer">给定要签名的 <see cref="IBuffer{Byte}"/>。</param>
+        /// <param name="buffer">给定要签名的 <see cref="IByteBuffer"/>。</param>
         /// <param name="signedBuffer">给定已签名的 <see cref="IReadOnlyBuffer{Byte}"/>。</param>
-        /// <returns>返回签名后的 <see cref="IBuffer{Byte}"/>。</returns>
-        public virtual bool VerifyData(IBuffer<byte> buffer, IReadOnlyBuffer<byte> signedBuffer)
+        /// <returns>返回签名后的 <see cref="IByteBuffer"/>。</returns>
+        public virtual bool VerifyData(IByteBuffer buffer, IReadOnlyBuffer<byte> signedBuffer)
         {
-            return _rsa.VerifyData(buffer.Memory.ToArray(), signedBuffer.Memory.ToArray(), SignHashAlgorithm, SignaturePadding);
+            return _rsa.VerifyData(buffer.Memory.ToArray(), signedBuffer.ReadOnlyMemory.ToArray(), SignHashAlgorithm, SignaturePadding);
         }
 
         /// <summary>
         /// 验证散列。
         /// </summary>
-        /// <param name="buffer">给定要签名的 <see cref="IBuffer{Byte}"/>。</param>
+        /// <param name="buffer">给定要签名的 <see cref="IByteBuffer"/>。</param>
         /// <param name="signedBuffer">给定已签名的 <see cref="IReadOnlyBuffer{Byte}"/>。</param>
-        /// <returns>返回签名后的 <see cref="IBuffer{Byte}"/>。</returns>
-        public virtual bool VerifyHash(IBuffer<byte> buffer, IReadOnlyBuffer<byte> signedBuffer)
+        /// <returns>返回签名后的 <see cref="IByteBuffer"/>。</returns>
+        public virtual bool VerifyHash(IByteBuffer buffer, IReadOnlyBuffer<byte> signedBuffer)
         {
-            return _rsa.VerifyHash(buffer.Memory.ToArray(), signedBuffer.Memory.ToArray(), SignHashAlgorithm, SignaturePadding);
+            return _rsa.VerifyHash(buffer.Memory.ToArray(), signedBuffer.ReadOnlyMemory.ToArray(), SignHashAlgorithm, SignaturePadding);
         }
 
 
         /// <summary>
-        /// 加密 <see cref="IBuffer{Byte}"/>。
+        /// 加密 <see cref="IByteBuffer"/>。
         /// </summary>
-        /// <param name="buffer">给定待加密的 <see cref="IBuffer{Byte}"/>。</param>
-        /// <returns>返回 <see cref="IBuffer{Byte}"/>。</returns>
-        public virtual IBuffer<byte> Encrypt(IBuffer<byte> buffer)
+        /// <param name="buffer">给定待加密的 <see cref="IByteBuffer"/>。</param>
+        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
+        public virtual IByteBuffer Encrypt(IByteBuffer buffer)
         {
-            return buffer.ChangeMemory(memory => _rsa.Encrypt(memory.ToArray(), EncryptionPadding));
+            return buffer.Change(memory => _rsa.Encrypt(memory.ToArray(), EncryptionPadding));
         }
 
 
         /// <summary>
-        /// 解密 <see cref="IBuffer{Byte}"/>。
+        /// 解密 <see cref="IByteBuffer"/>。
         /// </summary>
-        /// <param name="buffer">给定的加密 <see cref="IBuffer{Byte}"/>。</param>
-        /// <returns>返回 <see cref="IBuffer{Byte}"/>。</returns>
-        public virtual IBuffer<byte> Decrypt(IBuffer<byte> buffer)
+        /// <param name="buffer">给定的加密 <see cref="IByteBuffer"/>。</param>
+        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
+        public virtual IByteBuffer Decrypt(IByteBuffer buffer)
         {
-            return buffer.ChangeMemory(memory => _rsa.Decrypt(memory.ToArray(), EncryptionPadding));
+            return buffer.Change(memory => _rsa.Decrypt(memory.ToArray(), EncryptionPadding));
         }
 
     }

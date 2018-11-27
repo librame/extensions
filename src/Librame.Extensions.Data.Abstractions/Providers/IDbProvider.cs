@@ -21,20 +21,6 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据库提供程序接口。
     /// </summary>
-    /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public interface IDbProvider<TBuilderOptions> : IDbProvider
-        where TBuilderOptions : DataBuilderOptions
-    {
-        /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        TBuilderOptions BuilderOptions { get; }
-    }
-
-
-    /// <summary>
-    /// 数据库提供程序接口。
-    /// </summary>
     public interface IDbProvider : IDisposable
     {
         /// <summary>
@@ -98,6 +84,20 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         Task<int> SaveChangesAsync();
+
+
+        /// <summary>
+        /// 切换数据库连接执行。
+        /// </summary>
+        /// <param name="processAction">给定的处理动作。</param>
+        void SwitchConnectionProcess(Action processAction);
+        /// <summary>
+        /// 切换数据库连接执行。
+        /// </summary>
+        /// <typeparam name="TResult">指定的结果类型。</typeparam>
+        /// <param name="processFactory">给定的处理工厂方法。</param>
+        /// <returns>返回结果实例。</returns>
+        TResult SwitchConnectionProcess<TResult>(Func<TResult> processFactory);
 
 
         /// <summary>

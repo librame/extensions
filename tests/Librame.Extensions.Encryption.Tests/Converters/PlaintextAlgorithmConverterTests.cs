@@ -2,14 +2,12 @@
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    using Services;
-
-    public class DefaultPlaintextAlgorithmConverterTests
+    public class PlaintextAlgorithmConverterTests
     {
         [Fact]
         public void DefaultPlaintextAlgorithmConverterTest()
         {
-            var rawPlaintextString = nameof(DefaultPlaintextAlgorithmConverterTests);
+            var rawPlaintextString = nameof(PlaintextAlgorithmConverterTests);
             
             var converter = TestServiceProvider.Current.GetRequiredService<IPlaintextAlgorithmConverter>();
 

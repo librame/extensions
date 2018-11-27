@@ -18,14 +18,11 @@ namespace Librame.Extensions.Factorial.Client
 
             var services = new ServiceCollection();
 
+            var locator = "dotnetty.com.pfx".AsFileLocator(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
+
             services.AddLibrame(options => options.ReplaceLoggerFactory(loggerFactory))
-                .AddNetwork()
-                .AddDotNetty()
-                .ConfigureEncryption(builder =>
-                {
-                    var locator = "dotnetty.com.pfx".AsFileLocator(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
-                    builder.AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"));
-                });
+                .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
+                .AddNetwork().AddDotNetty();
 
             var serviceProvider = services.BuildServiceProvider();
             var client = serviceProvider.GetRequiredService<IFactorialClient>();

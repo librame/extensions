@@ -10,17 +10,20 @@
 
 #endregion
 
-namespace Librame.Buffers
+namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 字符串缓冲区接口。
+    /// 每周分表架构。
     /// </summary>
-    public interface IStringBuffer : IBuffer<char>, IStringReadOnlyBuffer
+    public class EveryWeekShardingSchema : ShardingSchema
     {
         /// <summary>
-        /// 创建副本。
+        /// 构造一个 <see cref="EveryWeekShardingSchema"/> 实例。
         /// </summary>
-        /// <returns>返回 <see cref="IStringBuffer"/>。</returns>
-        new IStringBuffer Copy();
+        public EveryWeekShardingSchema()
+            : base(EveryWeekShardingRule.Keys.EntitiesWeek, typeof(EveryWeekShardingRule))
+        {
+        }
+
     }
 }

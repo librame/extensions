@@ -43,6 +43,14 @@ namespace Librame.Extensions.Encryption
         /// </value>
         public IKeyGenerator KeyGenerator { get; }
 
+        /// <summary>
+        /// 构建器选项。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="EncryptionBuilderOptions"/>。
+        /// </value>
+        public EncryptionBuilderOptions BuilderOptions => KeyGenerator.BuilderOptions;
+
 
         /// <summary>
         /// 计算哈希。
@@ -50,9 +58,9 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
         /// <param name="hmac">给定的 <see cref="HMAC"/>。</param>
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        protected IBuffer<byte> ComputeHash(IBuffer<byte> buffer, HMAC hmac)
+        protected IByteBuffer ComputeHash(IByteBuffer buffer, HMAC hmac)
         {
-            return buffer.ChangeMemory(memory =>
+            return buffer.Change(memory =>
             {
                 var hash = hmac.ComputeHash(memory.ToArray());
                 Logger.LogDebug($"Compute HMAC hash: {hmac.HashName}");
@@ -68,7 +76,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        public virtual IBuffer<byte> HmacMd5(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer HmacMd5(IByteBuffer buffer, string identifier = null)
         {
             var keyBuffer = KeyGenerator.GetKey512(identifier);
             var hash = new HMACMD5(keyBuffer.Memory.ToArray());
@@ -83,7 +91,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        public virtual IBuffer<byte> HmacSha1(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer HmacSha1(IByteBuffer buffer, string identifier = null)
         {
             var keyBuffer = KeyGenerator.GetKey512(identifier);
             var hash = new HMACSHA1(keyBuffer.Memory.ToArray());
@@ -98,7 +106,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        public virtual IBuffer<byte> HmacSha256(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer HmacSha256(IByteBuffer buffer, string identifier = null)
         {
             var keyBuffer = KeyGenerator.GetKey512(identifier);
             var hash = new HMACSHA256(keyBuffer.Memory.ToArray());
@@ -113,7 +121,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        public virtual IBuffer<byte> HmacSha384(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer HmacSha384(IByteBuffer buffer, string identifier = null)
         {
             var keyBuffer = KeyGenerator.GetKey1024(identifier);
             var hash = new HMACSHA384(keyBuffer.Memory.ToArray());
@@ -128,7 +136,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        public virtual IBuffer<byte> HmacSha512(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer HmacSha512(IByteBuffer buffer, string identifier = null)
         {
             var keyBuffer = KeyGenerator.GetKey1024(identifier);
             var hash = new HMACSHA512(keyBuffer.Memory.ToArray());

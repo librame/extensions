@@ -18,17 +18,41 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 抽象存储。
     /// </summary>
-    /// <typeparam name="TDbContextService">指定的数据库上下文服务类型。</typeparam>
+    /// <typeparam name="TDbContext">指定的数据库上下文类型。</typeparam>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public abstract class AbstractStore<TDbContextService, TBuilderOptions> : IStore<TBuilderOptions>
-        where TDbContextService : IDbContext<TBuilderOptions>
-        where TBuilderOptions : DataBuilderOptions
+    public abstract class AbstractStore<TDbContext, TBuilderOptions> : AbstractStore<TDbContext>, IStore<TBuilderOptions>
+        where TDbContext : IDbContext<TBuilderOptions>
+        where TBuilderOptions : DataBuilderOptions, new()
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractStore{TDbContextService, TBuilderOptions}"/> 实例。
+        /// 构造一个 <see cref="AbstractStore{TDbContext, TBuilderOptions}"/> 实例。
         /// </summary>
         /// <param name="dbContext">给定的数据库上下文服务实例。</param>
-        public AbstractStore(TDbContextService dbContext)
+        public AbstractStore(TDbContext dbContext)
+            : base(dbContext)
+        {
+        }
+
+
+        /// <summary>
+        /// 构建器选项。
+        /// </summary>
+        public TBuilderOptions BuilderOptions => DbContext.BuilderOptions;
+    }
+
+
+    /// <summary>
+    /// 抽象存储。
+    /// </summary>
+    /// <typeparam name="TDbContext">指定的数据库上下文类型。</typeparam>
+    public abstract class AbstractStore<TDbContext> : IStore
+        where TDbContext : IDbContext
+    {
+        /// <summary>
+        /// 构造一个 <see cref="AbstractStore{TDbContext}"/> 实例。
+        /// </summary>
+        /// <param name="dbContext">给定的数据库上下文服务实例。</param>
+        public AbstractStore(TDbContext dbContext)
         {
             DbContext = dbContext.NotDefault(nameof(dbContext));
         }
@@ -37,12 +61,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 数据库上下文服务。
         /// </summary>
-        protected TDbContextService DbContext { get; }
-
-        /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        public TBuilderOptions BuilderOptions => DbContext.BuilderOptions;
+        protected TDbContext DbContext { get; }
 
 
         /// <summary>
@@ -83,7 +102,7 @@ namespace Librame.Extensions.Data
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的显示条数。</param>
         /// <returns>返回一个包含 <see cref="IPagingList{Tenant}"/> 的异步操作。</returns>
-        public virtual Task<IPagingList<Tenant>> GetTenants(int index, int size)
+        public virtual Task<IPagingList<Tenant>> GetTenantsAsync(int index, int size)
         {
             return DbContext.Tenants.AsPagingByIndexAsync(q => q.OrderByDescending(a => a.Id), index, size);
         }

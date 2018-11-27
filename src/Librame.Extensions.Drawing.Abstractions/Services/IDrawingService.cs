@@ -17,7 +17,7 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 图画服务接口。
     /// </summary>
-    public interface IDrawingService : IService
+    public interface IDrawingService : IService<DrawingBuilderOptions>
     {
     }
 }

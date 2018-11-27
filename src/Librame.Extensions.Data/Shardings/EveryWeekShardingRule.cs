@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 每周分表规则。
     /// </summary>
-    public class EveryWeekShardingRule : AbstractShardingRule
+    public class EveryWeekShardingRule : AbstractDateShardingRule
     {
         /// <summary>
         /// 添加默认键值对。

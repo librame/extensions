@@ -43,21 +43,29 @@ namespace Librame.Extensions.Encryption
         /// </value>
         public IKeyGenerator KeyGenerator { get; }
 
-        
+        /// <summary>
+        /// 构建器选项。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="EncryptionBuilderOptions"/>。
+        /// </value>
+        public EncryptionBuilderOptions BuilderOptions => KeyGenerator.BuilderOptions;
+
+
         /// <summary>
         /// 加密字节数组。
         /// </summary>
         /// <param name="algorithm">给定的 <see cref="SymmetricAlgorithm"/>。</param>
         /// <param name="buffer">给定的字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        protected virtual IBuffer<byte> Encrypt(SymmetricAlgorithm algorithm, IBuffer<byte> buffer)
+        protected virtual IByteBuffer Encrypt(SymmetricAlgorithm algorithm, IByteBuffer buffer)
         {
             algorithm.Mode = CipherMode.ECB;
             algorithm.Padding = PaddingMode.PKCS7;
 
             var encryptor = algorithm.CreateEncryptor();
 
-            return buffer.ChangeMemory(memory =>
+            return buffer.Change(memory =>
             {
                 var bytes = memory.ToArray();
                 bytes = encryptor.TransformFinalBlock(bytes, 0, bytes.Length);
@@ -73,14 +81,14 @@ namespace Librame.Extensions.Encryption
         /// <param name="algorithm">给定的 <see cref="SymmetricAlgorithm"/>。</param>
         /// <param name="buffer">给定的字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        protected virtual IBuffer<byte> Decrypt(SymmetricAlgorithm algorithm, IBuffer<byte> buffer)
+        protected virtual IByteBuffer Decrypt(SymmetricAlgorithm algorithm, IByteBuffer buffer)
         {
             algorithm.Mode = CipherMode.ECB;
             algorithm.Padding = PaddingMode.PKCS7;
 
             var encryptor = algorithm.CreateDecryptor();
 
-            return buffer.ChangeMemory(memory =>
+            return buffer.Change(memory =>
             {
                 var bytes = memory.ToArray();
                 bytes = encryptor.TransformFinalBlock(bytes, 0, bytes.Length);
@@ -99,7 +107,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定待加密的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        public virtual IBuffer<byte> ToAes(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer ToAes(IByteBuffer buffer, string identifier = null)
         {
             var algorithm = CreateAes(identifier);
 
@@ -112,7 +120,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        public virtual IBuffer<byte> FromAes(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer FromAes(IByteBuffer buffer, string identifier = null)
         {
             var algorithm = CreateAes(identifier);
 
@@ -144,7 +152,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定待加密的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        public virtual IBuffer<byte> ToDes(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer ToDes(IByteBuffer buffer, string identifier = null)
         {
             var algorithm = CreateDes(identifier);
 
@@ -157,7 +165,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        public virtual IBuffer<byte> FromDes(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer FromDes(IByteBuffer buffer, string identifier = null)
         {
             var algorithm = CreateDes(identifier);
 
@@ -189,7 +197,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定待加密的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        public virtual IBuffer<byte> ToTripleDes(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer ToTripleDes(IByteBuffer buffer, string identifier = null)
         {
             var algorithm = CreateTripleDes(identifier);
 
@@ -202,7 +210,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        public virtual IBuffer<byte> FromTripleDes(IBuffer<byte> buffer, string identifier = null)
+        public virtual IByteBuffer FromTripleDes(IByteBuffer buffer, string identifier = null)
         {
             var algorithm = CreateTripleDes(identifier);
 

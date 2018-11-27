@@ -14,39 +14,13 @@ using System.Net;
 
 namespace Librame.Extensions.Network
 {
-    using Encryption;
+    using Builders;
 
     /// <summary>
     /// 网络构建器选项。
     /// </summary>
-    public class NetworkBuilderOptions : EncryptionBuilderOptions
+    public class NetworkBuilderOptions : IBuilderOptions
     {
-        /// <summary>
-        /// 构建一个 <see cref="NetworkBuilderOptions"/> 实例。
-        /// </summary>
-        public NetworkBuilderOptions()
-        {
-        }
-        /// <summary>
-        /// 构建一个 <see cref="NetworkBuilderOptions"/> 实例。
-        /// </summary>
-        /// <param name="builderOptions">给定的 <see cref="EncryptionBuilderOptions"/>。</param>
-        public NetworkBuilderOptions(EncryptionBuilderOptions builderOptions)
-        {
-            Initialize(builderOptions);
-        }
-
-
-        /// <summary>
-        /// 初始化选项。
-        /// </summary>
-        /// <param name="builderOptions">给定的 <see cref="EncryptionBuilderOptions"/>。</param>
-        protected virtual void Initialize(EncryptionBuilderOptions builderOptions)
-        {
-            builderOptions.PopulateProperties(this);
-        }
-
-
         /// <summary>
         /// 抓取器选项。
         /// </summary>

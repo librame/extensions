@@ -29,7 +29,7 @@ namespace Librame.Builders
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddConverters(this IBuilder builder)
         {
-            builder.Services.AddSingleton<IEncodingConverter, DefaultEncodingConverter>();
+            builder.Services.AddSingleton<IEncodingConverter, EncodingConverter>();
 
             return builder;
         }

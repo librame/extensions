@@ -31,45 +31,45 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 计算 HMACMD5。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
-        /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        IBuffer<byte> HmacMd5(IBuffer<byte> buffer, string identifier = null);
+        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
+        IByteBuffer HmacMd5(IByteBuffer buffer, string identifier = null);
 
 
         /// <summary>
         /// 计算 HMACSHA1。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
-        /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        IBuffer<byte> HmacSha1(IBuffer<byte> buffer, string identifier = null);
+        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
+        IByteBuffer HmacSha1(IByteBuffer buffer, string identifier = null);
 
 
         /// <summary>
         /// 计算 HMACSHA256。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
-        /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        IBuffer<byte> HmacSha256(IBuffer<byte> buffer, string identifier = null);
+        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
+        IByteBuffer HmacSha256(IByteBuffer buffer, string identifier = null);
 
 
         /// <summary>
         /// 计算 HMACSHA384。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
-        /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        IBuffer<byte> HmacSha384(IBuffer<byte> buffer, string identifier = null);
+        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
+        IByteBuffer HmacSha384(IByteBuffer buffer, string identifier = null);
 
 
         /// <summary>
         /// 计算 HMACSHA512。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IBuffer{T}"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
         /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
-        /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        IBuffer<byte> HmacSha512(IBuffer<byte> buffer, string identifier = null);
+        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
+        IByteBuffer HmacSha512(IByteBuffer buffer, string identifier = null);
     }
 }

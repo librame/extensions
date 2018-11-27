@@ -21,8 +21,6 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
-    using Encryption;
-
     /// <summary>
     /// 内部邮箱服务发送器。
     /// </summary>
@@ -31,11 +29,10 @@ namespace Librame.Extensions.Network
         /// <summary>
         /// 构造一个 <see cref="InternalEmailSender"/> 实例。
         /// </summary>
-        /// <param name="hash">给定的 <see cref="IHashAlgorithmService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DefaultNetworkBuilderOptions}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalEmailSender}"/>。</param>
-        public InternalEmailSender(IHashAlgorithmService hash, IOptions<NetworkBuilderOptions> options, ILogger<InternalEmailSender> logger)
-            : base(hash, options, logger)
+        public InternalEmailSender(IOptions<NetworkBuilderOptions> options, ILogger<InternalEmailSender> logger)
+            : base(options, logger)
         {
             SendCompletedCallback = (sender, e) =>
             {
@@ -90,12 +87,12 @@ namespace Librame.Extensions.Network
         {
             try
             {
-                var from = new MailAddress(Options.Email.EmailAddress, Options.Email.DisplayName, Encoding);
+                var from = new MailAddress(BuilderOptions.Email.EmailAddress, BuilderOptions.Email.DisplayName, Encoding);
                 var to = new MailAddress(toAddress);
 
                 using (var message = new MailMessage(from, to))
                 {
-                    Logger.LogDebug($"Create mail message: from={Options.Email.EmailAddress}, to={toAddress}, encoding={Encoding.AsName()}");
+                    Logger.LogDebug($"Create mail message: from={BuilderOptions.Email.EmailAddress}, to={toAddress}, encoding={Encoding.AsName()}");
 
                     message.Body = body;
                     message.BodyEncoding = Encoding;
@@ -108,7 +105,7 @@ namespace Librame.Extensions.Network
                     // Configure MailMessage
                     configureMessage?.Invoke(message);
 
-                    var smtp = Options.Email.Smtp;
+                    var smtp = BuilderOptions.Email.Smtp;
                     using (var client = new SmtpClient(smtp.Server, smtp.Port))
                     {
                         Logger.LogDebug($"Create smtp client: server={client.Host}, port={client.Port}");

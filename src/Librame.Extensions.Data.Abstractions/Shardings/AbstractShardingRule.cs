@@ -12,7 +12,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Librame.Extensions.Data
 {
@@ -22,19 +21,27 @@ namespace Librame.Extensions.Data
     public abstract class AbstractShardingRule : IShardingRule
     {
         /// <summary>
-        /// 转换为表特性。
+        /// 转换为表架构。
         /// </summary>
         /// <param name="sharding">给定的 <see cref="IShardingSchema"/>。</param>
         /// <param name="entityType">给定的实体类型。</param>
-        /// <returns>返回 <see cref="TableAttribute"/>。</returns>
+        /// <returns>返回 <see cref="ITableSchema"/>。</returns>
         public virtual ITableSchema ToTable(IShardingSchema sharding, Type entityType)
         {
             AddDefaultKeyValues(sharding, entityType);
             
             var name = FormatKeyValues(sharding);
 
-            return new TableOptions(name).TryApplySchema(sharding.Schema);
+            return ToTable(name, sharding.Schema);
         }
+
+        /// <summary>
+        /// 转换为表架构。
+        /// </summary>
+        /// <param name="name">给定的表名。</param>
+        /// <param name="schema">给定的架构。</param>
+        /// <returns>返回 <see cref="ITableSchema"/>。</returns>
+        protected abstract ITableSchema ToTable(string name, string schema);
 
 
         /// <summary>

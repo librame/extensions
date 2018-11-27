@@ -29,14 +29,6 @@ namespace Librame.Extensions.Drawing
         IWatermarkService Watermark { get; }
 
         /// <summary>
-        /// 绘图选项。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="DrawingBuilderOptions"/>。
-        /// </value>
-        DrawingBuilderOptions Options { get; }
-
-        /// <summary>
         /// 图像文件扩展名集合。
         /// </summary>
         string[] ImageExtensions { get; }

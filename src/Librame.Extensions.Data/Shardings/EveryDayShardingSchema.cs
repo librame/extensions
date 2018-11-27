@@ -13,14 +13,14 @@
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 每天分表选项。
+    /// 每天分表架构。
     /// </summary>
-    public class EveryDayShardingOptions : ShardingOptions
+    public class EveryDayShardingSchema : ShardingSchema
     {
         /// <summary>
-        /// 构造一个 <see cref="EveryDayShardingOptions"/> 实例。
+        /// 构造一个 <see cref="EveryDayShardingSchema"/> 实例。
         /// </summary>
-        public EveryDayShardingOptions()
+        public EveryDayShardingSchema()
             : base(EveryDayShardingRule.Keys.EntitiesToday, typeof(EveryDayShardingRule))
         {
         }

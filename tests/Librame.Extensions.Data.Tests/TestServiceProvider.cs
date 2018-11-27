@@ -15,13 +15,13 @@ namespace Librame.Extensions.Data.Tests
                 var services = new ServiceCollection();
 
                 services.AddLibrame()
-                .AddData(postConfigureOptions: options =>
+                .AddData<TestBuilderOptions>(options =>
                 {
                     options.LocalTenant.DefaultConnectionString = "Data Source=PC-CLOUD\\SQLEXPRESS;Initial Catalog=librame_default;Integrated Security=True";
                     options.LocalTenant.WriteConnectionString = "Data Source=PC-CLOUD\\SQLEXPRESS;Initial Catalog=librame_write;Integrated Security=True";
                     options.LocalTenant.WriteConnectionSeparation = true;
                 })
-                .AddDbContext<ITestDbContext, TestDbContext>((options, optionsBuilder) =>
+                .AddDbContext<ITestDbContext, TestDbContext, TestBuilderOptions>((options, optionsBuilder) =>
                 {
                     var migrationsAssembly = typeof(TestServiceProvider).Assembly.GetName().Name;
                     optionsBuilder.UseSqlServer(options.LocalTenant.DefaultConnectionString,

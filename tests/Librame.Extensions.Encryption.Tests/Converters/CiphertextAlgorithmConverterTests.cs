@@ -2,14 +2,12 @@
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    using Services;
-
-    public class DefaultCiphertextAlgorithmConverterTests
+    public class CiphertextAlgorithmConverterTests
     {
         [Fact]
         public void DefaultCiphertextAlgorithmConverterTest()
         {
-            var rawCiphertextString = nameof(DefaultCiphertextAlgorithmConverterTests).AsEncodingBytes().AsBase64String();
+            var rawCiphertextString = nameof(CiphertextAlgorithmConverterTests).AsEncodingBytes().AsBase64String();
             
             var converter = TestServiceProvider.Current.GetRequiredService<ICiphertextAlgorithmConverter>();
 

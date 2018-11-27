@@ -14,24 +14,23 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Builders;
+    using Services;
+
     /// <summary>
     /// 存储接口。
     /// </summary>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public interface IStore<TBuilderOptions> : IStore
-        where TBuilderOptions : DataBuilderOptions
+    public interface IStore<TBuilderOptions> : IService<TBuilderOptions>
+        where TBuilderOptions : class, IBuilderOptions, new()
     {
-        /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        TBuilderOptions BuilderOptions { get; }
     }
 
-    
+
     /// <summary>
     /// 存储接口。
     /// </summary>
-    public interface IStore
+    public interface IStore : IService
     {
         /// <summary>
         /// 异步获取审计。
@@ -62,7 +61,7 @@ namespace Librame.Extensions.Data
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的显示条数。</param>
         /// <returns>返回一个包含 <see cref="IPagingList{Tenant}"/> 的异步操作。</returns>
-        Task<IPagingList<Tenant>> GetTenants(int index, int size);
+        Task<IPagingList<Tenant>> GetTenantsAsync(int index, int size);
     }
 
 }

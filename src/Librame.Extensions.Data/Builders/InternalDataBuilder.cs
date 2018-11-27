@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 内部数据构建器。
     /// </summary>
-    internal class InternalDataBuilder : DefaultBuilder, IDataBuilder
+    internal class InternalDataBuilder : Builder, IDataBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalDataBuilder"/> 实例。

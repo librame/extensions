@@ -17,15 +17,15 @@ namespace Librame.Extensions.Encryption
     using Converters;
 
     /// <summary>
-    /// 默认密文算法转换器。
+    /// 密文算法转换器。
     /// </summary>
-    public class DefaultPlaintextAlgorithmConverter : DefaultEncodingConverter, IPlaintextAlgorithmConverter
+    public class PlaintextAlgorithmConverter : EncodingConverter, IPlaintextAlgorithmConverter
     {
         /// <summary>
-        /// 构造一个 <see cref="DefaultPlaintextAlgorithmConverter"/> 实例。
+        /// 构造一个 <see cref="PlaintextAlgorithmConverter"/> 实例。
         /// </summary>
-        /// <param name="logger">给定的 <see cref="ILogger{DefaultPlaintextAlgorithmConverter}"/>。</param>
-        public DefaultPlaintextAlgorithmConverter(ILogger<DefaultPlaintextAlgorithmConverter> logger)
+        /// <param name="logger">给定的 <see cref="ILogger{PlaintextAlgorithmConverter}"/>。</param>
+        public PlaintextAlgorithmConverter(ILogger<PlaintextAlgorithmConverter> logger)
             : base(logger)
         {
         }
