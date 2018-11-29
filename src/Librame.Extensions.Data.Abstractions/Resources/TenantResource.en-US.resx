@@ -126,4 +126,10 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="WriteConnectionSeparation" xml:space="preserve">
+    <value>Write connection separation</value>
+  </data>
+  <data name="WriteConnectionString" xml:space="preserve">
+    <value>Write database connection string</value>
+  </data>
 </root>

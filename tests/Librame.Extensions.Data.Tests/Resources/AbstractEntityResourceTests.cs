@@ -10,25 +10,41 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void ResourceTest()
         {
+            var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
             var localizer = TestServiceProvider.Current.GetRequiredService<IEnhancedStringLocalizer<AbstractEntityResource>>();
 
-            // en-US
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("en-US");
-
-            var delete = localizer[r => r.DataStatus];
-            Assert.Equal("Data status", delete);
-
-            // zh-CN
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("zh-CN");
-
-            delete = localizer[r => r.DataStatus];
-            Assert.Equal("数据状态", delete);
-
-            // zh-TW
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("zh-TW");
-
-            delete = localizer[r => r.DataStatus];
-            Assert.Equal("數據狀態", delete);
+            foreach (var name in cultureNames)
+                RunTest(localizer, name);
         }
+
+        private void RunTest(IEnhancedStringLocalizer<AbstractEntityResource> localizer, string cultureName)
+        {
+            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture(cultureName);
+
+            var id = localizer[r => r.Id];
+            Assert.False(id.ResourceNotFound);
+
+            var tenantId = localizer[r => r.TenantId];
+            Assert.False(tenantId.ResourceNotFound);
+
+            var dataRank = localizer[r => r.DataRank];
+            Assert.False(dataRank.ResourceNotFound);
+
+            var dataStatus = localizer[r => r.DataStatus];
+            Assert.False(dataStatus.ResourceNotFound);
+
+            var createTime = localizer[r => r.CreateTime];
+            Assert.False(createTime.ResourceNotFound);
+
+            var creatorId = localizer[r => r.CreatorId];
+            Assert.False(creatorId.ResourceNotFound);
+
+            var updateTime = localizer[r => r.UpdateTime];
+            Assert.False(updateTime.ResourceNotFound);
+
+            var updatorId = localizer[r => r.UpdatorId];
+            Assert.False(updatorId.ResourceNotFound);
+        }
+
     }
 }

@@ -10,25 +10,41 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void ResourceTest()
         {
+            var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
             var localizer = TestServiceProvider.Current.GetRequiredService<IEnhancedStringLocalizer<AuditResource>>();
 
-            // en-US
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("en-US");
-
-            var delete = localizer[r => r.State];
-            Assert.Equal("State", delete);
-
-            // zh-CN
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("zh-CN");
-
-            delete = localizer[r => r.State];
-            Assert.Equal("状态", delete);
-
-            // zh-TW
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("zh-TW");
-
-            delete = localizer[r => r.State];
-            Assert.Equal("狀態", delete);
+            foreach (var name in cultureNames)
+                RunTest(localizer, name);
         }
+
+        private void RunTest(IEnhancedStringLocalizer<AuditResource> localizer, string cultureName)
+        {
+            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture(cultureName);
+
+            var entityId = localizer[r => r.EntityId];
+            Assert.False(entityId.ResourceNotFound);
+
+            var entityName = localizer[r => r.EntityName];
+            Assert.False(entityName.ResourceNotFound);
+
+            var entityTypeName = localizer[r => r.EntityTypeName];
+            Assert.False(entityTypeName.ResourceNotFound);
+
+            var state = localizer[r => r.State];
+            Assert.False(state.ResourceNotFound);
+
+            var stateName = localizer[r => r.StateName];
+            Assert.False(stateName.ResourceNotFound);
+
+            var createdBy = localizer[r => r.CreatedBy];
+            Assert.False(createdBy.ResourceNotFound);
+
+            var createdTime = localizer[r => r.CreatedTime];
+            Assert.False(createdTime.ResourceNotFound);
+
+            var properties = localizer[r => r.Properties];
+            Assert.False(properties.ResourceNotFound);
+        }
+
     }
 }

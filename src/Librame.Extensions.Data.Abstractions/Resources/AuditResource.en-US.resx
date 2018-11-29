@@ -138,4 +138,7 @@
   <data name="State" xml:space="preserve">
     <value>State</value>
   </data>
+  <data name="StateName" xml:space="preserve">
+    <value>State name</value>
+  </data>
 </root>

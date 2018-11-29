@@ -49,7 +49,7 @@ namespace Librame.Builders
         /// <param name="implementationFactory">给定的 <see cref="ILoggerFactory"/> 解析工厂方法。</param>
         public void ReplaceLoggerFactory(Func<IServiceProvider, ILoggerFactory> implementationFactory)
         {
-            ReplaceLoggerFactory(services => services.Replace(ServiceDescriptor.Singleton(implementationFactory)));
+            ReplaceLoggerFactory(services => services.TryReplace(implementationFactory));
         }
 
         private void ReplaceLoggerFactory(Action<IServiceCollection> configureServices)

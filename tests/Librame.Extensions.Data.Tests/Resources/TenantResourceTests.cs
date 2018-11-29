@@ -10,25 +10,32 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void ResourceTest()
         {
+            var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
             var localizer = TestServiceProvider.Current.GetRequiredService<IEnhancedStringLocalizer<TenantResource>>();
 
-            // en-US
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("en-US");
+            foreach (var name in cultureNames)
+                RunTest(localizer, name);
+        }
+        
+        private void RunTest(IEnhancedStringLocalizer<TenantResource> localizer, string cultureName)
+        {
+            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture(cultureName);
 
             var name = localizer[r => r.Name];
-            Assert.Equal("Name", name);
+            Assert.False(name.ResourceNotFound);
 
-            // zh-CN
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("zh-CN");
+            var host = localizer[r => r.Host];
+            Assert.False(host.ResourceNotFound);
 
-            name = localizer[r => r.Name];
-            Assert.Equal("名称", name);
+            var defaultConnection = localizer[r => r.DefaultConnectionString];
+            Assert.False(defaultConnection.ResourceNotFound);
 
-            // zh-TW
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("zh-TW");
+            var writeConnection = localizer[r => r.WriteConnectionString];
+            Assert.False(writeConnection.ResourceNotFound);
 
-            name = localizer[r => r.Name];
-            Assert.Equal("名稱", name);
+            var separation = localizer[r => r.WriteConnectionSeparation];
+            Assert.False(separation.ResourceNotFound);
         }
+
     }
 }

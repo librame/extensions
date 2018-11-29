@@ -10,25 +10,63 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void ResourceTest()
         {
+            var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
             var localizer = TestServiceProvider.Current.GetRequiredService<IEnhancedStringLocalizer<DataStatusResource>>();
 
-            // en-US
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("en-US");
+            foreach (var name in cultureNames)
+                RunTest(localizer, name);
+        }
+
+        private void RunTest(IEnhancedStringLocalizer<DataStatusResource> localizer, string cultureName)
+        {
+            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture(cultureName);
+
+            // Groups
+            var globalGroup = localizer[r => r.GlobalGroup];
+            Assert.False(globalGroup.ResourceNotFound);
+
+            var scopeGroup = localizer[r => r.ScopeGroup];
+            Assert.False(scopeGroup.ResourceNotFound);
+
+            var stateGroup = localizer[r => r.StateGroup];
+            Assert.False(stateGroup.ResourceNotFound);
+
+            // Global Group
+            var _default = localizer[r => r.Default];
+            Assert.False(_default.ResourceNotFound);
 
             var delete = localizer[r => r.Delete];
-            Assert.Equal("Delete", delete);
+            Assert.False(delete.ResourceNotFound);
 
-            // zh-CN
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("zh-CN");
+            // Scope Group
+            var _public = localizer[r => r.Public];
+            Assert.False(_public.ResourceNotFound);
 
-            delete = localizer[r => r.Delete];
-            Assert.Equal("删除", delete);
+            var _protect = localizer[r => r.Protect];
+            Assert.False(_protect.ResourceNotFound);
 
-            // zh-TW
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture("zh-TW");
+            var _internal = localizer[r => r.Internal];
+            Assert.False(_internal.ResourceNotFound);
 
-            delete = localizer[r => r.Delete];
-            Assert.Equal("刪除", delete);
+            var _private = localizer[r => r.Private];
+            Assert.False(_private.ResourceNotFound);
+
+            // State Group
+            var separation = localizer[r => r.Active];
+            Assert.False(separation.ResourceNotFound);
+
+            var pending = localizer[r => r.Pending];
+            Assert.False(pending.ResourceNotFound);
+
+            var inactive = localizer[r => r.Inactive];
+            Assert.False(inactive.ResourceNotFound);
+
+            var locking = localizer[r => r.Locking];
+            Assert.False(locking.ResourceNotFound);
+
+            var ban = localizer[r => r.Ban];
+            Assert.False(ban.ResourceNotFound);
         }
+
     }
 }

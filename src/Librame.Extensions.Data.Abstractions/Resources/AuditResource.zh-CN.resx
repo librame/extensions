@@ -138,4 +138,7 @@
   <data name="State" xml:space="preserve">
     <value>状态</value>
   </data>
+  <data name="StateName" xml:space="preserve">
+    <value>状态名称</value>
+  </data>
 </root>
