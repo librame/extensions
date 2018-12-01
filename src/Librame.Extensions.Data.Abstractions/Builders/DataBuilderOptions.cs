@@ -13,9 +13,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Data
+namespace Librame.Builders
 {
-    using Builders;
+    using Extensions.Data;
 
     /// <summary>
     /// 数据构建器选项。

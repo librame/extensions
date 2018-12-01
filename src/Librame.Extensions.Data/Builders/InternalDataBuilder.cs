@@ -12,10 +12,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Data
+namespace Librame.Builders
 {
-    using Builders;
-
     /// <summary>
     /// 内部数据构建器。
     /// </summary>

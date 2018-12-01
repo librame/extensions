@@ -10,10 +10,8 @@
 
 #endregion
 
-namespace Librame.Extensions.Storage
+namespace Librame.Builders
 {
-    using Builders;
-
     /// <summary>
     /// 存储构建器接口。
     /// </summary>

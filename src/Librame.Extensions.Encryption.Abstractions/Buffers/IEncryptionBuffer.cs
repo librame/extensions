@@ -12,9 +12,9 @@
 
 using System;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Buffers
 {
-    using Buffers;
+    using Converters;
 
     /// <summary>
     /// 加密缓冲区接口。

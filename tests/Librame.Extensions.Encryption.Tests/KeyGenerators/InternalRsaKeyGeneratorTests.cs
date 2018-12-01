@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Security.Cryptography;
 using Xunit;
 
 namespace Librame.Extensions.Encryption.Tests

@@ -1,9 +1,9 @@
-﻿using System.Globalization;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    using Resources;
+    using Localizations;
 
     public class DataStatusResourceTests
     {
@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data.Tests
 
         private void RunTest(IEnhancedStringLocalizer<DataStatusResource> localizer, string cultureName)
         {
-            CultureInfo.CurrentUICulture = CultureInfo.CreateSpecificCulture(cultureName);
+            LocalizationRegistration.Register(cultureName);
 
             // Groups
             var globalGroup = localizer[r => r.GlobalGroup];

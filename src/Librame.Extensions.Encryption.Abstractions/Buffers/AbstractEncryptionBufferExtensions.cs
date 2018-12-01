@@ -10,10 +10,13 @@
 
 #endregion
 
-namespace Librame.Extensions
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Librame.Buffers
 {
-    using Buffers;
-    using Encryption;
+    using Converters;
+    using Extensions;
+    using Extensions.Encryption;
 
     /// <summary>
     /// 抽象算法缓冲区静态扩展。

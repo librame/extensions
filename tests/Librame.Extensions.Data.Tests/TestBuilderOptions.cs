@@ -2,6 +2,8 @@
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Builders;
+
     public class TestBuilderOptions : DataBuilderOptions
     {
         /// <summary>

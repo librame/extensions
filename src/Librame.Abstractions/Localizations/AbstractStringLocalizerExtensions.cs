@@ -10,15 +10,14 @@
 
 #endregion
 
-using Microsoft.Extensions.Localization;
+using Librame.Extensions;
+using Librame.Localizations;
 using System;
 using System.Globalization;
 using System.Linq.Expressions;
 
-namespace Librame.Extensions
+namespace Microsoft.Extensions.Localization
 {
-    using Resources;
-
     /// <summary>
     /// 抽象字符串定位器静态扩展。
     /// </summary>

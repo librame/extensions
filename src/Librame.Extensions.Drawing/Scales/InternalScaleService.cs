@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing
 {
+    using Builders;
     using Services;
 
     /// <summary>

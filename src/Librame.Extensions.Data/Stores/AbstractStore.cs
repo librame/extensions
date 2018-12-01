@@ -10,11 +10,14 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Builders;
+
     /// <summary>
     /// 抽象存储。
     /// </summary>

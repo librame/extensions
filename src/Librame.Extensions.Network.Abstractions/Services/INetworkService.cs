@@ -14,6 +14,7 @@ using System.Text;
 
 namespace Librame.Extensions.Network
 {
+    using Builders;
     using Encryption;
     using Services;
 

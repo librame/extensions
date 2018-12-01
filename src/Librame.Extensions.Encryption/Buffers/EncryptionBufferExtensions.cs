@@ -10,11 +10,12 @@
 
 #endregion
 
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Librame.Extensions
+namespace Librame.Buffers
 {
-    using Encryption;
+    using Converters;
 
     /// <summary>
     /// 加密缓冲区静态扩展。

@@ -12,10 +12,8 @@
 
 using System.Net;
 
-namespace Librame.Extensions.Network
+namespace Librame.Builders
 {
-    using Builders;
-
     /// <summary>
     /// 网络构建器选项。
     /// </summary>

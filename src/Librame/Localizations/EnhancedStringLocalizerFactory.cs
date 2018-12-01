@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Reflection;
 
-namespace Librame.Resources
+namespace Librame.Localizations
 {
     using Extensions;
 
@@ -53,7 +53,7 @@ namespace Librame.Resources
         {
             var prefix = string.Empty;
 
-            if (typeInfo.Assembly.HasAttribute(out ResourcePrefixAttribute attribute) && attribute.UseEnhanced)
+            if (typeInfo.Assembly.HasAttribute(out EnhancedResourceAttribute attribute) && attribute.Enabled)
             {
                 if (resourcesRelativePath.IsEmpty())
                     prefix = $"{baseNamespace}.{typeInfo.Name}"; // typeInfo.FullName;
@@ -61,7 +61,7 @@ namespace Librame.Resources
                 // resourcesRelativePath 已格式化为 Resources. 模式
                 prefix = $"{baseNamespace}.{resourcesRelativePath}{typeInfo.Name}";
 
-                Logger.LogInformation($"{typeInfo.FullName} resource prefix is {prefix} from {nameof(EnhancedStringLocalizerFactory)}({nameof(attribute.UseEnhanced)}={attribute.UseEnhanced})");
+                Logger.LogInformation($"{typeInfo.FullName} resource prefix is {prefix} from {nameof(EnhancedStringLocalizerFactory)}({nameof(attribute.Enabled)}={attribute.Enabled})");
             }
             else
             {

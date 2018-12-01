@@ -12,6 +12,7 @@
 
 namespace Librame.Extensions.Encryption
 {
+    using Builders;
     using Services;
 
     /// <summary>

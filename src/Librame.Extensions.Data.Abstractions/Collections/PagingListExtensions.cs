@@ -10,12 +10,8 @@
 
 #endregion
 
-using System.Collections.Generic;
-
-namespace Librame.Extensions
+namespace System.Collections.Generic
 {
-    using Data;
-
     /// <summary>
     /// 分页列表静态扩展。
     /// </summary>

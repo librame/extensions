@@ -16,6 +16,8 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Data
 {
+    using Builders;
+
     /// <summary>
     /// 变化跟踪器上下文接口。
     /// </summary>

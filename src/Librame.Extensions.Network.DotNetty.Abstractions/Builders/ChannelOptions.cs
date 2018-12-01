@@ -16,7 +16,7 @@ using System.Text;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    using Encryption;
+    using Builders;
 
     /// <summary>
     /// 通道选项。

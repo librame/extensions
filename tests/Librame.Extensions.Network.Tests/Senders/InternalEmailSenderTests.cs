@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {

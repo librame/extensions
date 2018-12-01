@@ -10,14 +10,14 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
+using Librame.Extensions;
+using Librame.Extensions.Data;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Librame.Extensions.Data
+namespace System.Collections.Generic
 {
     /// <summary>
     /// 树状节点。

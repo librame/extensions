@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Converters
 {
     /// <summary>
     /// 密文算法转换器接口。

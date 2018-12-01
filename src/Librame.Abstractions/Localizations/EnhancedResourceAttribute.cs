@@ -12,28 +12,28 @@
 
 using System;
 
-namespace Librame.Resources
+namespace Microsoft.Extensions.Localization
 {
     /// <summary>
-    /// 资源前缀特性。
+    /// 增强型资源特性。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false)]
-    public class ResourcePrefixAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
+    public class EnhancedResourceAttribute : Attribute
     {
         /// <summary>
-        /// 构造一个 <see cref="ResourcePrefixAttribute"/> 实例。
+        /// 构造一个 <see cref="EnhancedResourceAttribute"/> 实例。
         /// </summary>
-        /// <param name="useEnhanced">使用增强模式。</param>
-        public ResourcePrefixAttribute(bool useEnhanced)
+        /// <param name="enabled">启用增强模式（可选；默认启用）。</param>
+        public EnhancedResourceAttribute(bool enabled = true)
             : base()
         {
-            UseEnhanced = useEnhanced;
+            Enabled = enabled;
         }
 
 
         /// <summary>
-        /// 使用增强模式。
+        /// 启用增强模式。
         /// </summary>
-        public bool UseEnhanced { get; }
+        public bool Enabled { get; }
     }
 }

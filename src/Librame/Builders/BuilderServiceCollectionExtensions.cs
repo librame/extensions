@@ -10,13 +10,12 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Librame.Builders;
+using Librame.Extensions;
 using System;
 
-namespace Librame.Builders
+namespace Microsoft.Extensions.DependencyInjection
 {
-    using Extensions;
-
     /// <summary>
     /// 构建器服务集合静态扩展。
     /// </summary>
@@ -24,12 +23,31 @@ namespace Librame.Builders
     {
 
         /// <summary>
-        /// 预配置构建器依赖集合。
+        /// 添加 Librame 服务集合。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="configureOptions">给定的配置依赖选项（可选）。</param>
+        /// <returns>返回 <see cref="IBuilder"/>。</returns>
+        public static IBuilder AddLibrame(this IServiceCollection services,
+            Action<DependenciesOptions> configureOptions = null)
+        {
+            services.AddPreLibrameDependencies(configureOptions);
+
+            var builder = services.AsBuilder();
+
+            return builder
+                .AddConverters()
+                .AddResources();
+        }
+
+
+        /// <summary>
+        /// 添加前置 Librame 依赖集合。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="configureOptions">给定的配置依赖选项（可选）。</param>
         /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
-        public static IServiceCollection PreConfigureBuilderDependencies(this IServiceCollection services,
+        public static IServiceCollection AddPreLibrameDependencies(this IServiceCollection services,
             Action<DependenciesOptions> configureOptions = null)
         {
             // Add Options
@@ -52,27 +70,7 @@ namespace Librame.Builders
 
             return services;
         }
-
-
-        /// <summary>
-        /// 添加 Librame 服务集合。
-        /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="configureOptions">给定的配置依赖选项（可选）。</param>
-        /// <returns>返回 <see cref="IBuilder"/>。</returns>
-        public static IBuilder AddLibrame(this IServiceCollection services,
-            Action<DependenciesOptions> configureOptions = null)
-        {
-            services.PreConfigureBuilderDependencies(configureOptions);
-
-            var builder = services.AsBuilder();
-
-            return builder
-                .AddConverters()
-                .AddResources();
-        }
-
-
+        
         /// <summary>
         /// 转换为构建器。
         /// </summary>

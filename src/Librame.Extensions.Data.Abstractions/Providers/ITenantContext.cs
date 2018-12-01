@@ -14,6 +14,8 @@ using System.Linq;
 
 namespace Librame.Extensions.Data
 {
+    using Builders;
+
     /// <summary>
     /// 租户上下文接口。
     /// </summary>

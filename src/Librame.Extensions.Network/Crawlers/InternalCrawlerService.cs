@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
+    using Builders;
+
     /// <summary>
     /// 抓取器服务。
     /// </summary>

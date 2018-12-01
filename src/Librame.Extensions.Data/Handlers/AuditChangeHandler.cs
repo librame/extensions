@@ -20,6 +20,8 @@ using System.Linq;
 
 namespace Librame.Extensions.Data
 {
+    using Builders;
+
     /// <summary>
     /// 审计变化处理程序。
     /// </summary>

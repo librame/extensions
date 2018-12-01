@@ -10,13 +10,12 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Librame.Extensions;
+using Librame.Extensions.Data;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace Librame.Extensions.Data
+namespace System.Collections.Generic
 {
     /// <summary>
     /// 树状列表。

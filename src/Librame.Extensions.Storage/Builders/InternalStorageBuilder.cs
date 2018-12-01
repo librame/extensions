@@ -12,10 +12,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Builders
 {
-    using Builders;
-
     /// <summary>
     /// 内部存储构建器。
     /// </summary>

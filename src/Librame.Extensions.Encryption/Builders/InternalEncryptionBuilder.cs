@@ -12,10 +12,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Builders
 {
-    using Builders;
-
     /// <summary>
     /// 内部加密构建器。
     /// </summary>

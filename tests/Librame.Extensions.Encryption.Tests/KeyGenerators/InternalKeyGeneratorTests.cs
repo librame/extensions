@@ -1,9 +1,8 @@
-﻿using Xunit;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    using Services;
-
     public class InternalKeyGeneratorTests
     {
         [Fact]

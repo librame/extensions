@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Storage
 {
+    using Builders;
     using Services;
 
     /// <summary>

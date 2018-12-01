@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing
 {
+    using Builders;
     using Locators;
     using Services;
 

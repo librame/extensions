@@ -22,6 +22,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Builders;
+
     /// <summary>
     /// 抽象数据库上下文。
     /// </summary>

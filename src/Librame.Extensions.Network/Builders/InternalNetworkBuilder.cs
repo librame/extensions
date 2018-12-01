@@ -12,10 +12,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Network
+namespace Librame.Builders
 {
-    using Builders;
-
     /// <summary>
     /// 内部网络构建器。
     /// </summary>

@@ -5,6 +5,7 @@ using System;
 
 namespace Librame.Consoles
 {
+    using Buffers;
     using Builders;
     using Extensions;
     using Extensions.Encryption;

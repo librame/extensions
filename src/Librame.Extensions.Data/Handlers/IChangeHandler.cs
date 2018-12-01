@@ -14,6 +14,8 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Librame.Extensions.Data
 {
+    using Builders;
+
     /// <summary>
     /// 变化处理程序接口。
     /// </summary>

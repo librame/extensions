@@ -10,10 +10,8 @@
 
 #endregion
 
-namespace Librame.Extensions.Network
+namespace Librame.Builders
 {
-    using Builders;
-
     /// <summary>
     /// 网络构建器接口。
     /// </summary>

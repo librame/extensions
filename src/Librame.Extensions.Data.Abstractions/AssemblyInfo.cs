@@ -10,10 +10,9 @@
 
 #endregion
 
-using Librame.Resources;
 using Microsoft.Extensions.Localization;
 using System.Reflection;
 
 [assembly: RootNamespace("Librame.Extensions.Data")]
 [assembly: ResourceLocation("Resources")]
-[assembly: ResourcePrefix(true)]
+[assembly: EnhancedResource]

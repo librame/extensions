@@ -16,7 +16,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Librame.Builders
 {
-    using Resources;
+    using Localizations;
 
     /// <summary>
     /// 资源构建器静态扩展。

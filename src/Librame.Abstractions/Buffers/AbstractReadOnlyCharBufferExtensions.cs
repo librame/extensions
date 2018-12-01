@@ -13,10 +13,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace Librame.Extensions
+namespace Librame.Buffers
 {
-    using Buffers;
-
     /// <summary>
     /// 抽象只读字符缓冲区静态扩展。
     /// </summary>

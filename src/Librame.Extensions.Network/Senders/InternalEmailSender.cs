@@ -21,6 +21,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
+    using Builders;
+
     /// <summary>
     /// 内部邮箱服务发送器。
     /// </summary>

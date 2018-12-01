@@ -10,18 +10,15 @@
 
 #endregion
 
-using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions
+namespace System.Linq
 {
-    using Data;
-
     /// <summary>
-    /// 分页查询静态扩展。
+    /// 分页列表查询静态扩展。
     /// </summary>
-    public static class PagingQueryableExtensions
+    public static class PagingListQueryableExtensions
     {
 
         /// <summary>

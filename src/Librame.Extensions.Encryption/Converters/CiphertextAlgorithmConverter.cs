@@ -12,10 +12,10 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Converters
 {
     using Buffers;
-    using Converters;
+    using Extensions;
 
     /// <summary>
     /// 密文算法转换器。

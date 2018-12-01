@@ -19,6 +19,8 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Librame.Builders
 {
+    using Buffers;
+    using Converters;
     using Extensions;
     using Extensions.Encryption;
 

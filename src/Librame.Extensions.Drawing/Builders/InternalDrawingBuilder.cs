@@ -12,10 +12,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Builders
 {
-    using Builders;
-
     /// <summary>
     /// 内部图画构建器。
     /// </summary>

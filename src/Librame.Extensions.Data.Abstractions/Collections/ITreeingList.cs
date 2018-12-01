@@ -10,10 +10,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
+using Librame.Extensions.Data;
 
-namespace Librame.Extensions.Data
+namespace System.Collections.Generic
 {
     /// <summary>
     /// 树状列表接口。

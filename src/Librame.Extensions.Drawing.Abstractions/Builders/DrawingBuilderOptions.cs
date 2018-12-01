@@ -13,9 +13,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Builders
 {
-    using Builders;
+    using Extensions.Drawing;
     using Locators;
 
     /// <summary>

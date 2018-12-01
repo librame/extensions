@@ -10,14 +10,13 @@
 
 #endregion
 
-using Microsoft.EntityFrameworkCore;
+using Librame.Extensions;
+using Librame.Extensions.Data;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace Librame.Extensions
+namespace Microsoft.EntityFrameworkCore
 {
-    using Data;
-
     /// <summary>
     /// 实体类型构建器静态扩展。
     /// </summary>

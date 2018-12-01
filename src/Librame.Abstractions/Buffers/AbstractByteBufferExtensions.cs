@@ -12,10 +12,8 @@
 
 using System;
 
-namespace Librame.Extensions
+namespace Librame.Buffers
 {
-    using Buffers;
-
     /// <summary>
     /// 抽象字节缓冲器静态扩展。
     /// </summary>

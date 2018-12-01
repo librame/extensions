@@ -10,10 +10,8 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Builders
 {
-    using Builders;
-
     /// <summary>
     /// 数据构建器接口。
     /// </summary>

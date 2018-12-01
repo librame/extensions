@@ -10,10 +10,9 @@
 
 #endregion
 
-namespace Librame.Extensions
+namespace Librame.Extensions.Encryption
 {
     using Buffers;
-    using Encryption;
 
     /// <summary>
     /// 抽象密钥生成器静态扩展。

@@ -17,6 +17,7 @@ using System.Security.Cryptography;
 namespace Librame.Extensions.Encryption
 {
     using Buffers;
+    using Builders;
     using Services;
 
     /// <summary>

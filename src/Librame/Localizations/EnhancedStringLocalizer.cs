@@ -14,20 +14,33 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Linq.Expressions;
 
-namespace Librame.Resources
+namespace Librame.Localizations
 {
     /// <summary>
-    /// 增强型字符串定位器接口。
+    /// 增强型字符串定位器。
     /// </summary>
     /// <typeparam name="TResource">指定的资源类型。</typeparam>
-    public interface IEnhancedStringLocalizer<TResource> : IStringLocalizer<TResource>
+    public class EnhancedStringLocalizer<TResource> : StringLocalizer<TResource>, IEnhancedStringLocalizer<TResource>
     {
+        /// <summary>
+        /// 构造一个 <see cref="EnhancedStringLocalizer{TResource}"/> 实例。
+        /// </summary>
+        /// <param name="factory">给定的 <see cref="IStringLocalizerFactory"/>。</param>
+        public EnhancedStringLocalizer(IStringLocalizerFactory factory)
+            : base(factory)
+        {
+        }
+
+
         /// <summary>
         /// 获取字符串。
         /// </summary>
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <returns>返回 <see cref="LocalizedString"/>。</returns>
-        LocalizedString this[Expression<Func<TResource, string>> propertyExpression] { get; }
+        public virtual LocalizedString this[Expression<Func<TResource, string>> propertyExpression]
+        {
+            get { return this.GetString(propertyExpression); }
+        }
 
         /// <summary>
         /// 获取字符串。
@@ -35,6 +48,10 @@ namespace Librame.Resources
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <param name="arguments">给定的参数数组。</param>
         /// <returns>返回 <see cref="LocalizedString"/>。</returns>
-        LocalizedString this[Expression<Func<TResource, string>> propertyExpression, params object[] arguments] { get; }
+        public virtual LocalizedString this[Expression<Func<TResource, string>> propertyExpression, params object[] arguments]
+        {
+            get { return this.GetString(propertyExpression, arguments); }
+        }
+
     }
 }

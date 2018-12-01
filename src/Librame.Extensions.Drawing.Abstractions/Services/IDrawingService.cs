@@ -12,6 +12,7 @@
 
 namespace Librame.Extensions.Drawing
 {
+    using Builders;
     using Services;
 
     /// <summary>

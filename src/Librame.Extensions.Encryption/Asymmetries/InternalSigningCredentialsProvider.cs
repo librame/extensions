@@ -16,6 +16,8 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Encryption
 {
+    using Builders;
+
     /// <summary>
     /// 内部签名证书提供程序。
     /// </summary>

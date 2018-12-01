@@ -1,9 +1,8 @@
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Librame.Extensions.Storage.Tests
 {
-    using Services;
-
     public class InternalFileSystemServiceTests
     {
         private IFileSystemService _fileSystem;

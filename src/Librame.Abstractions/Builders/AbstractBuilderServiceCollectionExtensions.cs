@@ -10,14 +10,12 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Librame.Extensions;
 using System;
 using System.Linq;
 
-namespace Librame.Builders
+namespace Microsoft.Extensions.DependencyInjection
 {
-    using Extensions;
-
     /// <summary>
     /// 抽象构建器服务集合静态扩展。
     /// </summary>

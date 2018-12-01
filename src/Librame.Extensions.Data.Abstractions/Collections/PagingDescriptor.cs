@@ -10,9 +10,7 @@
 
 #endregion
 
-using System;
-
-namespace Librame.Extensions.Data
+namespace System.Collections.Generic
 {
     /// <summary>
     /// 分页描述符。
