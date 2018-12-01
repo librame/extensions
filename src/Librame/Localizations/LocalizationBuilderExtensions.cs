@@ -19,17 +19,17 @@ namespace Librame.Builders
     using Localizations;
 
     /// <summary>
-    /// 资源构建器静态扩展。
+    /// 本地化构建器静态扩展。
     /// </summary>
-    public static class ResourceBuilderExtensions
+    public static class LocalizationBuilderExtensions
     {
 
         /// <summary>
-        /// 注册资源集合。
+        /// 注册本地化集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
-        public static IBuilder AddResources(this IBuilder builder)
+        public static IBuilder AddLocalizations(this IBuilder builder)
         {
             builder.Services.Replace(ServiceDescriptor.Singleton<IStringLocalizerFactory, EnhancedStringLocalizerFactory>());
             builder.Services.AddTransient(typeof(IEnhancedStringLocalizer<>), typeof(EnhancedStringLocalizer<>));

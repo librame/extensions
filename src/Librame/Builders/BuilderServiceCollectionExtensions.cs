@@ -37,7 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return builder
                 .AddConverters()
-                .AddResources();
+                .AddLocalizations();
         }
 
 
