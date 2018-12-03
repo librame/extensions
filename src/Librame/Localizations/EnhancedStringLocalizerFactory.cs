@@ -20,7 +20,7 @@ namespace Librame.Localizations
     using Extensions;
 
     /// <summary>
-    /// 增强型资源管理器字符串定位器工厂接口。
+    /// 增强型字符串定位器工厂。
     /// </summary>
     public class EnhancedStringLocalizerFactory : ResourceManagerStringLocalizerFactory, IStringLocalizerFactory
     {
@@ -56,18 +56,22 @@ namespace Librame.Localizations
             if (typeInfo.Assembly.HasAttribute(out EnhancedResourceAttribute attribute) && attribute.Enabled)
             {
                 if (resourcesRelativePath.IsEmpty())
+                {
                     prefix = $"{baseNamespace}.{typeInfo.Name}"; // typeInfo.FullName;
+                }
+                else
+                {
+                    // resourcesRelativePath 已格式化为 Resources. 模式
+                    prefix = $"{baseNamespace}.{resourcesRelativePath}{typeInfo.Name}";
+                }
 
-                // resourcesRelativePath 已格式化为 Resources. 模式
-                prefix = $"{baseNamespace}.{resourcesRelativePath}{typeInfo.Name}";
-
-                Logger.LogInformation($"{typeInfo.FullName} resource prefix is {prefix} from {nameof(EnhancedStringLocalizerFactory)}({nameof(attribute.Enabled)}={attribute.Enabled})");
+                Logger.LogInformation($"{typeInfo.FullName} resource prefix: {prefix} ({nameof(EnhancedResourceAttribute)}.{nameof(attribute.Enabled)}={attribute.Enabled})");
             }
             else
             {
                 prefix = base.GetResourcePrefix(typeInfo, baseNamespace, resourcesRelativePath);
 
-                Logger.LogInformation($"{typeInfo.FullName} resource prefix is {prefix} from {nameof(ResourceManagerStringLocalizerFactory)}");
+                Logger.LogInformation($"{typeInfo.FullName} resource prefix: {prefix} (from {nameof(ResourceManagerStringLocalizerFactory)})");
             }
 
             return prefix;
