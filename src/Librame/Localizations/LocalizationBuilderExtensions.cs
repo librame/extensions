@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 
 namespace Librame.Builders
@@ -31,8 +30,8 @@ namespace Librame.Builders
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddLocalizations(this IBuilder builder)
         {
-            builder.Services.Replace(ServiceDescriptor.Singleton<IStringLocalizerFactory, EnhancedStringLocalizerFactory>());
             builder.Services.AddTransient(typeof(IEnhancedStringLocalizer<>), typeof(EnhancedStringLocalizer<>));
+            builder.Services.TryReplace<IStringLocalizerFactory, EnhancedStringLocalizerFactory>();
 
             return builder;
         }
