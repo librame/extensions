@@ -73,7 +73,7 @@ namespace Librame.Extensions.Data
             ChangeAudits = new List<Audit>();
 
             // 如果不审计，则忽略
-            if (!entry.Metadata.ClrType.HasAttribute<NotAuditedAttribute>())
+            if (!entry.Metadata.ClrType.IsAttribute<NotAuditedAttribute>())
             {
                 var audit = ToAudit(entry);
                 ChangeAudits.Add(audit);
@@ -164,7 +164,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回字符串。</returns>
         private string TryGetEntityName(Type entityType)
         {
-            if (entityType.HasAttribute(out DescriptionAttribute attribute))
+            if (entityType.TryAsAttribute(out DescriptionAttribute attribute))
                 return attribute.Description.AsValueOrDefault(entityType.Name);
 
             return entityType.Name;
@@ -177,7 +177,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回字符串。</returns>
         private string TryGetPropertyName(IProperty property)
         {
-            if (property.ClrType.HasAttribute(out DescriptionAttribute attribute))
+            if (property.ClrType.TryAsAttribute(out DescriptionAttribute attribute))
                 return attribute.Description.AsValueOrDefault(property.Name);
 
             return property.Name;

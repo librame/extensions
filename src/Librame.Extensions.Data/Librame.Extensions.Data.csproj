@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>5.20.1812.31</Version>
+    <Version>5.20.1812.61</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Librame.Extensions.Data</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Librame.Extensions.Data</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>5.20.1812.31</AssemblyVersion>
-    <FileVersion>5.20.1812.31</FileVersion>
+    <AssemblyVersion>5.20.1812.61</AssemblyVersion>
+    <FileVersion>5.20.1812.61</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -17,10 +17,10 @@ using System.Linq.Expressions;
 namespace Librame.Localizations
 {
     /// <summary>
-    /// 增强型字符串定位器接口。
+    /// 表达式字符串定位器接口。
     /// </summary>
     /// <typeparam name="TResource">指定的资源类型。</typeparam>
-    public interface IEnhancedStringLocalizer<TResource> : IStringLocalizer<TResource>
+    public interface IExpressionStringLocalizer<TResource> : IStringLocalizer<TResource>
     {
         /// <summary>
         /// 获取字符串。

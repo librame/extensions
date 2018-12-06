@@ -30,8 +30,8 @@ namespace Librame.Builders
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddLocalizations(this IBuilder builder)
         {
-            builder.Services.AddTransient(typeof(IEnhancedStringLocalizer<>), typeof(EnhancedStringLocalizer<>));
-            builder.Services.TryReplace<IStringLocalizerFactory, EnhancedStringLocalizerFactory>();
+            builder.Services.AddTransient(typeof(IExpressionStringLocalizer<>), typeof(ExpressionStringLocalizer<>));
+            builder.Services.TryReplace<IStringLocalizerFactory, ExpressionStringLocalizerFactory>();
 
             return builder;
         }

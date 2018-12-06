@@ -216,7 +216,7 @@ namespace Librame.Extensions
             var field = enumType.AsEnumFields().SingleOrDefault(f => f.Name == name);
             if (field.IsDefault()) return default;
 
-            var attrib = field.Attribute<TAttribute>();
+            var attrib = field.AsAttribute<TAttribute>();
             return converter.Invoke(field, attrib);
         }
 
@@ -318,7 +318,7 @@ namespace Librame.Extensions
 
             return fields.Select(f =>
             {
-                var attrib = f.Attribute<TAttribute>();
+                var attrib = f.AsAttribute<TAttribute>();
                 var number = f.GetValue(null);
 
                 return converter.Invoke(f, attrib, number);
@@ -430,7 +430,7 @@ namespace Librame.Extensions
 
             return fields.Select(f =>
             {
-                var attrib = f.Attribute<TAttribute>();
+                var attrib = f.AsAttribute<TAttribute>();
                 var number = f.GetValue(null);
 
                 var text = textConverter.Invoke(f, attrib, number);

@@ -17,16 +17,16 @@ using System.Linq.Expressions;
 namespace Librame.Localizations
 {
     /// <summary>
-    /// 增强型字符串定位器。
+    /// 表达式字符串定位器。
     /// </summary>
     /// <typeparam name="TResource">指定的资源类型。</typeparam>
-    public class EnhancedStringLocalizer<TResource> : StringLocalizer<TResource>, IEnhancedStringLocalizer<TResource>
+    public class ExpressionStringLocalizer<TResource> : StringLocalizer<TResource>, IExpressionStringLocalizer<TResource>
     {
         /// <summary>
-        /// 构造一个 <see cref="EnhancedStringLocalizer{TResource}"/> 实例。
+        /// 构造一个 <see cref="ExpressionStringLocalizer{TResource}"/> 实例。
         /// </summary>
         /// <param name="factory">给定的 <see cref="IStringLocalizerFactory"/>。</param>
-        public EnhancedStringLocalizer(IStringLocalizerFactory factory)
+        public ExpressionStringLocalizer(IStringLocalizerFactory factory)
             : base(factory)
         {
         }

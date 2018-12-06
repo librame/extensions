@@ -19,9 +19,9 @@ using System.Linq.Expressions;
 namespace Microsoft.Extensions.Localization
 {
     /// <summary>
-    /// 抽象字符串定位器静态扩展。
+    /// 抽象表达式字符串定位器静态扩展。
     /// </summary>
-    public static class AbstractStringLocalizerExtensions
+    public static class AbstractExpressionStringLocalizerExtensions
     {
 
         #region IStringLocalizer
@@ -99,10 +99,10 @@ namespace Microsoft.Extensions.Localization
         /// 创建一个指定文化名称的字符串定位器副本。
         /// </summary>
         /// <typeparam name="TResource">指定的资源类型。</typeparam>
-        /// <param name="localizer">给定的 <see cref="IEnhancedStringLocalizer{TResource}"/>。</param>
+        /// <param name="localizer">给定的 <see cref="IExpressionStringLocalizer{TResource}"/>。</param>
         /// <param name="cultureName">给定的文化名称。</param>
-        /// <returns>返回 <see cref="IEnhancedStringLocalizer{TResource}"/>。</returns>
-        public static IEnhancedStringLocalizer<TResource> WithCulture<TResource>(this IEnhancedStringLocalizer<TResource> localizer, string cultureName)
+        /// <returns>返回 <see cref="IExpressionStringLocalizer{TResource}"/>。</returns>
+        public static IExpressionStringLocalizer<TResource> WithCulture<TResource>(this IExpressionStringLocalizer<TResource> localizer, string cultureName)
         {
             return localizer.WithCulture<TResource>(CultureInfo.CreateSpecificCulture(cultureName));
         }
@@ -110,10 +110,10 @@ namespace Microsoft.Extensions.Localization
         /// 创建一个指定文化名称的字符串定位器副本。
         /// </summary>
         /// <typeparam name="TResource">指定的资源类型。</typeparam>
-        /// <param name="localizer">给定的 <see cref="IEnhancedStringLocalizer{TResource}"/>。</param>
+        /// <param name="localizer">给定的 <see cref="IExpressionStringLocalizer{TResource}"/>。</param>
         /// <param name="culture">给定的 <see cref="CultureInfo"/>。</param>
-        /// <returns>返回 <see cref="IEnhancedStringLocalizer{TResource}"/>。</returns>
-        public static IEnhancedStringLocalizer<TResource> WithCulture<TResource>(this IEnhancedStringLocalizer<TResource> localizer, CultureInfo culture)
+        /// <returns>返回 <see cref="IExpressionStringLocalizer{TResource}"/>。</returns>
+        public static IExpressionStringLocalizer<TResource> WithCulture<TResource>(this IExpressionStringLocalizer<TResource> localizer, CultureInfo culture)
         {
             localizer.WithCulture(culture);
 

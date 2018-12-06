@@ -6,21 +6,31 @@ namespace Librame.Extensions.Tests
     {
 
         [Fact]
-        public void AttributeTest()
+        public void IsAttributeTest()
         {
-            var method = typeof(AttributeExtensionsTests).GetMethod(nameof(AttributeTest));
-            var fact = method.Attribute<FactAttribute>();
+            var method = typeof(AttributeExtensionsTests).GetMethod(nameof(IsAttributeTest));
+
+            Assert.True(method.IsAttribute<FactAttribute>());
+        }
+
+
+        [Fact]
+        public void AsAttributeTest()
+        {
+            var method = typeof(AttributeExtensionsTests).GetMethod(nameof(AsAttributeTest));
+            var fact = method.AsAttribute<FactAttribute>();
 
             Assert.NotNull(fact);
         }
 
 
         [Fact]
-        public void HasAttributeTest()
+        public void TryAsAttributeTest()
         {
-            var method = typeof(AttributeExtensionsTests).GetMethod(nameof(HasAttributeTest));
+            var method = typeof(AttributeExtensionsTests).GetMethod(nameof(TryAsAttributeTest));
 
-            Assert.True(method.HasAttribute<FactAttribute>());
+            Assert.True(method.TryAsAttribute(out FactAttribute fact));
+            Assert.NotNull(fact);
         }
 
     }

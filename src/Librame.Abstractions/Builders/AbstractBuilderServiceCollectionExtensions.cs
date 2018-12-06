@@ -22,55 +22,55 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class AbstractBuilderServiceCollectionExtensions
     {
 
-        #region TryGet
+        #region TryAs
 
         /// <summary>
-        /// 尝试获取服务描述符。
+        /// 尝试得到服务描述符。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceDescriptor">输出服务描述符。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGet<TService>(this IServiceCollection services, out ServiceDescriptor serviceDescriptor)
+        public static bool TryAs<TService>(this IServiceCollection services, out ServiceDescriptor serviceDescriptor)
            where TService : class
         {
-            return services.TryGet(typeof(TService), out serviceDescriptor);
+            return services.TryAs(typeof(TService), out serviceDescriptor);
         }
         /// <summary>
-        /// 尝试获取服务描述符。
+        /// 尝试得到服务描述符。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <typeparam name="TImplementation">指定的实现类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceDescriptor">输出服务描述符。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGet<TService, TImplementation>(this IServiceCollection services, out ServiceDescriptor serviceDescriptor)
+        public static bool TryAs<TService, TImplementation>(this IServiceCollection services, out ServiceDescriptor serviceDescriptor)
            where TService : class
            where TImplementation : class, TService
         {
-            return services.TryGet(typeof(TService), typeof(TImplementation), out serviceDescriptor);
+            return services.TryAs(typeof(TService), typeof(TImplementation), out serviceDescriptor);
         }
 
         /// <summary>
-        /// 尝试获取服务描述符。
+        /// 尝试得到服务描述符。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="serviceDescriptor">输出服务描述符。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGet(this IServiceCollection services, Type serviceType, out ServiceDescriptor serviceDescriptor)
+        public static bool TryAs(this IServiceCollection services, Type serviceType, out ServiceDescriptor serviceDescriptor)
         {
-            return services.TryGet(serviceType, implementationType: null, out serviceDescriptor);
+            return services.TryAs(serviceType, implementationType: null, out serviceDescriptor);
         }
         /// <summary>
-        /// 尝试获取服务描述符。
+        /// 尝试得到服务描述符。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="implementationType">给定的实现类型。</param>
         /// <param name="serviceDescriptor">输出服务描述符。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGet(this IServiceCollection services, Type serviceType, Type implementationType,
+        public static bool TryAs(this IServiceCollection services, Type serviceType, Type implementationType,
             out ServiceDescriptor serviceDescriptor)
         {
             Func<ServiceDescriptor, bool> predicate = null;
@@ -151,7 +151,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Type oldImplementationType, Type newImplementationType)
         {
-            if (services.TryGet(serviceType, oldImplementationType, out ServiceDescriptor serviceDescriptor))
+            if (services.TryAs(serviceType, oldImplementationType, out ServiceDescriptor serviceDescriptor))
             {
                 services.Remove(serviceDescriptor);
                 services.Add(ServiceDescriptor.Describe(serviceType, newImplementationType, serviceDescriptor.Lifetime));
@@ -230,7 +230,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Type oldImplementationType,
             Func<IServiceProvider, object> newImplementationFactory)
         {
-            if (services.TryGet(serviceType, oldImplementationType, out ServiceDescriptor serviceDescriptor))
+            if (services.TryAs(serviceType, oldImplementationType, out ServiceDescriptor serviceDescriptor))
             {
                 services.Remove(serviceDescriptor);
                 services.Add(ServiceDescriptor.Describe(serviceType, newImplementationFactory, serviceDescriptor.Lifetime));
