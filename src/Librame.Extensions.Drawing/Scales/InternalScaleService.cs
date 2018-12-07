@@ -58,6 +58,11 @@ namespace Librame.Extensions.Drawing
         /// </summary>
         public string[] ImageExtensions => BuilderOptions.ImageExtensions.Split(',');
 
+        /// <summary>
+        /// 过滤器品质。
+        /// </summary>
+        public SKFilterQuality FilterQuality { get; set; } = SKFilterQuality.Medium;
+
 
         /// <summary>
         /// 删除缩放方案集合图片。
@@ -171,7 +176,7 @@ namespace Librame.Extensions.Drawing
                     Logger.LogDebug($"Scale info: width={scaleSize.Width}, height={scaleSize.Height}, colorType={srcBmp.Info.ColorType.AsEnumName()}, alphaType={srcBmp.Info.AlphaType.AsEnumName()}");
 
                     // 按比例缩放
-                    using (var bmp = srcBmp.Resize(scaleInfo, SKBitmapResizeMethod.Lanczos3))
+                    using (var bmp = srcBmp.Resize(scaleInfo, FilterQuality))
                     {
                         // 引入水印
                         if (s.Watermark != WatermarkMode.None && Watermark is InternalWatermarkService internalWatermark)

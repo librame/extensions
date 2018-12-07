@@ -40,7 +40,7 @@ namespace Librame.Builders
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public void ReplaceLoggerFactory(ILoggerFactory loggerFactory)
         {
-            ReplaceLoggerFactory(services => services.Replace(ServiceDescriptor.Singleton(loggerFactory)));
+            ReplaceLoggerFactory(services => services.TryReplace(loggerFactory));
         }
 
         /// <summary>

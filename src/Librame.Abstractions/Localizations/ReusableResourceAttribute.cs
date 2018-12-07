@@ -43,9 +43,8 @@ namespace Microsoft.Extensions.Localization
         public bool Enabled { get; }
 
         /// <summary>
-        /// 前缀工厂方法（输入参数集合依次为 BaseNamespace、[ResourceRelativeLocation]、TypeInfo）。
+        /// 前缀工厂方法（可选；输入参数集合依次为 BaseNamespace、[ResourceRelativeLocation]、TypeInfo）。
         /// </summary>
         public Func<string, string, TypeInfo, string> PrefixFactory { get; set; }
-
     }
 }

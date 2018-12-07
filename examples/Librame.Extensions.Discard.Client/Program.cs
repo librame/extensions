@@ -19,7 +19,7 @@ namespace Librame.Extensions.Discard.Client
             var services = new ServiceCollection();
 
             var locator = "dotnetty.com.pfx".AsFileLocator(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
-
+            
             services.AddLibrame(options => options.ReplaceLoggerFactory(loggerFactory))
                 .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
                 .AddNetwork().AddDotNetty();
