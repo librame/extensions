@@ -16,21 +16,21 @@ using System.Reflection;
 namespace Microsoft.Extensions.Localization
 {
     /// <summary>
-    /// 可重用资源特性。
+    /// 资源映射特性。
     /// </summary>
     [AttributeUsage(AttributeTargets.Assembly |
         AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface,
         AllowMultiple = false, Inherited = false)]
-    public class ReusableResourceAttribute : Attribute
+    public class ResourceMappingAttribute : Attribute
     {
         /// <summary>
-        /// 构造一个 <see cref="ReusableResourceAttribute"/> 实例。
+        /// 构造一个 <see cref="ResourceMappingAttribute"/> 实例。
         /// </summary>
         /// <remarks>
         /// 如果启用，则使用 <see cref="PrefixFactory"/> 设定加载资源文件；反之，则使用原始规则加载资源文件。
         /// </remarks>
         /// <param name="enabled">是否启用此特性（可选；默认启用）。</param>
-        public ReusableResourceAttribute(bool enabled = true)
+        public ResourceMappingAttribute(bool enabled = true)
             : base()
         {
             Enabled = enabled;

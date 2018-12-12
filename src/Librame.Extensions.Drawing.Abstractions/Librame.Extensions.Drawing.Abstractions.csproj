@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>5.20.1812.71</Version>
+    <Version>5.20.1812.121</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Librame.Extensions.Drawing.Abstractions</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Librame.Extensions.Drawing.Abstractions</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>5.20.1812.71</AssemblyVersion>
-    <FileVersion>5.20.1812.71</FileVersion>
+    <AssemblyVersion>5.20.1812.121</AssemblyVersion>
+    <FileVersion>5.20.1812.121</FileVersion>
     <RootNamespace>Librame.Extensions.Drawing</RootNamespace>
   </PropertyGroup>
 

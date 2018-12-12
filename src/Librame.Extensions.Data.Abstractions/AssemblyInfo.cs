@@ -15,4 +15,4 @@ using System.Reflection;
 
 [assembly: RootNamespace("Librame.Extensions.Data")]
 [assembly: ResourceLocation("Resources")]
-[assembly: ReusableResource]
+[assembly: ResourceMapping]

@@ -5,7 +5,7 @@ namespace Librame.Extensions.Data.Tests
     /// <summary>
     /// 测试资源。
     /// </summary>
-    [ReusableResource(false)]
+    [ResourceMapping(false)]
     public class TestResource
     {
         /// <summary>

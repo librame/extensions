@@ -53,12 +53,12 @@ namespace Librame.Localizations
         {
             var prefix = string.Empty;
 
-            var reusableAttribute = GetReusableResourceAttribute(typeInfo);
-            if (reusableAttribute.IsNotDefault() && reusableAttribute.Enabled)
+            var mappingAttribute = GetResourceMappingAttribute(typeInfo);
+            if (mappingAttribute.IsNotDefault() && mappingAttribute.Enabled)
             {
-                if (reusableAttribute.PrefixFactory.IsDefault())
+                if (mappingAttribute.PrefixFactory.IsDefault())
                 {
-                    reusableAttribute.PrefixFactory = (_baseNamespace, _resourcesRelativePath, _typeInfo) =>
+                    mappingAttribute.PrefixFactory = (_baseNamespace, _resourcesRelativePath, _typeInfo) =>
                     {
                         if (resourcesRelativePath.IsEmpty())
                             return $"{_baseNamespace}.{_typeInfo.Name}";
@@ -67,9 +67,9 @@ namespace Librame.Localizations
                     };
                 }
 
-                prefix = reusableAttribute.PrefixFactory.Invoke(baseNamespace, resourcesRelativePath, typeInfo);
+                prefix = mappingAttribute.PrefixFactory.Invoke(baseNamespace, resourcesRelativePath, typeInfo);
 
-                Logger.LogInformation($"The resource prefix: {prefix} ({nameof(ReusableResourceAttribute)}.{nameof(reusableAttribute.Enabled)}={reusableAttribute.Enabled})");
+                Logger.LogInformation($"The resource prefix: {prefix} ({nameof(ResourceMappingAttribute)}.{nameof(mappingAttribute.Enabled)}={mappingAttribute.Enabled})");
             }
             else
             {
@@ -83,16 +83,16 @@ namespace Librame.Localizations
 
 
         /// <summary>
-        /// 获取可重用资源特性。
+        /// 获取资源映射特性。
         /// </summary>
         /// <param name="typeInfo">给定的 <see cref="TypeInfo"/>。</param>
-        /// <returns>返回 <see cref="ReusableResourceAttribute"/>。</returns>
-        protected virtual ReusableResourceAttribute GetReusableResourceAttribute(TypeInfo typeInfo)
+        /// <returns>返回 <see cref="ResourceMappingAttribute"/>。</returns>
+        protected virtual ResourceMappingAttribute GetResourceMappingAttribute(TypeInfo typeInfo)
         {
-            if (typeInfo.TryAsAttribute(out ReusableResourceAttribute typeAttribute))
+            if (typeInfo.TryAsAttribute(out ResourceMappingAttribute typeAttribute))
                 return typeAttribute;
 
-            if (typeInfo.Assembly.TryAsAttribute(out ReusableResourceAttribute assemblyAttribute))
+            if (typeInfo.Assembly.TryAsAttribute(out ResourceMappingAttribute assemblyAttribute))
                 return assemblyAttribute;
 
             return null;
