@@ -67,6 +67,21 @@ namespace Librame.Extensions.Data
             : base(dbContextOptions)
         {
             BuilderOptions = builderOptions.NotDefault(nameof(builderOptions)).Value;
+
+            InitializeDatabase();
+        }
+
+
+        /// <summary>
+        /// 初始化数据库。
+        /// </summary>
+        protected virtual void InitializeDatabase()
+        {
+            if (BuilderOptions.EnsureDatabase)
+            {
+                DatabaseCreated();
+                DatabaseUpdateTables();
+            }
         }
 
 

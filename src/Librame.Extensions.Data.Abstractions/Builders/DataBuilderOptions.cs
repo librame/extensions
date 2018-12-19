@@ -38,6 +38,11 @@ namespace Librame.Builders
         public bool TenantEnabled { get; set; } = true;
 
         /// <summary>
+        /// 确保数据库（默认已启用）。
+        /// </summary>
+        public bool EnsureDatabase { get; set; } = true;
+
+        /// <summary>
         /// 发布审计事件动作方法。
         /// </summary>
         public Action<IDbProvider, IList<Audit>> PublishAuditEvent { get; set; }
