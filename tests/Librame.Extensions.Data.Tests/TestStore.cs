@@ -97,12 +97,16 @@ namespace Librame.Extensions.Data.Tests
         {
             DbContext.TrySwitchConnection(options => options.DefaultConnectionString);
 
+            DbContext.DatabaseUpdateTables();
+
             return this;
         }
 
         public ITestStore UseWriteStore()
         {
             DbContext.TrySwitchConnection(options => options.WriteConnectionString);
+
+            DbContext.DatabaseUpdateTables();
 
             return this;
         }

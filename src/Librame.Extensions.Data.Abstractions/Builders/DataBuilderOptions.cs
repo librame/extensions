@@ -38,11 +38,6 @@ namespace Librame.Builders
         public bool TenantEnabled { get; set; } = true;
 
         /// <summary>
-        /// 确保数据库已创建（默认已启用）。
-        /// </summary>
-        public bool EnsureDbCreated { get; set; } = true;
-
-        /// <summary>
         /// 发布审计事件动作方法。
         /// </summary>
         public Action<IDbProvider, IList<Audit>> PublishAuditEvent { get; set; }
@@ -51,7 +46,7 @@ namespace Librame.Builders
         /// <summary>
         /// 本机租户。
         /// </summary>
-        public Tenant LocalTenant { get; set; } = new Tenant
+        public ITenant LocalTenant { get; set; } = new Tenant
         {
             Id = Guid.Empty.ToString(),
             Name = "Local",
@@ -60,17 +55,22 @@ namespace Librame.Builders
 
 
         /// <summary>
-        /// 审计表选项。
+        /// 审计表。
         /// </summary>
         public ITableSchema AuditTable { get; set; }
 
         /// <summary>
-        /// 审计属性表选项。
+        /// 审计属性表。
         /// </summary>
         public IShardingSchema AuditPropertyTable { get; set; }
-        
+
         /// <summary>
-        /// 租户表选项。
+        /// 迁移审计表。
+        /// </summary>
+        public ITableSchema MigrationAuditTable { get; set; }
+
+        /// <summary>
+        /// 租户表。
         /// </summary>
         public ITableSchema TenantTable { get; set; }
     }

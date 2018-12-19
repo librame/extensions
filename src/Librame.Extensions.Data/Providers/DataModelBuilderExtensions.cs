@@ -71,6 +71,18 @@ namespace Microsoft.EntityFrameworkCore
                 auditProperty.Property(x => x.AuditId);
             });
 
+            // 迁移审计
+            modelBuilder.Entity<MigrationAudit>(migrationAudit =>
+            {
+                migrationAudit.ToTable(builderOptions.MigrationAuditTable ?? new TableSchema<MigrationAudit>());
+
+                migrationAudit.HasKey(x => x.Id);
+
+                migrationAudit.Property(x => x.Id).ValueGeneratedOnAdd();
+                migrationAudit.Property(x => x.CommandHash).HasMaxLength(200).IsRequired();
+                migrationAudit.Property(x => x.CommandText).HasMaxLength(1000).IsRequired();
+            });
+
             // 租户
             modelBuilder.Entity<Tenant>(tenant =>
             {

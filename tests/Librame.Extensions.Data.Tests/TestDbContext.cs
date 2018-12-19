@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Microsoft.Extensions.Options;
     using Models;
     
     public interface ITestDbContext : IDbContext<TestBuilderOptions>
@@ -16,10 +15,8 @@ namespace Librame.Extensions.Data.Tests
 
     public class TestDbContext : AbstractDbContext<TestDbContext, TestBuilderOptions>, ITestDbContext
     {
-        public TestDbContext(IOptions<TestBuilderOptions> builderOptions,
-            IChangeTrackerContext trackerContext, ITenantContext tenantContext,
-            ILogger<TestDbContext> logger, DbContextOptions<TestDbContext> dbContextOptions)
-            : base(builderOptions, trackerContext, tenantContext, logger, dbContextOptions)
+        public TestDbContext(IOptions<TestBuilderOptions> builderOptions, DbContextOptions<TestDbContext> dbContextOptions)
+            : base(builderOptions, dbContextOptions)
         {
         }
 
@@ -52,7 +49,8 @@ namespace Librame.Extensions.Data.Tests
 
             modelBuilder.Entity<Article>(article =>
             {
-                article.ToShardingTable(BuilderOptions.ArticleTable ?? new EveryYearShardingSchema());
+                article.ToShardingTable(BuilderOptions.ArticleTable ?? new EveryDayShardingSchema());
+                //article.ToShardingTable(BuilderOptions.ArticleTable ?? new DefaultShardingSchema("20181220"));
 
                 article.HasKey(x => x.Id);
 

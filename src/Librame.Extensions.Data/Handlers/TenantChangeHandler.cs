@@ -24,7 +24,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 设置租户。
         /// </summary>
-        public Tenant SetTenant { private get; set; }
+        public ITenant SetTenant { private get; set; }
 
 
         /// <summary>
@@ -36,14 +36,17 @@ namespace Librame.Extensions.Data
         {
             if (!builderOptions.AuditEnabled) return;
 
-            if (entry.Entity is ITenantId && SetTenant.IsNotDefault())
+            if (entry.Entity is ITenantId entity && entity.IsNotDefault() && SetTenant.IsNotDefault())
             {
-                var property = entry.Entity?.GetType().GetProperty("TenantId");
+                // 获取租户标识属性
+                var idProperty = SetTenant.GetType().GetProperty("Id");
+                // 获取实体的关联租户标识属性
+                var tenantIdProperty = entity.GetType().GetProperty("TenantId");
 
-                if (property.IsNotDefault())
-                    property.SetValue(entry.Entity, SetTenant.Id);
+                // 更新当前实体的关联租户标识
+                if (idProperty.IsNotDefault() && tenantIdProperty.IsNotDefault())
+                    tenantIdProperty.SetValue(entity, idProperty.GetValue(SetTenant));
             }
         }
-
     }
 }

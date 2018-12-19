@@ -10,33 +10,21 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 租户标识接口。
+    /// 迁移审计资源。
     /// </summary>
-    /// <remarks>
-    /// 主要用于实体关联租户标识。
-    /// </remarks>
-    public interface ITenantId<TId> : ITenantId
-        where TId : IEquatable<TId>
+    public class MigrationAuditResource : Resources.IResource
     {
         /// <summary>
-        /// 租户标识。
+        /// 命令文本。
         /// </summary>
-        TId TenantId { get; set; }
-    }
+        public string CommandText { get; set; }
 
-
-    /// <summary>
-    /// 租户标识接口。
-    /// </summary>
-    /// <remarks>
-    /// 主要用于实体关联租户标识的验证。
-    /// </remarks>
-    public interface ITenantId
-    {
+        /// <summary>
+        /// 命令哈希。
+        /// </summary>
+        public string CommandHash { get; set; }
     }
 }

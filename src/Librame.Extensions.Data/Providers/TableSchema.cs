@@ -84,5 +84,4 @@ namespace Librame.Extensions.Data
             return this;
         }
     }
-
 }

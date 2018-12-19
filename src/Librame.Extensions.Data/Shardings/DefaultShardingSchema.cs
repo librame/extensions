@@ -10,33 +10,22 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 租户标识接口。
+    /// 默认分表架构。
     /// </summary>
-    /// <remarks>
-    /// 主要用于实体关联租户标识。
-    /// </remarks>
-    public interface ITenantId<TId> : ITenantId
-        where TId : IEquatable<TId>
+    public class DefaultShardingSchema : ShardingSchema
     {
         /// <summary>
-        /// 租户标识。
+        /// 构造一个表名格式为“Entities_Value”的 <see cref="DefaultShardingSchema"/> 实例。
         /// </summary>
-        TId TenantId { get; set; }
-    }
+        /// <param name="value">给定的值。</param>
+        public DefaultShardingSchema(string value)
+            : base(DefaultShardingRule.Keys.EntitiesDefault, typeof(BaseShardingRule),
+                  new FormattingDescriptor(DefaultShardingRule.Keys.Default, value))
+        {
+        }
 
-
-    /// <summary>
-    /// 租户标识接口。
-    /// </summary>
-    /// <remarks>
-    /// 主要用于实体关联租户标识的验证。
-    /// </remarks>
-    public interface ITenantId
-    {
     }
 }

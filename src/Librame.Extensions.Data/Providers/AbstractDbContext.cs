@@ -11,12 +11,16 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,39 +33,72 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TDbContext">指定的数据库上下文类型。</typeparam>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public abstract class AbstractDbContext<TDbContext, TBuilderOptions> : AbstractDbContext<TDbContext>, IDbContext<TBuilderOptions>
+    public abstract class AbstractDbContext<TDbContext, TBuilderOptions> : AbstractDbContext<TDbContext, Tenant, TBuilderOptions>, IDbContext<TBuilderOptions>
         where TDbContext : DbContext, IDbContext
         where TBuilderOptions : DataBuilderOptions, new()
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractDbContext{TDbContext, TBuilderOptions}"/> 实例。
         /// </summary>
-        /// <param name="trackerContext">给定的 <see cref="IChangeTrackerContext"/>。</param>
-        /// <param name="tenantContext">给定的 <see cref="ITenantContext"/>。</param>
-        /// <param name="builderOptions">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{TDbContext}"/>。</param>
+        /// <param name="builderOptions">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
         /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
-        public AbstractDbContext(IOptions<TBuilderOptions> builderOptions,
-            IChangeTrackerContext trackerContext, ITenantContext tenantContext,
-            ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
-            : base(trackerContext, tenantContext, logger, dbContextOptions)
+        public AbstractDbContext(IOptions<TBuilderOptions> builderOptions, DbContextOptions<TDbContext> dbContextOptions)
+            : base(builderOptions, dbContextOptions)
+        {
+        }
+    }
+    /// <summary>
+    /// 抽象数据库上下文。
+    /// </summary>
+    /// <typeparam name="TDbContext">指定的数据库上下文类型。</typeparam>
+    /// <typeparam name="TTenant">指定的租户类型。</typeparam>
+    /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
+    public abstract class AbstractDbContext<TDbContext, TTenant, TBuilderOptions> : AbstractDbContext<TDbContext>, IDbContext<TTenant, TBuilderOptions>
+        where TDbContext : DbContext, IDbContext
+        where TTenant : class, ITenant
+        where TBuilderOptions : DataBuilderOptions, new()
+    {
+        /// <summary>
+        /// 构造一个 <see cref="AbstractDbContext{TDbContext, TTenant, TBuilderOptions}"/> 实例。
+        /// </summary>
+        /// <param name="builderOptions">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
+        /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
+        public AbstractDbContext(IOptions<TBuilderOptions> builderOptions, DbContextOptions<TDbContext> dbContextOptions)
+            : base(dbContextOptions)
         {
             BuilderOptions = builderOptions.NotDefault(nameof(builderOptions)).Value;
-
-            if (BuilderOptions.EnsureDbCreated)
-                DatabaseCreated();
         }
 
-        
+
         /// <summary>
         /// 构建器选项。
         /// </summary>
         public TBuilderOptions BuilderOptions { get; }
-        
+
+        /// <summary>
+        /// 租户上下文。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="ITenantContext{TTenant}"/>。
+        /// </value>
+        public ITenantContext<TTenant> TenantContext => this.GetService<ITenantContext<TTenant>>();
+
         /// <summary>
         /// 当前租户。
         /// </summary>
-        public override Tenant CurrentTenant => TenantContext.GetTenant(Tenants, BuilderOptions);
+        /// <value>
+        /// 返回 <see cref="ITenant"/>。
+        /// </value>
+        public override ITenant CurrentTenant => TenantContext.GetTenant(Tenants, BuilderOptions);
+
+
+        /// <summary>
+        /// 租户数据集。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="DbSet{Tenant}"/>。
+        /// </value>
+        public DbSet<TTenant> Tenants { get; set; }
 
         
         /// <summary>
@@ -123,58 +160,63 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 构造一个 <see cref="AbstractDbContext{TDbContext}"/> 实例。
         /// </summary>
-        /// <param name="trackerContext">给定的 <see cref="IChangeTrackerContext"/>。</param>
-        /// <param name="tenantContext">给定的 <see cref="ITenantContext"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{TDbContext}"/>。</param>
         /// <param name="dbContextOptions">给定的 <see cref="DbContextOptions{TDbContext}"/>。</param>
-        public AbstractDbContext(IChangeTrackerContext trackerContext, ITenantContext tenantContext,
-            ILogger<TDbContext> logger, DbContextOptions<TDbContext> dbContextOptions)
+        public AbstractDbContext(DbContextOptions<TDbContext> dbContextOptions)
             : base(dbContextOptions)
         {
-            Logger = logger.NotDefault(nameof(logger));
-
-            TrackerContext = trackerContext.NotDefault(nameof(trackerContext));
-            TenantContext = tenantContext.NotDefault(nameof(tenantContext));
         }
 
 
         /// <summary>
         /// 记录器。
         /// </summary>
-        protected ILogger Logger { get; }
+        /// <value>
+        /// 返回 <see cref="ILogger"/>。
+        /// </value>
+        protected ILogger Logger => this.GetService<ILogger<TDbContext>>();
 
 
         /// <summary>
         /// 变化跟踪器上下文。
         /// </summary>
-        public IChangeTrackerContext TrackerContext { get; }
-
-        /// <summary>
-        /// 租户上下文。
-        /// </summary>
-        public ITenantContext TenantContext { get; }
+        /// <value>
+        /// 返回 <see cref="IChangeTrackerContext"/>。
+        /// </value>
+        public IChangeTrackerContext TrackerContext => this.GetService<IChangeTrackerContext>();
 
 
         /// <summary>
         /// 审计数据集。
         /// </summary>
+        /// <value>
+        /// 返回 <see cref="DbSet{Audit}"/>。
+        /// </value>
         public DbSet<Audit> Audits { get; set; }
 
         /// <summary>
         /// 审计属性数据集。
         /// </summary>
+        /// <value>
+        /// 返回 <see cref="DbSet{AuditProperty}"/>。
+        /// </value>
         public DbSet<AuditProperty> AuditProperties { get; set; }
 
         /// <summary>
-        /// 租户数据集。
+        /// 迁移审计数据集。
         /// </summary>
-        public DbSet<Tenant> Tenants { get; set; }
+        /// <value>
+        /// 返回 <see cref="DbSet{MigrationAudit}"/>。
+        /// </value>
+        public DbSet<MigrationAudit> MigrationAudits { get; set; }
 
 
         /// <summary>
         /// 当前租户。
         /// </summary>
-        public abstract Tenant CurrentTenant { get; }
+        /// <value>
+        /// 返回 <see cref="Tenant"/>。
+        /// </value>
+        public abstract ITenant CurrentTenant { get; }
 
 
         /// <summary>
@@ -207,19 +249,74 @@ namespace Librame.Extensions.Data
         /// 确保数据库已创建。
         /// </summary>
         /// <returns>返回布尔值。</returns>
-        public virtual bool DatabaseCreated()
+        public virtual void DatabaseCreated()
         {
-            return Database.EnsureCreated();
+            Database.EnsureCreated();
         }
 
         /// <summary>
         /// 异步确保数据库已创建。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含布尔值的异步操作。</returns>
-        public virtual Task<bool> DatabaseCreatedAsync(CancellationToken cancellationToken = default)
+        /// <returns>返回一个异步操作。</returns>
+        public virtual Task DatabaseCreatedAsync(CancellationToken cancellationToken = default)
         {
             return Database.EnsureCreatedAsync(cancellationToken);
+        }
+
+
+        /// <summary>
+        /// 数据库更新表集合。
+        /// </summary>
+        public virtual void DatabaseUpdateTables()
+        {
+            var dependencies = this.GetService<RelationalDatabaseCreatorDependencies>();
+            if (dependencies.IsDefault()) return;
+
+            // 获取初始模型的所有操作命令集合
+            var operations = dependencies.ModelDiffer.GetDifferences(null, dependencies.Model);
+            var commands = dependencies.MigrationsSqlGenerator.Generate(operations, dependencies.Model);
+            if (commands.IsEmpty()) return;
+
+            var updateCommands = new List<MigrationCommand>();
+
+            foreach (var cmd in commands)
+            {
+                // 查找此命令是否已执行
+                var commandHash = cmd.CommandText.Sha256Base64String();
+                var exists = MigrationAudits.FirstOrDefault(p => p.CommandHash == commandHash);
+                if (exists.IsDefault())
+                {
+                    updateCommands.Add(cmd);
+
+                    MigrationAudits.Add(new MigrationAudit
+                    {
+                        CommandHash = commandHash,
+                        CommandText = cmd.CommandText
+                    });
+                }
+            }
+            
+            if (updateCommands.IsNotEmpty() && MigrationAudits.IsNotEmpty())
+            {
+                // 初始已通过 DatabaseCreated 执行，不手动执行命令
+                dependencies.MigrationCommandExecutor.ExecuteNonQuery(updateCommands, dependencies.Connection);
+                SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// 数据库更新表集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        public virtual Task DatabaseUpdateTablesAsync(CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            DatabaseUpdateTables();
+
+            return Task.CompletedTask;
         }
 
 
@@ -338,7 +435,7 @@ namespace Librame.Extensions.Data
             // Switch Write Connection
             if (CurrentTenant.WriteConnectionSeparation)
                 TrySwitchConnection(CurrentTenant.WriteConnectionString);
-
+            
             var output = processFactory.Invoke();
 
             // Restore Default Connection
@@ -393,10 +490,10 @@ namespace Librame.Extensions.Data
                             //  Message = Cannot change connection string on a connection that has already been opened.
                             //  Source = MySqlConnector
 
-                            DatabaseCreated();
-
                             if (connection.State != ConnectionState.Open)
                             {
+                                DatabaseCreated();
+
                                 connection.Open();
                                 Logger.LogInformation("Open connection");
                             }

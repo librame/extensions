@@ -13,9 +13,9 @@
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 抽象日期分表规则。
+    /// 基础分表规则。
     /// </summary>
-    public abstract class AbstractDateShardingRule : AbstractShardingRule
+    public class BaseShardingRule : AbstractShardingRule
     {
         /// <summary>
         /// 转换为表架构。

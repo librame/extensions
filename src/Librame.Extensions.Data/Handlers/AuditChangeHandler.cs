@@ -28,6 +28,15 @@ namespace Librame.Extensions.Data
     public class AuditChangeHandler : IAuditChangeHandler
     {
         /// <summary>
+        /// 构造一个 <see cref="AuditChangeHandler"/> 实例。
+        /// </summary>
+        public AuditChangeHandler()
+        {
+            ChangeAudits = new List<Audit>();
+        }
+
+
+        /// <summary>
         /// 创建者名工厂方法。
         /// </summary>
         public Func<IEnumerable<PropertyEntry>, string> CreatorNameFactory { get; set; }
@@ -58,7 +67,7 @@ namespace Librame.Extensions.Data
         /// <value>
         /// 返回 <see cref="IList{Audit}"/>。
         /// </value>
-        public IList<Audit> ChangeAudits { get; protected set; }
+        public IList<Audit> ChangeAudits { get; private set; }
 
 
         /// <summary>
@@ -69,9 +78,7 @@ namespace Librame.Extensions.Data
         public virtual void Process(EntityEntry entry, DataBuilderOptions builderOptions)
         {
             if (!builderOptions.AuditEnabled) return;
-
-            ChangeAudits = new List<Audit>();
-
+            
             // 如果不审计，则忽略
             if (!entry.Metadata.ClrType.IsAttribute<NotAuditedAttribute>())
             {

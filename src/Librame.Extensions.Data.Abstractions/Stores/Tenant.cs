@@ -20,7 +20,7 @@ namespace Librame.Extensions.Data
     /// 租户。
     /// </summary>
     [Description("租户")]
-    public class Tenant : AbstractEntity<string, DateTimeOffset, DataStatus>, IConnectionStrings
+    public class Tenant : AbstractEntity<string, DateTimeOffset, DataStatus>, ITenant
     {
         /// <summary>
         /// 构造一个 <see cref="Tenant"/> 实例。

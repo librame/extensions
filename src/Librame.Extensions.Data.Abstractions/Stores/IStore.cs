@@ -22,9 +22,32 @@ namespace Librame.Extensions.Data
     /// 存储接口。
     /// </summary>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public interface IStore<TBuilderOptions> : IService<TBuilderOptions>
+    public interface IStore<TBuilderOptions> : IStore<Tenant, TBuilderOptions>
         where TBuilderOptions : class, IBuilderOptions, new()
     {
+        /// <summary>
+        /// 获取租户分页列表。
+        /// </summary>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的显示条数。</param>
+        /// <returns>返回一个包含 <see cref="IPagingList{Tenant}"/> 的异步操作。</returns>
+        Task<IPagingList<Tenant>> GetTenantsAsync(int index, int size);
+    }
+    /// <summary>
+    /// 存储接口。
+    /// </summary>
+    /// <typeparam name="TTenant">指定的租户类型。</typeparam>
+    /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
+    public interface IStore<TTenant, TBuilderOptions> : IService<TBuilderOptions>
+        where TTenant : class, ITenant
+        where TBuilderOptions : class, IBuilderOptions, new()
+    {
+        /// <summary>
+        /// 异步获取租户。
+        /// </summary>
+        /// <param name="id">给定的标识。</param>
+        /// <returns>返回一个包含 <see cref="Tenant"/> 的异步操作。</returns>
+        Task<TTenant> GetTenantAsync(object id);
     }
 
 
@@ -47,22 +70,5 @@ namespace Librame.Extensions.Data
         /// <param name="size">给定的显示条数。</param>
         /// <returns>返回一个包含 <see cref="IPagingList{Audit}"/> 的异步操作。</returns>
         Task<IPagingList<Audit>> GetAuditsAsync(int index, int size);
-
-
-        /// <summary>
-        /// 异步获取租户。
-        /// </summary>
-        /// <param name="id">给定的标识。</param>
-        /// <returns>返回一个包含 <see cref="Tenant"/> 的异步操作。</returns>
-        Task<Tenant> GetTenantAsync(int id);
-
-        /// <summary>
-        /// 获取租户分页列表。
-        /// </summary>
-        /// <param name="index">给定的页索引。</param>
-        /// <param name="size">给定的显示条数。</param>
-        /// <returns>返回一个包含 <see cref="IPagingList{Tenant}"/> 的异步操作。</returns>
-        Task<IPagingList<Tenant>> GetTenantsAsync(int index, int size);
     }
-
 }

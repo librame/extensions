@@ -37,15 +37,27 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 确保数据库已创建。
         /// </summary>
-        /// <returns>返回布尔值。</returns>
-        bool DatabaseCreated();
+        void DatabaseCreated();
 
         /// <summary>
         /// 异步确保数据库已创建。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含布尔值的异步操作。</returns>
-        Task<bool> DatabaseCreatedAsync(CancellationToken cancellationToken = default);
+        /// <returns>返回一个异步操作。</returns>
+        Task DatabaseCreatedAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 数据库更新表集合。
+        /// </summary>
+        void DatabaseUpdateTables();
+
+        /// <summary>
+        /// 数据库更新表集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        Task DatabaseUpdateTablesAsync(CancellationToken cancellationToken = default);
 
 
         /// <summary>

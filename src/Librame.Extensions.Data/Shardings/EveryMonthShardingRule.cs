@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 每月分表规则。
     /// </summary>
-    public class EveryMonthShardingRule : AbstractDateShardingRule
+    public class EveryMonthShardingRule : BaseShardingRule
     {
         /// <summary>
         /// 添加默认键值对。

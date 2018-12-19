@@ -20,6 +20,6 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 设置租户。
         /// </summary>
-        Tenant SetTenant { set; }
+        ITenant SetTenant { set; }
     }
 }

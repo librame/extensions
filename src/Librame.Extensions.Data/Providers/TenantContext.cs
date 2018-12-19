@@ -19,15 +19,17 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 租户上下文。
     /// </summary>
-    public class TenantContext : ITenantContext
+    /// <typeparam name="TTenant">指定的租户类型。</typeparam>
+    public class TenantContext<TTenant> : ITenantContext<TTenant>
+        where TTenant : class, ITenant
     {
         /// <summary>
         /// 获取租户。
         /// </summary>
-        /// <param name="tenants">给定的 <see cref="IQueryable{Tenant}"/>。</param>
+        /// <param name="tenants">给定的 <see cref="IQueryable{TTenant}"/>。</param>
         /// <param name="builderOptions">给定的 <see cref="DataBuilderOptions"/>。</param>
         /// <returns>返回 <see cref="Tenant"/>。</returns>
-        public Tenant GetTenant(IQueryable<Tenant> tenants, DataBuilderOptions builderOptions)
+        public ITenant GetTenant(IQueryable<TTenant> tenants, DataBuilderOptions builderOptions)
         {
             return builderOptions.LocalTenant;
         }

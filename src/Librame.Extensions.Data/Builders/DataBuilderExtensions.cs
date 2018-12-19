@@ -54,6 +54,7 @@ namespace Librame.Builders
             {
                 options.AuditTable = new TableSchema<Audit>();
                 options.AuditPropertyTable = new EveryWeekShardingSchema();
+                options.MigrationAuditTable = new TableSchema<MigrationAudit>();
                 options.TenantTable = new TableSchema<Tenant>();
 
                 configureOptions?.Invoke(options);
@@ -88,7 +89,7 @@ namespace Librame.Builders
             builder.Services.AddScoped<IChangeHandler, TenantChangeHandler>();
 
             builder.Services.AddScoped<IChangeTrackerContext, ChangeTrackerContext>();
-            builder.Services.AddScoped<ITenantContext, TenantContext>();
+            builder.Services.AddScoped(typeof(ITenantContext<>), typeof(TenantContext<>));
 
             return builder;
         }

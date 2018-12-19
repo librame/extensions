@@ -85,5 +85,4 @@ namespace Librame.Extensions.Data
         [Display(Name = nameof(TenantId), GroupName = "GlobalGroup", ResourceType = typeof(AbstractEntityResource))]
         public TTenantId TenantId { get; set; }
     }
-
 }
