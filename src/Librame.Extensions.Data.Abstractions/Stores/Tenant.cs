@@ -27,6 +27,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         public Tenant()
         {
+            Id = Guid.NewGuid().ToString();
             DataStatus = DataStatus.Public;
             CreateTime = UpdateTime = DateTimeOffset.Now;
         }

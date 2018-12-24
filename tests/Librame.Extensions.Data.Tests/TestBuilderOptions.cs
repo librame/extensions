@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Librame.Extensions.Data.Tests
+﻿namespace Librame.Extensions.Data.Tests
 {
     using Builders;
 
@@ -14,6 +12,6 @@ namespace Librame.Extensions.Data.Tests
         /// <summary>
         /// 文章表选项。
         /// </summary>
-        public IShardingSchema ArticleTable { get; set; }
+        public ITableSchema ArticleTable { get; set; }
     }
 }

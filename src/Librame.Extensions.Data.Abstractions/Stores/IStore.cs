@@ -38,7 +38,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public interface IStore<TTenant, TBuilderOptions> : IService<TBuilderOptions>
+    public interface IStore<TTenant, TBuilderOptions> : IStore, IService<TBuilderOptions>
         where TTenant : class, ITenant
         where TBuilderOptions : class, IBuilderOptions, new()
     {
@@ -56,6 +56,15 @@ namespace Librame.Extensions.Data
     /// </summary>
     public interface IStore : IService
     {
+        /// <summary>
+        /// 数据库提供程序。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="IDbProvider"/>。
+        /// </value>
+        IDbProvider DbProvider { get; }
+
+
         /// <summary>
         /// 异步获取审计。
         /// </summary>

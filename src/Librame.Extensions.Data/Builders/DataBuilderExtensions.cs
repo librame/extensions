@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -52,9 +53,9 @@ namespace Librame.Builders
         {
             Action<TBuilderOptions> _configureOptions = options =>
             {
-                options.AuditTable = new TableSchema<Audit>();
-                options.AuditPropertyTable = new EveryWeekShardingSchema();
-                options.MigrationAuditTable = new TableSchema<MigrationAudit>();
+                options.AuditTable = TableSchema<Audit>.BuildInternal();
+                options.AuditPropertyTable = TableSchema<AuditProperty>.BuildInternal();
+                options.MigrationAuditTable = TableSchema<MigrationAudit>.BuildInternal();
                 options.TenantTable = new TableSchema<Tenant>();
 
                 configureOptions?.Invoke(options);
@@ -126,6 +127,8 @@ namespace Librame.Builders
                 var options = provider.GetRequiredService<IOptions<TBuilderOptions>>().Value;
                 configureOptions?.Invoke(options, optionsBuilder);
             });
+
+            builder.Services.AddEntityFrameworkDesignTimeServices();
 
             return builder;
         }

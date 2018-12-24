@@ -18,13 +18,18 @@ namespace Librame.Extensions.Data
     public class MigrationAuditResource : Resources.IResource
     {
         /// <summary>
-        /// 命令文本。
+        /// 快照名称。
         /// </summary>
-        public string CommandText { get; set; }
+        public string SnapshotName { get; set; }
 
         /// <summary>
-        /// 命令哈希。
+        /// 快照代码。
         /// </summary>
-        public string CommandHash { get; set; }
+        public string SnapshotCode { get; set; }
+
+        /// <summary>
+        /// 快照哈希。
+        /// </summary>
+        public string SnapshotHash { get; set; }
     }
 }

@@ -40,7 +40,7 @@ namespace Microsoft.EntityFrameworkCore
             // 审计
             modelBuilder.Entity<Audit>(audit =>
             {
-                audit.ToTable(builderOptions.AuditTable ?? new TableSchema<Audit>());
+                audit.ToTable(builderOptions.AuditTable);
 
                 audit.HasKey(x => x.Id);
 
@@ -59,7 +59,7 @@ namespace Microsoft.EntityFrameworkCore
             // 审计属性
             modelBuilder.Entity<AuditProperty>(auditProperty =>
             {
-                auditProperty.ToShardingTable(builderOptions.AuditPropertyTable ?? new EveryWeekShardingSchema());
+                auditProperty.ToTable(builderOptions.AuditPropertyTable);
 
                 auditProperty.HasKey(x => x.Id);
 
@@ -74,23 +74,26 @@ namespace Microsoft.EntityFrameworkCore
             // 迁移审计
             modelBuilder.Entity<MigrationAudit>(migrationAudit =>
             {
-                migrationAudit.ToTable(builderOptions.MigrationAuditTable ?? new TableSchema<MigrationAudit>());
+                migrationAudit.ToTable(builderOptions.MigrationAuditTable);
 
                 migrationAudit.HasKey(x => x.Id);
 
                 migrationAudit.Property(x => x.Id).ValueGeneratedOnAdd();
-                migrationAudit.Property(x => x.CommandHash).HasMaxLength(200).IsRequired();
-                migrationAudit.Property(x => x.CommandText).HasMaxLength(1000).IsRequired();
+                migrationAudit.Property(x => x.SnapshotName).HasMaxLength(100).IsRequired();
+                migrationAudit.Property(x => x.SnapshotHash).HasMaxLength(200).IsRequired();
+                migrationAudit.Property(x => x.SnapshotCode).IsRequired();
             });
 
             // 租户
             modelBuilder.Entity<Tenant>(tenant =>
             {
-                tenant.ToTable(builderOptions.TenantTable ?? new TableSchema<Tenant>());
+                tenant.ToTable(builderOptions.TenantTable);
 
                 tenant.HasKey(x => x.Id);
+                //tenant.HasKey(r => new { r.Name, r.Host });
+                tenant.HasIndex(r => new { r.Name, r.Host }).HasName("TenantNameHostIndex").IsUnique();
 
-                tenant.Property(x => x.Id).ValueGeneratedOnAdd();
+                tenant.Property(x => x.Id).ValueGeneratedNever();
                 tenant.Property(x => x.Name).HasMaxLength(100).IsRequired();
                 tenant.Property(x => x.Host).HasMaxLength(200).IsRequired();
             });

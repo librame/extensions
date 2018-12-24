@@ -107,7 +107,15 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 数据库上下文服务。
         /// </summary>
-        protected TDbContext DbContext { get; }
+        public TDbContext DbContext { get; }
+
+        /// <summary>
+        /// 数据库提供程序。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="IDbProvider"/>。
+        /// </value>
+        public IDbProvider DbProvider => DbContext;
 
 
         /// <summary>

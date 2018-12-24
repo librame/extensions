@@ -12,7 +12,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,6 +23,11 @@ namespace Librame.Extensions.Data
     public interface IDbProvider : IDisposable
     {
         /// <summary>
+        /// 数据库已创建动作列表。
+        /// </summary>
+        IList<Action> DatabaseCreatedActions { get; set; }
+
+        /// <summary>
         /// 提供程序名称。
         /// </summary>
         string DbProviderName { get; }
@@ -33,31 +37,36 @@ namespace Librame.Extensions.Data
         /// </summary>
         bool AutoTransactionsEnabled { get; set; }
 
-
         /// <summary>
-        /// 确保数据库已创建。
+        /// 快照名称。
         /// </summary>
-        void DatabaseCreated();
+        string SnapshotName { get; set; }
+
 
         /// <summary>
-        /// 异步确保数据库已创建。
+        /// 创建数据库。
         /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个异步操作。</returns>
-        Task DatabaseCreatedAsync(CancellationToken cancellationToken = default);
-
+        void CreateDatabase();
 
         /// <summary>
-        /// 数据库更新表集合。
-        /// </summary>
-        void DatabaseUpdateTables();
-
-        /// <summary>
-        /// 数据库更新表集合。
+        /// 创建数据库。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个异步操作。</returns>
-        Task DatabaseUpdateTablesAsync(CancellationToken cancellationToken = default);
+        Task CreateDatabaseAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 更新数据库。
+        /// </summary>
+        void UpdateDatabase();
+
+        /// <summary>
+        /// 更新数据库。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        Task UpdateDatabaseAsync(CancellationToken cancellationToken = default);
 
 
         /// <summary>
@@ -72,17 +81,10 @@ namespace Librame.Extensions.Data
         /// 异步执行 SQL 命令。
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="parameters">给定的参数集合。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
-
-
-        /// <summary>
-        /// 获取数据库连接。
-        /// </summary>
-        /// <returns>返回 <see cref="DbConnection"/>。</returns>
-        DbConnection GetDbConnection();
 
 
         /// <summary>
@@ -90,12 +92,6 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回受影响的行数。</returns>
         int SaveChanges();
-
-        /// <summary>
-        /// 异步保存变化。
-        /// </summary>
-        /// <returns>返回一个包含受影响行数的异步操作。</returns>
-        Task<int> SaveChangesAsync();
 
 
         /// <summary>

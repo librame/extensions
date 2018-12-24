@@ -4,7 +4,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Microsoft.Extensions.Options;
     using Models;
-    
+
     public interface ITestDbContext : IDbContext<TestBuilderOptions>
     {
         DbSet<Category> Categories { get; set; }
@@ -30,7 +30,7 @@ namespace Librame.Extensions.Data.Tests
         {
             modelBuilder.Entity<Category>(category =>
             {
-                category.ToTable(BuilderOptions.CategoryTable ?? new TableSchema<Category>());
+                category.ToTable(BuilderOptions.CategoryTable);
 
                 category.HasKey(x => x.Id);
 
@@ -49,8 +49,7 @@ namespace Librame.Extensions.Data.Tests
 
             modelBuilder.Entity<Article>(article =>
             {
-                article.ToShardingTable(BuilderOptions.ArticleTable ?? new EveryDayShardingSchema());
-                //article.ToShardingTable(BuilderOptions.ArticleTable ?? new DefaultShardingSchema("20181220"));
+                article.ToTable(BuilderOptions.ArticleTable);
 
                 article.HasKey(x => x.Id);
 

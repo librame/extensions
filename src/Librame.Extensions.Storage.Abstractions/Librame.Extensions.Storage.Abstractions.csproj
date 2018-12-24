@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>5.20.1812.191</Version>
+    <Version>5.20.1812.241</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Librame.Extensions.Storage.Abstractions</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Librame.Extensions.Storage.Abstractions</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>5.20.1812.191</AssemblyVersion>
-    <FileVersion>5.20.1812.191</FileVersion>
+    <AssemblyVersion>5.20.1812.241</AssemblyVersion>
+    <FileVersion>5.20.1812.241</FileVersion>
     <RootNamespace>Librame.Extensions.Storage</RootNamespace>
   </PropertyGroup>
 

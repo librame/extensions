@@ -20,6 +20,8 @@ namespace Librame.Extensions
     public static class ConversionExtensions
     {
 
+        #region Base64String
+
         /// <summary>
         /// 转换为 BASE64 字符串。
         /// </summary>
@@ -40,6 +42,10 @@ namespace Librame.Extensions
             return Convert.FromBase64String(base64String);
         }
 
+        #endregion
+
+
+        #region HexString
 
         /// <summary>
         /// 转换为 16 进制字符串。
@@ -71,6 +77,8 @@ namespace Librame.Extensions
 
             return buffer;
         }
+
+        #endregion
 
     }
 }

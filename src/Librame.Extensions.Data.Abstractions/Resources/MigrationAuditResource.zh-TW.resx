@@ -117,10 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommandHash" xml:space="preserve">
-    <value>命令散列</value>
+  <data name="SnapshotCode" xml:space="preserve">
+    <value>快照代碼</value>
   </data>
-  <data name="CommandText" xml:space="preserve">
-    <value>命令文本</value>
+  <data name="SnapshotHash" xml:space="preserve">
+    <value>快照哈希</value>
+  </data>
+  <data name="SnapshotName" xml:space="preserve">
+    <value>快照名稱</value>
   </data>
 </root>

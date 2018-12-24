@@ -28,6 +28,11 @@ namespace Librame.Builders
         public string DefaultSchema { get; set; }
 
         /// <summary>
+        /// 默认快照名称。
+        /// </summary>
+        public string DefaultSnapshotName { get; set; }
+
+        /// <summary>
         /// 启用审计（默认已启用）。
         /// </summary>
         public bool AuditEnabled { get; set; } = true;
@@ -67,7 +72,7 @@ namespace Librame.Builders
         /// <summary>
         /// 审计属性表。
         /// </summary>
-        public IShardingSchema AuditPropertyTable { get; set; }
+        public ITableSchema AuditPropertyTable { get; set; }
 
         /// <summary>
         /// 迁移审计表。

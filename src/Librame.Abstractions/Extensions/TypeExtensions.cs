@@ -10,6 +10,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -20,6 +21,56 @@ namespace Librame.Extensions
     /// </summary>
     public static class TypeExtensions
     {
+        private static readonly Dictionary<Type, object> _commonTypeDictionary = new Dictionary<Type, object>
+        {
+#pragma warning disable IDE0034 // Simplify 'default' expression - default causes default(object)
+            { typeof(int), default(int) },
+            { typeof(Guid), default(Guid) },
+            { typeof(DateTime), default(DateTime) },
+            { typeof(DateTimeOffset), default(DateTimeOffset) },
+            { typeof(long), default(long) },
+            { typeof(bool), default(bool) },
+            { typeof(double), default(double) },
+            { typeof(short), default(short) },
+            { typeof(float), default(float) },
+            { typeof(byte), default(byte) },
+            { typeof(char), default(char) },
+            { typeof(uint), default(uint) },
+            { typeof(ushort), default(ushort) },
+            { typeof(ulong), default(ulong) },
+            { typeof(sbyte), default(sbyte) }
+#pragma warning restore IDE0034 // Simplify 'default' expression
+        };
+
+
+        /// <summary>
+        /// 获取默认值。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回对象 NULL（非值类型）或默认值（值类型）。</returns>
+        public static object AsDefaultValue(this Type type)
+        {
+            if (type.IsDefault() || !type.IsValueType) return null;
+
+            // A bit of perf code to avoid calling Activator.CreateInstance for common types and
+            // to avoid boxing on every call. This is about 50% faster than just calling CreateInstance
+            // for all value types.
+            return _commonTypeDictionary.TryGetValue(type, out var value)
+                ? value
+                : Activator.CreateInstance(type);
+        }
+
+
+        /// <summary>
+        /// 打开可空类型。
+        /// </summary>
+        /// <param name="nullableType">给定的可空类型。</param>
+        /// <returns>返回基础类型或可空类型本身。</returns>
+        public static Type UnwrapNullableType(this Type nullableType)
+        {
+            return Nullable.GetUnderlyingType(nullableType) ?? nullableType;
+        }
+
 
         /// <summary>
         /// 填入属性集合。

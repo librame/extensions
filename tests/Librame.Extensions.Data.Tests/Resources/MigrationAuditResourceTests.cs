@@ -21,10 +21,10 @@ namespace Librame.Extensions.Data.Tests
         {
             LocalizationRegistration.Register(cultureName);
 
-            var name = localizer[r => r.CommandHash];
+            var name = localizer[r => r.SnapshotHash];
             Assert.False(name.ResourceNotFound);
 
-            var host = localizer[r => r.CommandText];
+            var host = localizer[r => r.SnapshotCode];
             Assert.False(host.ResourceNotFound);
         }
 

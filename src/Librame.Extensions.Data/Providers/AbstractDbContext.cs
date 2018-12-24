@@ -12,17 +12,19 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Librame.Extensions.Data
 {
@@ -45,6 +47,33 @@ namespace Librame.Extensions.Data
         public AbstractDbContext(IOptions<TBuilderOptions> builderOptions, DbContextOptions<TDbContext> dbContextOptions)
             : base(builderOptions, dbContextOptions)
         {
+        }
+
+
+        /// <summary>
+        /// 初始化数据库。
+        /// </summary>
+        protected override void InitializeDatabase()
+        {
+            DatabaseCreatedActions.Add(() => AddDefaultTenant());
+
+            base.InitializeDatabase();
+        }
+
+
+        /// <summary>
+        /// 添加默认租户。
+        /// </summary>
+        protected virtual void AddDefaultTenant()
+        {
+            if (BuilderOptions.LocalTenant is Tenant tenant)
+            {
+                if (!Tenants.Any(p => p.Name == tenant.Name && p.Host == tenant.Host)
+                    && !Tenants.Local.Any(p => p.Name == tenant.Name && p.Host == tenant.Host))
+                {
+                    Tenants.Add(tenant);
+                }
+            }
         }
     }
     /// <summary>
@@ -77,11 +106,11 @@ namespace Librame.Extensions.Data
         /// </summary>
         protected virtual void InitializeDatabase()
         {
+            if (BuilderOptions.DefaultSnapshotName.IsNotEmpty())
+                SnapshotName = BuilderOptions.DefaultSnapshotName;
+
             if (BuilderOptions.EnsureDatabase)
-            {
-                DatabaseCreated();
-                DatabaseUpdateTables();
-            }
+                CreateDatabase();
         }
 
 
@@ -179,6 +208,16 @@ namespace Librame.Extensions.Data
         public AbstractDbContext(DbContextOptions<TDbContext> dbContextOptions)
             : base(dbContextOptions)
         {
+            InitializeDbContext();
+        }
+
+
+        /// <summary>
+        /// 初始化数据库上下文。
+        /// </summary>
+        protected virtual void InitializeDbContext()
+        {
+            DatabaseCreatedActions.Add(() => UpdateMigrationAudits());
         }
 
 
@@ -198,6 +237,12 @@ namespace Librame.Extensions.Data
         /// 返回 <see cref="IChangeTrackerContext"/>。
         /// </value>
         public IChangeTrackerContext TrackerContext => this.GetService<IChangeTrackerContext>();
+
+
+        /// <summary>
+        /// 数据库已创建动作列表。
+        /// </summary>
+        public IList<Action> DatabaseCreatedActions { get; set; } = new List<Action>();
 
 
         /// <summary>
@@ -251,6 +296,11 @@ namespace Librame.Extensions.Data
             set { Database.AutoTransactionsEnabled = value; }
         }
 
+        /// <summary>
+        /// 快照名称。
+        /// </summary>
+        public string SnapshotName { get; set; } = "LibrameSnapshot";
+
 
         /// <summary>
         /// 变化跟踪。
@@ -261,75 +311,167 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 确保数据库已创建。
+        /// 更新迁移审计集合。
         /// </summary>
-        /// <returns>返回布尔值。</returns>
-        public virtual void DatabaseCreated()
+        /// <param name="operationsFactory">给定的迁移操作列表工厂方法（可选）。</param>
+        protected virtual void UpdateMigrationAudits(Func<IReadOnlyList<MigrationOperation>, bool> operationsFactory = null)
         {
-            Database.EnsureCreated();
-        }
-
-        /// <summary>
-        /// 异步确保数据库已创建。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个异步操作。</returns>
-        public virtual Task DatabaseCreatedAsync(CancellationToken cancellationToken = default)
-        {
-            return Database.EnsureCreatedAsync(cancellationToken);
-        }
-
-
-        /// <summary>
-        /// 数据库更新表集合。
-        /// </summary>
-        public virtual void DatabaseUpdateTables()
-        {
-            var dependencies = this.GetService<RelationalDatabaseCreatorDependencies>();
-            if (dependencies.IsDefault()) return;
-
-            // 获取初始模型的所有操作命令集合
-            var operations = dependencies.ModelDiffer.GetDifferences(null, dependencies.Model);
-            var commands = dependencies.MigrationsSqlGenerator.Generate(operations, dependencies.Model);
-            if (commands.IsEmpty()) return;
-
-            var updateCommands = new List<MigrationCommand>();
-
-            foreach (var cmd in commands)
+            MigrationAudit lastMigrationAudit = null;
+            if (MigrationAudits.Any())
             {
-                // 查找此命令是否已执行
-                var commandHash = cmd.CommandText.Sha256Base64String();
-                var exists = MigrationAudits.FirstOrDefault(p => p.CommandHash == commandHash);
-                if (exists.IsDefault())
-                {
-                    updateCommands.Add(cmd);
+                lastMigrationAudit = MigrationAudits.FirstOrDefault(p => p.CreateTime == MigrationAudits.Max(s => s.CreateTime));
+            }
+            else if (MigrationAudits.Local.Any())
+            {
+                lastMigrationAudit = MigrationAudits.Local.FirstOrDefault(p => p.CreateTime == MigrationAudits.Local.Max(s => s.CreateTime));
+            }
 
-                    MigrationAudits.Add(new MigrationAudit
+            IModel lastModel = null;
+            if (lastMigrationAudit.IsNotDefault())
+            {
+                var lastSnapshotCode = lastMigrationAudit.SnapshotCode.FromEncodingBase64String();
+                lastModel = ModelSnapshotHelper.CreateSnapshot(this, lastSnapshotCode, SnapshotName)?.Model;
+            }
+
+            var differ = this.GetService<IMigrationsModelDiffer>();
+            var operations = differ.GetDifferences(lastModel, Model);
+            // 如果模型无变化则直接返回
+            if (operations.IsEmpty()) return;
+
+            var executeResult = operationsFactory?.Invoke(operations);
+            // 如果执行结果存在且不成功则直接返回
+            if (executeResult.HasValue && !executeResult.Value) return;
+
+            var snapshotCode = ModelSnapshotHelper.GenerateSnapshotCode(this, SnapshotName);
+            var snapshotBuffer = snapshotCode.AsEncodingBytes();
+            var snapshotHash = snapshotBuffer.Sha1().AsBase64String();
+
+            if (!MigrationAudits.Any(p => p.SnapshotHash == snapshotHash && p.SnapshotName == SnapshotName)
+                && !MigrationAudits.Local.Any(p => p.SnapshotHash == snapshotHash && p.SnapshotName == SnapshotName))
+            {
+                MigrationAudits.Add(new MigrationAudit
+                {
+                    SnapshotCode = snapshotBuffer.AsBase64String(),
+                    SnapshotHash = snapshotHash,
+                    SnapshotName = SnapshotName
+                });
+
+                base.SaveChanges();
+            }
+        }
+
+
+        /// <summary>
+        /// 执行迁移命令集合。
+        /// </summary>
+        /// <param name="operations">给定的 <see cref="IReadOnlyList{MigrationOperation}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        protected virtual bool ExecuteMigrationCommands(IReadOnlyList<MigrationOperation> operations)
+        {
+            var executeResult = false;
+            if (operations.IsEmpty()) return executeResult;
+
+            var generator = this.GetService<IMigrationsSqlGenerator>();
+            var commands = generator.Generate(operations, Model);
+
+            using (new TransactionScope(TransactionScopeOption.Suppress, TransactionScopeAsyncFlowOption.Enabled))
+            {
+                Database.OpenConnection();
+
+                try
+                {
+                    foreach (var cmd in commands)
                     {
-                        CommandHash = commandHash,
-                        CommandText = cmd.CommandText
-                    });
+                        IDbContextTransaction transaction = null;
+
+                        try
+                        {
+                            if (transaction == null
+                                && !cmd.TransactionSuppressed)
+                            {
+                                transaction = Database.BeginTransaction();
+                            }
+
+                            if (transaction != null
+                                && cmd.TransactionSuppressed)
+                            {
+                                transaction.Commit();
+                                transaction.Dispose();
+                                transaction = null;
+                            }
+
+                            Database.ExecuteSqlCommand(cmd.CommandText);
+                            transaction?.Commit();
+
+                            if (!executeResult)
+                                executeResult = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction?.Rollback();
+                            Logger.LogWarning(ex, ex.AsInnerMessage());
+                        }
+                        finally
+                        {
+                            transaction?.Dispose();
+                        }
+                    }
+                }
+                finally
+                {
+                    Database.CloseConnection();
                 }
             }
-            
-            if (updateCommands.IsNotEmpty() && MigrationAudits.IsNotEmpty())
+
+            return executeResult;
+        }
+
+
+        /// <summary>
+        /// 创建数据库。
+        /// </summary>
+        public virtual void CreateDatabase()
+        {
+            if (Database.EnsureCreated())
             {
-                // 初始已通过 DatabaseCreated 执行，不手动执行命令
-                dependencies.MigrationCommandExecutor.ExecuteNonQuery(updateCommands, dependencies.Connection);
-                SaveChanges();
+                foreach (var action in DatabaseCreatedActions)
+                    action?.Invoke();
             }
         }
 
         /// <summary>
-        /// 数据库更新表集合。
+        /// 创建数据库。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个异步操作。</returns>
-        public virtual Task DatabaseUpdateTablesAsync(CancellationToken cancellationToken = default)
+        public virtual Task CreateDatabaseAsync(CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            DatabaseUpdateTables();
+            CreateDatabase();
+
+            return Task.CompletedTask;
+        }
+
+
+        /// <summary>
+        /// 更新数据库。
+        /// </summary>
+        public virtual void UpdateDatabase()
+        {
+            UpdateMigrationAudits(ExecuteMigrationCommands);
+        }
+
+        /// <summary>
+        /// 更新数据库。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        public virtual Task UpdateDatabaseAsync(CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            UpdateDatabase();
 
             return Task.CompletedTask;
         }
@@ -350,42 +492,15 @@ namespace Librame.Extensions.Data
         /// 异步执行 SQL 命令。
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="parameters">给定的参数集合。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         public virtual Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default)
         {
             return Database.ExecuteSqlCommandAsync(sql, parameters, cancellationToken);
         }
+        
 
-
-        /// <summary>
-        /// 获取数据库连接。
-        /// </summary>
-        /// <returns>返回 <see cref="DbConnection"/>。</returns>
-        public virtual DbConnection GetDbConnection()
-        {
-            return Database.GetDbConnection();
-        }
-
-
-        /// <summary>
-        /// 异步保存变化。
-        /// </summary>
-        /// <returns>返回一个包含受影响行数的异步操作。</returns>
-        public virtual Task<int> SaveChangesAsync()
-        {
-            return base.SaveChangesAsync();
-        }
-
-        /// <summary>
-        /// 保存变化。
-        /// </summary>
-        /// <returns>返回受影响的行数。</returns>
-        public override int SaveChanges()
-        {
-            return ChangeTracking(() => base.SaveChanges());
-        }
         /// <summary>
         /// 保存变化。
         /// </summary>
@@ -396,18 +511,6 @@ namespace Librame.Extensions.Data
             return ChangeTracking(() => base.SaveChanges(acceptAllChangesOnSuccess));
         }
 
-        /// <summary>
-        /// 异步保存变化。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含受影响行数的异步操作。</returns>
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            return Task.Factory.StartNew(() =>
-            {
-                return ChangeTracking(() => base.SaveChangesAsync(cancellationToken).Result);
-            });
-        }
         /// <summary>
         /// 异步保存变化。
         /// </summary>
@@ -483,7 +586,7 @@ namespace Librame.Extensions.Data
                 return false;
             }
 
-            var connection = GetDbConnection();
+            var connection = Database.GetDbConnection();
             if (connection.ConnectionString == connectionString)
             {
                 Logger.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) same as the current connection string");
@@ -499,7 +602,7 @@ namespace Librame.Extensions.Data
                             //connection.ChangeDatabase(connectionString);
                             connection.ConnectionString = connectionString;
                             Logger.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) change connection string: {connectionString}");
-
+                            
                             // MySql Bug: System.InvalidOperationException
                             //  HResult = 0x80131509
                             //  Message = Cannot change connection string on a connection that has already been opened.
@@ -507,7 +610,7 @@ namespace Librame.Extensions.Data
 
                             if (connection.State != ConnectionState.Open)
                             {
-                                DatabaseCreated();
+                                CreateDatabase();
 
                                 connection.Open();
                                 Logger.LogInformation("Open connection");

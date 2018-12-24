@@ -97,7 +97,7 @@ namespace Librame.Extensions.Data
         {
             var audit = new Audit
             {
-                EntityName = TryGetEntityName(entry.Metadata.ClrType),
+                EntityName = GetEntityName(entry.Metadata.ClrType),
                 EntityTypeName = entry.Metadata.ClrType.FullName,
                 State = (int)entry.State,
                 StateName = entry.State.ToString()
@@ -109,11 +109,11 @@ namespace Librame.Extensions.Data
                     continue;
 
                 if (property.IsPrimaryKey())
-                    audit.EntityId = TryGetEntityId(entry.Property(property.Name));
+                    audit.EntityId = GetEntityId(entry.Property(property.Name));
 
                 var auditProperty = new AuditProperty()
                 {
-                    PropertyName = TryGetPropertyName(property),
+                    PropertyName = GetPropertyName(property),
                     PropertyTypeName = property.ClrType.FullName
                 };
 
@@ -144,7 +144,7 @@ namespace Librame.Extensions.Data
                 audit.Properties.Add(auditProperty);
             }
 
-            var creation = TryGetCreation(entry);
+            var creation = GetCreation(entry);
             audit.CreatedBy = creation.Creator;
             audit.CreatedTime = creation.CreatedTime;
 
@@ -156,7 +156,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="property">给定的 <see cref="PropertyEntry"/>。</param>
         /// <returns>返回字符串。</returns>
-        private string TryGetEntityId(PropertyEntry property)
+        private string GetEntityId(PropertyEntry property)
         {
             if (property.EntityEntry.State == EntityState.Deleted)
                 return property.OriginalValue?.ToString();
@@ -169,7 +169,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="entityType">给定的实体类型。</param>
         /// <returns>返回字符串。</returns>
-        private string TryGetEntityName(Type entityType)
+        private string GetEntityName(Type entityType)
         {
             if (entityType.TryAsAttribute(out DescriptionAttribute attribute))
                 return attribute.Description.AsValueOrDefault(entityType.Name);
@@ -182,7 +182,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="property">给定的 <see cref="IProperty"/>。</param>
         /// <returns>返回字符串。</returns>
-        private string TryGetPropertyName(IProperty property)
+        private string GetPropertyName(IProperty property)
         {
             if (property.ClrType.TryAsAttribute(out DescriptionAttribute attribute))
                 return attribute.Description.AsValueOrDefault(property.Name);
@@ -195,7 +195,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
         /// <returns>返回创建信息。</returns>
-        private (string Creator, DateTime CreatedTime) TryGetCreation(EntityEntry entry)
+        private (string Creator, DateTime CreatedTime) GetCreation(EntityEntry entry)
         {
             var creator = string.Empty;
             var createdTime = string.Empty;

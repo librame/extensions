@@ -32,16 +32,22 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 命令文本。
+        /// 快照名称。
         /// </summary>
-        [Display(Name = nameof(CommandText), ResourceType = typeof(MigrationAuditResource))]
-        public string CommandText { get; set; }
+        [Display(Name = nameof(SnapshotName), ResourceType = typeof(MigrationAuditResource))]
+        public string SnapshotName { get; set; }
 
         /// <summary>
-        /// 命令哈希。
+        /// 快照代码。
         /// </summary>
-        [Display(Name = nameof(CommandHash), ResourceType = typeof(MigrationAuditResource))]
-        public string CommandHash { get; set; }
+        [Display(Name = nameof(SnapshotCode), ResourceType = typeof(MigrationAuditResource))]
+        public string SnapshotCode { get; set; }
+
+        /// <summary>
+        /// 快照哈希。
+        /// </summary>
+        [Display(Name = nameof(SnapshotHash), ResourceType = typeof(MigrationAuditResource))]
+        public string SnapshotHash { get; set; }
 
         /// <summary>
         /// 创建时间。

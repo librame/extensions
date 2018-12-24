@@ -38,7 +38,7 @@ namespace Librame.Extensions.Data.Tests
                 UseDefaultStore();
                 return;
             }
-
+            
             Category firstCategory;
             Category lastCategory;
 
@@ -97,7 +97,7 @@ namespace Librame.Extensions.Data.Tests
         {
             DbContext.TrySwitchConnection(options => options.DefaultConnectionString);
 
-            DbContext.DatabaseUpdateTables();
+            DbContext.UpdateDatabase();
 
             return this;
         }
@@ -106,7 +106,7 @@ namespace Librame.Extensions.Data.Tests
         {
             DbContext.TrySwitchConnection(options => options.WriteConnectionString);
 
-            DbContext.DatabaseUpdateTables();
+            DbContext.UpdateDatabase();
 
             return this;
         }
