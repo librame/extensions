@@ -25,8 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network", "src\Librame.Extensions.Network\Librame.Extensions.Network.csproj", "{E44A6266-4FCB-4336-AF4B-A82040371F9D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Abstractions", "src\Librame.Extensions.Network.DotNetty.Abstractions\Librame.Extensions.Network.DotNetty.Abstractions.csproj", "{1436066B-7A8B-4647-BBD8-10626558F1AF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty", "src\Librame.Extensions.Network.DotNetty\Librame.Extensions.Network.DotNetty.csproj", "{5C7BA55D-A40A-43B8-B820-C62DB22A12F9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Storage.Abstractions", "src\Librame.Extensions.Storage.Abstractions\Librame.Extensions.Storage.Abstractions.csproj", "{E52A5EE0-1992-4585-910B-E495E95FDC83}"
@@ -139,10 +137,6 @@ Global
 		{E44A6266-4FCB-4336-AF4B-A82040371F9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E44A6266-4FCB-4336-AF4B-A82040371F9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E44A6266-4FCB-4336-AF4B-A82040371F9D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1436066B-7A8B-4647-BBD8-10626558F1AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1436066B-7A8B-4647-BBD8-10626558F1AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1436066B-7A8B-4647-BBD8-10626558F1AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1436066B-7A8B-4647-BBD8-10626558F1AF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5C7BA55D-A40A-43B8-B820-C62DB22A12F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5C7BA55D-A40A-43B8-B820-C62DB22A12F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C7BA55D-A40A-43B8-B820-C62DB22A12F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -278,7 +272,6 @@ Global
 		{E82B257A-B115-4411-8499-4D00A77D8F33} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{1C4EF2B8-A61E-42D0-A2D5-C7BCAB0CF944} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{E44A6266-4FCB-4336-AF4B-A82040371F9D} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
-		{1436066B-7A8B-4647-BBD8-10626558F1AF} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{5C7BA55D-A40A-43B8-B820-C62DB22A12F9} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{E52A5EE0-1992-4585-910B-E495E95FDC83} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{DFEC7505-7869-4134-8C38-086489B38A2D} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
@@ -311,7 +304,7 @@ Global
 		{2ECCAEF5-764D-4C23-9E18-8FB51D311562} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4B0E8A00-41DB-40AA-826D-5EFA8FF281F0}
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45
+		SolutionGuid = {4B0E8A00-41DB-40AA-826D-5EFA8FF281F0}
 	EndGlobalSection
 EndGlobal

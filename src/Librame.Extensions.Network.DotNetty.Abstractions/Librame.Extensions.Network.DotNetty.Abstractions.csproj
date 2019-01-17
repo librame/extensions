@@ -32,10 +32,19 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetty.Transport" Version="0.6.0" />
+    <PackageReference Include="MSBump" Version="2.3.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Librame.Extensions.Network.Abstractions\Librame.Extensions.Network.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Builders\" />
+    <Folder Include="Channels\" />
   </ItemGroup>
 
 </Project>

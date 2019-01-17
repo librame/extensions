@@ -16,6 +16,7 @@ using System;
 namespace Librame.Extensions.Network.DotNetty
 {
     using Builders;
+    using Internal;
 
     /// <summary>
     /// DotNetty 网络构建器静态扩展。
