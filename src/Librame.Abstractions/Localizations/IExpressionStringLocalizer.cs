@@ -23,14 +23,13 @@ namespace Librame.Localizations
     public interface IExpressionStringLocalizer<TResource> : IStringLocalizer<TResource>
     {
         /// <summary>
-        /// 获取字符串。
+        /// 获取字符串属性的本地化字符串。
         /// </summary>
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <returns>返回 <see cref="LocalizedString"/>。</returns>
         LocalizedString this[Expression<Func<TResource, string>> propertyExpression] { get; }
-
         /// <summary>
-        /// 获取字符串。
+        /// 获取字符串属性的本地化字符串。
         /// </summary>
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <param name="arguments">给定的参数数组。</param>

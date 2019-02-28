@@ -28,6 +28,7 @@ namespace Librame.Extensions.Data
         where TBuilderOptions : class, IBuilderOptions, new()
     {
     }
+
     /// <summary>
     /// 数据库上下文接口。
     /// </summary>

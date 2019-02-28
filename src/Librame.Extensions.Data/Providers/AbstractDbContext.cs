@@ -76,6 +76,7 @@ namespace Librame.Extensions.Data
             }
         }
     }
+
     /// <summary>
     /// 抽象数据库上下文。
     /// </summary>

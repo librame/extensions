@@ -3,8 +3,9 @@ using System.Linq;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using System;
     using Models;
-    
+
     public interface ITestStore : IStore<TestBuilderOptions>
     {
         IList<Category> GetCategories();
@@ -109,6 +110,11 @@ namespace Librame.Extensions.Data.Tests
             DbContext.UpdateDatabase();
 
             return this;
+        }
+
+        protected override Type GetTargetType()
+        {
+            return GetType();
         }
     }
 }

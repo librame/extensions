@@ -14,8 +14,6 @@ using System;
 
 namespace Librame.Extensions.Encryption
 {
-    using Infrastructures;
-
     /// <summary>
     /// 算法标识符。
     /// </summary>

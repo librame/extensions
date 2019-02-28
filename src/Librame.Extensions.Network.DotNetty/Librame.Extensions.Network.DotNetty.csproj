@@ -6,7 +6,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>5.21.2019.1181-dev01</Version>
+    <Version>5.22.2019.1284-dev0003</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Librame.Extensions.Network.DotNetty</Description>
@@ -20,13 +20,13 @@
     <PackageReleaseNotes>Librame.Extensions.Network.DotNetty</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>5.21.2019.1181</AssemblyVersion>
-    <FileVersion>5.21.2019.1181</FileVersion>
+    <AssemblyVersion>5.23.2019.2281</AssemblyVersion>
+    <FileVersion>5.23.2019.2281</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <BumpLabel>dev</BumpLabel>
-    <BumpLabelDigits>2</BumpLabelDigits>
+    <BumpLabelDigits>4</BumpLabelDigits>
     <OutputPath>..\..\bin\Debug\</OutputPath>
     <DocumentationFile>..\..\bin\Debug\netstandard2.0\Librame.Extensions.Network.DotNetty.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>

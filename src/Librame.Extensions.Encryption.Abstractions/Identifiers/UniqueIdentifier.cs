@@ -15,8 +15,6 @@ using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
 {
-    using Infrastructures;
-
     /// <summary>
     /// 唯一标识符。
     /// </summary>

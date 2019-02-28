@@ -9,6 +9,7 @@ namespace Librame.Consoles
     using Builders;
     using Extensions;
     using Extensions.Encryption;
+    using Threads;
 
     class Program
     {
@@ -31,6 +32,8 @@ namespace Librame.Consoles
 
             RunEncryption(serviceProvider);
 
+            RunThreadPoolTest();
+
             // Close NLog
             NLog.LogManager.Shutdown();
         }
@@ -50,6 +53,23 @@ namespace Librame.Consoles
             var plaintextBuffer = content.AsPlaintextBuffer(serviceProvider);
 
             Console.WriteLine($"Content MD5: {hash.Md5(plaintextBuffer).AsBase64String()}");
+        }
+
+        private static void RunThreadPoolTest()
+        {
+            using (var pool = new SimpleThreadPool())
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    var job = new JobDescriptor(i);
+
+                    job.Execution = (t, args) => Console.WriteLine($"add {args[0]}_{t.ManagedThreadId}.");
+                    job.FinishCallback = (t, args) => Console.WriteLine($"{args[0]}_{t.ManagedThreadId}_finished.");
+                    job.ErrorCallback = (t, args, ex) => Console.WriteLine(ex.AsInnerMessage());
+
+                    pool.AddJob(job);
+                }
+            }
         }
 
     }

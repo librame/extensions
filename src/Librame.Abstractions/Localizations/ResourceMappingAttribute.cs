@@ -18,8 +18,7 @@ namespace Microsoft.Extensions.Localization
     /// <summary>
     /// 资源映射特性。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Assembly |
-        AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface,
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface,
         AllowMultiple = false, Inherited = false)]
     public class ResourceMappingAttribute : Attribute
     {

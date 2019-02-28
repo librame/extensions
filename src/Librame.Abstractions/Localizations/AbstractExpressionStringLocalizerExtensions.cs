@@ -30,11 +30,12 @@ namespace Microsoft.Extensions.Localization
         /// 获取字符串。
         /// </summary>
         /// <typeparam name="TResource">指定的资源类型。</typeparam>
+        /// <typeparam name="TProperty">指定的属性类型。</typeparam>
         /// <param name="localizer">给定的 <see cref="IStringLocalizer{TResource}"/>。</param>
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <returns>返回 <see cref="LocalizedString"/>。</returns>
-        public static LocalizedString GetString<TResource>(this IStringLocalizer<TResource> localizer,
-            Expression<Func<TResource, string>> propertyExpression)
+        public static LocalizedString GetString<TResource, TProperty>(this IStringLocalizer<TResource> localizer,
+            Expression<Func<TResource, TProperty>> propertyExpression)
         {
             string name = propertyExpression.AsPropertyName();
 
@@ -44,12 +45,13 @@ namespace Microsoft.Extensions.Localization
         /// 获取字符串。
         /// </summary>
         /// <typeparam name="TResource">指定的资源类型。</typeparam>
+        /// <typeparam name="TProperty">指定的属性类型。</typeparam>
         /// <param name="localizer">给定的 <see cref="IStringLocalizer{TResource}"/>。</param>
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <param name="arguments">给定的参数数组。</param>
         /// <returns>返回 <see cref="LocalizedString"/>。</returns>
-        public static LocalizedString GetString<TResource>(this IStringLocalizer<TResource> localizer,
-            Expression<Func<TResource, string>> propertyExpression, params object[] arguments)
+        public static LocalizedString GetString<TResource, TProperty>(this IStringLocalizer<TResource> localizer,
+            Expression<Func<TResource, TProperty>> propertyExpression, params object[] arguments)
         {
             string name = propertyExpression.AsPropertyName();
 
@@ -58,6 +60,8 @@ namespace Microsoft.Extensions.Localization
 
         #endregion
 
+
+        #region WithCulture
 
         /// <summary>
         /// 创建一个指定文化名称的字符串定位器副本。
@@ -119,6 +123,8 @@ namespace Microsoft.Extensions.Localization
 
             return localizer;
         }
+
+        #endregion
 
     }
 }

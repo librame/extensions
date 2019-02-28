@@ -11,6 +11,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Linq
@@ -29,12 +30,14 @@ namespace System.Linq
         /// <param name="order">给定的排序方式。</param>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的显示条数。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPagingList{TEntity}"/> 的异步操作。</returns>
         public static Task<IPagingList<TEntity>> AsPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order, int index, int size)
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order, int index, int size,
+            CancellationToken cancellationToken = default)
             where TEntity : class
         {
-            return Task.Factory.StartNew(() => query.AsPagingByIndex(order, index, size));
+            return Task.Factory.StartNew(() => query.AsPagingByIndex(order, index, size), cancellationToken);
         }
 
         /// <summary>
@@ -62,12 +65,14 @@ namespace System.Linq
         /// <param name="order">给定的排序方式。</param>
         /// <param name="skip">给定的跳过条数。</param>
         /// <param name="take">给定的取得条数。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPagingList{TEntity}"/> 的异步操作。</returns>
         public static Task<IPagingList<TEntity>> AsPagingBySkipAsync<TEntity>(this IQueryable<TEntity> query,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order, int skip, int take)
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order, int skip, int take,
+            CancellationToken cancellationToken = default)
             where TEntity : class
         {
-            return Task.Factory.StartNew(() => query.AsPagingBySkip(order, skip, take));
+            return Task.Factory.StartNew(() => query.AsPagingBySkip(order, skip, take), cancellationToken);
         }
 
         /// <summary>
@@ -94,12 +99,14 @@ namespace System.Linq
         /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
         /// <param name="order">给定的排序方式。</param>
         /// <param name="createDescriptorFactory">给定创建分页描述符的方法（输入参数为数据总条数）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPagingList{TEntity}"/> 的异步操作。</returns>
         public static Task<IPagingList<TEntity>> AsPagingAsync<TEntity>(this IQueryable<TEntity> query,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order, Func<int, PagingDescriptor> createDescriptorFactory)
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> order, Func<int, PagingDescriptor> createDescriptorFactory,
+            CancellationToken cancellationToken = default)
             where TEntity : class
         {
-            return Task.Factory.StartNew(() => query.AsPaging(order, createDescriptorFactory));
+            return Task.Factory.StartNew(() => query.AsPaging(order, createDescriptorFactory), cancellationToken);
         }
 
         /// <summary>

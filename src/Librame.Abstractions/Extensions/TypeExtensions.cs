@@ -23,23 +23,23 @@ namespace Librame.Extensions
     {
         private static readonly Dictionary<Type, object> _commonTypeDictionary = new Dictionary<Type, object>
         {
-#pragma warning disable IDE0034 // Simplify 'default' expression - default causes default(object)
+            #pragma warning disable IDE0034 // Simplify 'default' expression - default causes default(object)
+            { typeof(char), default(char) },
+            { typeof(sbyte), default(sbyte) },
+            { typeof(short), default(short) },
             { typeof(int), default(int) },
-            { typeof(Guid), default(Guid) },
+            { typeof(long), default(long) },
+            { typeof(byte), default(byte) },
+            { typeof(ushort), default(ushort) },
+            { typeof(uint), default(uint) },
+            { typeof(ulong), default(ulong) },
+            { typeof(double), default(double) },
+            { typeof(float), default(float) },
+            { typeof(bool), default(bool) },
             { typeof(DateTime), default(DateTime) },
             { typeof(DateTimeOffset), default(DateTimeOffset) },
-            { typeof(long), default(long) },
-            { typeof(bool), default(bool) },
-            { typeof(double), default(double) },
-            { typeof(short), default(short) },
-            { typeof(float), default(float) },
-            { typeof(byte), default(byte) },
-            { typeof(char), default(char) },
-            { typeof(uint), default(uint) },
-            { typeof(ushort), default(ushort) },
-            { typeof(ulong), default(ulong) },
-            { typeof(sbyte), default(sbyte) }
-#pragma warning restore IDE0034 // Simplify 'default' expression
+            { typeof(Guid), default(Guid) }
+            #pragma warning restore IDE0034 // Simplify 'default' expression
         };
 
 

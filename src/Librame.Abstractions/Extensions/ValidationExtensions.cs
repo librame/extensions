@@ -16,8 +16,6 @@ using System.Linq;
 
 namespace Librame.Extensions
 {
-    using Infrastructures;
-
     /// <summary>
     /// 验证静态扩展。
     /// </summary>

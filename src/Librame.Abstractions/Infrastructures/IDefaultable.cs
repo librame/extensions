@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Infrastructures
+namespace System
 {
     /// <summary>
     /// 可默认接口。

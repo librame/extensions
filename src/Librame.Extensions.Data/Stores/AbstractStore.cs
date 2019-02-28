@@ -10,8 +10,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
@@ -42,12 +44,14 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的显示条数。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPagingList{Tenant}"/> 的异步操作。</returns>
-        public virtual Task<IPagingList<Tenant>> GetTenantsAsync(int index, int size)
+        public virtual Task<IPagingList<Tenant>> GetTenantsAsync(int index, int size, CancellationToken cancellationToken = default)
         {
-            return DbContext.Tenants.AsPagingByIndexAsync(q => q.OrderByDescending(a => a.Id), index, size);
+            return DbContext.Tenants.AsPagingByIndexAsync(q => q.OrderByDescending(a => a.Id), index, size, cancellationToken);
         }
     }
+
     /// <summary>
     /// 抽象存储。
     /// </summary>
@@ -79,10 +83,11 @@ namespace Librame.Extensions.Data
         /// 异步获取租户。
         /// </summary>
         /// <param name="id">给定的标识。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="Tenant"/> 的异步操作。</returns>
-        public virtual Task<TTenant> GetTenantAsync(object id)
+        public virtual Task<TTenant> GetTenantAsync(object id, CancellationToken cancellationToken = default)
         {
-            return DbContext.Tenants.FindAsync(id);
+            return DbContext.Tenants.FindAsync(new object[] { id }, cancellationToken);
         }
     }
 
@@ -91,7 +96,7 @@ namespace Librame.Extensions.Data
     /// 抽象存储。
     /// </summary>
     /// <typeparam name="TDbContext">指定的数据库上下文类型。</typeparam>
-    public abstract class AbstractStore<TDbContext> : IStore
+    public abstract class AbstractStore<TDbContext> : AbstractDisposable, IStore
         where TDbContext : IDbContext
     {
         /// <summary>
@@ -122,10 +127,11 @@ namespace Librame.Extensions.Data
         /// 异步获取审计。
         /// </summary>
         /// <param name="id">给定的标识。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="Audit"/> 的异步操作。</returns>
-        public virtual Task<Audit> GetAuditAsync(int id)
+        public virtual Task<Audit> GetAuditAsync(int id, CancellationToken cancellationToken = default)
         {
-            return DbContext.Audits.FindAsync(id);
+            return DbContext.Audits.FindAsync(new object[] { id }, cancellationToken);
         }
 
         /// <summary>
@@ -133,10 +139,11 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的显示条数。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPagingList{Audit}"/> 的异步操作。</returns>
-        public virtual Task<IPagingList<Audit>> GetAuditsAsync(int index, int size)
+        public virtual Task<IPagingList<Audit>> GetAuditsAsync(int index, int size, CancellationToken cancellationToken = default)
         {
-            return DbContext.Audits.AsPagingByIndexAsync(q => q.OrderByDescending(a => a.Id), index, size);
+            return DbContext.Audits.AsPagingByIndexAsync(q => q.OrderByDescending(a => a.Id), index, size, cancellationToken);
         }
     }
 }
