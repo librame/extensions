@@ -15,7 +15,7 @@
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/10363349?v=3&amp;s=460</PackageIconUrl>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Librame,Librame,NETCore,NETStandard,Encryption</PackageTags>
+    <PackageTags>Librame,NETCore,NETStandard,Encryption</PackageTags>
     <PackageReleaseNotes>Librame.Extensions.Encryption.Abstractions</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>

@@ -15,7 +15,7 @@
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/10363349?v=3&amp;s=460</PackageIconUrl>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Librame,Librame,NETCore,NETStandard,Drawing</PackageTags>
+    <PackageTags>Librame,NETCore,NETStandard,Drawing</PackageTags>
     <PackageReleaseNotes>Librame.Extensions.Drawing</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
