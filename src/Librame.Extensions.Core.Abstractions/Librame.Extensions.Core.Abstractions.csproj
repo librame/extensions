@@ -28,14 +28,14 @@
     <BumpLabel>dev</BumpLabel>
     <BumpLabelDigits>4</BumpLabelDigits>
     <OutputPath>..\..\bin\</OutputPath>
-    <DocumentationFile>..\..\bin\netstandard2.0\Librame.Abstractions.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\netstandard2.0\Librame.Extensions.Core.Abstractions.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <BumpResetLabel>dev</BumpResetLabel>
     <BumpRevision>true</BumpRevision>
     <OutputPath>..\..\bin\</OutputPath>
-    <DocumentationFile>..\..\bin\netstandard2.0\Librame.Abstractions.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\netstandard2.0\Librame.Extensions.Core.Abstractions.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
