@@ -4,7 +4,6 @@ namespace Librame.Extensions.Storage.Tests
 {
     public class CapacityUnitTests
     {
-
         [Fact]
         public void FormatCapacityUnitStringTest()
         {

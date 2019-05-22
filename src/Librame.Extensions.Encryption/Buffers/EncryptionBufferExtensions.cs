@@ -13,9 +13,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Librame.Buffers
+namespace Librame.Extensions
 {
-    using Converters;
+    using Encryption;
 
     /// <summary>
     /// 加密缓冲区静态扩展。
@@ -23,7 +23,7 @@ namespace Librame.Buffers
     public static class EncryptionBufferExtensions
     {
         
-        #region ICiphertextAlgorithmBuffer
+        #region ICiphertextBuffer
 
         /// <summary>
         /// 转换为内部密文算法缓冲区。
@@ -31,10 +31,10 @@ namespace Librame.Buffers
         /// <param name="str">给定的密文字符串。</param>
         /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
         /// <returns>返回算法缓冲区。</returns>
-        public static IEncryptionBuffer<ICiphertextAlgorithmConverter, string> AsCiphertextBuffer(this string str,
+        public static IEncryptionBuffer<ICiphertextConverter, string> AsCiphertextBuffer(this string str,
             IServiceProvider serviceProvider)
         {
-            var converter = serviceProvider.GetRequiredService<ICiphertextAlgorithmConverter>();
+            var converter = serviceProvider.GetRequiredService<ICiphertextConverter>();
 
             return str.AsCiphertextBuffer(converter).ApplyServiceProvider(serviceProvider);
         }
@@ -43,10 +43,10 @@ namespace Librame.Buffers
         /// 转换为内部密文算法缓冲区。
         /// </summary>
         /// <param name="str">给定的密文字符串。</param>
-        /// <param name="converter">给定的 <see cref="ICiphertextAlgorithmConverter"/>。</param>
+        /// <param name="converter">给定的 <see cref="ICiphertextConverter"/>。</param>
         /// <returns>返回算法缓冲区。</returns>
-        public static IEncryptionBuffer<ICiphertextAlgorithmConverter, string> AsCiphertextBuffer(this string str,
-            ICiphertextAlgorithmConverter converter)
+        public static IEncryptionBuffer<ICiphertextConverter, string> AsCiphertextBuffer(this string str,
+            ICiphertextConverter converter)
         {
             return converter.AsEncryptionBuffer(str);
         }
@@ -54,7 +54,7 @@ namespace Librame.Buffers
         #endregion
 
 
-        #region IPlaintextAlgorithmBuffer
+        #region IPlaintextBuffer
 
         /// <summary>
         /// 转换为内部明文算法缓冲区。
@@ -62,10 +62,10 @@ namespace Librame.Buffers
         /// <param name="str">给定的明文字符串。</param>
         /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
         /// <returns>返回算法缓冲区。</returns>
-        public static IEncryptionBuffer<IPlaintextAlgorithmConverter, string> AsPlaintextBuffer(this string str,
+        public static IEncryptionBuffer<IPlaintextConverter, string> AsPlaintextBuffer(this string str,
             IServiceProvider serviceProvider)
         {
-            var converter = serviceProvider.GetRequiredService<IPlaintextAlgorithmConverter>();
+            var converter = serviceProvider.GetRequiredService<IPlaintextConverter>();
 
             return str.AsPlaintextBuffer(converter).ApplyServiceProvider(serviceProvider);
         }
@@ -74,10 +74,10 @@ namespace Librame.Buffers
         /// 转换为内部明文算法缓冲区。
         /// </summary>
         /// <param name="str">给定的明文字符串。</param>
-        /// <param name="converter">给定的 <see cref="IPlaintextAlgorithmConverter"/>。</param>
+        /// <param name="converter">给定的 <see cref="IPlaintextConverter"/>。</param>
         /// <returns>返回算法缓冲区。</returns>
-        public static IEncryptionBuffer<IPlaintextAlgorithmConverter, string> AsPlaintextBuffer(this string str,
-            IPlaintextAlgorithmConverter converter)
+        public static IEncryptionBuffer<IPlaintextConverter, string> AsPlaintextBuffer(this string str,
+            IPlaintextConverter converter)
         {
             return converter.AsEncryptionBuffer(str);
         }

@@ -1,28 +1,37 @@
 ﻿using DotNetty.Common.Internal.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Librame.Extensions.Telnet.Server
 {
-    using Builders;
-    using Extensions.Network.DotNetty;
+    using Core;
+    using Encryption;
+    using Network;
+    using Network.DotNetty;
 
     class Program
     {
         static void Main(string[] args)
         {
-            var loggerFactory = InternalLoggerFactory.DefaultFactory;
-            loggerFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));
+            var locator = "dotnetty.com.pfx".AsFileLocator(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
 
             var services = new ServiceCollection();
 
-            var locator = "dotnetty.com.pfx".AsFileLocator(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
+            services.AddLibrame(configureLogging: loggingBuilder =>
+            {
+                loggingBuilder.ClearProviders();
+                loggingBuilder.SetMinimumLevel(LogLevel.Trace);
 
-            services.AddLibrame(options => options.ReplaceLoggerFactory(loggerFactory))
+                loggingBuilder.AddConsole(options => options.IncludeScopes = false);
+                loggingBuilder.AddFilter((str, level) => true);
+            })
                 .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
                 .AddNetwork().AddDotNetty();
+
+            // Use DotNetty LoggerFactory
+            services.TryReplace(InternalLoggerFactory.DefaultFactory);
 
             var serviceProvider = services.BuildServiceProvider();
             var server = serviceProvider.GetRequiredService<ITelnetServer>();

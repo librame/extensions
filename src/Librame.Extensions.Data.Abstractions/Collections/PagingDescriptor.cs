@@ -33,7 +33,7 @@ namespace System.Collections.Generic
         public int Skip { get; set; }
 
         /// <summary>
-        /// 页大小。
+        /// 页大小或得到的条数。
         /// </summary>
         public int Size { get; set; }
 

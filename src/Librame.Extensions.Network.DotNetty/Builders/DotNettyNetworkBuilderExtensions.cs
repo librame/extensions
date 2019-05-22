@@ -15,7 +15,6 @@ using System;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    using Builders;
     using Internal;
 
     /// <summary>
@@ -23,7 +22,6 @@ namespace Librame.Extensions.Network.DotNetty
     /// </summary>
     public static class DotNettyNetworkBuilderExtensions
     {
-
         /// <summary>
         /// 添加 DotNetty。
         /// </summary>
@@ -32,7 +30,8 @@ namespace Librame.Extensions.Network.DotNetty
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddDotNetty(this INetworkBuilder builder, Action<ChannelOptions> configureOptions = null)
         {
-            if (configureOptions.IsNotDefault())
+            // Configure Options
+            if (configureOptions != null)
                 builder.Services.Configure(configureOptions);
 
             builder.Services.AddSingleton<IDiscardClient, InternalDiscardClient>();

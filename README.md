@@ -1,17 +1,17 @@
 ## Librame Project
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/librame/Librame/blob/master/LICENSE)
-[![Available on NuGet https://www.nuget.org/packages?q=Librame](https://img.shields.io/nuget/v/Librame.svg?style=flat-square)](https://www.nuget.org/packages?q=Librame)
+[![Available on NuGet https://www.nuget.org/packages?q=Librame.Extensions.Core](https://img.shields.io/nuget/v/Librame.Extensions.Core.svg?style=flat-square)](https://www.nuget.org/packages?q=Librame.Extensions.Core)
 
 ## Use
 
 * Official releases are on [NuGet](https://www.nuget.org/packages?q=Librame).
 
-### Librame
+### Librame.Extensions.Core
 
 ## Install Extension
 
-    PM> Install-Package Librame
+    PM> Install-Package Librame.Extensions.Core
 
 ## Register Extension
 
@@ -25,11 +25,11 @@
     var serviceProvider = services.BuildServiceProvider();
     ......
 
-### Librame.Extensions.Data (based EntityFrameworkCore)
+### Librame.Extensions.Data.EntityFrameworkCore
 
 ## Install Extension
 
-    PM> Install-Package Librame.Extensions.Data
+    PM> Install-Package Librame.Extensions.Data.EntityFrameworkCore
 
 ## Register Extension
 
@@ -44,7 +44,7 @@
             options.LocalTenant.WriteConnectionString = "write database connection string";
             options.LocalTenant.WriteConnectionSeparation = true;
         })
-        .AddDbContext<ITestDbContext, TestDbContext>((options, optionsBuilder) =>
+        .AddAccessor<TestDbContextAccessor>((options, optionsBuilder) =>
         {
             optionsBuilder.UseSqlServer(options.LocalTenant.DefaultConnectionString,
                 sql => sql.MigrationsAssembly("AssemblyName"));
@@ -58,22 +58,53 @@
 
 ## Test Extension
 
-    // DbContext
-    public interface ITestDbContext : IDbContext
+    // Accessor
+    public class TestDbContextAccessor : DbContextAccessor, IAccessor
     {
-        DbSet<Category> Categories { get; set; }
+        public TestDbContextAccessor(DbContextOptions options)
+            : base(options)
+        {
+        }
 
-        DbSet<Article> Articles { get; set; }
-    }
-    public class TestDbContext : AbstractDbContext<TestDbContext>, ITestDbContext
-    {
         public DbSet<Category> Categories { get; set; }
 
         public DbSet<Article> Articles { get; set; }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Category>(category =>
+            {
+                category.ToTable(new TableSchema<Category>());
+
+                category.HasKey(x => x.Id);
+
+                category.Property(x => x.Id).ValueGeneratedOnAdd();
+                category.Property(x => x.Name).HasMaxLength(100).IsRequired();
+                category.Property(x => x.Rank);
+                category.Property(x => x.Status);
+
+                category.HasMany(x => x.Articles).WithOne(x => x.Category).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Article>(article =>
+            {
+                article.ToTable(TableSchema<Article>.BuildEveryYear(DateTime.Now));
+
+                article.HasKey(x => x.Id);
+
+                article.Property(x => x.Id).ValueGeneratedNever();
+                article.Property(x => x.Title).HasMaxLength(200).IsRequired();
+                article.Property(x => x.Descr).HasMaxLength(1000).IsRequired();
+                article.Property(x => x.Rank);
+                article.Property(x => x.Status);
+            });
+        }
     }
     
     // Store
-    public interface ITestStore : IStore
+    public interface ITestStore : IBaseStore
     {
         IList<Category> GetCategories();
 
@@ -84,72 +115,70 @@
 
         ITestStore UseWriteStore();
     }
-    public class TestStore : AbstractStore<ITestDbContext>, ITestStore
+    public class TestStore : AbstractBaseStore, ITestStore
     {
-        public TestStore(ITestDbContext dbContext)
-            : base(dbContext)
+        public TestStore(IAccessor accessor)
+            : base(accessor)
         {
         }
         
         public IList<Category> GetCategories()
         {
-            return DbContext.Categories.ToList();
+            if (Accessor is TestDbContextAccessor dbContextAccessor)
+                return dbContextAccessor.Categories.ToList();
+
+            return null;
         }
 
         public IPagingList<Article> GetArticles()
         {
-            return DbContext.Articles.AsPagingByIndex(order => order.OrderBy(a => a.Id), 1, 10);
+            if (Accessor is TestDbContextAccessor dbContextAccessor)
+                return dbContextAccessor.Articles.AsPagingListByIndex(ordered => ordered.OrderBy(a => a.Id), 1, 10);
+
+            return null;
         }
 
 
         public ITestStore UseDefaultStore()
         {
-            DbContext.TrySwitchConnection(options => options.DefaultString);
+            Accessor.ChangeDbConnection(t => t.WriteConnectionString);
             return this;
         }
 
         public ITestStore UseWriteStore()
         {
-            DbContext.TrySwitchConnection(options => options.WriteString);
+            Accessor.ChangeDbConnection(t => t.DefaultConnectionString);
             return this;
         }
     }
     
     // Test
-    public class UnifiedTests
+    public class DbContextAccessorTests
     {
         [Fact]
-        public void UnifiedTest()
+        public void AllTest()
         {
             var store = TestServiceProvider.Current.GetRequiredService<ITestStore>();
 
             var categories = store.GetCategories();
             Assert.Empty(categories);
 
-            // Use Write Database
-            categories = store.UseWriteStore().GetCategories();
+            categories = store.UseWriteDbConnection().GetCategories();
             Assert.NotEmpty(categories);
 
-            // Restore
-            store.UseDefaultStore();
-
-            var articles = store.GetArticles();
+            var articles = store.UseDefaultDbConnection().GetArticles();
             Assert.Empty(articles);
 
-            // Use Write Database
-            articles = store.UseWriteStore().GetArticles();
+            articles = store.UseWriteDbConnection().GetArticles();
             Assert.NotEmpty(articles);
-
-            // Restore
-            store.UseDefaultStore();
         }
     }
 
-### Librame.Extensions.Drawing (based SkiaSharp)
+### Librame.Extensions.Drawing.SkiaSharp
 
 ## Install Extension
 
-    PM> Install-Package Librame.Extensions.Drawing
+    PM> Install-Package Librame.Extensions.Drawing.SkiaSharp
 
 ## Register Extension
 
@@ -206,7 +235,7 @@
         public async void DrawScaleTest()
         {
             // 5K 2.21MB
-            var imageFile = "eso1004a.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
+            var imageFile = "test.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
             
             var succeed = await _drawing.DrawFile(imageFile.ToString());
             Assert.True(succeed);
@@ -240,8 +269,8 @@
         public async void DrawWatermarkTest()
         {
             // 5K 2.21MB
-            var imageFile = "eso1004a.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
-            var saveFile = imageFile.NewFileName("eso1004a-watermark.png");
+            var imageFile = "test.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
+            var saveFile = imageFile.NewFileName("test-watermark.png");
             
             var succeed = await _drawing.DrawFile(imageFile.ToString(), saveFile.ToString());
             Assert.True(succeed);
@@ -304,6 +333,7 @@
                 .FromAes()
                 .FromTripleDes()
                 .FromDes();
+                
             Assert.Equal(hashString, ciphertextBuffer.AsCiphertextString());
         }
     }
@@ -362,38 +392,38 @@
     }
 
     // Email
-    public class InternalEmailSenderTests
+    public class InternalEmailServiceTests
     {
-        private IEmailSender _sender;
+        private IEmailService _service;
 
-        public InternalEmailSenderTests()
+        public InternalEmailServiceTests()
         {
-            _sender = TestServiceProvider.Current.GetRequiredService<IEmailSender>();
+            _service = TestServiceProvider.Current.GetRequiredService<IEmailService>();
         }
         
         [Fact]
         public async void SendAsyncTest()
         {
-            async _sender.SendAsync("receiver@domain.com",
+            async _service.SendAsync("receiver@domain.com",
                 "Email Subject",
                 "Email Body");
         }
     }
     
     // Message
-    public class InternalSmsSenderTests
+    public class InternalSmsServiceTests
     {
-        private ISmsSender _sender;
+        private ISmsService _service;
 
-        public InternalSmsSenderTests()
+        public InternalSmsServiceTests()
         {
-            _sender = TestServiceProvider.Current.GetRequiredService<ISmsSender>();
+            _service = TestServiceProvider.Current.GetRequiredService<ISmsService>();
         }
 
         [Fact]
         public async void SendAsyncTest()
         {
-            var result = async _sender.SendAsync("TestData: 123456");
+            var result = async _service.SendAsync("TestData: 123456");
             Assert.Empty(result);
         }
     }
@@ -412,9 +442,19 @@
     var locator = "dotnetty.com.pfx".AsDefaultFileLocator("BasePath");
     
     // Register Librame
-    services.AddLibrame()
+    services.AddLibrame(configureLogging: loggingBuilder =>
+    {
+        loggingBuilder.ClearProviders();
+        loggingBuilder.SetMinimumLevel(LogLevel.Trace);
+
+        loggingBuilder.AddConsole(options => options.IncludeScopes = false);
+        loggingBuilder.AddFilter((str, level) => true);
+    })
         .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
         .AddNetwork().AddDotNetty();
+    
+    // Use DotNetty LoggerFactory
+    services.TryReplace(InternalLoggerFactory.DefaultFactory);
     
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();
@@ -458,6 +498,7 @@
         }
     })
     .Wait();
+    ......
 
 ### Librame.Extensions.Storage
 
@@ -479,27 +520,40 @@
 
 ## Test Extension
 
-    // FileSystem
-    public class InternalFileSystemServiceTests
+    public class InternalPhysicalFileServiceTests
     {
-        private IFileSystemService _fileSystem;
+        private IFileService _file;
 
-        public InternalFileSystemServiceTests()
+        public InternalPhysicalFileServiceTests()
         {
-            _fileSystem = TestServiceProvider.Current.GetRequiredService<IFileSystemService>();
+            _file = TestServiceProvider.Current.GetRequiredService<IFileService>();
         }
 
         [Fact]
-        public void LoadDriversTest()
+        public void GetProviderAsyncTest()
         {
-            var drivers = _fileSystem.LoadDrivers();
-            Assert.NotEmpty(drivers);
+            var provider = _file.GetProviderAsync(“root”).Result;
+            var files = provider.GetDirectoryContents("subpath");
+            Assert.NotEmpty(files);
+        }
+    }
+    
+    public class InternalFileUploadServiceTests
+    {
+        private IFileUploadService _fileUpload;
+
+        public InternalFileUploadServiceTests()
+        {
+            _fileUpload = TestServiceProvider.Current.GetRequiredService<IFileUploadService>();
         }
 
         [Fact]
-        public void LoadDirectoriesTest()
+        public void UploadFileAsync()
         {
-            var dirs = _fileSystem.LoadDirectories("*.*");
-            Assert.NotEmpty(dirs);
+            var uploadApi = "https://domain.com/api/upload";
+            var uploadFile = @"c:\temp.txt";
+
+            var result = _fileUpload.UploadFileAsync(uploadApi, uploadFile).Result;
+            Assert.NotEmpty(result);
         }
     }

@@ -14,8 +14,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Librame.Extensions.Network.DotNetty
 {
+    using Core;
     using Encryption;
-    using Services;
 
     /// <summary>
     /// 通道服务接口。
@@ -23,12 +23,12 @@ namespace Librame.Extensions.Network.DotNetty
     public interface IChannelService : IService
     {
         /// <summary>
-        /// 签名证书提供程序。
+        /// 签名证书。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="ISigningCredentialsProvider"/>。
+        /// 返回 <see cref="ISigningCredentialsService"/>。
         /// </value>
-        ISigningCredentialsProvider Provider { get; }
+        ISigningCredentialsService SigningCredentials { get; }
 
         /// <summary>
         /// 日志工厂。

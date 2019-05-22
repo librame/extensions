@@ -10,9 +10,9 @@
 
 #endregion
 
-namespace Librame.Converters
+namespace Librame.Extensions.Encryption
 {
-    using Buffers;
+    using Core;
 
     /// <summary>
     /// 算法转换器接口。

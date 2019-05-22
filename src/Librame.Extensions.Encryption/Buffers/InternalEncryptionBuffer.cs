@@ -12,10 +12,9 @@
 
 using System;
 
-namespace Librame.Buffers
+namespace Librame.Extensions.Encryption
 {
-    using Converters;
-    using Extensions;
+    using Core;
 
     /// <summary>
     /// 内部加密缓冲区。
@@ -72,7 +71,7 @@ namespace Librame.Buffers
         /// </value>
         public IServiceProvider ServiceProvider
         {
-            get { return _serviceProvider.NotDefault(nameof(_serviceProvider)); }
+            get { return _serviceProvider.NotNull(nameof(_serviceProvider)); }
         }
 
 
@@ -96,7 +95,7 @@ namespace Librame.Buffers
         {
             var buffer = new InternalEncryptionBuffer<TConverter, TSource>(Converter, Source, this);
 
-            if (_serviceProvider.IsNotDefault())
+            if (_serviceProvider != null)
                 buffer.ApplyServiceProvider(_serviceProvider);
 
             return buffer;

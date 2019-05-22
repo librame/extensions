@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using Xunit;
 
@@ -9,7 +10,7 @@ namespace Librame.Extensions.Encryption.Tests
         [Fact]
         public void InternalRsaKeyGeneratorServiceTest()
         {
-            var provider = TestServiceProvider.Current.GetRequiredService<ISigningCredentialsProvider>();
+            var provider = TestServiceProvider.Current.GetRequiredService<ISigningCredentialsService>();
             var credentials = provider.GetGlobalSigningCredentials();
 
             var rsa = credentials.ResolveRsa();

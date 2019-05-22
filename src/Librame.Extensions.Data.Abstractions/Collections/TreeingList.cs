@@ -46,7 +46,7 @@ namespace System.Collections.Generic
         public TreeingList(IEnumerable<T> items,
             Func<IEnumerable<TreeingNode<T, TId>>, IOrderedEnumerable<TreeingNode<T, TId>>> orderBy = null)
         {
-            items.NotDefault(nameof(items));
+            items.NotNull(nameof(items));
 
             Nodes = ToNodes(items);
             NonstratifiedNodes = ToNonstratifiedNodes(Nodes, orderBy);
@@ -59,7 +59,7 @@ namespace System.Collections.Generic
         public TreeingList(IList<TreeingNode<T, TId>> nodes,
             Func<IEnumerable<TreeingNode<T, TId>>, IOrderedEnumerable<TreeingNode<T, TId>>> orderBy = null)
         {
-            Nodes = nodes.NotDefault(nameof(nodes));
+            Nodes = nodes.NotNull(nameof(nodes));
             NonstratifiedNodes = ToNonstratifiedNodes(nodes, orderBy);
         }
 
@@ -85,7 +85,7 @@ namespace System.Collections.Generic
         {
             List<TreeingNode<T, TId>> nonstratifiedNodes = null;
 
-            if (nodes.IsNotDefault() && nodes.Count > 0)
+            if (nodes != null && nodes.Count > 0)
             {
                 nonstratifiedNodes = new List<TreeingNode<T, TId>>();
 
@@ -117,7 +117,7 @@ namespace System.Collections.Generic
         /// <returns>返回枚举数。</returns>
         public IEnumerator<TreeingNode<T, TId>> GetEnumerator()
         {
-            if (Nodes.IsEmpty()) return null;
+            if (Nodes.IsNullOrEmpty()) return null;
 
             return Nodes.GetEnumerator();
         }

@@ -99,7 +99,7 @@ namespace System.Collections.Generic
             }
             set
             {
-                if (value.IsEmpty())
+                if (value.IsNullOrEmpty())
                     value = new List<TreeingNode<T, TId>>();
 
                 _children = value;
@@ -153,7 +153,7 @@ namespace System.Collections.Generic
         {
             child = GetChild(childId);
 
-            return (child.IsNotDefault());
+            return (child != null);
         }
 
 
@@ -251,7 +251,7 @@ namespace System.Collections.Generic
         /// <returns>返回字符串。</returns>
         public virtual string ToString(Func<T, string> toStringFactory)
         {
-            if (toStringFactory.IsDefault())
+            if (toStringFactory == null)
                 toStringFactory = obj => obj.ToString(); // obj.AsPairsString();
 
             var sb = new StringBuilder();

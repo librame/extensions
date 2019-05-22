@@ -2,8 +2,6 @@
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    using Buffers;
-
     public class InternalEncryptionBufferTests
     {
         [Fact]

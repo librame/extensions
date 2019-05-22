@@ -120,37 +120,19 @@
   <data name="Id" xml:space="preserve">
     <value>Id</value>
   </data>
-  <data name="DataRank" xml:space="preserve">
-    <value>Data rank</value>
+  <data name="TenantId" xml:space="preserve">
+    <value>Tenant id</value>
   </data>
-  <data name="DataStatus" xml:space="preserve">
-    <value>Data status</value>
+  <data name="Rank" xml:space="preserve">
+    <value>Rank</value>
   </data>
-  <data name="CreateTime" xml:space="preserve">
-    <value>Create time</value>
-  </data>
-  <data name="CreatorId" xml:space="preserve">
-    <value>Creator id</value>
-  </data>
-  <data name="UpdateTime" xml:space="preserve">
-    <value>Update time</value>
-  </data>
-  <data name="UpdatorId" xml:space="preserve">
-    <value>Updator id</value>
-  </data>
-  <data name="CreateGroup" xml:space="preserve">
-    <value>Create group</value>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
   </data>
   <data name="GlobalGroup" xml:space="preserve">
     <value>Global group</value>
   </data>
-  <data name="UpdateGroup" xml:space="preserve">
-    <value>Update group</value>
-  </data>
   <data name="DataGroup" xml:space="preserve">
     <value>Data group</value>
-  </data>
-  <data name="TenantId" xml:space="preserve">
-    <value>Tenant id</value>
   </data>
 </root>

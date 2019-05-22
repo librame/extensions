@@ -2,8 +2,6 @@
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    using Buffers;
-
     public class EncryptionBuilderExtensionsTests
     {
         [Fact]
@@ -26,6 +24,7 @@ namespace Librame.Extensions.Encryption.Tests
                 .AsCiphertextString();
 
             var plaintextBufferCopy = plaintextBuffer.Copy();
+
             var ciphertextString = plaintextBufferCopy
                 .AsDes()
                 .AsTripleDes()

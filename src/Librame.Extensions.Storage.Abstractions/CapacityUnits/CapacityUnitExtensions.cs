@@ -68,7 +68,7 @@ namespace Librame.Extensions
         /// <returns>返回字符串。</returns>
         public static string FormatCapacityUnitString(this int fileSize, CapacityUnitDescriptor descriptor)
         {
-            descriptor.NotDefault(nameof(descriptor));
+            descriptor.NotNull(nameof(descriptor));
 
             if (fileSize <= descriptor.Size)
                 return $"{fileSize} {descriptor.Abbr}";
@@ -127,7 +127,7 @@ namespace Librame.Extensions
         /// <returns>返回字符串。</returns>
         public static string FormatCapacityUnitString(this long fileSize, CapacityUnitDescriptor descriptor)
         {
-            descriptor.NotDefault(nameof(descriptor));
+            descriptor.NotNull(nameof(descriptor));
 
             if (fileSize <= descriptor.Size)
                 return $"{fileSize} {descriptor.Abbr}";

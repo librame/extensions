@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Librame.Extensions.Data\Librame.Extensions.Data.csproj" />
+    <ProjectReference Include="..\..\src\Librame.Extensions.Data.Abstractions\Librame.Extensions.Data.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

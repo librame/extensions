@@ -30,6 +30,6 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="port">给定要启动的端口（可选；默认使用选项配置）。</param>
         /// <returns>返回一个异步操作。</returns>
         Task StartAsync(Action<IChannel> configureProcess,
-            Func<IChannelHandler> handlerFactory = null, string host = null, int port = 0);
+            Func<IChannelHandler> handlerFactory = null, string host = null, int? port = null);
     }
 }

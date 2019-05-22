@@ -1,20 +1,12 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Librame.Models
 {
     using Extensions.Data;
 
     [Description("文章")]
-    public class Article : AbstractEntity<int, DateTime, DataStatus>
+    public class Article : AbstractEntity<string>
     {
-        public Article()
-        {
-            CreateTime = UpdateTime = DateTime.Now;
-            DataStatus = DataStatus.Public;
-        }
-
-
         public string Title { get; set; }
 
         public string Descr { get; set; }

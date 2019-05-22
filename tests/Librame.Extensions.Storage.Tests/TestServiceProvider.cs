@@ -3,13 +3,11 @@ using System;
 
 namespace Librame.Extensions.Storage.Tests
 {
-    using Builders;
-
     internal static class TestServiceProvider
     {
         static TestServiceProvider()
         {
-            if (Current.IsDefault())
+            if (Current == null)
             {
                 var services = new ServiceCollection();
 
@@ -21,6 +19,5 @@ namespace Librame.Extensions.Storage.Tests
         }
 
         public static IServiceProvider Current { get; private set; }
-
     }
 }

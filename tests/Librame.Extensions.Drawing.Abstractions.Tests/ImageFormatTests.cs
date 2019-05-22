@@ -6,9 +6,9 @@ namespace Librame.Extensions.Drawing.Tests
     {
 
         [Fact]
-        public void BaseTest()
+        public void AllTest()
         {
-            var list = typeof(ImageFormat).AsEnumResults((f, v) => f);
+            var list = typeof(ImageFormat).AsEnumResults(f => f);
             Assert.NotEmpty(list);
         }
 

@@ -18,6 +18,7 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
@@ -41,12 +42,12 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         /// <summary>
         /// 构造一个 <see cref="InternalSecureChatServer"/> 实例。
         /// </summary>
-        /// <param name="provider">给定的 <see cref="ISigningCredentialsProvider"/>。</param>
+        /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
-        public InternalSecureChatServer(ISigningCredentialsProvider provider,
+        public InternalSecureChatServer(ISigningCredentialsService signingCredentials,
             ILoggerFactory loggerFactory, IOptions<ChannelOptions> options)
-            : base(provider, loggerFactory, options)
+            : base(signingCredentials, loggerFactory, options)
         {
             _serverOptions = Options.SecureChatServer;
         }
@@ -61,11 +62,13 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         /// <param name="port">给定要启动的端口（可选；默认使用选项配置）。</param>
         /// <returns>返回一个异步操作。</returns>
         public async Task StartAsync(Action<IChannel> configureProcess,
-            Func<IChannelHandler> handlerFactory = null, string host = null, int port = 0)
+            Func<IChannelHandler> handlerFactory = null, string host = null, int? port = null)
         {
-            handlerFactory = handlerFactory.AsValueOrDefault(() => new InternalSecureChatServerHandler(this));
-            host = host.AsValueOrDefault(_serverOptions.Host);
-            port = port.AsValueOrDefault(_serverOptions.Port).NotOutOfPortNumberRange(nameof(port));
+            if (null == handlerFactory)
+                handlerFactory = () => new InternalSecureChatServerHandler(this);
+
+            host = host.HasOrDefault(_serverOptions.Host);
+            port = port.HasOrDefault(_serverOptions.Port);
 
             var bossGroup = new MultithreadEventLoopGroup(1);
             var workerGroup = new MultithreadEventLoopGroup();
@@ -74,7 +77,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
 
             if (_serverOptions.UseSSL)
             {
-                var credentials = Provider.GetSigningCredentials(_serverOptions.SigningCredentialsKey);
+                var credentials = SigningCredentials.GetSigningCredentials(_serverOptions.SigningCredentialsKey);
                 tlsCertificate = credentials.ResolveCertificate();
             }
 
@@ -100,7 +103,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
                     }));
 
                 var address = IPAddress.Parse(host);
-                var bootstrapChannel = await bootstrap.BindAsync(new IPEndPoint(address, port));
+                var bootstrapChannel = await bootstrap.BindAsync(new IPEndPoint(address, port.Value));
 
                 configureProcess.Invoke(bootstrapChannel);
                 

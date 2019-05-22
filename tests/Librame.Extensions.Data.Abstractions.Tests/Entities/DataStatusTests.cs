@@ -4,11 +4,10 @@ namespace Librame.Extensions.Data.Tests
 {
     public class DataStatusTests
     {
-
         [Fact]
-        public void BaseTest()
+        public void AllTest()
         {
-            var list = typeof(DataStatus).AsEnumResults((f, v) => f);
+            var list = typeof(DataStatus).AsEnumResults(f => f);
             Assert.NotEmpty(list);
         }
 

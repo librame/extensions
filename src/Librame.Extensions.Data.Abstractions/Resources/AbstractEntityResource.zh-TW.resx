@@ -118,39 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Id" xml:space="preserve">
-    <value>編號</value>
+    <value>標識</value>
   </data>
-  <data name="DataRank" xml:space="preserve">
-    <value>數據排列</value>
+  <data name="TenantId" xml:space="preserve">
+    <value>租戶標識</value>
   </data>
-  <data name="DataStatus" xml:space="preserve">
-    <value>數據狀態</value>
+  <data name="Rank" xml:space="preserve">
+    <value>排列</value>
   </data>
-  <data name="CreateTime" xml:space="preserve">
-    <value>創建時間</value>
-  </data>
-  <data name="CreatorId" xml:space="preserve">
-    <value>創建者標識</value>
-  </data>
-  <data name="UpdateTime" xml:space="preserve">
-    <value>修正時間</value>
-  </data>
-  <data name="UpdatorId" xml:space="preserve">
-    <value>修正者標識</value>
-  </data>
-  <data name="CreateGroup" xml:space="preserve">
-    <value>創建組</value>
-  </data>
-  <data name="DataGroup" xml:space="preserve">
-    <value>數據組</value>
+  <data name="Status" xml:space="preserve">
+    <value>狀態</value>
   </data>
   <data name="GlobalGroup" xml:space="preserve">
     <value>通用組</value>
   </data>
-  <data name="UpdateGroup" xml:space="preserve">
-    <value>更新組</value>
-  </data>
-  <data name="TenantId" xml:space="preserve">
-    <value>租戶標識</value>
+  <data name="DataGroup" xml:space="preserve">
+    <value>數據組</value>
   </data>
 </root>

@@ -12,7 +12,7 @@
 
 namespace Librame.Extensions.Encryption
 {
-    using Buffers;
+    using Core;
 
     /// <summary>
     /// 抽象密钥生成器静态扩展。

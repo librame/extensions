@@ -11,6 +11,7 @@
 #endregion
 
 using Librame.Extensions;
+using System.Linq;
 
 namespace System.Collections.Generic
 {
@@ -23,11 +24,45 @@ namespace System.Collections.Generic
         /// <summary>
         /// 构造一个 <see cref="PagingList{T}"/> 实例。
         /// </summary>
+        /// <param name="query">给定的查询接口。</param>
+        /// <param name="descriptor">给定的描述符。</param>
+        public PagingList(IQueryable<T> query, PagingDescriptor descriptor)
+        {
+            query.NotNull(nameof(query));
+
+            // 跳过条数
+            if (descriptor.Skip > 0)
+                query = query.Skip(descriptor.Skip);
+
+            // 获取条数
+            if (descriptor.Size > 0)
+                query = query.Take(descriptor.Size);
+
+            Rows = query.ToList();
+            Descriptor = descriptor;
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="PagingList{T}"/> 实例。
+        /// </summary>
         /// <param name="rows">给定的行集合。</param>
         /// <param name="descriptor">给定的描述符。</param>
         public PagingList(IList<T> rows, PagingDescriptor descriptor)
         {
-            Rows = rows.NotDefault(nameof(rows));
+            rows.NotNull(nameof(rows));
+
+            if (rows.Count > descriptor.Size)
+            {
+                // 跳过条数
+                if (descriptor.Skip > 0)
+                    rows = rows.Skip(descriptor.Skip).ToList();
+
+                // 获取条数
+                if (descriptor.Size > 0)
+                    rows = rows.Take(descriptor.Size).ToList();
+            }
+
+            Rows = rows;
             Descriptor = descriptor;
         }
 

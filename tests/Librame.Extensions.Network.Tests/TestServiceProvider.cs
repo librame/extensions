@@ -3,13 +3,13 @@ using System;
 
 namespace Librame.Extensions.Network.Tests
 {
-    using Builders;
+    using Encryption;
 
     internal static class TestServiceProvider
     {
         static TestServiceProvider()
         {
-            if (Current.IsDefault())
+            if (Current == null)
             {
                 var services = new ServiceCollection();
 

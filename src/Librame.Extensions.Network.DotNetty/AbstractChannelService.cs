@@ -15,8 +15,8 @@ using Microsoft.Extensions.Options;
 
 namespace Librame.Extensions.Network.DotNetty
 {
+    using Core;
     using Encryption;
-    using Services;
 
     /// <summary>
     /// 抽象通道服务。
@@ -28,25 +28,26 @@ namespace Librame.Extensions.Network.DotNetty
         /// <summary>
         /// 构造一个 <see cref="AbstractChannelService{TService}"/> 实例。
         /// </summary>
-        /// <param name="provider">给定的 <see cref="ISigningCredentialsProvider"/>。</param>
+        /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
-        public AbstractChannelService(ISigningCredentialsProvider provider, ILoggerFactory loggerFactory, IOptions<ChannelOptions> options)
+        public AbstractChannelService(ISigningCredentialsService signingCredentials,
+            ILoggerFactory loggerFactory, IOptions<ChannelOptions> options)
             : base(loggerFactory.CreateLogger<TService>())
         {
-            Provider = provider;
-            LoggerFactory = loggerFactory;
-            Options = options.Value;
+            SigningCredentials = signingCredentials.NotNull(nameof(signingCredentials));
+            LoggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
+            Options = options.NotNull(nameof(options)).Value;
         }
 
 
         /// <summary>
-        /// 签名证书提供程序。
+        /// 签名证书。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="ISigningCredentialsProvider"/>。
+        /// 返回 <see cref="ISigningCredentialsService"/>。
         /// </value>
-        public ISigningCredentialsProvider Provider { get; }
+        public ISigningCredentialsService SigningCredentials { get; }
 
         /// <summary>
         /// 日志工厂。

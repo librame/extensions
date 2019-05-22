@@ -62,7 +62,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
 
         public InternalHttpServerHandler(IHttpServer server)
         {
-            _server = server.NotDefault(nameof(server));
+            _server = server.NotNull(nameof(server));
             _logger = server.LoggerFactory.CreateLogger<InternalHttpServerHandler>();
         }
 

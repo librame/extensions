@@ -12,12 +12,14 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Builders
+namespace Librame.Extensions.Network
 {
+    using Core;
+
     /// <summary>
     /// 内部网络构建器。
     /// </summary>
-    internal class InternalNetworkBuilder : Builder, INetworkBuilder
+    internal class InternalNetworkBuilder : AbstractBuilder, INetworkBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalNetworkBuilder"/> 实例。

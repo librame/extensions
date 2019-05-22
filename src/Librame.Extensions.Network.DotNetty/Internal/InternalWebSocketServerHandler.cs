@@ -37,7 +37,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
 
         public InternalWebSocketServerHandler(IWebSocketServer server)
         {
-            _server = server.NotDefault(nameof(server));
+            _server = server.NotNull(nameof(server));
             _logger = server.LoggerFactory.CreateLogger<InternalWebSocketServerHandler>();
         }
 

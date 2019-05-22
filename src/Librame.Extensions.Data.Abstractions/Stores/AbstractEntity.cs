@@ -15,54 +15,41 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 抽象实体。
     /// </summary>
-    /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TDateTime">指定的日期与时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
+    public abstract class AbstractEntity : AbstractEntity<float, DataStatus>
+    {
+        /// <summary>
+        /// 构造一个 <see cref="AbstractEntity"/> 默认实例。
+        /// </summary>
+        public AbstractEntity()
+        {
+            Rank = 10;
+            Status = DataStatus.Public;
+        }
+    }
+
+
+    /// <summary>
+    /// 抽象实体（默认以字符串为标识类型）。
+    /// </summary>
+    /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
-    public abstract class AbstractEntity<TId, TDateTime, TStatus> : AbstractId<TId>, IEntity<TId, TDateTime, TStatus>
-        where TId : IEquatable<TId>
-        where TDateTime : struct
+    public abstract class AbstractEntity<TRank, TStatus> : AbstractEntity<string, TRank, TStatus>
+        where TRank : struct
         where TStatus : struct
     {
         /// <summary>
-        /// 数据排序。
+        /// 构造一个 <see cref="AbstractEntity{TRank, TStatus}"/> 默认实例。
         /// </summary>
-        [Display(Name = nameof(DataRank), GroupName = "DataGroup", ResourceType = typeof(AbstractEntityResource))]
-        public virtual int DataRank { get; set; }
-
-        /// <summary>
-        /// 数据状态。
-        /// </summary>
-        [Display(Name = nameof(DataStatus), GroupName = "DataGroup", ResourceType = typeof(AbstractEntityResource))]
-        public virtual TStatus DataStatus { get; set; }
-
-        /// <summary>
-        /// 创建时间。
-        /// </summary>
-        [Display(Name = nameof(CreateTime), GroupName = "CreateGroup", ResourceType = typeof(AbstractEntityResource))]
-        [DataType(DataType.DateTime)]
-        public virtual TDateTime CreateTime { get; set; }
-
-        /// <summary>
-        /// 创建者标识。
-        /// </summary>
-        [Display(Name = nameof(CreatorId), GroupName = "CreateGroup", ResourceType = typeof(AbstractEntityResource))]
-        public virtual TId CreatorId { get; set; }
-
-        /// <summary>
-        /// 更新时间。
-        /// </summary>
-        [Display(Name = nameof(UpdateTime), GroupName = "UpdateGroup", ResourceType = typeof(AbstractEntityResource))]
-        [DataType(DataType.DateTime)]
-        public virtual TDateTime UpdateTime { get; set; }
-
-        /// <summary>
-        /// 更新者标识。
-        /// </summary>
-        [Display(Name = nameof(UpdatorId), GroupName = "UpdateGroup", ResourceType = typeof(AbstractEntityResource))]
-        public virtual TId UpdatorId { get; set; }
+        public AbstractEntity()
+        {
+            // 默认使用空标识符，新增推荐使用 IIdentificationService 注入
+            Id = UniqueIdentifier.EmptyByGuid().ToString();
+        }
     }
 
 
@@ -70,19 +57,41 @@ namespace Librame.Extensions.Data
     /// 抽象实体。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TTenantId">指定的租户标识类型。</typeparam>
-    /// <typeparam name="TDateTime">指定的日期与时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
-    /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
-    public abstract class AbstractEntity<TId, TTenantId, TDateTime, TStatus> : AbstractEntity<TId, TDateTime, TStatus>, ITenantId<TTenantId>
+    public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>
         where TId : IEquatable<TId>
-        where TTenantId : IEquatable<TTenantId>
-        where TDateTime : struct
+    {
+        /// <summary>
+        /// 构造一个 <see cref="AbstractEntity{TId}"/> 默认实例。
+        /// </summary>
+        public AbstractEntity()
+        {
+            Rank = 10;
+            Status = DataStatus.Public;
+        }
+    }
+
+
+    /// <summary>
+    /// 抽象实体。
+    /// </summary>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
+    /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
+    /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
+    public abstract class AbstractEntity<TId, TRank, TStatus> : AbstractId<TId>, IRank<TRank>, IStatus<TStatus>
+        where TId : IEquatable<TId>
+        where TRank : struct
         where TStatus : struct
     {
         /// <summary>
-        /// 租户标识。
+        /// 排序。
         /// </summary>
-        [Display(Name = nameof(TenantId), GroupName = "GlobalGroup", ResourceType = typeof(AbstractEntityResource))]
-        public TTenantId TenantId { get; set; }
+        [Display(Name = nameof(Rank), GroupName = "DataGroup", ResourceType = typeof(AbstractEntityResource))]
+        public virtual TRank Rank { get; set; }
+
+        /// <summary>
+        /// 状态。
+        /// </summary>
+        [Display(Name = nameof(Status), GroupName = "DataGroup", ResourceType = typeof(AbstractEntityResource))]
+        public virtual TStatus Status { get; set; }
     }
 }

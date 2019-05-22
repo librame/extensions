@@ -14,5 +14,5 @@ using Microsoft.Extensions.Localization;
 using System.Reflection;
 
 [assembly: RootNamespace("Librame.Extensions.Data")]
-[assembly: ResourceLocation("Resources")]
+//[assembly: ResourceLocation("Resources")]
 [assembly: ResourceMapping]

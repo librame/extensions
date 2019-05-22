@@ -120,37 +120,19 @@
   <data name="Id" xml:space="preserve">
     <value>标识</value>
   </data>
-  <data name="DataRank" xml:space="preserve">
-    <value>数据排序</value>
+  <data name="TenantId" xml:space="preserve">
+    <value>租户标识</value>
   </data>
-  <data name="DataStatus" xml:space="preserve">
-    <value>数据状态</value>
+  <data name="Rank" xml:space="preserve">
+    <value>排序</value>
   </data>
-  <data name="CreateTime" xml:space="preserve">
-    <value>创建时间</value>
-  </data>
-  <data name="CreatorId" xml:space="preserve">
-    <value>创建者标识</value>
-  </data>
-  <data name="UpdateTime" xml:space="preserve">
-    <value>更新时间</value>
-  </data>
-  <data name="UpdatorId" xml:space="preserve">
-    <value>更新者标识</value>
-  </data>
-  <data name="CreateGroup" xml:space="preserve">
-    <value>创建组</value>
-  </data>
-  <data name="DataGroup" xml:space="preserve">
-    <value>数据组</value>
+  <data name="Status" xml:space="preserve">
+    <value>状态</value>
   </data>
   <data name="GlobalGroup" xml:space="preserve">
     <value>全局组</value>
   </data>
-  <data name="UpdateGroup" xml:space="preserve">
-    <value>更新组</value>
-  </data>
-  <data name="TenantId" xml:space="preserve">
-    <value>租户标识</value>
+  <data name="DataGroup" xml:space="preserve">
+    <value>数据组</value>
   </data>
 </root>

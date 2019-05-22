@@ -12,12 +12,12 @@
 
 namespace Librame.Extensions.Encryption
 {
-    using Buffers;
+    using Core;
 
     /// <summary>
     /// 密钥生成器接口。
     /// </summary>
-    public interface IKeyGenerator : IEncryptionService
+    public interface IKeyGenerator : IService
     {
         /// <summary>
         /// 生成密钥。

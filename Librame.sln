@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2227C6AD-F534-454B-9037-27E9E3461F4A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Abstractions", "src\Librame.Abstractions\Librame.Abstractions.csproj", "{48B368CF-7252-4FA2-AA49-6624C1A55550}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions", "src\Librame.Extensions\Librame.Extensions.csproj", "{A23D6C38-EC47-4A16-9BF4-B8B726B4A5DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame", "src\Librame\Librame.csproj", "{D278CB33-83A3-4778-9A3F-F75C8D2DD591}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Core.Abstractions", "src\Librame.Extensions.Core.Abstractions\Librame.Extensions.Core.Abstractions.csproj", "{48B368CF-7252-4FA2-AA49-6624C1A55550}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Core", "src\Librame.Extensions.Core\Librame.Extensions.Core.csproj", "{D278CB33-83A3-4778-9A3F-F75C8D2DD591}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Encryption.Abstractions", "src\Librame.Extensions.Encryption.Abstractions\Librame.Extensions.Encryption.Abstractions.csproj", "{E4C71339-4730-4647-91D9-BAAE18DAE949}"
 EndProject
@@ -15,11 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Encrypti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Data.Abstractions", "src\Librame.Extensions.Data.Abstractions\Librame.Extensions.Data.Abstractions.csproj", "{4E3174BF-EF2F-4C51-9311-EE8A449A025E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Data", "src\Librame.Extensions.Data\Librame.Extensions.Data.csproj", "{ECA5803A-559D-4B8F-84C4-F9F717C7384D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Data.EntityFrameworkCore", "src\Librame.Extensions.Data.EntityFrameworkCore\Librame.Extensions.Data.EntityFrameworkCore.csproj", "{ECA5803A-559D-4B8F-84C4-F9F717C7384D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Drawing.Abstractions", "src\Librame.Extensions.Drawing.Abstractions\Librame.Extensions.Drawing.Abstractions.csproj", "{D9386D0D-AAFC-4AC7-9273-E155A9BEC90A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Drawing", "src\Librame.Extensions.Drawing\Librame.Extensions.Drawing.csproj", "{E82B257A-B115-4411-8499-4D00A77D8F33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Drawing.SkiaSharp", "src\Librame.Extensions.Drawing.SkiaSharp\Librame.Extensions.Drawing.SkiaSharp.csproj", "{E82B257A-B115-4411-8499-4D00A77D8F33}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.Abstractions", "src\Librame.Extensions.Network.Abstractions\Librame.Extensions.Network.Abstractions.csproj", "{1C4EF2B8-A61E-42D0-A2D5-C7BCAB0CF944}"
 EndProject
@@ -33,9 +35,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Storage"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02A1AB01-0F0B-4ECD-9FCB-DB4B3FDDC487}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Abstractions.Tests", "tests\Librame.Abstractions.Tests\Librame.Abstractions.Tests.csproj", "{DC73ED1B-C0FD-4E3F-82FB-FC43702EF3A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Tests", "tests\Librame.Extensions.Tests\Librame.Extensions.Tests.csproj", "{B1DD7EAD-172D-4368-88F1-7D94CE9C7244}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Tests", "tests\Librame.Tests\Librame.Tests.csproj", "{0D475006-5BD1-4BDF-92B7-C019DFEE750D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Core.Abstractions.Tests", "tests\Librame.Extensions.Core.Abstractions.Tests\Librame.Extensions.Core.Abstractions.Tests.csproj", "{DC73ED1B-C0FD-4E3F-82FB-FC43702EF3A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Core.Tests", "tests\Librame.Extensions.Core.Tests\Librame.Extensions.Core.Tests.csproj", "{0D475006-5BD1-4BDF-92B7-C019DFEE750D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Encryption.Abstractions.Tests", "tests\Librame.Extensions.Encryption.Abstractions.Tests\Librame.Extensions.Encryption.Abstractions.Tests.csproj", "{69BE153A-FE4D-4E4D-BFAC-C74336335401}"
 EndProject
@@ -43,11 +47,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Encrypti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Data.Abstractions.Tests", "tests\Librame.Extensions.Data.Abstractions.Tests\Librame.Extensions.Data.Abstractions.Tests.csproj", "{DD645368-FF2A-4D40-B655-D0E453FA4D1B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Data.Tests", "tests\Librame.Extensions.Data.Tests\Librame.Extensions.Data.Tests.csproj", "{D36968A5-F538-48E2-B437-3F47CD829D15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Data.EntityFrameworkCore.Tests", "tests\Librame.Extensions.Data.EntityFrameworkCore.Tests\Librame.Extensions.Data.EntityFrameworkCore.Tests.csproj", "{D36968A5-F538-48E2-B437-3F47CD829D15}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Drawing.Abstractions.Tests", "tests\Librame.Extensions.Drawing.Abstractions.Tests\Librame.Extensions.Drawing.Abstractions.Tests.csproj", "{508C1894-2FA0-4CB5-91EE-0F31D3A5D612}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Drawing.Tests", "tests\Librame.Extensions.Drawing.Tests\Librame.Extensions.Drawing.Tests.csproj", "{40081654-2AF2-4091-819E-BC49799CDB9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Drawing.SkiaSharp.Tests", "tests\Librame.Extensions.Drawing.SkiaSharp.Tests\Librame.Extensions.Drawing.SkiaSharp.Tests.csproj", "{40081654-2AF2-4091-819E-BC49799CDB9A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.Abstractions.Tests", "tests\Librame.Extensions.Network.Abstractions.Tests\Librame.Extensions.Network.Abstractions.Tests.csproj", "{18C793FF-25B2-4540-BCE2-A7281F8A0453}"
 EndProject
@@ -63,7 +67,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Models", "shared\Li
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Consoles", "examples\Librame.Consoles\Librame.Consoles.csproj", "{92AFAE63-85D6-43E3-826A-3BA9837427CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Consoles", "examples\Librame.Extensions.Consoles\Librame.Extensions.Consoles.csproj", "{92AFAE63-85D6-43E3-826A-3BA9837427CD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.SecureChat.Server", "examples\Librame.Extensions.SecureChat.Server\Librame.Extensions.SecureChat.Server.csproj", "{563594A3-858F-4D8E-A8DF-C9E782E8CA86}"
 EndProject
@@ -97,6 +101,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A23D6C38-EC47-4A16-9BF4-B8B726B4A5DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A23D6C38-EC47-4A16-9BF4-B8B726B4A5DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A23D6C38-EC47-4A16-9BF4-B8B726B4A5DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A23D6C38-EC47-4A16-9BF4-B8B726B4A5DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{48B368CF-7252-4FA2-AA49-6624C1A55550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{48B368CF-7252-4FA2-AA49-6624C1A55550}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48B368CF-7252-4FA2-AA49-6624C1A55550}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -149,6 +157,10 @@ Global
 		{DFEC7505-7869-4134-8C38-086489B38A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFEC7505-7869-4134-8C38-086489B38A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFEC7505-7869-4134-8C38-086489B38A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1DD7EAD-172D-4368-88F1-7D94CE9C7244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1DD7EAD-172D-4368-88F1-7D94CE9C7244}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1DD7EAD-172D-4368-88F1-7D94CE9C7244}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1DD7EAD-172D-4368-88F1-7D94CE9C7244}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DC73ED1B-C0FD-4E3F-82FB-FC43702EF3A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DC73ED1B-C0FD-4E3F-82FB-FC43702EF3A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC73ED1B-C0FD-4E3F-82FB-FC43702EF3A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -262,6 +274,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A23D6C38-EC47-4A16-9BF4-B8B726B4A5DD} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{48B368CF-7252-4FA2-AA49-6624C1A55550} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{D278CB33-83A3-4778-9A3F-F75C8D2DD591} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{E4C71339-4730-4647-91D9-BAAE18DAE949} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
@@ -275,6 +288,7 @@ Global
 		{5C7BA55D-A40A-43B8-B820-C62DB22A12F9} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{E52A5EE0-1992-4585-910B-E495E95FDC83} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
 		{DFEC7505-7869-4134-8C38-086489B38A2D} = {2227C6AD-F534-454B-9037-27E9E3461F4A}
+		{B1DD7EAD-172D-4368-88F1-7D94CE9C7244} = {02A1AB01-0F0B-4ECD-9FCB-DB4B3FDDC487}
 		{DC73ED1B-C0FD-4E3F-82FB-FC43702EF3A7} = {02A1AB01-0F0B-4ECD-9FCB-DB4B3FDDC487}
 		{0D475006-5BD1-4BDF-92B7-C019DFEE750D} = {02A1AB01-0F0B-4ECD-9FCB-DB4B3FDDC487}
 		{69BE153A-FE4D-4E4D-BFAC-C74336335401} = {02A1AB01-0F0B-4ECD-9FCB-DB4B3FDDC487}

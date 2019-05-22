@@ -15,6 +15,24 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
+    /// <summary>
+    /// 抽象标识（默认以字符串为标识类型）。
+    /// </summary>
+    public abstract class AbstractId : AbstractId<string>
+    {
+        /// <summary>
+        /// 构造一个 <see cref="AbstractId"/> 默认实例。
+        /// </summary>
+        public AbstractId()
+        {
+            // 默认使用空标识符，新增推荐使用 IIdentificationService 注入
+            Id = UniqueIdentifier.EmptyByGuid().ToString();
+        }
+    }
+
+
     /// <summary>
     /// 抽象标识。
     /// </summary>

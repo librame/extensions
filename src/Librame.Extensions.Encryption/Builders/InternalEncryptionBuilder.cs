@@ -12,12 +12,14 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Builders
+namespace Librame.Extensions.Encryption
 {
+    using Core;
+
     /// <summary>
     /// 内部加密构建器。
     /// </summary>
-    internal class InternalEncryptionBuilder : Builder, IEncryptionBuilder
+    internal class InternalEncryptionBuilder : AbstractBuilder, IEncryptionBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalEncryptionBuilder"/> 实例。

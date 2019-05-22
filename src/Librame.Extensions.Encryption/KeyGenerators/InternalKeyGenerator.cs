@@ -16,14 +16,12 @@ using System;
 
 namespace Librame.Extensions.Encryption
 {
-    using Buffers;
-    using Builders;
-    using Services;
+    using Core;
 
     /// <summary>
     /// 内部密钥生成器。
     /// </summary>
-    internal class InternalKeyGenerator : AbstractService<InternalKeyGenerator, EncryptionBuilderOptions>, IKeyGenerator
+    internal class InternalKeyGenerator : AbstractEncryptionService<InternalKeyGenerator>, IKeyGenerator
     {
         private readonly AlgorithmIdentifier _optionIdentifier;
 
@@ -31,12 +29,12 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 构造一个 <see cref="InternalKeyGenerator"/> 实例。
         /// </summary>
-        /// <param name="builderOptions">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalKeyGenerator}"/>。</param>
-        public InternalKeyGenerator(IOptions<EncryptionBuilderOptions> builderOptions, ILogger<InternalKeyGenerator> logger)
-            : base(builderOptions, logger)
+        public InternalKeyGenerator(IOptions<EncryptionBuilderOptions> options, ILogger<InternalKeyGenerator> logger)
+            : base(options, logger)
         {
-            _optionIdentifier = AlgorithmIdentifier.Parse(BuilderOptions.Identifier);
+            _optionIdentifier = AlgorithmIdentifier.Parse(Options.Identifier);
         }
 
 
@@ -50,7 +48,7 @@ namespace Librame.Extensions.Encryption
         {
             Memory<byte> memory;
 
-            if (identifier.IsNotEmpty())
+            if (!identifier.IsNullOrEmpty())
             {
                 memory = AlgorithmIdentifier.Parse(identifier).Memory;
                 Logger.LogDebug($"Use set identifier: {identifier}");
@@ -58,7 +56,7 @@ namespace Librame.Extensions.Encryption
             else
             {
                 memory = _optionIdentifier.Memory;
-                Logger.LogDebug($"Use options identifier: {BuilderOptions.Identifier}");
+                Logger.LogDebug($"Use options identifier: {Options.Identifier}");
             }
 
             return GenerateKey(memory.ToArray(), length);
@@ -78,7 +76,7 @@ namespace Librame.Extensions.Encryption
             // 计算最大公约数
             var gcf = bytes.Length.ComputeGCD(length);
 
-            if (BuilderOptions.KeyGenerator.IsRandomKey)
+            if (Options.KeyGenerator.IsRandomKey)
             {
                 // 得到最大索引长度
                 var maxIndexLength = (gcf <= bytes.Length) ? bytes.Length : gcf;

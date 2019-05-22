@@ -14,19 +14,18 @@ using System.Text;
 
 namespace Librame.Extensions.Network
 {
-    using Builders;
+    using Core;
     using Encryption;
-    using Services;
 
     /// <summary>
     /// 网络服务接口。
     /// </summary>
-    public interface INetworkService : IService<NetworkBuilderOptions>
+    public interface INetworkService : IService
     {
         /// <summary>
-        /// 散列算法（默认不使用）。
+        /// 散列算法。
         /// </summary>
-        IHashAlgorithmService Hash { get; set; }
+        IHashService Hash { get; }
 
         /// <summary>
         /// 字符编码（默认使用 <see cref="Encoding.UTF8"/>）。

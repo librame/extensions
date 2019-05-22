@@ -3,8 +3,6 @@ using Xunit;
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    using Builders;
-
     public class InternalEncryptionBuilderTests
     {
         [Fact]

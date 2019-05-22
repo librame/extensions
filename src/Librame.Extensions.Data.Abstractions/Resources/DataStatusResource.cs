@@ -12,10 +12,12 @@
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 数据状态资源。
     /// </summary>
-    public class DataStatusResource : Resources.IResource
+    public class DataStatusResource : IResource
     {
 
         #region Groups

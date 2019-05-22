@@ -12,13 +12,20 @@
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 抽象实体资源。
     /// </summary>
-    public class AbstractEntityResource : Resources.IResource
+    public class AbstractEntityResource : IResource
     {
 
         #region Global Group
+
+        /// <summary>
+        /// 全局组。
+        /// </summary>
+        public string GlobalGroup { get; set; }
 
         /// <summary>
         /// 标识。
@@ -36,44 +43,19 @@ namespace Librame.Extensions.Data
         #region Data Group
 
         /// <summary>
-        /// 数据排序。
+        /// 数据组。
         /// </summary>
-        public string DataRank { get; set; }
+        public string DataGroup { get; set; }
 
         /// <summary>
-        /// 数据状态。
+        /// 排序。
         /// </summary>
-        public string DataStatus { get; set; }
-
-        #endregion
-
-
-        #region Create Group
+        public string Rank { get; set; }
 
         /// <summary>
-        /// 创建时间。
+        /// 状态。
         /// </summary>
-        public string CreateTime { get; set; }
-
-        /// <summary>
-        /// 创建者标识。
-        /// </summary>
-        public string CreatorId { get; set; }
-
-        #endregion
-
-
-        #region Update Group
-
-        /// <summary>
-        /// 更新时间。
-        /// </summary>
-        public string UpdateTime { get; set; }
-
-        /// <summary>
-        /// 更新者标识。
-        /// </summary>
-        public string UpdatorId { get; set; }
+        public string Status { get; set; }
 
         #endregion
 

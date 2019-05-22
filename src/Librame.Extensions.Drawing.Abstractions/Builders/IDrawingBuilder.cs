@@ -10,8 +10,10 @@
 
 #endregion
 
-namespace Librame.Builders
+namespace Librame.Extensions.Drawing
 {
+    using Core;
+
     /// <summary>
     /// 图画构建器接口。
     /// </summary>
