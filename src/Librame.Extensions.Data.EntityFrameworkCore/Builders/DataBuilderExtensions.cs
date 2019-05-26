@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
         /// <param name="configureOptions">给定的 <see cref="Action{DataBuilderOptions}"/>（可选）。</param>
-        /// <returns>返回 <see cref="InternalDataBuilder"/>。</returns>
+        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddData(this IBuilder builder,
             Action<DataBuilderOptions> configureOptions = null)
         {
