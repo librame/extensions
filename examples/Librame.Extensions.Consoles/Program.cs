@@ -20,7 +20,7 @@ namespace Librame.Extensions.Consoles
 
             var services = new ServiceCollection();
 
-            services.AddLibrame(configureLogging: loggingBuilder =>
+            services.AddLibrame(options => options.ConfigureLogging = loggingBuilder =>
             {
                 // configure Logging with NLog
                 loggingBuilder.ClearProviders();

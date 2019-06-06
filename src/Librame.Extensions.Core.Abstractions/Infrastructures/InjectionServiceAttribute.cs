@@ -15,18 +15,10 @@ using System;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 文件定位器接口。
+    /// 注入服务特性。
     /// </summary>
-    public interface IFileLocator : ILocator<string>, IEquatable<IFileLocator>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
+    public class InjectionServiceAttribute : Attribute
     {
-        /// <summary>
-        /// 文件名。
-        /// </summary>
-        string FileName { get; }
-
-        /// <summary>
-        /// 基础路径。
-        /// </summary>
-        string BasePath { get; }
     }
 }

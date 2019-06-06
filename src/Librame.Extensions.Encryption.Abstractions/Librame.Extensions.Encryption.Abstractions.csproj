@@ -5,22 +5,22 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.0.767.201</Version>
+    <Version>6.0.782.201</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
-    <Description>Librame.Extensions.Encryption.Abstractions</Description>
+    <Description>Based Librame.Extensions.Core.Abstractions encryption extension package.</Description>
     <Copyright>Copyright © 2012-2018</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/librame/Librame</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/10363349?v=3&amp;s=460</PackageIconUrl>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Librame,NETCore,NETStandard,Encryption</PackageTags>
-    <PackageReleaseNotes>Librame.Extensions.Encryption.Abstractions</PackageReleaseNotes>
+    <PackageTags>Abstractions,Encryption,Extensions,Librame,NETStandard</PackageTags>
+    <PackageReleaseNotes>Based Librame.Extensions.Core.Abstractions encryption extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.0.767.201</AssemblyVersion>
-    <FileVersion>6.0.767.201</FileVersion>
+    <AssemblyVersion>6.0.782.201</AssemblyVersion>
+    <FileVersion>6.0.19606.201</FileVersion>
     <RootNamespace>Librame.Extensions.Encryption</RootNamespace>
   </PropertyGroup>
 

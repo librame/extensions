@@ -12,6 +12,7 @@ namespace Librame.Extensions.Core.Tests
                 var services = new ServiceCollection();
 
                 services.AddLibrame();
+                services.AddScoped<InjectionServiceTest>();
 
                 Current = services.BuildServiceProvider();
             }

@@ -17,10 +17,17 @@ namespace Librame.Extensions.Core
     /// </summary>
     /// <typeparam name="TSource">指定的源类型。</typeparam>
     public interface ILocator<TSource>
+        where TSource : class
     {
         /// <summary>
-        /// 定位源。
+        /// 原始源。
         /// </summary>
-        TSource Source { get; }
+        TSource RawSource { get; }
+
+        /// <summary>
+        /// 获取源。
+        /// </summary>
+        /// <returns>返回源实例。</returns>
+        TSource GetSource();
     }
 }

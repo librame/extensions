@@ -28,14 +28,14 @@ namespace Librame.Extensions.Data.Tests
 
     public class TestStore : AbstractBaseStore, ITestStore
     {
-        public TestStore(IIdentificationService identification, IAccessor accessor)
+        public TestStore(IIdService identification, IAccessor accessor)
             : base(accessor)
         {
             Initialize(identification);
         }
 
 
-        private void Initialize(IIdentificationService identification)
+        private void Initialize(IIdService identification)
         {
             if (Accessor is TestDbContextAccessor dbContextAccessor)
             {

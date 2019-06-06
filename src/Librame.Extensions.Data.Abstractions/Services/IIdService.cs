@@ -20,7 +20,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 标识服务接口。
     /// </summary>
-    public interface IIdentificationService : IService
+    public interface IIdService : IService
     {
         /// <summary>
         /// 异步获取标识。

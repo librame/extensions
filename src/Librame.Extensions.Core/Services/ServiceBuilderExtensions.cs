@@ -30,6 +30,8 @@ namespace Librame.Extensions.Core
             builder.Services.AddTransient<IClockService, InternalClockService>();
             builder.Services.AddTransient<IPlatformService, InternalPlatformService>();
 
+            builder.Services.AddSingleton<IInjectionService, InternalInjectionService>();
+
             return builder;
         }
 

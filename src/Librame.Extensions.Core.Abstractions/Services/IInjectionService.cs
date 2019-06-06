@@ -15,18 +15,19 @@ using System;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 文件定位器接口。
+    /// 注入服务接口。
     /// </summary>
-    public interface IFileLocator : ILocator<string>, IEquatable<IFileLocator>
+    public interface IInjectionService : IService
     {
         /// <summary>
-        /// 文件名。
+        /// 服务提供程序。
         /// </summary>
-        string FileName { get; }
+        IServiceProvider ServiceProvider { get; }
 
         /// <summary>
-        /// 基础路径。
+        /// 服务注入。
         /// </summary>
-        string BasePath { get; }
+        /// <param name="service">给定的服务对象。</param>
+        void Inject(object service);
     }
 }

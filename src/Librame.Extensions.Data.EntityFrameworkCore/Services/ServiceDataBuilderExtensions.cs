@@ -26,7 +26,8 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddServices(this IDataBuilder builder)
         {
-            builder.Services.AddTransient<IIdentificationService, InternalIdentificationService>();
+            builder.Services.AddTransient<IIdService, InternalIdService>();
+
             builder.Services.AddScoped<IAuditService, InternalAuditService>();
 
             return builder;

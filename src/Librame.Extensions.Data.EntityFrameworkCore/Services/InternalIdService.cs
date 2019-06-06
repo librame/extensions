@@ -21,13 +21,13 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 内部标识服务。
     /// </summary>
-    public class InternalIdentificationService : AbstractService<InternalIdentificationService>, IIdentificationService
+    public class InternalIdService : AbstractService<InternalIdService>, IIdService
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalIdentificationService"/> 实例。
+        /// 构造一个 <see cref="InternalIdService"/> 实例。
         /// </summary>
         /// <param name="logger">给定的 <see cref="ILogger{IdService}"/>。</param>
-        public InternalIdentificationService(ILogger<InternalIdentificationService> logger)
+        public InternalIdService(ILogger<InternalIdService> logger)
             : base(logger)
         {
         }

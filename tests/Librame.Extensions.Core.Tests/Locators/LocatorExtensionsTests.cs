@@ -13,8 +13,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal(dir, locator.BasePath);
             Assert.NotEqual(file, locator.ToString());
 
-            var newlocator = locator.NewFileName("abc.txt");
-            Assert.NotEqual(locator.ToString(), newlocator.ToString());
+            Assert.NotEqual(locator.ToString(), locator.NewFileName("abc.txt").ToString());
         }
     }
 }

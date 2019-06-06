@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class AccessTokenServiceTests
+    public class InternalAccessTokenServiceTests
     {
         [Fact]
         public void AllTest()

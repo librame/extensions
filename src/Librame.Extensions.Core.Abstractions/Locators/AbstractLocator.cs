@@ -25,13 +25,20 @@ namespace Librame.Extensions.Core
         /// <param name="source">给定的定位源。</param>
         public AbstractLocator(TSource source)
         {
-            Source = source.NotNull(nameof(source));
+            RawSource = source.NotNull(nameof(source));
         }
 
 
         /// <summary>
-        /// 定位源。
+        /// 原始源。
         /// </summary>
-        public TSource Source { get; protected set; }
+        public TSource RawSource { get; }
+
+
+        /// <summary>
+        /// 获取源。
+        /// </summary>
+        /// <returns>返回源实例。</returns>
+        public abstract TSource GetSource();
     }
 }

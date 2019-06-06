@@ -28,16 +28,16 @@ namespace Librame.Extensions.Data
     internal class InternalAuditService : AbstractService<InternalAuditService>, IAuditService
     {
         private readonly IClockService _clock;
-        private readonly IIdentificationService _identification;
+        private readonly IIdService _identification;
 
 
         /// <summary>
         /// 构造一个 <see cref="InternalAuditService"/> 实例。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identification">给定的 <see cref="IIdentificationService"/>。</param>
+        /// <param name="identification">给定的 <see cref="IIdService"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalAuditService}"/>。</param>
-        public InternalAuditService(IClockService clock, IIdentificationService identification,
+        public InternalAuditService(IClockService clock, IIdService identification,
             ILogger<InternalAuditService> logger)
             : base(logger)
         {

@@ -21,12 +21,12 @@ namespace Librame.Extensions.WebSocket.Client
 
             var services = new ServiceCollection();
 
-            services.AddLibrame(configureLogging: loggingBuilder =>
+            services.AddLibrame(options => options.ConfigureLogging = loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
                 loggingBuilder.SetMinimumLevel(LogLevel.Trace);
 
-                loggingBuilder.AddConsole(options => options.IncludeScopes = false);
+                loggingBuilder.AddConsole(logger => logger.IncludeScopes = false);
                 loggingBuilder.AddFilter((str, level) => true);
             })
                 .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
