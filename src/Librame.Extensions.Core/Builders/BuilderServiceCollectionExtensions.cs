@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加 Librame。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="configureAction">给定的配置本地化动作（可选）。</param>
+        /// <param name="configureAction">给定的配置选项动作（可选）。</param>
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddLibrame(this IServiceCollection services,
             Action<LibrameOptions> configureAction = null)
