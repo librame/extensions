@@ -226,7 +226,7 @@ namespace Librame.Extensions.Drawing
 
                 case WatermarkMode.Image:
                     {
-                        using (var watermark = SKBitmap.Decode(ImageFileLocator.GetSource()))
+                        using (var watermark = SKBitmap.Decode(ImageFileLocator.ToString()))
                         {
                             // 绘制图像水印
                             canvas.DrawBitmap(watermark, startX, startY);
@@ -251,7 +251,7 @@ namespace Librame.Extensions.Drawing
             paint.IsAntialias = true;
             paint.Color = SKColor.Parse(colorHexString);
             // paint.StrokeCap = SKStrokeCap.Round;
-            paint.Typeface = SKTypeface.FromFile(FontFileLocator.GetSource());
+            paint.Typeface = SKTypeface.FromFile(FontFileLocator.ToString());
             paint.TextSize = Options.Watermark.Font.Size;
 
             return paint;

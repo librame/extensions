@@ -28,5 +28,35 @@ namespace Librame.Extensions.Core
         /// 基础路径。
         /// </summary>
         string BasePath { get; }
+
+
+        /// <summary>
+        /// 改变基础路径。
+        /// </summary>
+        /// <param name="newBasePath">给定的新基础路径。</param>
+        /// <returns>返回当前 <see cref="IFileLocator"/>。</returns>
+        IFileLocator ChangeBasePath(string newBasePath);
+
+        /// <summary>
+        /// 改变文件名。
+        /// </summary>
+        /// <param name="newFileName">给定的新文件名。</param>
+        /// <returns>返回当前 <see cref="IFileLocator"/>。</returns>
+        IFileLocator ChangeFileName(string newFileName);
+
+
+        /// <summary>
+        /// 依据当前文件定位器的文件名与指定的基础路径，新建一个文件定位器。
+        /// </summary>
+        /// <param name="newBasePath">给定的新基础路径。</param>
+        /// <returns>返回 <see cref="IFileLocator"/>。</returns>
+        IFileLocator NewBasePath(string newBasePath);
+
+        /// <summary>
+        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个文件定位器。
+        /// </summary>
+        /// <param name="newFileName">给定的新文件名。</param>
+        /// <returns>返回 <see cref="IFileLocator"/>。</returns>
+        IFileLocator NewFileName(string newFileName);
     }
 }

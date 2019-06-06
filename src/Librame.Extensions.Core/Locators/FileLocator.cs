@@ -31,9 +31,30 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         /// <param name="basePath">给定的基础路径。</param>
-        public FileLocator(string fileName, string basePath)
+        protected FileLocator(string fileName, string basePath)
             : base(fileName, basePath)
         {
+        }
+
+
+        /// <summary>
+        /// 依据当前文件定位器的文件名与指定的基础路径，新建一个文件定位器。
+        /// </summary>
+        /// <param name="newBasePath">给定的新基础路径。</param>
+        /// <returns>返回 <see cref="IFileLocator"/>。</returns>
+        public override IFileLocator NewBasePath(string newBasePath)
+        {
+            return new FileLocator(FileName, newBasePath);
+        }
+
+        /// <summary>
+        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个文件定位器。
+        /// </summary>
+        /// <param name="newFileName">给定的新文件名。</param>
+        /// <returns>返回 <see cref="IFileLocator"/>。</returns>
+        public override IFileLocator NewFileName(string newFileName)
+        {
+            return new FileLocator(newFileName, BasePath);
         }
 
 
@@ -57,7 +78,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
         {
-            return GetSource().GetHashCode();
+            return ToString().GetHashCode();
         }
 
 
@@ -69,7 +90,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回是否相等的布尔值。</returns>
         public static bool operator ==(FileLocator a, FileLocator b)
         {
-            return a.GetSource() == b.GetSource();
+            return a.ToString() == b.ToString();
         }
 
         /// <summary>

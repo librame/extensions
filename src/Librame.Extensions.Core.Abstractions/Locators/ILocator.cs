@@ -20,14 +20,13 @@ namespace Librame.Extensions.Core
         where TSource : class
     {
         /// <summary>
-        /// 原始源。
+        /// 原始源实例。
         /// </summary>
         TSource RawSource { get; }
 
         /// <summary>
-        /// 获取源。
+        /// 源实例。
         /// </summary>
-        /// <returns>返回源实例。</returns>
-        TSource GetSource();
+        TSource Source { get; }
     }
 }

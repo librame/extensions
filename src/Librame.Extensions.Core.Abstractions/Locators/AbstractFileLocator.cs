@@ -46,22 +46,56 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 文件名。
         /// </summary>
-        public string FileName { get; }
+        public string FileName { get; private set; }
         
         /// <summary>
         /// 基础路径。
         /// </summary>
-        public string BasePath { get; }
+        public string BasePath { get; private set; }
 
 
         /// <summary>
-        /// 获取源。
+        /// 重写源实例。
         /// </summary>
-        /// <returns>返回源实例。</returns>
-        public override string GetSource()
+        public override string Source => BasePath.CombinePath(FileName);
+
+
+        /// <summary>
+        /// 改变基础路径。
+        /// </summary>
+        /// <param name="newBasePath">给定的新基础路径。</param>
+        /// <returns>返回当前 <see cref="IFileLocator"/>。</returns>
+        public virtual IFileLocator ChangeBasePath(string newBasePath)
         {
-            return BasePath.CombinePath(FileName);
+            BasePath = newBasePath.NotNullOrEmpty(nameof(newBasePath));
+            return this;
         }
+
+        /// <summary>
+        /// 改变文件名。
+        /// </summary>
+        /// <param name="newFileName">给定的新文件名。</param>
+        /// <returns>返回当前 <see cref="IFileLocator"/>。</returns>
+        public virtual IFileLocator ChangeFileName(string newFileName)
+        {
+            FileName = newFileName.NotNullOrEmpty(nameof(newFileName));
+            return this;
+        }
+
+
+        /// <summary>
+        /// 依据当前文件定位器的文件名与指定的基础路径，新建一个文件定位器。
+        /// </summary>
+        /// <param name="newBasePath">给定的新基础路径。</param>
+        /// <returns>返回 <see cref="IFileLocator"/>。</returns>
+        public abstract IFileLocator NewBasePath(string newBasePath);
+
+        /// <summary>
+        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个文件定位器。
+        /// </summary>
+        /// <param name="newFileName">给定的新文件名。</param>
+        /// <returns>返回 <see cref="IFileLocator"/>。</returns>
+        public abstract IFileLocator NewFileName(string newFileName);
 
 
         /// <summary>
@@ -71,7 +105,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回布尔值。</returns>
         public virtual bool Equals(IFileLocator other)
         {
-            return GetSource() == other.GetSource();
+            return Source == other.Source;
         }
 
 
@@ -81,7 +115,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回字符串。</returns>
         public override string ToString()
         {
-            return GetSource();
+            return Source;
         }
 
     }
