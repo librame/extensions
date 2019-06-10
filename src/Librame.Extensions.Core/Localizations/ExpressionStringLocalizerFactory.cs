@@ -54,9 +54,9 @@ namespace Librame.Extensions.Core
             var prefix = string.Empty;
 
             var mappingAttribute = GetResourceMappingAttribute(typeInfo);
-            if (mappingAttribute != null && mappingAttribute.Enabled)
+            if (mappingAttribute.IsNotNull() && mappingAttribute.Enabled)
             {
-                if (mappingAttribute.PrefixFactory == null)
+                if (mappingAttribute.PrefixFactory.IsNull())
                 {
                     mappingAttribute.PrefixFactory = (_baseNamespace, _resourcesRelativePath, _typeInfo) =>
                     {

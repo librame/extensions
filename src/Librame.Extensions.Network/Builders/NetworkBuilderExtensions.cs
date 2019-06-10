@@ -10,7 +10,7 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using System;
 
 namespace Librame.Extensions.Network
@@ -27,20 +27,26 @@ namespace Librame.Extensions.Network
         /// 添加网络扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{NetworkBuilderOptions}"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{NetworkBuilderOptions}"/>（可选；高优先级）。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
+        /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddNetwork(this IBuilder builder,
-            Action<NetworkBuilderOptions> configureOptions = null)
+            Action<NetworkBuilderOptions> configureOptions = null,
+            IConfiguration configuration = null,
+            Action<BinderOptions> configureBinderOptions = null)
         {
-            // Configure Options
-            if (configureOptions != null)
-                builder.Services.Configure(configureOptions);
+            var options = builder.Configure(configureOptions,
+                configuration, configureBinderOptions);
 
-            // Check Dependencies
+            // Check EncryptionBuilder Dependency
             if (!(builder is IEncryptionBuilder))
-                builder.AddEncryption().AddDeveloperGlobalSigningCredentials();
+            {
+                builder.AddEncryption(options.ConfigureEncryption)
+                    .AddDeveloperGlobalSigningCredentials();
+            }
 
-            var networkBuilder = new InternalNetworkBuilder(builder);
+            var networkBuilder = new InternalNetworkBuilder(builder, options);
 
             return networkBuilder
                 .AddServices();

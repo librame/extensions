@@ -65,7 +65,7 @@ namespace Librame.Extensions.Data
         public static EntityResult Failed(params EntityError[] errors)
         {
             var result = new EntityResult { Succeeded = false };
-            if (errors != null)
+            if (errors.IsNotNull())
             {
                 result._errors.AddRange(errors);
             }

@@ -85,7 +85,7 @@ namespace System.Collections.Generic
         {
             List<TreeingNode<T, TId>> nonstratifiedNodes = null;
 
-            if (nodes != null && nodes.Count > 0)
+            if (nodes.IsNotNull() && nodes.Count > 0)
             {
                 nonstratifiedNodes = new List<TreeingNode<T, TId>>();
 

@@ -107,13 +107,13 @@ namespace Librame.Extensions.Core
 
         private void ExecuteJobs()
         {
-            while (true && _jobs != null && Enabled)
+            while (true && _jobs.IsNotNull() && Enabled)
             {
                 JobDescriptor job = null;
 
                 if ((_jobs?.TryDequeue(out job)).Value)
                 {
-                    if (job == null)
+                    if (job.IsNull())
                     {
                         Thread.Sleep(10);
                         continue;
@@ -171,7 +171,7 @@ namespace Librame.Extensions.Core
 
             _jobs = null;
 
-            if (_threads != null)
+            if (_threads.IsNotNull())
             {
                 foreach (var t in _threads)
                 {

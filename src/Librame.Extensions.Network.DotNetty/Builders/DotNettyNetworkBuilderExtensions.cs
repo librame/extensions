@@ -10,11 +10,13 @@
 
 #endregion
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace Librame.Extensions.Network.DotNetty
 {
+    using Core;
     using Internal;
 
     /// <summary>
@@ -26,13 +28,17 @@ namespace Librame.Extensions.Network.DotNetty
         /// 添加 DotNetty。
         /// </summary>
         /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{ChannelOptions}"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{DotNettyOptions}"/>（可选；高优先级）。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
+        /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddDotNetty(this INetworkBuilder builder, Action<ChannelOptions> configureOptions = null)
+        public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
+            Action<DotNettyOptions> configureOptions = null,
+            IConfiguration configuration = null,
+            Action<BinderOptions> configureBinderOptions = null)
         {
-            // Configure Options
-            if (configureOptions != null)
-                builder.Services.Configure(configureOptions);
+            builder.Configure(configureOptions,
+                configuration, configureBinderOptions);
 
             builder.Services.AddSingleton<IDiscardClient, InternalDiscardClient>();
             builder.Services.AddSingleton<IDiscardServer, InternalDiscardServer>();

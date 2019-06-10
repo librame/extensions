@@ -44,7 +44,7 @@ namespace Librame.Extensions.Encryption
         
         private void InitializeRsa()
         {
-            if (_rsa == null)
+            if (_rsa.IsNull())
             {
                 var credentials = SigningCredentials.GetSigningCredentials(Options.SigningCredentialsKey);
                 _rsa = credentials.ResolveRsa();

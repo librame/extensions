@@ -23,6 +23,29 @@ namespace Librame.Extensions
     public static class ValidationExtensions
     {
         /// <summary>
+        /// 是否为 NULL。
+        /// </summary>
+        /// <typeparam name="TSource">指定的源类型。</typeparam>
+        /// <param name="source">给定的源实例。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNull<TSource>(this TSource source)
+            where TSource : class
+        {
+            return null == source;
+        }
+        /// <summary>
+        /// 是否不为 NULL。
+        /// </summary>
+        /// <typeparam name="TSource">指定的源类型。</typeparam>
+        /// <param name="source">给定的源实例。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNotNull<TSource>(this TSource source)
+            where TSource : class
+        {
+            return null != source;
+        }
+
+        /// <summary>
         /// 是否为 NULL 或空字符串。
         /// </summary>
         /// <remarks>
@@ -45,7 +68,33 @@ namespace Librame.Extensions
         /// <returns>返回布尔值。</returns>
         public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> sources)
         {
-            return null == sources || !sources.Any();
+            return sources.IsNull() || !sources.Any();
+        }
+
+        /// <summary>
+        /// 是否不为 NULL 或空字符串。
+        /// </summary>
+        /// <remarks>
+        /// 详情参考 <see cref="string.IsNullOrEmpty(string)"/>。
+        /// </remarks>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNotNullOrEmpty(this string str)
+        {
+            return !string.IsNullOrEmpty(str);
+        }
+        /// <summary>
+        /// 是否不为 NULL 或空集合。
+        /// </summary>
+        /// <remarks>
+        /// 详情参考  <see cref="Enumerable.Any{TSource}(IEnumerable{TSource})"/>。
+        /// </remarks>
+        /// <typeparam name="TSource">指定的源类型。</typeparam>
+        /// <param name="sources">给定的 <see cref="IEnumerable{TSource}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNotNullOrEmpty<TSource>(this IEnumerable<TSource> sources)
+        {
+            return !sources.IsNullOrEmpty();
         }
 
         /// <summary>
@@ -55,7 +104,7 @@ namespace Librame.Extensions
         /// <returns>返回布尔值。</returns>
         public static bool IsNullableType(this Type type)
         {
-            return null != type
+            return type.IsNotNull()
                 && type.IsGenericType
                 && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }

@@ -3,25 +3,39 @@ using System;
 
 namespace Librame.Extensions.Drawing.Tests
 {
-    using Core;
-
     internal static class TestServiceProvider
     {
-        static TestServiceProvider()
+        private static object _locker = new object();
+        private static IServiceProvider _serviceProvider = null;
+
+        public static IServiceProvider Current
         {
-            if (Current == null)
+            get
             {
-                var services = new ServiceCollection();
+                if (_serviceProvider.IsNull())
+                {
+                    lock (_locker)
+                    {
+                        if (_serviceProvider.IsNull())
+                        {
+                            var services = new ServiceCollection();
 
-                services.AddLibrame()
-                    .AddDrawing();
+                            services.AddLibrame()
+                                .AddDrawing(options =>
+                                {
+                                    options.Captcha.Font.FileLocator.ChangeBasePath(ResourcesPath);
+                                    options.Watermark.Font.FileLocator.ChangeBasePath(ResourcesPath);
+                                    options.Watermark.ImageFileLocator.ChangeBasePath(ResourcesPath);
+                                });
 
-                Current = services.BuildServiceProvider();
+                            _serviceProvider = services.BuildServiceProvider();
+                        }
+                    }
+                }
+
+                return _serviceProvider;
             }
         }
-
-        public static IServiceProvider Current { get; private set; }
-
 
         public static string ResourcesPath
         {

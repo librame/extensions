@@ -41,7 +41,7 @@ namespace Librame.Extensions.Network
             SendCompletedCallback = (sender, e) =>
             {
                 // e.UserState = userToken
-                if (e.Error != null)
+                if (e.Error.IsNotNull())
                     Logger.LogError(e.Error, e.Error.AsInnerMessage());
             };
         }

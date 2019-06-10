@@ -47,7 +47,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
         public InternalWebSocketClient(ISigningCredentialsService signingCredentials,
-            ILoggerFactory loggerFactory, IOptions<ChannelOptions> options)
+            ILoggerFactory loggerFactory, IOptions<DotNettyOptions> options)
             : base(signingCredentials, loggerFactory, options)
         {
             _clientOptions = Options.WebSocketClient;
@@ -125,7 +125,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
                 var handshaker = WebSocketClientHandshakerFactory.NewHandshaker(uri,
                     WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
 
-                if (null == handlerFactory)
+                if (handlerFactory.IsNull())
                     handlerFactory = () => new InternalWebSocketClientHandler(this, handshaker);
 
                 var handler = handlerFactory.Invoke() as InternalWebSocketClientHandler;
@@ -133,7 +133,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
                 bootstrap.Handler(new ActionChannelInitializer<IChannel>(channel =>
                 {
                     var pipeline = channel.Pipeline;
-                    if (cert != null)
+                    if (cert.IsNotNull())
                     {
                         pipeline.AddLast("tls",
                             new TlsHandler(stream => new SslStream(stream, true, (sender, certificate, chain, errors) => true),

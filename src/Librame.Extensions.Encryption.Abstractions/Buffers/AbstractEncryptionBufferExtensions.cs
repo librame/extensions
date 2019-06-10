@@ -33,7 +33,7 @@ namespace Librame.Extensions.Encryption
         public static string AsCiphertextString(this IEncryptionBuffer<IPlaintextConverter, string> buffer,
             ICiphertextConverter converter = null)
         {
-            if (converter == null)
+            if (converter.IsNull())
                 converter = buffer.ServiceProvider.GetRequiredService<ICiphertextConverter>();
 
             return converter.ToSource(buffer);
@@ -74,7 +74,7 @@ namespace Librame.Extensions.Encryption
         public static string AsPlaintextString(this IEncryptionBuffer<ICiphertextConverter, string> buffer,
             IPlaintextConverter converter = null)
         {
-            if (converter == null)
+            if (converter.IsNull())
                 converter = buffer.ServiceProvider.GetRequiredService<IPlaintextConverter>();
 
             return converter.ToSource(buffer);

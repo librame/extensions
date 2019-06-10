@@ -266,7 +266,7 @@ namespace Librame.Extensions
         public static bool TryHasExtension<T>(this T item, IEnumerable<string> extensions,
             Func<T, string, bool> hasExtensionFactory)
         {
-            return item.TryHasExtension(extensions, hasExtensionFactory, out string extension);
+            return item.TryHasExtension(extensions, hasExtensionFactory, out _);
         }
 
         /// <summary>

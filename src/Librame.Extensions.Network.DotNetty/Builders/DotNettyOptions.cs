@@ -16,17 +16,19 @@ using System.Text;
 
 namespace Librame.Extensions.Network.DotNetty
 {
+    using Core;
     using Encryption;
 
     /// <summary>
-    /// 通道选项。
+    /// DotNetty 选项。
     /// </summary>
-    public class ChannelOptions
+    public class DotNettyOptions : AbstractBuilderOptions, IBuilderOptions
     {
         /// <summary>
         /// 字符编码（默认为 <see cref="Encoding.UTF8"/>）。
         /// </summary>
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
+        public Encoding Encoding { get; set; }
+            = Encoding.UTF8;
 
 
         /// <summary>
@@ -111,7 +113,8 @@ namespace Librame.Extensions.Network.DotNetty
         /// <summary>
         /// 数量。
         /// </summary>
-        public int Count { get; set; } = 100;
+        public int Count { get; set; }
+            = 100;
     }
 
 
@@ -123,12 +126,14 @@ namespace Librame.Extensions.Network.DotNetty
         /// <summary>
         /// 路径。
         /// </summary>
-        public string Path { get; set; } = "/websocket";
+        public string Path { get; set; }
+            = "/websocket";
 
         /// <summary>
         /// 使用 Libuv（默认使用）。
         /// </summary>
-        public bool UseLibuv { get; set; } = true;
+        public bool UseLibuv { get; set; }
+            = true;
     }
 
 
@@ -153,7 +158,8 @@ namespace Librame.Extensions.Network.DotNetty
         /// <summary>
         /// 缓冲区大小。
         /// </summary>
-        public int BufferSize { get; set; } = 256;
+        public int BufferSize { get; set; }
+            = 256;
     }
 
 
@@ -165,7 +171,8 @@ namespace Librame.Extensions.Network.DotNetty
         /// <summary>
         /// 使用 Libuv（默认使用）。
         /// </summary>
-        public bool UseLibuv { get; set; } = true;
+        public bool UseLibuv { get; set; }
+            = true;
     }
 
 
@@ -177,7 +184,8 @@ namespace Librame.Extensions.Network.DotNetty
         /// <summary>
         /// 退出命名。
         /// </summary>
-        public string ExitCommand { get; set; } = "exit";
+        public string ExitCommand { get; set; }
+            = "exit";
 
         /// <summary>
         /// 签名证书键名（默认使用全局键名）。
@@ -188,17 +196,20 @@ namespace Librame.Extensions.Network.DotNetty
         /// <summary>
         /// 使用 SSL（默认使用）。
         /// </summary>
-        public bool UseSSL { get; set; } = false;
+        public bool UseSSL { get; set; }
+            = false;
 
         /// <summary>
         /// 主机。
         /// </summary>
-        public string Host { get; set; } = "127.0.0.1";
+        public string Host { get; set; }
+            = "127.0.0.1";
 
         /// <summary>
         /// 端口。
         /// </summary>
-        public int Port { get; set; } = 8070;
+        public int Port { get; set; }
+            = 8070;
 
         /// <summary>
         /// 静默时间间隔（默认 100 毫秒，即 0.1 秒）。

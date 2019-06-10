@@ -17,5 +17,9 @@ namespace Librame.Extensions.Core
     /// </summary>
     public interface IBuilderOptions
     {
+        /// <summary>
+        /// 选项名称。
+        /// </summary>
+        string OptionsName { get; set; }
     }
 }

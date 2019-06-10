@@ -42,8 +42,8 @@ namespace Librame.Extensions.Network.DotNetty
         /// 通道选项。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="ChannelOptions"/>。
+        /// 返回 <see cref="DotNettyOptions"/>。
         /// </value>
-        ChannelOptions Options { get; }
+        DotNettyOptions Options { get; }
     }
 }

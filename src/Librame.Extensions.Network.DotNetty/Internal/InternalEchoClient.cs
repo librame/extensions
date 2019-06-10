@@ -45,7 +45,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
         public InternalEchoClient(ISigningCredentialsService signingCredentials,
-            ILoggerFactory loggerFactory, IOptions<ChannelOptions> options)
+            ILoggerFactory loggerFactory, IOptions<DotNettyOptions> options)
             : base(signingCredentials, loggerFactory, options)
         {
             _clientOptions = Options.EchoClient;
@@ -63,7 +63,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         public async Task StartAsync(Action<IChannel> configureProcess,
             Func<IChannelHandler> handlerFactory = null, string host = null, int? port = null)
         {
-            if (null == handlerFactory)
+            if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalEchoClientHandler(this);
 
             host = host.HasOrDefault(_clientOptions.Host);
@@ -92,7 +92,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
                     .Handler(new ActionChannelInitializer<ISocketChannel>(channel =>
                     {
                         var pipeline = channel.Pipeline;
-                        if (cert != null)
+                        if (cert.IsNotNull())
                         {
                             pipeline.AddLast("tls",
                                 new TlsHandler(stream => new SslStream(stream, true, (sender, certificate, chain, errors) => true),

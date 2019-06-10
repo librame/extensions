@@ -7,11 +7,15 @@ namespace Librame.Extensions.Core.Tests
     public class InternalClockServiceTests
     {
         [Fact]
-        public void AllTest()
+        public async void AllTest()
         {
             var service = TestServiceProvider.Current.GetRequiredService<IClockService>();
-            var utcnow = service.GetUtcNowAsync(default).Result;
-            Assert.Equal(utcnow.Day, DateTimeOffset.Now.Day);
+
+            var now = await service.GetNowAsync(default);
+            Assert.Equal(now.Day, DateTime.Now.Day);
+
+            var utcNow = await service.GetUtcNowAsync(default);
+            Assert.Equal(utcNow.Day, DateTimeOffset.Now.Day);
         }
 
     }

@@ -10,7 +10,7 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using System;
 
 namespace Librame.Extensions.Drawing
@@ -26,25 +26,19 @@ namespace Librame.Extensions.Drawing
         /// 添加图画扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{DrawingBuilderOptions}"/>（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{DrawingBuilderOptions}"/>（可选；高优先级）。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
+        /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
         public static IDrawingBuilder AddDrawing(this IBuilder builder,
-            Action<DrawingBuilderOptions> configureOptions = null)
+            Action<DrawingBuilderOptions> configureOptions = null,
+            IConfiguration configuration = null,
+            Action<BinderOptions> configureBinderOptions = null)
         {
-            var fontFileLocator = "font.ttf".AsFileLocator();
-            Action<DrawingBuilderOptions> _configureOptions = options =>
-            {
-                options.Captcha.Font.FileLocator = fontFileLocator;
-                options.Watermark.Font.FileLocator = fontFileLocator;
-                options.Watermark.ImageFileLocator = "watermark.png".AsFileLocator();
+            var options = builder.Configure(configureOptions,
+                configuration, configureBinderOptions);
 
-                configureOptions?.Invoke(options);
-            };
-
-            // Configure Options
-            builder.Services.Configure(_configureOptions);
-
-            var drawingBuilder = new InternalDrawingBuilder(builder);
+            var drawingBuilder = new InternalDrawingBuilder(builder, options);
 
             return drawingBuilder
                 .AddServices();

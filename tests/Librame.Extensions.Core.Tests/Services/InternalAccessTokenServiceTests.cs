@@ -6,10 +6,10 @@ namespace Librame.Extensions.Core.Tests
     public class InternalAccessTokenServiceTests
     {
         [Fact]
-        public void AllTest()
+        public async void AllTest()
         {
             var service = TestServiceProvider.Current.GetRequiredService<IAccessTokenService>();
-            var token = service.GetTokenAsync(default).Result;
+            var token = await service.GetTokenAsync(default);
             Assert.NotEmpty(token);
         }
 

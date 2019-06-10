@@ -32,7 +32,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="RsaSecurityKey"/>。</returns>
         public static RsaSecurityKey LoadRsaSecurityKey(string fileName, bool persistKey)
         {
-            if (fileName == null) // 默认与 IdentityServer4 同时路径及文件名
+            if (fileName.IsNullOrEmpty()) // 默认与 IdentityServer4 同时路径及文件名
                 fileName = Directory.GetCurrentDirectory().CombinePath("tempkey.rsa");
 
             RsaSecurityKey key;
@@ -53,7 +53,7 @@ namespace Librame.Extensions.Encryption
 
                 RSAParameters parameters;
 
-                if (key.Rsa != null)
+                if (key.Rsa.IsNotNull())
                     parameters = key.Rsa.ExportParameters(includePrivateParameters: true);
                 else
                     parameters = key.Parameters;

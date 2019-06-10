@@ -81,7 +81,7 @@ namespace Librame.Extensions
         {
             attribute = provider.GetCustomAttribute<TAttribute>(inherit);
 
-            return null != attribute;
+            return attribute.IsNotNull();
         }
         /// <summary>
         /// 尝试得到特性集合。
@@ -97,7 +97,7 @@ namespace Librame.Extensions
         {
             attributes = provider.GetCustomAttributes<TAttribute>(inherit);
 
-            return null != attributes;
+            return attributes.IsNotNull();
         }
 
         #endregion

@@ -5,19 +5,31 @@ namespace Librame.Extensions.Core.Tests
 {
     internal static class TestServiceProvider
     {
-        static TestServiceProvider()
+        private static object _locker = new object();
+        private static IServiceProvider _serviceProvider = null;
+
+        public static IServiceProvider Current
         {
-            if (Current == null)
+            get
             {
-                var services = new ServiceCollection();
+                if (_serviceProvider.IsNull())
+                {
+                    lock (_locker)
+                    {
+                        if (_serviceProvider.IsNull())
+                        {
+                            var services = new ServiceCollection();
 
-                services.AddLibrame();
-                services.AddScoped<InjectionServiceTest>();
+                            services.AddLibrame();
+                            services.AddScoped<InjectionServiceTest>();
 
-                Current = services.BuildServiceProvider();
+                            _serviceProvider = services.BuildServiceProvider();
+                        }
+                    }
+                }
+
+                return _serviceProvider;
             }
         }
-
-        public static IServiceProvider Current { get; private set; }
     }
 }

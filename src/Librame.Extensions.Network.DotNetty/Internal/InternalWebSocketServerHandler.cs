@@ -105,7 +105,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
                 GetWebSocketLocation(request), null, true, 5 * 1024 * 1024);
 
             handshaker = wsFactory.NewHandshaker(request);
-            if (handshaker == null)
+            if (handshaker.IsNull())
             {
                 WebSocketServerHandshakerFactory.SendUnsupportedVersionResponse(context.Channel);
             }

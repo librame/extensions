@@ -19,14 +19,15 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 内部存储构建器。
     /// </summary>
-    internal class InternalStorageBuilder : AbstractBuilder, IStorageBuilder
+    internal class InternalStorageBuilder : AbstractBuilder<StorageBuilderOptions>, IStorageBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalStorageBuilder"/> 实例。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        public InternalStorageBuilder(IBuilder builder)
-            : base(builder)
+        /// <param name="options">给定的 <see cref="StorageBuilderOptions"/>。</param>
+        public InternalStorageBuilder(IBuilder builder, StorageBuilderOptions options)
+            : base(builder, options)
         {
             Services.AddSingleton<IStorageBuilder>(this);
         }

@@ -28,7 +28,7 @@ namespace Librame.Extensions
         /// <returns>返回消息字符串。</returns>
         public static string AsInnerMessage(this Exception ex)
         {
-            if (null != ex.InnerException)
+            if (ex.InnerException.IsNotNull())
                 return ex.InnerException.AsInnerMessage();
 
             return ex.Message;
@@ -292,7 +292,7 @@ namespace Librame.Extensions
         /// <returns>返回目标类型实例或抛出异常。</returns>
         public static TTarget IsValue<TSource, TTarget>(this TSource source, string paramName)
         {
-            if (source == null)
+            if (source == null) // 未限定源类型为 Class
                 throw new ArgumentNullException(paramName);
 
             if (!(source is TTarget target))

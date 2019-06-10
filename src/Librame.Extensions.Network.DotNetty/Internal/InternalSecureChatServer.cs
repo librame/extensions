@@ -46,7 +46,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
         public InternalSecureChatServer(ISigningCredentialsService signingCredentials,
-            ILoggerFactory loggerFactory, IOptions<ChannelOptions> options)
+            ILoggerFactory loggerFactory, IOptions<DotNettyOptions> options)
             : base(signingCredentials, loggerFactory, options)
         {
             _serverOptions = Options.SecureChatServer;
@@ -64,7 +64,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         public async Task StartAsync(Action<IChannel> configureProcess,
             Func<IChannelHandler> handlerFactory = null, string host = null, int? port = null)
         {
-            if (null == handlerFactory)
+            if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalSecureChatServerHandler(this);
 
             host = host.HasOrDefault(_serverOptions.Host);
@@ -93,7 +93,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
                     .ChildHandler(new ActionChannelInitializer<ISocketChannel>(channel =>
                     {
                         var pipeline = channel.Pipeline;
-                        if (tlsCertificate != null)
+                        if (tlsCertificate.IsNotNull())
                             pipeline.AddLast(TlsHandler.Server(tlsCertificate));
 
                         pipeline.AddLast(new DelimiterBasedFrameDecoder(8192, Delimiters.LineDelimiter()));

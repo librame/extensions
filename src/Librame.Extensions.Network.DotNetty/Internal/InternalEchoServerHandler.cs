@@ -33,7 +33,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
             var buffer = message as IByteBuffer;
-            if (buffer != null)
+            if (buffer.IsNotNull())
                 _logger.LogInformation($"Received from client: {buffer.ToString(_server.Options.Encoding)}");
 
             context.WriteAsync(message);

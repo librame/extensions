@@ -8,7 +8,7 @@ namespace Librame.Extensions.Data.Tests
     {
         static TestServiceProvider()
         {
-            if (Current == null)
+            if (Current.IsNull())
             {
                 var services = new ServiceCollection();
 

@@ -36,11 +36,11 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         public override void ChannelActive(IChannelHandlerContext context)
         {
             var g = group;
-            if (g == null)
+            if (g.IsNull())
             {
                 lock (this)
                 {
-                    if (group == null)
+                    if (group.IsNull())
                         g = group = new DefaultChannelGroup(context.Executor);
                 }
             }

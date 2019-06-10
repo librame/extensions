@@ -19,12 +19,13 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 存储构建器选项。
     /// </summary>
-    public class StorageBuilderOptions : IBuilderOptions
+    public class StorageBuilderOptions : AbstractBuilderOptions, IBuilderOptions
     {
         /// <summary>
         /// 缓冲区大小（默认使用 512）。
         /// </summary>
-        public int BufferSize { get; set; } = 512;
+        public int BufferSize { get; set; }
+            = 512;
 
 
         /// <summary>
@@ -43,16 +44,19 @@ namespace Librame.Extensions.Storage
         /// <summary>
         /// 初始路径。
         /// </summary>
-        public string InitPath { get; set; } = Directory.GetCurrentDirectory();
+        public string InitPath { get; set; }
+            = Directory.GetCurrentDirectory();
 
         /// <summary>
         /// 查找模式。
         /// </summary>
-        public string SearchPattern { get; set; } = "*";
+        public string SearchPattern { get; set; }
+            = "*";
 
         /// <summary>
         /// 查找选项枚举。
         /// </summary>
-        public SearchOption SearchOption { get; set; } = SearchOption.TopDirectoryOnly;
+        public SearchOption SearchOption { get; set; }
+            = SearchOption.TopDirectoryOnly;
     }
 }

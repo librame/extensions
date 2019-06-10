@@ -32,7 +32,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
         public AbstractChannelService(ISigningCredentialsService signingCredentials,
-            ILoggerFactory loggerFactory, IOptions<ChannelOptions> options)
+            ILoggerFactory loggerFactory, IOptions<DotNettyOptions> options)
             : base(loggerFactory.CreateLogger<TService>())
         {
             SigningCredentials = signingCredentials.NotNull(nameof(signingCredentials));
@@ -61,8 +61,8 @@ namespace Librame.Extensions.Network.DotNetty
         /// 通道选项。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="ChannelOptions"/>。
+        /// 返回 <see cref="DotNettyOptions"/>。
         /// </value>
-        public ChannelOptions Options { get; }
+        public DotNettyOptions Options { get; }
     }
 }

@@ -95,7 +95,7 @@ namespace Librame.Extensions.Encryption
         {
             var buffer = new InternalEncryptionBuffer<TConverter, TSource>(Converter, Source, this);
 
-            if (_serviceProvider != null)
+            if (_serviceProvider.IsNotNull())
                 buffer.ApplyServiceProvider(_serviceProvider);
 
             return buffer;

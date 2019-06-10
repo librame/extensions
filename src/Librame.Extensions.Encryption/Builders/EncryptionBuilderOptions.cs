@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 加密构建器选项。
     /// </summary>
-    public class EncryptionBuilderOptions : IBuilderOptions
+    public class EncryptionBuilderOptions : AbstractBuilderOptions, IBuilderOptions
     {
         /// <summary>
         /// 全局键名。
@@ -28,12 +28,14 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 标识符（默认新建标识符；参考 <see cref="AlgorithmIdentifier"/>）。
         /// </summary>
-        public string Identifier { get; set; } = AlgorithmIdentifier.New().ToString();
+        public string Identifier { get; set; }
+            = AlgorithmIdentifier.New().ToString();
 
         /// <summary>
         /// 签名证书键名（默认使用全局键名）。
         /// </summary>
-        public string SigningCredentialsKey { get; set; } = GLOBAL_KEY;
+        public string SigningCredentialsKey { get; set; }
+            = GLOBAL_KEY;
 
 
         /// <summary>
@@ -52,7 +54,8 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 是否生成随机密钥（默认不生成）。
         /// </summary>
-        public bool IsRandomKey { get; set; } = false;
+        public bool IsRandomKey { get; set; }
+            = false;
     }
 
 }

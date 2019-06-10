@@ -19,7 +19,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 内部访问令牌服务。
     /// </summary>
-    public class InternalAccessTokenService : AbstractService<InternalAccessTokenService>, IAccessTokenService
+    internal class InternalAccessTokenService : AbstractService<InternalAccessTokenService>, IAccessTokenService
     {
         private readonly static UniqueIdentifier _identifier = UniqueIdentifier.NewByGuid();
 

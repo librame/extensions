@@ -6,11 +6,10 @@ namespace Librame.Extensions.Core.Tests
     public class InternalPlatformServiceTests
     {
         [Fact]
-        public void AllTest()
+        public async void AllTest()
         {
             var service = TestServiceProvider.Current.GetRequiredService<IPlatformService>();
-            var info = service.GetEnvironmentInfoAsync(default).Result;
-            Assert.NotNull(info);
+            var info = await service.GetEnvironmentInfoAsync(default);
             Assert.NotEmpty(info.ApplicationName);
         }
 

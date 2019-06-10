@@ -13,14 +13,20 @@
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
+using System.Text;
 
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// Librame 选项。
+    /// 构建器选项。
     /// </summary>
-    public class LibrameOptions
+    public class BuilderOptions : AbstractBuilderOptions, IBuilderOptions
     {
+        private static readonly CultureInfo _zhCNCultureInfo
+            = new CultureInfo("zh-CN");
+
+
         /// <summary>
         /// 配置本地化。
         /// </summary>
@@ -38,9 +44,22 @@ namespace Librame.Extensions.Core
             = _ => { };
 
         /// <summary>
-        /// 选项名称。
+        /// 文化信息（默认为 zh-CN）。
         /// </summary>
-        public string OptionsName { get; set; }
+        public CultureInfo CultureInfo { get; set; }
+            = _zhCNCultureInfo;
+
+        /// <summary>
+        /// UI 文化信息（默认为 zh-CN）。
+        /// </summary>
+        public CultureInfo CultureUIInfo { get; set; }
+            = _zhCNCultureInfo;
+
+        /// <summary>
+        /// 字符编码（默认为 UTF8）。
+        /// </summary>
+        public Encoding Encoding { get; set; }
+            = Encoding.UTF8;
 
         /// <summary>
         /// 使用自动注册服务集合（默认不启用）。

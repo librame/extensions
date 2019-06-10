@@ -73,8 +73,13 @@ namespace Librame.Extensions.Core
         TimeSpan TickTimeSpan { get; }
 
         /// <summary>
-        /// 获取区域性信息。
+        /// 获取文化信息。
         /// </summary>
         CultureInfo Culture { get; }
+
+        /// <summary>
+        /// 获取 UI 文化信息。
+        /// </summary>
+        CultureInfo UICulture { get; }
     }
 }

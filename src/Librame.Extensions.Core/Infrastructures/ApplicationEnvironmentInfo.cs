@@ -87,8 +87,13 @@ namespace Librame.Extensions.Core
         public TimeSpan TickTimeSpan => new TimeSpan(TickCount * 10000);
 
         /// <summary>
-        /// 获取区域性信息。
+        /// 获取文化信息。
         /// </summary>
         public CultureInfo Culture => CultureInfo.CurrentCulture;
+
+        /// <summary>
+        /// 获取 UI 文化信息。
+        /// </summary>
+        public CultureInfo UICulture => CultureInfo.CurrentUICulture;
     }
 }

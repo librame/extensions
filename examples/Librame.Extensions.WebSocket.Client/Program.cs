@@ -42,7 +42,7 @@ namespace Librame.Extensions.WebSocket.Client
                 while (true)
                 {
                     string msg = Console.ReadLine();
-                    if (msg == null)
+                    if (msg.IsNull())
                     {
                         break;
                     }

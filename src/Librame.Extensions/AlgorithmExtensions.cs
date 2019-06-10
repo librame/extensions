@@ -138,7 +138,7 @@ namespace Librame.Extensions
             var algorithm = HashAlgorithm.Create(algorithmName.Name);
             var hash = algorithm.ComputeHash(buffer);
 
-            if (null != rsa)
+            if (rsa.IsNotNull())
                 hash = rsa.SignHash(hash, algorithmName, padding ?? RSASignaturePadding.Pkcs1);
 
             return hash;

@@ -38,7 +38,8 @@ namespace Librame.Extensions.Data
         public DbContextAccessor(DbContextOptions options)
             : base(options)
         {
-            Database.EnsureCreated();
+            if (BuilderOptions.EnsureDatabase)
+                Database.EnsureCreated();
         }
 
 
@@ -113,14 +114,17 @@ namespace Librame.Extensions.Data
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             // 改变为写入数据库（支持读写分离）
-            ChangeDbConnection(tenant => tenant.WriteConnectionString).Wait();
+            if (BuilderOptions.TenantEnabled)
+                ChangeDbConnection(tenant => tenant.WriteConnectionString).Wait();
 
-            PreproccessSaveChangesAsync().Wait();
+            if (BuilderOptions.AuditEnabled)
+                AuditSaveChangesAsync().Wait();
 
             var count = base.SaveChanges(acceptAllChangesOnSuccess);
 
             // 尝试还原改变的数据库连接
-            ChangeDbConnection(tenant => tenant.DefaultConnectionString).Wait();
+            if (BuilderOptions.TenantEnabled)
+                ChangeDbConnection(tenant => tenant.DefaultConnectionString).Wait();
 
             return count;
         }
@@ -134,30 +138,33 @@ namespace Librame.Extensions.Data
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
             // 改变为写入数据库（支持读写分离）
-            await ChangeDbConnection(tenant => tenant.WriteConnectionString);
+            if (BuilderOptions.TenantEnabled)
+                await ChangeDbConnection(tenant => tenant.WriteConnectionString);
 
-            await PreproccessSaveChangesAsync();
+            if (BuilderOptions.AuditEnabled)
+                await AuditSaveChangesAsync();
 
             var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
             // 尝试还原改变的数据库连接
-            await ChangeDbConnection(tenant => tenant.DefaultConnectionString);
+            if (BuilderOptions.TenantEnabled)
+                await ChangeDbConnection(tenant => tenant.DefaultConnectionString);
 
             return count;
         }
 
         /// <summary>
-        /// 异步预处理保存更改。
+        /// 异步审计保存更改。
         /// </summary>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        protected virtual async Task PreproccessSaveChangesAsync()
+        protected virtual async Task AuditSaveChangesAsync()
         {
             // 默认仅拦截实体的增删改操作
             var entityStates = new EntityState[] { EntityState.Added, EntityState.Modified, EntityState.Deleted };
 
             // 得到变化的实体集合
             var entityEntries = ChangeTracker.Entries()
-                .Where(m => m.Entity != null && entityStates.Contains(m.State)).ToList();
+                .Where(m => m.Entity.IsNotNull() && entityStates.Contains(m.State)).ToList();
 
             // 获取注册的实体入口处理器集合
             var auditService = ServiceProvider.GetService<IAuditService>();
@@ -174,7 +181,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回是否切换的布尔值。</returns>
         public virtual Task ChangeDbConnection(Func<ITenant, string> connectionStringFactory)
         {
-            if (null == CurrentTenant || null == connectionStringFactory)
+            if (CurrentTenant.IsNull() || connectionStringFactory.IsNull())
                 return Task.CompletedTask;
 
             var connectionString = connectionStringFactory.Invoke(CurrentTenant);

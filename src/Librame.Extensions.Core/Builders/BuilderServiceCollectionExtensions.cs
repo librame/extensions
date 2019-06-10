@@ -10,13 +10,13 @@
 
 #endregion
 
-using Librame.Extensions;
 using Librame.Extensions.Core;
 using System;
-using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    using Configuration;
+
     /// <summary>
     /// 构建器服务集合静态扩展。
     /// </summary>
@@ -26,19 +26,17 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加 Librame。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="configureAction">给定的配置选项动作（可选）。</param>
+        /// <param name="configureOptions">给定的 <see cref="Action{BuilderOptions}"/>（可选；高优先级）。</param>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
+        /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddLibrame(this IServiceCollection services,
-            Action<LibrameOptions> configureAction = null)
+            Action<BuilderOptions> configureOptions = null,
+            IConfiguration configuration = null,
+            Action<BinderOptions> configureBinderOptions = null)
         {
-            var options = new LibrameOptions();
-            configureAction?.Invoke(options);
-
-            // AddOptions
-            if (options.OptionsName.IsNullOrEmpty())
-                services.AddOptions();
-            else
-                services.AddOptions<LibrameOptions>(options.OptionsName);
+            var options = services.ConfigureBuilder(configureOptions,
+                configuration, configureBinderOptions);
 
             // AddLocalization
             services.AddLocalization(options.ConfigureLocalization);
@@ -46,68 +44,12 @@ namespace Microsoft.Extensions.DependencyInjection
             // AddLogging
             services.AddLogging(options.ConfigureLogging);
 
-            // AddAutoRegistrationServices
-            if (options.UseAutoRegistrationServices)
-                services.AddAutoRegistrationServices();
-
-            var builder = new InternalBuilder(services);
+            var builder = new InternalBuilder(services, options);
 
             return builder
                 .AddConverters()
                 .AddLocalizations()
                 .AddServices();
-        }
-
-        /// <summary>
-        /// 添加自动注册服务集合。
-        /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
-        public static IServiceCollection AddAutoRegistrationServices(this IServiceCollection services)
-        {
-            var objectType = typeof(object);
-
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            foreach (var type in assembly.GetTypes())
-            {
-                if (type.TryGetCustomAttribute(out AutoRegistrationServiceAttribute serviceAttribute))
-                {
-                    var serviceType = serviceAttribute.ServiceType;
-
-                    if (serviceType == null && serviceAttribute.UseBaseTypeAsServiceType)
-                    {
-                        // 如果类型的基础类型为空或是接口，则基础类型返回 Object 类型
-                        serviceType = type.BaseType != objectType ? type.BaseType
-                            : type.GetInterfaces().FirstOrDefault();
-                    }
-
-                    if (serviceType == null)
-                    {
-                        // 使用当前类型为服务类型
-                        serviceType = type;
-                    }
-
-                    switch (serviceAttribute.Lifetime)
-                    {
-                        case ServiceLifetime.Singleton:
-                            services.AddSingleton(serviceType, type);
-                            break;
-
-                        case ServiceLifetime.Scoped:
-                            services.AddScoped(serviceType, type);
-                            break;
-
-                        case ServiceLifetime.Transient:
-                            services.AddTransient(serviceType, type);
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            return services;
         }
 
     }

@@ -185,7 +185,7 @@ namespace Librame.Extensions.Network
 
             using (var s = CreateResponse(url, postData).GetResponseStream())
             {
-                if (s != null)
+                if (s.IsNotNull())
                 {
                     using (var sr = new StreamReader(s))
                     {

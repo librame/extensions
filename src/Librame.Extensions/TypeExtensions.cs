@@ -89,21 +89,21 @@ namespace Librame.Extensions
             target.NotNull(nameof(target));
 
             var srcProperties = new List<PropertyInfo>(typeof(TSource).GetProperties());
-            var trgtProperties = new List<PropertyInfo>(typeof(TTarget).GetProperties());
+            var tarProperties = new List<PropertyInfo>(typeof(TTarget).GetProperties());
 
             for (var s = 0; s < srcProperties.Count; s++)
             {
-                for (var t = 0; t < trgtProperties.Count; t++)
+                for (var t = 0; t < tarProperties.Count; t++)
                 {
                     var srcProperty = srcProperties[s];
-                    var trgtProperty = trgtProperties[t];
+                    var tarProperty = tarProperties[t];
 
-                    if (srcProperty.Name == trgtProperty.Name)
+                    if (srcProperty.Name == tarProperty.Name)
                     {
                         var value = srcProperty.GetValue(source);
-                        trgtProperty.SetValue(target, value);
+                        tarProperty.SetValue(target, value);
 
-                        trgtProperties.Remove(trgtProperty);
+                        tarProperties.Remove(tarProperty);
                         srcProperties.Remove(srcProperty);
                         
                         break;

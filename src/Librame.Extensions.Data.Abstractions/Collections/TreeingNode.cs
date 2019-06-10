@@ -153,7 +153,7 @@ namespace System.Collections.Generic
         {
             child = GetChild(childId);
 
-            return (child != null);
+            return child.IsNotNull();
         }
 
 
@@ -251,7 +251,7 @@ namespace System.Collections.Generic
         /// <returns>返回字符串。</returns>
         public virtual string ToString(Func<T, string> toStringFactory)
         {
-            if (toStringFactory == null)
+            if (toStringFactory.IsNull())
                 toStringFactory = obj => obj.ToString(); // obj.AsPairsString();
 
             var sb = new StringBuilder();

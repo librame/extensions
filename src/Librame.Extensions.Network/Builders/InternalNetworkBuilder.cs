@@ -19,14 +19,15 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 内部网络构建器。
     /// </summary>
-    internal class InternalNetworkBuilder : AbstractBuilder, INetworkBuilder
+    internal class InternalNetworkBuilder : AbstractBuilder<NetworkBuilderOptions>, INetworkBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalNetworkBuilder"/> 实例。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        public InternalNetworkBuilder(IBuilder builder)
-            : base(builder)
+        /// <param name="options">给定的 <see cref="NetworkBuilderOptions"/>。</param>
+        public InternalNetworkBuilder(IBuilder builder, NetworkBuilderOptions options)
+            : base(builder, options)
         {
             Services.AddSingleton<INetworkBuilder>(this);
         }

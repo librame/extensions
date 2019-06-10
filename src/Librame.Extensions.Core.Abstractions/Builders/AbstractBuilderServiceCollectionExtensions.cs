@@ -10,6 +10,7 @@
 
 #endregion
 
+using Librame.Extensions;
 using System;
 using System.Linq;
 
@@ -74,14 +75,14 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Func<ServiceDescriptor, bool> predicate = null;
 
-            if (implementationType == null)
+            if (implementationType.IsNull())
                 predicate = p => p.ServiceType == serviceType;
             else
                 predicate = p => p.ServiceType == serviceType && p.ImplementationType == implementationType;
 
             serviceDescriptor = services.FirstOrDefault(predicate);
 
-            return serviceDescriptor != null;
+            return serviceDescriptor.IsNotNull();
         }
 
         #endregion

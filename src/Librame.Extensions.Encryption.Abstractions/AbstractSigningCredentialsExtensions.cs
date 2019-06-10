@@ -10,6 +10,7 @@
 
 #endregion
 
+using Librame.Extensions;
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -30,7 +31,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <returns>返回 <see cref="RSA"/>。</returns>
         public static RSA ResolveRsa(this SigningCredentials credentials, bool throwIfError = true)
         {
-            if (credentials == null && throwIfError)
+            if (credentials.IsNull() && throwIfError)
                 throw new ArgumentException($"Have you registered the IEncryptionBuilder.AddSigningCredentials()");
 
             if (credentials.Key is X509SecurityKey x509Key)
@@ -38,7 +39,7 @@ namespace Microsoft.IdentityModel.Tokens
 
             if (credentials.Key is RsaSecurityKey rsaKey)
             {
-                if (rsaKey.Rsa == null)
+                if (rsaKey.Rsa.IsNull())
                 {
                     var rsa = RSA.Create();
                     rsa.ImportParameters(rsaKey.Parameters);
@@ -64,7 +65,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <returns>返回 <see cref="X509Certificate2"/>。</returns>
         public static X509Certificate2 ResolveCertificate(this SigningCredentials credentials, bool throwIfError = true)
         {
-            if (credentials == null && throwIfError)
+            if (credentials.IsNull() && throwIfError)
                 throw new ArgumentException($"Have you registered the IEncryptionBuilder.AddSigningCredentials()");
             
             if (credentials.Key is X509SecurityKey x509Key)

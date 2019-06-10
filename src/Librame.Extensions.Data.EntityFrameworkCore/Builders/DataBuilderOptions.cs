@@ -19,32 +19,30 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据构建器选项。
     /// </summary>
-    public class DataBuilderOptions : IBuilderOptions
+    public class DataBuilderOptions : AbstractBuilderOptions, IBuilderOptions
     {
         /// <summary>
         /// 默认架构。
         /// </summary>
         public string DefaultSchema { get; set; }
 
-        ///// <summary>
-        ///// 默认快照名称。
-        ///// </summary>
-        //public string DefaultSnapshotName { get; set; }
-
         /// <summary>
         /// 启用审计（默认已启用）。
         /// </summary>
-        public bool AuditEnabled { get; set; } = true;
+        public bool AuditEnabled { get; set; }
+            = true;
 
         /// <summary>
         /// 启用租户（默认已启用）。
         /// </summary>
-        public bool TenantEnabled { get; set; } = true;
+        public bool TenantEnabled { get; set; }
+            = true;
 
         /// <summary>
         /// 确保数据库（默认已启用）。
         /// </summary>
-        public bool EnsureDatabase { get; set; } = true;
+        public bool EnsureDatabase { get; set; }
+            = true;
 
 
         /// <summary>
