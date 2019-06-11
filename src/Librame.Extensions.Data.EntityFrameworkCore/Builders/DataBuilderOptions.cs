@@ -48,7 +48,8 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 本机租户。
         /// </summary>
-        public ITenant LocalTenant { get; set; } = new BaseTenant();
+        public ITenant LocalTenant { get; set; }
+            = new BaseTenant();
 
 
         /// <summary>
