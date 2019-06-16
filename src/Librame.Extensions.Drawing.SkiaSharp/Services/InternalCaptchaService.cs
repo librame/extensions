@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing
@@ -50,9 +51,12 @@ namespace Librame.Extensions.Drawing
         /// </summary>
         /// <param name="captcha">给定的验证码。</param>
         /// <param name="savePath">给定的保存路径。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        public Task<bool> DrawFile(string captcha, string savePath)
+        public Task<bool> DrawFile(string captcha, string savePath, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var result = false;
 
             DrawCore(captcha, data =>
@@ -75,9 +79,12 @@ namespace Librame.Extensions.Drawing
         /// </summary>
         /// <param name="captcha">给定的验证码。</param>
         /// <param name="target">给定的目标流。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        public Task<bool> DrawStream(string captcha, Stream target)
+        public Task<bool> DrawStream(string captcha, Stream target, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var result = false;
 
             DrawCore(captcha, data =>
@@ -96,9 +103,12 @@ namespace Librame.Extensions.Drawing
         /// 绘制验证码字节数组。
         /// </summary>
         /// <param name="captcha">给定的验证码。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含图像字节数组的异步操作。</returns>
-        public Task<byte[]> DrawBytes(string captcha)
+        public Task<byte[]> DrawBytes(string captcha, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var buffer = default(byte[]);
 
             DrawCore(captcha, data =>

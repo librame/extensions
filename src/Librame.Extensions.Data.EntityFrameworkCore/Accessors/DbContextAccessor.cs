@@ -23,12 +23,14 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// <see cref="DbContext"/> 访问器。
     /// </summary>
     public class DbContextAccessor : DbContext, IAccessor
     {
-        private static object _locker = new object();
+        private static byte[] _locker = new byte[0];
 
 
         /// <summary>
@@ -135,14 +137,15 @@ namespace Librame.Extensions.Data
         /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
-        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
         {
             // 改变为写入数据库（支持读写分离）
             if (BuilderOptions.TenantEnabled)
                 await ChangeDbConnection(tenant => tenant.WriteConnectionString);
 
             if (BuilderOptions.AuditEnabled)
-                await AuditSaveChangesAsync();
+                await AuditSaveChangesAsync(cancellationToken);
 
             var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
@@ -156,8 +159,9 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 异步审计保存更改。
         /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        protected virtual async Task AuditSaveChangesAsync()
+        protected virtual async Task AuditSaveChangesAsync(CancellationToken cancellationToken = default)
         {
             // 默认仅拦截实体的增删改操作
             var entityStates = new EntityState[] { EntityState.Added, EntityState.Modified, EntityState.Deleted };
@@ -168,9 +172,13 @@ namespace Librame.Extensions.Data
 
             // 获取注册的实体入口处理器集合
             var auditService = ServiceProvider.GetService<IAuditService>();
-            var audits = await auditService.GetAuditsAsync(entityEntries);
+            var audits = await auditService.GetAuditsAsync(entityEntries, cancellationToken);
 
-            await BaseAudits.AddRangeAsync(audits);
+            await BaseAudits.AddRangeAsync(audits, cancellationToken);
+
+            // 通知审计实体列表
+            var mediator = ServiceProvider.GetService<IMediator>();
+            await mediator?.Publish(new AuditNotification { Audits = audits }, cancellationToken);
         }
 
 
@@ -178,9 +186,13 @@ namespace Librame.Extensions.Data
         /// 改变数据库连接。
         /// </summary>
         /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        public virtual Task ChangeDbConnection(Func<ITenant, string> connectionStringFactory)
+        public virtual Task ChangeDbConnection(Func<ITenant, string> connectionStringFactory,
+            CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (CurrentTenant.IsNull() || connectionStringFactory.IsNull())
                 return Task.CompletedTask;
 

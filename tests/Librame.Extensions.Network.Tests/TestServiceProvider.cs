@@ -5,35 +5,23 @@ namespace Librame.Extensions.Network.Tests
 {
     using Encryption;
 
-    internal static class TestServiceProvider
+    internal class TestServiceProvider
     {
-        private static object _locker = new object();
-        private static IServiceProvider _serviceProvider = null;
-
-        public static IServiceProvider Current
+        static TestServiceProvider()
         {
-            get
+            Current = Current.EnsureSingleton(() =>
             {
-                if (_serviceProvider.IsNull())
-                {
-                    lock (_locker)
-                    {
-                        if (_serviceProvider.IsNull())
-                        {
-                            var services = new ServiceCollection();
+                var services = new ServiceCollection();
 
-                            services.AddLibrame()
-                                .AddEncryption().AddDeveloperGlobalSigningCredentials()
-                                .AddNetwork();
+                services.AddLibrame()
+                    .AddEncryption().AddDeveloperGlobalSigningCredentials()
+                    .AddNetwork();
 
-                            _serviceProvider = services.BuildServiceProvider();
-                        }
-                    }
-                }
-
-                return _serviceProvider;
-            }
+                return services.BuildServiceProvider();
+            });
         }
 
+
+        public static IServiceProvider Current { get; }
     }
 }

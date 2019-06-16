@@ -66,8 +66,8 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalEchoServerHandler(this);
 
-            host = host.HasOrDefault(_serverOptions.Host);
-            port = port.HasOrDefault(_serverOptions.Port);
+            host = host.EnsureValue(_serverOptions.Host);
+            port = port.EnsureValue(_serverOptions.Port);
 
             IEventLoopGroup bossGroup;
             IEventLoopGroup workerGroup;

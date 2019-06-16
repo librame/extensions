@@ -34,6 +34,7 @@ namespace Librame.Extensions.Core
         }
     }
 
+
     /// <summary>
     /// 单例助手。
     /// </summary>

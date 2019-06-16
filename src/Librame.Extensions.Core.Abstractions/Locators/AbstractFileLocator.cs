@@ -26,7 +26,7 @@ namespace Librame.Extensions.Core
         public AbstractFileLocator(string fileName)
             : base(fileName)
         {
-            FileName = Path.GetFileName(fileName);
+            FileName = CreateFileNameLocator(fileName);
             BasePath = Path.GetDirectoryName(fileName);
         }
 
@@ -38,26 +38,46 @@ namespace Librame.Extensions.Core
         protected AbstractFileLocator(string fileName, string basePath)
             : base(basePath.CombinePath(fileName))
         {
+            FileName = CreateFileNameLocator(fileName);
+            BasePath = basePath;
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="AbstractFileLocator"/> 实例。
+        /// </summary>
+        /// <param name="fileName">给定的文件名。</param>
+        /// <param name="basePath">给定的基础路径。</param>
+        protected AbstractFileLocator(IFileNameLocator fileName, string basePath)
+            : base(basePath.CombinePath(fileName.ToString()))
+        {
             FileName = fileName;
             BasePath = basePath;
         }
 
 
         /// <summary>
-        /// 文件名。
+        /// 创建 <see cref="IFileNameLocator"/> 实例。
         /// </summary>
-        public string FileName { get; private set; }
-        
+        /// <param name="fileName">给定的文件名。</param>
+        /// <returns>返回 <see cref="IFileNameLocator"/>。</returns>
+        protected abstract IFileNameLocator CreateFileNameLocator(string fileName);
+
+
         /// <summary>
         /// 基础路径。
         /// </summary>
         public string BasePath { get; private set; }
 
+        /// <summary>
+        /// 文件名。
+        /// </summary>
+        public IFileNameLocator FileName { get; private set; }
+
 
         /// <summary>
         /// 重写源实例。
         /// </summary>
-        public override string Source => BasePath.CombinePath(FileName);
+        public override string Source => BasePath.CombinePath(FileName.ToString());
 
 
         /// <summary>
@@ -78,24 +98,41 @@ namespace Librame.Extensions.Core
         /// <returns>返回当前 <see cref="IFileLocator"/>。</returns>
         public virtual IFileLocator ChangeFileName(string newFileName)
         {
-            FileName = newFileName.NotNullOrEmpty(nameof(newFileName));
+            return ChangeFileName(CreateFileNameLocator(newFileName));
+        }
+
+        /// <summary>
+        /// 改变文件名。
+        /// </summary>
+        /// <param name="newFileName">给定的新 <see cref="IFileNameLocator"/>。</param>
+        /// <returns>返回当前 <see cref="IFileLocator"/>。</returns>
+        public virtual IFileLocator ChangeFileName(IFileNameLocator newFileName)
+        {
+            FileName = newFileName;
             return this;
         }
 
 
         /// <summary>
-        /// 依据当前文件定位器的文件名与指定的基础路径，新建一个文件定位器。
+        /// 依据当前文件定位器的文件名与指定的基础路径，新建一个 <see cref="IFileLocator"/> 实例。
         /// </summary>
         /// <param name="newBasePath">给定的新基础路径。</param>
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
         public abstract IFileLocator NewBasePath(string newBasePath);
 
         /// <summary>
-        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个文件定位器。
+        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个 <see cref="IFileLocator"/> 实例。
         /// </summary>
         /// <param name="newFileName">给定的新文件名。</param>
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
         public abstract IFileLocator NewFileName(string newFileName);
+
+        /// <summary>
+        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个 <see cref="IFileLocator"/> 实例。
+        /// </summary>
+        /// <param name="newFileName">给定的新 <see cref="IFileNameLocator"/>。</param>
+        /// <returns>返回 <see cref="IFileLocator"/>。</returns>
+        public abstract IFileLocator NewFileName(IFileNameLocator newFileName);
 
 
         /// <summary>
@@ -110,7 +147,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 转换为文件源路径。
+        /// 转换为文件。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()

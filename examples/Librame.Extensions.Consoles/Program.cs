@@ -71,7 +71,7 @@ namespace Librame.Extensions.Consoles
                 for (int i = 0; i < 10; i++)
                 {
                     var job = new JobDescriptor(i);
-
+                    
                     job.Execution = (t, args) => Console.WriteLine($"add {args[0]}_{t.ManagedThreadId}.");
                     job.FinishCallback = (t, args) => Console.WriteLine($"{args[0]}_{t.ManagedThreadId}_finished.");
                     job.ErrorCallback = (t, args, ex) => Console.WriteLine(ex.AsInnerMessage());

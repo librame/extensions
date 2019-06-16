@@ -12,29 +12,4 @@ namespace Librame.Extensions.Core.Tests
             service.InjectTest();
         }
     }
-
-
-    public class InjectionServiceTest
-    {
-        [InjectionService]
-        IBuilder _fieldBuilder = null;
-
-
-        public InjectionServiceTest(IInjectionService injectionService)
-        {
-            injectionService.Inject(this);
-        }
-
-
-        [InjectionService]
-        public IBuilder PropertyBuilder { get; set; }
-
-
-        public void InjectTest()
-        {
-            _fieldBuilder.NotNull(nameof(_fieldBuilder));
-            PropertyBuilder.NotNull(nameof(PropertyBuilder));
-        }
-
-    }
 }

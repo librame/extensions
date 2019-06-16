@@ -16,6 +16,7 @@ using SkiaSharp;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing
@@ -56,9 +57,12 @@ namespace Librame.Extensions.Drawing
         /// <param name="imagePath">给定的图像路径。</param>
         /// <param name="savePath">给定的保存路径。</param>
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        public Task<bool> DrawFile(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text)
+        public Task<bool> DrawFile(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var result = false;
             
             DrawCore(imagePath, mode, data =>
@@ -82,9 +86,12 @@ namespace Librame.Extensions.Drawing
         /// <param name="imagePath">给定的验证码。</param>
         /// <param name="target">给定的目标流。</param>
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        public Task<bool> DrawStream(string imagePath, Stream target, WatermarkMode mode = WatermarkMode.Text)
+        public Task<bool> DrawStream(string imagePath, Stream target, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var result = false;
             
             DrawCore(imagePath, mode, data =>
@@ -104,9 +111,12 @@ namespace Librame.Extensions.Drawing
         /// </summary>
         /// <param name="imagePath">给定的图像路径。</param>
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含图像字节数组的异步操作。</returns>
-        public Task<byte[]> DrawBytes(string imagePath, WatermarkMode mode = WatermarkMode.Text)
+        public Task<byte[]> DrawBytes(string imagePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var buffer = default(byte[]);
             
             DrawCore(imagePath, mode, data =>
@@ -158,7 +168,7 @@ namespace Librame.Extensions.Drawing
         /// <param name="canvas">给定的图像处理上下文。</param>
         /// <param name="imageSize">给定的图像尺寸。</param>
         /// <param name="mode">给定的水印模式。</param>
-        public void DrawCore(SKCanvas canvas, Size imageSize, WatermarkMode mode)
+        internal void DrawCore(SKCanvas canvas, Size imageSize, WatermarkMode mode)
         {
             var startX = Options.Watermark.Location.X;
             var startY = Options.Watermark.Location.Y;

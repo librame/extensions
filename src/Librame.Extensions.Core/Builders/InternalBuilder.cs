@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Linq;
 
 namespace Librame.Extensions.Core
@@ -41,7 +40,7 @@ namespace Librame.Extensions.Core
         {
             BuilderGlobalization.RegisterCultureInfos(options.CultureInfo, options.CultureUIInfo);
 
-            if (options.UseAutoRegistrationServices)
+            if (options.EnableAutoRegistrationServices)
                 AddAutoRegistrationServices();
         }
 
@@ -53,10 +52,9 @@ namespace Librame.Extensions.Core
         {
             var objectType = typeof(object);
 
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            foreach (var type in assembly.GetTypes())
+            BuilderGlobalization.RegisterTypes(type =>
             {
-                if (type.TryGetCustomAttribute(out AutoRegistrationServiceAttribute serviceAttribute))
+                if (type.TryGetCustomAttribute(out RegistrationServiceAttribute serviceAttribute))
                 {
                     var serviceType = serviceAttribute.ServiceType;
 
@@ -91,7 +89,7 @@ namespace Librame.Extensions.Core
                             break;
                     }
                 }
-            }
+            });
         }
 
     }

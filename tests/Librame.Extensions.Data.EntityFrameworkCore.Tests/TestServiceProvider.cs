@@ -4,11 +4,11 @@ using System;
 
 namespace Librame.Extensions.Data.Tests
 {
-    internal static class TestServiceProvider
+    internal class TestServiceProvider
     {
         static TestServiceProvider()
         {
-            if (Current.IsNull())
+            Current = Current.EnsureSingleton(() =>
             {
                 var services = new ServiceCollection();
 
@@ -28,10 +28,11 @@ namespace Librame.Extensions.Data.Tests
 
                 services.AddTransient<ITestStore, TestStore>();
 
-                Current = services.BuildServiceProvider();
-            }
+                return services.BuildServiceProvider();
+            });
         }
 
-        public static IServiceProvider Current { get; private set; }
+
+        public static IServiceProvider Current { get; }
     }
 }

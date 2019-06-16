@@ -67,8 +67,8 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalTelnetServerHandler(this);
 
-            host = host.HasOrDefault(_serverOptions.Host);
-            port = port.HasOrDefault(_serverOptions.Port);
+            host = host.EnsureValue(_serverOptions.Host);
+            port = port.EnsureValue(_serverOptions.Port);
 
             var bossGroup = new MultithreadEventLoopGroup(1);
             var workerGroup = new MultithreadEventLoopGroup();

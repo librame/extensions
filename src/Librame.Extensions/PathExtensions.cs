@@ -104,6 +104,7 @@ namespace Librame.Extensions
         private static readonly string DirectorySeparator = Path.DirectorySeparatorChar.ToString();
         private static readonly string AltDirectorySeparator = Path.AltDirectorySeparatorChar.ToString();
         private static readonly string ParentDirectorySeparatorKey = $"..{DirectorySeparator}";
+
         /// <summary>
         /// 合并路径。
         /// </summary>

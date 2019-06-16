@@ -16,10 +16,10 @@ using System;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 自动注册服务特性。
+    /// 注册服务特性。
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class AutoRegistrationServiceAttribute : Attribute
+    public class RegistrationServiceAttribute : Attribute
     {
         /// <summary>
         /// 生命周期。

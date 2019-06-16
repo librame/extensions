@@ -11,6 +11,7 @@
 #endregion
 
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing
@@ -28,8 +29,9 @@ namespace Librame.Extensions.Drawing
         /// <param name="imagePath">给定的图像路径。</param>
         /// <param name="savePath">给定的保存路径。</param>
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        Task<bool> DrawFile(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text);
+        Task<bool> DrawFile(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default);
 
 
         /// <summary>
@@ -38,8 +40,9 @@ namespace Librame.Extensions.Drawing
         /// <param name="imagePath">给定的验证码。</param>
         /// <param name="target">给定的目标流。</param>
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        Task<bool> DrawStream(string imagePath, Stream target, WatermarkMode mode = WatermarkMode.Text);
+        Task<bool> DrawStream(string imagePath, Stream target, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default);
 
 
         /// <summary>
@@ -47,7 +50,8 @@ namespace Librame.Extensions.Drawing
         /// </summary>
         /// <param name="imagePath">给定的图像路径。</param>
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含图像字节数组的异步操作。</returns>
-        Task<byte[]> DrawBytes(string imagePath, WatermarkMode mode = WatermarkMode.Text);
+        Task<byte[]> DrawBytes(string imagePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default);
     }
 }

@@ -4,7 +4,6 @@ namespace Librame.Extensions.Tests
 {
     public class TypeExtensionsTests
     {
-
         class TestClass1
         {
             public string Name { get; set; }

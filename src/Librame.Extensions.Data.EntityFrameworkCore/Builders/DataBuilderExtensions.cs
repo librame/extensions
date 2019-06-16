@@ -41,6 +41,7 @@ namespace Librame.Extensions.Data
             var dataBuilder = new InternalDataBuilder(builder, options);
 
             return dataBuilder
+                .AddMediators()
                 .AddServices();
         }
 

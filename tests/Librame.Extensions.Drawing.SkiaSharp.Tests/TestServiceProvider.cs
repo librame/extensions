@@ -3,44 +3,32 @@ using System;
 
 namespace Librame.Extensions.Drawing.Tests
 {
-    internal static class TestServiceProvider
+    internal class TestServiceProvider
     {
-        private static object _locker = new object();
-        private static IServiceProvider _serviceProvider = null;
-
-        public static IServiceProvider Current
+        static TestServiceProvider()
         {
-            get
+            Current = Current.EnsureSingleton(() =>
             {
-                if (_serviceProvider.IsNull())
-                {
-                    lock (_locker)
+                var services = new ServiceCollection();
+
+                services.AddLibrame()
+                    .AddDrawing(options =>
                     {
-                        if (_serviceProvider.IsNull())
-                        {
-                            var services = new ServiceCollection();
+                        options.Captcha.Font.FileLocator.ChangeBasePath(ResourcesPath);
+                        options.Watermark.Font.FileLocator.ChangeBasePath(ResourcesPath);
+                        options.Watermark.ImageFileLocator.ChangeBasePath(ResourcesPath);
+                    });
 
-                            services.AddLibrame()
-                                .AddDrawing(options =>
-                                {
-                                    options.Captcha.Font.FileLocator.ChangeBasePath(ResourcesPath);
-                                    options.Watermark.Font.FileLocator.ChangeBasePath(ResourcesPath);
-                                    options.Watermark.ImageFileLocator.ChangeBasePath(ResourcesPath);
-                                });
-
-                            _serviceProvider = services.BuildServiceProvider();
-                        }
-                    }
-                }
-
-                return _serviceProvider;
-            }
+                return services.BuildServiceProvider();
+            });
         }
+
+
+        public static IServiceProvider Current { get; }
 
         public static string ResourcesPath
         {
             get { return AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"); }
         }
-
     }
 }

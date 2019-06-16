@@ -69,8 +69,8 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalWebSocketServerHandler(this);
 
-            host = host.HasOrDefault(_serverOptions.Host);
-            port = port.HasOrDefault(_serverOptions.Port);
+            host = host.EnsureValue(_serverOptions.Host);
+            port = port.EnsureValue(_serverOptions.Port);
 
             Logger.LogInformation(
                    $"\n{RuntimeInformation.OSArchitecture} {RuntimeInformation.OSDescription}"

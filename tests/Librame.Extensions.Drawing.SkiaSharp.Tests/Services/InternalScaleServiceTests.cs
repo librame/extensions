@@ -30,11 +30,11 @@ namespace Librame.Extensions.Drawing.Tests
         {
             // 5K 2.21MB
             var directory = TestServiceProvider.ResourcesPath.CombinePath(@"pictures");
-            
-            // Clear
-            var count = _drawing.DeleteScalesByDirectory(directory);
 
-            count = await _drawing.DrawFilesByDirectory(directory);
+            // Clear
+            await _drawing.DeleteScalesByDirectory(directory);
+
+            int count = await _drawing.DrawFilesByDirectory(directory);
             Assert.True(count > 0);
         }
 

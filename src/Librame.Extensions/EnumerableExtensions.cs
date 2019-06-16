@@ -32,6 +32,7 @@ namespace Librame.Extensions
             yield return instance;
         }
 
+
         /// <summary>
         /// 转换为只读列表集合。
         /// </summary>
@@ -52,5 +53,20 @@ namespace Librame.Extensions
         {
             return new ReadOnlyCollection<T>(list);
         }
+
+
+        /// <summary>
+        /// 新增列表中不包含的值。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="list">给定的 <see cref="IList{T}"/>。</param>
+        /// <param name="value">给定的新增的值。</param>
+        public static void AddIfNotContains<T>(this IList<T> list, T value)
+        {
+            if (list.Contains(value)) return;
+
+            list.Add(value);
+        }
+
     }
 }

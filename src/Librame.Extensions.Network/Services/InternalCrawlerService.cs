@@ -77,7 +77,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回一个包含超链接列表的异步操作。</returns>
         public async Task<IList<string>> GetHyperLinks(string url, string pattern = null)
         {
-            pattern = pattern.HasOrDefault(() =>
+            pattern = pattern.EnsureValue(() =>
             {
                 return @"(?<url>((http(s)?|ftp|file|ws):)?//([\w-]+\.)+[\w-]+(/[\w- ./?%&=]+)?)|(?<path>(/*[\w- ./?%&=]+\.[\w- .]+)?)";
             });

@@ -65,8 +65,8 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         public async Task StartAsync(Action<IChannel> configureProcess,
             Func<IChannelHandler> handlerFactory = null, string host = null, int? port = null)
         {
-            host = host.HasOrDefault(_clientOptions.Host);
-            port = port.HasOrDefault(_clientOptions.Port);
+            host = host.EnsureValue(_clientOptions.Host);
+            port = port.EnsureValue(_clientOptions.Port);
 
             var builder = new UriBuilder
             {

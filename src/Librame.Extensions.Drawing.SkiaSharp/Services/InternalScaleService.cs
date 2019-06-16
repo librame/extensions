@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing
@@ -63,9 +64,12 @@ namespace Librame.Extensions.Drawing
         /// 删除缩放方案集合图片。
         /// </summary>
         /// <param name="imageDirectory">给定的图像目录。</param>
-        /// <returns>返回删除张数。</returns>
-        public int DeleteScalesByDirectory(string imageDirectory)
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含删除张数的异步操作。</returns>
+        public Task<int> DeleteScalesByDirectory(string imageDirectory, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var files = Directory.EnumerateFiles(imageDirectory, "*.*", SearchOption.AllDirectories);
 
             var count = 0;
@@ -85,7 +89,7 @@ namespace Librame.Extensions.Drawing
                 }
             }
 
-            return count;
+            return Task.FromResult(count);
         }
 
 
@@ -93,9 +97,12 @@ namespace Librame.Extensions.Drawing
         /// 绘制缩放文件集合。
         /// </summary>
         /// <param name="imageDirectory">给定的图像目录。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含处理张数的异步操作。</returns>
-        public async Task<int> DrawFilesByDirectory(string imageDirectory)
+        public async Task<int> DrawFilesByDirectory(string imageDirectory, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var files = Directory.EnumerateFiles(imageDirectory, "*.*", SearchOption.AllDirectories);
 
             var count = 0;
@@ -104,7 +111,7 @@ namespace Librame.Extensions.Drawing
             {
                 if (IsImageFile(file))
                 {
-                    await DrawFile(file);
+                    await DrawFile(file, null, cancellationToken);
 
                     count++;
                 }
@@ -118,16 +125,19 @@ namespace Librame.Extensions.Drawing
         /// 绘制缩放文件集合。
         /// </summary>
         /// <param name="imagePaths">给定的图像路径集合。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含处理张数的异步操作。</returns>
-        public async Task<int> DrawFiles(IEnumerable<string> imagePaths)
+        public async Task<int> DrawFiles(IEnumerable<string> imagePaths, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             var count = 0;
 
             foreach (var file in imagePaths)
             {
                 if (IsImageFile(file))
                 {
-                    await DrawFile(file);
+                    await DrawFile(file, null, cancellationToken);
 
                     count++;
                 }
@@ -142,9 +152,12 @@ namespace Librame.Extensions.Drawing
         /// </summary>
         /// <param name="imagePath">给定的图像路径。</param>
         /// <param name="savePathTemplate">给定的保存路径模板（默认同图像路径）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
-        public Task<bool> DrawFile(string imagePath, string savePathTemplate = null)
+        public Task<bool> DrawFile(string imagePath, string savePathTemplate = null, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (Options.Scales.Count < 1)
             {
                 Logger.LogWarning("Scale options is not found.");
@@ -191,10 +204,10 @@ namespace Librame.Extensions.Drawing
                         using (var data = img.Encode(skFormat, Options.Quality))
                         {
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
-                            var middleName = s.Suffix.HasOrDefault(() => DateTime.Now.Ticks.ToString());
+                            var middleName = s.Suffix.EnsureValue(() => DateTime.Now.Ticks.ToString());
 
                             // 设定缩放保存路径
-                            var scaleSavePath = savePathTemplate.HasOrDefault(imagePath);
+                            var scaleSavePath = savePathTemplate.EnsureValue(imagePath);
                             scaleSavePath = scaleSavePath.ChangeFileName((baseName, extension) =>
                             {
                                 // 添加后缀名

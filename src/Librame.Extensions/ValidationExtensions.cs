@@ -45,6 +45,7 @@ namespace Librame.Extensions
             return null != source;
         }
 
+
         /// <summary>
         /// 是否为 NULL 或空字符串。
         /// </summary>
@@ -97,17 +98,6 @@ namespace Librame.Extensions
             return !sources.IsNullOrEmpty();
         }
 
-        /// <summary>
-        /// 是否为 <see cref="Nullable{T}"/> 类型。
-        /// </summary>
-        /// <param name="type">给定的类型。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool IsNullableType(this Type type)
-        {
-            return type.IsNotNull()
-                && type.IsGenericType
-                && type.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
 
         /// <summary>
         /// 是否为倍数。
@@ -119,6 +109,7 @@ namespace Librame.Extensions
         {
             return 0 == value % multiples;
         }
+
 
         /// <summary>
         /// 是否大于或大于等于对比值。
@@ -164,6 +155,39 @@ namespace Librame.Extensions
                 || value.IsGreater(compareMaximum, equalMaximum);
         }
 
+
+        /// <summary>
+        /// 是否为 <see cref="Nullable{T}"/>。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNullable(this Type type)
+        {
+            return type.IsNotNull()
+                && type.IsGenericType
+                && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
+        /// <summary>
+        /// 是否为具体实类型（非接口与抽象类型）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsConcrete(this Type type)
+        {
+            return !type.IsAbstract && !type.IsInterface;
+        }
+
+        /// <summary>
+        /// 是否为开放泛类型（泛类型并包含类型参数数组）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsOpenGeneric(this Type type)
+        {
+            return type.IsGenericTypeDefinition || type.ContainsGenericParameters;
+        }
+
         /// <summary>
         /// 是否可以从目标类型分配。
         /// </summary>
@@ -193,6 +217,7 @@ namespace Librame.Extensions
 
             return baseTypeInfo.IsAssignableFrom(fromTypeInfo);
         }
+
         /// <summary>
         /// 是否可以分配给基础类型。
         /// </summary>

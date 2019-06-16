@@ -65,8 +65,8 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalSecureChatClientHandler(this);
 
-            host = host.HasOrDefault(_clientOptions.Host);
-            port = port.HasOrDefault(_clientOptions.Port);
+            host = host.EnsureValue(_clientOptions.Host);
+            port = port.EnsureValue(_clientOptions.Port);
 
             var group = new MultithreadEventLoopGroup();
 

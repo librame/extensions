@@ -41,7 +41,7 @@ namespace Librame.Extensions.Data
         /// 重载异步保存更改。
         /// </summary>
         /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
 
@@ -50,7 +50,8 @@ namespace Librame.Extensions.Data
         /// 改变数据库连接。
         /// </summary>
         /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        Task ChangeDbConnection(Func<ITenant, string> connectionStringFactory);
+        Task ChangeDbConnection(Func<ITenant, string> connectionStringFactory, CancellationToken cancellationToken = default);
     }
 }
