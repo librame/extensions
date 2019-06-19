@@ -175,17 +175,20 @@ namespace Librame.Extensions
         /// <returns>返回布尔值。</returns>
         public static bool IsConcrete(this Type type)
         {
-            return !type.IsAbstract && !type.IsInterface;
+            return type.IsNotNull()
+                && !type.IsAbstract
+                && !type.IsInterface;
         }
 
         /// <summary>
-        /// 是否为开放泛类型（泛类型并包含类型参数数组）。
+        /// 是否为公开泛类型（泛类型定义或包含泛型参数集合）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsOpenGeneric(this Type type)
         {
-            return type.IsGenericTypeDefinition || type.ContainsGenericParameters;
+            return type.IsNotNull()
+                && (type.IsGenericTypeDefinition || type.ContainsGenericParameters);
         }
 
         /// <summary>

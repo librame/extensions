@@ -28,22 +28,22 @@ namespace Librame.Extensions.Data
     /// </summary>
     internal class InternalAuditService : AbstractService<InternalAuditService>, IAuditService
     {
-        private readonly IClockService _clock;
-        private readonly IIdService _identification;
+        private readonly IClockService _clockService;
+        private readonly IIdService _idService;
 
 
         /// <summary>
         /// 构造一个 <see cref="InternalAuditService"/> 实例。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identification">给定的 <see cref="IIdService"/>。</param>
+        /// <param name="clockService">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="idService">给定的 <see cref="IIdService"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalAuditService}"/>。</param>
-        public InternalAuditService(IClockService clock, IIdService identification,
+        public InternalAuditService(IClockService clockService, IIdService idService,
             ILogger<InternalAuditService> logger)
             : base(logger)
         {
-            _clock = clock.NotNull(nameof(clock));
-            _identification = identification.NotNull(nameof(identification));
+            _clockService = clockService.NotNull(nameof(clockService));
+            _idService = idService.NotNull(nameof(idService));
         }
 
 
@@ -85,7 +85,7 @@ namespace Librame.Extensions.Data
         {
             var audit = new BaseAudit
             {
-                Id = _identification.GetIdAsync(default).Result,
+                Id = _idService.GetIdAsync(default).Result,
                 EntityName = GetEntityName(entry.Metadata.ClrType),
                 EntityTypeName = entry.Metadata.ClrType.FullName,
                 State = (int)entry.State,
@@ -211,7 +211,7 @@ namespace Librame.Extensions.Data
             if (obj is DateTime dateTime)
                 return new DateTimeOffset(dateTime);
 
-            return _clock.GetUtcNowAsync(default).Result;
+            return _clockService.GetUtcNowAsync(default).Result;
         }
 
         /// <summary>

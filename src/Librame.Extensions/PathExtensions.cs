@@ -64,6 +64,8 @@ namespace Librame.Extensions
         /// <returns>返回路径。</returns>
         public static string ChangeFileName(this string path, Func<string, string, string> newFileNameFactory)
         {
+            newFileNameFactory.NotNull(nameof(newFileNameFactory));
+
             var fileName = Path.GetFileName(path);
             var extension = Path.GetExtension(path);
 
@@ -76,7 +78,7 @@ namespace Librame.Extensions
             index = path.LastIndexOf(fileName);
             var dir = path.Substring(0, index);
 
-            fileName = newFileNameFactory?.Invoke(baseName, extension);
+            fileName = newFileNameFactory.Invoke(baseName, extension);
 
             return Path.Combine(dir, fileName);
         }

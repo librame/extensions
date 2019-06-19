@@ -22,7 +22,7 @@ namespace Librame.Extensions.Data.Tests
 
             modelBuilder.Entity<Category>(category =>
             {
-                category.ToTable(new TableSchema<Category>());
+                category.ToTable();
 
                 category.HasKey(x => x.Id);
 
@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data.Tests
 
             modelBuilder.Entity<Article>(article =>
             {
-                article.ToTable(TableSchema<Article>.BuildEveryYear(DateTime.Now));
+                article.ToTable(names => $"{names}_{DateTime.Now.ToString("yy")}");
 
                 article.HasKey(x => x.Id);
 

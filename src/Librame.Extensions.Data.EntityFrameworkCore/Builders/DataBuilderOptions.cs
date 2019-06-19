@@ -56,18 +56,18 @@ namespace Librame.Extensions.Data
         /// 审计表。
         /// </summary>
         public Func<Type, ITableSchema> AuditTableFactory { get; set; }
-            = type => TableSchema.BuildInternal(type);
+            = type => type.AsInternalTableSchema();
 
         /// <summary>
         /// 审计属性表。
         /// </summary>
         public Func<Type, ITableSchema> AuditPropertyTableFactory { get; set; }
-            = type => TableSchema.BuildInternal(type);
+            = type => type.AsInternalTableSchema();
 
         /// <summary>
         /// 租户表。
         /// </summary>
         public Func<Type, ITableSchema> TenantTableFactory { get; set; }
-            = type => TableSchema.BuildInternal(type);
+            = type => type.AsInternalTableSchema();
     }
 }

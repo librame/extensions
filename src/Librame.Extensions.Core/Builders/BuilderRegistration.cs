@@ -59,7 +59,9 @@ namespace Librame.Extensions.Core
             });
 
             var types = filterAssemblies.Invoke(Assemblies).SelectMany(a => a.ExportedTypes);
-            types = filterTypes?.Invoke(types);
+
+            if (filterTypes.IsNotNull())
+                types = filterTypes.Invoke(types);
 
             foreach (var type in types)
                 action.Invoke(type);

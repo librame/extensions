@@ -6,6 +6,14 @@ namespace Librame.Extensions.Data.Tests
 {
     public class PagingListTests
     {
+        public class TestPaging
+        {
+            public int Id { get; set; }
+
+            public string Name { get; set; }
+        }
+
+
         [Fact]
         public void AllTest()
         {
@@ -25,13 +33,5 @@ namespace Librame.Extensions.Data.Tests
             Assert.Equal(21, paging.First().Id);
         }
 
-    }
-
-
-    public class TestPaging
-    {
-        public int Id { get; set; }
-
-        public string Name { get; set; }
     }
 }

@@ -5,6 +5,16 @@ namespace Librame.Extensions.Data.Tests
 {
     public class TreeingListTests
     {
+        public class TestTreeing : IParentId<int>
+        {
+            public string Name { get; set; }
+
+            public int ParentId { get; set; }
+
+            public int Id { get; set; }
+        }
+
+
         [Fact]
         public void AllTest()
         {
@@ -28,16 +38,5 @@ namespace Librame.Extensions.Data.Tests
             var treeing = list.AsTreeingList();
             Assert.Equal(10, treeing.Count);
         }
-
-    }
-
-
-    public class TestTreeing : IParentId<int>
-    {
-        public string Name { get; set; }
-
-        public int ParentId { get; set; }
-
-        public int Id { get; set; }
     }
 }

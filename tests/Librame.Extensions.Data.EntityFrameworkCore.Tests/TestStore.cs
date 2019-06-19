@@ -28,14 +28,14 @@ namespace Librame.Extensions.Data.Tests
 
     public class TestStore : AbstractBaseStore, ITestStore
     {
-        public TestStore(IIdService identification, IAccessor accessor)
+        public TestStore(IIdService idService, IAccessor accessor)
             : base(accessor)
         {
-            Initialize(identification);
+            Initialize(idService);
         }
 
 
-        private void Initialize(IIdService identification)
+        private void Initialize(IIdService idService)
         {
             if (Accessor is TestDbContextAccessor dbContextAccessor)
             {
@@ -71,7 +71,7 @@ namespace Librame.Extensions.Data.Tests
                     {
                         articles.Add(new Article
                         {
-                            Id = identification.GetIdAsync(default).Result,
+                            Id = idService.GetIdAsync(default).Result,
                             Title = "Article " + i.ToString(),
                             Descr = "Descr " + i.ToString(),
                             Category = (i < 50) ? firstCategory : lastCategory
