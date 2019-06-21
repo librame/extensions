@@ -114,7 +114,7 @@ namespace Librame.Extensions.Data.Tests
             return this;
         }
 
-        protected override Type GetDisposedType()
+        protected override Type GetDisposableType()
         {
             return GetType();
         }

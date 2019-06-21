@@ -34,7 +34,7 @@ namespace Librame.Extensions.Encryption
         public InternalKeyGenerator(IOptions<EncryptionBuilderOptions> options, ILogger<InternalKeyGenerator> logger)
             : base(options, logger)
         {
-            _optionIdentifier = AlgorithmIdentifier.Parse(Options.Identifier);
+            _optionIdentifier = (AlgorithmIdentifier)Options.Identifier;
         }
 
 
@@ -50,7 +50,7 @@ namespace Librame.Extensions.Encryption
 
             if (!identifier.IsNullOrEmpty())
             {
-                memory = AlgorithmIdentifier.Parse(identifier).Memory;
+                memory = ((AlgorithmIdentifier)identifier).Memory;
                 Logger.LogDebug($"Use set identifier: {identifier}");
             }
             else

@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 算法标识符。
     /// </summary>
-    public struct AlgorithmIdentifier : IEquatable<AlgorithmIdentifier>
+    public class AlgorithmIdentifier : IEquatable<AlgorithmIdentifier>
     {
         /// <summary>
         /// 构造一个 <see cref="AlgorithmIdentifier"/> 实例。
@@ -56,14 +56,22 @@ namespace Librame.Extensions.Encryption
 
 
         /// <summary>
-        /// 是否相等。
+        /// 转换为全局唯一标识符。
         /// </summary>
-        /// <param name="other">给定的 <see cref="AlgorithmIdentifier"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public bool Equals(AlgorithmIdentifier other)
-        {
-            return this == other;
-        }
+        /// <returns>返回 <see cref="Guid"/>。</returns>
+        public Guid ToGuid()
+            => new Guid(Memory.ToArray());
+
+
+        /// <summary>
+        /// 转换为只读内存。
+        /// </summary>
+        /// <returns>返回 <see cref="ReadOnlyMemory{T}"/>。</returns>
+        public ReadOnlyMemory<byte> ToReadOnlyMemory()
+            => Memory;
+
+
+        #region Overrrides
 
         /// <summary>
         /// 是否相等。
@@ -84,29 +92,7 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <returns>返回整数。</returns>
         public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
-
-
-        /// <summary>
-        /// 转换为全局唯一标识符。
-        /// </summary>
-        /// <returns>返回 <see cref="Guid"/>。</returns>
-        public Guid ToGuid()
-        {
-            return new Guid(Memory.ToArray());
-        }
-
-
-        /// <summary>
-        /// 转换为只读内存。
-        /// </summary>
-        /// <returns>返回 <see cref="ReadOnlyMemory{T}"/>。</returns>
-        public ReadOnlyMemory<byte> ToReadOnlyMemory()
-        {
-            return Memory;
-        }
+            => ToString().GetHashCode();
 
 
         /// <summary>
@@ -114,9 +100,20 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-        {
-            return Memory.ToArray().AsHexString();
-        }
+            => Memory.ToArray().AsHexString();
+
+        #endregion
+
+
+        #region Compares
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="other">给定的 <see cref="AlgorithmIdentifier"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool Equals(AlgorithmIdentifier other)
+            => this == other;
 
 
         /// <summary>
@@ -126,9 +123,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="b">给定的 <see cref="AlgorithmIdentifier"/>。</param>
         /// <returns>返回是否相等的布尔值。</returns>
         public static bool operator ==(AlgorithmIdentifier a, AlgorithmIdentifier b)
-        {
-            return a.ToString() == b.ToString();
-        }
+            => a?.ToString() == b?.ToString();
 
         /// <summary>
         /// 是否不等。
@@ -137,48 +132,56 @@ namespace Librame.Extensions.Encryption
         /// <param name="b">给定的 <see cref="AlgorithmIdentifier"/>。</param>
         /// <returns>返回是否不等的布尔值。</returns>
         public static bool operator !=(AlgorithmIdentifier a, AlgorithmIdentifier b)
-        {
-            return !(a == b);
-        }
+            => !(a == b);
 
+        #endregion
+
+
+        #region Converts
 
         /// <summary>
         /// 隐式转换为字符串。
         /// </summary>
         /// <param name="identifier">给定的 <see cref="AlgorithmIdentifier"/>。</param>
-        public static implicit operator Guid(AlgorithmIdentifier identifier)
-        {
-            return identifier.ToGuid();
-        }
+        public static implicit operator string(AlgorithmIdentifier identifier)
+            => identifier?.ToString();
 
         /// <summary>
         /// 显式转换为算法标识符。
         /// </summary>
         /// <param name="guid">给定的 <see cref="Guid"/>。</param>
         public static explicit operator AlgorithmIdentifier(Guid guid)
-        {
-            return new AlgorithmIdentifier(guid);
-        }
+            => new AlgorithmIdentifier(guid);
 
+        /// <summary>
+        /// 显式转换为算法标识符。
+        /// </summary>
+        /// <param name="identifier">给定的标识符字符串（通常为 16 进制格式）。</param>
+        public static explicit operator AlgorithmIdentifier(string identifier)
+            => new AlgorithmIdentifier(identifier.FromHexString());
+
+        #endregion
+
+
+        #region Instances
+
+        /// <summary>
+        /// 空 GUID 只读实例。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="AlgorithmIdentifier"/>。
+        /// </value>
+        public readonly static AlgorithmIdentifier Empty
+            = new AlgorithmIdentifier(Guid.Empty);
 
         /// <summary>
         /// 新建实例。
         /// </summary>
         /// <returns>返回 <see cref="AlgorithmIdentifier"/>。</returns>
         public static AlgorithmIdentifier New()
-        {
-            return new AlgorithmIdentifier(Guid.NewGuid());
-        }
+            => new AlgorithmIdentifier(Guid.NewGuid());
 
-        /// <summary>
-        /// 解析实例。
-        /// </summary>
-        /// <param name="identifier">给定的标识符字符串（通常为 16 进制格式）。</param>
-        /// <returns>返回 <see cref="AlgorithmIdentifier"/>。</returns>
-        public static AlgorithmIdentifier Parse(string identifier)
-        {
-            return new AlgorithmIdentifier(identifier.FromHexString());
-        }
+        #endregion
 
     }
 }

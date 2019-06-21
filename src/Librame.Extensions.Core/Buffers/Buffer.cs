@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     /// 缓冲区。
     /// </summary>
     /// <typeparam name="T">指定的类型。</typeparam>
-    public class Buffer<T> : AbstractBuffer<T>
+    public class Buffer<T> : AbstractBuffer<T>, IBuffer<T>
     {
         /// <summary>
         /// 构造一个 <see cref="Buffer{T}"/> 实例。
@@ -40,12 +40,22 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 创建副本。
+        /// 创建一个浅副本。
         /// </summary>
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        public override IBuffer<T> Copy()
+        public override IBuffer<T> ShallowClone()
         {
             return new Buffer<T>(Memory);
+        }
+
+        /// <summary>
+        /// 创建一个深副本。
+        /// </summary>
+        /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
+        public override IBuffer<T> DeepClone()
+        {
+            // ReadOnlyMemory<T> 结构体是值类型，无谓深浅
+            return ShallowClone();
         }
 
     }

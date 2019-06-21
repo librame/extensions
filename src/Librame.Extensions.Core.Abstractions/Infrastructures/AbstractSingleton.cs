@@ -24,7 +24,7 @@ namespace Librame.Extensions.Core
     /// 参考：https://www.cnblogs.com/leolion/p/10275027.html
     /// </remarks>
     /// <typeparam name="TSingleton">定义的单例密封类型。</typeparam>
-    public abstract class AbstractSingleton<TSingleton>
+    public abstract class AbstractSingleton<TSingleton> : ISingleton<TSingleton>
         where TSingleton : class
     {
         // 派生类须定义一个无参数的私有构造函数

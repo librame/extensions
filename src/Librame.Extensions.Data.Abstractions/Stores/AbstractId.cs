@@ -27,8 +27,8 @@ namespace Librame.Extensions.Data
         /// </summary>
         public AbstractId()
         {
-            // 默认使用空标识符，新增推荐使用 IIdentificationService 注入
-            Id = UniqueIdentifier.EmptyByGuid().ToString();
+            // 默认使用空标识符，新增推荐使用服务注入
+            Id = UniqueIdentifier.EmptyByGuid;
         }
     }
 

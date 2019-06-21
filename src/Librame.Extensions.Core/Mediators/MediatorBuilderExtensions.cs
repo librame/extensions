@@ -67,7 +67,7 @@ namespace Librame.Extensions.Core
                 },
                 types => types
                     .Where(type => Enumerable.Any(type.FindInterfacesThatClose(multiOpenInterface)))
-                    .Where(t => !t.IsOpenGeneric()));
+                    .Where(t => !t.IsOpenGenericType()));
             }
         }
 
@@ -83,7 +83,7 @@ namespace Librame.Extensions.Core
                 var interfaceTypes = Enumerable.ToArray(type.FindInterfacesThatClose(openRequestInterface));
                 if (interfaceTypes.Any())
                 {
-                    if (type.IsConcrete())
+                    if (type.IsConcreteType())
                     {
                         concretions.Add(type);
                     }
@@ -94,7 +94,7 @@ namespace Librame.Extensions.Core
                     }
                 }
             },
-            types => types.Where(t => !t.IsOpenGeneric()));
+            types => types.Where(t => !t.IsOpenGenericType()));
 
             foreach (var @interface in interfaces)
             {
@@ -119,7 +119,7 @@ namespace Librame.Extensions.Core
                     }
                 }
 
-                if (!@interface.IsOpenGeneric())
+                if (!@interface.IsOpenGenericType())
                 {
                     AddConcretionsThatCouldBeClosed(@interface, concretions, services);
                 }
@@ -151,7 +151,7 @@ namespace Librame.Extensions.Core
         private static void AddConcretionsThatCouldBeClosed(Type @interface, List<Type> concretions, IServiceCollection services)
         {
             foreach (var type in concretions
-                .Where(x => x.IsOpenGeneric() && x.CouldCloseTo(@interface)))
+                .Where(x => x.IsOpenGenericType() && x.CouldCloseTo(@interface)))
             {
                 try
                 {
@@ -190,7 +190,7 @@ namespace Librame.Extensions.Core
         {
             if (pluggedType == null) yield break;
 
-            if (!pluggedType.IsConcrete()) yield break;
+            if (!pluggedType.IsConcreteType()) yield break;
 
             if (templateType.GetTypeInfo().IsInterface)
             {

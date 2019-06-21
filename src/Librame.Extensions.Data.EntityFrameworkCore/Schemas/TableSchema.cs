@@ -54,7 +54,7 @@ namespace Librame.Extensions.Data
                 if (types.IsNotNullOrEmpty())
                 {
                     // 取出具体实类型名称（多个实类型则默认返回第一个）
-                    return GetEntityTypeNames(types.Where(type => type.IsConcrete()).FirstOrDefault());
+                    return GetEntityTypeNames(types.Where(type => type.IsConcreteType()).FirstOrDefault());
                 }
 
                 return entityType.Name.SplitPair("`").Key?.AsPluralize();

@@ -22,6 +22,9 @@ namespace Librame.Extensions
     /// </summary>
     public static class ValidationExtensions
     {
+
+        #region NullOrEmpty
+
         /// <summary>
         /// 是否为 NULL。
         /// </summary>
@@ -98,6 +101,10 @@ namespace Librame.Extensions
             return !sources.IsNullOrEmpty();
         }
 
+        #endregion
+
+
+        #region Compare
 
         /// <summary>
         /// 是否为倍数。
@@ -155,25 +162,17 @@ namespace Librame.Extensions
                 || value.IsGreater(compareMaximum, equalMaximum);
         }
 
+        #endregion
+
+
+        #region Type
 
         /// <summary>
-        /// 是否为 <see cref="Nullable{T}"/>。
+        /// 是否为具体实类型（非接口与抽象类型，即可实例化类型）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsNullable(this Type type)
-        {
-            return type.IsNotNull()
-                && type.IsGenericType
-                && type.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
-
-        /// <summary>
-        /// 是否为具体实类型（非接口与抽象类型）。
-        /// </summary>
-        /// <param name="type">给定的类型。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool IsConcrete(this Type type)
+        public static bool IsConcreteType(this Type type)
         {
             return type.IsNotNull()
                 && !type.IsAbstract
@@ -181,14 +180,39 @@ namespace Librame.Extensions
         }
 
         /// <summary>
-        /// 是否为公开泛类型（泛类型定义或包含泛型参数集合）。
+        /// 是否为开放式泛型（泛类型定义或包含泛型参数集合）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsOpenGeneric(this Type type)
+        public static bool IsOpenGenericType(this Type type)
         {
+            // 如泛型 List<string>，则 GenericTypeDefinition 为 List<T>，GenericParameters 为 string
             return type.IsNotNull()
                 && (type.IsGenericTypeDefinition || type.ContainsGenericParameters);
+        }
+
+        /// <summary>
+        /// 是否为可空类型。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNullableType(this Type type)
+        {
+            // 如可空泛型 int?，则 GenericTypeDefinition() 为 Nullable<T>
+            return type.IsNotNull()
+                && type.IsGenericType
+                && type.GetGenericTypeDefinition() == TypeExtensions.NullableType;
+        }
+
+        /// <summary>
+        /// 是否为字符串类型。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsStringType(this Type type)
+        {
+            return type.IsNotNull()
+                && type == TypeExtensions.StringType;
         }
 
         /// <summary>
@@ -203,7 +227,7 @@ namespace Librame.Extensions
         /// <param name="baseType">给定的基础类型。</param>
         /// <param name="targetType">给定的目标类型。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsAssignableFromTarget(this Type baseType, Type targetType)
+        public static bool IsAssignableFromTargetType(this Type baseType, Type targetType)
         {
             baseType.NotNull(nameof(baseType));
             targetType.NotNull(nameof(targetType));
@@ -228,14 +252,17 @@ namespace Librame.Extensions
         /// <paramref name="baseType"/> 或 <paramref name="targetType"/> 为空。
         /// </exception>
         /// <remarks>
-        /// 与 <see cref="IsAssignableFromTarget(Type, Type)"/> 参数相反。
+        /// 与 <see cref="IsAssignableFromTargetType(Type, Type)"/> 参数相反。
         /// </remarks>
         /// <param name="targetType">给定的目标类型。</param>
         /// <param name="baseType">给定的基础类型。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsAssignableToBase(this Type targetType, Type baseType)
+        public static bool IsAssignableToBaseType(this Type targetType, Type baseType)
         {
-            return baseType.IsAssignableFromTarget(targetType);
+            return baseType.IsAssignableFromTargetType(targetType);
         }
+
+        #endregion
+
     }
 }

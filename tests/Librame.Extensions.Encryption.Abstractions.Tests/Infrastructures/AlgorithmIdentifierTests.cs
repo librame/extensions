@@ -4,12 +4,14 @@ namespace Librame.Extensions.Encryption.Tests
 {
     public class AlgorithmIdentifierTests
     {
-
         [Fact]
         public void NewTest()
         {
-            var identifier = AlgorithmIdentifier.New();
-            Assert.Equal(identifier, AlgorithmIdentifier.Parse(identifier.ToString()));
+            var identifier = (string)AlgorithmIdentifier.Empty;
+            Assert.NotEmpty(identifier);
+
+            var identifier1 = (string)AlgorithmIdentifier.New();
+            Assert.NotEqual(identifier1, identifier);
         }
 
     }

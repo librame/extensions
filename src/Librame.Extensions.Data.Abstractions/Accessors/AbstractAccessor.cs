@@ -23,7 +23,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 抽象访问器。
     /// </summary>
-    public abstract class AbstractAccessor : AbstractDispose, IAccessor
+    public abstract class AbstractAccessor : AbstractDisposable, IAccessor
     {
         /// <summary>
         /// 访问器类型。

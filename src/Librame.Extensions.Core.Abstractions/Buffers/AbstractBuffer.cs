@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     /// 抽象缓冲区。
     /// </summary>
     /// <typeparam name="T">指定的类型。</typeparam>
-    public abstract class AbstractBuffer<T> : IBuffer<T>
+    public abstract class AbstractBuffer<T> : AbstractCloneable<IBuffer<T>>, IBuffer<T>
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractBuffer{T}"/> 实例。
@@ -44,13 +44,6 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <value>返回 <see cref="Memory{T}"/>。</value>
         public Memory<T> Memory { get; set; }
-
-
-        /// <summary>
-        /// 创建副本。
-        /// </summary>
-        /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
-        public abstract IBuffer<T> Copy();
 
 
         /// <summary>
@@ -97,6 +90,5 @@ namespace Librame.Extensions.Core
         {
             return Memory.ToString();
         }
-
     }
 }

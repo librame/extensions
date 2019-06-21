@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 唯一标识符。
     /// </summary>
-    public struct UniqueIdentifier : IEquatable<UniqueIdentifier>
+    public class UniqueIdentifier : IEquatable<UniqueIdentifier>
     {
         private static readonly string _base32Chars = "0123456789abcdefghjkmnpqrstvwxyz";
 
@@ -29,20 +29,23 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="UniqueIdentifier"/> 实例。
         /// </summary>
         /// <param name="generator">给定的 <see cref="RandomNumberGenerator"/>。</param>
-        /// <param name="length">给定要生成的长度（可选；默认为 32）。</param>
-        public UniqueIdentifier(RandomNumberGenerator generator, int length = 32)
+        /// <param name="length">给定要生成的字节长度（可选；默认为 32 位）。</param>
+        /// <param name="useHexEncode">使用 16 进制或 BASE64 编码。如果字节长度默认为 32，则生成字符串的长度为 64/44（可选；默认使用 16 进制编码）。</param>
+        public UniqueIdentifier(RandomNumberGenerator generator, int length = 32, bool useHexEncode = true)
         {
+            generator.NotNull(nameof(generator));
+
             var buffer = new byte[length];
             generator.GetBytes(buffer);
 
-            _identifier = buffer.AsHexString();
+            _identifier = useHexEncode ? buffer.AsHexString() : buffer.AsBase64String();
         }
 
         /// <summary>
         /// 构造一个 <see cref="UniqueIdentifier"/> 实例。
         /// </summary>
         /// <param name="guid">给定的 <see cref="Guid"/>。</param>
-        /// <param name="base32Chars">给定的 BASE64 字符集合（可选；默认由数字加小写字母共 26 个字符）。</param>
+        /// <param name="base32Chars">给定的 BASE32 字符集合（可选；默认生成由数字加小写字母构成长度为 26 的字符串）。</param>
         public UniqueIdentifier(Guid guid, string base32Chars = null)
         {
             var buffer = guid.ToByteArray();
@@ -57,7 +60,7 @@ namespace Librame.Extensions.Core
         }
 
 
-        private static string ToBase32(long hs, long ls, string base32Chars)
+        private string ToBase32(long hs, long ls, string base32Chars)
         {
             var buffer = new char[26];
 
@@ -93,15 +96,7 @@ namespace Librame.Extensions.Core
         }
 
 
-        /// <summary>
-        /// 是否相等。
-        /// </summary>
-        /// <param name="other">给定的 <see cref="UniqueIdentifier"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public bool Equals(UniqueIdentifier other)
-        {
-            return this == other;
-        }
+        #region Overrrides
 
         /// <summary>
         /// 是否相等。
@@ -122,19 +117,28 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回整数。</returns>
         public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
+            => ToString().GetHashCode();
 
 
         /// <summary>
-        /// 转换为 16 进制字符串。
+        /// 转换为字符串。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-        {
-            return _identifier;
-        }
+            => _identifier;
+
+        #endregion
+
+
+        #region Compares
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="other">给定的 <see cref="UniqueIdentifier"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool Equals(UniqueIdentifier other)
+            => this == other;
 
 
         /// <summary>
@@ -144,9 +148,7 @@ namespace Librame.Extensions.Core
         /// <param name="b">给定的 <see cref="UniqueIdentifier"/>。</param>
         /// <returns>返回是否相等的布尔值。</returns>
         public static bool operator ==(UniqueIdentifier a, UniqueIdentifier b)
-        {
-            return a.ToString() == b.ToString();
-        }
+            => a.ToString() == b.ToString();
 
         /// <summary>
         /// 是否不等。
@@ -155,49 +157,66 @@ namespace Librame.Extensions.Core
         /// <param name="b">给定的 <see cref="UniqueIdentifier"/>。</param>
         /// <returns>返回是否不等的布尔值。</returns>
         public static bool operator !=(UniqueIdentifier a, UniqueIdentifier b)
-        {
-            return !(a == b);
-        }
+            => !(a == b);
 
+        #endregion
+
+
+        #region Converts
 
         /// <summary>
         /// 隐式转换为字符串。
         /// </summary>
         /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>。</param>
         public static implicit operator string(UniqueIdentifier identifier)
-        {
-            return identifier.ToString();
-        }
+            => identifier?.ToString();
+
+        /// <summary>
+        /// 显式转换为 <see cref="UniqueIdentifier"/>（默认由数字加小写字母构成）。
+        /// </summary>
+        /// <param name="guid">给定的 <see cref="Guid"/>。</param>
+        public static explicit operator UniqueIdentifier(Guid guid)
+            => new UniqueIdentifier(guid);
+
+        /// <summary>
+        /// 显式转换为 <see cref="UniqueIdentifier"/>（默认生成 32 位字节长度数组）。
+        /// </summary>
+        /// <param name="generator">给定的 <see cref="RandomNumberGenerator"/>。</param>
+        public static explicit operator UniqueIdentifier(RandomNumberGenerator generator)
+            => new UniqueIdentifier(generator);
+
+        #endregion
+
+
+        #region Instances
+
+        /// <summary>
+        /// 空 GUID 只读实例。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="UniqueIdentifier"/>。
+        /// </value>
+        public readonly static UniqueIdentifier EmptyByGuid
+            = new UniqueIdentifier(Guid.Empty);
 
 
         /// <summary>
-        /// 空实例。
+        /// 使用 <see cref="Guid.NewGuid()"/> 新建实例。
         /// </summary>
-        /// <returns>返回 <see cref="UniqueIdentifier"/>。</returns>
-        public static UniqueIdentifier EmptyByGuid(string base32Chars = null)
-        {
-            return new UniqueIdentifier(Guid.Empty, base32Chars);
-        }
-
-        /// <summary>
-        /// 新建实例。
-        /// </summary>
-        /// <param name="base32Chars">给定的 BASE64 字符集合（可选；默认由数字加小写字母共 26 个字符）。</param>
+        /// <param name="base32Chars">给定的 BASE32 字符集合（可选；默认由数字加小写字母构成）。</param>
         /// <returns>返回 <see cref="UniqueIdentifier"/>。</returns>
         public static UniqueIdentifier NewByGuid(string base32Chars = null)
-        {
-            return new UniqueIdentifier(Guid.NewGuid(), base32Chars);
-        }
+            => new UniqueIdentifier(Guid.NewGuid(), base32Chars);
 
         /// <summary>
-        /// 新建实例。
+        /// 使用 <see cref="RandomNumberGenerator.Create()"/> 新建实例。
         /// </summary>
-        /// <param name="length">给定要生成的长度（可选；默认为 32）。</param>
+        /// <param name="length">给定要生成的字节长度（可选；默认为 32 位）。</param>
         /// <returns>返回 <see cref="UniqueIdentifier"/>。</returns>
         public static UniqueIdentifier NewByRng(int length = 32)
-        {
-            return new UniqueIdentifier(RandomNumberGenerator.Create(), length);
-        }
+            => new UniqueIdentifier(RandomNumberGenerator.Create(), length);
+
+        #endregion
 
     }
 }

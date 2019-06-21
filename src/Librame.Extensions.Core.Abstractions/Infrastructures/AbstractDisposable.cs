@@ -15,33 +15,33 @@ using System;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象处置对象。
+    /// 抽象可处置对象。
     /// </summary>
-    /// <typeparam name="TDisposed">指定的已处置类型。</typeparam>
-    public abstract class AbstractDispose<TDisposed> : AbstractDispose
+    /// <typeparam name="TDisposable">指定的可处置对象类型。</typeparam>
+    public abstract class AbstractDisposable<TDisposable> : AbstractDisposable, IDisposable<TDisposable>
     {
         /// <summary>
-        /// 获取已处置类型。
+        /// 获取可处置对象类型。
         /// </summary>
         /// <returns>返回 <see cref="Type"/>。</returns>
-        protected override Type GetDisposedType()
+        protected override Type GetDisposableType()
         {
-            return typeof(TDisposed);
+            return typeof(TDisposable);
         }
     }
 
     /// <summary>
-    /// 抽象处置对象。
+    /// 抽象可处置对象。
     /// </summary>
-    public abstract class AbstractDispose : IDisposable
+    public abstract class AbstractDisposable : IDisposable
     {
         private bool _disposed;
 
         /// <summary>
-        /// 获取已处置类型。
+        /// 获取可处置对象类型。
         /// </summary>
         /// <returns>返回 <see cref="Type"/>。</returns>
-        protected abstract Type GetDisposedType();
+        protected abstract Type GetDisposableType();
 
         /// <summary>
         /// 如果已处置则抛出异常。
@@ -49,11 +49,11 @@ namespace Librame.Extensions.Core
         protected virtual void ThrowIfDisposed()
         {
             if (_disposed)
-                throw new ObjectDisposedException(GetDisposedType()?.Name);
+                throw new ObjectDisposedException(GetDisposableType()?.Name);
         }
 
         /// <summary>
-        /// 处置。
+        /// 处置对象。
         /// </summary>
         public virtual void Dispose()
         {

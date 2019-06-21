@@ -60,7 +60,7 @@ namespace Librame.Extensions.Data
         /// 获取已释放类型。
         /// </summary>
         /// <returns>返回 <see cref="Type"/>。</returns>
-        protected override Type GetDisposedType()
+        protected override Type GetDisposableType()
         {
             return GetType();
         }

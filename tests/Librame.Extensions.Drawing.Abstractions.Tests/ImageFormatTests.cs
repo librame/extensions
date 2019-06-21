@@ -4,7 +4,6 @@ namespace Librame.Extensions.Drawing.Tests
 {
     public class ImageFormatTests
     {
-
         [Fact]
         public void AllTest()
         {

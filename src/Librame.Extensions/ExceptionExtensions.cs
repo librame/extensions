@@ -249,7 +249,7 @@ namespace Librame.Extensions
         /// <returns>返回目标类型或抛出异常。</returns>
         public static Type AssignableFromTarget(this Type baseType, Type targetType)
         {
-            if (!baseType.IsAssignableFromTarget(targetType))
+            if (!baseType.IsAssignableFromTargetType(targetType))
             {
                 var message = $"The \"{baseType.ToString()}\" is not assignable from \"{targetType.ToString()}\".";
                 throw new ArgumentException(message);

@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     /// 抽象服务。
     /// </summary>
     /// <typeparam name="TService">指定的服务类型。</typeparam>
-    public abstract class AbstractService<TService> : AbstractDispose<TService>, IService
+    public abstract class AbstractService<TService> : AbstractDisposable<TService>, IService
         where TService : class, IService
     {
         /// <summary>

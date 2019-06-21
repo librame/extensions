@@ -22,13 +22,6 @@ namespace Librame.Extensions.Tests
         }
 
         [Fact]
-        public void IsNullableTypeTest()
-        {
-            Assert.True(typeof(bool?).IsNullable());
-            Assert.False(typeof(bool).IsNullable());
-        }
-
-        [Fact]
         public void IsMultiplesTest()
         {
             Assert.True(4.IsMultiples(2));
@@ -65,19 +58,26 @@ namespace Librame.Extensions.Tests
         }
 
         [Fact]
+        public void IsNullableTypeTest()
+        {
+            Assert.True(typeof(bool?).IsNullableType());
+            Assert.False(typeof(bool).IsNullableType());
+        }
+
+        [Fact]
         public void IsAssignableFromTargetTest()
         {
             var baseType = typeof(IAnimal);
             var catType = typeof(Cat);
             var dogType = typeof(Dog);
 
-            Assert.True(baseType.IsAssignableFromTarget(catType));
-            Assert.True(baseType.IsAssignableFromTarget(dogType));
-            Assert.False(catType.IsAssignableFromTarget(dogType));
+            Assert.True(baseType.IsAssignableFromTargetType(catType));
+            Assert.True(baseType.IsAssignableFromTargetType(dogType));
+            Assert.False(catType.IsAssignableFromTargetType(dogType));
 
-            Assert.True(catType.IsAssignableToBase(baseType));
-            Assert.True(dogType.IsAssignableToBase(baseType));
-            Assert.False(catType.IsAssignableToBase(dogType));
+            Assert.True(catType.IsAssignableToBaseType(baseType));
+            Assert.True(dogType.IsAssignableToBaseType(baseType));
+            Assert.False(catType.IsAssignableToBaseType(dogType));
         }
 
     }

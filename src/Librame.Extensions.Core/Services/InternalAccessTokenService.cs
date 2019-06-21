@@ -21,9 +21,6 @@ namespace Librame.Extensions.Core
     /// </summary>
     internal class InternalAccessTokenService : AbstractService<InternalAccessTokenService>, IAccessTokenService
     {
-        private readonly static UniqueIdentifier _identifier = UniqueIdentifier.NewByGuid();
-
-
         /// <summary>
         /// 构造一个 <see cref="InternalClockService"/> 实例。
         /// </summary>
@@ -44,7 +41,7 @@ namespace Librame.Extensions.Core
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var token = _identifier.ToString();
+            var token = UniqueIdentifier.EmptyByGuid.ToString();
             Logger.LogInformation($"Get Access Token: {token}");
 
             return Task.FromResult(token);

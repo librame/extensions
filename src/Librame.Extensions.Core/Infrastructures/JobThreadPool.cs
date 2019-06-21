@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 工作线程池。
     /// </summary>
-    public class JobThreadPool : AbstractDispose<JobThreadPool>, IJobThreadPool
+    public class JobThreadPool : AbstractDisposable<JobThreadPool>, IJobThreadPool
     {
         private List<Thread> _threads;
         private ConcurrentQueue<JobDescriptor> _jobs;

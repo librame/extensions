@@ -4,26 +4,53 @@ namespace Librame.Extensions.Tests
 {
     public class TypeExtensionsTests
     {
-        class TestClass1
+        class TestClass
         {
-            public string Name { get; set; }
-        }
+            static string _field1;
+            string _field2;
+            public string Field3 = string.Empty;
 
-        class TestClass2 : TestClass1
-        {
-            public string Abbr { get; set; }
+            static string Property1 { get; set; }
+            string Property2 { get; set; }
+            public string Property3 { get; set; }
         }
 
 
         [Fact]
-        public void CreateOrDefaultTest()
+        public void GetAllFieldsTest()
         {
-            var i = (int)typeof(int).CreateOrDefault();
-            Assert.Equal(default, i);
+            var type = typeof(TestClass);
 
-            var obj = (TestClass1)typeof(TestClass1).CreateOrDefault();
-            Assert.NotNull(obj);
+            var fields = type.GetAllFields();
+            Assert.Equal(6, fields.Length);
+
+            fields = type.GetAllFieldsWithoutStatic();
+            Assert.Equal(4, fields.Length);
         }
+
+
+        [Fact]
+        public void GetAllPropertiesTest()
+        {
+            var type = typeof(TestClass);
+
+            var properties = type.GetAllProperties();
+            Assert.Equal(3, properties.Length);
+
+            properties = type.GetAllPropertiesWithoutStatic();
+            Assert.Equal(2, properties.Length);
+        }
+
+
+        //[Fact]
+        //public void CreateOrDefaultTest()
+        //{
+        //    var i = (int)typeof(int).CreateOrDefault();
+        //    Assert.Equal(default, i);
+
+        //    var obj = (TestClass1)typeof(TestClass1).CreateOrDefault();
+        //    Assert.NotNull(obj);
+        //}
 
 
         [Fact]
@@ -31,20 +58,6 @@ namespace Librame.Extensions.Tests
         {
             var type = typeof(bool?).UnwrapNullableType();
             Assert.Equal(typeof(bool), type);
-        }
-
-
-        [Fact]
-        public void PopulatePropertiesTest()
-        {
-            var c1 = new TestClass1
-            {
-                Name = nameof(TestClass1)
-            };
-            var c2 = new TestClass2();
-
-            c1.PopulateProperties(c2);
-            Assert.Equal(c1.Name, c2.Name);
         }
 
     }

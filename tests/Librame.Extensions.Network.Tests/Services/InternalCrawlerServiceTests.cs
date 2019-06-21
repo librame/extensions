@@ -16,7 +16,7 @@ namespace Librame.Extensions.Network.Tests
         [Fact]
         public async void GetStringTest()
         {
-            var result = await _crawler.GetString("https://www.cnblogs.com");
+            var result = await _crawler.GetStringAsync("https://www.cnblogs.com");
             Assert.NotEmpty(result);
         }
 
@@ -24,7 +24,7 @@ namespace Librame.Extensions.Network.Tests
         [Fact]
         public async void GetHyperLinksTest()
         {
-            var result = await _crawler.GetHyperLinks("https://www.baidu.com");
+            var result = await _crawler.GetHyperLinksAsync("https://www.baidu.com");
             Assert.True(result.Count > 0);
         }
 
@@ -32,7 +32,7 @@ namespace Librame.Extensions.Network.Tests
         [Fact]
         public async void GetImageHyperLinksTest()
         {
-            var result = await _crawler.GetImageHyperLinks("https://www.baidu.com");
+            var result = await _crawler.GetImageHyperLinksAsync("https://www.baidu.com");
             Assert.True(result.Count > 0);
         }
 

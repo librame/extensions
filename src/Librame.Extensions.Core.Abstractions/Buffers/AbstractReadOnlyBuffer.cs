@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     /// 抽象只读缓冲区。
     /// </summary>
     /// <typeparam name="T">指定的类型。</typeparam>
-    public abstract class AbstractReadOnlyBuffer<T> : IReadOnlyBuffer<T>
+    public abstract class AbstractReadOnlyBuffer<T> : AbstractCloneable<IReadOnlyBuffer<T>>, IReadOnlyBuffer<T>
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractReadOnlyBuffer{T}"/> 实例。
@@ -44,13 +44,6 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <value>返回 <see cref="ReadOnlyMemory{T}"/>。</value>
         public ReadOnlyMemory<T> Memory { get; }
-
-
-        /// <summary>
-        /// 创建副本。
-        /// </summary>
-        /// <returns>返回 <see cref="IReadOnlyBuffer{T}"/>。</returns>
-        public abstract IReadOnlyBuffer<T> Copy();
 
 
         /// <summary>

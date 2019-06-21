@@ -14,14 +14,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 内部注入服务。
     /// </summary>
-    internal class InternalInjectionService : AbstractDispose<InternalInjectionService>, IInjectionService
+    internal class InternalInjectionService : AbstractDisposable<InternalInjectionService>, IInjectionService
     {
         Dictionary<Type, Action<object, IServiceProvider>> _injectedActions
             = new Dictionary<Type, Action<object, IServiceProvider>>();
@@ -59,7 +58,6 @@ namespace Librame.Extensions.Core
                 return;
             }
 
-            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
             var setExpressions = new List<Expression>();
 
             // 参数
@@ -70,7 +68,7 @@ namespace Librame.Extensions.Core
             var serviceMethod = typeof(IServiceProvider).GetMethod(nameof(IServiceProvider.GetService));
 
             // 字段注入
-            var fields = serviceType.GetFields(flags).Where(fi => fi.IsDefined<InjectionServiceAttribute>());
+            var fields = serviceType.GetAllFieldsWithoutStatic().Where(fi => fi.IsDefined<InjectionServiceAttribute>());
             foreach (var field in fields)
             {
                 var fieldExpression = Expression.Field(obj, field);
@@ -80,7 +78,7 @@ namespace Librame.Extensions.Core
             }
 
             // 属性注入
-            var properties = serviceType.GetProperties(flags).Where(pi => pi.IsDefined<InjectionServiceAttribute>());
+            var properties = serviceType.GetAllPropertiesWithoutStatic().Where(pi => pi.IsDefined<InjectionServiceAttribute>());
             foreach (var property in properties)
             {
                 var propExpression = Expression.Property(obj, property);
@@ -91,6 +89,7 @@ namespace Librame.Extensions.Core
 
             var bodyExpression = Expression.Block(setExpressions);
             var injectAction = Expression.Lambda<Action<object, IServiceProvider>>(bodyExpression, objExpression, spExpression).Compile();
+
             _injectedActions[serviceType] = injectAction;
             injectAction.Invoke(service, ServiceProvider);
         }

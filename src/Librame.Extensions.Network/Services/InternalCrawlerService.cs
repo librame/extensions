@@ -55,9 +55,9 @@ namespace Librame.Extensions.Network
         /// <param name="url">给定的 URL 链接。</param>
         /// <param name="pattern">给定包含 url 与 path 分组名的超链接正则表达式匹配模式（可选）。</param>
         /// <returns>返回一个包含图像类超链接列表的异步操作。</returns>
-        public async Task<IList<string>> GetImageHyperLinks(string url, string pattern = null)
+        public async Task<IList<string>> GetImageHyperLinksAsync(string url, string pattern = null)
         {
-            var hyperLinks = await GetHyperLinks(url, pattern);
+            var hyperLinks = await GetHyperLinksAsync(url, pattern);
             Logger.LogDebug($"Get hyper links: {string.Join(",", hyperLinks)}");
 
             if (hyperLinks.IsNullOrEmpty()) return hyperLinks;
@@ -75,7 +75,7 @@ namespace Librame.Extensions.Network
         /// <param name="url">给定的 URL 链接。</param>
         /// <param name="pattern">给定包含 url 与 path 分组名的超链接正则表达式匹配模式（可选）。</param>
         /// <returns>返回一个包含超链接列表的异步操作。</returns>
-        public async Task<IList<string>> GetHyperLinks(string url, string pattern = null)
+        public async Task<IList<string>> GetHyperLinksAsync(string url, string pattern = null)
         {
             pattern = pattern.EnsureValue(() =>
             {
@@ -87,7 +87,7 @@ namespace Librame.Extensions.Network
 
             var links = new List<string>();
 
-            var htmlCode = await GetString(url);
+            var htmlCode = await GetStringAsync(url);
             var matches = regex.Matches(htmlCode);
 
             if (matches.Count < 1)
@@ -155,7 +155,7 @@ namespace Librame.Extensions.Network
         /// </summary>
         /// <param name="url">给定的 URL 链接。</param>
         /// <returns>返回一个包含响应内容的异步操作。</returns>
-        public Task<string> GetString(string url)
+        public Task<string> GetStringAsync(string url)
         {
             return GetResponseString(url);
         }
@@ -167,7 +167,7 @@ namespace Librame.Extensions.Network
         /// <param name="url">给定的 URL 链接。</param>
         /// <param name="postData">给定用于提交请求的数据。</param>
         /// <returns>返回一个包含响应内容的异步操作。</returns>
-        public Task<string> PostString(string url, string postData)
+        public Task<string> PostStringAsync(string url, string postData)
         {
             return GetResponseString(url, postData);
         }

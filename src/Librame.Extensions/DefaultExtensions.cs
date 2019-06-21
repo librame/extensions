@@ -11,6 +11,11 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Librame.Extensions
 {
@@ -20,6 +25,7 @@ namespace Librame.Extensions
     public static class DefaultExtensions
     {
         private static byte[] _locker = new byte[0];
+
 
         /// <summary>
         /// 确保单例。
@@ -89,6 +95,141 @@ namespace Librame.Extensions
             where TValue : struct
         {
             return nullable.HasValue ? nullable.Value : defaultValueFactory.Invoke();
+        }
+
+
+        /// <summary>
+        /// 确保克隆。
+        /// </summary>
+        /// <param name="obj">给定要克隆的对象。</param>
+        /// <param name="type">给定要克隆的类型（可选）。</param>
+        /// <param name="clonedTypes">给定已克隆的类型字典（可选；外部传入以支持链式克隆）。</param>
+        /// <returns>返回克隆的对象。</returns>
+        public static object EnsureClone(this object obj, Type type,
+            ConcurrentDictionary<Type, object> clonedTypes = null)
+        {
+            if (obj.IsNull()) return null;
+            if (type.IsNull()) type = obj.GetType();
+
+            // 如果是值或字符串类型
+            if (type.IsValueType || type.IsStringType())
+            {
+                // 则直接调用 Object.MemberwiseClone() 方法
+                return type.GetMethod("MemberwiseClone")?.Invoke(obj, null);
+            }
+
+            // 如果支持序列化模式
+            if (type.IsSerializable)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    var formatter = new BinaryFormatter();
+                    formatter.Serialize(ms, obj);
+
+                    ms.Seek(0, SeekOrigin.Begin);
+                    return formatter.Deserialize(ms);
+                }
+            }
+
+            // 初始实例化
+            if (clonedTypes.IsNull())
+                clonedTypes = new ConcurrentDictionary<Type, object>();
+
+            // 反射模式
+            var clone = Activator.CreateInstance(type);
+
+            foreach (var field in type.GetAllFields())
+            {
+                var fieldValue = clonedTypes.GetOrAdd(field.FieldType, _type =>
+                {
+                    // 链式克隆
+                    return EnsureClone(field.GetValue(obj), _type, clonedTypes);
+                });
+
+                field.SetValue(clone, fieldValue);
+            }
+
+            foreach (var property in type.GetAllProperties())
+            {
+                var propertyValue = clonedTypes.GetOrAdd(property.PropertyType, _type =>
+                {
+                    // 链式克隆
+                    return EnsureClone(property.GetValue(obj), _type, clonedTypes);
+                });
+
+                property.SetValue(clone, propertyValue);
+            }
+
+            return clone;
+        }
+
+
+        /// <summary>
+        /// 确保从源对象填入目标对象（支持所有字段与属性）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="source"/> 为空或默认值。
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="target"/> 为空或默认值。
+        /// </exception>
+        /// <param name="source">给定的来源类型实例。</param>
+        /// <param name="target">给定的目标类型实例。</param>
+        public static void EnsurePopulate<TSource, TTarget>(this TSource source, TTarget target)
+            where TSource : class
+            where TTarget : class
+        {
+            source.NotNull(nameof(source));
+            target.NotNull(nameof(target));
+
+            var sourceType = typeof(TSource);
+            var targetType = typeof(TTarget);
+
+            var srcFields = new List<FieldInfo>(sourceType.GetAllFields());
+            var tarFields = new List<FieldInfo>(targetType.GetAllFields());
+
+            for (var s = 0; s < srcFields.Count; s++)
+            {
+                for (var t = 0; t < tarFields.Count; t++)
+                {
+                    var srcField = srcFields[s];
+                    var tarField = tarFields[t];
+
+                    if (srcField.Name == tarField.Name)
+                    {
+                        var value = srcField.GetValue(source);
+                        tarField.SetValue(target, value);
+
+                        tarFields.Remove(tarField);
+                        srcFields.Remove(srcField);
+
+                        break;
+                    }
+                }
+            }
+
+            var srcProperties = new List<PropertyInfo>(sourceType.GetAllProperties());
+            var tarProperties = new List<PropertyInfo>(targetType.GetAllProperties());
+
+            for (var s = 0; s < srcProperties.Count; s++)
+            {
+                for (var t = 0; t < tarProperties.Count; t++)
+                {
+                    var srcProperty = srcProperties[s];
+                    var tarProperty = tarProperties[t];
+
+                    if (srcProperty.Name == tarProperty.Name)
+                    {
+                        var value = srcProperty.GetValue(source);
+                        tarProperty.SetValue(target, value);
+
+                        tarProperties.Remove(tarProperty);
+                        srcProperties.Remove(srcProperty);
+
+                        break;
+                    }
+                }
+            }
         }
 
     }

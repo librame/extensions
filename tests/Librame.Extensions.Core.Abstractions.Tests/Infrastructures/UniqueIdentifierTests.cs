@@ -7,14 +7,14 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void AllTest()
         {
-            var empty = UniqueIdentifier.EmptyByGuid();
-            Assert.NotEmpty(empty.ToString());
+            var identifier = (string)UniqueIdentifier.EmptyByGuid;
+            Assert.NotEmpty(identifier);
 
-            var guid = UniqueIdentifier.NewByGuid();
-            Assert.NotEmpty(guid.ToString());
+            identifier = UniqueIdentifier.NewByGuid();
+            Assert.NotEmpty(identifier);
 
-            var rng = UniqueIdentifier.NewByRng();
-            Assert.NotEmpty(rng.ToString());
+            identifier = UniqueIdentifier.NewByRng();
+            Assert.NotEmpty(identifier);
         }
     }
 }

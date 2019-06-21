@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 抽象存储。
     /// </summary>
-    public abstract class AbstractStore : AbstractDispose, IStore
+    public abstract class AbstractStore : AbstractDisposable, IStore
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractStore"/> 实例。
