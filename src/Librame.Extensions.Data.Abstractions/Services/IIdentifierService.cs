@@ -18,16 +18,15 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 标识服务接口。
+    /// 标识符服务接口。
     /// </summary>
-    public interface IIdService : IService
+    public interface IIdentifierService : IService
     {
         /// <summary>
         /// 异步获取标识。
         /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="parameters">给定的参数数组。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="string"/> 的异步操作。</returns>
-        Task<string> GetIdAsync(CancellationToken cancellationToken, params object[] parameters);
+        Task<string> GetIdAsync(CancellationToken cancellationToken = default);
     }
 }

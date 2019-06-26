@@ -16,7 +16,7 @@ namespace Librame.Extensions.Core
     /// 定位器接口。
     /// </summary>
     /// <typeparam name="TSource">指定的源类型。</typeparam>
-    public interface ILocator<TSource>
+    public interface ILocator<out TSource>
         where TSource : class
     {
         /// <summary>

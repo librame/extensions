@@ -24,7 +24,7 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 构造一个 <see cref="CiphertextConverter"/> 实例。
         /// </summary>
-        /// <param name="logger">给定的 <see cref="ILogger{CiphertextAlgorithmConverter}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{CiphertextConverter}"/>。</param>
         public CiphertextConverter(ILogger<CiphertextConverter> logger)
         {
             Logger = logger;
@@ -43,7 +43,7 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="source">给定的密文字符串。</param>
         /// <returns>返回缓冲区。</returns>
-        public IByteBuffer ToResult(string source)
+        public IByteBuffer To(string source)
         {
             var buffer = source.AsByteBufferFromBase64String();
             Logger.LogDebug($"From BASE64 String: {source}");
@@ -56,7 +56,7 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="result">给定的缓冲区。</param>
         /// <returns>返回字符串。</returns>
-        public string ToSource(IByteBuffer result)
+        public string From(IByteBuffer result)
         {
             string str = result.AsBase64String();
             Logger.LogDebug($"Convert to BASE64 String: {str}");

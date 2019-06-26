@@ -21,7 +21,6 @@ namespace Librame.Extensions
     /// </summary>
     public static class ConverterExtensions
     {
-
         /// <summary>
         /// 转换为字符编码转换器。
         /// </summary>

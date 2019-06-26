@@ -13,10 +13,10 @@ namespace Librame.Extensions.Core.Tests
 
             var str = nameof(EncodingConverterTests);
 
-            var buffer = converter.ToResult(str);
+            var buffer = converter.To(str);
             Assert.NotEmpty(buffer.Memory.ToArray());
 
-            var source = converter.ToSource(buffer);
+            var source = converter.From(buffer);
             Assert.Equal(str, source);
         }
 

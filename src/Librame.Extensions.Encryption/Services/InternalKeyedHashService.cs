@@ -21,14 +21,14 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部键控散列服务。
     /// </summary>
-    internal class InternalKeyedHashService : AbstractEncryptionService<InternalKeyedHashService>, IKeyedHashService
+    internal class InternalKeyedHashService : AbstractService<InternalKeyedHashService, EncryptionBuilderOptions>, IKeyedHashService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalKeyedHashService"/> 实例。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalKeyedHashAlgorithmService}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalKeyedHashService}"/>。</param>
         public InternalKeyedHashService(IKeyGenerator keyGenerator,
             IOptions<EncryptionBuilderOptions> options, ILogger<InternalKeyedHashService> logger)
             : base(options, logger)

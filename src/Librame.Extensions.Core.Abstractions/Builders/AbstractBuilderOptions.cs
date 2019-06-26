@@ -21,6 +21,5 @@ namespace Librame.Extensions.Core
         /// 选项名称。
         /// </summary>
         public string OptionsName { get; set; }
-
     }
 }

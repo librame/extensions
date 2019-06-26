@@ -8,7 +8,7 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public async void AllTest()
         {
-            var service = TestServiceProvider.Current.GetRequiredService<IIdService>();
+            var service = TestServiceProvider.Current.GetRequiredService<IIdentifierService>();
             var id = await service.GetIdAsync(default);
             Assert.NotEmpty(id);
         }

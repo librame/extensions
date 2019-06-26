@@ -20,9 +20,9 @@ namespace Librame.Extensions.Encryption
     using Core;
 
     /// <summary>
-    /// 内部 RSA 非对称算法服务。
+    /// 内部 RSA 服务。
     /// </summary>
-    internal class InternalRsaService : AbstractEncryptionService<InternalRsaService>, IRsaService
+    internal class InternalRsaService : AbstractService<InternalRsaService, EncryptionBuilderOptions>, IRsaService
     {
         private RSA _rsa = null;
 
@@ -32,7 +32,7 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalRsaAlgorithmService}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalRsaService}"/>。</param>
         public InternalRsaService(ISigningCredentialsService signingCredentials,
             IOptions<EncryptionBuilderOptions> options, ILogger<InternalRsaService> logger)
             : base(options, logger)

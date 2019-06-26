@@ -50,7 +50,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddConverters()
                 .AddLocalizations()
                 .AddMediators()
-                .AddServices();
+                .AddServices()
+                .AddValidators();
         }
 
     }

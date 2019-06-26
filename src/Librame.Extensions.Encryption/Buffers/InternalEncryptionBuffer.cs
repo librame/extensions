@@ -30,7 +30,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="converter">给定的转换器。</param>
         /// <param name="source">给定的来源实例。</param>
         public InternalEncryptionBuffer(TConverter converter, TSource source)
-            : this(converter, source, converter.ToResult(source))
+            : this(converter, source, converter.To(source))
         {
         }
 

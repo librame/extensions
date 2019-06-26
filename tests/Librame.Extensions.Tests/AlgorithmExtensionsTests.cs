@@ -8,6 +8,20 @@ namespace Librame.Extensions.Tests
         private string _rawString = nameof(AlgorithmExtensionsTests);
 
 
+        [Fact]
+        public void RandomStringsTest()
+        {
+            var pairs = 20.RandomStrings();
+            Assert.NotEmpty(pairs);
+
+            pairs = 20.RandomStrings(hasSpecial: true);
+            foreach (var p in pairs)
+            {
+                Assert.True(p.Key.HasSpecial());
+            }
+        }
+
+
         #region Hash Algorithm
 
         [Fact]

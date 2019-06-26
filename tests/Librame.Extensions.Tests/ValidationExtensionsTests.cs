@@ -5,6 +5,17 @@ namespace Librame.Extensions.Tests
 {
     public class ValidationExtensionsTests
     {
+        interface IAnimal
+        {
+        }
+        class Cat : IAnimal
+        {
+        }
+        class Dog : IAnimal
+        {
+        }
+
+
         [Fact]
         public void IsNullOrEmptyTest()
         {
@@ -80,18 +91,36 @@ namespace Librame.Extensions.Tests
             Assert.False(catType.IsAssignableToBaseType(dogType));
         }
 
-    }
+        [Fact]
+        public void DigitAndLetterTest()
+        {
+            Assert.True("012x".HasDigit());
+            Assert.False("012x".IsDigit());
+            Assert.True("012".IsDigit());
 
+            Assert.True("xX".HasLower());
+            Assert.False("xX".IsLower());
+            Assert.True("x".IsLower());
 
-    interface IAnimal
-    {
-    }
+            Assert.True("xX".HasUpper());
+            Assert.False("xX".IsUpper());
+            Assert.True("X".IsUpper());
 
-    class Cat : IAnimal
-    {
-    }
+            Assert.True("xX$".HasSpecial());
+            Assert.False("xX$".IsSpecial());
+            Assert.True("$".IsSpecial());
 
-    class Dog : IAnimal
-    {
+            Assert.True("012xX".HasLetter());
+            Assert.False("012xX".IsLetter());
+            Assert.True("xX".IsLetter());
+
+            Assert.True("012xX!".HasLetterAndDigit());
+            Assert.False("012xX!".IsLetterAndDigit());
+            Assert.True("012xX".IsLetterAndDigit());
+
+            Assert.True("012xX$^*".HasSafety());
+            Assert.False("xX$^*".IsSafety());
+            Assert.True("012xX$^*".IsSafety());
+        }
     }
 }

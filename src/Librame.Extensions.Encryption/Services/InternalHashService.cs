@@ -21,17 +21,16 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部散列服务。
     /// </summary>
-    internal class InternalHashService : AbstractEncryptionService<InternalHashService>, IHashService
+    internal class InternalHashService : AbstractService<InternalHashService, EncryptionBuilderOptions>, IHashService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalHashService"/> 实例。
         /// </summary>
         /// <param name="rsa">给定的 <see cref="IRsaService"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalHashAlgorithmService}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalHashService}"/>。</param>
         public InternalHashService(IRsaService rsa,
-            IOptions<EncryptionBuilderOptions> options,
-            ILogger<InternalHashService> logger)
+            IOptions<EncryptionBuilderOptions> options, ILogger<InternalHashService> logger)
             : base(options, logger)
         {
             Rsa = rsa.NotNull(nameof(rsa));

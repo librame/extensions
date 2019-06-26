@@ -36,7 +36,7 @@ namespace Librame.Extensions.Encryption
             if (converter.IsNull())
                 converter = buffer.ServiceProvider.GetRequiredService<ICiphertextConverter>();
 
-            return converter.ToSource(buffer);
+            return converter.From(buffer);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回字符串。</returns>
         public static string AsCiphertextString(this IEncryptionBuffer<ICiphertextConverter, string> buffer)
         {
-            return buffer.Converter.ToSource(buffer);
+            return buffer.Converter.From(buffer);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回缓冲区。</returns>
         public static IByteBuffer FromCiphertextString(this string str, IEncryptionBuffer<ICiphertextConverter, string> buffer)
         {
-            return buffer.Converter.ToResult(str);
+            return buffer.Converter.To(str);
         }
 
         #endregion
@@ -77,7 +77,7 @@ namespace Librame.Extensions.Encryption
             if (converter.IsNull())
                 converter = buffer.ServiceProvider.GetRequiredService<IPlaintextConverter>();
 
-            return converter.ToSource(buffer);
+            return converter.From(buffer);
         }
 
         #endregion

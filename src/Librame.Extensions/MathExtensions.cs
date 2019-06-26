@@ -17,7 +17,6 @@ namespace Librame.Extensions
     /// </summary>
     public static class MathExtensions
     {
-
         /// <summary>
         /// 计算最大公约数。
         /// </summary>

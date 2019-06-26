@@ -13,19 +13,20 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Storage
 {
+    using Core;
+
     /// <summary>
-    /// 访问令牌服务接口。
+    /// 存储令牌服务接口。
     /// </summary>
-    public interface IAccessTokenService : IService
+    public interface IStorageTokenService : IService
     {
         /// <summary>
-        /// 获取令牌。
+        /// 异步获取令牌。
         /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="parameters">给定的参数数组。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        Task<string> GetTokenAsync(CancellationToken cancellationToken, params object[] parameters);
+        Task<string> GetTokenAsync(CancellationToken cancellationToken = default);
     }
 }

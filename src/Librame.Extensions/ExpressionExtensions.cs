@@ -21,7 +21,6 @@ namespace Librame.Extensions
     /// </summary>
     public static class ExpressionExtensions
     {
-
         /// <summary>
         /// 解析指定属性表达式对应的名称。
         /// </summary>

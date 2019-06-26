@@ -19,7 +19,6 @@ namespace Librame.Extensions.Core
     /// </summary>
     public static class ConverterBuilderExtensions
     {
-
         /// <summary>
         /// 添加转换器集合扩展。
         /// </summary>

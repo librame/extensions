@@ -76,7 +76,7 @@ namespace Librame.Extensions.Network
                 var hwr = WebRequest.CreateHttp(url);
                 Logger.LogDebug($"Create http web request for gateway: {url.ToString()}");
 
-                hwr.ContentType = $"application/x-www-form-urlencoded;charset={Encoding.AsName()}";
+                hwr.ContentType = $"application/x-www-form-urlencoded;charset={Encoding.FromEncoding()}";
                 Logger.LogDebug($"Set content type: {hwr.ContentType}");
 
                 hwr.Method = "POST";

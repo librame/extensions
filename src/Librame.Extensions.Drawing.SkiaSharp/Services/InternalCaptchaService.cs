@@ -27,7 +27,7 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部验证码服务。
     /// </summary>
-    internal class InternalCaptchaService : AbstractDrawingService<InternalCaptchaService>, ICaptchaService
+    internal class InternalCaptchaService : AbstractService<InternalCaptchaService, DrawingBuilderOptions>, ICaptchaService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalCaptchaService"/> 实例。

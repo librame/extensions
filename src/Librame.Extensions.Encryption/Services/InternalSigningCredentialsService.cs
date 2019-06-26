@@ -18,10 +18,12 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Encryption
 {
+    using Core;
+
     /// <summary>
     /// 内部签名证书服务。
     /// </summary>
-    internal class InternalSigningCredentialsService : AbstractEncryptionService<InternalSigningCredentialsService>, ISigningCredentialsService
+    internal class InternalSigningCredentialsService : AbstractService<InternalSigningCredentialsService, EncryptionBuilderOptions>, ISigningCredentialsService
     {
         private readonly ConcurrentDictionary<string, SigningCredentials> _credentials;
 
@@ -31,7 +33,7 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="credentials">给定的签名证书集合。</param>
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalSymmetricAlgorithmService}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalSigningCredentialsService}"/>。</param>
         public InternalSigningCredentialsService(IEnumerable<KeyValuePair<string, SigningCredentials>> credentials,
             IOptions<EncryptionBuilderOptions> options, ILogger<InternalSigningCredentialsService> logger)
             : base(options, logger)

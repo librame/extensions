@@ -21,7 +21,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部密钥生成器。
     /// </summary>
-    internal class InternalKeyGenerator : AbstractEncryptionService<InternalKeyGenerator>, IKeyGenerator
+    internal class InternalKeyGenerator : AbstractService<InternalKeyGenerator, EncryptionBuilderOptions>, IKeyGenerator
     {
         private readonly AlgorithmIdentifier _optionIdentifier;
 

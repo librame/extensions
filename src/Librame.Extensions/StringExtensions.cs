@@ -105,7 +105,6 @@ namespace Librame.Extensions
             words.NotNull(nameof(words));
 
             string str = string.Empty;
-
             foreach (var w in words)
             {
                 // 首字母大写，其余字母均小写
@@ -130,7 +129,6 @@ namespace Librame.Extensions
 
             // 首单词小写
             string str = words[0].ToLower();
-
             if (words.Length > 1)
             {
                 for (var i = 1; i < words.Length; i++)

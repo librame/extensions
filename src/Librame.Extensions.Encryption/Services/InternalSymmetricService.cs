@@ -19,16 +19,16 @@ namespace Librame.Extensions.Encryption
     using Core;
 
     /// <summary>
-    /// 内部对称算法服务。
+    /// 内部对称服务。
     /// </summary>
-    internal class InternalSymmetricService : AbstractEncryptionService<InternalSymmetricService>, ISymmetricService
+    internal class InternalSymmetricService : AbstractService<InternalSymmetricService, EncryptionBuilderOptions>, ISymmetricService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalSymmetricService"/> 实例。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalSymmetricAlgorithmService}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{InternalSymmetricService}"/>。</param>
         public InternalSymmetricService(IKeyGenerator keyGenerator,
             IOptions<EncryptionBuilderOptions> options, ILogger<InternalSymmetricService> logger)
             : base(options, logger)

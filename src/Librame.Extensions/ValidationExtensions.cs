@@ -264,5 +264,184 @@ namespace Librame.Extensions
 
         #endregion
 
+
+        #region Digit & Letter & Special
+
+        /// <summary>
+        /// 是否有数字。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool HasDigit(this string str)
+            => str.Any(IsDigit);
+
+        /// <summary>
+        /// 是否为数字。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsDigit(this string str)
+            => str.All(IsDigit);
+
+        /// <summary>
+        /// 是否为数字。
+        /// </summary>
+        /// <param name="c">给定的字符。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsDigit(this char c)
+            => c >= '0' && c <= '9';
+
+
+        /// <summary>
+        /// 是否有小写字母。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool HasLower(this string str)
+            => str.Any(IsLower);
+
+        /// <summary>
+        /// 是否为小写字母。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLower(this string str)
+            => str.All(IsLower);
+
+        /// <summary>
+        /// 是否为小写字母。
+        /// </summary>
+        /// <param name="c">给定的字符。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLower(this char c)
+            => c >= 'a' && c <= 'z';
+
+
+        /// <summary>
+        /// 是否有大写字母。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool HasUpper(this string str)
+            => str.Any(IsUpper);
+
+        /// <summary>
+        /// 是否为大写字母。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsUpper(this string str)
+            => str.All(IsUpper);
+
+        /// <summary>
+        /// 是否为大写字母。
+        /// </summary>
+        /// <param name="c">给定的字符。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsUpper(this char c)
+            => c >= 'A' && c <= 'Z';
+
+
+        /// <summary>
+        /// 是否有部分特殊符号。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool HasSpecial(this string str)
+            => str.Any(IsSpecial);
+
+        /// <summary>
+        /// 是否为部分特殊符号。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsSpecial(this string str)
+            => str.All(IsSpecial);
+
+        /// <summary>
+        /// 是否为部分特殊符号。
+        /// </summary>
+        /// <param name="c">给定的字符。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsSpecial(this char c)
+            => AlgorithmExtensions.SPECIAL.Contains(c);
+
+
+        /// <summary>
+        /// 是否有大小写字母。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool HasLetter(this string str)
+            => str.HasUpper() && str.HasLower();
+
+        /// <summary>
+        /// 是否为大小写字母。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLetter(this string str)
+            => str.HasLetter() && str.All(IsLetter);
+
+        /// <summary>
+        /// 是否为大小写字母。
+        /// </summary>
+        /// <param name="c">给定的字符。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLetter(this char c)
+            => c.IsUpper() || c.IsLower();
+
+
+        /// <summary>
+        /// 是否有大小写字母和数字。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool HasLetterAndDigit(this string str)
+            => str.HasLetter() && str.HasDigit();
+
+        /// <summary>
+        /// 是否为大小写字母和数字。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLetterAndDigit(this string str)
+            => str.HasLetterAndDigit() && str.All(IsLetterAndDigit);
+
+        /// <summary>
+        /// 是否为大小写字母和数字。
+        /// </summary>
+        /// <param name="c">给定的字符。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLetterAndDigit(this char c)
+            => c.IsUpper() || c.IsLower() || c.IsDigit();
+
+
+        /// <summary>
+        /// 是否有大小写字母、数字和部分特殊符号。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool HasSafety(this string str)
+            => str.HasLetterAndDigit() && str.HasSpecial();
+
+        /// <summary>
+        /// 是否为大小写字母、数字和部分特殊符号。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsSafety(this string str)
+            => str.HasSafety() && str.All(IsSafety);
+
+        /// <summary>
+        /// 是否为大小写字母、数字和部分特殊符号。
+        /// </summary>
+        /// <param name="c">给定的字符。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsSafety(this char c)
+            => c.IsUpper() || c.IsLower() || c.IsDigit() || c.IsSpecial();
+
+        #endregion
+
     }
 }

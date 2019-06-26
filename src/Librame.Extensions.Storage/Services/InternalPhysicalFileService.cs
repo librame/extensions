@@ -12,24 +12,23 @@
 
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Storage
 {
+    using Core;
+
     /// <summary>
     /// 内部物理文件服务。
     /// </summary>
-    internal class InternalPhysicalFileService : AbstractStorageService<InternalPhysicalFileService>, IFileService
+    internal class InternalPhysicalFileService : AbstractService<InternalPhysicalFileService>, IFileService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalPhysicalFileService"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{StorageBuilderOptions}"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{PhysicalFileService}"/>。</param>
-        public InternalPhysicalFileService(IOptions<StorageBuilderOptions> options,
-            ILogger<InternalPhysicalFileService> logger)
-            : base(options, logger)
+        public InternalPhysicalFileService(ILogger<InternalPhysicalFileService> logger)
+            : base(logger)
         {
         }
 

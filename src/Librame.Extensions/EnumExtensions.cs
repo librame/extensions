@@ -143,7 +143,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="enumType">给定的枚举类型。</param>
         /// <returns>返回结果字典。</returns>
-        public static IDictionary<string, int> AsEnumDictionary(this Type enumType)
+        public static Dictionary<string, int> AsEnumDictionary(this Type enumType)
         {
             return enumType.AsEnumDictionary<int>();
         }
@@ -153,7 +153,7 @@ namespace Librame.Extensions
         /// <typeparam name="TConst">指定的常量类型。</typeparam>
         /// <param name="enumType">给定的枚举类型。</param>
         /// <returns>返回结果字典。</returns>
-        public static IDictionary<string, TConst> AsEnumDictionary<TConst>(this Type enumType)
+        public static Dictionary<string, TConst> AsEnumDictionary<TConst>(this Type enumType)
             where TConst : struct
         {
             return enumType.AsEnumDictionary(field => (TConst)field.GetValue(null));
@@ -166,7 +166,7 @@ namespace Librame.Extensions
         /// <param name="enumType">给定的枚举类型。</param>
         /// <param name="converter">给定的结果转换方法。</param>
         /// <returns>返回结果字典。</returns>
-        public static IDictionary<string, TResult> AsEnumDictionary<TResult>(this Type enumType,
+        public static Dictionary<string, TResult> AsEnumDictionary<TResult>(this Type enumType,
             Func<FieldInfo, TResult> converter)
         {
             converter.NotNull(nameof(converter));

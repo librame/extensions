@@ -10,6 +10,8 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions
@@ -19,6 +21,94 @@ namespace Librame.Extensions
     /// </summary>
     public static class AlgorithmExtensions
     {
+        /// <summary>
+        /// 26 个小写字母。
+        /// </summary>
+        public const string LOWER = "abcdefghijklmnopqrstuvwxyz";
+
+        /// <summary>
+        /// 26 个大写字母。
+        /// </summary>
+        public const string UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        /// <summary>
+        /// 10 个数字。
+        /// </summary>
+        public const string NUMBER = "0123456789";
+
+        /// <summary>
+        /// 9 个部分特殊符号。
+        /// </summary>
+        public const string SPECIAL = "~!@#$%^&*";
+
+        /// <summary>
+        /// 52 个大小写字母。
+        /// </summary>
+        public const string LETTER = LOWER + UPPER;
+
+        /// <summary>
+        /// 62 个大小写字母和数字。
+        /// </summary>
+        public const string LETTER_NUMBER = LETTER + NUMBER;
+
+        /// <summary>
+        /// 71 个大小写字母、数字和特殊符号。
+        /// </summary>
+        public const string LETTER_NUMBER_SPECIAL = LETTER + NUMBER + SPECIAL;
+
+
+        /// <summary>
+        /// 随机字符串字典。
+        /// </summary>
+        /// <param name="number">给定要生成的随机字符串个数（如 100 个）。</param>
+        /// <param name="length">给定单个随机字符串的长度（可选；默认 8 位长度）。</param>
+        /// <param name="encodeFactory">给定单个随机字符串的编码工厂方法（可选；默认使用 MD5 编码）。</param>
+        /// <param name="hasSpecial">是否包含部分特殊符号（可选；默认不包含）。</param>
+        /// <returns>返回 <see cref="Dictionary{String, String}"/>。</returns>
+        public static Dictionary<string, string> RandomStrings(this int number, int length = 8,
+            Func<string, string> encodeFactory = null, bool hasSpecial = false)
+        {
+            if (encodeFactory.IsNull())
+                encodeFactory = Md5Base64String;
+
+            var pairs = new Dictionary<string, string>();
+            var chars = hasSpecial ? LETTER_NUMBER_SPECIAL : LETTER_NUMBER;
+            var random = new Random((int)DateTime.Now.Ticks);
+
+            var offset = 0;
+            for (int j = 0; j < number + offset; j++)
+            {
+                var str = string.Empty;
+
+                for (int i = 0; i < length; i++)
+                {
+                    str += chars[random.Next(chars.Length)];
+                }
+
+                if (str.IsLetter())
+                {
+                    offset++;
+                    continue; // 如果全是字母则重新生成
+                }
+
+                if (str.IsDigit())
+                {
+                    offset++;
+                    continue; // 如果全是数字则重新生成
+                }
+
+                if (hasSpecial && (!str.HasSpecial() || str.IsSpecial()))
+                {
+                    offset++;
+                    continue; // 如果没有或全是特殊符号则重新生成
+                }
+
+                pairs.Add(str, encodeFactory.Invoke(str));
+            }
+
+            return pairs;
+        }
+
 
         #region Hash Algorithm
 

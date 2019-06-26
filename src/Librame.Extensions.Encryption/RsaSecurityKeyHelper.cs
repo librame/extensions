@@ -106,7 +106,7 @@ namespace Librame.Extensions.Encryption
                 key = new RsaSecurityKey(rsa);
             }
 
-            key.KeyId = UniqueIdentifier.NewByRng(16).ToString();
+            key.KeyId = RngIdentifier.New(16);
             return key;
         }
 

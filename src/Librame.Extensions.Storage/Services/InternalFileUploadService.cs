@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,20 +27,19 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 内部文件上传服务。
     /// </summary>
-    public class InternalFileUploadService : AbstractStorageService<InternalFileUploadService>, IFileUploadService
+    public class InternalFileUploadService : AbstractService<InternalFileUploadService>, IFileUploadService
     {
-        private readonly IAccessTokenService _accessToken;
+        private readonly IStorageTokenService _accessToken;
 
 
         /// <summary>
         /// 构造一个 <see cref="InternalFileUploadService"/> 实例。
         /// </summary>
-        /// <param name="accessToken">给定的 <see cref="IAccessTokenService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{StorageBuilderOptions}"/>。</param>
+        /// <param name="accessToken">给定的 <see cref="IStorageTokenService"/>。</param>
         /// <param name="logger">给定的 <see cref="ILogger{InternalFileUploadService}"/>。</param>
-        public InternalFileUploadService(IAccessTokenService accessToken,
-            IOptions<StorageBuilderOptions> options, ILogger<InternalFileUploadService> logger)
-            : base(options, logger)
+        public InternalFileUploadService(IStorageTokenService accessToken,
+            ILogger<InternalFileUploadService> logger)
+            : base(logger)
         {
             _accessToken = accessToken.NotNull(nameof(accessToken));
         }

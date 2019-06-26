@@ -93,7 +93,8 @@ namespace Librame.Extensions.Data
         /// 当前租户。
         /// </summary>
         /// <value>返回 <see cref="ITenant"/>。</value>
-        public virtual ITenant CurrentTenant => BuilderOptions.LocalTenant;
+        public virtual ITenant CurrentTenant
+            => ServiceProvider.GetRequiredService<ITenantService>().GetTenantAsync(BaseTenants).Result;
 
 
         /// <summary>

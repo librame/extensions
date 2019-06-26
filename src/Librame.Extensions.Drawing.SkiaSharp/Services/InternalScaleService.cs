@@ -22,10 +22,12 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing
 {
+    using Core;
+
     /// <summary>
     /// 内部缩放服务。
     /// </summary>
-    internal class InternalScaleService : AbstractDrawingService<InternalScaleService>, IScaleService
+    internal class InternalScaleService : AbstractService<InternalScaleService, DrawingBuilderOptions>, IScaleService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalScaleService"/> 实例。

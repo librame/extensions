@@ -26,7 +26,6 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddServices(this IBuilder builder)
         {
-            builder.Services.AddSingleton<IAccessTokenService, InternalAccessTokenService>();
             builder.Services.AddSingleton<IClockService, InternalClockService>();
             builder.Services.AddSingleton<IDateTimeService, InternalDateTimeService>();
             builder.Services.AddSingleton<IInjectionService, InternalInjectionService>();
