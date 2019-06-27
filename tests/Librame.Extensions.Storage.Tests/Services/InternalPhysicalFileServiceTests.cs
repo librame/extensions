@@ -19,7 +19,7 @@ namespace Librame.Extensions.Storage.Tests
         {
             var root = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..");
             var provider = _file.GetProviderAsync(root).Result;
-            var files = provider.GetDirectoryContents(@"bin\Debug\netcoreapp2.1");
+            var files = provider.GetDirectoryContents(@"bin\Debug\netcoreapp2.2");
             Assert.NotEmpty(files);
         }
 

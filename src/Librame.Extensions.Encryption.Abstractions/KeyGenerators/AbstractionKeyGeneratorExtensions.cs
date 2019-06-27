@@ -17,9 +17,8 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 抽象密钥生成器静态扩展。
     /// </summary>
-    public static class AbstractKeyGeneratorExtensions
+    public static class AbstractionKeyGeneratorExtensions
     {
-
         /// <summary>
         /// 获取 64 位密钥。
         /// </summary>

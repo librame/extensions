@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class AbstractReadOnlyCharBufferExtensionsTests
+    public class AbstractionReadOnlyCharBufferExtensionsTests
     {
         [Fact]
         public void SplitKeyValueTest()

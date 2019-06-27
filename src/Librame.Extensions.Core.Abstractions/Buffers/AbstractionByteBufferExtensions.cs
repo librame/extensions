@@ -17,7 +17,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 抽象字节缓冲器静态扩展。
     /// </summary>
-    public static class AbstractByteBufferExtensions
+    public static class AbstractionByteBufferExtensions
     {
         /// <summary>
         /// 改变存储器。

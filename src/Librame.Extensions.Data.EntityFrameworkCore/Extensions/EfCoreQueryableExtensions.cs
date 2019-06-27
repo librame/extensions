@@ -19,9 +19,9 @@ using System.Reflection;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 可查询接口静态扩展。
+    /// EntityFrameworkCore 可查询接口静态扩展。
     /// </summary>
-    public static class EfCoreQueryableExtensions
+    public static class EFCoreQueryableExtensions
     {
         private static readonly TypeInfo _queryCompilerTypeInfo
             = typeof(QueryCompiler).GetTypeInfo();

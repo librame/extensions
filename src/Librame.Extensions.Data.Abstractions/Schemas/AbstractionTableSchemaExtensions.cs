@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 抽象表架构静态扩展。
     /// </summary>
-    public static class AbstractTableSchemaExtensions
+    public static class AbstractionTableSchemaExtensions
     {
         /// <summary>
         /// 应用架构。

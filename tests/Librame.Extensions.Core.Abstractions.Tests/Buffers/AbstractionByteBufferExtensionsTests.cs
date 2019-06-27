@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class AbstractByteBufferExtensionsTests
+    public class AbstractionByteBufferExtensionsTests
     {
         [Fact]
         public void AllTest()

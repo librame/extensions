@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 抽象只读字符缓冲区静态扩展。
     /// </summary>
-    public static class AbstractReadOnlyCharBufferExtensions
+    public static class AbstractionReadOnlyCharBufferExtensions
     {
 
         #region SplitKeyValue

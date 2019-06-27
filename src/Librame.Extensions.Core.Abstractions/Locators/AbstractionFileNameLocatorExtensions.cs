@@ -19,7 +19,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 抽象文件名定位器静态扩展。
     /// </summary>
-    public static class AbstractFileNameLocatorExtensions
+    public static class AbstractionFileNameLocatorExtensions
     {
         /// <summary>
         /// 当作数组。

@@ -19,7 +19,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <summary>
     /// 抽象构建器服务集合静态扩展。
     /// </summary>
-    public static class AbstractBuilderServiceCollectionExtensions
+    public static class AbstractionBuilderServiceCollectionExtensions
     {
 
         #region TryGet

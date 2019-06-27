@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.Localization
     /// <summary>
     /// 抽象表达式字符串定位器静态扩展。
     /// </summary>
-    public static class AbstractExpressionStringLocalizerExtensions
+    public static class AbstractionExpressionStringLocalizerExtensions
     {
 
         #region IStringLocalizer

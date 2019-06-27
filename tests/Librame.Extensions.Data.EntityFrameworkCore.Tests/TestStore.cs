@@ -6,7 +6,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
 
-    public interface ITestStore : IBaseStore
+    public interface ITestStore : IBaseStore<TestDbContextAccessor>
     {
         IList<Category> GetCategories();
 
@@ -26,7 +26,7 @@ namespace Librame.Extensions.Data.Tests
     }
 
 
-    public class TestStore : AbstractBaseStore, ITestStore
+    public class TestStore : AbstractBaseStore<TestDbContextAccessor>, ITestStore
     {
         public TestStore(IIdentifierService idService, IAccessor accessor)
             : base(accessor)
@@ -37,69 +37,60 @@ namespace Librame.Extensions.Data.Tests
 
         private void Initialize(IIdentifierService idService)
         {
-            if (Accessor is TestDbContextAccessor dbContextAccessor)
+            UseWriteDbConnection();
+
+            Category firstCategory;
+            Category lastCategory;
+
+            if (!RealAccessor.Categories.Any())
             {
-                UseWriteDbConnection();
-
-                Category firstCategory;
-                Category lastCategory;
-
-                if (!dbContextAccessor.Categories.Any())
+                firstCategory = new Category
                 {
-                    firstCategory = new Category
-                    {
-                        Name = "First Category"
-                    };
-                    lastCategory = new Category
-                    {
-                        Name = "Last Category"
-                    };
-
-                    dbContextAccessor.Categories.AddRange(lastCategory, firstCategory);
-                }
-                else
+                    Name = "First Category"
+                };
+                lastCategory = new Category
                 {
-                    firstCategory = dbContextAccessor.Categories.First();
-                    lastCategory = dbContextAccessor.Categories.Last();
-                }
+                    Name = "Last Category"
+                };
 
-                if (!dbContextAccessor.Articles.Any())
-                {
-                    var articles = new List<Article>();
-
-                    for (int i = 0; i < 100; i++)
-                    {
-                        articles.Add(new Article
-                        {
-                            Id = idService.GetIdAsync(default).Result,
-                            Title = "Article " + i.ToString(),
-                            Descr = "Descr " + i.ToString(),
-                            Category = (i < 50) ? firstCategory : lastCategory
-                        });
-                    }
-
-                    dbContextAccessor.Articles.AddRangeAsync(articles);
-                }
-
-                dbContextAccessor.SaveChanges();
+                RealAccessor.Categories.AddRange(lastCategory, firstCategory);
             }
+            else
+            {
+                firstCategory = RealAccessor.Categories.First();
+                lastCategory = RealAccessor.Categories.Last();
+            }
+
+            if (!RealAccessor.Articles.Any())
+            {
+                var articles = new List<Article>();
+
+                for (int i = 0; i < 100; i++)
+                {
+                    articles.Add(new Article
+                    {
+                        Id = idService.GetIdAsync(default).Result,
+                        Title = "Article " + i.ToString(),
+                        Descr = "Descr " + i.ToString(),
+                        Category = (i < 50) ? firstCategory : lastCategory
+                    });
+                }
+
+                RealAccessor.Articles.AddRangeAsync(articles);
+            }
+
+            RealAccessor.SaveChanges();
         }
 
 
         public IList<Category> GetCategories()
         {
-            if (Accessor is TestDbContextAccessor dbContextAccessor)
-                return dbContextAccessor.Categories.ToList();
-
-            return null;
+            return RealAccessor.Categories.ToList();
         }
 
         public IPagingList<Article> GetArticles()
         {
-            if (Accessor is TestDbContextAccessor dbContextAccessor)
-                return dbContextAccessor.Articles.AsPagingListByIndex(ordered => ordered.OrderBy(a => a.Id), 1, 10);
-
-            return null;
+            return RealAccessor.Articles.AsPagingListByIndex(ordered => ordered.OrderBy(a => a.Id), 1, 10);
         }
 
         public ITestStore UseWriteDbConnection()

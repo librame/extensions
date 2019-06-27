@@ -20,9 +20,8 @@ namespace Microsoft.IdentityModel.Tokens
     /// <summary>
     /// 抽象签名证书静态扩展。
     /// </summary>
-    public static class AbstractSigningCredentialsExtensions
+    public static class AbstractionSigningCredentialsExtensions
     {
-
         /// <summary>
         /// 解析 RSA。
         /// </summary>

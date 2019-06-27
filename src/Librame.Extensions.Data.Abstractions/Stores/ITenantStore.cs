@@ -10,14 +10,59 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 租户存储接口。
     /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-    public interface ITenantStore<TTenant> : IStore
+    public interface ITenantStore<TAccessor, TTenant> : IStore<TAccessor>
+        where TAccessor : IAccessor
         where TTenant : class
     {
+        /// <summary>
+        /// 异步获取审计列表。
+        /// </summary>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <param name="orderedFactory">给定的排序工厂方法。</param>
+        /// <param name="queryFactory">给定的查询工厂方法。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="IPagingList{TTenant}"/> 的异步操作。</returns>
+        Task<IPagingList<TTenant>> GetTenantsAsync(int index, int size,
+            Func<IQueryable<TTenant>, IOrderedQueryable<TTenant>> orderedFactory,
+            Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 异步创建租户。
+        /// </summary>
+        /// <param name="tenant">给定的 <typeparamref name="TTenant"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
+        Task<EntityResult> CreateAsync(TTenant tenant, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 异步更新租户。
+        /// </summary>
+        /// <param name="tenant">给定的 <typeparamref name="TTenant"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
+        Task<EntityResult> UpdateAsync(TTenant tenant, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 异步删除租户。
+        /// </summary>
+        /// <param name="tenant">给定的 <typeparamref name="TTenant"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
+        Task<EntityResult> DeleteAsync(TTenant tenant, CancellationToken cancellationToken = default);
     }
 }

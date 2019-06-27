@@ -15,7 +15,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 抽象字符串验证器静态扩展。
     /// </summary>
-    public static class AbstractStringValidatorExtensions
+    public static class AbstractionStringValidatorExtensions
     {
         /// <summary>
         /// 是否为数字。

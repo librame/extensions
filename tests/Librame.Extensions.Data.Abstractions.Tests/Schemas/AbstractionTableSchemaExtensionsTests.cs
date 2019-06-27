@@ -2,7 +2,7 @@
 
 namespace Librame.Extensions.Data.Tests
 {
-    public class AbstractTableSchemaExtensionsTests
+    public class AbstractionTableSchemaExtensionsTests
     {
         public class TestTableSchema : AbstractSchema, ITableSchema
         {

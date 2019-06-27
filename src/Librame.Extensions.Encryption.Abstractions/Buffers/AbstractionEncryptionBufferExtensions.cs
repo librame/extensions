@@ -19,7 +19,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 抽象算法缓冲区静态扩展。
     /// </summary>
-    public static class AbstractEncryptionBufferExtensions
+    public static class AbstractionEncryptionBufferExtensions
     {
 
         #region CiphertextString

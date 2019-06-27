@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class AbstractCharBufferExtensionsTests
+    public class AbstractionCharBufferExtensionsTests
     {
         [Fact]
         public void AllTest()
@@ -11,7 +11,7 @@ namespace Librame.Extensions.Core.Tests
             var buffer = new TestCharBuffer(Memory<char>.Empty);
             Assert.True(buffer.Memory.IsEmpty);
 
-            var array = nameof(AbstractCharBufferExtensionsTests).ToCharArray();
+            var array = nameof(AbstractionCharBufferExtensionsTests).ToCharArray();
             buffer.Change(m => array);
             Assert.Equal(array.Length, buffer.Memory.Length);
 

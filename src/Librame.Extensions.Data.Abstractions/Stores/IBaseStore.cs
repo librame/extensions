@@ -15,7 +15,9 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 基础存储接口。
     /// </summary>
-    public interface IBaseStore : IBaseStore<BaseAudit, BaseAuditProperty, BaseTenant>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
+    public interface IBaseStore<TAccessor> : IBaseStore<TAccessor, BaseAudit, BaseTenant>
+        where TAccessor : IAccessor
     {
     }
 
@@ -23,13 +25,13 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 基础存储接口。
     /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
-    /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-    public interface IBaseStore<TAudit, TAuditProperty, TTenant> : IAuditStore<TAudit, TAuditProperty>, ITenantStore<TTenant>
+    public interface IBaseStore<TAccessor, TAudit, TTenant> : IAuditStore<TAccessor, TAudit>, ITenantStore<TAccessor, TTenant>
         where TAudit : class
-        where TAuditProperty : class
         where TTenant : class
+        where TAccessor : IAccessor
     {
     }
 }
