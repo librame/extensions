@@ -43,10 +43,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
         public override Task<EntityResult> DeleteAsync(BaseTenant tenant, CancellationToken cancellationToken = default)
-        {
-            // BaseTenant 支持逻辑删除
-            return Accessor.LogicDeleteAsync(cancellationToken, tenant);
-        }
+            => Accessor.LogicDeleteAsync(cancellationToken, tenant);
     }
 
 
@@ -81,9 +78,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回 <see cref="Type"/>。</returns>
         protected override Type GetDisposableType()
-        {
-            return GetType();
-        }
+            => GetType();
 
 
         #region Audits
@@ -93,16 +88,12 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
-        /// <param name="orderedFactory">给定的排序工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TAudit}"/> 的异步操作。</returns>
-        public virtual Task<IPageable<TAudit>> GetPagingAuditsAsync(int index, int size,
-            Func<IQueryable<TAudit>, IOrderedQueryable<TAudit>> orderedFactory,
-            CancellationToken cancellationToken = default)
+        public virtual Task<IPageable<TAudit>> GetPagingAuditsAsync(int index, int size, CancellationToken cancellationToken = default)
         {
-            return Accessor.QueryPagingAsync(orderedFactory,
-                descr => descr.ComputeByIndex(index, size),
-                cancellationToken);
+            return Accessor.QueryPagingAsync<TAudit>(query => query.OrderByDescending(ks => ks.CreatedTime),
+                descr => descr.ComputeByIndex(index, size), cancellationToken);
         }
 
         #endregion
@@ -115,16 +106,12 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
-        /// <param name="orderedFactory">给定的排序工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TAudit}"/> 的异步操作。</returns>
-        public virtual Task<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size,
-            Func<IQueryable<TTenant>, IOrderedQueryable<TTenant>> orderedFactory,
-            CancellationToken cancellationToken = default)
+        public virtual Task<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size, CancellationToken cancellationToken = default)
         {
-            return Accessor.QueryPagingAsync(orderedFactory,
-                descr => descr.ComputeByIndex(index, size),
-                cancellationToken);
+            return Accessor.QueryPagingAsync<TTenant>(query => query.OrderByDescending(ks => ks.Id),
+                descr => descr.ComputeByIndex(index, size), cancellationToken);
         }
 
         /// <summary>
@@ -134,9 +121,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
         public virtual Task<EntityResult> CreateAsync(TTenant tenant, CancellationToken cancellationToken = default)
-        {
-            return Accessor.CreateAsync(cancellationToken, tenant);
-        }
+            => Accessor.CreateAsync(cancellationToken, tenant);
 
         /// <summary>
         /// 异步更新租户。
@@ -145,9 +130,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
         public virtual Task<EntityResult> UpdateAsync(TTenant tenant, CancellationToken cancellationToken = default)
-        {
-            return Accessor.UpdateAsync(cancellationToken, tenant);
-        }
+            => Accessor.UpdateAsync(cancellationToken, tenant);
 
         /// <summary>
         /// 异步删除租户。
@@ -156,9 +139,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
         public virtual Task<EntityResult> DeleteAsync(TTenant tenant, CancellationToken cancellationToken = default)
-        {
-            return Accessor.DeleteAsync(cancellationToken, tenant);
-        }
+            => Accessor.DeleteAsync(cancellationToken, tenant);
 
         #endregion
 
