@@ -50,21 +50,19 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <typeparam name="TEntity">指定的实体类型。</typeparam>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        /// <param name="pagingFactory">给定的分页描述符工厂方法（输入参数为查询总条数）。</param>
         /// <param name="orderedFactory">给定的排序工厂方法。</param>
-        /// <param name="queryFactory">给定的查询工厂方法。</param>
+        /// <param name="computeAction">给定的分页计算动作。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含 <see cref="IPagingList{TEntity}"/> 的异步操作。</returns>
-        public static Task<IPagingList<TEntity>> QueryPagingListAsync<TEntity>(this IAccessor accessor,
-            Func<int, PagingDescriptor> pagingFactory,
+        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
+        public static Task<IPageable<TEntity>> QueryPagingAsync<TEntity>(this IAccessor accessor,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
-            Func<IQueryable<TEntity>, IQueryable<TEntity>> queryFactory = null,
+            Action<PagingDescriptor> computeAction,
             CancellationToken cancellationToken = default)
             where TEntity : class
         {
-            return accessor.QueryResultAsync<TEntity, IPagingList<TEntity>>(query =>
+            return accessor.QueryResultAsync<TEntity, IPageable<TEntity>>(query =>
             {
-                return query.AsPagingList(orderedFactory, pagingFactory);
+                return query.AsPaging(orderedFactory, computeAction);
             },
             cancellationToken);
         }

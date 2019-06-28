@@ -13,16 +13,11 @@
 namespace System.Collections.Generic
 {
     /// <summary>
-    /// 分页列表接口。
+    /// 可分页接口。
     /// </summary>
     /// <typeparam name="T">指定的分页类型。</typeparam>
-    public interface IPagingList<T> : IEnumerable<T>, IList<T>
+    public interface IPageable<T> : IEnumerable<T>, IPagingInfo
     {
-        /// <summary>
-        /// 行列表。
-        /// </summary>
-        IList<T> Rows { get; }
-
         /// <summary>
         /// 描述符。
         /// </summary>

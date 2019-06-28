@@ -15,22 +15,27 @@ using Librame.Extensions.Data;
 namespace System.Collections.Generic
 {
     /// <summary>
-    /// 树状列表接口。
+    /// 可树形接口。
     /// </summary>
-    /// <typeparam name="T">指定的树状元素类型。</typeparam>
-    /// <typeparam name="TId">指定的树状元素标识类型。</typeparam>
-    public interface ITreeingList<T, TId> : IEnumerable<TreeingNode<T, TId>>, IList<TreeingNode<T, TId>>
+    /// <typeparam name="T">指定的树形元素类型。</typeparam>
+    public interface ITreeable<T> : ITreeable<T, int>
+        where T : IParentId<int>
+    {
+    }
+
+
+    /// <summary>
+    /// 可树形接口。
+    /// </summary>
+    /// <typeparam name="T">指定的树形元素类型。</typeparam>
+    /// <typeparam name="TId">指定的树形元素标识类型。</typeparam>
+    public interface ITreeable<T, TId> : IEnumerable<TreeingNode<T, TId>>
         where T : IParentId<TId>
         where TId : IEquatable<TId>
     {
         /// <summary>
-        /// 节点列表。
+        /// 节点数。
         /// </summary>
-        IList<TreeingNode<T, TId>> Nodes { get; }
-        
-        /// <summary>
-        /// 无层级节点列表。
-        /// </summary>
-        IList<TreeingNode<T, TId>> NonstratifiedNodes { get; }
+        int Count { get; }
     }
 }

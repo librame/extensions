@@ -15,107 +15,109 @@ namespace System.Collections.Generic
     /// <summary>
     /// 分页描述符。
     /// </summary>
-    public struct PagingDescriptor
+    public class PagingDescriptor : IPagingInfo
     {
+        /// <summary>
+        /// 构造一个 <see cref="PagingDescriptor"/> 实例。
+        /// </summary>
+        /// <param name="total">给定的总条数。</param>
+        public PagingDescriptor(int total)
+        {
+            Total = total;
+        }
+
+
         /// <summary>
         /// 总条数。
         /// </summary>
-        public int Total { get; set; }
+        public int Total { get; }
 
         /// <summary>
         /// 总页数。
         /// </summary>
-        public int Pages { get; set; }
+        public int Pages { get; private set; }
 
         /// <summary>
         /// 跳过的条数。
         /// </summary>
-        public int Skip { get; set; }
+        public int Skip { get; private set; }
 
         /// <summary>
         /// 页大小或得到的条数。
         /// </summary>
-        public int Size { get; set; }
+        public int Size { get; private set; }
 
         /// <summary>
         /// 页索引。
         /// </summary>
-        public int Index { get; set; }
-
-
-        #region Create
+        public int Index { get; private set; }
 
         /// <summary>
-        /// 根据索引创建分页描述符。
+        /// 是否通过跳数计算。
+        /// </summary>
+        public bool IsComputedBySkip { get; private set; }
+
+
+        /// <summary>
+        /// 通过索引计算。
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
-        /// <param name="total">给定的总条数。</param>
         /// <returns>返回 <see cref="PagingDescriptor"/>。</returns>
-        public static PagingDescriptor CreateByIndex(int index, int size, int total)
+        public PagingDescriptor ComputeByIndex(int index, int size)
         {
             if (index < 1) index = 1;
             if (size < 1) size = 1;
 
-            var info = new PagingDescriptor();
-
-            info.Size = size;
-            info.Index = index;
+            Size = size;
+            Index = index;
 
             // 计算跳过的条数
-            if (info.Index > 1)
+            if (Index > 1)
             {
-                info.Skip = (info.Index - 1) * info.Size;
+                Skip = (Index - 1) * Size;
             }
             else
             {
                 // 当前页索引小于等于1表示不跳过
-                info.Skip = 0;
+                Skip = 0;
             }
 
-            // 如果总条数存在
-            info.Total = total;
-
-            if (info.Total > 0)
+            if (Total > 0)
             {
                 // 计算总索引数
-                info.Pages = info.Total / info.Size + (info.Total % info.Size > 0 ? 1 : 0);
+                Pages = Total / Size + (Total % Size > 0 ? 1 : 0);
             }
 
-            return info;
+            IsComputedBySkip = false;
+
+            return this;
         }
 
-
         /// <summary>
-        /// 根据跳过条数创建分页描述符。
+        /// 通过跳数计算。
         /// </summary>
         /// <param name="skip">给定的跳过条数。</param>
         /// <param name="take">给定的获取条数。</param>
-        /// <param name="total">给定的总条数。</param>
         /// <returns>返回 <see cref="PagingDescriptor"/>。</returns>
-        public static PagingDescriptor CreateBySkip(int skip, int take, int total)
+        public PagingDescriptor ComputeBySkip(int skip, int take)
         {
             if (take < 1) take = 1;
 
-            var info = new PagingDescriptor();
+            Index = ((int)Math.Round((double)skip / take)) + 1;
+            Skip = skip;
+            Size = take;
 
-            info.Index = ((int)Math.Round((double)skip / take)) + 1;
-            info.Skip = skip;
-            info.Size = take;
-
-            // 如果总条数存在
-            info.Total = total;
-
-            if (info.Total > 0)
+            if (Total > 0)
             {
                 // 计算总页数
-                info.Pages = info.Total / take + (info.Total % take > 0 ? 1 : 0);
+                Pages = Total / take + (Total % take > 0 ? 1 : 0);
             }
 
-            return info;
-        }
+            IsComputedBySkip = true;
 
-        #endregion
+            return this;
+        }
 
     }
 }

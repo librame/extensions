@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    public class PagingListTests
+    public class PagingTests
     {
         public class TestPaging
         {
@@ -24,12 +24,12 @@ namespace Librame.Extensions.Data.Tests
                 list.Add(new TestPaging
                 {
                     Id = i + 1,
-                    Name = nameof(PagingListTests) + (i + 1)
+                    Name = nameof(PagingTests) + (i + 1)
                 });
             }
 
-            var paging = list.AsPagingListByIndex(2, 20);
-            Assert.Equal(20, paging.Count);
+            var paging = list.AsPaging(descr => descr.ComputeByIndex(2, 20));
+            Assert.Equal(20, paging.Size);
             Assert.Equal(21, paging.First().Id);
         }
 

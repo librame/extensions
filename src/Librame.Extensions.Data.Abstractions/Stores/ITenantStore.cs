@@ -28,17 +28,15 @@ namespace Librame.Extensions.Data
         where TTenant : class
     {
         /// <summary>
-        /// 异步获取审计列表。
+        /// 异步获取分页租户集合。
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
         /// <param name="orderedFactory">给定的排序工厂方法。</param>
-        /// <param name="queryFactory">给定的查询工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IPagingList{TTenant}"/> 的异步操作。</returns>
-        Task<IPagingList<TTenant>> GetTenantsAsync(int index, int size,
+        /// <returns>返回一个包含 <see cref="IPageable{TTenant}"/> 的异步操作。</returns>
+        Task<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size,
             Func<IQueryable<TTenant>, IOrderedQueryable<TTenant>> orderedFactory,
-            Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>

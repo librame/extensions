@@ -10,7 +10,7 @@ namespace Librame.Extensions.Data.Tests
     {
         IList<Category> GetCategories();
 
-        IPagingList<Article> GetArticles();
+        IPageable<Article> GetArticles();
 
         /// <summary>
         /// 供手动切换读取写入库测试。
@@ -88,9 +88,10 @@ namespace Librame.Extensions.Data.Tests
             return RealAccessor.Categories.ToList();
         }
 
-        public IPagingList<Article> GetArticles()
+        public IPageable<Article> GetArticles()
         {
-            return RealAccessor.Articles.AsPagingListByIndex(ordered => ordered.OrderBy(a => a.Id), 1, 10);
+            return RealAccessor.Articles.AsPaging(ordered => ordered.OrderBy(a => a.Id),
+                descr => descr.ComputeByIndex(1, 10));
         }
 
         public ITestStore UseWriteDbConnection()

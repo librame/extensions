@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    public class TreeingListTests
+    public class TreeingTests
     {
         public class TestTreeing : IParentId<int>
         {
@@ -25,7 +25,7 @@ namespace Librame.Extensions.Data.Tests
                 var test = new TestTreeing
                 {
                     Id = i + 1,
-                    Name = nameof(TreeingListTests) + (i + 1)
+                    Name = nameof(TreeingTests) + (i + 1)
                 };
 
                 if (i < 10) test.ParentId = 0;
@@ -35,7 +35,7 @@ namespace Librame.Extensions.Data.Tests
                 list.Add(test);
             }
 
-            var treeing = list.AsTreeingList();
+            var treeing = list.AsTreeing();
             Assert.Equal(10, treeing.Count);
         }
     }

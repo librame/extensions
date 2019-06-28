@@ -89,21 +89,20 @@ namespace Librame.Extensions.Data
         #region Audits
 
         /// <summary>
-        /// 异步获取审计列表。
+        /// 异步获取分页审计集合。
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
         /// <param name="orderedFactory">给定的排序工厂方法。</param>
-        /// <param name="queryFactory">给定的查询工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IPagingList{TAudit}"/> 的异步操作。</returns>
-        public virtual Task<IPagingList<TAudit>> GetAuditsAsync(int index, int size,
+        /// <returns>返回一个包含 <see cref="IPageable{TAudit}"/> 的异步操作。</returns>
+        public virtual Task<IPageable<TAudit>> GetPagingAuditsAsync(int index, int size,
             Func<IQueryable<TAudit>, IOrderedQueryable<TAudit>> orderedFactory,
-            Func<IQueryable<TAudit>, IQueryable<TAudit>> queryFactory = null,
             CancellationToken cancellationToken = default)
         {
-            return Accessor.QueryPagingListAsync(total => PagingDescriptor.CreateByIndex(index, size, total),
-                orderedFactory, queryFactory, cancellationToken);
+            return Accessor.QueryPagingAsync(orderedFactory,
+                descr => descr.ComputeByIndex(index, size),
+                cancellationToken);
         }
 
         #endregion
@@ -112,21 +111,20 @@ namespace Librame.Extensions.Data
         #region Tenants
 
         /// <summary>
-        /// 异步获取审计列表。
+        /// 异步获取分页租户集合。
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
         /// <param name="orderedFactory">给定的排序工厂方法。</param>
-        /// <param name="queryFactory">给定的查询工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IPagingList{TAudit}"/> 的异步操作。</returns>
-        public virtual Task<IPagingList<TTenant>> GetTenantsAsync(int index, int size,
+        /// <returns>返回一个包含 <see cref="IPageable{TAudit}"/> 的异步操作。</returns>
+        public virtual Task<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size,
             Func<IQueryable<TTenant>, IOrderedQueryable<TTenant>> orderedFactory,
-            Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
             CancellationToken cancellationToken = default)
         {
-            return Accessor.QueryPagingListAsync(total => PagingDescriptor.CreateByIndex(index, size, total),
-                orderedFactory, queryFactory, cancellationToken);
+            return Accessor.QueryPagingAsync(orderedFactory,
+                descr => descr.ComputeByIndex(index, size),
+                cancellationToken);
         }
 
         /// <summary>
