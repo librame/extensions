@@ -22,10 +22,10 @@ namespace Librame.Extensions.Data
         where TAccessor : IAccessor
     {
         /// <summary>
-        /// 真实数据访问器。
+        /// 数据访问器。
         /// </summary>
-        /// <value>返回 <see cref="IAccessor"/>。</value>
-        TAccessor RealAccessor { get; }
+        /// <value>返回 <typeparamref name="TAccessor"/>。</value>
+        new TAccessor Accessor { get; }
     }
 
 

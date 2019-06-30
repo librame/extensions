@@ -57,6 +57,11 @@ namespace Librame.Extensions.Data
                 setupAction.Invoke(options, optionsBuilder);
             });
 
+            builder.Services.AddScoped(serviceProvider =>
+            {
+                return (TAccessorImplementation)serviceProvider.GetRequiredService<TAccessorService>();
+            });
+
             return builder;
         }
 

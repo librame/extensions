@@ -41,7 +41,8 @@ namespace Librame.Extensions.Core
         /// 获取可处置对象类型。
         /// </summary>
         /// <returns>返回 <see cref="Type"/>。</returns>
-        protected abstract Type GetDisposableType();
+        protected virtual Type GetDisposableType()
+            => GetType();
 
         /// <summary>
         /// 如果已处置则抛出异常。

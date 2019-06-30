@@ -12,7 +12,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,15 +32,6 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 建立可查询接口。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <returns>返回 <see cref="IQueryable{TEntity}"/>。</returns>
-        IQueryable<TEntity> Queryable<TEntity>()
-            where TEntity : class;
-
-
-        /// <summary>
         /// 执行 SQL 命令。
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>
@@ -57,47 +47,6 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
-
-
-        /// <summary>
-        /// 异步创建集合。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="entities">给定要增加的实体集合。</param>
-        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
-        Task<EntityResult> CreateAsync<TEntity>(CancellationToken cancellationToken, params TEntity[] entities)
-            where TEntity : class;
-
-        /// <summary>
-        /// 异步更新集合。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="entities">给定要更新的实体集合。</param>
-        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
-        Task<EntityResult> UpdateAsync<TEntity>(CancellationToken cancellationToken, params TEntity[] entities)
-            where TEntity : class;
-
-        /// <summary>
-        /// 异步删除集合。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="entities">给定要删除的实体集合。</param>
-        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
-        Task<EntityResult> DeleteAsync<TEntity>(CancellationToken cancellationToken, params TEntity[] entities)
-            where TEntity : class;
-
-        /// <summary>
-        /// 异步逻辑删除集合。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="entities">给定要删除的实体集合。</param>
-        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
-        Task<EntityResult> LogicDeleteAsync<TEntity>(CancellationToken cancellationToken, params TEntity[] entities)
-            where TEntity : class, IStatus<DataStatus>;
 
 
         /// <summary>

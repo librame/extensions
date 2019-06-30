@@ -28,7 +28,7 @@ namespace Librame.Extensions.Data.Tests
 
     public class TestStore : AbstractBaseStore<TestDbContextAccessor>, ITestStore
     {
-        public TestStore(IIdentifierService idService, IAccessor accessor)
+        public TestStore(IIdentifierService idService, IAccessor accessor) // or TestDbContextAccessor
             : base(accessor)
         {
             Initialize(idService);
@@ -42,7 +42,7 @@ namespace Librame.Extensions.Data.Tests
             Category firstCategory;
             Category lastCategory;
 
-            if (!RealAccessor.Categories.Any())
+            if (!Accessor.Categories.Any())
             {
                 firstCategory = new Category
                 {
@@ -53,15 +53,15 @@ namespace Librame.Extensions.Data.Tests
                     Name = "Last Category"
                 };
 
-                RealAccessor.Categories.AddRange(lastCategory, firstCategory);
+                Accessor.Categories.AddRange(lastCategory, firstCategory);
             }
             else
             {
-                firstCategory = RealAccessor.Categories.First();
-                lastCategory = RealAccessor.Categories.Last();
+                firstCategory = Accessor.Categories.First();
+                lastCategory = Accessor.Categories.Last();
             }
 
-            if (!RealAccessor.Articles.Any())
+            if (!Accessor.Articles.Any())
             {
                 var articles = new List<Article>();
 
@@ -76,21 +76,21 @@ namespace Librame.Extensions.Data.Tests
                     });
                 }
 
-                RealAccessor.Articles.AddRangeAsync(articles);
+                Accessor.Articles.AddRangeAsync(articles);
             }
 
-            RealAccessor.SaveChanges();
+            Accessor.SaveChanges();
         }
 
 
         public IList<Category> GetCategories()
         {
-            return RealAccessor.Categories.ToList();
+            return Accessor.Categories.ToList();
         }
 
         public IPageable<Article> GetArticles()
         {
-            return RealAccessor.Articles.AsPaging(ordered => ordered.OrderBy(a => a.Id),
+            return Accessor.Articles.AsPaging(ordered => ordered.OrderBy(a => a.Id),
                 descr => descr.ComputeByIndex(1, 10));
         }
 

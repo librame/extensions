@@ -46,20 +46,20 @@ namespace Librame.Extensions.Data
         }
 
 
-        ///// <summary>
-        ///// 基础审计。
-        ///// </summary>
-        //public DbSet<BaseAudit> BaseAudits { get; set; }
+        /// <summary>
+        /// 基础审计。
+        /// </summary>
+        public DbSet<BaseAudit> BaseAudits { get; set; }
 
-        ///// <summary>
-        ///// 基础审计属性。
-        ///// </summary>
-        //public DbSet<BaseAuditProperty> BaseAuditProperties { get; set; }
+        /// <summary>
+        /// 基础审计属性。
+        /// </summary>
+        public DbSet<BaseAuditProperty> BaseAuditProperties { get; set; }
 
-        ///// <summary>
-        ///// 基础租户。
-        ///// </summary>
-        //public DbSet<BaseTenant> BaseTenants { get; set; }
+        /// <summary>
+        /// 基础租户。
+        /// </summary>
+        public DbSet<BaseTenant> BaseTenants { get; set; }
 
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <value>返回 <see cref="ITenant"/>。</value>
         public virtual ITenant CurrentTenant
-            => ServiceProvider.GetRequiredService<ITenantService>().GetTenantAsync(Queryable<BaseTenant>()).Result;
+            => ServiceProvider.GetRequiredService<ITenantService>().GetTenantAsync(BaseTenants).Result;
 
 
         /// <summary>
@@ -107,18 +107,6 @@ namespace Librame.Extensions.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ConfigureBaseEntities(BuilderOptions);
-        }
-
-
-        /// <summary>
-        /// 建立可查询接口。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <returns>返回 <see cref="IQueryable{TEntity}"/>。</returns>
-        public virtual IQueryable<TEntity> Queryable<TEntity>()
-            where TEntity : class
-        {
-            return Set<TEntity>();
         }
 
 
@@ -144,89 +132,6 @@ namespace Librame.Extensions.Data
             CancellationToken cancellationToken = default)
         {
             return Database.ExecuteSqlCommandAsync(sql, parameters, cancellationToken);
-        }
-
-
-        /// <summary>
-        /// 异步创建集合。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="entities">给定要增加的实体集合。</param>
-        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
-        public virtual Task<EntityResult> CreateAsync<TEntity>(CancellationToken cancellationToken, params TEntity[] entities)
-            where TEntity : class
-        {
-            try
-            {
-                Set<TEntity>().AddRangeAsync(entities);
-
-                return Task.FromResult(EntityResult.Success);
-            }
-            catch (Exception ex)
-            {
-                return Task.FromResult(EntityResult.Failed(ex));
-            }
-        }
-
-        /// <summary>
-        /// 异步更新集合。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="entities">给定要更新的实体集合。</param>
-        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
-        public virtual Task<EntityResult> UpdateAsync<TEntity>(CancellationToken cancellationToken, params TEntity[] entities)
-            where TEntity : class
-        {
-            try
-            {
-                Set<TEntity>().UpdateRange(entities);
-
-                return Task.FromResult(EntityResult.Success);
-            }
-            catch (Exception ex)
-            {
-                return Task.FromResult(EntityResult.Failed(ex));
-            }
-        }
-
-        /// <summary>
-        /// 异步删除集合。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="entities">给定要删除的实体集合。</param>
-        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
-        public virtual Task<EntityResult> DeleteAsync<TEntity>(CancellationToken cancellationToken, params TEntity[] entities)
-            where TEntity : class
-        {
-            try
-            {
-                Set<TEntity>().RemoveRange(entities);
-
-                return Task.FromResult(EntityResult.Success);
-            }
-            catch (Exception ex)
-            {
-                return Task.FromResult(EntityResult.Failed(ex));
-            }
-        }
-
-        /// <summary>
-        /// 异步逻辑删除集合。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="entities">给定要删除的实体集合。</param>
-        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
-        public virtual Task<EntityResult> LogicDeleteAsync<TEntity>(CancellationToken cancellationToken, params TEntity[] entities)
-            where TEntity : class, IStatus<DataStatus>
-        {
-            foreach (var entity in entities)
-                entity.Status = DataStatus.Delete;
-
-            return UpdateAsync(cancellationToken, entities);
         }
 
 

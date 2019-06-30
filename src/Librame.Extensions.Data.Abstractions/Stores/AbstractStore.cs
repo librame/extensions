@@ -22,22 +22,33 @@ namespace Librame.Extensions.Data
         where TAccessor : IAccessor
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractStore"/> 实例。
+        /// 构造一个 <see cref="AbstractStore{TAccessor}"/> 实例。
+        /// </summary>
+        /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
+        public AbstractStore(TAccessor accessor)
+            : base(accessor)
+        {
+            Accessor = accessor;
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="AbstractStore{TAccessor}"/> 实例。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         public AbstractStore(IAccessor accessor)
             : base(accessor)
         {
-            RealAccessor = accessor.IsValue<IAccessor, TAccessor>(nameof(accessor));
+            Accessor = accessor.IsValue<IAccessor, TAccessor>(nameof(accessor));
         }
 
 
         /// <summary>
-        /// 真实数据访问器。
+        /// 数据访问器。
         /// </summary>
-        /// <value>返回 <see cref="IAccessor"/>。</value>
-        public TAccessor RealAccessor { get; }
+        /// <value>返回 <typeparamref name="TAccessor"/>。</value>
+        public new TAccessor Accessor { get; }
     }
+
 
     /// <summary>
     /// 抽象存储。
