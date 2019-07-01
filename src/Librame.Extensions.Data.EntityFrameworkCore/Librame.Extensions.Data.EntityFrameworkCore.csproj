@@ -25,15 +25,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <BumpLabel>dev</BumpLabel>
-    <BumpLabelDigits>4</BumpLabelDigits>
     <OutputPath>..\..\bin\</OutputPath>
     <DocumentationFile>..\..\bin\netstandard2.0\Librame.Extensions.Data.EntityFrameworkCore.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <BumpResetLabel>dev</BumpResetLabel>
-    <BumpRevision>true</BumpRevision>
     <OutputPath>..\..\bin\</OutputPath>
     <DocumentationFile>..\..\bin\netstandard2.0\Librame.Extensions.Data.EntityFrameworkCore.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
