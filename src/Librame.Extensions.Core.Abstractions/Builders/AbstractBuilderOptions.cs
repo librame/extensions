@@ -15,6 +15,21 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 抽象构建器选项。
     /// </summary>
+    /// <typeparam name="TTableSchemaOptions">指定的表架构选项类型。</typeparam>
+    public abstract class AbstractBuilderOptions<TTableSchemaOptions> : AbstractBuilderOptions, IBuilderOptions<TTableSchemaOptions>
+        where TTableSchemaOptions : ITableSchemaOptions, new()
+    {
+        /// <summary>
+        /// 表架构选项。
+        /// </summary>
+        public TTableSchemaOptions TableSchemas { get; set; }
+            = new TTableSchemaOptions();
+    }
+
+
+    /// <summary>
+    /// 抽象构建器选项。
+    /// </summary>
     public abstract class AbstractBuilderOptions : IBuilderOptions
     {
         /// <summary>

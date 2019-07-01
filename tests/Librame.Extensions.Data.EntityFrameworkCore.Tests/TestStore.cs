@@ -69,7 +69,7 @@ namespace Librame.Extensions.Data.Tests
                 {
                     articles.Add(new Article
                     {
-                        Id = idService.GetIdAsync(default).Result,
+                        Id = idService.GetAuditIdAsync(default).Result,
                         Title = "Article " + i.ToString(),
                         Descr = "Descr " + i.ToString(),
                         Category = (i < 50) ? firstCategory : lastCategory

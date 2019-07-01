@@ -30,46 +30,46 @@ namespace Librame.Extensions.Data
                 modelBuilder.HasDefaultSchema(options.DefaultSchema);
 
             // 审计
-            modelBuilder.Entity<BaseAudit>(audit =>
+            modelBuilder.Entity<BaseAudit>(b =>
             {
-                audit.ToTable(options.AuditTableFactory?.Invoke(typeof(BaseAudit)));
+                b.ToTable(options.TableSchemas.AuditFactory);
 
-                audit.HasKey(k => k.Id);
+                b.HasKey(k => k.Id);
 
-                audit.Property(p => p.Id).ValueGeneratedNever();
-                audit.Property(p => p.EntityName).HasMaxLength(100).IsRequired();
-                audit.Property(p => p.EntityTypeName).HasMaxLength(200).IsRequired();
-                audit.Property(p => p.StateName).HasMaxLength(50);
-                audit.Property(p => p.CreatedBy).HasMaxLength(50);
+                b.Property(p => p.Id).ValueGeneratedNever();
+                b.Property(p => p.EntityName).HasMaxLength(100).IsRequired();
+                b.Property(p => p.EntityTypeName).HasMaxLength(200).IsRequired();
+                b.Property(p => p.StateName).HasMaxLength(50);
+                b.Property(p => p.CreatedBy).HasMaxLength(50);
 
                 // 关联
-                audit.HasMany(p => p.Properties).WithOne(p => p.Audit).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                b.HasMany(p => p.Properties).WithOne(p => p.Audit).IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
 
             // 审计属性
-            modelBuilder.Entity<BaseAuditProperty>(auditProperty =>
+            modelBuilder.Entity<BaseAuditProperty>(b =>
             {
-                auditProperty.ToTable(options.AuditPropertyTableFactory?.Invoke(typeof(BaseAuditProperty)));
+                b.ToTable(options.TableSchemas.AuditPropertyFactory);
 
-                auditProperty.HasKey(k => k.Id);
+                b.HasKey(k => k.Id);
 
-                auditProperty.Property(p => p.Id).ValueGeneratedOnAdd();
-                auditProperty.Property(p => p.PropertyName).HasMaxLength(100).IsRequired();
-                auditProperty.Property(p => p.PropertyTypeName).HasMaxLength(200).IsRequired();
+                b.Property(p => p.Id).ValueGeneratedOnAdd();
+                b.Property(p => p.PropertyName).HasMaxLength(100).IsRequired();
+                b.Property(p => p.PropertyTypeName).HasMaxLength(200).IsRequired();
             });
 
             // 租户
-            modelBuilder.Entity<BaseTenant>(tenant =>
+            modelBuilder.Entity<BaseTenant>(b =>
             {
-                tenant.ToTable(options.TenantTableFactory?.Invoke(typeof(BaseTenant)));
+                b.ToTable(options.TableSchemas.TenantFactory);
 
-                tenant.HasKey(k => k.Id);
+                b.HasKey(k => k.Id);
 
-                tenant.HasIndex(i => new { i.Name, i.Host }).HasName($"{nameof(BaseTenant)}NameHostIndex").IsUnique();
+                b.HasIndex(i => new { i.Name, i.Host }).HasName().IsUnique();
 
-                tenant.Property(p => p.Id).ValueGeneratedNever();
-                tenant.Property(p => p.Name).HasMaxLength(100).IsRequired();
-                tenant.Property(p => p.Host).HasMaxLength(200).IsRequired();
+                b.Property(p => p.Id).ValueGeneratedNever();
+                b.Property(p => p.Name).HasMaxLength(100).IsRequired();
+                b.Property(p => p.Host).HasMaxLength(200).IsRequired();
             });
         }
 

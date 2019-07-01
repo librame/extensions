@@ -5,7 +5,6 @@ namespace Librame.Extensions.Data.Tests
 {
     public class DbContextAccessorTests
     {
-
         [Fact]
         public void AllTest()
         {

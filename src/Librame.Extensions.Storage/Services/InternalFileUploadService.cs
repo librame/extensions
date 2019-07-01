@@ -27,7 +27,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 内部文件上传服务。
     /// </summary>
-    public class InternalFileUploadService : AbstractService<InternalFileUploadService>, IFileUploadService
+    internal class InternalFileUploadService : AbstractService<InternalFileUploadService>, IFileUploadService
     {
         private readonly IStorageTokenService _accessToken;
 

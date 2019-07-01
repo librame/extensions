@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.0.806.201</Version>
+    <Version>6.0.807.201</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based Microsoft.Extensions common framework class library.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Microsoft.Extensions common framework class library.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.0.806.201</AssemblyVersion>
-    <FileVersion>6.0.1906.301</FileVersion>
+    <AssemblyVersion>6.0.807.201</AssemblyVersion>
+    <FileVersion>6.0.1907.11</FileVersion>
     <RootNamespace>Librame.Extensions.Core</RootNamespace>
   </PropertyGroup>
 

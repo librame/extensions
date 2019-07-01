@@ -23,10 +23,17 @@ namespace Librame.Extensions.Data
     public interface IIdentifierService : IService
     {
         /// <summary>
-        /// 异步获取标识。
+        /// 异步获取审计标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="string"/> 的异步操作。</returns>
-        Task<string> GetIdAsync(CancellationToken cancellationToken = default);
+        Task<string> GetAuditIdAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 异步获取租户标识。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="string"/>。</returns>
+        Task<string> GetTenantIdAsync(CancellationToken cancellationToken = default);
     }
 }

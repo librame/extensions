@@ -22,34 +22,20 @@ namespace Microsoft.EntityFrameworkCore
     /// </summary>
     public static class TableSchemaEntityTypeBuilderExtensions
     {
-        /// <summary>
-        /// 映射内部表架构（格式参考：__names?）。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="entityTypeBuilder">给定的 <see cref="EntityTypeBuilder{TEntity}"/>。</param>
-        /// <param name="formatter">给定的格式化器。</param>
-        /// <param name="schema">给定的架构（可选）。</param>
-        /// <returns>返回 <see cref="EntityTypeBuilder{TEntity}"/>。</returns>
-        public static EntityTypeBuilder<TEntity> ToInternalTable<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder,
-            Func<string, string> formatter = null, string schema = null)
-            where TEntity : class
-        {
-            return entityTypeBuilder.ToTable(typeof(TEntity).AsInternalTableSchema(formatter, schema));
-        }
+
+        #region EntityTypeBuilder<TEntity>
 
         /// <summary>
-        /// 映射表架构（格式参考：names?）。
+        /// 映射表架构。
         /// </summary>
         /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="entityTypeBuilder">给定的 <see cref="EntityTypeBuilder{TEntity}"/>。</param>
-        /// <param name="formatter">给定的表名格式化器（可选）。</param>
-        /// <param name="schema">给定的架构（可选）。</param>
+        /// <param name="builder">给定的 <see cref="EntityTypeBuilder{TEntity}"/>。</param>
+        /// <param name="factory">给定的实体类型转换表架构的工厂方法。</param>
         /// <returns>返回 <see cref="EntityTypeBuilder{TEntity}"/>。</returns>
-        public static EntityTypeBuilder<TEntity> ToTable<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder,
-            Func<string, string> formatter = null, string schema = null)
+        public static EntityTypeBuilder<TEntity> ToTable<TEntity>(this EntityTypeBuilder<TEntity> builder, Func<Type, ITableSchema> factory)
             where TEntity : class
         {
-            return entityTypeBuilder.ToTable(typeof(TEntity).AsTableSchema(formatter, schema));
+            return builder.ToTable(factory?.Invoke(builder.Metadata.ClrType));
         }
 
         /// <summary>
@@ -62,13 +48,27 @@ namespace Microsoft.EntityFrameworkCore
         public static EntityTypeBuilder<TEntity> ToTable<TEntity>(this EntityTypeBuilder<TEntity> entityTypeBuilder, ITableSchema table)
             where TEntity : class
         {
-            table.NotNull(nameof(table));
+            (entityTypeBuilder as EntityTypeBuilder).ToTable(table);
 
-            if (!table.Schema.IsNullOrEmpty())
-                return entityTypeBuilder.ToTable(table.Name);
-
-            return entityTypeBuilder.ToTable(table.Name, table.Schema);
+            return entityTypeBuilder;
         }
+
+        #endregion
+
+
+        #region EntityTypeBuilder
+
+        ///// <summary>
+        ///// 映射表架构工厂方法。
+        ///// </summary>
+        ///// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        ///// <param name="entityTypeBuilder">给定的 <see cref="EntityTypeBuilder"/>。</param>
+        ///// <param name="factory">给定的实体类型映射表架构的工厂方法。</param>
+        ///// <returns>返回 <see cref="EntityTypeBuilder"/>。</returns>
+        //public static EntityTypeBuilder ToTable<TEntity>(this EntityTypeBuilder entityTypeBuilder, Func<Type, ITableSchema> factory)
+        //{
+        //    return entityTypeBuilder.ToTable(factory?.Invoke(typeof(TEntity)));
+        //}
 
         /// <summary>
         /// 映射表架构。
@@ -85,5 +85,8 @@ namespace Microsoft.EntityFrameworkCore
 
             return entityTypeBuilder.ToTable(table.Name, table.Schema);
         }
+
+        #endregion
+
     }
 }

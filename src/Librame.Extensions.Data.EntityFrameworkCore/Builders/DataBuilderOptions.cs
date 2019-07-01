@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据构建器选项。
     /// </summary>
-    public class DataBuilderOptions : AbstractBuilderOptions, IBuilderOptions
+    public class DataBuilderOptions : AbstractBuilderOptions<TableSchemaOptions>
     {
         /// <summary>
         /// 默认架构。
@@ -48,26 +48,32 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 本机租户。
         /// </summary>
-        public ITenant LocalTenant { get; set; }
+        public ITenant DefaultTenant { get; set; }
             = new BaseTenant();
+    }
 
 
+    /// <summary>
+    /// 表架构选项。
+    /// </summary>
+    public class TableSchemaOptions : ITableSchemaOptions
+    {
         /// <summary>
-        /// 审计表。
+        /// 审计工厂方法。
         /// </summary>
-        public Func<Type, ITableSchema> AuditTableFactory { get; set; }
+        public Func<Type, ITableSchema> AuditFactory { get; set; }
             = type => type.AsInternalTableSchema();
 
         /// <summary>
-        /// 审计属性表。
+        /// 审计属性工厂方法。
         /// </summary>
-        public Func<Type, ITableSchema> AuditPropertyTableFactory { get; set; }
+        public Func<Type, ITableSchema> AuditPropertyFactory { get; set; }
             = type => type.AsInternalTableSchema();
 
         /// <summary>
-        /// 租户表。
+        /// 租户工厂方法。
         /// </summary>
-        public Func<Type, ITableSchema> TenantTableFactory { get; set; }
+        public Func<Type, ITableSchema> TenantFactory { get; set; }
             = type => type.AsInternalTableSchema();
     }
 }

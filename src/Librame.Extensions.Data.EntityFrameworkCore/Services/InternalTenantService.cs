@@ -48,7 +48,7 @@ namespace Librame.Extensions.Data
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            return Task.FromResult(Options.LocalTenant);
+            return Task.FromResult(Options.DefaultTenant);
         }
     }
 }

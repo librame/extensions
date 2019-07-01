@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Librame.Extensions.Data.Tests
 {
@@ -22,7 +21,7 @@ namespace Librame.Extensions.Data.Tests
 
             modelBuilder.Entity<Category>(category =>
             {
-                category.ToTable();
+                category.ToTable(type => type.AsTableSchema());
 
                 category.HasKey(x => x.Id);
 
@@ -37,7 +36,7 @@ namespace Librame.Extensions.Data.Tests
 
             modelBuilder.Entity<Article>(article =>
             {
-                article.ToTable(names => $"{names}_{DateTime.Now.ToString("yy")}");
+                article.ToTable(type => type.AsTableSchema(now => now.ToString("yy")));
 
                 article.HasKey(x => x.Id);
 

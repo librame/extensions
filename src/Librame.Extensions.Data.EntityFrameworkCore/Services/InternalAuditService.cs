@@ -85,7 +85,7 @@ namespace Librame.Extensions.Data
         {
             var audit = new BaseAudit
             {
-                Id = _identifierService.GetIdAsync(default).Result,
+                Id = _identifierService.GetAuditIdAsync(default).Result,
                 EntityName = GetEntityName(entry.Metadata.ClrType),
                 EntityTypeName = entry.Metadata.ClrType.FullName,
                 State = (int)entry.State,
