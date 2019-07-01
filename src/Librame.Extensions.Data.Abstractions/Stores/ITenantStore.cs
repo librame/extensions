@@ -43,7 +43,7 @@ namespace Librame.Extensions.Data
         Task<TTenant> GetTenantAsync(string name, string host, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// 异步获取所有分页租户集合。
+        /// 异步获取所有租户集合。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="List{TTenant}"/> 的异步操作。</returns>
