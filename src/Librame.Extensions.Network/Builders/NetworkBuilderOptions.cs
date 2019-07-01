@@ -21,7 +21,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 网络构建器选项。
     /// </summary>
-    public class NetworkBuilderOptions : AbstractBuilderOptions, IBuilderOptions
+    public class NetworkBuilderOptions : AbstractBuilderOptions
     {
         /// <summary>
         /// 配置加密。

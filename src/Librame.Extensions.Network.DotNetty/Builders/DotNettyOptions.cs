@@ -22,7 +22,7 @@ namespace Librame.Extensions.Network.DotNetty
     /// <summary>
     /// DotNetty 选项。
     /// </summary>
-    public class DotNettyOptions : AbstractBuilderOptions, IBuilderOptions
+    public class DotNettyOptions : AbstractBuilderOptions
     {
         /// <summary>
         /// 字符编码（默认为 <see cref="Encoding.UTF8"/>）。

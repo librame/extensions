@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 构建器选项。
     /// </summary>
-    public class BuilderOptions : AbstractBuilderOptions, IBuilderOptions
+    public class BuilderOptions : AbstractBuilderOptions
     {
         private static readonly CultureInfo _zhCNCultureInfo
             = new CultureInfo("zh-CN");
