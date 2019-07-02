@@ -23,11 +23,11 @@
     <FileVersion>6.0.1907.11</FileVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'"
-    <OutputPath>..\..\bin\</OutputPath>
-    <DocumentationFile>..\..\bin\netstandard2.0\Librame.Extensions.Encryption.xml</DocumentationFile>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <OutputPath>..\..\bin\</OutputPath>
+        <DocumentationFile>..\..\bin\netstandard2.0\Librame.Extensions.Encryption.xml</DocumentationFile>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\bin\</OutputPath>
     <DocumentationFile>..\..\bin\netstandard2.0\Librame.Extensions.Encryption.xml</DocumentationFile>
