@@ -18,20 +18,18 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
     /// 内部租户服务。
     /// </summary>
-    internal class InternalTenantService : AbstractService<InternalTenantService, DataBuilderOptions>, ITenantService
+    internal class InternalTenantService : AbstractDataService, ITenantService
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalAuditService"/> 实例。
+        /// 构造一个 <see cref="InternalTenantService"/> 实例。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalTenantService}"/>。</param>
-        public InternalTenantService(IOptions<DataBuilderOptions> options, ILogger<InternalTenantService> logger)
-            : base(options, logger)
+        /// <param name="loggerFactory">给定的 <see cref="ILogger{InternalTenantService}"/>。</param>
+        public InternalTenantService(IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(options, loggerFactory)
         {
         }
 
@@ -46,9 +44,13 @@ namespace Librame.Extensions.Data
         public Task<ITenant> GetTenantAsync<TTenant>(IQueryable<TTenant> queryable, CancellationToken cancellationToken = default)
             where TTenant : ITenant
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                var tenant = Options.DefaultTenant;
+                Logger.LogInformation($"Get Tenant: Name={tenant?.Name}, Host={tenant.Host}");
 
-            return Task.FromResult(Options.DefaultTenant);
+                return tenant;
+            });
         }
     }
 }

@@ -14,21 +14,21 @@ using System;
 
 namespace Librame.Extensions.Core
 {
-    /// <summary>
-    /// 抽象可处置对象。
-    /// </summary>
-    /// <typeparam name="TDisposable">指定的可处置对象类型。</typeparam>
-    public abstract class AbstractDisposable<TDisposable> : AbstractDisposable, IDisposable<TDisposable>
-    {
-        /// <summary>
-        /// 获取可处置对象类型。
-        /// </summary>
-        /// <returns>返回 <see cref="Type"/>。</returns>
-        protected override Type GetDisposableType()
-        {
-            return typeof(TDisposable);
-        }
-    }
+    ///// <summary>
+    ///// 抽象可处置对象。
+    ///// </summary>
+    ///// <typeparam name="TDisposable">指定的可处置对象类型。</typeparam>
+    //public abstract class AbstractDisposable<TDisposable> : AbstractDisposable, IDisposable<TDisposable>
+    //{
+    //    /// <summary>
+    //    /// 获取可处置对象类型。
+    //    /// </summary>
+    //    /// <returns>返回 <see cref="Type"/>。</returns>
+    //    protected override Type GetDisposableType()
+    //    {
+    //        return typeof(TDisposable);
+    //    }
+    //}
 
     /// <summary>
     /// 抽象可处置对象。

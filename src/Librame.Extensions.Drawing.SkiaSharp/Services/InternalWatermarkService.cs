@@ -26,16 +26,16 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部水印服务。
     /// </summary>
-    internal class InternalWatermarkService : AbstractService<InternalWatermarkService, DrawingBuilderOptions>, IWatermarkService
+    internal class InternalWatermarkService : AbstractDrawingService, IWatermarkService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalWatermarkService"/> 实例。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalWatermarkService}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public InternalWatermarkService(IOptions<DrawingBuilderOptions> options,
-            ILogger<InternalWatermarkService> logger)
-            : base(options, logger)
+            ILoggerFactory loggerFactory)
+            : base(options, loggerFactory)
         {
         }
 
@@ -59,24 +59,25 @@ namespace Librame.Extensions.Drawing
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        public Task<bool> DrawFile(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
+        public Task<bool> DrawFileAsync(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var result = false;
-            
-            DrawCore(imagePath, mode, data =>
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                using (var fs = new FileStream(savePath, FileMode.OpenOrCreate))
+                var result = false;
+
+                DrawCore(imagePath, mode, data =>
                 {
-                    data.SaveTo(fs);
-                }
+                    using (var fs = new FileStream(savePath, FileMode.OpenOrCreate))
+                    {
+                        data.SaveTo(fs);
+                    }
 
-                Logger.LogDebug($"Watermark image file save as: {savePath}");
-                result = true;
+                    Logger.LogDebug($"Watermark image file save as: {savePath}");
+                    result = true;
+                });
+
+                return result;
             });
-
-            return Task.FromResult(result);
         }
 
 
@@ -88,21 +89,22 @@ namespace Librame.Extensions.Drawing
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        public Task<bool> DrawStream(string imagePath, Stream target, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
+        public Task<bool> DrawStreamAsync(string imagePath, Stream target, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var result = false;
-            
-            DrawCore(imagePath, mode, data =>
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                data.SaveTo(target);
+                var result = false;
 
-                Logger.LogDebug($"Watermark image file save as stream");
-                result = true;
+                DrawCore(imagePath, mode, data =>
+                {
+                    data.SaveTo(target);
+
+                    Logger.LogDebug($"Watermark image file save as stream");
+                    result = true;
+                });
+
+                return result;
             });
-
-            return Task.FromResult(result);
         }
 
 
@@ -113,19 +115,20 @@ namespace Librame.Extensions.Drawing
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含图像字节数组的异步操作。</returns>
-        public Task<byte[]> DrawBytes(string imagePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
+        public Task<byte[]> DrawBytesAsync(string imagePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var buffer = default(byte[]);
-            
-            DrawCore(imagePath, mode, data =>
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                buffer = data.ToArray();
-                Logger.LogDebug($"Watermark image file save as byte[]: length={buffer.Length}");
-            });
+                var buffer = default(byte[]);
 
-            return Task.FromResult(buffer);
+                DrawCore(imagePath, mode, data =>
+                {
+                    buffer = data.ToArray();
+                    Logger.LogDebug($"Watermark image file save as byte[]: length={buffer.Length}");
+                });
+
+                return buffer;
+            });
         }
 
 

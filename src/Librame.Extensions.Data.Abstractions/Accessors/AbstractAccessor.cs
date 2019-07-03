@@ -81,6 +81,6 @@ namespace Librame.Extensions.Data
         /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        public abstract Task ChangeDbConnection(Func<ITenant, string> connectionStringFactory, CancellationToken cancellationToken = default);
+        public abstract Task ChangeDbConnectionAsync(Func<ITenant, string> connectionStringFactory, CancellationToken cancellationToken = default);
     }
 }

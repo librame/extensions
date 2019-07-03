@@ -71,7 +71,7 @@ namespace System.Collections.Generic
             where T : IParentId<TId>
             where TId : IEquatable<TId>
         {
-            return Task.Factory.StartNew(() => items.AsTreeingNodes<T, TId>(), cancellationToken);
+            return Task.Run(() => items.AsTreeingNodes<T, TId>(), cancellationToken);
         }
 
         /// <summary>

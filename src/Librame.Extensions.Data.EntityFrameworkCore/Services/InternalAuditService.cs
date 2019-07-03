@@ -26,7 +26,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 内部审计服务。
     /// </summary>
-    internal class InternalAuditService : AbstractService<InternalAuditService>, IAuditService
+    internal class InternalAuditService : AbstractService, IAuditService
     {
         private readonly IClockService _clockService;
         private readonly IIdentifierService _identifierService;
@@ -37,10 +37,10 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="clockService">给定的 <see cref="IClockService"/>。</param>
         /// <param name="identifierService">给定的 <see cref="IIdentifierService"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalAuditService}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public InternalAuditService(IClockService clockService, IIdentifierService identifierService,
-            ILogger<InternalAuditService> logger)
-            : base(logger)
+            ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             _clockService = clockService.NotNull(nameof(clockService));
             _identifierService = identifierService.NotNull(nameof(identifierService));
@@ -56,23 +56,24 @@ namespace Librame.Extensions.Data
         public Task<List<BaseAudit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
             CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var audits = new List<BaseAudit>();
-
-            if (changeEntities.IsNullOrEmpty())
-                return Task.FromResult(audits);
-
-            foreach (var entry in changeEntities)
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                if (entry.Metadata.ClrType.IsDefined<NotAuditedAttribute>())
-                    continue; // 如果不审计，则忽略
+                var audits = new List<BaseAudit>();
 
-                var audit = ToAudit(entry);
-                audits.Add(audit);
-            }
+                if (changeEntities.IsNullOrEmpty())
+                    return audits;
 
-            return Task.FromResult(audits);
+                foreach (var entry in changeEntities)
+                {
+                    if (entry.Metadata.ClrType.IsDefined<NotAuditedAttribute>())
+                        continue; // 如果不审计，则忽略
+
+                    var audit = ToAudit(entry);
+                    audits.Add(audit);
+                }
+
+                return audits;
+            });
         }
 
 

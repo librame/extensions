@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据构建器选项。
     /// </summary>
-    public class DataBuilderOptions : AbstractBuilderOptions<TableSchemaOptions>
+    public class DataBuilderOptions : AbstractDataBuilderOptions<TableSchemaOptions>
     {
         /// <summary>
         /// 默认架构。

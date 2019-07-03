@@ -37,7 +37,7 @@ namespace Librame.Extensions.Core
             Action<BinderOptions> configureBinderOptions = null)
             where TOptions : class, IBuilderOptions, new()
         {
-            return ConfigureBuilder(builder.Services, configureOptions,
+            return builder.Services.ConfigureBuilder(configureOptions,
                 configuration, configureBinderOptions);
         }
 

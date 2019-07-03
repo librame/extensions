@@ -65,11 +65,11 @@ namespace Librame.Extensions.Data
         Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// 改变数据库连接。
+        /// 异步改变数据库连接。
         /// </summary>
         /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        Task ChangeDbConnection(Func<ITenant, string> connectionStringFactory, CancellationToken cancellationToken = default);
+        Task ChangeDbConnectionAsync(Func<ITenant, string> connectionStringFactory, CancellationToken cancellationToken = default);
     }
 }

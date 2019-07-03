@@ -80,7 +80,7 @@ namespace System.Linq
             orderedQuery.NotNull(nameof(orderedQuery));
             computeAction.NotNull(nameof(computeAction));
 
-            return Task.Factory.StartNew(() =>
+            return Task.Run(() =>
             {
                 IPageable<TEntity> paging = orderedQuery.AsPagingCore(computeAction);
                 return paging;

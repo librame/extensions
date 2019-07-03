@@ -22,7 +22,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部 RSA 服务。
     /// </summary>
-    internal class InternalRsaService : AbstractService<InternalRsaService, EncryptionBuilderOptions>, IRsaService
+    internal class InternalRsaService : AbstractEncryptionService, IRsaService
     {
         private RSA _rsa = null;
 
@@ -32,10 +32,10 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalRsaService}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public InternalRsaService(ISigningCredentialsService signingCredentials,
-            IOptions<EncryptionBuilderOptions> options, ILogger<InternalRsaService> logger)
-            : base(options, logger)
+            IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(options, loggerFactory)
         {
             SigningCredentials = signingCredentials.NotNull(nameof(signingCredentials));
 

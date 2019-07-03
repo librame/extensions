@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core.Tests
         {
             public override Task<Pong> HandleAsync(Ping request, CancellationToken cancellationToken = default)
             {
-                return Task.Factory.StartNew(() => new Pong { Message = request.Message + " Pong" });
+                return Task.Run(() => new Pong { Message = request.Message + " Pong" });
             }
         }
 

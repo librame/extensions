@@ -27,15 +27,15 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部验证码服务。
     /// </summary>
-    internal class InternalCaptchaService : AbstractService<InternalCaptchaService, DrawingBuilderOptions>, ICaptchaService
+    internal class InternalCaptchaService : AbstractDrawingService, ICaptchaService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalCaptchaService"/> 实例。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalCaptchaService}"/>。</param>
-        public InternalCaptchaService(IOptions<DrawingBuilderOptions> options, ILogger<InternalCaptchaService> logger)
-            : base(options, logger)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public InternalCaptchaService(IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(options, loggerFactory)
         {
         }
 
@@ -53,24 +53,31 @@ namespace Librame.Extensions.Drawing
         /// <param name="savePath">给定的保存路径。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        public Task<bool> DrawFile(string captcha, string savePath, CancellationToken cancellationToken = default)
+        public Task<bool> DrawFileAsync(string captcha, string savePath, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var result = false;
-
-            DrawCore(captcha, data =>
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                using (var fs = new FileStream(savePath, FileMode.OpenOrCreate))
+                try
                 {
-                    data.SaveTo(fs);
+                    DrawCore(captcha, data =>
+                    {
+                        using (var fs = new FileStream(savePath, FileMode.OpenOrCreate))
+                        {
+                            data.SaveTo(fs);
+                        }
+
+                        Logger.LogInformation($"Captcha image file save as: {savePath}");
+                    });
+
+                    return File.Exists(savePath);
                 }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex.Message);
 
-                Logger.LogDebug($"Captcha image file save as: {savePath}");
-                result = true;
+                    return false;
+                }
             });
-
-            return Task.FromResult(result);
         }
 
 
@@ -81,21 +88,28 @@ namespace Librame.Extensions.Drawing
         /// <param name="target">给定的目标流。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        public Task<bool> DrawStream(string captcha, Stream target, CancellationToken cancellationToken = default)
+        public Task<bool> DrawStreamAsync(string captcha, Stream target, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var result = false;
-
-            DrawCore(captcha, data =>
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                data.SaveTo(target);
-                
-                Logger.LogDebug($"Captcha image save as stream");
-                result = true;
-            });
+                try
+                {
+                    DrawCore(captcha, data =>
+                    {
+                        data.SaveTo(target);
 
-            return Task.FromResult(result);
+                        Logger.LogInformation($"Captcha image save as stream");
+                    });
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex.Message);
+
+                    return false;
+                }
+            });
         }
 
 
@@ -105,19 +119,29 @@ namespace Librame.Extensions.Drawing
         /// <param name="captcha">给定的验证码。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含图像字节数组的异步操作。</returns>
-        public Task<byte[]> DrawBytes(string captcha, CancellationToken cancellationToken = default)
+        public Task<byte[]> DrawBytesAsync(string captcha, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var buffer = default(byte[]);
-
-            DrawCore(captcha, data =>
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                buffer = data.ToArray();
-                Logger.LogDebug($"Captcha image save as byte[]: length={buffer.Length}");
-            });
+                try
+                {
+                    var buffer = default(byte[]);
 
-            return Task.FromResult(buffer);
+                    DrawCore(captcha, data =>
+                    {
+                        buffer = data.ToArray();
+                        Logger.LogDebug($"Captcha image save as byte[]: length={buffer.Length}");
+                    });
+
+                    return buffer;
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex.Message);
+
+                    return new byte[0];
+                }
+            });
         }
 
 
@@ -128,7 +152,7 @@ namespace Librame.Extensions.Drawing
         /// <param name="postAction">后置动作处理。</param>
         public void DrawCore(string captcha, Action<SKData> postAction)
         {
-            Logger.LogDebug($"Captcha text: {captcha}");
+            Logger.LogInformation($"Captcha text: {captcha}");
 
             var colorOptions = Options.Captcha.Colors;
             var bgColor = SKColor.Parse(colorOptions.BackgroundHex);

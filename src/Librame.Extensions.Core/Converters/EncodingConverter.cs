@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构造一个 <see cref="EncodingConverter"/> 实例。
         /// </summary>
-        /// <param name="encoding">给定的 <see cref="System.Text.Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
+        /// <param name="encoding">给定的字符编码（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
         public EncodingConverter(Encoding encoding = null)
         {
             Encoding = encoding ?? Encoding.UTF8;
@@ -32,7 +32,6 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 字符编码。
         /// </summary>
-        /// <value>返回 <see cref="System.Text.Encoding"/>。</value>
         public Encoding Encoding { get; set; }
 
 

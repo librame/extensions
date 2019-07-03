@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,14 +21,14 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 内部标识符服务。
     /// </summary>
-    internal class InternalIdentifierService : AbstractService<InternalIdentifierService>, IIdentifierService
+    internal class InternalIdentifierService : AbstractService, IIdentifierService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalIdentifierService"/> 实例。
         /// </summary>
-        /// <param name="logger">给定的 <see cref="ILogger{IdService}"/>。</param>
-        public InternalIdentifierService(ILogger<InternalIdentifierService> logger)
-            : base(logger)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public InternalIdentifierService(ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
         }
 
@@ -41,12 +40,13 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="string"/>。</returns>
         public Task<string> GetAuditIdAsync(CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                string auditId = GuIdentifier.New();
+                Logger.LogInformation($"Get AuditId: {auditId}");
 
-            string auditId = GuIdentifier.New();
-            Logger.LogInformation($"Get AuditId {auditId} in {DateTimeOffset.Now}");
-
-            return Task.FromResult(auditId);
+                return auditId;
+            });
         }
 
         /// <summary>
@@ -56,12 +56,13 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="string"/>。</returns>
         public Task<string> GetTenantIdAsync(CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                string tenantId = GuIdentifier.New();
+                Logger.LogInformation($"Get TenantId: {tenantId}");
 
-            string tenantId = GuIdentifier.New();
-            Logger.LogInformation($"Get TenantId {tenantId} in {DateTimeOffset.Now}");
-
-            return Task.FromResult(tenantId);
+                return tenantId;
+            });
         }
 
     }

@@ -10,18 +10,12 @@
 
 #endregion
 
-using System.Text;
-
 namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 字符编码转换器接口。
     /// </summary>
-    public interface IEncodingConverter : IConverter<string, IByteBuffer>
+    public interface IEncodingConverter : IConverter<string, IByteBuffer>, IEncoding
     {
-        /// <summary>
-        /// 字符编码。
-        /// </summary>
-        Encoding Encoding { get; set; }
     }
 }

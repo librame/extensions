@@ -18,19 +18,17 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 抽象服务。
     /// </summary>
-    /// <typeparam name="TService">指定的服务类型。</typeparam>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public abstract class AbstractService<TService, TBuilderOptions> : AbstractService<TService>, IService<TBuilderOptions>
-        where TService : class, IService
+    public abstract class AbstractService<TBuilderOptions> : AbstractService, IService<TBuilderOptions>
         where TBuilderOptions : class, IBuilderOptions, new()
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractService{TService}"/> 实例。
+        /// 构造一个 <see cref="AbstractService{TBuilderOptions}"/> 实例。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{TService}"/>。</param>
-        protected AbstractService(IOptions<TBuilderOptions> options, ILogger<TService> logger)
-            : base(logger)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        protected AbstractService(IOptions<TBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             Options = options.NotNull(nameof(options)).Value;
         }
@@ -39,6 +37,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构建器选项。
         /// </summary>
+        /// <value>返回 <typeparamref name="TBuilderOptions"/>。</value>
         public TBuilderOptions Options { get; }
     }
 
@@ -46,24 +45,29 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 抽象服务。
     /// </summary>
-    /// <typeparam name="TService">指定的服务类型。</typeparam>
-    public abstract class AbstractService<TService> : AbstractDisposable<TService>, IService
-        where TService : class, IService
+    public abstract class AbstractService : AbstractDisposable, IService
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractService{TService}"/> 实例。
+        /// 构造一个 <see cref="AbstractService"/> 实例。
         /// </summary>
-        /// <param name="logger">给定的 <see cref="ILogger{TService}"/>。</param>
-        protected AbstractService(ILogger<TService> logger)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        protected AbstractService(ILoggerFactory loggerFactory)
         {
-            Logger = logger.NotNull(nameof(logger));
+            LoggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
         }
 
+
+        /// <summary>
+        /// 记录器工厂。
+        /// </summary>
+        /// <value>返回 <see cref="ILoggerFactory"/>。</value>
+        public ILoggerFactory LoggerFactory { get; }
 
         /// <summary>
         /// 记录器。
         /// </summary>
         /// <value>返回 <see cref="ILogger"/>。</value>
-        protected ILogger Logger { get; }
+        protected virtual ILogger Logger
+            => LoggerFactory.CreateLogger(GetDisposableType());
     }
 }

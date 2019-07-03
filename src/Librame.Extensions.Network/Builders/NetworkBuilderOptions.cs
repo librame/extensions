@@ -41,6 +41,12 @@ namespace Librame.Extensions.Network
             = new CrawlerOptions();
 
         /// <summary>
+        /// 请求程序。
+        /// </summary>
+        public RequesterOptions Requester { get; set; }
+            = new RequesterOptions();
+
+        /// <summary>
         /// 邮件选项。
         /// </summary>
         public EmailOptions Email { get; set; }
@@ -64,6 +70,19 @@ namespace Librame.Extensions.Network
     /// 抓取器选项。
     /// </summary>
     public class CrawlerOptions
+    {
+        /// <summary>
+        /// 图像文件扩展名集合（以英文逗号分隔）。
+        /// </summary>
+        public string ImageExtensions { get; set; }
+            = ".jpg,.jpeg,.png,.bmp";
+    }
+
+
+    /// <summary>
+    /// 请求程序选项。
+    /// </summary>
+    public class RequesterOptions
     {
         /// <summary>
         /// 允许自动重定向。
@@ -94,12 +113,6 @@ namespace Librame.Extensions.Network
         /// </summary>
         public string UserAgent { get; set; }
             = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36";
-
-        /// <summary>
-        /// 图像文件扩展名集合（以英文逗号分隔）。
-        /// </summary>
-        public string ImageExtensions { get; set; }
-            = ".jpg,.jpeg,.png,.bmp";
     }
 
 

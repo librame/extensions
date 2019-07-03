@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Librame.Extensions.Core
@@ -24,6 +25,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构建器选项。
         /// </summary>
+        /// <value>返回 <typeparamref name="TBuilderOptions"/>。</value>
         TBuilderOptions Options { get; }
     }
 
@@ -33,5 +35,10 @@ namespace Librame.Extensions.Core
     /// </summary>
     public interface IService : IDisposable
     {
+        /// <summary>
+        /// 记录器工厂。
+        /// </summary>
+        /// <value>返回 <see cref="ILoggerFactory"/>。</value>
+        ILoggerFactory LoggerFactory { get; }
     }
 }

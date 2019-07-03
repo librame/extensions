@@ -16,27 +16,27 @@ using System.Linq;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 内部构建器。
+    /// 内部核心构建器。
     /// </summary>
-    internal class InternalBuilder : AbstractBuilder<BuilderOptions>, IBuilder
+    internal class InternalCoreBuilder : AbstractBuilder<CoreBuilderOptions>, ICoreBuilder
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalBuilder"/> 实例。
+        /// 构造一个 <see cref="InternalCoreBuilder"/> 实例。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="options">给定的 <see cref="BuilderOptions"/>。</param>
-        public InternalBuilder(IServiceCollection services, BuilderOptions options)
+        /// <param name="options">给定的 <see cref="CoreBuilderOptions"/>。</param>
+        public InternalCoreBuilder(IServiceCollection services, CoreBuilderOptions options)
             : base(services, options)
         {
-            Services.AddSingleton<IBuilder>(this);
+            Services.AddSingleton<ICoreBuilder>(this);
         }
 
 
         /// <summary>
         /// 初始化构建器。
         /// </summary>
-        /// <param name="options">给定的 <see cref="BuilderOptions"/>。</param>
-        protected override void Initialize(BuilderOptions options)
+        /// <param name="options">给定的 <see cref="CoreBuilderOptions"/>。</param>
+        protected override void Initialize(CoreBuilderOptions options)
         {
             BuilderGlobalization.RegisterCultureInfos(options.CultureInfo, options.CultureUIInfo);
 

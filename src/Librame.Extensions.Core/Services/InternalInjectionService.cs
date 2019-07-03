@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 内部注入服务。
     /// </summary>
-    internal class InternalInjectionService : AbstractDisposable<InternalInjectionService>, IInjectionService
+    internal class InternalInjectionService : AbstractService, IInjectionService
     {
         Dictionary<Type, Action<object, IServiceProvider>> _injectedActions
             = new Dictionary<Type, Action<object, IServiceProvider>>();
@@ -30,7 +31,10 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="InternalInjectionService"/> 实例。
         /// </summary>
         /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
-        public InternalInjectionService(IServiceProvider serviceProvider)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public InternalInjectionService(IServiceProvider serviceProvider,
+            ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             ServiceProvider = serviceProvider.NotNull(nameof(serviceProvider));
         }
@@ -54,7 +58,9 @@ namespace Librame.Extensions.Core
 
             if (_injectedActions.TryGetValue(serviceType, out Action<object, IServiceProvider> action))
             {
-                action(service, ServiceProvider);
+                action.Invoke(service, ServiceProvider);
+                Logger.LogInformation($"Use cache action for resolve the service type: {serviceType}");
+
                 return;
             }
 

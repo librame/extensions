@@ -20,22 +20,24 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
+    using Core;
     using Encryption;
 
     /// <summary>
     /// 内部短信服务。
     /// </summary>
-    internal class InternalSmsService : AbstractNetworkService<InternalSmsService>, ISmsService
+    internal class InternalSmsService : AbstractSafetyNetworkService, ISmsService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalSmsService"/> 实例。
         /// </summary>
         /// <param name="hash">给定的 <see cref="IHashService"/>。</param>
+        /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalSmsService}"/>。</param>
-        public InternalSmsService(IHashService hash,
-            IOptions<NetworkBuilderOptions> options, ILogger<InternalSmsService> logger)
-            : base(hash, options, logger)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public InternalSmsService(IHashService hash, IOptions<CoreBuilderOptions> coreOptions,
+            IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(hash, coreOptions, options, loggerFactory)
         {
         }
 

@@ -20,14 +20,14 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 内部时钟服务。
     /// </summary>
-    internal class InternalClockService : AbstractService<InternalClockService>, IClockService
+    internal class InternalClockService : AbstractService, IClockService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalClockService"/> 实例。
         /// </summary>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalClockService}"/>。</param>
-        public InternalClockService(ILogger<InternalClockService> logger)
-            : base(logger)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public InternalClockService(ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
         }
 
@@ -39,12 +39,13 @@ namespace Librame.Extensions.Core
         /// <returns>返回一个包含 <see cref="DateTimeOffset"/> 的异步操作。</returns>
         public Task<DateTime> GetNowAsync(CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                var now = DateTime.Now;
+                Logger.LogInformation($"Get DateTime: {now.ToString()}");
 
-            var now = DateTime.Now;
-            Logger.LogInformation($"Get DateTime: {now.ToString()}");
-
-            return Task.FromResult(now);
+                return now;
+            });
         }
 
         /// <summary>
@@ -54,12 +55,13 @@ namespace Librame.Extensions.Core
         /// <returns>返回一个包含 <see cref="DateTimeOffset"/> 的异步操作。</returns>
         public Task<DateTimeOffset> GetUtcNowAsync(CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                var now = DateTimeOffset.Now;
+                Logger.LogInformation($"Get UTC DateTime: {now.ToString()}");
 
-            var now = DateTimeOffset.Now;
-            Logger.LogInformation($"Get UTC DateTime: {now.ToString()}");
-
-            return Task.FromResult(now);
+                return now;
+            });
         }
     }
 }

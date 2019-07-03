@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 内部日期与时间服务。
     /// </summary>
-    internal class InternalDateTimeService : AbstractService<InternalDateTimeService>, IDateTimeService
+    internal class InternalDateTimeService : AbstractService, IDateTimeService
     {
         private readonly IExpressionStringLocalizer<DateTimeResource> _localizer;
 
@@ -28,10 +28,10 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="InternalDateTimeService"/> 实例。
         /// </summary>
         /// <param name="localizer">给定的 <see cref="IExpressionStringLocalizer{DateTimeResource}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalDateTimeService}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public InternalDateTimeService(IExpressionStringLocalizer<DateTimeResource> localizer,
-            ILogger<InternalDateTimeService> logger)
-            : base(logger)
+            ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             _localizer = localizer.NotNull(nameof(localizer));
         }
@@ -45,17 +45,18 @@ namespace Librame.Extensions.Core
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public Task<string> HumanizeAsync(DateTime dateTime, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var now = DateTime.Now;
-
-            if (now <= dateTime)
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                Logger.LogWarning($"The {dateTime} is greater than {now}");
-                return Task.FromResult(now.ToString());
-            }
+                var now = DateTime.Now;
 
-            return HumanizeCoreAsync(now - dateTime);
+                if (now <= dateTime)
+                {
+                    Logger.LogWarning($"The {dateTime} is greater than {now}");
+                    return now.ToString();
+                }
+
+                return HumanizeCore(now - dateTime);
+            });
         }
 
         /// <summary>
@@ -66,20 +67,21 @@ namespace Librame.Extensions.Core
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var utcNow = DateTimeOffset.Now;
-
-            if (utcNow <= dateTimeOffset)
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                Logger.LogWarning($"The {dateTimeOffset} is greater than {utcNow}");
-                return Task.FromResult(utcNow.ToString());
-            }
+                var now = DateTimeOffset.Now;
 
-            return HumanizeCoreAsync(utcNow - dateTimeOffset);
+                if (now <= dateTimeOffset)
+                {
+                    Logger.LogWarning($"The {dateTimeOffset} is greater than {now}");
+                    return now.ToString();
+                }
+
+                return HumanizeCore(now - dateTimeOffset);
+            });
         }
 
-        private Task<string> HumanizeCoreAsync(TimeSpan timeSpan)
+        private string HumanizeCore(TimeSpan timeSpan)
         {
             int count = 0;
             var label = string.Empty;
@@ -110,7 +112,7 @@ namespace Librame.Extensions.Core
                 label = _localizer[r => r.HumanizedMinutesAgo];
             }
 
-            return Task.FromResult($"{count} {label}");
+            return $"{count} {label}";
         }
     }
 }

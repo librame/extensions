@@ -20,9 +20,9 @@ namespace Librame.Extensions.Storage
     using Core;
 
     /// <summary>
-    /// 文件上传服务接口。
+    /// 文件传输服务接口。
     /// </summary>
-    public interface IFileUploadService : IService
+    public interface IFileTransferService : IService, IEncoding
     {
         /// <summary>
         /// 异步上传文件。

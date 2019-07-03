@@ -44,11 +44,12 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个异步操作。</returns>
         public override Task HandleAsync(AuditNotification notification, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                _logger.LogInformation($"{notification.Audits.Count} Audits have been processed.");
 
-            _logger.LogInformation($"{notification.Audits.Count} Audits have been processed.");
-
-            return Task.CompletedTask;
+                return Task.CompletedTask;
+            });
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddLibrame(this IServiceCollection services,
-            Action<BuilderOptions> configureOptions = null,
+            Action<CoreBuilderOptions> configureOptions = null,
             IConfiguration configuration = null,
             Action<BinderOptions> configureBinderOptions = null)
         {
@@ -44,7 +44,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // AddLogging
             services.AddLogging(options.ConfigureLogging);
 
-            var builder = new InternalBuilder(services, options);
+            var builder = new InternalCoreBuilder(services, options);
 
             return builder
                 .AddConverters()

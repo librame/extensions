@@ -20,7 +20,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 邮箱服务接口。
     /// </summary>
-    public interface IEmailService : INetworkService
+    public interface IEmailService : ISafetyNetworkService
     {
         /// <summary>
         /// 发送完成后的回调方法。

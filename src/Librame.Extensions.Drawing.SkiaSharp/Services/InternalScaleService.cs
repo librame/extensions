@@ -27,17 +27,17 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部缩放服务。
     /// </summary>
-    internal class InternalScaleService : AbstractService<InternalScaleService, DrawingBuilderOptions>, IScaleService
+    internal class InternalScaleService : AbstractDrawingService, IScaleService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalScaleService"/> 实例。
         /// </summary>
         /// <param name="watermark">给定的 <see cref="IWatermarkService"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalScaleService}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public InternalScaleService(IWatermarkService watermark,
-            IOptions<DrawingBuilderOptions> options, ILogger<InternalScaleService> logger)
-            : base(options, logger)
+            IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(options, loggerFactory)
         {
             Watermark = watermark.NotNull(nameof(watermark));
         }
@@ -68,30 +68,29 @@ namespace Librame.Extensions.Drawing
         /// <param name="imageDirectory">给定的图像目录。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含删除张数的异步操作。</returns>
-        public Task<int> DeleteScalesByDirectory(string imageDirectory, CancellationToken cancellationToken = default)
+        public Task<int> DeleteScalesByDirectoryAsync(string imageDirectory, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var files = Directory.EnumerateFiles(imageDirectory, "*.*", SearchOption.AllDirectories);
-
-            var count = 0;
-
-            foreach (var file in files)
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                var fileName = Path.GetFileName(file);
+                var count = 0;
+                var files = Directory.EnumerateFiles(imageDirectory, "*.*", SearchOption.AllDirectories);
 
-                foreach (var scale in Options.Scales)
+                foreach (var file in files)
                 {
-                    if (fileName.Contains(scale.Suffix))
-                    {
-                        File.Delete(file);
+                    var fileName = Path.GetFileName(file);
 
-                        count++;
+                    foreach (var scale in Options.Scales)
+                    {
+                        if (fileName.Contains(scale.Suffix))
+                        {
+                            File.Delete(file);
+                            count++;
+                        }
                     }
                 }
-            }
 
-            return Task.FromResult(count);
+                return count;
+            });
         }
 
 
@@ -101,25 +100,24 @@ namespace Librame.Extensions.Drawing
         /// <param name="imageDirectory">给定的图像目录。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含处理张数的异步操作。</returns>
-        public async Task<int> DrawFilesByDirectory(string imageDirectory, CancellationToken cancellationToken = default)
+        public Task<int> DrawFilesByDirectoryAsync(string imageDirectory, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var files = Directory.EnumerateFiles(imageDirectory, "*.*", SearchOption.AllDirectories);
-
-            var count = 0;
-
-            foreach (var file in files)
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                if (IsImageFile(file))
+                var count = 0;
+                var files = Directory.EnumerateFiles(imageDirectory, "*.*", SearchOption.AllDirectories);
+
+                foreach (var file in files)
                 {
-                    await DrawFile(file, null, cancellationToken);
-
-                    count++;
+                    if (IsImageFile(file))
+                    {
+                        DrawFile(file, null, cancellationToken);
+                        count++;
+                    }
                 }
-            }
 
-            return count;
+                return count;
+            });
         }
 
 
@@ -129,23 +127,23 @@ namespace Librame.Extensions.Drawing
         /// <param name="imagePaths">给定的图像路径集合。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含处理张数的异步操作。</returns>
-        public async Task<int> DrawFiles(IEnumerable<string> imagePaths, CancellationToken cancellationToken = default)
+        public Task<int> DrawFilesAsync(IEnumerable<string> imagePaths, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var count = 0;
-
-            foreach (var file in imagePaths)
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                if (IsImageFile(file))
+                var count = 0;
+
+                foreach (var file in imagePaths)
                 {
-                    await DrawFile(file, null, cancellationToken);
-
-                    count++;
+                    if (IsImageFile(file))
+                    {
+                        DrawFile(file, null, cancellationToken);
+                        count++;
+                    }
                 }
-            }
 
-            return count;
+                return count;
+            });
         }
 
 
@@ -155,15 +153,13 @@ namespace Librame.Extensions.Drawing
         /// <param name="imagePath">给定的图像路径。</param>
         /// <param name="savePathTemplate">给定的保存路径模板（默认同图像路径）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含布尔值的异步操作。</returns>
-        public Task<bool> DrawFile(string imagePath, string savePathTemplate = null, CancellationToken cancellationToken = default)
+        /// <returns>返回布尔值。</returns>
+        public bool DrawFile(string imagePath, string savePathTemplate = null, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             if (Options.Scales.Count < 1)
             {
                 Logger.LogWarning("Scale options is not found.");
-                return Task.FromResult(false);
+                return false;
             }
 
             using (var srcBmp = SKBitmap.Decode(imagePath))
@@ -226,7 +222,7 @@ namespace Librame.Extensions.Drawing
                 }
             }
 
-            return Task.FromResult(true);
+            return true;
         }
 
 

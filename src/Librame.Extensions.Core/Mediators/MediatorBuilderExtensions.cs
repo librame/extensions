@@ -36,7 +36,7 @@ namespace Librame.Extensions.Core
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
             builder.Services.AddSingleton<IMediator, InternalMediator>();
 
-            if (builder.Options is BuilderOptions options && options.EnableScanHandlersAndProcessors)
+            if (builder.Options is CoreBuilderOptions options && options.EnableScanHandlersAndProcessors)
                 ScanHandlersAndProcessors(builder);
 
             return builder;

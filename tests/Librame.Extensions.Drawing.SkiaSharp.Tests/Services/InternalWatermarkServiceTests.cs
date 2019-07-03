@@ -22,7 +22,7 @@ namespace Librame.Extensions.Drawing.Tests
             var imageFile = "eso1004a.jpg".AsFileLocator(TestServiceProvider.ResourcesPath);
             var saveFile = imageFile.NewFileName("eso1004a-watermark.png");
             
-            var succeed = await _drawing.DrawFile(imageFile.ToString(), saveFile.ToString());
+            var succeed = await _drawing.DrawFileAsync(imageFile.ToString(), saveFile.ToString());
             Assert.True(succeed);
         }
 

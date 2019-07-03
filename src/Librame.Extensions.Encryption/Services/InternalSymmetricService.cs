@@ -21,17 +21,17 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部对称服务。
     /// </summary>
-    internal class InternalSymmetricService : AbstractService<InternalSymmetricService, EncryptionBuilderOptions>, ISymmetricService
+    internal class InternalSymmetricService : AbstractEncryptionService, ISymmetricService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalSymmetricService"/> 实例。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalSymmetricService}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public InternalSymmetricService(IKeyGenerator keyGenerator,
-            IOptions<EncryptionBuilderOptions> options, ILogger<InternalSymmetricService> logger)
-            : base(options, logger)
+            IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(options, loggerFactory)
         {
             KeyGenerator = keyGenerator.NotNull(nameof(keyGenerator));
         }

@@ -18,15 +18,15 @@ namespace Librame.Extensions.Storage
     using Core;
 
     /// <summary>
-    /// 存储令牌服务接口。
+    /// 文件权限服务接口。
     /// </summary>
-    public interface IStorageTokenService : IService
+    public interface IFilePermissionService : IService
     {
         /// <summary>
-        /// 异步获取令牌。
+        /// 异步获取访问令牌。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        Task<string> GetTokenAsync(CancellationToken cancellationToken = default);
+        Task<string> GetAccessTokenAsync(CancellationToken cancellationToken = default);
     }
 }

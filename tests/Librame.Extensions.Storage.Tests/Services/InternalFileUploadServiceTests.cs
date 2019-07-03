@@ -5,11 +5,11 @@ namespace Librame.Extensions.Storage.Tests
 {
     public class InternalFileUploadServiceTests
     {
-        private IFileUploadService _fileUpload;
+        private IFileTransferService _fileUpload;
 
         public InternalFileUploadServiceTests()
         {
-            _fileUpload = TestServiceProvider.Current.GetRequiredService<IFileUploadService>();
+            _fileUpload = TestServiceProvider.Current.GetRequiredService<IFileTransferService>();
         }
 
 

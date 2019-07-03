@@ -14,11 +14,11 @@ using System;
 
 namespace Librame.Extensions.Core
 {
-    /// <summary>
-    /// 可处置对象接口。
-    /// </summary>
-    /// <typeparam name="TDisposable">指定的可处置对象类型。</typeparam>
-    public interface IDisposable<TDisposable> : IDisposable
-    {
-    }
+    ///// <summary>
+    ///// 可处置对象接口。
+    ///// </summary>
+    ///// <typeparam name="TDisposable">指定的可处置对象类型。</typeparam>
+    //public interface IDisposable<TDisposable> : IDisposable
+    //{
+    //}
 }

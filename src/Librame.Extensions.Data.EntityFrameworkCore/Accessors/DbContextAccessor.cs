@@ -144,7 +144,7 @@ namespace Librame.Extensions.Data
         {
             // 改变为写入数据库（支持读写分离）
             if (BuilderOptions.TenantEnabled)
-                ChangeDbConnection(tenant => tenant.WriteConnectionString).Wait();
+                ChangeDbConnectionAsync(tenant => tenant.WriteConnectionString).Wait();
 
             if (BuilderOptions.AuditEnabled)
                 AuditSaveChangesAsync().Wait();
@@ -153,7 +153,7 @@ namespace Librame.Extensions.Data
 
             // 尝试还原改变的数据库连接
             if (BuilderOptions.TenantEnabled)
-                ChangeDbConnection(tenant => tenant.DefaultConnectionString).Wait();
+                ChangeDbConnectionAsync(tenant => tenant.DefaultConnectionString).Wait();
 
             return count;
         }
@@ -169,7 +169,7 @@ namespace Librame.Extensions.Data
         {
             // 改变为写入数据库（支持读写分离）
             if (BuilderOptions.TenantEnabled)
-                await ChangeDbConnection(tenant => tenant.WriteConnectionString);
+                await ChangeDbConnectionAsync(tenant => tenant.WriteConnectionString);
 
             if (BuilderOptions.AuditEnabled)
                 await AuditSaveChangesAsync(cancellationToken);
@@ -178,7 +178,7 @@ namespace Librame.Extensions.Data
 
             // 尝试还原改变的数据库连接
             if (BuilderOptions.TenantEnabled)
-                await ChangeDbConnection(tenant => tenant.DefaultConnectionString);
+                await ChangeDbConnectionAsync(tenant => tenant.DefaultConnectionString);
 
             return count;
         }
@@ -215,21 +215,19 @@ namespace Librame.Extensions.Data
         /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        public virtual Task ChangeDbConnection(Func<ITenant, string> connectionStringFactory,
+        public virtual Task ChangeDbConnectionAsync(Func<ITenant, string> connectionStringFactory,
             CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             if (CurrentTenant.IsNull() || connectionStringFactory.IsNull())
                 return Task.CompletedTask;
 
-            var connectionString = connectionStringFactory.Invoke(CurrentTenant);
             if (!CurrentTenant.WriteConnectionSeparation)
             {
                 Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) connection write separation is disable");
                 return Task.CompletedTask;
             }
 
+            var connectionString = connectionStringFactory.Invoke(CurrentTenant);
             var connection = Database.GetDbConnection();
             if (connection.ConnectionString == connectionString)
             {
@@ -241,47 +239,44 @@ namespace Librame.Extensions.Data
             {
                 lock (_locker)
                 {
-                    switch (connection.State)
-                    {
-                        case ConnectionState.Closed:
-                            {
-                                // MYSql: System.InvalidOperationException
-                                //  HResult = 0x80131509
-                                //  Message = Cannot change connection string on a connection that has already been opened.
-                                //  Source = MySqlConnector
-
-                                // connection.ChangeDatabase(connectionString);
-                                connection.ConnectionString = connectionString;
-                                Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) change connection string: {connectionString}");
-
-                                if (connection.State != ConnectionState.Open)
-                                {
-                                    Database.EnsureCreated();
-
-                                    connection.Open();
-                                    Logger?.LogInformation("Open connection");
-                                }
-                            }
-                            break;
-
-                        case ConnectionState.Open:
-                            {
-                                connection.Close();
-                                Logger?.LogInformation("Close connection");
-                            }
-                            goto case ConnectionState.Closed;
-
-                        default:
-                            goto case ConnectionState.Open;
-                    }
+                    return ChangeDbConnectionCoreAsync();
                 }
             }
             catch (Exception ex)
             {
                 Logger?.LogError(ex, ex.AsInnerMessage());
+                return Task.CompletedTask;
             }
 
-            return Task.CompletedTask;
+            // ChangeDbConnectionCoreAsync
+            Task ChangeDbConnectionCoreAsync()
+            {
+                return cancellationToken.RunActionOrCancellationAsync(async () =>
+                {
+                    if (connection.State != ConnectionState.Closed)
+                    {
+                        connection.Close();
+                        Logger?.LogInformation("Close connection");
+                    }
+
+                    // MYSql: System.InvalidOperationException
+                    //  HResult = 0x80131509
+                    //  Message = Cannot change connection string on a connection that has already been opened.
+                    //  Source = MySqlConnector
+                    // connection.ChangeDatabase(connectionString);
+
+                    connection.ConnectionString = connectionString;
+                    Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) change connection string: {connectionString}");
+
+                    if (connection.State != ConnectionState.Open)
+                    {
+                        await Database.EnsureCreatedAsync();
+
+                        await connection.OpenAsync();
+                        Logger?.LogInformation("Open connection");
+                    }
+                });
+            }
         }
 
     }

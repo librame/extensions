@@ -22,22 +22,22 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
-    using Encryption;
+    using Core;
 
     /// <summary>
     /// 内部抓取器服务。
     /// </summary>
-    internal class InternalCrawlerService : AbstractNetworkService<InternalCrawlerService>, ICrawlerService
+    internal class InternalCrawlerService : AbstractNetworkService, ICrawlerService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalCrawlerService"/> 实例。
         /// </summary>
-        /// <param name="hash">给定的 <see cref="IHashService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DefaultNetworkBuilderOptions}"/>。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{InternalCrawlerService}"/>。</param>
-        public InternalCrawlerService(IHashService hash,
-            IOptions<NetworkBuilderOptions> options, ILogger<InternalCrawlerService> logger)
-            : base(hash, options, logger)
+        /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public InternalCrawlerService(IOptions<CoreBuilderOptions> coreOptions,
+            IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(coreOptions, options, loggerFactory)
         {
             ImageExtensions = Options.Crawler.ImageExtensions.Split(',');
         }
@@ -230,7 +230,7 @@ namespace Librame.Extensions.Network
                     hwr.Method = "POST";
                     Logger.LogDebug($"Set method: {hwr.Method}");
 
-                    hwr.ContentType = "application/x-www-form-urlencoded;charset=utf-8";
+                    hwr.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
                     Logger.LogDebug($"Set content type: {hwr.ContentType}");
 
                     hwr.ContentLength = buffer.Length;

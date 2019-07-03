@@ -8,8 +8,8 @@ namespace Librame.Extensions.Storage.Tests
         [Fact]
         public async void AllTest()
         {
-            var service = TestServiceProvider.Current.GetRequiredService<IStorageTokenService>();
-            var token = await service.GetTokenAsync(default);
+            var service = TestServiceProvider.Current.GetRequiredService<IFilePermissionService>();
+            var token = await service.GetAccessTokenAsync(default);
             Assert.NotEmpty(token);
         }
 

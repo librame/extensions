@@ -27,8 +27,8 @@ namespace Librame.Extensions.Storage
         public static IStorageBuilder AddServices(this IStorageBuilder builder)
         {
             builder.Services.AddSingleton<IFileService, InternalPhysicalFileService>();
-            builder.Services.AddSingleton<IFileUploadService, InternalFileUploadService>();
-            builder.Services.AddSingleton<IStorageTokenService, InternalStorageTokenService>();
+            builder.Services.AddSingleton<IFileTransferService, InternalFileTransferService>();
+            builder.Services.AddSingleton<IFilePermissionService, InternalFilePermissionService>();
 
             return builder;
         }
