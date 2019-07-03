@@ -32,7 +32,7 @@ namespace Librame.Extensions.Network.Tests
         [Fact]
         public async void GetImageHyperLinksTest()
         {
-            var result = await _crawler.GetImageHyperLinksAsync("https://www.baidu.com");
+            var result = await _crawler.GetImageLinksAsync("https://www.baidu.com");
             Assert.True(result.Count > 0);
         }
 

@@ -10,6 +10,8 @@
 
 #endregion
 
+using Microsoft.Extensions.Logging;
+
 namespace Librame.Extensions.Data
 {
     using Core;
@@ -25,7 +27,8 @@ namespace Librame.Extensions.Data
         /// 构造一个 <see cref="AbstractStore{TAccessor}"/> 实例。
         /// </summary>
         /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        public AbstractStore(TAccessor accessor)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public AbstractStore(TAccessor accessor, ILoggerFactory loggerFactory)
             : base(accessor)
         {
             Accessor = accessor;
@@ -35,8 +38,9 @@ namespace Librame.Extensions.Data
         /// 构造一个 <see cref="AbstractStore{TAccessor}"/> 实例。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public AbstractStore(IAccessor accessor)
-            : base(accessor)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public AbstractStore(IAccessor accessor, ILoggerFactory loggerFactory)
+            : base(accessor, loggerFactory)
         {
             Accessor = accessor.IsValue<IAccessor, TAccessor>(nameof(accessor));
         }
@@ -53,13 +57,15 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 抽象存储。
     /// </summary>
-    public abstract class AbstractStore : AbstractDisposable, IStore
+    public abstract class AbstractStore : AbstractService, IStore
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractStore"/> 实例。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public AbstractStore(IAccessor accessor)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public AbstractStore(IAccessor accessor, ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             Accessor = accessor.NotNull(nameof(accessor));
         }

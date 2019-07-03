@@ -28,7 +28,7 @@ namespace Librame.Extensions.Network.Tests
                 throw new NotImplementedException();
             }
 
-            public Task<IList<string>> GetImageHyperLinksAsync(string url, string pattern = null)
+            public Task<IList<string>> GetImageLinksAsync(string url, string pattern = null)
             {
                 throw new NotImplementedException();
             }
@@ -38,7 +38,7 @@ namespace Librame.Extensions.Network.Tests
                 throw new NotImplementedException();
             }
 
-            public Task<string> PostStringAsync(string url, string postData)
+            public Task<string> RequestStringAsync(string url, string postData)
             {
                 throw new NotImplementedException();
             }
@@ -52,9 +52,9 @@ namespace Librame.Extensions.Network.Tests
 
             Assert.Throws<NotImplementedException>(() => service.Dispose());
             Assert.ThrowsAsync<NotImplementedException>(() => service.GetHyperLinksAsync(null));
-            Assert.ThrowsAsync<NotImplementedException>(() => service.GetImageHyperLinksAsync(null));
+            Assert.ThrowsAsync<NotImplementedException>(() => service.GetImageLinksAsync(null));
             Assert.ThrowsAsync<NotImplementedException>(() => service.GetStringAsync(null));
-            Assert.ThrowsAsync<NotImplementedException>(() => service.PostStringAsync(null, null));
+            Assert.ThrowsAsync<NotImplementedException>(() => service.SendRequestAsync(null, null));
         }
     }
 }

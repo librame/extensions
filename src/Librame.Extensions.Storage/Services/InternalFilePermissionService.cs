@@ -29,7 +29,8 @@ namespace Librame.Extensions.Storage
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{StorageBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalFilePermissionService(IOptions<StorageBuilderOptions> options, ILoggerFactory loggerFactory)
+        public InternalFilePermissionService(IOptions<StorageBuilderOptions> options,
+            ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
         }
@@ -40,7 +41,7 @@ namespace Librame.Extensions.Storage
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        public Task<string> GetAccessTokenAsync(CancellationToken cancellationToken = default)
+        public Task<string> GeAccessTokenAsync(CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
@@ -48,6 +49,38 @@ namespace Librame.Extensions.Storage
                 Logger.LogInformation($"Get access token: {accessToken}");
 
                 return accessToken;
+            });
+        }
+
+        /// <summary>
+        /// 异步获取授权码。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
+        public Task<string> GetAuthorizationCodeAsync(CancellationToken cancellationToken = default)
+        {
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                string authorizationCode = RngIdentifier.New();
+                Logger.LogInformation($"Get authorization code: {authorizationCode}");
+
+                return authorizationCode;
+            });
+        }
+
+        /// <summary>
+        /// 异步获取 Cookie 值。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
+        public Task<string> GetCookieValueAsync(CancellationToken cancellationToken = default)
+        {
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                string cookieValue = RngIdentifier.New();
+                Logger.LogInformation($"Get cookie value: {cookieValue}");
+
+                return cookieValue;
             });
         }
     }

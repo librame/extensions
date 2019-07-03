@@ -98,15 +98,11 @@ namespace Librame.Extensions.Network
 
                 using (var message = new MailMessage(from, to))
                 {
-                    Logger.LogDebug($"Create mail message: from={Options.Email.EmailAddress}, to={toAddress}, encoding={Encoding.FromEncoding()}");
-
+                    Logger.LogDebug($"Create mail message: from={Options.Email.EmailAddress}, to={toAddress}, encoding={Encoding.AsName()}");
                     message.Body = body;
                     message.BodyEncoding = Encoding;
-                    Logger.LogDebug($"Set body: {message.Body}");
-
                     message.Subject = subject;
                     message.SubjectEncoding = Encoding;
-                    Logger.LogDebug($"Set subject: {message.Subject}");
 
                     // Configure MailMessage
                     configureMessage?.Invoke(message);

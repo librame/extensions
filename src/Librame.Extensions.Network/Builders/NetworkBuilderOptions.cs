@@ -41,10 +41,10 @@ namespace Librame.Extensions.Network
             = new CrawlerOptions();
 
         /// <summary>
-        /// 请求程序。
+        /// 请求选项。
         /// </summary>
-        public RequesterOptions Requester { get; set; }
-            = new RequesterOptions();
+        public RequestOptions Request { get; set; }
+            = new RequestOptions();
 
         /// <summary>
         /// 邮件选项。
@@ -82,7 +82,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 请求程序选项。
     /// </summary>
-    public class RequesterOptions
+    public class RequestOptions
     {
         /// <summary>
         /// 允许自动重定向。
@@ -112,7 +112,7 @@ namespace Librame.Extensions.Network
         /// 浏览器代理。
         /// </summary>
         public string UserAgent { get; set; }
-            = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36";
+            = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36";
     }
 
 

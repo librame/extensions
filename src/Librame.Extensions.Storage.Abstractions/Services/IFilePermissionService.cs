@@ -27,6 +27,20 @@ namespace Librame.Extensions.Storage
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        Task<string> GetAccessTokenAsync(CancellationToken cancellationToken = default);
+        Task<string> GeAccessTokenAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 异步获取授权码。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
+        Task<string> GetAuthorizationCodeAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 异步获取 Cookie 值。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
+        Task<string> GetCookieValueAsync(CancellationToken cancellationToken = default);
     }
 }

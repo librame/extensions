@@ -9,8 +9,8 @@ namespace Librame.Extensions.Tests
         public void EncodingTest()
         {
             var encoding = Encoding.UTF8;
-            var encodingName = encoding.FromEncoding();
-            Assert.Equal(encoding, encodingName.AsEncoding());
+            var encodingName = encoding.AsName();
+            Assert.Equal(encoding, encodingName.FromName());
         }
 
         [Fact]

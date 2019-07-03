@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
@@ -29,16 +30,22 @@ namespace Librame.Extensions.Network
     /// </summary>
     internal class InternalCrawlerService : AbstractNetworkService, ICrawlerService
     {
+        private readonly IRequestFactory<HttpWebRequest> _requestFactory;
+
+
         /// <summary>
         /// 构造一个 <see cref="InternalCrawlerService"/> 实例。
         /// </summary>
+        /// <param name="requestFactory">给定的 <see cref="IRequestFactory{HttpWebRequest}"/>。</param>
         /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalCrawlerService(IOptions<CoreBuilderOptions> coreOptions,
+        public InternalCrawlerService(IRequestFactory<HttpWebRequest> requestFactory,
+            IOptions<CoreBuilderOptions> coreOptions,
             IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(coreOptions, options, loggerFactory)
         {
+            _requestFactory = requestFactory.NotNull(nameof(requestFactory));
             ImageExtensions = Options.Crawler.ImageExtensions.Split(',');
         }
 
@@ -55,17 +62,17 @@ namespace Librame.Extensions.Network
         /// <param name="url">给定的 URL 链接。</param>
         /// <param name="pattern">给定包含 url 与 path 分组名的超链接正则表达式匹配模式（可选）。</param>
         /// <returns>返回一个包含图像类超链接列表的异步操作。</returns>
-        public async Task<IList<string>> GetImageHyperLinksAsync(string url, string pattern = null)
+        public async Task<IList<string>> GetImageLinksAsync(string url, string pattern = null)
         {
             var hyperLinks = await GetHyperLinksAsync(url, pattern);
             Logger.LogDebug($"Get hyper links: {string.Join(",", hyperLinks)}");
 
             if (hyperLinks.IsNullOrEmpty()) return hyperLinks;
 
-            var list = hyperLinks.ExtractHasExtension(ImageExtensions).ToList();
+            var imageLinks = hyperLinks.ExtractHasExtension(ImageExtensions).ToList();
             Logger.LogDebug($"Extract images: {string.Join(",", ImageExtensions)}");
 
-            return list;
+            return imageLinks;
         }
 
 
@@ -87,9 +94,8 @@ namespace Librame.Extensions.Network
 
             var links = new List<string>();
 
-            var htmlCode = await GetStringAsync(url);
-            var matches = regex.Matches(htmlCode);
-
+            var response = await SendRequestAsync(url);
+            var matches = regex.Matches(response);
             if (matches.Count < 1)
                 return links;
             
@@ -151,90 +157,46 @@ namespace Librame.Extensions.Network
 
 
         /// <summary>
-        /// 获取链接响应的内容。
+        /// 异步发送请求。
         /// </summary>
         /// <param name="url">给定的 URL 链接。</param>
+        /// <param name="postData">给定用于提交请求的数据（可选；默认不提交数据）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含响应内容的异步操作。</returns>
-        public Task<string> GetStringAsync(string url)
+        public Task<string> SendRequestAsync(string url, string postData = null,
+            CancellationToken cancellationToken = default)
         {
-            return GetResponseString(url);
-        }
-
-
-        /// <summary>
-        /// 提交链接响应的内容。
-        /// </summary>
-        /// <param name="url">给定的 URL 链接。</param>
-        /// <param name="postData">给定用于提交请求的数据。</param>
-        /// <returns>返回一个包含响应内容的异步操作。</returns>
-        public Task<string> PostStringAsync(string url, string postData)
-        {
-            return GetResponseString(url, postData);
-        }
-
-
-        /// <summary>
-        /// 获取链接响应内容。
-        /// </summary>
-        /// <param name="url">给定的 URL 链接。</param>
-        /// <param name="postData">给定用于提交请求的数据。</param>
-        /// <returns>返回一个包含响应内容的异步操作。</returns>
-        protected Task<string> GetResponseString(string url, string postData = null)
-        {
-            string result = null;
-
-            using (var s = CreateResponse(url, postData).GetResponseStream())
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                if (s.IsNotNull())
+                string response = null;
+
+                using (var s = CreateResponse(url, postData).GetResponseStream())
                 {
-                    using (var sr = new StreamReader(s))
+                    if (s.IsNotNull())
                     {
-                        result = sr.ReadToEnd();
-                        Logger.LogDebug($"Receive string: {result}");
+                        using (var sr = new StreamReader(s, Encoding))
+                        {
+                            response = sr.ReadToEnd();
+                            Logger.LogDebug($"Response: {response}");
+                        }
                     }
                 }
-            }
 
-            return Task.FromResult(result);
+                return response;
+            });
         }
 
-        /// <summary>
-        /// 创建链接响应。
-        /// </summary>
-        /// <param name="url">给定的 URL 链接。</param>
-        /// <param name="postData">给定用于提交请求的数据。</param>
-        /// <returns>返回 <see cref="WebResponse"/>。</returns>
-        protected WebResponse CreateResponse(string url, string postData = null)
+        private WebResponse CreateResponse(string url, string postData = null)
         {
             try
             {
-                var hwr = WebRequest.CreateHttp(url);
-                Logger.LogDebug($"Create http web request: {url}");
-
-                hwr.AllowAutoRedirect = Options.Crawler.AllowAutoRedirect;
-                Logger.LogDebug($"Set allow auto redirect: {hwr.AllowAutoRedirect}");
-
-                hwr.Referer = Options.Crawler.Referer;
-                Logger.LogDebug($"Set referer: {hwr.Referer}");
-
-                hwr.Timeout = Options.Crawler.Timeout;
-                Logger.LogDebug($"Set timeout: {hwr.Timeout}");
-
-                hwr.UserAgent = Options.Crawler.UserAgent;
-                Logger.LogDebug($"Set user agent: {hwr.UserAgent}");
+                var method = postData.IsNullOrEmpty() ? "GET" : "POST";
+                var hwr = _requestFactory.CreateRequest(url, method);
 
                 if (!postData.IsNullOrEmpty())
                 {
                     var buffer = Encoding.GetBytes(postData);
-
-                    hwr.Method = "POST";
-                    Logger.LogDebug($"Set method: {hwr.Method}");
-
-                    hwr.ContentType = "application/x-www-form-urlencoded; charset=utf-8";
-                    Logger.LogDebug($"Set content type: {hwr.ContentType}");
-
                     hwr.ContentLength = buffer.Length;
-                    Logger.LogDebug($"Set content length: {hwr.ContentLength}");
 
                     using (var s = hwr.GetRequestStream())
                     {

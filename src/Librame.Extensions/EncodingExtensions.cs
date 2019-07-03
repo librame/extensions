@@ -22,24 +22,24 @@ namespace Librame.Extensions
     public static class EncodingExtensions
     {
         /// <summary>
-        /// 将代码页名称转换为关联的字符编码。
-        /// </summary>
-        /// <param name="name">首选编码的代码页名称。</param>
-        /// <returns>返回与指定代码页关联的编码。</returns>
-        public static Encoding AsEncoding(this string name)
-        {
-            return Encoding.GetEncoding(name);
-        }
-
-        /// <summary>
-        /// 将字符编码还原为可配置的代码页名称。
+        /// 将字符编码转换为名称的字符串形式。
         /// </summary>
         /// <param name="encoding">给定的字符编码。</param>
         /// <returns>返回代码页名称。</returns>
-        public static string FromEncoding(this Encoding encoding)
+        public static string AsName(this Encoding encoding)
         {
             // WebName or BodyName
             return encoding?.WebName;
+        }
+
+        /// <summary>
+        /// 从名称的字符串形式还原字符编码。
+        /// </summary>
+        /// <param name="name">首选编码的代码页名称。</param>
+        /// <returns>返回与指定代码页关联的编码。</returns>
+        public static Encoding FromName(this string name)
+        {
+            return Encoding.GetEncoding(name);
         }
 
 

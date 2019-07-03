@@ -11,6 +11,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
@@ -32,8 +33,7 @@ namespace Librame.Extensions.Network
         /// <param name="url">给定的 URL 链接。</param>
         /// <param name="pattern">给定包含 url 与 path 分组名的超链接正则表达式匹配模式（可选）。</param>
         /// <returns>返回一个包含图像类超链接列表的异步操作。</returns>
-        Task<IList<string>> GetImageHyperLinksAsync(string url, string pattern = null);
-
+        Task<IList<string>> GetImageLinksAsync(string url, string pattern = null);
 
         /// <summary>
         /// 异步获取链接响应内容中包含的所有超链接。
@@ -43,21 +43,14 @@ namespace Librame.Extensions.Network
         /// <returns>返回一个包含超链接列表的异步操作。</returns>
         Task<IList<string>> GetHyperLinksAsync(string url, string pattern = null);
 
-
         /// <summary>
-        /// 异步获取链接响应的内容。
+        /// 异步发送请求。
         /// </summary>
         /// <param name="url">给定的 URL 链接。</param>
+        /// <param name="postData">给定用于提交请求的数据（可选；默认不提交数据）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含响应内容的异步操作。</returns>
-        Task<string> GetStringAsync(string url);
-
-
-        /// <summary>
-        /// 异步提交链接响应的内容。
-        /// </summary>
-        /// <param name="url">给定的 URL 链接。</param>
-        /// <param name="postData">给定用于提交请求的数据。</param>
-        /// <returns>返回一个包含响应内容的异步操作。</returns>
-        Task<string> PostStringAsync(string url, string postData);
+        Task<string> SendRequestAsync(string url, string postData = null,
+            CancellationToken cancellationToken = default);
     }
 }

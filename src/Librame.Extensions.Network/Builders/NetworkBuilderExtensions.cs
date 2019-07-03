@@ -49,6 +49,7 @@ namespace Librame.Extensions.Network
             var networkBuilder = new InternalNetworkBuilder(builder, options);
 
             return networkBuilder
+                .AddRequests()
                 .AddServices();
         }
 

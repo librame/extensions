@@ -28,7 +28,8 @@ namespace Librame.Extensions.Storage
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{StorageBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalPhysicalFileService(IOptions<StorageBuilderOptions> options, ILoggerFactory loggerFactory)
+        public InternalPhysicalFileService(IOptions<StorageBuilderOptions> options,
+            ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
         }

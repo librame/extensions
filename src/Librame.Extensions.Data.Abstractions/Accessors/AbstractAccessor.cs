@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -22,8 +23,18 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 抽象访问器。
     /// </summary>
-    public abstract class AbstractAccessor : AbstractDisposable, IAccessor
+    public abstract class AbstractAccessor : AbstractService, IAccessor
     {
+        /// <summary>
+        /// 构造一个 <see cref="AbstractService"/> 实例。
+        /// </summary>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        protected AbstractAccessor(ILoggerFactory loggerFactory)
+            : base(loggerFactory)
+        {
+        }
+
+
         /// <summary>
         /// 当前租户。
         /// </summary>

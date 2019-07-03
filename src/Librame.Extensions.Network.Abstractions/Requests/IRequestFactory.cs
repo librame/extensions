@@ -10,15 +10,15 @@
 
 #endregion
 
-using System.Net;
-
 namespace Librame.Extensions.Network
 {
+    using Core;
+
     /// <summary>
-    /// HTTP 请求程序接口。
+    /// 请求工厂接口。
     /// </summary>
     /// <typeparam name="TRequest">指定的请求类型。</typeparam>
-    public interface IHttpRequester<TRequest> : IRequestFactory
+    public interface IRequestFactory<TRequest> : IEncoding
         where TRequest : class
     {
         /// <summary>
@@ -26,7 +26,7 @@ namespace Librame.Extensions.Network
         /// </summary>
         /// <param name="url">给定的 URL。</param>
         /// <param name="method">给定的请求方法（可选；默认 POST）。</param>
-        /// <returns>返回 <see cref="HttpWebRequest"/>。</returns>
+        /// <returns>返回 <typeparamref name="TRequest"/>。</returns>
         TRequest CreateRequest(string url, string method = "POST");
     }
 }
