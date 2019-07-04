@@ -10,8 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
-
 namespace Librame.Extensions.Network.DotNetty
 {
     using Core;
@@ -20,7 +18,7 @@ namespace Librame.Extensions.Network.DotNetty
     /// <summary>
     /// 通道服务接口。
     /// </summary>
-    public interface IChannelService : IService
+    public interface IChannelService : IService<DotNettyOptions>
     {
         /// <summary>
         /// 签名证书。
@@ -29,21 +27,5 @@ namespace Librame.Extensions.Network.DotNetty
         /// 返回 <see cref="ISigningCredentialsService"/>。
         /// </value>
         ISigningCredentialsService SigningCredentials { get; }
-
-        /// <summary>
-        /// 日志工厂。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="ILoggerFactory"/>。
-        /// </value>
-        ILoggerFactory LoggerFactory { get; }
-
-        /// <summary>
-        /// 通道选项。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="DotNettyOptions"/>。
-        /// </value>
-        DotNettyOptions Options { get; }
     }
 }

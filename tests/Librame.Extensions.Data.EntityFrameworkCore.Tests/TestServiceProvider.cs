@@ -15,8 +15,8 @@ namespace Librame.Extensions.Data.Tests
                 services.AddLibrame()
                     .AddData(options =>
                     {
-                        options.DefaultTenant.DefaultConnectionString = "Data Source=PC-CLOUD\\SQLEXPRESS;Initial Catalog=librame_default;Integrated Security=True";
-                        options.DefaultTenant.WriteConnectionString = "Data Source=PC-CLOUD\\SQLEXPRESS;Initial Catalog=librame_write;Integrated Security=True";
+                        options.DefaultTenant.DefaultConnectionString = "Data Source=.;Initial Catalog=librame_default;Integrated Security=True";
+                        options.DefaultTenant.WriteConnectionString = "Data Source=.;Initial Catalog=librame_write;Integrated Security=True";
                         options.DefaultTenant.WriteConnectionSeparation = true;
                     })
                     .AddAccessor<TestDbContextAccessor>((options, optionsBuilder) =>
@@ -26,7 +26,8 @@ namespace Librame.Extensions.Data.Tests
                             sql => sql.MigrationsAssembly(migrationsAssembly));
                     });
 
-                services.AddTransient<ITestStore, TestStore>();
+                services.TryReplace<IIdentifierService, TestIdentifierService>();
+                services.AddScoped<ITestStore, TestStore>();
 
                 return services.BuildServiceProvider();
             });

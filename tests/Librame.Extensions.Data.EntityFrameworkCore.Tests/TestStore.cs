@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Librame.Extensions.Data.Tests
@@ -28,14 +27,15 @@ namespace Librame.Extensions.Data.Tests
 
     public class TestStore : AbstractBaseStore<TestDbContextAccessor>, ITestStore
     {
-        public TestStore(IIdentifierService idService, IAccessor accessor) // or TestDbContextAccessor
+        public TestStore(IIdentifierService identifierService, IAccessor accessor) // or TestDbContextAccessor
             : base(accessor)
         {
-            Initialize(idService);
+            if (identifierService is TestIdentifierService testIdentifierService)
+                Initialize(testIdentifierService);
         }
 
 
-        private void Initialize(IIdentifierService idService)
+        private void Initialize(TestIdentifierService identifierService)
         {
             UseWriteDbConnection();
 
@@ -67,19 +67,23 @@ namespace Librame.Extensions.Data.Tests
 
                 for (int i = 0; i < 100; i++)
                 {
+                    var articleId = identifierService.GetArticleIdAsync(default).Result;
+
                     articles.Add(new Article
                     {
-                        Id = idService.GetAuditIdAsync(default).Result,
+                        Id = articleId,
                         Title = "Article " + i.ToString(),
                         Descr = "Descr " + i.ToString(),
                         Category = (i < 50) ? firstCategory : lastCategory
                     });
                 }
 
-                Accessor.Articles.AddRangeAsync(articles);
+                Accessor.Articles.AddRange(articles);
             }
 
             Accessor.SaveChanges();
+
+            UseDefaultDbConnection();
         }
 
 
@@ -96,19 +100,14 @@ namespace Librame.Extensions.Data.Tests
 
         public ITestStore UseWriteDbConnection()
         {
-            Accessor.ChangeDbConnection(t => t.WriteConnectionString);
+            Accessor.TryChangeDbConnection(t => t.WriteConnectionString);
             return this;
         }
 
         public ITestStore UseDefaultDbConnection()
         {
-            Accessor.ChangeDbConnection(t => t.DefaultConnectionString);
+            Accessor.TryChangeDbConnection(t => t.DefaultConnectionString);
             return this;
-        }
-
-        protected override Type GetDisposableType()
-        {
-            return GetType();
         }
     }
 }

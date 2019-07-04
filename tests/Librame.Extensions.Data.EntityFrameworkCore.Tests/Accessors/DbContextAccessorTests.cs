@@ -21,6 +21,8 @@ namespace Librame.Extensions.Data.Tests
 
             articles = store.UseWriteDbConnection().GetArticles();
             Assert.NotEmpty(articles);
+
+            //store.Dispose();
         }
 
     }

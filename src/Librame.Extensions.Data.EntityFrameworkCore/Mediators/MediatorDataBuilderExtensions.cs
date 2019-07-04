@@ -28,7 +28,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddMediators(this IDataBuilder builder)
         {
-            builder.Services.AddSingleton<INotificationHandler<AuditNotification>, InternalAuditNotificationHandler>();
+            builder.Services.AddScoped<INotificationHandler<AuditNotification>, InternalAuditNotificationHandler>();
 
             return builder;
         }

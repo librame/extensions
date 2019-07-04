@@ -28,7 +28,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IBuilder"/>。</returns>
         public static IBuilder AddLocalizations(this IBuilder builder)
         {
-            builder.Services.AddTransient(typeof(IExpressionStringLocalizer<>), typeof(ExpressionStringLocalizer<>));
+            builder.Services.AddScoped(typeof(IExpressionStringLocalizer<>), typeof(ExpressionStringLocalizer<>));
             builder.Services.TryReplace<IStringLocalizerFactory, ExpressionStringLocalizerFactory>();
 
             return builder;

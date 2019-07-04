@@ -4,12 +4,12 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class InternalDateTimeServiceTests
+    public class InternalHumanizationServiceTests
     {
         [Fact]
         public async void AllTest()
         {
-            var service = TestServiceProvider.Current.GetRequiredService<IDateTimeService>();
+            var service = TestServiceProvider.Current.GetRequiredService<IHumanizationService>();
 
             var now = DateTime.Now.AddMinutes(-2);
             var nowString = await service.HumanizeAsync(now);

@@ -94,7 +94,7 @@ namespace Librame.Extensions.Network
 
             var links = new List<string>();
 
-            var response = await SendRequestAsync(url);
+            var response = await GetContentAsync(url);
             var matches = regex.Matches(response);
             if (matches.Count < 1)
                 return links;
@@ -157,13 +157,13 @@ namespace Librame.Extensions.Network
 
 
         /// <summary>
-        /// 异步发送请求。
+        /// 异步获取链接响应内容。
         /// </summary>
         /// <param name="url">给定的 URL 链接。</param>
         /// <param name="postData">给定用于提交请求的数据（可选；默认不提交数据）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含响应内容的异步操作。</returns>
-        public Task<string> SendRequestAsync(string url, string postData = null,
+        public Task<string> GetContentAsync(string url, string postData = null,
             CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>

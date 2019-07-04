@@ -111,7 +111,7 @@ namespace Librame.Extensions.Drawing
                 {
                     if (IsImageFile(file))
                     {
-                        DrawFile(file, null, cancellationToken);
+                        DrawFile(file, null);
                         count++;
                     }
                 }
@@ -137,7 +137,7 @@ namespace Librame.Extensions.Drawing
                 {
                     if (IsImageFile(file))
                     {
-                        DrawFile(file, null, cancellationToken);
+                        DrawFile(file, null);
                         count++;
                     }
                 }
@@ -152,9 +152,8 @@ namespace Librame.Extensions.Drawing
         /// </summary>
         /// <param name="imagePath">给定的图像路径。</param>
         /// <param name="savePathTemplate">给定的保存路径模板（默认同图像路径）。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回布尔值。</returns>
-        public bool DrawFile(string imagePath, string savePathTemplate = null, CancellationToken cancellationToken = default)
+        public bool DrawFile(string imagePath, string savePathTemplate = null)
         {
             if (Options.Scales.Count < 1)
             {

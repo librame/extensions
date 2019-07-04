@@ -34,7 +34,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部安全聊天服务端通道服务。
     /// </summary>
-    internal class InternalSecureChatServer : AbstractChannelService<InternalSecureChatServer>, ISecureChatServer
+    internal class InternalSecureChatServer : AbstractChannelService, ISecureChatServer
     {
         private readonly ServerOptions _serverOptions;
 
@@ -43,11 +43,11 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         /// 构造一个 <see cref="InternalSecureChatServer"/> 实例。
         /// </summary>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DotNettyOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
         public InternalSecureChatServer(ISigningCredentialsService signingCredentials,
-            ILoggerFactory loggerFactory, IOptions<DotNettyOptions> options)
-            : base(signingCredentials, loggerFactory, options)
+            IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
+            : base(signingCredentials, options, loggerFactory)
         {
             _serverOptions = Options.SecureChatServer;
         }

@@ -27,8 +27,8 @@ namespace Librame.Extensions.Storage
         /// 异步获取提供程序。
         /// </summary>
         /// <param name="root">给定的根。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IFileProvider"/> 的异步操作。</returns>
-        Task<IFileProvider> GetProviderAsync(string root, CancellationToken cancellationToken);
+        Task<IFileProvider> GetProviderAsync(string root, CancellationToken cancellationToken = default);
     }
 }

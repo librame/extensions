@@ -14,10 +14,10 @@ namespace Librame.Extensions.Network.Tests
 
 
         [Fact]
-        public async void GetStringTest()
+        public async void GetContentTest()
         {
-            var result = await _crawler.GetStringAsync("https://www.cnblogs.com");
-            Assert.NotEmpty(result);
+            var content = await _crawler.GetContentAsync("https://www.cnblogs.com");
+            Assert.NotEmpty(content);
         }
 
 
@@ -30,7 +30,7 @@ namespace Librame.Extensions.Network.Tests
 
 
         [Fact]
-        public async void GetImageHyperLinksTest()
+        public async void GetImageLinksTest()
         {
             var result = await _crawler.GetImageLinksAsync("https://www.baidu.com");
             Assert.True(result.Count > 0);

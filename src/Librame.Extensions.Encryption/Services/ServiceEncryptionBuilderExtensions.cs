@@ -32,10 +32,10 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddServices(this IEncryptionBuilder builder)
         {
-            builder.Services.AddSingleton<IHashService, InternalHashService>();
-            builder.Services.AddSingleton<IKeyedHashService, InternalKeyedHashService>();
-            builder.Services.AddSingleton<IRsaService, InternalRsaService>();
-            builder.Services.AddSingleton<ISymmetricService, InternalSymmetricService>();
+            builder.Services.AddScoped<IHashService, InternalHashService>();
+            builder.Services.AddScoped<IKeyedHashService, InternalKeyedHashService>();
+            builder.Services.AddScoped<IRsaService, InternalRsaService>();
+            builder.Services.AddScoped<ISymmetricService, InternalSymmetricService>();
 
             return builder;
         }
@@ -63,9 +63,9 @@ namespace Librame.Extensions.Encryption
             builder.Services.AddSingleton<ISigningCredentialsService>(provider =>
             {
                 var options = provider.GetRequiredService<IOptions<EncryptionBuilderOptions>>();
-                var logger = provider.GetRequiredService<ILogger<InternalSigningCredentialsService>>();
+                var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
 
-                return new InternalSigningCredentialsService(credentials, options, logger);
+                return new InternalSigningCredentialsService(credentials, options, loggerFactory);
             });
 
             return builder;

@@ -40,24 +40,24 @@ namespace Librame.Extensions.Network.DotNetty
             builder.Configure(configureOptions,
                 configuration, configureBinderOptions);
 
-            builder.Services.AddSingleton<IDiscardClient, InternalDiscardClient>();
+            builder.Services.AddScoped<IDiscardClient, InternalDiscardClient>();
             builder.Services.AddSingleton<IDiscardServer, InternalDiscardServer>();
 
-            builder.Services.AddSingleton<IEchoClient, InternalEchoClient>();
+            builder.Services.AddScoped<IEchoClient, InternalEchoClient>();
             builder.Services.AddSingleton<IEchoServer, InternalEchoServer>();
 
-            builder.Services.AddSingleton<IFactorialClient, InternalFactorialClient>();
+            builder.Services.AddScoped<IFactorialClient, InternalFactorialClient>();
             builder.Services.AddSingleton<IFactorialServer, InternalFactorialServer>();
 
             builder.Services.AddSingleton<IHttpServer, InternalHttpServer>();
 
-            builder.Services.AddSingleton<ISecureChatClient, InternalSecureChatClient>();
+            builder.Services.AddScoped<ISecureChatClient, InternalSecureChatClient>();
             builder.Services.AddSingleton<ISecureChatServer, InternalSecureChatServer>();
 
-            builder.Services.AddSingleton<ITelnetClient, InternalTelnetClient>();
+            builder.Services.AddScoped<ITelnetClient, InternalTelnetClient>();
             builder.Services.AddSingleton<ITelnetServer, InternalTelnetServer>();
 
-            builder.Services.AddSingleton<IWebSocketClient, InternalWebSocketClient>();
+            builder.Services.AddScoped<IWebSocketClient, InternalWebSocketClient>();
             builder.Services.AddSingleton<IWebSocketServer, InternalWebSocketServer>();
 
             return builder;

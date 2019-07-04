@@ -41,8 +41,8 @@ namespace Librame.Extensions.Data
         public DbContextAccessor(DbContextOptions options)
             : base(options)
         {
-            if (BuilderOptions.EnsureDatabase)
-                Database.EnsureCreated();
+            if (BuilderOptions.IsCreateDatabase)
+                EnsureDatabaseCreated();
         }
 
 
@@ -71,11 +71,16 @@ namespace Librame.Extensions.Data
                 .FirstOrDefault();
 
         /// <summary>
+        /// 记录器工厂。
+        /// </summary>
+        protected ILoggerFactory LoggerFactory
+            => CoreOptions?.LoggerFactory ?? CoreOptions.ApplicationServiceProvider.GetRequiredService<ILoggerFactory>();
+
+        /// <summary>
         /// 记录器。
         /// </summary>
         protected ILogger Logger
-            => (CoreOptions?.LoggerFactory ?? CoreOptions.ApplicationServiceProvider.GetRequiredService<ILoggerFactory>())
-                .CreateLogger<DbContextAccessor>();
+            => LoggerFactory.CreateLogger(GetType());
 
         /// <summary>
         /// 服务提供程序。
@@ -96,6 +101,53 @@ namespace Librame.Extensions.Data
         /// <value>返回 <see cref="ITenant"/>。</value>
         public virtual ITenant CurrentTenant
             => ServiceProvider.GetRequiredService<ITenantService>().GetTenantAsync(BaseTenants).Result;
+
+
+        /// <summary>
+        /// 确保已创建数据库。
+        /// </summary>
+        /// <returns>返回是否已创建的布尔值。</returns>
+        protected virtual void EnsureDatabaseCreated()
+        {
+            if (Database.EnsureCreated())
+            {
+                var connectionString = Database.GetDbConnection().ConnectionString;
+                Logger.LogInformation($"Database created: {connectionString}.");
+
+                AddDefaultTenant();
+                BuilderOptions.DatabaseCreatedAction?.Invoke(this);
+            }
+        }
+
+
+        /// <summary>
+        /// 增加默认租户。
+        /// </summary>
+        protected virtual void AddDefaultTenant()
+        {
+            var defaultTenant = BuilderOptions.DefaultTenant;
+            var dbTenant = BaseTenants.FirstOrDefault(p =>
+                p.Name == defaultTenant.Name && p.Host == defaultTenant.Host);
+
+            if (defaultTenant.IsNotNull() && dbTenant.IsNull())
+            {
+                // 添加默认租户到数据库
+                if (defaultTenant is BaseTenant baseTenant)
+                {
+                    dbTenant = baseTenant;
+                }
+                else
+                {
+                    dbTenant = new BaseTenant();
+                    BuilderOptions.DefaultTenant.EnsurePopulate(dbTenant);
+                }
+
+                var identifierService = ServiceProvider.GetRequiredService<IIdentifierService>();
+                dbTenant.Id = identifierService.GetTenantIdAsync().Result;
+
+                BaseTenants.Add(dbTenant);
+            }
+        }
 
 
         /// <summary>
@@ -143,17 +195,17 @@ namespace Librame.Extensions.Data
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             // 改变为写入数据库（支持读写分离）
-            if (BuilderOptions.TenantEnabled)
-                ChangeDbConnectionAsync(tenant => tenant.WriteConnectionString).Wait();
+            if (BuilderOptions.EnableTenant)
+                TryChangeDbConnection(tenant => tenant.WriteConnectionString);
 
-            if (BuilderOptions.AuditEnabled)
+            if (BuilderOptions.EnableAudit)
                 AuditSaveChangesAsync().Wait();
 
             var count = base.SaveChanges(acceptAllChangesOnSuccess);
 
             // 尝试还原改变的数据库连接
-            if (BuilderOptions.TenantEnabled)
-                ChangeDbConnectionAsync(tenant => tenant.DefaultConnectionString).Wait();
+            if (BuilderOptions.EnableTenant)
+                TryChangeDbConnection(tenant => tenant.DefaultConnectionString);
 
             return count;
         }
@@ -168,17 +220,17 @@ namespace Librame.Extensions.Data
             CancellationToken cancellationToken = default)
         {
             // 改变为写入数据库（支持读写分离）
-            if (BuilderOptions.TenantEnabled)
-                await ChangeDbConnectionAsync(tenant => tenant.WriteConnectionString);
+            if (BuilderOptions.EnableTenant)
+                TryChangeDbConnection(tenant => tenant.WriteConnectionString);
 
-            if (BuilderOptions.AuditEnabled)
+            if (BuilderOptions.EnableAudit)
                 await AuditSaveChangesAsync(cancellationToken);
 
             var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
             // 尝试还原改变的数据库连接
-            if (BuilderOptions.TenantEnabled)
-                await ChangeDbConnectionAsync(tenant => tenant.DefaultConnectionString);
+            if (BuilderOptions.EnableTenant)
+                TryChangeDbConnection(tenant => tenant.DefaultConnectionString);
 
             return count;
         }
@@ -201,7 +253,7 @@ namespace Librame.Extensions.Data
             var auditService = ServiceProvider.GetService<IAuditService>();
             var audits = await auditService.GetAuditsAsync(entityEntries, cancellationToken);
 
-            await Set<BaseAudit>().AddRangeAsync(audits, cancellationToken);
+            await BaseAudits.AddRangeAsync(audits, cancellationToken);
 
             // 通知审计实体列表
             var mediator = ServiceProvider.GetService<IMediator>();
@@ -210,21 +262,19 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 改变数据库连接。
+        /// 尝试改变数据库连接。
         /// </summary>
         /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        public virtual Task ChangeDbConnectionAsync(Func<ITenant, string> connectionStringFactory,
-            CancellationToken cancellationToken = default)
+        public virtual bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory)
         {
             if (CurrentTenant.IsNull() || connectionStringFactory.IsNull())
-                return Task.CompletedTask;
+                return false;
 
             if (!CurrentTenant.WriteConnectionSeparation)
             {
                 Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) connection write separation is disable");
-                return Task.CompletedTask;
+                return false;
             }
 
             var connectionString = connectionStringFactory.Invoke(CurrentTenant);
@@ -232,50 +282,53 @@ namespace Librame.Extensions.Data
             if (connection.ConnectionString == connectionString)
             {
                 Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) same as the current connection string");
-                return Task.CompletedTask;
+                return false;
             }
 
             try
             {
                 lock (_locker)
                 {
-                    return ChangeDbConnectionCoreAsync();
+                    ChangeDbConnectionCore();
                 }
+
+                return true;
             }
             catch (Exception ex)
             {
                 Logger?.LogError(ex, ex.AsInnerMessage());
-                return Task.CompletedTask;
+
+                return false;
             }
 
-            // ChangeDbConnectionCoreAsync
-            Task ChangeDbConnectionCoreAsync()
+            void ChangeDbConnectionCore()
             {
-                return cancellationToken.RunActionOrCancellationAsync(async () =>
+                if (connection.State != ConnectionState.Closed)
                 {
-                    if (connection.State != ConnectionState.Closed)
+                    connection.Close();
+                    Logger?.LogInformation("Close connection");
+                }
+
+                // MYSql: System.InvalidOperationException
+                //  HResult = 0x80131509
+                //  Message = Cannot change connection string on a connection that has already been opened.
+                //  Source = MySqlConnector
+                // connection.ChangeDatabase(connectionString);
+
+                connection.ConnectionString = connectionString;
+                Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) change connection string: {connectionString}");
+
+                if (connection.State != ConnectionState.Open)
+                {
+                    if (BuilderOptions.IsCreateDatabase)
+                        EnsureDatabaseCreated();
+
+                    if (connection.State == ConnectionState.Closed)
                     {
-                        connection.Close();
-                        Logger?.LogInformation("Close connection");
-                    }
-
-                    // MYSql: System.InvalidOperationException
-                    //  HResult = 0x80131509
-                    //  Message = Cannot change connection string on a connection that has already been opened.
-                    //  Source = MySqlConnector
-                    // connection.ChangeDatabase(connectionString);
-
-                    connection.ConnectionString = connectionString;
-                    Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) change connection string: {connectionString}");
-
-                    if (connection.State != ConnectionState.Open)
-                    {
-                        await Database.EnsureCreatedAsync();
-
-                        await connection.OpenAsync();
+                        connection.Open();
                         Logger?.LogInformation("Open connection");
                     }
-                });
+                }
             }
         }
 

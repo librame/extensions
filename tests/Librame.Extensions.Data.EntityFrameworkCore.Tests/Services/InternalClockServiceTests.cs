@@ -2,7 +2,7 @@
 using System;
 using Xunit;
 
-namespace Librame.Extensions.Core.Tests
+namespace Librame.Extensions.Data.Tests
 {
     public class InternalClockServiceTests
     {

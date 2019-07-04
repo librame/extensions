@@ -26,7 +26,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddBuffers(this IEncryptionBuilder builder)
         {
-            builder.Services.AddTransient(typeof(IEncryptionBuffer<,>), typeof(InternalEncryptionBuffer<,>));
+            builder.Services.AddScoped(typeof(IEncryptionBuffer<,>), typeof(InternalEncryptionBuffer<,>));
 
             return builder;
         }

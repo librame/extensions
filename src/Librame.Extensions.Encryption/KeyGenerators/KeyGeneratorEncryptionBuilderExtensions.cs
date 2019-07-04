@@ -26,7 +26,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddKeyGenerators(this IEncryptionBuilder builder)
         {
-            builder.Services.AddSingleton<IKeyGenerator, InternalKeyGenerator>();
+            builder.Services.AddScoped<IKeyGenerator, InternalKeyGenerator>();
 
             return builder;
         }

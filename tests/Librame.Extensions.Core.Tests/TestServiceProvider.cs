@@ -70,7 +70,7 @@ namespace Librame.Extensions.Core.Tests
     public class InjectionServiceTest
     {
         [InjectionService]
-        IBuilder _fieldBuilder = null;
+        ICoreBuilder _fieldBuilder = null;
 
 
         public InjectionServiceTest(IInjectionService injectionService)
@@ -80,7 +80,7 @@ namespace Librame.Extensions.Core.Tests
 
 
         [InjectionService]
-        public IBuilder PropertyBuilder { get; set; }
+        public ICoreBuilder PropertyBuilder { get; set; }
 
 
         public void InjectTest()

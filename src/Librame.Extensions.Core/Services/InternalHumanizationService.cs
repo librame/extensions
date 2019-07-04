@@ -18,18 +18,18 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 内部日期与时间服务。
+    /// 内部人性化服务。
     /// </summary>
-    internal class InternalDateTimeService : AbstractService, IDateTimeService
+    internal class InternalHumanizationService : AbstractService, IHumanizationService
     {
         private readonly IExpressionStringLocalizer<DateTimeResource> _localizer;
 
         /// <summary>
-        /// 构造一个 <see cref="InternalDateTimeService"/> 实例。
+        /// 构造一个 <see cref="InternalHumanizationService"/> 实例。
         /// </summary>
         /// <param name="localizer">给定的 <see cref="IExpressionStringLocalizer{DateTimeResource}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalDateTimeService(IExpressionStringLocalizer<DateTimeResource> localizer,
+        public InternalHumanizationService(IExpressionStringLocalizer<DateTimeResource> localizer,
             ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {

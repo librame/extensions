@@ -44,13 +44,13 @@ namespace Librame.Extensions.Network
         Task<IList<string>> GetHyperLinksAsync(string url, string pattern = null);
 
         /// <summary>
-        /// 异步发送请求。
+        /// 异步获取链接响应内容。
         /// </summary>
         /// <param name="url">给定的 URL 链接。</param>
         /// <param name="postData">给定用于提交请求的数据（可选；默认不提交数据）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含响应内容的异步操作。</returns>
-        Task<string> SendRequestAsync(string url, string postData = null,
+        Task<string> GetContentAsync(string url, string postData = null,
             CancellationToken cancellationToken = default);
     }
 }

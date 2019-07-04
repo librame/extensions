@@ -33,7 +33,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部回流客户端通道服务。
     /// </summary>
-    internal class InternalEchoClient : AbstractChannelService<InternalEchoClient>, IEchoClient
+    internal class InternalEchoClient : AbstractChannelService, IEchoClient
     {
         private readonly ClientOptions _clientOptions;
 
@@ -42,11 +42,11 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         /// 构造一个 <see cref="InternalEchoClient"/> 实例。
         /// </summary>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DotNettyOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
         public InternalEchoClient(ISigningCredentialsService signingCredentials,
-            ILoggerFactory loggerFactory, IOptions<DotNettyOptions> options)
-            : base(signingCredentials, loggerFactory, options)
+            IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
+            : base(signingCredentials, options, loggerFactory)
         {
             _clientOptions = Options.EchoClient;
         }

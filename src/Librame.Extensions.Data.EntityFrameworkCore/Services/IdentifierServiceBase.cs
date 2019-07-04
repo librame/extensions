@@ -11,57 +11,59 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
-    /// 内部时钟服务。
+    /// 标识符服务基类。
     /// </summary>
-    internal class InternalClockService : AbstractService, IClockService
+    public class IdentifierServiceBase : AbstractService, IIdentifierService
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalClockService"/> 实例。
+        /// 构造一个 <see cref="IdentifierServiceBase"/> 实例。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalClockService(ILoggerFactory loggerFactory)
+        public IdentifierServiceBase(ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
         }
 
 
         /// <summary>
-        /// 异步获取当前协调世界时(UTC)的日期和时间。
+        /// 异步获取审计标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="DateTimeOffset"/> 的异步操作。</returns>
-        public Task<DateTime> GetNowAsync(CancellationToken cancellationToken = default)
+        /// <returns>返回 <see cref="string"/>。</returns>
+        public virtual Task<string> GetAuditIdAsync(CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                var now = DateTime.Now;
-                Logger.LogInformation($"Get DateTime: {now.ToString()}");
+                string auditId = GuIdentifier.New();
+                Logger.LogInformation($"Get AuditId: {auditId}");
 
-                return now;
+                return auditId;
             });
         }
 
         /// <summary>
-        /// 异步获取当前协调世界时(UTC)的日期和时间。
+        /// 异步获取租户标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="DateTimeOffset"/> 的异步操作。</returns>
-        public Task<DateTimeOffset> GetUtcNowAsync(CancellationToken cancellationToken = default)
+        /// <returns>返回 <see cref="string"/>。</returns>
+        public virtual Task<string> GetTenantIdAsync(CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                var now = DateTimeOffset.Now;
-                Logger.LogInformation($"Get UTC DateTime: {now.ToString()}");
+                string tenantId = GuIdentifier.New();
+                Logger.LogInformation($"Get TenantId: {tenantId}");
 
-                return now;
+                return tenantId;
             });
         }
+
     }
 }

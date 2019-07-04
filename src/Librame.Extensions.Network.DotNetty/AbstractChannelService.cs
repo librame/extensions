@@ -21,23 +21,19 @@ namespace Librame.Extensions.Network.DotNetty
     /// <summary>
     /// 抽象通道服务。
     /// </summary>
-    /// <typeparam name="TService">指定的服务类型。</typeparam>
-    public abstract class AbstractChannelService<TService> : AbstractService<TService>, IChannelService
-        where TService : class, IChannelService
+    public abstract class AbstractChannelService : AbstractService<DotNettyOptions>, IChannelService
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractChannelService{TService}"/> 实例。
+        /// 构造一个 <see cref="AbstractChannelService"/> 实例。
         /// </summary>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DotNettyOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
         public AbstractChannelService(ISigningCredentialsService signingCredentials,
-            ILoggerFactory loggerFactory, IOptions<DotNettyOptions> options)
-            : base(loggerFactory.CreateLogger<TService>())
+            IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
+            : base(options, loggerFactory)
         {
             SigningCredentials = signingCredentials.NotNull(nameof(signingCredentials));
-            LoggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
-            Options = options.NotNull(nameof(options)).Value;
         }
 
 
@@ -48,21 +44,5 @@ namespace Librame.Extensions.Network.DotNetty
         /// 返回 <see cref="ISigningCredentialsService"/>。
         /// </value>
         public ISigningCredentialsService SigningCredentials { get; }
-
-        /// <summary>
-        /// 日志工厂。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="ILoggerFactory"/>。
-        /// </value>
-        public ILoggerFactory LoggerFactory { get; }
-        
-        /// <summary>
-        /// 通道选项。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="DotNettyOptions"/>。
-        /// </value>
-        public DotNettyOptions Options { get; }
     }
 }

@@ -35,7 +35,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部 WebSocket 客户端通道服务。
     /// </summary>
-    internal class InternalWebSocketClient : AbstractChannelService<InternalWebSocketClient>, IWebSocketClient
+    internal class InternalWebSocketClient : AbstractChannelService, IWebSocketClient
     {
         private readonly WebSocketClientOptions _clientOptions;
 
@@ -44,11 +44,11 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         /// 构造一个 <see cref="InternalWebSocketClient"/> 实例。
         /// </summary>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DotNettyOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
         public InternalWebSocketClient(ISigningCredentialsService signingCredentials,
-            ILoggerFactory loggerFactory, IOptions<DotNettyOptions> options)
-            : base(signingCredentials, loggerFactory, options)
+            IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
+            : base(signingCredentials, options, loggerFactory)
         {
             _clientOptions = Options.WebSocketClient;
         }

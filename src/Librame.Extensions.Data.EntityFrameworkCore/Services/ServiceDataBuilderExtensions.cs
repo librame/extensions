@@ -27,8 +27,9 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddServices(this IDataBuilder builder)
         {
             builder.Services.AddScoped<IAuditService, InternalAuditService>();
+            builder.Services.AddScoped<IClockService, InternalClockService>();
             builder.Services.AddScoped<ITenantService, InternalTenantService>();
-            builder.Services.AddScoped<IIdentifierService, InternalIdentifierService>();
+            builder.Services.AddScoped<IIdentifierService, IdentifierServiceBase>();
 
             return builder;
         }

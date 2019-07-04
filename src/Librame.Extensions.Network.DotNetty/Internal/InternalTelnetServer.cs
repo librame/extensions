@@ -34,7 +34,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部 Telnet 服务端通道服务。
     /// </summary>
-    internal class InternalTelnetServer : AbstractChannelService<InternalTelnetServer>, ITelnetServer
+    internal class InternalTelnetServer : AbstractChannelService, ITelnetServer
     {
         private readonly ServerOptions _serverOptions;
 
@@ -43,11 +43,11 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         /// 构造一个 <see cref="InternalTelnetServer"/> 实例。
         /// </summary>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DotNettyOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{ChannelOptions}"/>。</param>
         public InternalTelnetServer(ISigningCredentialsService signingCredentials,
-            ILoggerFactory loggerFactory, IOptions<DotNettyOptions> options)
-            : base(signingCredentials, loggerFactory, options)
+            IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
+            : base(signingCredentials, options, loggerFactory)
         {
             _serverOptions = Options.TelnetServer;
         }

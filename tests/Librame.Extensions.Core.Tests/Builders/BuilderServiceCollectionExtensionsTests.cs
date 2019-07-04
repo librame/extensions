@@ -8,7 +8,7 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void AddLibrameTest()
         {
-            var builder = TestServiceProvider.Current.GetRequiredService<IBuilder>();
+            var builder = TestServiceProvider.Current.GetRequiredService<ICoreBuilder>();
             Assert.NotNull(builder);
         }
 

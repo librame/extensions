@@ -17,12 +17,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
     /// 访问器接口。
     /// </summary>
-    public interface IAccessor : IService
+    public interface IAccessor : IDisposable
     {
         /// <summary>
         /// 当前租户。
@@ -64,12 +62,12 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
 
+
         /// <summary>
-        /// 异步改变数据库连接。
+        /// 尝试改变数据库连接。
         /// </summary>
         /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        Task ChangeDbConnectionAsync(Func<ITenant, string> connectionStringFactory, CancellationToken cancellationToken = default);
+        bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory);
     }
 }

@@ -15,10 +15,10 @@ namespace Librame.Extensions.Storage.Tests
 
 
         [Fact]
-        public void GetProviderAsyncTest()
+        public async void GetProviderAsyncTest()
         {
             var root = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..");
-            var provider = _file.GetProviderAsync(root).Result;
+            var provider = await _file.GetProviderAsync(root);
             var files = provider.GetDirectoryContents(@"bin\Debug\netcoreapp2.2");
             Assert.NotEmpty(files);
         }

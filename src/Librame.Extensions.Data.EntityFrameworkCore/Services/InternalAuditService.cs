@@ -12,7 +12,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -87,7 +86,7 @@ namespace Librame.Extensions.Data
             var audit = new BaseAudit
             {
                 Id = _identifierService.GetAuditIdAsync(default).Result,
-                EntityName = GetEntityName(entry.Metadata.ClrType),
+                EntityName = entry.Metadata.ClrType.Name,
                 EntityTypeName = entry.Metadata.ClrType.FullName,
                 State = (int)entry.State,
                 StateName = entry.State.ToString()
@@ -103,7 +102,7 @@ namespace Librame.Extensions.Data
 
                 var auditProperty = new BaseAuditProperty()
                 {
-                    PropertyName = GetPropertyName(property),
+                    PropertyName = property.Name,
                     PropertyTypeName = property.ClrType.FullName
                 };
 
@@ -134,7 +133,20 @@ namespace Librame.Extensions.Data
                 audit.Properties.Add(auditProperty);
             }
 
-            SetCreationOrUpdation(audit, entry);
+            if (entry.State == EntityState.Modified && entry.Entity is IUpdation updation)
+            {
+                audit.CreatedTime = ToDateTime(updation.GetUpdatedTime());
+                audit.CreatedBy = ToBy(updation.GetUpdatedBy());
+            }
+            else if (entry.Entity is ICreation creation)
+            {
+                audit.CreatedTime = ToDateTime(creation.GetCreatedTime());
+                audit.CreatedBy = ToBy(creation.GetCreatedBy());
+            }
+            else
+            {
+                audit.CreatedTime = _clockService.GetUtcNowAsync(default).Result;
+            }
 
             return audit;
         }
@@ -150,53 +162,6 @@ namespace Librame.Extensions.Data
                 return property.OriginalValue?.ToString();
 
             return property.CurrentValue?.ToString();
-        }
-
-        /// <summary>
-        /// 获取实体名称（支持描述特性）。
-        /// </summary>
-        /// <param name="entityType">给定的实体类型。</param>
-        /// <returns>返回字符串。</returns>
-        private string GetEntityName(Type entityType)
-        {
-            //if (entityType.TryGetCustomAttribute(out DescriptionAttribute attribute))
-            //    return attribute.Description.HasOrDefault(entityType.Name);
-
-            return entityType.Name;
-        }
-
-        /// <summary>
-        /// 获取属性名称（支持描述特性）。
-        /// </summary>
-        /// <param name="property">给定的 <see cref="IProperty"/>。</param>
-        /// <returns>返回字符串。</returns>
-        private string GetPropertyName(IProperty property)
-        {
-            //if (property.ClrType.TryGetCustomAttribute(out DescriptionAttribute attribute))
-            //    return attribute.Description.HasOrDefault(property.Name);
-
-            return property.Name;
-        }
-
-        /// <summary>
-        /// 设置创建或更新属性。
-        /// </summary>
-        /// <param name="audit">给定要编辑的审计对象。</param>
-        /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
-        private void SetCreationOrUpdation(BaseAudit audit, EntityEntry entry)
-        {
-            if (entry.State == EntityState.Modified && entry.Entity is IUpdation updation)
-            {
-                audit.CreatedTime = ToDateTime(updation.GetUpdatedTime());
-                audit.CreatedBy = ToBy(updation.GetUpdatedBy());
-                return;
-            }
-
-            if (entry.Entity is ICreation creation)
-            {
-                audit.CreatedTime = ToDateTime(creation.GetCreatedTime());
-                audit.CreatedBy = ToBy(creation.GetCreatedBy());
-            }
         }
 
         /// <summary>

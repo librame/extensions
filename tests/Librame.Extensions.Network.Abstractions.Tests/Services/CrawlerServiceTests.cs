@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -13,6 +15,8 @@ namespace Librame.Extensions.Network.Tests
         public class TestCrawlerService : ICrawlerService
         {
             public string[] ImageExtensions { get; set; }
+
+            public ILoggerFactory LoggerFactory => throw new NotImplementedException();
 
             public IHashService Hash => throw new NotImplementedException();
 
@@ -33,12 +37,8 @@ namespace Librame.Extensions.Network.Tests
                 throw new NotImplementedException();
             }
 
-            public Task<string> GetStringAsync(string url)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<string> RequestStringAsync(string url, string postData)
+            public Task<string> GetContentAsync(string url, string postData = null,
+                CancellationToken cancellationToken = default)
             {
                 throw new NotImplementedException();
             }
@@ -53,8 +53,7 @@ namespace Librame.Extensions.Network.Tests
             Assert.Throws<NotImplementedException>(() => service.Dispose());
             Assert.ThrowsAsync<NotImplementedException>(() => service.GetHyperLinksAsync(null));
             Assert.ThrowsAsync<NotImplementedException>(() => service.GetImageLinksAsync(null));
-            Assert.ThrowsAsync<NotImplementedException>(() => service.GetStringAsync(null));
-            Assert.ThrowsAsync<NotImplementedException>(() => service.SendRequestAsync(null, null));
+            Assert.ThrowsAsync<NotImplementedException>(() => service.GetContentAsync(null, null));
         }
     }
 }

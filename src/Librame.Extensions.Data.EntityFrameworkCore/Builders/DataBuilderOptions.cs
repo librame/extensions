@@ -29,24 +29,29 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 启用审计（默认已启用）。
         /// </summary>
-        public bool AuditEnabled { get; set; }
+        public bool EnableAudit { get; set; }
             = true;
 
         /// <summary>
         /// 启用租户（默认已启用）。
         /// </summary>
-        public bool TenantEnabled { get; set; }
+        public bool EnableTenant { get; set; }
             = true;
 
         /// <summary>
-        /// 确保数据库（默认已启用）。
+        /// 是否创建数据库（如果数据库不存在；默认已启用）。
         /// </summary>
-        public bool EnsureDatabase { get; set; }
+        public bool IsCreateDatabase { get; set; }
             = true;
+
+        /// <summary>
+        /// 数据库已创建的动作（启用创建数据库后此项有效）。
+        /// </summary>
+        public Action<IAccessor> DatabaseCreatedAction { get; set; }
 
 
         /// <summary>
-        /// 本机租户。
+        /// 默认租户。
         /// </summary>
         public ITenant DefaultTenant { get; set; }
             = new BaseTenant();

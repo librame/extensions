@@ -17,9 +17,9 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 日期与时间服务接口。
+    /// 人性化服务接口。
     /// </summary>
-    public interface IDateTimeService : IService
+    public interface IHumanizationService : IService
     {
         /// <summary>
         /// 异步人性化。

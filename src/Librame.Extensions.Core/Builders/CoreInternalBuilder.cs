@@ -29,6 +29,7 @@ namespace Librame.Extensions.Core
             : base(services, options)
         {
             Services.AddSingleton<ICoreBuilder>(this);
+            Services.AddSingleton(serviceProvider => (IBuilder)serviceProvider.GetRequiredService<ICoreBuilder>());
         }
 
 

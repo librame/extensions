@@ -16,12 +16,12 @@ namespace Librame.Extensions.Drawing.Tests
 
 
         [Fact]
-        public async void DrawScaleTest()
+        public void DrawScaleTest()
         {
             // 5K 2.21MB
             var imageFile = "eso1004a.jpg".AsFileLocator(TestServiceProvider.ResourcesPath);
             
-            var succeed = await _drawing.DrawFile(imageFile.ToString());
+            var succeed = _drawing.DrawFile(imageFile.ToString());
             Assert.True(succeed);
         }
 

@@ -14,10 +14,12 @@ namespace Librame.Extensions.Network.Tests
 
 
         [Fact]
-        public async void SendAsyncTest()
+        public void SendAsyncTest()
         {
-            var result = await _service.SendAsync("TestData: 123456");
-            Assert.Empty(result);
+            Assert.ThrowsAsync<System.Net.WebException>(() =>
+            {
+                return _service.SendAsync("TestData: 123456");
+            });
         }
 
     }

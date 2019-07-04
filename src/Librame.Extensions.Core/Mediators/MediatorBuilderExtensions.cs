@@ -32,8 +32,8 @@ namespace Librame.Extensions.Core
         public static IBuilder AddMediators(this IBuilder builder)
         {
             builder.Services.AddTransient<ServiceFactoryDelegate>(sp => sp.GetService);
-            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
-            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
+            builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
+            builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
             builder.Services.AddSingleton<IMediator, InternalMediator>();
 
             if (builder.Options is CoreBuilderOptions options && options.EnableScanHandlersAndProcessors)
@@ -63,7 +63,7 @@ namespace Librame.Extensions.Core
             {
                 BuilderGlobalization.RegisterTypes(type =>
                 {
-                    builder.Services.AddTransient(multiOpenInterface, type);
+                    builder.Services.AddScoped(multiOpenInterface, type);
                 },
                 types => types
                     .Where(type => Enumerable.Any(type.FindInterfacesThatClose(multiOpenInterface)))
@@ -103,7 +103,7 @@ namespace Librame.Extensions.Core
                 {
                     foreach (var type in exactMatches)
                     {
-                        services.AddTransient(@interface, type);
+                        services.AddScoped(@interface, type);
                     }
                 }
                 else
@@ -115,7 +115,7 @@ namespace Librame.Extensions.Core
 
                     foreach (var type in exactMatches)
                     {
-                        services.TryAddTransient(@interface, type);
+                        services.TryAddScoped(@interface, type);
                     }
                 }
 
@@ -155,7 +155,7 @@ namespace Librame.Extensions.Core
             {
                 try
                 {
-                    services.TryAddTransient(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
+                    services.TryAddScoped(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
                 }
                 catch (Exception)
                 {
