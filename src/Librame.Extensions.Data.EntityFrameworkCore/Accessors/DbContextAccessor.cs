@@ -273,15 +273,15 @@ namespace Librame.Extensions.Data
 
             if (!CurrentTenant.WriteConnectionSeparation)
             {
-                Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) connection write separation is disable");
+                Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) connection write separation is disable.");
                 return false;
             }
 
             var connectionString = connectionStringFactory.Invoke(CurrentTenant);
             var connection = Database.GetDbConnection();
-            if (connection.ConnectionString == connectionString)
+            if (connection.ConnectionString.Equals(connectionString, StringComparison.OrdinalIgnoreCase))
             {
-                Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) same as the current connection string");
+                Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) same as the current connection string.");
                 return false;
             }
 
