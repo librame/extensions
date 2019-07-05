@@ -96,14 +96,6 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 当前租户。
-        /// </summary>
-        /// <value>返回 <see cref="ITenant"/>。</value>
-        public virtual ITenant CurrentTenant
-            => ServiceProvider.GetRequiredService<ITenantService>().GetTenantAsync(BaseTenants).Result;
-
-
-        /// <summary>
         /// 确保已创建数据库。
         /// </summary>
         /// <returns>返回是否已创建的布尔值。</returns>
@@ -268,20 +260,21 @@ namespace Librame.Extensions.Data
         /// <returns>返回是否切换的布尔值。</returns>
         public virtual bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory)
         {
-            if (CurrentTenant.IsNull() || connectionStringFactory.IsNull())
+            var tenant = ServiceProvider.GetRequiredService<ITenantService>().GetTenantAsync(BaseTenants).Result;
+            if (tenant.IsNull() || connectionStringFactory.IsNull())
                 return false;
 
-            if (!CurrentTenant.WriteConnectionSeparation)
+            if (!tenant.WriteConnectionSeparation)
             {
-                Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) connection write separation is disable.");
+                Logger?.LogInformation($"The tenant({tenant.Name}:{tenant.Host}) connection write separation is disable.");
                 return false;
             }
 
-            var connectionString = connectionStringFactory.Invoke(CurrentTenant);
+            var connectionString = connectionStringFactory.Invoke(tenant);
             var connection = Database.GetDbConnection();
             if (connection.ConnectionString.Equals(connectionString, StringComparison.OrdinalIgnoreCase))
             {
-                Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) same as the current connection string.");
+                Logger?.LogInformation($"The tenant({tenant.Name}:{tenant.Host}) same as the current connection string.");
                 return false;
             }
 
@@ -316,7 +309,7 @@ namespace Librame.Extensions.Data
                 // connection.ChangeDatabase(connectionString);
 
                 connection.ConnectionString = connectionString;
-                Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) change connection string: {connectionString}");
+                Logger?.LogInformation($"The tenant({tenant.Name}:{tenant.Host}) change connection string: {connectionString}");
 
                 if (connection.State != ConnectionState.Open)
                 {

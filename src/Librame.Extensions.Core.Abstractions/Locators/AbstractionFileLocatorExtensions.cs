@@ -172,13 +172,33 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
+        /// 删除文件。
+        /// </summary>
+        /// <param name="locator">给定的 <see cref="IFileLocator"/>。</param>
+        public static void Delete(this IFileLocator locator)
+        {
+            File.Delete(locator?.ToString());
+        }
+        /// <summary>
+        /// 删除文件。
+        /// </summary>
+        /// <param name="locator">给定的 <see cref="IFileLocator"/>。</param>
+        /// <param name="fileInfo">给定的 <see cref="FileInfo"/>。</param>
+        public static void Delete(this IFileLocator locator, out FileInfo fileInfo)
+        {
+            fileInfo = locator.AsFileInfo();
+            fileInfo.Delete();
+        }
+
+
+        /// <summary>
         /// 文件是否存在。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IFileLocator"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool Exists(this IFileLocator locator)
         {
-            return locator.Exists(out _);
+            return File.Exists(locator?.ToString());
         }
         /// <summary>
         /// 文件是否存在。
@@ -189,7 +209,6 @@ namespace Librame.Extensions.Core
         public static bool Exists(this IFileLocator locator, out FileInfo fileInfo)
         {
             fileInfo = locator.AsFileInfo();
-
             return fileInfo.Exists;
         }
 
@@ -198,10 +217,9 @@ namespace Librame.Extensions.Core
         /// 目录是否存在。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IFileLocator"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool DirectoryExists(this IFileLocator locator)
+        public static void DirectoryExists(this IFileLocator locator)
         {
-            return locator.DirectoryExists(out _);
+            Directory.Delete(locator?.ToString());
         }
         /// <summary>
         /// 目录是否存在。
@@ -212,7 +230,6 @@ namespace Librame.Extensions.Core
         public static bool DirectoryExists(this IFileLocator locator, out DirectoryInfo directoryInfo)
         {
             directoryInfo = locator.AsDirectoryInfo();
-
             return directoryInfo.Exists;
         }
 

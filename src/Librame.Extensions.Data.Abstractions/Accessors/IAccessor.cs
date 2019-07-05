@@ -23,13 +23,6 @@ namespace Librame.Extensions.Data
     public interface IAccessor : IDisposable
     {
         /// <summary>
-        /// 当前租户。
-        /// </summary>
-        /// <value>返回 <see cref="ITenant"/>。</value>
-        ITenant CurrentTenant { get; }
-
-
-        /// <summary>
         /// 执行 SQL 命令。
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>

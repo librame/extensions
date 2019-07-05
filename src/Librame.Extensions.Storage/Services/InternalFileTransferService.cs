@@ -54,63 +54,118 @@ namespace Librame.Extensions.Storage
         public Encoding Encoding { get; set; }
 
         /// <summary>
-        /// 使用访问令牌。
+        /// 使用访问令牌（默认禁用）。
         /// </summary>
         public bool UseAccessToken { get; set; }
             = false;
 
         /// <summary>
-        /// 使用授权码。
+        /// 使用授权码（默认禁用）。
         /// </summary>
         public bool UseAuthorizationCode { get; set; }
             = false;
 
         /// <summary>
-        /// 使用 Cookie 值。
+        /// 使用 Cookie 值（默认禁用）。
         /// </summary>
         public bool UseCookieValue { get; set; }
             = false;
+
+        /// <summary>
+        /// 使用断点续传（默认使用）。
+        /// </summary>
+        public bool UseBreakpointResume { get; set; }
+            = true;
+
+        /// <summary>
+        /// 后置头部集合动作。
+        /// </summary>
+        public Action<WebHeaderCollection> PostHeadersAction { get; set; }
+
+        /// <summary>
+        /// 进度动作（传入参数依次为总长度、当前位置）。
+        /// </summary>
+        public Action<long, long> ProgressAction { get; set; }
 
 
         /// <summary>
         /// 异步下载文件。
         /// </summary>
         /// <param name="downloadUrl">给定用于下载文件的远程 URL。</param>
-        /// <param name="filePath">给定的文件路径。</param>
+        /// <param name="savePath">给定的保存路径。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含远程响应字符串数组的异步操作。</returns>
-        public Task<string> DownloadFileAsync(string downloadUrl, string filePath,
+        /// <returns>返回一个包含 <see cref="IFileLocator"/> 的异步操作。</returns>
+        public async Task<IFileLocator> DownloadFileAsync(string downloadUrl, string savePath,
             CancellationToken cancellationToken = default)
         {
-            return DownloadFilesAsync(downloadUrl, new string[] { filePath },
-                cancellationToken);
-        }
-
-        /// <summary>
-        /// 异步下载文件集合。
-        /// </summary>
-        /// <param name="downloadUrl">给定用于下载文件的远程 URL。</param>
-        /// <param name="filePaths">给定的文件路径数组。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含远程响应字符串数组的异步操作。</returns>
-        public async Task<string> DownloadFilesAsync(string downloadUrl, string[] filePaths,
-            CancellationToken cancellationToken = default)
-        {
-            string response = null;
+            IFileLocator locator = null;
 
             try
             {
-                var hwr = await CreateRequestAsync(downloadUrl);
+                var hwr = await CreateRequestAsync(downloadUrl, "GET", cancellationToken);
 
+                var buffer = new byte[Options.BufferSize];
+                var range = 0L;
+
+                if (File.Exists(savePath) && UseBreakpointResume)
+                {
+                    using (var fs = File.OpenRead(savePath))
+                    {
+                        var readCount = 1;
+                        while (readCount > 0)
+                        {
+                            // 每次从流中读取指定缓冲区的字节数，当读完后退出循环
+                            readCount = fs.Read(buffer, 0, buffer.Length);
+                        }
+
+                        range = fs.Position;
+                    }
+
+                    hwr.AddRange(range);
+                }
+
+                using (var wr = hwr.GetResponse())
+                {
+                    // Accept-Ranges: bytes or none.
+                    var acceptRanges = wr.Headers[HttpResponseHeader.AcceptRanges];
+                    var supportRanges = acceptRanges?.Contains("bytes");
+
+                    using (var s = wr.GetResponseStream())
+                    {
+                        var writeMode = FileMode.Create;
+
+                        // 如果需要且服务端支持 Ranges，才启用续传
+                        if (range > 0 && supportRanges.Value && s.CanSeek)
+                        {
+                            s.Seek(range, SeekOrigin.Begin);
+                            writeMode = FileMode.Append;
+                        }
+
+                        using (var fs = File.Open(savePath, writeMode))
+                        {
+                            var readCount = 1;
+                            while (readCount > 0)
+                            {
+                                // 每次从流中读取指定缓冲区的字节数，当读完后退出循环
+                                readCount = s.Read(buffer, 0, buffer.Length);
+
+                                // 将读取到的缓冲区字节数写入文件流
+                                fs.Write(buffer, 0, readCount);
+
+                                ProgressAction?.Invoke(s.Length, fs.Position);
+                            }
+                        }
+                    }
+                }
+
+                locator = savePath.AsFileLocator();
             }
             catch (Exception ex)
             {
-                response = ex.AsInnerMessage();
-
-                Logger.LogError(ex, response);
+                Logger.LogError(ex, ex.AsInnerMessage());
             }
 
-            return response;
+            return locator;
         }
 
 
@@ -121,54 +176,41 @@ namespace Librame.Extensions.Storage
         /// <param name="filePath">给定的文件路径。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含远程响应字符串数组的异步操作。</returns>
-        public Task<string> UploadFileAsync(string uploadUrl, string filePath,
-            CancellationToken cancellationToken = default)
-        {
-            return UploadFilesAsync(uploadUrl, new string[] { filePath },
-                cancellationToken);
-        }
-
-        /// <summary>
-        /// 异步上传文件集合。
-        /// </summary>
-        /// <param name="uploadUrl">给定用于接收上传文件的远程 URL。</param>
-        /// <param name="filePaths">给定的文件路径数组。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含远程响应字符串数组的异步操作。</returns>
-        public async Task<string> UploadFilesAsync(string uploadUrl, string[] filePaths,
+        public async Task<string> UploadFileAsync(string uploadUrl, string filePath,
             CancellationToken cancellationToken = default)
         {
             string response = null;
 
             try
             {
-                var hwr = await CreateRequestAsync(uploadUrl);
+                var hwr = await CreateRequestAsync(uploadUrl, cancellationToken: cancellationToken);
 
-                foreach (var file in filePaths)
+                using (var s = hwr.GetRequestStream())
                 {
-                    var buffer = File.ReadAllBytes(file);
-                    //var content = new ByteArrayContent(buffer);
-                    //content.Headers.Add("file_extension", Path.GetExtension(file));
-                    //configureContentHeaders?.Invoke(content.Headers);
+                    var buffer = new byte[Options.BufferSize];
 
-                    //var response = await _httpClient.PostAsync(uploadUri, content, cancellationToken);
-                    //var result = await response.Content.ReadAsStringAsync();
-
-                    using (var s = hwr.GetRequestStream())
+                    using (var fs = File.OpenRead(filePath))
                     {
-                        await s.WriteAsync(buffer, 0, buffer.Length, cancellationToken);
+                        var readCount = 1;
+                        while (readCount > 0)
+                        {
+                            // 每次从文件流中读取指定缓冲区的字节数，当读完后退出循环
+                            readCount = fs.Read(buffer, 0, buffer.Length);
+
+                            // 将读取到的缓冲区字节数写入请求流
+                            s.Write(buffer, 0, readCount);
+
+                            ProgressAction?.Invoke(fs.Length, s.Position);
+                        }
                     }
                 }
 
                 using (var s = hwr.GetResponse().GetResponseStream())
                 {
-                    if (s.IsNotNull())
+                    using (var sr = new StreamReader(s, Encoding))
                     {
-                        using (var sr = new StreamReader(s, Encoding))
-                        {
-                            response = await sr.ReadToEndAsync();
-                            Logger.LogDebug($"Response: {response}");
-                        }
+                        response = await sr.ReadToEndAsync();
+                        Logger.LogDebug($"Response: {response}");
                     }
                 }
             }
@@ -181,6 +223,7 @@ namespace Librame.Extensions.Storage
             
             return response;
         }
+
 
         private async Task<HttpWebRequest> CreateRequestAsync(string url, string method = "POST",
             CancellationToken cancellationToken = default)
@@ -212,6 +255,8 @@ namespace Librame.Extensions.Storage
                 var cookieValue = await _permissionService.GetCookieValueAsync(cancellationToken);
                 hwr.Headers.Add(HttpRequestHeader.Cookie, cookieValue);
             }
+
+            PostHeadersAction?.Invoke(hwr.Headers);
 
             return hwr;
         }
