@@ -36,6 +36,7 @@ namespace Librame.Extensions.Core
         public override Task HandleAsync(INotification notification, ServiceFactoryDelegate serviceFactory,
             Func<IEnumerable<Func<Task>>, Task> publishFactory, CancellationToken cancellationToken = default)
         {
+            // [BUG]
             var handlers = serviceFactory
                 .Invokes<INotificationHandler<TNotification>>()
                 .Select(x => new Func<Task>(() => x.HandleAsync((TNotification)notification, cancellationToken)));

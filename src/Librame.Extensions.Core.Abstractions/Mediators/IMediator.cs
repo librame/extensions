@@ -29,6 +29,15 @@ namespace Librame.Extensions.Core
         /// <returns>返回一个包含 <typeparamref name="TResponse"/> 的异步操作。</returns>
         Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default);
 
+
+        /// <summary>
+        /// 异步向多个处理程序发送通知。
+        /// </summary>
+        /// <param name="notification">给定的通知对象。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个异步操作。</returns>
+        Task Publish(object notification, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// 异步向多个处理程序发送通知。
         /// </summary>

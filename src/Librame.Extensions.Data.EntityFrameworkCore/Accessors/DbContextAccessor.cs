@@ -260,9 +260,9 @@ namespace Librame.Extensions.Data
 
             await BaseAudits.AddRangeAsync(audits, cancellationToken);
 
-            // 通知审计实体列表
-            var mediator = ServiceProvider.GetService<IMediator>();
-            await mediator?.Publish(new AuditNotification { Audits = audits }, cancellationToken);
+            //// 通知审计实体列表 [BUG]
+            //var mediator = ServiceProvider.GetService<IMediator>();
+            //await mediator?.Publish(new AuditNotification { Audits = audits }, cancellationToken);
         }
 
 

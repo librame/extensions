@@ -34,7 +34,7 @@ namespace Librame.Extensions.Core
             builder.Services.AddTransient<ServiceFactoryDelegate>(sp => sp.GetService);
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
             builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
-            builder.Services.AddScoped<IMediator, InternalMediator>();
+            builder.Services.AddTransient<IMediator, InternalMediator>();
 
             if (builder.Options is CoreBuilderOptions options && options.EnableScanHandlersAndProcessors)
                 ScanHandlersAndProcessors(builder);
@@ -42,9 +42,6 @@ namespace Librame.Extensions.Core
             return builder;
         }
 
-        /// <summary>
-        /// 扫描实现的处理程序集合与处理器集合。
-        /// </summary>
         private static void ScanHandlersAndProcessors(IBuilder builder)
         {
             ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>), builder.Services, false);
@@ -67,7 +64,7 @@ namespace Librame.Extensions.Core
                 },
                 types => types
                     .Where(type => Enumerable.Any(type.FindInterfacesThatClose(multiOpenInterface)))
-                    .Where(t => !t.IsOpenGenericType()));
+                    .Where(type => type.IsConcreteType() && type.IsOpenGenericType()));
             }
         }
 
@@ -177,7 +174,7 @@ namespace Librame.Extensions.Core
 
             if (pluggedType == pluginType) return true;
 
-            return pluginType.GetTypeInfo().IsAssignableFrom(pluggedType.GetTypeInfo());
+            return pluginType.IsAssignableFrom(pluggedType);
         }
 
         private static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType)

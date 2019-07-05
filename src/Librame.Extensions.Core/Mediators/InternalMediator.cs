@@ -65,6 +65,22 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 异步向多个处理程序发送通知。
         /// </summary>
+        /// <param name="notification">给定的通知对象。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个异步操作。</returns>
+        public Task Publish(object notification, CancellationToken cancellationToken = default)
+        {
+            notification.NotNull(nameof(notification));
+
+            if (notification is INotification instance)
+                return Publish(instance, cancellationToken);
+
+            throw new ArgumentException($"{nameof(notification)} does not implement ${nameof(INotification)}");
+        }
+
+        /// <summary>
+        /// 异步向多个处理程序发送通知。
+        /// </summary>
         /// <param name="notification">给定的 <see cref="INotification"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个异步操作。</returns>
@@ -84,7 +100,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="allHandlers">表示调用每个通知处理程序的任务的枚举。</param>
         /// <returns>表示调用所有处理程序的任务。</returns>
-        protected virtual async Task PublishCore(IEnumerable<Func<Task>> allHandlers)
+        private async Task PublishCore(IEnumerable<Func<Task>> allHandlers)
         {
             foreach (var handler in allHandlers)
             {

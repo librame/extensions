@@ -19,7 +19,7 @@ namespace Librame.Extensions.Storage.Tests
         public async void DownloadFileAsync()
         {
             var url = "https://github.com/librame/Librame/raw/dev/SPECIFICATION.md";
-            var filePath = @"c:\Librame_SPECIFICATION.md";
+            var filePath = @"d:\SPECIFICATION.md";
 
             var locator = await _fileTransfer.DownloadFileAsync(url, filePath);
             Assert.NotNull(locator);
