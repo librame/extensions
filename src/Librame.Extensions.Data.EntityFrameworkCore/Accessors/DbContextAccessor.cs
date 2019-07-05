@@ -41,10 +41,21 @@ namespace Librame.Extensions.Data
         public DbContextAccessor(DbContextOptions options)
             : base(options)
         {
+            Initialize();
+        }
+
+
+        /// <summary>
+        /// 初始化。
+        /// </summary>
+        protected virtual void Initialize()
+        {
             if (BuilderOptions.IsCreateDatabase)
                 EnsureDatabaseCreated();
         }
 
+
+        #region Base Entities
 
         /// <summary>
         /// 基础审计。
@@ -61,38 +72,40 @@ namespace Librame.Extensions.Data
         /// </summary>
         public DbSet<BaseTenant> BaseTenants { get; set; }
 
+        #endregion
+
 
         /// <summary>
         /// 核心选项扩展。
         /// </summary>
-        protected CoreOptionsExtension CoreOptions
+        protected CoreOptionsExtension CoreOptionsExtension
             => this.GetService<IDbContextOptions>()
                 .Extensions.OfType<CoreOptionsExtension>()
                 .FirstOrDefault();
 
         /// <summary>
-        /// 记录器工厂。
-        /// </summary>
-        protected ILoggerFactory LoggerFactory
-            => CoreOptions?.LoggerFactory ?? CoreOptions.ApplicationServiceProvider.GetRequiredService<ILoggerFactory>();
-
-        /// <summary>
-        /// 记录器。
-        /// </summary>
-        protected ILogger Logger
-            => LoggerFactory.CreateLogger(GetType());
-
-        /// <summary>
         /// 服务提供程序。
         /// </summary>
         protected IServiceProvider ServiceProvider
-            => CoreOptions?.InternalServiceProvider ?? CoreOptions.ApplicationServiceProvider;
+            => CoreOptionsExtension?.InternalServiceProvider ?? CoreOptionsExtension?.ApplicationServiceProvider;
 
         /// <summary>
         /// 构建器选项。
         /// </summary>
         protected DataBuilderOptions BuilderOptions
             => ServiceProvider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
+
+        /// <summary>
+        /// 记录器工厂。
+        /// </summary>
+        protected ILoggerFactory LoggerFactory
+            => ServiceProvider.GetRequiredService<ILoggerFactory>();
+
+        /// <summary>
+        /// 记录器。
+        /// </summary>
+        protected ILogger Logger
+            => LoggerFactory.CreateLogger(GetType());
 
 
         /// <summary>

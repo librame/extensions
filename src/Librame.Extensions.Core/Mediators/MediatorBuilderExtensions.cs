@@ -32,9 +32,9 @@ namespace Librame.Extensions.Core
         public static IBuilder AddMediators(this IBuilder builder)
         {
             builder.Services.AddTransient<ServiceFactoryDelegate>(sp => sp.GetService);
-            builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
-            builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
-            builder.Services.AddSingleton<IMediator, InternalMediator>();
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
+            builder.Services.AddScoped<IMediator, InternalMediator>();
 
             if (builder.Options is CoreBuilderOptions options && options.EnableScanHandlersAndProcessors)
                 ScanHandlersAndProcessors(builder);
@@ -63,7 +63,7 @@ namespace Librame.Extensions.Core
             {
                 BuilderGlobalization.RegisterTypes(type =>
                 {
-                    builder.Services.AddScoped(multiOpenInterface, type);
+                    builder.Services.AddTransient(multiOpenInterface, type);
                 },
                 types => types
                     .Where(type => Enumerable.Any(type.FindInterfacesThatClose(multiOpenInterface)))
@@ -72,8 +72,7 @@ namespace Librame.Extensions.Core
         }
 
         private static void ConnectImplementationsToTypesClosing(Type openRequestInterface,
-            IServiceCollection services,
-            bool addIfAlreadyExists)
+            IServiceCollection services, bool addIfAlreadyExists)
         {
             var concretions = new List<Type>();
             var interfaces = new List<Type>();
@@ -103,7 +102,7 @@ namespace Librame.Extensions.Core
                 {
                     foreach (var type in exactMatches)
                     {
-                        services.AddScoped(@interface, type);
+                        services.AddTransient(@interface, type);
                     }
                 }
                 else
@@ -115,7 +114,7 @@ namespace Librame.Extensions.Core
 
                     foreach (var type in exactMatches)
                     {
-                        services.TryAddScoped(@interface, type);
+                        services.TryAddTransient(@interface, type);
                     }
                 }
 
@@ -155,7 +154,7 @@ namespace Librame.Extensions.Core
             {
                 try
                 {
-                    services.TryAddScoped(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
+                    services.TryAddTransient(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
                 }
                 catch (Exception)
                 {
