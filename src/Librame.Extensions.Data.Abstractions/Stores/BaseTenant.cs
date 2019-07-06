@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data
     /// 基础租户。
     /// </summary>
     [Description("基础租户")]
-    public class BaseTenant : BaseTenant<float, DataStatus>
+    public class BaseTenant : BaseTenant<float, DataStatus>, IRank, IStatus
     {
         /// <summary>
         /// 构造一个 <see cref="BaseTenant"/> 的默认实例。

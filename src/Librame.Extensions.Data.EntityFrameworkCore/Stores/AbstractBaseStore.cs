@@ -64,6 +64,23 @@ namespace Librame.Extensions.Data
         }
 
 
+        #region Tenants
+
+        /// <summary>
+        /// 异步获取分页租户集合。
+        /// </summary>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="IPageable{TTenant}"/> 的异步操作。</returns>
+        public override Task<IPageable<BaseTenant>> GetPagingTenantsAsync(int index, int size, CancellationToken cancellationToken = default)
+        {
+            return EnsureTenants().AsDescendingPagingByIndexAsync(index, size, cancellationToken);
+        }
+
+        #endregion
+
+
         /// <summary>
         /// 尝试逻辑删除租户集合。
         /// </summary>
@@ -150,8 +167,8 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TAudit}"/> 的异步操作。</returns>
         public virtual Task<IPageable<TAudit>> GetPagingAuditsAsync(int index, int size, CancellationToken cancellationToken = default)
         {
-            return EnsureAudits().AsPagingAsync(q => q.OrderByDescending(k => k.CreatedTime),
-                d => d.ComputeByIndex(index, size), cancellationToken);
+            return EnsureAudits().AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
+                index, size, cancellationToken);
         }
 
         #endregion
@@ -201,8 +218,8 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TTenant}"/> 的异步操作。</returns>
         public virtual Task<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size, CancellationToken cancellationToken = default)
         {
-            return EnsureTenants().AsPagingAsync(q => q.OrderByDescending(k => k.Id),
-                d => d.ComputeByIndex(index, size), cancellationToken);
+            return EnsureTenants().AsPagingByIndexAsync(q => q.OrderByDescending(k => k.Id),
+                index, size, cancellationToken);
         }
 
 

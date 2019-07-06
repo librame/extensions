@@ -15,6 +15,14 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 状态接口。
     /// </summary>
+    public interface IStatus : IStatus<DataStatus>
+    {
+    }
+
+
+    /// <summary>
+    /// 状态接口。
+    /// </summary>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
     public interface IStatus<TStatus>
         where TStatus : struct

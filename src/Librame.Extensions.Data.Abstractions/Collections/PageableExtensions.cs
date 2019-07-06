@@ -11,6 +11,7 @@
 #endregion
 
 using Librame.Extensions;
+using Librame.Extensions.Data;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +23,23 @@ namespace System.Linq
     /// </summary>
     public static class PageableExtensions
     {
+
+        #region IList
+
+        /// <summary>
+        /// 转换为可分页集合（即内存分页）。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="list">给定的 <see cref="IList{T}"/>。</param>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <returns>返回 <see cref="IPageable{T}"/>。</returns>
+        public static IPageable<T> AsPagingByIndex<T>(this IList<T> list, int index, int size)
+            where T : class
+        {
+            return list.AsPaging(paging => paging.ComputeByIndex(index, size));
+        }
+
         /// <summary>
         /// 转换为可分页集合（即内存分页）。
         /// </summary>
@@ -45,6 +63,94 @@ namespace System.Linq
             }
         }
 
+        #endregion
+
+
+        #region IQueryable
+
+        /// <summary>
+        /// 异步转换为可升序分页集合（注：默认按排序字段进行排序）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
+        public static Task<IPageable<TEntity>> AsAscendingPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
+            int index, int size, CancellationToken cancellationToken = default)
+            where TEntity : class, IRank
+        {
+            return query.AsPagingByIndexAsync(ordered => ordered.OrderBy(k => k.Rank),
+                index, size, cancellationToken);
+        }
+        /// <summary>
+        /// 异步转换为可降序分页集合（注：默认按排序字段进行排序）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
+        public static Task<IPageable<TEntity>> AsDescendingPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
+            int index, int size, CancellationToken cancellationToken = default)
+            where TEntity : class, IRank
+        {
+            return query.AsPagingByIndexAsync(ordered => ordered.OrderByDescending(k => k.Rank),
+                index, size, cancellationToken);
+        }
+
+        /// <summary>
+        /// 异步转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="orderedFactory">给定的排序方式。</param>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
+        public static Task<IPageable<TEntity>> AsPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
+            int index, int size, CancellationToken cancellationToken = default)
+            where TEntity : class
+        {
+            return query.AsPagingAsync(orderedFactory,
+                paging => paging.ComputeByIndex(index, size), cancellationToken);
+        }
+
+
+        /// <summary>
+        /// 异步转换为可升序分页集合（注：默认按排序字段进行排序）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="computeAction">给定的分页计算动作。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
+        public static Task<IPageable<TEntity>> AsAscendingPagingAsync<TEntity>(this IQueryable<TEntity> query,
+            Action<PagingDescriptor> computeAction, CancellationToken cancellationToken = default)
+            where TEntity : class, IRank
+        {
+            return query.AsPagingAsync(ordered => ordered.OrderBy(k => k.Rank),
+                computeAction, cancellationToken);
+        }
+        /// <summary>
+        /// 异步转换为可降序分页集合（注：默认按排序字段进行排序）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="computeAction">给定的分页计算动作。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
+        public static Task<IPageable<TEntity>> AsDescendingPagingAsync<TEntity>(this IQueryable<TEntity> query,
+            Action<PagingDescriptor> computeAction, CancellationToken cancellationToken = default)
+            where TEntity : class, IRank
+        {
+            return query.AsPagingAsync(ordered => ordered.OrderByDescending(k => k.Rank),
+                computeAction, cancellationToken);
+        }
 
         /// <summary>
         /// 异步转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
@@ -64,6 +170,108 @@ namespace System.Linq
 
             return orderedFactory.Invoke(query).AsPagingAsync(computeAction, cancellationToken);
         }
+
+
+        /// <summary>
+        /// 转换为可升序分页集合（注：默认按排序字段进行排序）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
+        public static IPageable<TEntity> AsAscendingPagingByIndex<TEntity>(this IQueryable<TEntity> query,
+            int index, int size)
+            where TEntity : class, IRank
+        {
+            return query.AsPagingByIndex(ordered => ordered.OrderBy(k => k.Rank),
+                index, size);
+        }
+        /// <summary>
+        /// 转换为可降序分页集合（注：默认按排序字段进行排序）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
+        public static IPageable<TEntity> AsDescendingPagingByIndex<TEntity>(this IQueryable<TEntity> query,
+            int index, int size)
+            where TEntity : class, IRank
+        {
+            return query.AsPagingByIndex(ordered => ordered.OrderByDescending(k => k.Rank),
+                index, size);
+        }
+
+        /// <summary>
+        /// 转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="orderedFactory">给定的排序方式。</param>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
+        public static IPageable<TEntity> AsPagingByIndex<TEntity>(this IQueryable<TEntity> query,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
+            int index, int size)
+            where TEntity : class
+        {
+            return query.AsPaging(orderedFactory, paging => paging.ComputeByIndex(index, size));
+        }
+
+
+        /// <summary>
+        /// 转换为可升序分页集合（注：默认按排序字段进行排序）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="computeAction">给定的分页计算动作。</param>
+        /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
+        public static IPageable<TEntity> AsAscendingPaging<TEntity>(this IQueryable<TEntity> query,
+            Action<PagingDescriptor> computeAction)
+            where TEntity : class, IRank
+        {
+            return query.AsPaging(ordered => ordered.OrderBy(k => k.Rank),
+                computeAction);
+        }
+        /// <summary>
+        /// 转换为可降序分页集合（注：默认按排序字段进行排序）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="computeAction">给定的分页计算动作。</param>
+        /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
+        public static IPageable<TEntity> AsDescendingPaging<TEntity>(this IQueryable<TEntity> query,
+            Action<PagingDescriptor> computeAction)
+            where TEntity : class, IRank
+        {
+            return query.AsPaging(ordered => ordered.OrderByDescending(k => k.Rank),
+                computeAction);
+        }
+
+        /// <summary>
+        /// 转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
+        /// <param name="orderedFactory">给定的排序方式。</param>
+        /// <param name="computeAction">给定的分页计算动作。</param>
+        /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
+        public static IPageable<TEntity> AsPaging<TEntity>(this IQueryable<TEntity> query,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
+            Action<PagingDescriptor> computeAction)
+            where TEntity : class
+        {
+            orderedFactory.NotNull(nameof(orderedFactory));
+
+            return orderedFactory.Invoke(query).AsPaging(computeAction);
+        }
+
+        #endregion
+
+
+        #region IOrderedQueryable
 
         /// <summary>
         /// 异步转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
@@ -93,18 +301,15 @@ namespace System.Linq
         /// 转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
         /// </summary>
         /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="query">给定的 <see cref="IQueryable{TEntity}"/>。</param>
-        /// <param name="orderedFactory">给定的排序方式。</param>
-        /// <param name="computeAction">给定的分页计算动作。</param>
+        /// <param name="orderedQuery">给定的 <see cref="IOrderedQueryable{TEntity}"/>。</param>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
         /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
-        public static IPageable<TEntity> AsPaging<TEntity>(this IQueryable<TEntity> query,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
-            Action<PagingDescriptor> computeAction)
+        public static IPageable<TEntity> AsPagingByIndex<TEntity>(this IOrderedQueryable<TEntity> orderedQuery,
+            int index, int size)
             where TEntity : class
         {
-            orderedFactory.NotNull(nameof(orderedFactory));
-
-            return orderedFactory.Invoke(query).AsPaging(computeAction);
+            return orderedQuery.AsPaging(paging => paging.ComputeByIndex(index, size));
         }
 
         /// <summary>
@@ -119,10 +324,10 @@ namespace System.Linq
             where TEntity : class
         {
             orderedQuery.NotNull(nameof(orderedQuery));
-            computeAction.NotNull(nameof(computeAction));
 
             return orderedQuery.AsPagingCore(computeAction);
         }
+
 
         private static IPageable<TEntity> AsPagingCore<TEntity>(this IOrderedQueryable<TEntity> orderedQuery,
             Action<PagingDescriptor> computeAction)
@@ -150,6 +355,8 @@ namespace System.Linq
                 throw ex;
             }
         }
+
+        #endregion
 
     }
 }

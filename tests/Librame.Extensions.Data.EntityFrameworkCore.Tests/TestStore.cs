@@ -94,8 +94,7 @@ namespace Librame.Extensions.Data.Tests
 
         public IPageable<Article> GetArticles()
         {
-            return Accessor.Articles.AsPaging(ordered => ordered.OrderBy(a => a.Id),
-                descr => descr.ComputeByIndex(1, 10));
+            return Accessor.Articles.AsDescendingPagingByIndex(1, 10);
         }
 
         public ITestStore UseWriteDbConnection()

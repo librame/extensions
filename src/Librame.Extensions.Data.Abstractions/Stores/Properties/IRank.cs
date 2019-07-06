@@ -15,6 +15,14 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 排序接口。
     /// </summary>
+    public interface IRank : IRank<float>
+    {
+    }
+
+
+    /// <summary>
+    /// 排序接口。
+    /// </summary>
     /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     public interface IRank<TRank>
         where TRank : struct

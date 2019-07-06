@@ -28,7 +28,7 @@ namespace Librame.Extensions.Data.Tests
                 });
             }
 
-            var paging = list.AsPaging(descr => descr.ComputeByIndex(2, 20));
+            var paging = list.AsPagingByIndex(2, 20);
             Assert.Equal(20, paging.Size);
             Assert.Equal(21, paging.First().Id);
         }

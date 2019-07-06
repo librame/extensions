@@ -20,7 +20,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 抽象标识（默认以字符串为标识类型）。
     /// </summary>
-    public abstract class AbstractId : AbstractId<string>
+    public abstract class AbstractId : AbstractId<string>, IId
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractId"/> 默认实例。

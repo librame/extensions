@@ -20,7 +20,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 抽象实体。
     /// </summary>
-    public abstract class AbstractEntity : AbstractEntity<float, DataStatus>
+    public abstract class AbstractEntity : AbstractEntity<float, DataStatus>, IRank, IStatus
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractEntity"/> 默认实例。
@@ -38,7 +38,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
-    public abstract class AbstractEntity<TRank, TStatus> : AbstractEntity<string, TRank, TStatus>
+    public abstract class AbstractEntity<TRank, TStatus> : AbstractEntity<string, TRank, TStatus>, IId
         where TRank : struct
         where TStatus : struct
     {
@@ -57,7 +57,7 @@ namespace Librame.Extensions.Data
     /// 抽象实体。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>
+    public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>, IRank, IStatus
         where TId : IEquatable<TId>
     {
         /// <summary>
