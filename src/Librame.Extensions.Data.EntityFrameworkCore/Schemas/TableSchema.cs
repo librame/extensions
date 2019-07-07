@@ -39,26 +39,26 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 获取实体类型名称复数形式。
+        /// 获取实体类型名称的复数形式。
+        /// </summary>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <returns>返回字符串。</returns>
+        public static string GetEntityNames<TEntity>()
+        {
+            return GetEntityNames(typeof(TEntity));
+        }
+
+        /// <summary>
+        /// 获取实体类型名称的复数形式。
         /// </summary>
         /// <param name="entityType">给定的实体类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetEntityTypeNames(Type entityType)
+        public static string GetEntityNames(Type entityType)
         {
-            if (entityType.IsNull())
-                return string.Empty;
+            entityType.NotNull(nameof(entityType));
 
             if (entityType.IsGenericType)
-            {
-                var types = entityType.GetGenericArguments();
-                if (types.IsNotNullOrEmpty())
-                {
-                    // 取出具体实类型名称（多个实类型则默认返回第一个）
-                    return GetEntityTypeNames(types.Where(type => type.IsConcreteType()).FirstOrDefault());
-                }
-
                 return entityType.Name.SplitPair("`").Key?.AsPluralize();
-            }
 
             return entityType.Name.AsPluralize();
         }

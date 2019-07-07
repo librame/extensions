@@ -57,26 +57,17 @@ namespace Librame.Extensions.Drawing
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                try
+                DrawCore(captcha, data =>
                 {
-                    DrawCore(captcha, data =>
+                    using (var fs = new FileStream(savePath, FileMode.OpenOrCreate))
                     {
-                        using (var fs = new FileStream(savePath, FileMode.OpenOrCreate))
-                        {
-                            data.SaveTo(fs);
-                        }
+                        data.SaveTo(fs);
+                    }
 
-                        Logger.LogInformation($"Captcha image file save as: {savePath}");
-                    });
+                    Logger.LogInformation($"Captcha image file save as: {savePath}");
+                });
 
-                    return File.Exists(savePath);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(ex.Message);
-
-                    return false;
-                }
+                return File.Exists(savePath);
             });
         }
 
@@ -92,23 +83,14 @@ namespace Librame.Extensions.Drawing
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                try
+                DrawCore(captcha, data =>
                 {
-                    DrawCore(captcha, data =>
-                    {
-                        data.SaveTo(target);
+                    data.SaveTo(target);
 
-                        Logger.LogInformation($"Captcha image save as stream");
-                    });
+                    Logger.LogInformation($"Captcha image save as stream");
+                });
 
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(ex.Message);
-
-                    return false;
-                }
+                return true;
             });
         }
 
@@ -123,24 +105,15 @@ namespace Librame.Extensions.Drawing
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                try
+                var buffer = default(byte[]);
+
+                DrawCore(captcha, data =>
                 {
-                    var buffer = default(byte[]);
+                    buffer = data.ToArray();
+                    Logger.LogDebug($"Captcha image save as byte[]: length={buffer.Length}");
+                });
 
-                    DrawCore(captcha, data =>
-                    {
-                        buffer = data.ToArray();
-                        Logger.LogDebug($"Captcha image save as byte[]: length={buffer.Length}");
-                    });
-
-                    return buffer;
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(ex.Message);
-
-                    return new byte[0];
-                }
+                return buffer;
             });
         }
 

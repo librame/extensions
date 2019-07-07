@@ -91,44 +91,37 @@ namespace Librame.Extensions.Network
             Action<MailMessage> configureMessage = null,
             Action<SmtpClient> configureClient = null)
         {
-            try
-            {
-                var from = new MailAddress(Options.Email.EmailAddress, Options.Email.DisplayName, Encoding);
-                var to = new MailAddress(toAddress);
+            var from = new MailAddress(Options.Email.EmailAddress, Options.Email.DisplayName, Encoding);
+            var to = new MailAddress(toAddress);
 
-                using (var message = new MailMessage(from, to))
+            using (var message = new MailMessage(from, to))
+            {
+                Logger.LogDebug($"Create mail message: from={Options.Email.EmailAddress}, to={toAddress}, encoding={Encoding.AsName()}");
+                message.Body = body;
+                message.BodyEncoding = Encoding;
+                message.Subject = subject;
+                message.SubjectEncoding = Encoding;
+
+                // Configure MailMessage
+                configureMessage?.Invoke(message);
+
+                //var smtp = Options.Smtp;
+                using (var client = new SmtpClient(Options.Smtp.Server, Options.Smtp.Port))
                 {
-                    Logger.LogDebug($"Create mail message: from={Options.Email.EmailAddress}, to={toAddress}, encoding={Encoding.AsName()}");
-                    message.Body = body;
-                    message.BodyEncoding = Encoding;
-                    message.Subject = subject;
-                    message.SubjectEncoding = Encoding;
+                    Logger.LogDebug($"Create smtp client: server={client.Host}, port={client.Port}");
 
-                    // Configure MailMessage
-                    configureMessage?.Invoke(message);
+                    client.Credentials = Options.Smtp.Credential;
+                    Logger.LogDebug($"Set credentials: domain={Options.Smtp.Credential.Domain}, username={Options.Smtp.Credential.UserName}, password=***");
 
-                    //var smtp = Options.Smtp;
-                    using (var client = new SmtpClient(Options.Smtp.Server, Options.Smtp.Port))
-                    {
-                        Logger.LogDebug($"Create smtp client: server={client.Host}, port={client.Port}");
+                    client.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
 
-                        client.Credentials = Options.Smtp.Credential;
-                        Logger.LogDebug($"Set credentials: domain={Options.Smtp.Credential.Domain}, username={Options.Smtp.Credential.UserName}, password=***");
+                    // Configure SmtpClient
+                    configureClient?.Invoke(client);
 
-                        client.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
-
-                        // Configure SmtpClient
-                        configureClient?.Invoke(client);
-
-                        // SendAsync
-                        await client.SendMailAsync(message);
-                        Logger.LogDebug($"Send mail.");
-                    }
+                    // SendAsync
+                    await client.SendMailAsync(message);
+                    Logger.LogDebug($"Send mail.");
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, ex.AsInnerMessage());
             }
         }
 

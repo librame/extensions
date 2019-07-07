@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 using Xunit;
 
 namespace Librame.Extensions.Storage.Tests
@@ -30,13 +31,15 @@ namespace Librame.Extensions.Storage.Tests
         }
 
         [Fact]
-        public async void UploadFileAsync()
+        public void UploadFileAsync()
         {
             var url = "https://domain.com/api/upload";
-            var filePath = @"c:\temp.txt";
+            var filePath = @"d:\_never.txt";
 
-            var response = await _fileTransfer.UploadFileAsync(url, filePath);
-            Assert.NotEmpty(response);
+            Assert.ThrowsAsync<FileNotFoundException>(() =>
+            {
+                return _fileTransfer.UploadFileAsync(url, filePath);
+            });
         }
 
     }

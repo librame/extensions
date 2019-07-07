@@ -147,7 +147,7 @@ namespace Librame.Extensions
             if (base32String.HasLower())
                 base32String = base32String.ToUpperInvariant();
 
-            var bytes = new byte[base32String.Length * 5 / 8]; // BUG：计算字节数组长度公式有偏差
+            var bytes = new byte[base32String.Length * 5 / 8];
             var bitIndex = 0;
             var inputIndex = 0;
             var outputBits = 0;
@@ -178,8 +178,8 @@ namespace Librame.Extensions
                 }
             }
 
-            // 因计算字节数组长度公式有偏差，故需手动移除数组末尾的0字节，才能正确还原源数组
-            bytes = bytes.Where(b => byte.MinValue != b).ToArray();
+            // 因字符串强制以“\0”结尾，故需手动移除数组末尾的“0”字节，才能正确还原源数组
+            bytes = bytes.TrimEnd(byte.MinValue).ToArray();
 
             return bytes;
         }

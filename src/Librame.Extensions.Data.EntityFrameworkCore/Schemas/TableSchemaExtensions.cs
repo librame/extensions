@@ -98,7 +98,7 @@ namespace Librame.Extensions.Data
         public static ITableSchema AsTableSchema(this Type entityType,
             Func<string, string> namesFactory = null, string schema = null)
         {
-            var names = TableSchema.GetEntityTypeNames(entityType);
+            var names = TableSchema.GetEntityNames(entityType);
 
             if (namesFactory.IsNotNull())
                 names = namesFactory.Invoke(names);

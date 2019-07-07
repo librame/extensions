@@ -98,74 +98,63 @@ namespace Librame.Extensions.Storage
         public async Task<IFileLocator> DownloadFileAsync(string downloadUrl, string savePath,
             CancellationToken cancellationToken = default)
         {
-            IFileLocator locator = null;
+            var hwr = await CreateRequestAsync(downloadUrl, "GET", cancellationToken);
 
-            try
+            var buffer = new byte[Options.BufferSize];
+            var range = 0L;
+
+            if (File.Exists(savePath) && UseBreakpointResume)
             {
-                var hwr = await CreateRequestAsync(downloadUrl, "GET", cancellationToken);
-
-                var buffer = new byte[Options.BufferSize];
-                var range = 0L;
-
-                if (File.Exists(savePath) && UseBreakpointResume)
+                using (var fs = File.OpenRead(savePath))
                 {
-                    using (var fs = File.OpenRead(savePath))
+                    var readCount = 1;
+                    while (readCount > 0)
+                    {
+                        // 每次从流中读取指定缓冲区的字节数，当读完后退出循环
+                        readCount = fs.Read(buffer, 0, buffer.Length);
+                    }
+
+                    range = fs.Position;
+                }
+
+                hwr.AddRange(range);
+            }
+
+            using (var wr = hwr.GetResponse())
+            {
+                // Accept-Ranges: bytes or none.
+                var acceptRanges = wr.Headers[HttpResponseHeader.AcceptRanges];
+                var supportRanges = acceptRanges?.Contains("bytes");
+
+                using (var s = wr.GetResponseStream())
+                {
+                    var writeMode = FileMode.Create;
+
+                    // 如果需要且服务端支持 Ranges，才启用续传
+                    if (range > 0 && supportRanges.Value && s.CanSeek)
+                    {
+                        s.Seek(range, SeekOrigin.Begin);
+                        writeMode = FileMode.Append;
+                    }
+
+                    using (var fs = File.Open(savePath, writeMode))
                     {
                         var readCount = 1;
                         while (readCount > 0)
                         {
                             // 每次从流中读取指定缓冲区的字节数，当读完后退出循环
-                            readCount = fs.Read(buffer, 0, buffer.Length);
-                        }
+                            readCount = s.Read(buffer, 0, buffer.Length);
 
-                        range = fs.Position;
-                    }
+                            // 将读取到的缓冲区字节数写入文件流
+                            fs.Write(buffer, 0, readCount);
 
-                    hwr.AddRange(range);
-                }
-
-                using (var wr = hwr.GetResponse())
-                {
-                    // Accept-Ranges: bytes or none.
-                    var acceptRanges = wr.Headers[HttpResponseHeader.AcceptRanges];
-                    var supportRanges = acceptRanges?.Contains("bytes");
-
-                    using (var s = wr.GetResponseStream())
-                    {
-                        var writeMode = FileMode.Create;
-
-                        // 如果需要且服务端支持 Ranges，才启用续传
-                        if (range > 0 && supportRanges.Value && s.CanSeek)
-                        {
-                            s.Seek(range, SeekOrigin.Begin);
-                            writeMode = FileMode.Append;
-                        }
-
-                        using (var fs = File.Open(savePath, writeMode))
-                        {
-                            var readCount = 1;
-                            while (readCount > 0)
-                            {
-                                // 每次从流中读取指定缓冲区的字节数，当读完后退出循环
-                                readCount = s.Read(buffer, 0, buffer.Length);
-
-                                // 将读取到的缓冲区字节数写入文件流
-                                fs.Write(buffer, 0, readCount);
-
-                                ProgressAction?.Invoke(s.Length, fs.Position);
-                            }
+                            ProgressAction?.Invoke(s.Length, fs.Position);
                         }
                     }
                 }
-
-                locator = savePath.AsFileLocator();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, ex.AsInnerMessage());
             }
 
-            return locator;
+            return savePath.AsFileLocator();
         }
 
 
@@ -181,46 +170,37 @@ namespace Librame.Extensions.Storage
         {
             string response = null;
 
-            try
+            var hwr = await CreateRequestAsync(uploadUrl, cancellationToken: cancellationToken);
+
+            using (var s = hwr.GetRequestStream())
             {
-                var hwr = await CreateRequestAsync(uploadUrl, cancellationToken: cancellationToken);
+                var buffer = new byte[Options.BufferSize];
 
-                using (var s = hwr.GetRequestStream())
+                using (var fs = File.OpenRead(filePath))
                 {
-                    var buffer = new byte[Options.BufferSize];
-
-                    using (var fs = File.OpenRead(filePath))
+                    var readCount = 1;
+                    while (readCount > 0)
                     {
-                        var readCount = 1;
-                        while (readCount > 0)
-                        {
-                            // 每次从文件流中读取指定缓冲区的字节数，当读完后退出循环
-                            readCount = fs.Read(buffer, 0, buffer.Length);
+                        // 每次从文件流中读取指定缓冲区的字节数，当读完后退出循环
+                        readCount = fs.Read(buffer, 0, buffer.Length);
 
-                            // 将读取到的缓冲区字节数写入请求流
-                            s.Write(buffer, 0, readCount);
+                        // 将读取到的缓冲区字节数写入请求流
+                        s.Write(buffer, 0, readCount);
 
-                            ProgressAction?.Invoke(fs.Length, s.Position);
-                        }
-                    }
-                }
-
-                using (var s = hwr.GetResponse().GetResponseStream())
-                {
-                    using (var sr = new StreamReader(s, Encoding))
-                    {
-                        response = await sr.ReadToEndAsync();
-                        Logger.LogDebug($"Response: {response}");
+                        ProgressAction?.Invoke(fs.Length, s.Position);
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                response = ex.AsInnerMessage();
 
-                Logger.LogError(ex, response);
+            using (var s = hwr.GetResponse().GetResponseStream())
+            {
+                using (var sr = new StreamReader(s, Encoding))
+                {
+                    response = await sr.ReadToEndAsync();
+                    Logger.LogDebug($"Response: {response}");
+                }
             }
-            
+
             return response;
         }
 
