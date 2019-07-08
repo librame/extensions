@@ -21,7 +21,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-    public interface ITenantStore<TAccessor, TTenant> : IStore<TAccessor>
+    public interface ITenantStore<out TAccessor, TTenant> : IStore<TAccessor>
         where TAccessor : IAccessor
         where TTenant : class
     {

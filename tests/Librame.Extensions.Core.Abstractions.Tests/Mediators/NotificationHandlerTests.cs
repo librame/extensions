@@ -6,14 +6,14 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class AbstractNotificationHandlerTests
+    public class NotificationHandlerTests
     {
         public class Ping : INotification
         {
             public string Message { get; set; }
         }
 
-        public class PongChildHandler : AbstractNotificationHandler<Ping>
+        public class PongChildHandler : INotificationHandler<Ping>
         {
             private readonly TextWriter _writer;
 
@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core.Tests
                 _writer = writer;
             }
 
-            public override Task HandleAsync(Ping notification, CancellationToken cancellationToken = default)
+            public Task HandleAsync(Ping notification, CancellationToken cancellationToken = default)
             {
                 _writer.WriteLine(notification.Message + " Pong");
 

@@ -23,16 +23,13 @@ namespace Librame.Extensions.Data
     /// </summary>
     internal class InternalAuditNotificationHandler : AbstractNotificationHandler<AuditNotification>
     {
-        private readonly ILogger<InternalAuditNotificationHandler> _logger;
-
-
         /// <summary>
         /// 构建一个 <see cref="InternalAuditNotificationHandler"/> 实例。
         /// </summary>
-        /// <param name="logger">给定的 <see cref="ILogger{AuditNotificationHandler}"/>。</param>
-        public InternalAuditNotificationHandler(ILogger<InternalAuditNotificationHandler> logger)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public InternalAuditNotificationHandler(ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
-            _logger = logger;
         }
 
 
@@ -46,7 +43,7 @@ namespace Librame.Extensions.Data
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                _logger.LogInformation($"{notification.Audits.Count} Audits have been processed.");
+                Logger.LogInformation($"{notification.Audits.Count} Audits have been processed.");
 
                 return Task.CompletedTask;
             });

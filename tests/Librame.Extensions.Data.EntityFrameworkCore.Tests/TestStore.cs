@@ -5,7 +5,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
 
-    public interface ITestStore : IBaseStore<TestDbContextAccessor>
+    public interface ITestStore : IStoreHub<TestDbContextAccessor>
     {
         IList<Category> GetCategories();
 
@@ -25,7 +25,7 @@ namespace Librame.Extensions.Data.Tests
     }
 
 
-    public class TestStore : AbstractBaseStore<TestDbContextAccessor>, ITestStore
+    public class TestStore : StoreHubBase<TestDbContextAccessor>, ITestStore
     {
         public TestStore(IIdentifierService identifierService, IAccessor accessor) // or TestDbContextAccessor
             : base(accessor)

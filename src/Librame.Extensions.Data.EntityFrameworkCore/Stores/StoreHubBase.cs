@@ -19,18 +19,17 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 抽象基础存储。
+    /// 存储中心基类。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    public abstract class AbstractBaseStore<TAccessor> : AbstractBaseStore<TAccessor, BaseAudit, BaseTenant, float, DataStatus>,
-        IBaseStore<TAccessor>
+    public class StoreHubBase<TAccessor> : StoreHubBase<TAccessor, BaseAudit, BaseTenant, float, DataStatus>, IStoreHub<TAccessor>
         where TAccessor : DbContextAccessor
     {
         /// <summary>
         /// 构造一个抽象基础存储实例。
         /// </summary>
         /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        public AbstractBaseStore(TAccessor accessor)
+        public StoreHubBase(TAccessor accessor)
             : base(accessor)
         {
         }
@@ -39,7 +38,7 @@ namespace Librame.Extensions.Data
         /// 构造一个抽象基础存储实例。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public AbstractBaseStore(IAccessor accessor)
+        public StoreHubBase(IAccessor accessor)
             : base(accessor)
         {
         }
@@ -78,8 +77,6 @@ namespace Librame.Extensions.Data
             return EnsureTenants().AsDescendingPagingByIndexAsync(index, size, cancellationToken);
         }
 
-        #endregion
-
 
         /// <summary>
         /// 尝试逻辑删除租户集合。
@@ -88,19 +85,21 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="EntityResult"/>。</returns>
         public override EntityResult TryDelete(params BaseTenant[] tenants)
             => EnsureTenants().TryLogicDelete(tenants);
+
+        #endregion
+
     }
 
 
     /// <summary>
-    /// 抽象基础存储。
+    /// 存储中心基类。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
-    public abstract class AbstractBaseStore<TAccessor, TAudit, TTenant, TRank, TStatus> : AbstractStore<TAccessor>,
-        IBaseStore<TAccessor, TAudit, TTenant>
+    public class StoreHubBase<TAccessor, TAudit, TTenant, TRank, TStatus> : AbstractStore<TAccessor>, IStoreHub<TAccessor, TAudit, TTenant>
         where TAccessor : DbContext, IAccessor
         where TAudit : BaseAudit
         where TTenant : BaseTenant<TRank, TStatus>
@@ -108,19 +107,19 @@ namespace Librame.Extensions.Data
         where TStatus : struct
     {
         /// <summary>
-        /// 构造一个抽象基础存储实例。
+        /// 构造一个存储中心基类实例。
         /// </summary>
         /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        public AbstractBaseStore(TAccessor accessor)
+        public StoreHubBase(TAccessor accessor)
             : base(accessor)
         {
         }
 
         /// <summary>
-        /// 构造一个抽象基础存储实例。
+        /// 构造一个存储中心基类实例。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public AbstractBaseStore(IAccessor accessor)
+        public StoreHubBase(IAccessor accessor)
             : base(accessor)
         {
         }

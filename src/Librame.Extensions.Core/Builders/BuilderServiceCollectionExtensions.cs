@@ -49,7 +49,6 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder
                 .AddConverters()
                 .AddLocalizations()
-                .AddMediators()
                 .AddServices()
                 .AddValidators();
         }

@@ -23,7 +23,7 @@ namespace Librame.Extensions.Core
         where TNotification : INotification
     {
         /// <summary>
-        /// 异步处理。
+        /// 异步处理通知。
         /// </summary>
         /// <param name="notification">给定的通知。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>

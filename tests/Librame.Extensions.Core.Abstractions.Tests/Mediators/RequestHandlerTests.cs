@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class AbstractRequestHandlerTests
+    public class RequestHandlerTests
     {
         public class Ping : IRequest<Pong>
         {
@@ -16,9 +16,9 @@ namespace Librame.Extensions.Core.Tests
             public string Message { get; set; }
         }
 
-        public class PingHandler : AbstractRequestHandler<Ping, Pong>
+        public class PingHandler : IRequestHandler<Ping, Pong>
         {
-            public override Task<Pong> HandleAsync(Ping request, CancellationToken cancellationToken = default)
+            public Task<Pong> HandleAsync(Ping request, CancellationToken cancellationToken = default)
             {
                 return Task.Run(() => new Pong { Message = request.Message + " Pong" });
             }

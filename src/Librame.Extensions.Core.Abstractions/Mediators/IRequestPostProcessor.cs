@@ -21,6 +21,7 @@ namespace Librame.Extensions.Core
     /// <typeparam name="TRequest">指定的请求类型。</typeparam>
     /// <typeparam name="TResponse">指定的响应类型。</typeparam>
     public interface IRequestPostProcessor<in TRequest, in TResponse>
+        where TRequest : IRequest<TResponse>
     {
         /// <summary>
         /// 进程方法在处理程序上的句柄方法之后执行。

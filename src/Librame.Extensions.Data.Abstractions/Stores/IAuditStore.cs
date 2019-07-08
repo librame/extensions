@@ -21,7 +21,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
-    public interface IAuditStore<TAccessor, TAudit> : IStore<TAccessor>
+    public interface IAuditStore<out TAccessor, TAudit> : IStore<TAccessor>
         where TAccessor : IAccessor
         where TAudit : class
     {

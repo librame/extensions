@@ -10,51 +10,9 @@
 
 #endregion
 
-using Microsoft.Extensions.Options;
-
 namespace Librame.Extensions.Data
 {
     using Core;
-
-    /// <summary>
-    /// 抽象存储。
-    /// </summary>
-    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public abstract class AbstractStore<TAccessor, TBuilderOptions> : AbstractStore<TAccessor>, IStore<TAccessor, TBuilderOptions>
-        where TAccessor : IAccessor
-        where TBuilderOptions : class, IBuilderOptions, new()
-    {
-        /// <summary>
-        /// 构造一个 <see cref="AbstractStore{TAccessor, TBuilderOptions}"/> 实例。
-        /// </summary>
-        /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
-        public AbstractStore(TAccessor accessor, IOptions<TBuilderOptions> options)
-            : base(accessor)
-        {
-            Options = options.NotNull(nameof(options)).Value;
-        }
-
-        /// <summary>
-        /// 构造一个 <see cref="AbstractStore{TAccessor, TBuilderOptions}"/> 实例。
-        /// </summary>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
-        public AbstractStore(IAccessor accessor, IOptions<TBuilderOptions> options)
-            : base(accessor)
-        {
-            Options = options.NotNull(nameof(options)).Value;
-        }
-
-
-        /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        /// <value>返回 <typeparamref name="TBuilderOptions"/>。</value>
-        public TBuilderOptions Options { get; }
-    }
-
 
     /// <summary>
     /// 抽象存储。
