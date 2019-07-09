@@ -15,9 +15,9 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 基础租户资源。
+    /// 数据租户资源。
     /// </summary>
-    public class BaseTenantResource : IResource
+    public class DataTenantResource : IResource
     {
         /// <summary>
         /// 名称。

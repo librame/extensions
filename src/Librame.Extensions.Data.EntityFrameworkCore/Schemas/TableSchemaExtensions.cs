@@ -23,22 +23,50 @@ namespace Librame.Extensions.Data
         #region AsInternalTableSchema
 
         /// <summary>
-        /// 当作表架构（格式参考：__names_suffix）。
+        /// 当作内部当前日期与时间表架构（格式参考：__names_suffix）。
         /// </summary>
         /// <param name="entityType">给定的实体类型。</param>
         /// <param name="suffixFactory">给定的 <see cref="DateTimeOffset"/> 后缀工厂方法（可选）。</param>
         /// <param name="schema">给定的架构（可选）。</param>
         /// <returns>返回 <see cref="ITableSchema"/>。</returns>
-        public static ITableSchema AsInternalTableSchema(this Type entityType,
+        public static ITableSchema AsInternalDateTimeTableSchema(this Type entityType,
+            Func<DateTime, string> suffixFactory, string schema = null)
+        {
+            suffixFactory.NotNull(nameof(suffixFactory));
+
+            var suffix = suffixFactory.Invoke(DateTime.Now);
+
+            return entityType.AsInternalSuffixTableSchema(suffix, schema);
+        }
+
+        /// <summary>
+        /// 当作内部当前日期与时间偏移表架构（格式参考：__names_suffix）。
+        /// </summary>
+        /// <param name="entityType">给定的实体类型。</param>
+        /// <param name="suffixFactory">给定的 <see cref="DateTimeOffset"/> 后缀工厂方法（可选）。</param>
+        /// <param name="schema">给定的架构（可选）。</param>
+        /// <returns>返回 <see cref="ITableSchema"/>。</returns>
+        public static ITableSchema AsInternalDateTimeOffsetTableSchema(this Type entityType,
             Func<DateTimeOffset, string> suffixFactory, string schema = null)
         {
             suffixFactory.NotNull(nameof(suffixFactory));
 
             var suffix = suffixFactory.Invoke(DateTimeOffset.Now);
 
-            Func<string, string> namesFactory = names => $"{names}_{suffix}";
+            return entityType.AsInternalSuffixTableSchema(suffix, schema);
+        }
 
-            return entityType.AsInternalTableSchema(namesFactory, schema);
+        /// <summary>
+        /// 当作内部后缀表架构（格式参考：__names_?）。
+        /// </summary>
+        /// <param name="entityType">给定的实体类型。</param>
+        /// <param name="suffix">给定的表名后缀。</param>
+        /// <param name="schema">给定的架构（可选）。</param>
+        /// <returns>返回 <see cref="ITableSchema"/>。</returns>
+        public static ITableSchema AsInternalSuffixTableSchema(this Type entityType,
+            string suffix, string schema = null)
+        {
+            return entityType.AsInternalTableSchema(names => $"{names}_{suffix}", schema);
         }
 
         /// <summary>
@@ -70,22 +98,50 @@ namespace Librame.Extensions.Data
         #region AsTableSchema
 
         /// <summary>
-        /// 当作表架构（格式参考：names_suffix）。
+        /// 当作当前日期与时间表架构（格式参考：names_suffix）。
         /// </summary>
         /// <param name="entityType">给定的实体类型。</param>
         /// <param name="suffixFactory">给定的 <see cref="DateTimeOffset"/> 后缀工厂方法（可选）。</param>
         /// <param name="schema">给定的架构（可选）。</param>
         /// <returns>返回 <see cref="ITableSchema"/>。</returns>
-        public static ITableSchema AsTableSchema(this Type entityType,
+        public static ITableSchema AsDateTimeTableSchema(this Type entityType,
+            Func<DateTime, string> suffixFactory, string schema = null)
+        {
+            suffixFactory.NotNull(nameof(suffixFactory));
+
+            var suffix = suffixFactory.Invoke(DateTime.Now);
+
+            return entityType.AsSuffixTableSchema(suffix, schema);
+        }
+
+        /// <summary>
+        /// 当作当前日期与时间偏移表架构（格式参考：names_suffix）。
+        /// </summary>
+        /// <param name="entityType">给定的实体类型。</param>
+        /// <param name="suffixFactory">给定的 <see cref="DateTimeOffset"/> 后缀工厂方法（可选）。</param>
+        /// <param name="schema">给定的架构（可选）。</param>
+        /// <returns>返回 <see cref="ITableSchema"/>。</returns>
+        public static ITableSchema AsDateTimeOffsetTableSchema(this Type entityType,
             Func<DateTimeOffset, string> suffixFactory, string schema = null)
         {
             suffixFactory.NotNull(nameof(suffixFactory));
 
             var suffix = suffixFactory.Invoke(DateTimeOffset.Now);
 
-            Func<string, string> namesFactory = names => $"{names}_{suffix}";
+            return entityType.AsSuffixTableSchema(suffix, schema);
+        }
 
-            return entityType.AsTableSchema(namesFactory, schema);
+        /// <summary>
+        /// 当作后缀表架构（格式参考：names_?）。
+        /// </summary>
+        /// <param name="entityType">给定的实体类型。</param>
+        /// <param name="suffix">给定的表名后缀。</param>
+        /// <param name="schema">给定的架构（可选）。</param>
+        /// <returns>返回 <see cref="ITableSchema"/>。</returns>
+        public static ITableSchema AsSuffixTableSchema(this Type entityType,
+            string suffix, string schema = null)
+        {
+            return entityType.AsTableSchema(names => $"{names}_{suffix}", schema);
         }
 
         /// <summary>

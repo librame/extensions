@@ -30,7 +30,7 @@ namespace Librame.Extensions.Data
                 modelBuilder.HasDefaultSchema(options.DefaultSchema);
 
             // 审计
-            modelBuilder.Entity<BaseAudit>(b =>
+            modelBuilder.Entity<DataAudit>(b =>
             {
                 b.ToTable(options.TableSchemas.AuditFactory);
 
@@ -47,7 +47,7 @@ namespace Librame.Extensions.Data
             });
 
             // 审计属性
-            modelBuilder.Entity<BaseAuditProperty>(b =>
+            modelBuilder.Entity<DataAuditProperty>(b =>
             {
                 b.ToTable(options.TableSchemas.AuditPropertyFactory);
 
@@ -59,7 +59,7 @@ namespace Librame.Extensions.Data
             });
 
             // 租户
-            modelBuilder.Entity<BaseTenant>(b =>
+            modelBuilder.Entity<DataTenant>(b =>
             {
                 b.ToTable(options.TableSchemas.TenantFactory);
 

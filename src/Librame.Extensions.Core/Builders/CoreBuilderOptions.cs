@@ -62,15 +62,15 @@ namespace Librame.Extensions.Core
             = Encoding.UTF8;
 
         /// <summary>
-        /// 启用自动注册服务集合（默认不启用）。
+        /// 启用自动注册中介者集合（默认不启用）。
         /// </summary>
-        public bool EnableAutoRegistrationServices { get; set; }
+        public bool EnableAutoRegistrationMediators { get; set; }
             = false;
 
         /// <summary>
-        /// 启用扫描处理程序集合与处理器集合。
+        /// 启用自动注册服务集合（默认不启用）。
         /// </summary>
-        public bool EnableScanHandlersAndProcessors { get; set; }
+        public bool EnableAutoRegistrationServices { get; set; }
             = false;
     }
 }

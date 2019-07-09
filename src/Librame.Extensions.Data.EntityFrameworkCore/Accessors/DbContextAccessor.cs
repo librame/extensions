@@ -60,17 +60,17 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 基础审计。
         /// </summary>
-        public DbSet<BaseAudit> BaseAudits { get; set; }
+        public DbSet<DataAudit> BaseAudits { get; set; }
 
         /// <summary>
         /// 基础审计属性。
         /// </summary>
-        public DbSet<BaseAuditProperty> BaseAuditProperties { get; set; }
+        public DbSet<DataAuditProperty> BaseAuditProperties { get; set; }
 
         /// <summary>
         /// 基础租户。
         /// </summary>
-        public DbSet<BaseTenant> BaseTenants { get; set; }
+        public DbSet<DataTenant> BaseTenants { get; set; }
 
         #endregion
 
@@ -137,13 +137,13 @@ namespace Librame.Extensions.Data
             if (defaultTenant.IsNotNull() && dbTenant.IsNull())
             {
                 // 添加默认租户到数据库
-                if (defaultTenant is BaseTenant baseTenant)
+                if (defaultTenant is DataTenant baseTenant)
                 {
                     dbTenant = baseTenant;
                 }
                 else
                 {
-                    dbTenant = new BaseTenant();
+                    dbTenant = new DataTenant();
                     BuilderOptions.DefaultTenant.EnsurePopulate(dbTenant);
                 }
 
@@ -255,14 +255,14 @@ namespace Librame.Extensions.Data
                 .Where(m => m.Entity.IsNotNull() && entityStates.Contains(m.State)).ToList();
 
             // 获取注册的实体入口处理器集合
-            var auditService = ServiceProvider.GetService<IAuditService>();
+            var auditService = ServiceProvider.GetRequiredService<IAuditService>();
             var audits = await auditService.GetAuditsAsync(entityEntries, cancellationToken);
 
             await BaseAudits.AddRangeAsync(audits, cancellationToken);
 
-            //// 通知审计实体列表 [BUG]
-            //var mediator = ServiceProvider.GetService<IMediator>();
-            //await mediator?.Publish(new AuditNotification { Audits = audits }, cancellationToken);
+            // 通知审计实体列表
+            var mediator = ServiceProvider.GetRequiredService<IMediator>();
+            await mediator.Publish(new AuditNotification { Audits = audits }, cancellationToken);
         }
 
 

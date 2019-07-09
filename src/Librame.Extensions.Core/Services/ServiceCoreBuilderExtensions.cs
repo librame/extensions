@@ -15,16 +15,16 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 服务构建器静态扩展。
+    /// 服务核心构建器静态扩展。
     /// </summary>
-    public static class ServiceBuilderExtensions
+    public static class ServiceCoreBuilderExtensions
     {
         /// <summary>
         /// 添加服务集合扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <returns>返回 <see cref="IBuilder"/>。</returns>
-        public static IBuilder AddServices(this IBuilder builder)
+        /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddServices(this ICoreBuilder builder)
         {
             builder.Services.AddScoped<IHumanizationService, InternalHumanizationService>();
             builder.Services.AddScoped<IInjectionService, InternalInjectionService>();

@@ -16,7 +16,7 @@ namespace Librame.Extensions.Data
     /// 存储中心接口。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    public interface IStoreHub<out TAccessor> : IStoreHub<TAccessor, BaseAudit, BaseTenant>
+    public interface IStoreHub<out TAccessor> : IStoreHub<TAccessor, DataAudit, DataTenant>
         where TAccessor : IAccessor
     {
     }

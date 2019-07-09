@@ -54,7 +54,7 @@ namespace Librame.Extensions.Data
         /// 默认租户。
         /// </summary>
         public ITenant DefaultTenant { get; set; }
-            = new BaseTenant();
+            = new DataTenant();
     }
 
 

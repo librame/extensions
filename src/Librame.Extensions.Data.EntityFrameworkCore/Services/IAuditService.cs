@@ -30,7 +30,7 @@ namespace Librame.Extensions.Data
         /// <param name="changeEntities">给定的 <see cref="IList{EntityEntry}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="List{BaseAudit}"/> 的异步操作。</returns>
-        Task<List<BaseAudit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
+        Task<List<DataAudit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
             CancellationToken cancellationToken = default);
     }
 }

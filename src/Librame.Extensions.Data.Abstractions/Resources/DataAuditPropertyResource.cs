@@ -15,9 +15,9 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 基础审计属性资源。
+    /// 数据审计属性资源。
     /// </summary>
-    public class BaseAuditPropertyResource : IResource
+    public class DataAuditPropertyResource : IResource
     {
         /// <summary>
         /// 属性名称。

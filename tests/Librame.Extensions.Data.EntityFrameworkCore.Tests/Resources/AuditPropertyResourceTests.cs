@@ -11,13 +11,13 @@ namespace Librame.Extensions.Data.Tests
         public void ResourceTest()
         {
             var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
-            var localizer = TestServiceProvider.Current.GetRequiredService<IExpressionStringLocalizer<BaseAuditPropertyResource>>();
+            var localizer = TestServiceProvider.Current.GetRequiredService<IExpressionStringLocalizer<DataAuditPropertyResource>>();
 
             foreach (var name in cultureNames)
                 RunTest(localizer, name);
         }
 
-        private void RunTest(IExpressionStringLocalizer<BaseAuditPropertyResource> localizer, string cultureName)
+        private void RunTest(IExpressionStringLocalizer<DataAuditPropertyResource> localizer, string cultureName)
         {
             BuilderGlobalization.RegisterCultureInfos(cultureName);
 

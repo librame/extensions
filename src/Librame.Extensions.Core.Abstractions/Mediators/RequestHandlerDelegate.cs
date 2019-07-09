@@ -10,20 +10,14 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Core
 {
-    using Core;
-
     /// <summary>
-    /// 审计通知。
+    /// 表示要在中间件执行的下一个异步请求任务。
     /// </summary>
-    public class AuditNotification : INotification
-    {
-        /// <summary>
-        /// 审计集合。
-        /// </summary>
-        public List<DataAudit> Audits { get; set; }
-    }
+    /// <typeparam name="TResponse">指定的响应类型。</typeparam>
+    /// <returns>返回一个包含 <typeparamref name="TResponse"/> 的异步操作。</returns>
+    public delegate Task<TResponse> RequestHandlerDelegate<TResponse>();
 }

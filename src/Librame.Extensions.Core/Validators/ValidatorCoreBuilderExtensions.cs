@@ -15,18 +15,18 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 转换器构建器静态扩展。
+    /// 验证器核心构建器静态扩展。
     /// </summary>
-    public static class ConverterBuilderExtensions
+    public static class ValidatorCoreBuilderExtensions
     {
         /// <summary>
-        /// 添加转换器集合扩展。
+        /// 添加验证器集合扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
-        /// <returns>返回 <see cref="IBuilder"/>。</returns>
-        public static IBuilder AddConverters(this IBuilder builder)
+        /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddValidators(this ICoreBuilder builder)
         {
-            builder.Services.AddSingleton<IEncodingConverter, EncodingConverter>();
+            builder.Services.AddSingleton<IStringValidator, StringValidator>();
 
             return builder;
         }

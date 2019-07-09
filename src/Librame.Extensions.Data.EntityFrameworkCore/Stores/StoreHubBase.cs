@@ -22,7 +22,7 @@ namespace Librame.Extensions.Data
     /// 存储中心基类。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    public class StoreHubBase<TAccessor> : StoreHubBase<TAccessor, BaseAudit, BaseTenant, float, DataStatus>, IStoreHub<TAccessor>
+    public class StoreHubBase<TAccessor> : StoreHubBase<TAccessor, DataAudit, DataTenant, float, DataStatus>, IStoreHub<TAccessor>
         where TAccessor : DbContextAccessor
     {
         /// <summary>
@@ -48,7 +48,7 @@ namespace Librame.Extensions.Data
         /// 确保审计数据集。
         /// </summary>
         /// <returns>返回 <see cref="DbSet{TEntity}"/>。</returns>
-        protected override DbSet<BaseAudit> EnsureAudits()
+        protected override DbSet<DataAudit> EnsureAudits()
         {
             return Accessor.BaseAudits;
         }
@@ -57,7 +57,7 @@ namespace Librame.Extensions.Data
         /// 确保租户数据集。
         /// </summary>
         /// <returns>返回 <see cref="DbSet{TEntity}"/>。</returns>
-        protected override DbSet<BaseTenant> EnsureTenants()
+        protected override DbSet<DataTenant> EnsureTenants()
         {
             return Accessor.BaseTenants;
         }
@@ -72,7 +72,7 @@ namespace Librame.Extensions.Data
         /// <param name="size">给定的页大小。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TTenant}"/> 的异步操作。</returns>
-        public override Task<IPageable<BaseTenant>> GetPagingTenantsAsync(int index, int size, CancellationToken cancellationToken = default)
+        public override Task<IPageable<DataTenant>> GetPagingTenantsAsync(int index, int size, CancellationToken cancellationToken = default)
         {
             return EnsureTenants().AsDescendingPagingByIndexAsync(index, size, cancellationToken);
         }
@@ -81,9 +81,9 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 尝试逻辑删除租户集合。
         /// </summary>
-        /// <param name="tenants">给定的 <see cref="BaseTenant"/> 数组。</param>
+        /// <param name="tenants">给定的 <see cref="DataTenant"/> 数组。</param>
         /// <returns>返回 <see cref="EntityResult"/>。</returns>
-        public override EntityResult TryDelete(params BaseTenant[] tenants)
+        public override EntityResult TryDelete(params DataTenant[] tenants)
             => EnsureTenants().TryLogicDelete(tenants);
 
         #endregion
@@ -101,8 +101,8 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
     public class StoreHubBase<TAccessor, TAudit, TTenant, TRank, TStatus> : AbstractStore<TAccessor>, IStoreHub<TAccessor, TAudit, TTenant>
         where TAccessor : DbContext, IAccessor
-        where TAudit : BaseAudit
-        where TTenant : BaseTenant<TRank, TStatus>
+        where TAudit : DataAudit
+        where TTenant : DataTenant<TRank, TStatus>
         where TRank : struct
         where TStatus : struct
     {

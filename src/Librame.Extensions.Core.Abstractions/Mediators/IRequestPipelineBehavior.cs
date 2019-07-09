@@ -16,20 +16,20 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 请求后置处理程序接口。
+    /// 请求管道行为接口。
     /// </summary>
     /// <typeparam name="TRequest">指定的请求类型。</typeparam>
     /// <typeparam name="TResponse">指定的响应类型。</typeparam>
-    public interface IRequestPostProcessor<in TRequest, in TResponse>
-        where TRequest : IRequest<TResponse>
+    public interface IRequestPipelineBehavior<in TRequest, TResponse>
+        where TRequest : IRequest
     {
         /// <summary>
-        /// 进程方法在处理程序上的句柄方法之后执行。
+        /// 异步管道处理程序。执行任何附加行为，并根据需要等待响应动作。
         /// </summary>
-        /// <param name="request">给定的 <typeparamref name="TRequest"/>。</param>
-        /// <param name="response">给定的 <typeparamref name="TResponse"/>。</param>
+        /// <param name="request">给定传入的请求。</param>
+        /// <param name="next">用于管道中的下一个操作的可等待委托。最终，这个委托表示处理程序。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个异步操作。</returns>
-        Task Process(TRequest request, TResponse response, CancellationToken cancellationToken = default);
+        /// <returns>返回一个包含 <typeparamref name="TResponse"/> 的异步操作。</returns>
+        Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken = default);
     }
 }

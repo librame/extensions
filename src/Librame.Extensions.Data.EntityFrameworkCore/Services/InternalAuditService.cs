@@ -52,12 +52,12 @@ namespace Librame.Extensions.Data
         /// <param name="changeEntities">给定的 <see cref="IList{EntityEntry}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="List{BaseAudit}"/> 的异步操作。</returns>
-        public Task<List<BaseAudit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
+        public Task<List<DataAudit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
             CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                var audits = new List<BaseAudit>();
+                var audits = new List<DataAudit>();
 
                 if (changeEntities.IsNullOrEmpty())
                     return audits;
@@ -81,9 +81,9 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
         /// <returns>返回审计。</returns>
-        private BaseAudit ToAudit(EntityEntry entry)
+        private DataAudit ToAudit(EntityEntry entry)
         {
-            var audit = new BaseAudit
+            var audit = new DataAudit
             {
                 Id = _identifierService.GetAuditIdAsync(default).Result,
                 EntityName = entry.Metadata.ClrType.Name,
@@ -100,7 +100,7 @@ namespace Librame.Extensions.Data
                 if (property.IsPrimaryKey())
                     audit.EntityId = GetEntityId(entry.Property(property.Name));
 
-                var auditProperty = new BaseAuditProperty()
+                var auditProperty = new DataAuditProperty()
                 {
                     PropertyName = property.Name,
                     PropertyTypeName = property.ClrType.FullName
