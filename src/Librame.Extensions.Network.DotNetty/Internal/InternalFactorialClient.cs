@@ -32,7 +32,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部析因客户端通道服务。
     /// </summary>
-    internal class InternalFactorialClient : AbstractChannelService, IFactorialClient
+    internal class InternalFactorialClient : ChannelServiceBase, IFactorialClient
     {
         private readonly FactorialClientOptions _clientOptions;
 
@@ -65,7 +65,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalFactorialClientHandler(this);
 
-            host = host.EnsureValue(_clientOptions.Host);
+            host = host.EnsureString(_clientOptions.Host);
             port = port.EnsureValue(_clientOptions.Port);
 
             var group = new MultithreadEventLoopGroup();

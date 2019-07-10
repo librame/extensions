@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data
         /// 异步获取审计标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="string"/>。</returns>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetAuditIdAsync(CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
@@ -50,10 +50,27 @@ namespace Librame.Extensions.Data
         }
 
         /// <summary>
+        /// 异步获取审计属性标识。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
+        public virtual Task<string> GetAuditPropertyIdAsync(CancellationToken cancellationToken = default)
+        {
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                string auditPropertyId = GuIdentifier.New();
+                Logger.LogInformation($"Get AuditPropertyId: {auditPropertyId}");
+
+                return auditPropertyId;
+            });
+        }
+
+
+        /// <summary>
         /// 异步获取租户标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="string"/>。</returns>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetTenantIdAsync(CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>

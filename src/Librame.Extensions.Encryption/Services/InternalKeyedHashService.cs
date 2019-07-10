@@ -21,7 +21,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部键控散列服务。
     /// </summary>
-    internal class InternalKeyedHashService : AbstractEncryptionService, IKeyedHashService
+    internal class InternalKeyedHashService : EncryptionServiceBase, IKeyedHashService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalKeyedHashService"/> 实例。

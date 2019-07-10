@@ -27,7 +27,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 内部邮箱服务。
     /// </summary>
-    internal class InternalEmailService : AbstractSafetyNetworkService, IEmailService
+    internal class InternalEmailService : SafetyNetworkServiceBase, IEmailService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalEmailService"/> 实例。

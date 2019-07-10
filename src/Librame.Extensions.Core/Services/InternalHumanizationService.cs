@@ -22,14 +22,14 @@ namespace Librame.Extensions.Core
     /// </summary>
     internal class InternalHumanizationService : AbstractService, IHumanizationService
     {
-        private readonly IExpressionStringLocalizer<DateTimeResource> _localizer;
+        private readonly IExpressionStringLocalizer<HumanizationResource> _localizer;
 
         /// <summary>
         /// 构造一个 <see cref="InternalHumanizationService"/> 实例。
         /// </summary>
         /// <param name="localizer">给定的 <see cref="IExpressionStringLocalizer{DateTimeResource}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalHumanizationService(IExpressionStringLocalizer<DateTimeResource> localizer,
+        public InternalHumanizationService(IExpressionStringLocalizer<HumanizationResource> localizer,
             ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {

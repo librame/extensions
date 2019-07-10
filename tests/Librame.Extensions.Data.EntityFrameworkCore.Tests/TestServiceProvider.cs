@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data.Tests
                     });
 
                 services.TryReplace<IIdentifierService, TestIdentifierService>();
-                services.AddScoped<ITestStore, TestStore>();
+                services.AddScoped<ITestStoreHub, TestStoreHub>();
 
                 return services.BuildServiceProvider();
             });

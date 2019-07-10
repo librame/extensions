@@ -13,13 +13,10 @@
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 日期时间资源。
+    /// 人性化资源。
     /// </summary>
-    public class DateTimeResource : IResource
+    public class HumanizationResource : IResource
     {
-
-        #region Humanization
-
         /// <summary>
         /// 人性化分钟数以前。
         /// </summary>
@@ -44,8 +41,5 @@ namespace Librame.Extensions.Core
         /// 人性化年数以前。
         /// </summary>
         public string HumanizedYearsAgo { get; set; }
-
-        #endregion
-
     }
 }

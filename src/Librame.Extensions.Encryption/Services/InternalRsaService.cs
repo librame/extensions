@@ -22,7 +22,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部 RSA 服务。
     /// </summary>
-    internal class InternalRsaService : AbstractEncryptionService, IRsaService
+    internal class InternalRsaService : EncryptionServiceBase, IRsaService
     {
         private RSA _rsa = null;
 

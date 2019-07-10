@@ -23,6 +23,17 @@ namespace Librame.Extensions.Data
     public interface IAccessor : IDisposable
     {
         /// <summary>
+        /// 审计通知动作。
+        /// </summary>
+        Action<AuditNotification> AuditNotificationAction { get; set; }
+
+        /// <summary>
+        /// 数据库创建后的动作（在启用创建数据库时此项有效）。
+        /// </summary>
+        Action DatabaseCreatedAction { get; set; }
+
+
+        /// <summary>
         /// 执行 SQL 命令。
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>

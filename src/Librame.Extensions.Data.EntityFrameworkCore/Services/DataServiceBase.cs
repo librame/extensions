@@ -13,24 +13,23 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Data
 {
     using Core;
 
     /// <summary>
-    /// 抽象加密服务。
+    /// 数据服务基类。
     /// </summary>
-    public abstract class AbstractEncryptionService : AbstractService<EncryptionBuilderOptions>
+    public class DataServiceBase : AbstractService<DataBuilderOptions>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractEncryptionService"/> 实例。
+        /// 构造一个 <see cref="DataServiceBase"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractEncryptionService(IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
+        public DataServiceBase(IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
         }
-
     }
 }

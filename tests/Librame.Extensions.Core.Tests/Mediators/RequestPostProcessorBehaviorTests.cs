@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class RequestPreProcessorTests
+    public class RequestPostProcessorBehaviorTests
     {
         [Fact]
         public async Task AllTest()
@@ -12,8 +12,8 @@ namespace Librame.Extensions.Core.Tests
             var mediator = TestServiceProvider.Current.GetRequiredService<IMediator>();
 
             var response = await mediator.Send(new Ping { Message = "Ping" });
-
-            Assert.Contains("Ping Ping Pong", response.Message);
+            
+            Assert.Contains("Ping Pong Ping", response.Message);
         }
 
     }

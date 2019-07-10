@@ -31,7 +31,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部弃用服务端通道服务。
     /// </summary>
-    internal class InternalDiscardServer : AbstractChannelService, IDiscardServer
+    internal class InternalDiscardServer : ChannelServiceBase, IDiscardServer
     {
         private readonly ServerOptions _serverOptions;
 
@@ -64,7 +64,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalDiscardServerHandler(this);
 
-            host = host.EnsureValue(_serverOptions.Host);
+            host = host.EnsureString(_serverOptions.Host);
             port = port.EnsureValue(_serverOptions.Port);
 
             var bossGroup = new MultithreadEventLoopGroup(1);

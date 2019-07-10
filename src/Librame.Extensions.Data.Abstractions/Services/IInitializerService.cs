@@ -10,20 +10,21 @@
 
 #endregion
 
-using System.Collections.Generic;
-
 namespace Librame.Extensions.Data
 {
     using Core;
 
     /// <summary>
-    /// 审计通知。
+    /// 初始化器服务。
     /// </summary>
-    public class AuditNotification : INotification
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
+    public interface IInitializerService<in TAccessor> : IService
+        where TAccessor : IAccessor
     {
         /// <summary>
-        /// 审计集合。
+        /// 初始化数据。
         /// </summary>
-        public List<Audit> Audits { get; set; }
+        /// <param name="storeHub">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
+        void Initialize(IStoreHub<TAccessor> storeHub);
     }
 }

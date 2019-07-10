@@ -13,23 +13,24 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Extensions.Encryption
 {
     using Core;
 
     /// <summary>
-    /// 抽象图画服务。
+    /// 加密服务基类。
     /// </summary>
-    public abstract class AbstractDrawingService : AbstractService<DrawingBuilderOptions>
+    public class EncryptionServiceBase : AbstractService<EncryptionBuilderOptions>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractDrawingService"/> 实例。
+        /// 构造一个 <see cref="EncryptionServiceBase"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractDrawingService(IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
+        public EncryptionServiceBase(IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
         }
+
     }
 }

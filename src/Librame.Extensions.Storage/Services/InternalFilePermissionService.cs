@@ -22,7 +22,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 内部存储令牌服务。
     /// </summary>
-    internal class InternalFilePermissionService : AbstractStorageService, IFilePermissionService
+    internal class InternalFilePermissionService : StorageServiceBase, IFilePermissionService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalFilePermissionService"/> 实例。

@@ -10,7 +10,9 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +28,16 @@ namespace Librame.Extensions.Data
         where TTenant : class
     {
         /// <summary>
-        /// 异步查找租户。
+        /// 异步包含指定租户。
+        /// </summary>
+        /// <param name="name">给定的名称。</param>
+        /// <param name="host">给定的主机。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含布尔值的异步操作。</returns>
+        Task<bool> ContainTenantAsync(string name, string host, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 异步查找指定租户。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="keyValues">给定的键值对数组或标识。</param>
@@ -34,7 +45,7 @@ namespace Librame.Extensions.Data
         Task<TTenant> FindTenantAsync(CancellationToken cancellationToken, params object[] keyValues);
 
         /// <summary>
-        /// 异步获取租户。
+        /// 异步获取指定租户。
         /// </summary>
         /// <param name="name">给定的名称。</param>
         /// <param name="host">给定的主机。</param>
@@ -45,18 +56,23 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 异步获取所有租户集合。
         /// </summary>
+        /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="List{TTenant}"/> 的异步操作。</returns>
-        Task<List<TTenant>> GetAllTenantsAsync(CancellationToken cancellationToken = default);
+        Task<List<TTenant>> GetAllTenantsAsync(Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 异步获取分页租户集合。
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
+        /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TTenant}"/> 的异步操作。</returns>
-        Task<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size, CancellationToken cancellationToken = default);
+        Task<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size,
+            Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
+            CancellationToken cancellationToken = default);
 
 
         /// <summary>

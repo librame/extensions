@@ -35,7 +35,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部 HTTP 服务端通道服务。
     /// </summary>
-    internal class InternalHttpServer : AbstractChannelService, IHttpServer
+    internal class InternalHttpServer : ChannelServiceBase, IHttpServer
     {
         private readonly HttpServerOptions _serverOptions;
 
@@ -69,7 +69,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalHttpServerHandler(this);
 
-            host = host.EnsureValue(_serverOptions.Host);
+            host = host.EnsureString(_serverOptions.Host);
             port = port.EnsureValue(_serverOptions.Port);
 
             Logger.LogInformation(

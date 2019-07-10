@@ -35,7 +35,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部 WebSocket 客户端通道服务。
     /// </summary>
-    internal class InternalWebSocketClient : AbstractChannelService, IWebSocketClient
+    internal class InternalWebSocketClient : ChannelServiceBase, IWebSocketClient
     {
         private readonly WebSocketClientOptions _clientOptions;
 
@@ -65,7 +65,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
         public async Task StartAsync(Action<IChannel> configureProcess,
             Func<IChannelHandler> handlerFactory = null, string host = null, int? port = null)
         {
-            host = host.EnsureValue(_clientOptions.Host);
+            host = host.EnsureString(_clientOptions.Host);
             port = port.EnsureValue(_clientOptions.Port);
 
             var builder = new UriBuilder

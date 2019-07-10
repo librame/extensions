@@ -32,7 +32,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部 Telnet 客户端通道服务。
     /// </summary>
-    internal class InternalTelnetClient : AbstractChannelService, ITelnetClient
+    internal class InternalTelnetClient : ChannelServiceBase, ITelnetClient
     {
         private readonly ClientOptions _clientOptions;
 
@@ -65,7 +65,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalTelnetClientHandler(this);
 
-            host = host.EnsureValue(_clientOptions.Host);
+            host = host.EnsureString(_clientOptions.Host);
             port = port.EnsureValue(_clientOptions.Port);
 
             var group = new MultithreadEventLoopGroup();

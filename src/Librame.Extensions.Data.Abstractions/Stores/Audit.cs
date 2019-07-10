@@ -18,60 +18,60 @@ using System.ComponentModel.DataAnnotations;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 数据审计。
+    /// 审计。
     /// </summary>
     [NotAudited]
-    [Description("数据审计")]
-    public class DataAudit : AbstractId
+    [Description("审计")]
+    public class Audit : AbstractId
     {
         /// <summary>
         /// 实体标识。
         /// </summary>
-        [Display(Name = nameof(EntityId), ResourceType = typeof(DataAuditResource))]
+        [Display(Name = nameof(EntityId), ResourceType = typeof(AuditResource))]
         public virtual string EntityId { get; set; }
 
         /// <summary>
         /// 实体名称。
         /// </summary>
-        [Display(Name = nameof(EntityName), ResourceType = typeof(DataAuditResource))]
+        [Display(Name = nameof(EntityName), ResourceType = typeof(AuditResource))]
         public virtual string EntityName { get; set; }
 
         /// <summary>
         /// 实体类型名称。
         /// </summary>
-        [Display(Name = nameof(EntityTypeName), ResourceType = typeof(DataAuditResource))]
+        [Display(Name = nameof(EntityTypeName), ResourceType = typeof(AuditResource))]
         public virtual string EntityTypeName { get; set; }
 
         /// <summary>
         /// 操作状态。
         /// </summary>
-        [Display(Name = nameof(State), ResourceType = typeof(DataAuditResource))]
+        [Display(Name = nameof(State), ResourceType = typeof(AuditResource))]
         public virtual int State { get; set; }
 
         /// <summary>
         /// 状态名称。
         /// </summary>
-        [Display(Name = nameof(StateName), ResourceType = typeof(DataAuditResource))]
+        [Display(Name = nameof(StateName), ResourceType = typeof(AuditResource))]
         public virtual string StateName { get; set; }
 
         /// <summary>
         /// 创建者。
         /// </summary>
-        [Display(Name = nameof(CreatedBy), ResourceType = typeof(DataAuditResource))]
+        [Display(Name = nameof(CreatedBy), ResourceType = typeof(AuditResource))]
         public virtual string CreatedBy { get; set; }
 
         /// <summary>
         /// 创建时间。
         /// </summary>
-        [Display(Name = nameof(CreatedTime), ResourceType = typeof(DataAuditResource))]
+        [Display(Name = nameof(CreatedTime), ResourceType = typeof(AuditResource))]
         public virtual DateTimeOffset CreatedTime { get; set; }
 
 
         /// <summary>
         /// 实体属性集合。
         /// </summary>
-        [Display(Name = nameof(Properties), ResourceType = typeof(DataAuditResource))]
-        public virtual IList<DataAuditProperty> Properties { get; set; }
-            = new List<DataAuditProperty>();
+        [Display(Name = nameof(Properties), ResourceType = typeof(AuditResource))]
+        public virtual IList<AuditProperty> Properties { get; set; }
+            = new List<AuditProperty>();
     }
 }

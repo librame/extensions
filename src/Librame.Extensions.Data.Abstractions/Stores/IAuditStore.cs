@@ -26,6 +26,14 @@ namespace Librame.Extensions.Data
         where TAudit : class
     {
         /// <summary>
+        /// 异步查找审计。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="keyValues">给定的键值对数组或标识。</param>
+        /// <returns>返回一个包含 <typeparamref name="TAudit"/> 的异步操作。</returns>
+        Task<TAudit> FindAuditAsync(CancellationToken cancellationToken, params object[] keyValues);
+
+        /// <summary>
         /// 异步获取分页审计集合。
         /// </summary>
         /// <param name="index">给定的页索引。</param>

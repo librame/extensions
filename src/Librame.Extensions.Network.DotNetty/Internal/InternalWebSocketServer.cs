@@ -35,7 +35,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部 WebSocket 服务端通道服务。
     /// </summary>
-    internal class InternalWebSocketServer : AbstractChannelService, IWebSocketServer
+    internal class InternalWebSocketServer : ChannelServiceBase, IWebSocketServer
     {
         private readonly HttpServerOptions _serverOptions;
 
@@ -69,7 +69,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalWebSocketServerHandler(this);
 
-            host = host.EnsureValue(_serverOptions.Host);
+            host = host.EnsureString(_serverOptions.Host);
             port = port.EnsureValue(_serverOptions.Port);
 
             Logger.LogInformation(

@@ -21,7 +21,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 内部 HTTP Web 请求工厂。
     /// </summary>
-    internal class InternalHttpWebRequestFactory : AbstractRequestFactory<HttpWebRequest>, IRequestFactory<HttpWebRequest>
+    internal class InternalHttpWebRequestFactory : RequestFactoryBase<HttpWebRequest>, IRequestFactory<HttpWebRequest>
     {
         /// <summary>
         /// 构造一个 <see cref="InternalHttpWebRequestFactory"/> 实例。

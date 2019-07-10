@@ -15,33 +15,38 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 数据租户资源。
+    /// 审计属性资源。
     /// </summary>
-    public class DataTenantResource : IResource
+    public class AuditPropertyResource : IResource
     {
         /// <summary>
-        /// 名称。
+        /// 属性名称。
         /// </summary>
-        public string Name { get; set; }
+        public string PropertyName { get; set; }
 
         /// <summary>
-        /// 主机。
+        /// 属性类型名称。
         /// </summary>
-        public string Host { get; set; }
+        public string PropertyTypeName { get; set; }
 
         /// <summary>
-        /// 默认连接字符串。
+        /// 旧值。
         /// </summary>
-        public string DefaultConnectionString { get; set; }
+        public string OldValue { get; set; }
 
         /// <summary>
-        /// 写入连接字符串。
+        /// 新值。
         /// </summary>
-        public string WriteConnectionString { get; set; }
+        public string NewValue { get; set; }
 
         /// <summary>
-        /// 写入分离。
+        /// 审计标识。
         /// </summary>
-        public string WriteConnectionSeparation { get; set; }
+        public string AuditId { get; set; }
+
+        /// <summary>
+        /// 审计。
+        /// </summary>
+        public string Audit { get; set; }
     }
 }

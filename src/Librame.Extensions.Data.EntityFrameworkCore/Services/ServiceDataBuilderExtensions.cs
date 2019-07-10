@@ -29,7 +29,9 @@ namespace Librame.Extensions.Data
             builder.Services.AddScoped<IAuditService, InternalAuditService>();
             builder.Services.AddScoped<IClockService, InternalClockService>();
             builder.Services.AddScoped<ITenantService, InternalTenantService>();
+
             builder.Services.AddScoped<IIdentifierService, IdentifierServiceBase>();
+            builder.Services.AddScoped(typeof(IInitializerService<>), typeof(InitializerServiceBase<>));
 
             return builder;
         }

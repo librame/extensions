@@ -32,7 +32,7 @@ namespace Librame.Extensions.Core
             builder.Services.AddTransient(typeof(IRequestHandlerWrapper<,>), typeof(InternalRequestHandlerWrapper<,>));
             builder.Services.AddTransient(typeof(INotificationHandlerWrapper<>), typeof(InternalNotificationHandlerWrapper<>));
 
-            builder.Services.AddTransient<IMediator, InternalMediator>();
+            builder.Services.AddScoped<IMediator, InternalMediator>();
 
             return builder;
         }

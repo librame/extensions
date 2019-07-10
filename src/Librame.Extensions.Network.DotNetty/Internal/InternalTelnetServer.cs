@@ -34,7 +34,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部 Telnet 服务端通道服务。
     /// </summary>
-    internal class InternalTelnetServer : AbstractChannelService, ITelnetServer
+    internal class InternalTelnetServer : ChannelServiceBase, ITelnetServer
     {
         private readonly ServerOptions _serverOptions;
 
@@ -67,7 +67,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalTelnetServerHandler(this);
 
-            host = host.EnsureValue(_serverOptions.Host);
+            host = host.EnsureString(_serverOptions.Host);
             port = port.EnsureValue(_serverOptions.Port);
 
             var bossGroup = new MultithreadEventLoopGroup(1);

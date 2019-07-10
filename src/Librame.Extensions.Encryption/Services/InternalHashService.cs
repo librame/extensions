@@ -21,7 +21,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部散列服务。
     /// </summary>
-    internal class InternalHashService : AbstractEncryptionService, IHashService
+    internal class InternalHashService : EncryptionServiceBase, IHashService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalHashService"/> 实例。

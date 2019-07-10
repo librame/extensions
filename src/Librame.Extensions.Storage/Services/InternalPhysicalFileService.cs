@@ -21,7 +21,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 内部物理文件服务。
     /// </summary>
-    internal class InternalPhysicalFileService : AbstractStorageService, IFileService
+    internal class InternalPhysicalFileService : StorageServiceBase, IFileService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalPhysicalFileService"/> 实例。

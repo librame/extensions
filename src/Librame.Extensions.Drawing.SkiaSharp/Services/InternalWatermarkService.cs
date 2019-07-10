@@ -26,7 +26,7 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部水印服务。
     /// </summary>
-    internal class InternalWatermarkService : AbstractDrawingService, IWatermarkService
+    internal class InternalWatermarkService : DrawingServiceBase, IWatermarkService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalWatermarkService"/> 实例。

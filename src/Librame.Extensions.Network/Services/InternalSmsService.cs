@@ -26,7 +26,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 内部短信服务。
     /// </summary>
-    internal class InternalSmsService : AbstractSafetyNetworkService, ISmsService
+    internal class InternalSmsService : SafetyNetworkServiceBase, ISmsService
     {
         private readonly IRequestFactory<HttpWebRequest> _requestFactory;
 

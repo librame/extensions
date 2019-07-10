@@ -20,18 +20,18 @@ namespace Librame.Extensions.Network
     using Encryption;
 
     /// <summary>
-    /// 抽象安全网络服务。
+    /// 安全网络服务基类。
     /// </summary>
-    public abstract class AbstractSafetyNetworkService : AbstractNetworkService, ISafetyNetworkService
+    public class SafetyNetworkServiceBase : NetworkServiceBase, ISafetyNetworkService
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractSafetyNetworkService"/> 实例。
+        /// 构造一个 <see cref="SafetyNetworkServiceBase"/> 实例。
         /// </summary>
         /// <param name="hash">给定的 <see cref="IHashService"/>。</param>
         /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractSafetyNetworkService(IHashService hash, IOptions<CoreBuilderOptions> coreOptions,
+        public SafetyNetworkServiceBase(IHashService hash, IOptions<CoreBuilderOptions> coreOptions,
             IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(coreOptions, options, loggerFactory)
         {

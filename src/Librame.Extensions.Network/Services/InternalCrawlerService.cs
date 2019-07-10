@@ -28,7 +28,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 内部抓取器服务。
     /// </summary>
-    internal class InternalCrawlerService : AbstractNetworkService, ICrawlerService
+    internal class InternalCrawlerService : NetworkServiceBase, ICrawlerService
     {
         private readonly IRequestFactory<HttpWebRequest> _requestFactory;
 
@@ -84,7 +84,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回一个包含超链接列表的异步操作。</returns>
         public async Task<IList<string>> GetHyperLinksAsync(string url, string pattern = null)
         {
-            pattern = pattern.EnsureValue(() =>
+            pattern = pattern.EnsureString(() =>
             {
                 return @"(?<url>((http(s)?|ftp|file|ws):)?//([\w-]+\.)+[\w-]+(/[\w- ./?%&=]+)?)|(?<path>(/*[\w- ./?%&=]+\.[\w- .]+)?)";
             });

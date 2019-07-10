@@ -26,7 +26,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 内部文件传输服务。
     /// </summary>
-    internal class InternalFileTransferService : AbstractStorageService, IFileTransferService
+    internal class InternalFileTransferService : StorageServiceBase, IFileTransferService
     {
         private readonly IFilePermissionService _permissionService;
 

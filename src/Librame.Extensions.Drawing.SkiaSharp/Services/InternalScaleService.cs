@@ -27,7 +27,7 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部缩放服务。
     /// </summary>
-    internal class InternalScaleService : AbstractDrawingService, IScaleService
+    internal class InternalScaleService : DrawingServiceBase, IScaleService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalScaleService"/> 实例。
@@ -201,10 +201,10 @@ namespace Librame.Extensions.Drawing
                         using (var data = img.Encode(skFormat, Options.Quality))
                         {
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
-                            var middleName = s.Suffix.EnsureValue(() => DateTime.Now.Ticks.ToString());
+                            var middleName = s.Suffix.EnsureString(() => DateTime.Now.Ticks.ToString());
 
                             // 设定缩放保存路径
-                            var scaleSavePath = savePathTemplate.EnsureValue(imagePath);
+                            var scaleSavePath = savePathTemplate.EnsureString(imagePath);
                             scaleSavePath = scaleSavePath.ChangeFileName((baseName, extension) =>
                             {
                                 // 添加后缀名

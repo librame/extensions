@@ -21,7 +21,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部签名证书服务。
     /// </summary>
-    internal class InternalSigningCredentialsService : AbstractEncryptionService, ISigningCredentialsService
+    internal class InternalSigningCredentialsService : EncryptionServiceBase, ISigningCredentialsService
     {
         private readonly ConcurrentDictionary<string, SigningCredentials> _credentials;
 

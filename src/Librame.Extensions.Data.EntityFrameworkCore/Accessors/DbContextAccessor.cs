@@ -24,8 +24,6 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
     /// <see cref="DbContext"/> 访问器。
     /// </summary>
@@ -55,51 +53,48 @@ namespace Librame.Extensions.Data
         }
 
 
-        #region Base Entities
+        /// <summary>
+        /// 审计通知动作。
+        /// </summary>
+        public Action<AuditNotification> AuditNotificationAction { get; set; }
 
         /// <summary>
-        /// 基础审计。
+        /// 数据库创建后的动作（在启用创建数据库时此项有效）。
         /// </summary>
-        public DbSet<DataAudit> BaseAudits { get; set; }
+        public Action DatabaseCreatedAction { get; set; }
+
+
+        #region Entities
 
         /// <summary>
-        /// 基础审计属性。
+        /// 审计。
         /// </summary>
-        public DbSet<DataAuditProperty> BaseAuditProperties { get; set; }
+        public DbSet<Audit> Audits { get; set; }
 
         /// <summary>
-        /// 基础租户。
+        /// 审计属性。
         /// </summary>
-        public DbSet<DataTenant> BaseTenants { get; set; }
+        public DbSet<AuditProperty> AuditProperties { get; set; }
+
+        /// <summary>
+        /// 租户。
+        /// </summary>
+        public DbSet<Tenant> Tenants { get; set; }
 
         #endregion
 
 
         /// <summary>
-        /// 核心选项扩展。
-        /// </summary>
-        protected CoreOptionsExtension CoreOptionsExtension
-            => this.GetService<IDbContextOptions>()
-                .Extensions.OfType<CoreOptionsExtension>()
-                .FirstOrDefault();
-
-        /// <summary>
-        /// 服务提供程序。
-        /// </summary>
-        protected IServiceProvider ServiceProvider
-            => CoreOptionsExtension?.InternalServiceProvider ?? CoreOptionsExtension?.ApplicationServiceProvider;
-
-        /// <summary>
         /// 构建器选项。
         /// </summary>
-        protected DataBuilderOptions BuilderOptions
-            => ServiceProvider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
+        public DataBuilderOptions BuilderOptions
+            => this.GetService<IOptions<DataBuilderOptions>>().Value;
 
         /// <summary>
         /// 记录器工厂。
         /// </summary>
         protected ILoggerFactory LoggerFactory
-            => ServiceProvider.GetRequiredService<ILoggerFactory>();
+            => this.GetService<ILoggerFactory>();
 
         /// <summary>
         /// 记录器。
@@ -119,38 +114,7 @@ namespace Librame.Extensions.Data
                 var connectionString = Database.GetDbConnection().ConnectionString;
                 Logger.LogInformation($"Database created: {connectionString}.");
 
-                AddDefaultTenant();
-                BuilderOptions.DatabaseCreatedAction?.Invoke(this);
-            }
-        }
-
-
-        /// <summary>
-        /// 增加默认租户。
-        /// </summary>
-        protected virtual void AddDefaultTenant()
-        {
-            var defaultTenant = BuilderOptions.DefaultTenant;
-            var dbTenant = BaseTenants.FirstOrDefault(p =>
-                p.Name == defaultTenant.Name && p.Host == defaultTenant.Host);
-
-            if (defaultTenant.IsNotNull() && dbTenant.IsNull())
-            {
-                // 添加默认租户到数据库
-                if (defaultTenant is DataTenant baseTenant)
-                {
-                    dbTenant = baseTenant;
-                }
-                else
-                {
-                    dbTenant = new DataTenant();
-                    BuilderOptions.DefaultTenant.EnsurePopulate(dbTenant);
-                }
-
-                var identifierService = ServiceProvider.GetRequiredService<IIdentifierService>();
-                dbTenant.Id = identifierService.GetTenantIdAsync().Result;
-
-                BaseTenants.Add(dbTenant);
+                DatabaseCreatedAction?.Invoke();
             }
         }
 
@@ -255,14 +219,13 @@ namespace Librame.Extensions.Data
                 .Where(m => m.Entity.IsNotNull() && entityStates.Contains(m.State)).ToList();
 
             // 获取注册的实体入口处理器集合
-            var auditService = ServiceProvider.GetRequiredService<IAuditService>();
+            var auditService = this.GetService<IAuditService>();
             var audits = await auditService.GetAuditsAsync(entityEntries, cancellationToken);
 
-            await BaseAudits.AddRangeAsync(audits, cancellationToken);
+            await Audits.AddRangeAsync(audits, cancellationToken);
 
-            // 通知审计实体列表
-            var mediator = ServiceProvider.GetRequiredService<IMediator>();
-            await mediator.Publish(new AuditNotification { Audits = audits }, cancellationToken);
+            // 通知审计实体列表（此处直接通过 this.GetService 解析 IMediator 会无响应，因此使用委托方式实现通知）
+            AuditNotificationAction?.Invoke(new AuditNotification { Audits = audits });
         }
 
 
@@ -273,7 +236,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回是否切换的布尔值。</returns>
         public virtual bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory)
         {
-            var tenant = ServiceProvider.GetRequiredService<ITenantService>().GetTenantAsync(BaseTenants).Result;
+            var tenant = this.GetService<ITenantService>().GetTenantAsync(Tenants).Result;
             if (tenant.IsNull() || connectionStringFactory.IsNull())
                 return false;
 

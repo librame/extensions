@@ -21,7 +21,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部对称服务。
     /// </summary>
-    internal class InternalSymmetricService : AbstractEncryptionService, ISymmetricService
+    internal class InternalSymmetricService : EncryptionServiceBase, ISymmetricService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalSymmetricService"/> 实例。

@@ -21,7 +21,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 内部租户服务。
     /// </summary>
-    internal class InternalTenantService : AbstractDataService, ITenantService
+    internal class InternalTenantService : DataServiceBase, ITenantService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalTenantService"/> 实例。

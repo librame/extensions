@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace Librame.Extensions.Tests
 {
@@ -19,22 +20,60 @@ namespace Librame.Extensions.Tests
         }
 
         [Fact]
+        public void EnsureCreateTest()
+        {
+            var test = typeof(TestClass1).EnsureCreate();
+            Assert.NotNull(test);
+
+            var test1 = DefaultExtensions.EnsureCreate<TestClass1>();
+            Assert.NotNull(test1);
+
+            Assert.Equal((test as TestClass1).Property3, test1.Property3);
+
+            // Change Property
+            test1.Property3 = nameof(EnsureCreateTest);
+
+            var testParameter = test1.EnsureCreate<TestParameterCreate>();
+            Assert.NotNull(testParameter);
+
+            Assert.Equal(testParameter.TestClass.Property3, test1.Property3);
+        }
+
+        [Fact]
+        public void EnsureStringTest()
+        {
+            var defaultString = "1";
+            var str = string.Empty;
+            Assert.Equal(defaultString, str.EnsureString(defaultString));
+
+            str = " ";
+            Assert.NotEqual(defaultString, str.EnsureString(defaultString));
+        }
+
+        [Fact]
         public void EnsureValueTest()
         {
             // Number
             var defaultInt = 1;
-            int? nullable = null;
-            Assert.Equal(defaultInt, nullable.EnsureValue(defaultInt));
+            int? i = null;
+            Assert.Equal(defaultInt, i.EnsureValue(defaultInt));
 
-            // String
-            var defaultString = "1";
-            var str = string.Empty;
-            Assert.Equal(defaultString, str.EnsureValue(defaultString));
-
-            str = " ";
-            Assert.NotEqual(defaultString, str.EnsureValue(defaultString));
+            // Guid
+            var defaultGuid = Guid.Empty;
+            Guid? guid = null;
+            Assert.Equal(defaultGuid, guid.EnsureValue(defaultGuid));
         }
 
+
+        class TestParameterCreate
+        {
+            public TestParameterCreate(TestClass1 testClass)
+            {
+                TestClass = testClass;
+            }
+
+            public TestClass1 TestClass { get; }
+        }
 
         class TestClass1
         {

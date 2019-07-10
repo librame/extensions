@@ -33,7 +33,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
     /// <summary>
     /// 内部回流服务端通道服务。
     /// </summary>
-    internal class InternalEchoServer : AbstractChannelService, IEchoServer
+    internal class InternalEchoServer : ChannelServiceBase, IEchoServer
     {
         private readonly ServerOptions _serverOptions;
 
@@ -66,7 +66,7 @@ namespace Librame.Extensions.Network.DotNetty.Internal
             if (handlerFactory.IsNull())
                 handlerFactory = () => new InternalEchoServerHandler(this);
 
-            host = host.EnsureValue(_serverOptions.Host);
+            host = host.EnsureString(_serverOptions.Host);
             port = port.EnsureValue(_serverOptions.Port);
 
             IEventLoopGroup bossGroup;

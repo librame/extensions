@@ -13,25 +13,23 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Extensions.Drawing
 {
     using Core;
 
     /// <summary>
-    /// 抽象存储服务。
+    /// 图画服务基类。
     /// </summary>
-    public abstract class AbstractStorageService : AbstractService<StorageBuilderOptions>
+    public class DrawingServiceBase : AbstractService<DrawingBuilderOptions>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractStorageService"/> 实例。
+        /// 构造一个 <see cref="DrawingServiceBase"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{StorageBuilderOptions}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractStorageService(IOptions<StorageBuilderOptions> options,
-            ILoggerFactory loggerFactory)
+        public DrawingServiceBase(IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
         }
-
     }
 }

@@ -52,12 +52,12 @@ namespace Librame.Extensions.Data
         /// <param name="changeEntities">给定的 <see cref="IList{EntityEntry}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="List{BaseAudit}"/> 的异步操作。</returns>
-        public Task<List<DataAudit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
+        public Task<List<Audit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
             CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                var audits = new List<DataAudit>();
+                var audits = new List<Audit>();
 
                 if (changeEntities.IsNullOrEmpty())
                     return audits;
@@ -67,7 +67,7 @@ namespace Librame.Extensions.Data
                     if (entry.Metadata.ClrType.IsDefined<NotAuditedAttribute>())
                         continue; // 如果不审计，则忽略
 
-                    var audit = ToAudit(entry);
+                    var audit = ToAudit(entry, cancellationToken);
                     audits.Add(audit);
                 }
 
@@ -80,12 +80,13 @@ namespace Librame.Extensions.Data
         /// 转换为审计。
         /// </summary>
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回审计。</returns>
-        private DataAudit ToAudit(EntityEntry entry)
+        private Audit ToAudit(EntityEntry entry, CancellationToken cancellationToken = default)
         {
-            var audit = new DataAudit
+            var audit = new Audit
             {
-                Id = _identifierService.GetAuditIdAsync(default).Result,
+                Id = _identifierService.GetAuditIdAsync(cancellationToken).Result,
                 EntityName = entry.Metadata.ClrType.Name,
                 EntityTypeName = entry.Metadata.ClrType.FullName,
                 State = (int)entry.State,
@@ -100,8 +101,9 @@ namespace Librame.Extensions.Data
                 if (property.IsPrimaryKey())
                     audit.EntityId = GetEntityId(entry.Property(property.Name));
 
-                var auditProperty = new DataAuditProperty()
+                var auditProperty = new AuditProperty()
                 {
+                    Id = _identifierService.GetAuditPropertyIdAsync(cancellationToken).Result,
                     PropertyName = property.Name,
                     PropertyTypeName = property.ClrType.FullName
                 };

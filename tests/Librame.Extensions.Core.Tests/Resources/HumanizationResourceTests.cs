@@ -5,19 +5,19 @@ namespace Librame.Extensions.Core.Tests
 {
     using Core;
 
-    public class DateTimeResourceTests
+    public class HumanizationResourceTests
     {
         [Fact]
         public void ResourceTest()
         {
             var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
-            var localizer = TestServiceProvider.Current.GetRequiredService<IExpressionStringLocalizer<DateTimeResource>>();
+            var localizer = TestServiceProvider.Current.GetRequiredService<IExpressionStringLocalizer<HumanizationResource>>();
 
             foreach (var name in cultureNames)
                 RunTest(localizer, name);
         }
 
-        private void RunTest(IExpressionStringLocalizer<DateTimeResource> localizer, string cultureName)
+        private void RunTest(IExpressionStringLocalizer<HumanizationResource> localizer, string cultureName)
         {
             BuilderGlobalization.RegisterCultureInfos(cultureName);
 

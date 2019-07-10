@@ -36,7 +36,7 @@ namespace Librame.Extensions.Data.Tests
 
             modelBuilder.Entity<Article>(article =>
             {
-                article.ToTable(type => type.AsTableSchema(now => now.ToString("yy")));
+                article.ToTable(type => type.AsDateTimeTableSchema(now => now.ToString("yy")));
 
                 article.HasKey(x => x.Id);
 

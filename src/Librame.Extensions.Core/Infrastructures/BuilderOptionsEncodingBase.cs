@@ -10,28 +10,21 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Core
 {
-    using Core;
-
     /// <summary>
-    /// 抽象网络服务。
+    /// 构建器选项字符编码基类。
     /// </summary>
-    public class AbstractNetworkService : AbstractService<NetworkBuilderOptions>, INetworkService
+    public class BuilderOptionsEncodingBase : IEncoding
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractNetworkService"/> 实例。
+        /// 构造一个 <see cref="BuilderOptionsEncodingBase"/> 实例。
         /// </summary>
         /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractNetworkService(IOptions<CoreBuilderOptions> coreOptions,
-            IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+        protected BuilderOptionsEncodingBase(IOptions<CoreBuilderOptions> coreOptions)
         {
             CoreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
             Encoding = CoreOptions.Encoding;
@@ -39,12 +32,12 @@ namespace Librame.Extensions.Network
 
 
         /// <summary>
-        /// 核心选项。
+        /// 核心构建器选项。
         /// </summary>
         protected CoreBuilderOptions CoreOptions { get; }
 
         /// <summary>
-        /// 字符编码。
+        /// 字符编码（默认使用构建器选项配置）。
         /// </summary>
         public Encoding Encoding { get; set; }
     }

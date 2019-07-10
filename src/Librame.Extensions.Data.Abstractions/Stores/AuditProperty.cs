@@ -16,46 +16,46 @@ using System.ComponentModel.DataAnnotations;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 数据审计属性。
+    /// 审计属性。
     /// </summary>
     [NotAudited]
-    [Description("数据审计属性")]
-    public class DataAuditProperty : AbstractId<int>
+    [Description("审计属性")]
+    public class AuditProperty : AbstractId
     {
         /// <summary>
         /// 属性名称。
         /// </summary>
-        [Display(Name = nameof(PropertyName), ResourceType = typeof(DataAuditPropertyResource))]
+        [Display(Name = nameof(PropertyName), ResourceType = typeof(AuditPropertyResource))]
         public virtual string PropertyName { get; set; }
 
         /// <summary>
         /// 属性类型名称。
         /// </summary>
-        [Display(Name = nameof(PropertyTypeName), ResourceType = typeof(DataAuditPropertyResource))]
+        [Display(Name = nameof(PropertyTypeName), ResourceType = typeof(AuditPropertyResource))]
         public virtual string PropertyTypeName { get; set; }
 
         /// <summary>
         /// 旧值。
         /// </summary>
-        [Display(Name = nameof(OldValue), ResourceType = typeof(DataAuditPropertyResource))]
+        [Display(Name = nameof(OldValue), ResourceType = typeof(AuditPropertyResource))]
         public virtual string OldValue { get; set; }
 
         /// <summary>
         /// 新值。
         /// </summary>
-        [Display(Name = nameof(NewValue), ResourceType = typeof(DataAuditPropertyResource))]
+        [Display(Name = nameof(NewValue), ResourceType = typeof(AuditPropertyResource))]
         public virtual string NewValue { get; set; }
 
         /// <summary>
         /// 审计标识。
         /// </summary>
-        [Display(Name = nameof(AuditId), ResourceType = typeof(DataAuditPropertyResource))]
+        [Display(Name = nameof(AuditId), ResourceType = typeof(AuditPropertyResource))]
         public virtual string AuditId { get; set; }
 
 
         /// <summary>
         /// 基础审计。
         /// </summary>
-        public virtual DataAudit Audit { get; set; }
+        public virtual Audit Audit { get; set; }
     }
 }

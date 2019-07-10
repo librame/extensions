@@ -13,23 +13,22 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Core
 {
-    using Core;
-
     /// <summary>
-    /// 抽象数据服务。
+    /// 核心服务基类。
     /// </summary>
-    public abstract class AbstractDataService : AbstractService<DataBuilderOptions>
+    public class CoreServiceBase : AbstractService<CoreBuilderOptions>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractDataService"/> 实例。
+        /// 构造一个 <see cref="AbstractService{TService}"/> 实例。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractDataService(IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+        public CoreServiceBase(IOptions<CoreBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
         }
+
     }
 }
