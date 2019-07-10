@@ -45,6 +45,11 @@ namespace Librame.Extensions.Data
             = true;
 
         /// <summary>
+        /// 已创建数据库动作。
+        /// </summary>
+        public Action<IAccessor> DatabaseCreatedAction { get; set; }
+
+        /// <summary>
         /// 默认租户。
         /// </summary>
         public ITenant DefaultTenant { get; set; }

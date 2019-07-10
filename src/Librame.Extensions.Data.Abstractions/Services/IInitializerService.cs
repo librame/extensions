@@ -18,13 +18,37 @@ namespace Librame.Extensions.Data
     /// 初始化器服务。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
+    /// <typeparam name="TIdentifier">指定的标识符服务类型。</typeparam>
+    public interface IInitializerService<in TAccessor, out TIdentifier> : IInitializerService<TAccessor>
+        where TAccessor : IAccessor
+        where TIdentifier : IIdentifierService
+    {
+        /// <summary>
+        /// 标识符服务。
+        /// </summary>
+        /// <value>返回 <typeparamref name="TIdentifier"/>。</value>
+        new TIdentifier Identifier { get; }
+    }
+
+
+    /// <summary>
+    /// 初始化器服务。
+    /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     public interface IInitializerService<in TAccessor> : IService
         where TAccessor : IAccessor
     {
         /// <summary>
-        /// 初始化数据。
+        /// 标识符服务。
         /// </summary>
-        /// <param name="storeHub">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
-        void Initialize(IStoreHub<TAccessor> storeHub);
+        /// <value>返回 <see cref="IIdentifierService"/>。</value>
+        IIdentifierService Identifier { get; }
+
+
+        /// <summary>
+        /// 初始化服务。
+        /// </summary>
+        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
+        void InitializeService(IStoreHub<TAccessor> stores);
     }
 }

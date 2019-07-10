@@ -23,27 +23,34 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 内部审计服务。
+    /// 审计服务基类。
     /// </summary>
-    internal class InternalAuditService : AbstractService, IAuditService
+    public class AuditServiceBase : AbstractService, IAuditService
     {
-        private readonly IClockService _clockService;
-        private readonly IIdentifierService _identifierService;
-
-
         /// <summary>
-        /// 构造一个 <see cref="InternalAuditService"/> 实例。
+        /// 构造一个 <see cref="AuditServiceBase"/> 实例。
         /// </summary>
-        /// <param name="clockService">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identifierService">给定的 <see cref="IIdentifierService"/>。</param>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="identifier">给定的 <see cref="IIdentifierService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalAuditService(IClockService clockService, IIdentifierService identifierService,
+        public AuditServiceBase(IClockService clock, IIdentifierService identifier,
             ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
-            _clockService = clockService.NotNull(nameof(clockService));
-            _identifierService = identifierService.NotNull(nameof(identifierService));
+            Clock = clock.NotNull(nameof(clock));
+            Identifier = identifier.NotNull(nameof(identifier));
         }
+
+
+        /// <summary>
+        /// 时钟服务。
+        /// </summary>
+        protected IClockService Clock { get; }
+
+        /// <summary>
+        /// 标识符服务。
+        /// </summary>
+        protected IIdentifierService Identifier { get; }
 
 
         /// <summary>
@@ -52,7 +59,7 @@ namespace Librame.Extensions.Data
         /// <param name="changeEntities">给定的 <see cref="IList{EntityEntry}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="List{BaseAudit}"/> 的异步操作。</returns>
-        public Task<List<Audit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
+        public virtual Task<List<Audit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
             CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
@@ -82,11 +89,11 @@ namespace Librame.Extensions.Data
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回审计。</returns>
-        private Audit ToAudit(EntityEntry entry, CancellationToken cancellationToken = default)
+        protected virtual Audit ToAudit(EntityEntry entry, CancellationToken cancellationToken = default)
         {
             var audit = new Audit
             {
-                Id = _identifierService.GetAuditIdAsync(cancellationToken).Result,
+                Id = Identifier.GetAuditIdAsync(cancellationToken).Result,
                 EntityName = entry.Metadata.ClrType.Name,
                 EntityTypeName = entry.Metadata.ClrType.FullName,
                 State = (int)entry.State,
@@ -103,7 +110,7 @@ namespace Librame.Extensions.Data
 
                 var auditProperty = new AuditProperty()
                 {
-                    Id = _identifierService.GetAuditPropertyIdAsync(cancellationToken).Result,
+                    Id = Identifier.GetAuditPropertyIdAsync(cancellationToken).Result,
                     PropertyName = property.Name,
                     PropertyTypeName = property.ClrType.FullName
                 };
@@ -147,7 +154,7 @@ namespace Librame.Extensions.Data
             }
             else
             {
-                audit.CreatedTime = _clockService.GetUtcNowAsync(default).Result;
+                audit.CreatedTime = Clock.GetUtcNowAsync(default).Result;
             }
 
             return audit;
@@ -158,7 +165,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="property">给定的 <see cref="PropertyEntry"/>。</param>
         /// <returns>返回字符串。</returns>
-        private string GetEntityId(PropertyEntry property)
+        protected virtual string GetEntityId(PropertyEntry property)
         {
             if (property.EntityEntry.State == EntityState.Deleted)
                 return property.OriginalValue?.ToString();
@@ -171,15 +178,18 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回 <see cref="DateTimeOffset"/>。</returns>
-        private DateTimeOffset ToDateTime(object obj)
+        protected virtual DateTimeOffset ToDateTime(object obj)
         {
+            if (obj.IsNull())
+                return Clock.GetUtcNowAsync(default).Result;
+
             if (obj is DateTimeOffset dateTimeOffset)
                 return dateTimeOffset;
 
             if (obj is DateTime dateTime)
                 return new DateTimeOffset(dateTime);
 
-            return _clockService.GetUtcNowAsync(default).Result;
+            return DateTimeOffset.Parse(obj.ToString());
         }
 
         /// <summary>
@@ -187,14 +197,8 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回字符串。</returns>
-        private string ToBy(object obj)
+        protected virtual string ToBy(object obj)
         {
-            if (obj is int i)
-                return i.ToString();
-
-            if (obj is long l)
-                return l.ToString();
-
             if (obj is string str)
                 return str;
 

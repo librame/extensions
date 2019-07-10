@@ -26,12 +26,13 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddServices(this IDataBuilder builder)
         {
-            builder.Services.AddScoped<IAuditService, InternalAuditService>();
             builder.Services.AddScoped<IClockService, InternalClockService>();
             builder.Services.AddScoped<ITenantService, InternalTenantService>();
 
+            builder.Services.AddScoped<IAuditService, AuditServiceBase>();
             builder.Services.AddScoped<IIdentifierService, IdentifierServiceBase>();
             builder.Services.AddScoped(typeof(IInitializerService<>), typeof(InitializerServiceBase<>));
+            builder.Services.AddScoped(typeof(IInitializerService<,>), typeof(InitializerServiceBase<,>));
 
             return builder;
         }

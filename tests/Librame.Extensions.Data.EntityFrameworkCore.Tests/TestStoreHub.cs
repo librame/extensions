@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data.Tests
 
     public class TestStoreHub : StoreHubBase<TestDbContextAccessor>, ITestStoreHub
     {
-        public TestStoreHub(IAccessor accessor) // or TestDbContextAccessor
+        public TestStoreHub(IAccessor accessor)
             : base(accessor)
         {
         }

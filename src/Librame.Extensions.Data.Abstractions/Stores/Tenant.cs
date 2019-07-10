@@ -27,6 +27,8 @@ namespace Librame.Extensions.Data
         public Tenant()
             : base()
         {
+            Rank = 10;
+            Status = DataStatus.Public;
         }
 
         /// <summary>
@@ -37,6 +39,8 @@ namespace Librame.Extensions.Data
         public Tenant(string name, string host)
             : base(name, host)
         {
+            Rank = 10;
+            Status = DataStatus.Public;
         }
     }
 

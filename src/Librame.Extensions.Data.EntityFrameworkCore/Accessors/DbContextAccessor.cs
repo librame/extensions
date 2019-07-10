@@ -18,6 +18,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace Librame.Extensions.Data
         protected virtual void Initialize()
         {
             if (BuilderOptions.IsCreateDatabase)
-                EnsureDatabaseCreated();
+                EnsureDatabaseCreated(Database.GetDbConnection());
         }
 
 
@@ -57,11 +58,6 @@ namespace Librame.Extensions.Data
         /// 审计通知动作。
         /// </summary>
         public Action<AuditNotification> AuditNotificationAction { get; set; }
-
-        /// <summary>
-        /// 数据库创建后的动作（在启用创建数据库时此项有效）。
-        /// </summary>
-        public Action DatabaseCreatedAction { get; set; }
 
 
         #region Entities
@@ -106,15 +102,16 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 确保已创建数据库。
         /// </summary>
+        /// <param name="dbConnection">给定的 <see cref="DbConnection"/>。</param>
         /// <returns>返回是否已创建的布尔值。</returns>
-        protected virtual void EnsureDatabaseCreated()
+        protected virtual void EnsureDatabaseCreated(DbConnection dbConnection)
         {
             if (Database.EnsureCreated())
             {
-                var connectionString = Database.GetDbConnection().ConnectionString;
-                Logger.LogInformation($"Database created: {connectionString}.");
+                if (dbConnection.IsNotNull())
+                    Logger.LogInformation($"Database created: {dbConnection.ConnectionString}.");
 
-                DatabaseCreatedAction?.Invoke();
+                BuilderOptions.DatabaseCreatedAction?.Invoke(this);
             }
         }
 
@@ -290,7 +287,7 @@ namespace Librame.Extensions.Data
                 if (connection.State != ConnectionState.Open)
                 {
                     if (BuilderOptions.IsCreateDatabase)
-                        EnsureDatabaseCreated();
+                        EnsureDatabaseCreated(connection);
 
                     if (connection.State == ConnectionState.Closed)
                     {

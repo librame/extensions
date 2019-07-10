@@ -27,11 +27,6 @@ namespace Librame.Extensions.Data
         /// </summary>
         Action<AuditNotification> AuditNotificationAction { get; set; }
 
-        /// <summary>
-        /// 数据库创建后的动作（在启用创建数据库时此项有效）。
-        /// </summary>
-        Action DatabaseCreatedAction { get; set; }
-
 
         /// <summary>
         /// 执行 SQL 命令。

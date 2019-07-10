@@ -20,43 +20,104 @@ namespace Librame.Extensions.Data
     /// 初始化器服务基类。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    public class InitializerServiceBase<TAccessor> : AbstractService, IInitializerService<TAccessor>
+    /// <typeparam name="TIdentifier">指定的标识符服务类型。</typeparam>
+    public class InitializerServiceBase<TAccessor, TIdentifier> : InitializerServiceBase<TAccessor>, IInitializerService<TAccessor, TIdentifier>
         where TAccessor : DbContextAccessor
+        where TIdentifier : IIdentifierService
     {
-        private readonly IIdentifierService _identifierService;
-
+        /// <summary>
+        /// 构造一个初始化器服务基类实例（可用于容器构造）。
+        /// </summary>
+        /// <param name="identifier">给定的 <see cref="IIdentifierService"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public InitializerServiceBase(IIdentifierService identifier, ILoggerFactory loggerFactory)
+            : base(identifier, loggerFactory)
+        {
+            // Cast
+            Identifier = identifier.CastTo<IIdentifierService, TIdentifier>(nameof(identifier));
+        }
 
         /// <summary>
-        /// 构造一个 <see cref="InitializerServiceBase{TAccessor}"/> 实例。
+        /// 构造一个初始化器服务基类实例（可用于手动构造）。
         /// </summary>
-        /// <param name="identifierService">给定的 <see cref="IIdentifierService"/>。</param>
+        /// <param name="identifier">给定的 <typeparamref name="TIdentifier"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InitializerServiceBase(IIdentifierService identifierService, ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+        protected InitializerServiceBase(TIdentifier identifier, ILoggerFactory loggerFactory)
+            : base(identifier, loggerFactory)
         {
-            _identifierService = identifierService.NotNull(nameof(identifierService));
+            // Override
+            Identifier = identifier;
         }
 
 
         /// <summary>
-        /// 初始化数据。
+        /// 标识符服务。
         /// </summary>
-        /// <param name="storeHub">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
-        public virtual void Initialize(IStoreHub<TAccessor> storeHub)
-        {
-            storeHub.NotNull(nameof(storeHub));
+        /// <value>返回 <typeparamref name="TIdentifier"/>。</value>
+        public new TIdentifier Identifier { get; }
+    }
 
-            InitializeTenants(storeHub);
+
+    /// <summary>
+    /// 初始化器服务基类。
+    /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
+    public class InitializerServiceBase<TAccessor> : AbstractService, IInitializerService<TAccessor>
+        where TAccessor : DbContextAccessor
+    {
+        /// <summary>
+        /// 构造一个初始化器服务基类实例。
+        /// </summary>
+        /// <param name="identifier">给定的 <see cref="IIdentifierService"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public InitializerServiceBase(IIdentifierService identifier, ILoggerFactory loggerFactory)
+            : base(loggerFactory)
+        {
+            Identifier = identifier.NotNull(nameof(identifier));
+        }
+
+
+        /// <summary>
+        /// 标识符服务。
+        /// </summary>
+        /// <value>返回 <see cref="IIdentifierService"/>。</value>
+        public IIdentifierService Identifier { get; }
+
+
+        /// <summary>
+        /// 初始化服务。
+        /// </summary>
+        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
+        public virtual void InitializeService(IStoreHub<TAccessor> stores)
+        {
+            stores.NotNull(nameof(stores));
+
+            // 提前切换为写入数据库，以便支持数据重复验证
+            stores.Accessor.TryChangeDbConnection(tenant => tenant.WriteConnectionString);
+
+            InitializeStores(stores);
+
+            // 已重写，保存时会自行尝试还原为读取数据库
+            stores.Accessor.SaveChanges();
+        }
+
+        /// <summary>
+        /// 初始化存储集合。
+        /// </summary>
+        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
+        protected virtual void InitializeStores(IStoreHub<TAccessor> stores)
+        {
+            InitializeTenants(stores);
         }
 
         /// <summary>
         /// 初始化租户集合。
         /// </summary>
-        /// <param name="storeHubBase">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
-        protected virtual void InitializeTenants(IStoreHub<TAccessor> storeHubBase)
+        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
+        protected virtual void InitializeTenants(IStoreHub<TAccessor> stores)
         {
-            var defaultTenant = storeHubBase.Accessor.BuilderOptions.DefaultTenant;
-            if (!storeHubBase.ContainTenantAsync(defaultTenant.Name, defaultTenant.Host).Result)
+            var defaultTenant = stores.Accessor.BuilderOptions.DefaultTenant;
+            if (!stores.ContainTenantAsync(defaultTenant.Name, defaultTenant.Host).Result)
             {
                 Tenant tenant;
 
@@ -71,11 +132,22 @@ namespace Librame.Extensions.Data
                     defaultTenant.EnsurePopulate(tenant);
                 }
 
-                tenant.Id = _identifierService.GetTenantIdAsync().Result;
+                tenant.Id = Identifier.GetTenantIdAsync().Result;
 
-                storeHubBase.TryCreateAsync(default, tenant).Wait();
+                stores.TryCreateAsync(default, tenant).Wait();
                 Logger.LogInformation($"Add default tenant to database.");
             }
+        }
+
+
+        /// <summary>
+        /// 处置对象。
+        /// </summary>
+        public override void Dispose()
+        {
+            Identifier.Dispose();
+
+            base.Dispose();
         }
 
     }

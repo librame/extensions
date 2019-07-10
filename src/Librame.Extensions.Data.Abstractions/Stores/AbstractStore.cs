@@ -22,25 +22,25 @@ namespace Librame.Extensions.Data
         where TAccessor : IAccessor
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractStore{TAccessor}"/> 实例。
-        /// </summary>
-        /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        public AbstractStore(TAccessor accessor)
-            : base(accessor)
-        {
-            // Override
-            Accessor = accessor;
-        }
-
-        /// <summary>
-        /// 构造一个 <see cref="AbstractStore{TAccessor}"/> 实例。
+        /// 构造一个抽象存储实例（可用于容器构造）。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         public AbstractStore(IAccessor accessor)
             : base(accessor)
         {
-            // Convert
-            Accessor = accessor.IsValue<IAccessor, TAccessor>(nameof(accessor));
+            // Cast
+            Accessor = accessor.CastTo<IAccessor, TAccessor>(nameof(accessor));
+        }
+
+        /// <summary>
+        /// 构造一个抽象存储实例（可用于手动构造）。
+        /// </summary>
+        /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
+        protected AbstractStore(TAccessor accessor)
+            : base(accessor)
+        {
+            // Override
+            Accessor = accessor;
         }
 
 
@@ -80,6 +80,7 @@ namespace Librame.Extensions.Data
         public override void Dispose()
         {
             Accessor.Dispose();
+
             base.Dispose();
         }
 

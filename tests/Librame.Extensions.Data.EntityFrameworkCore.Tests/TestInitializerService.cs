@@ -1,56 +1,75 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Librame.Extensions.Data.Tests
 {
     using Models;
 
-    public class TestInitializerService : InitializerServiceBase<TestDbContextAccessor>
+    public class TestInitializerService<TAccessor> : InitializerServiceBase<TAccessor, TestIdentifierService>
+        where TAccessor : TestDbContextAccessor
     {
-        public TestInitializerService(IIdentifierService identifierService, ILoggerFactory loggerFactory)
-            : base(identifierService, loggerFactory)
+        private IList<Category> _categories;
+
+
+        public TestInitializerService(IIdentifierService identifier, ILoggerFactory loggerFactory)
+            : base(identifier, loggerFactory)
         {
         }
 
 
-        public override void Initialize(IStoreHub<TestDbContextAccessor> storeHub)
+        protected override void InitializeStores(IStoreHub<TAccessor> stores)
         {
-            base.Initialize(storeHub);
+            base.InitializeStores(stores);
 
+            InitializeCategories(stores);
 
+            InitializeArticles(stores);
         }
 
-        protected virtual void InitializeCategories(IStoreHub<TestDbContextAccessor> storeHubBase)
+        private void InitializeCategories(IStoreHub<TestDbContextAccessor> stores)
         {
-            var firstCategory = new Category
+            if (!stores.Accessor.Categories.Any())
             {
-                Name = "First Category"
-            };
-
-            var lastCategory = new Category
-            {
-                Name = "Last Category"
-            };
-        }
-
-        protected virtual void InitializeArticles(IStoreHub<TestDbContextAccessor> storeHubBase)
-        {
-            var articles = new List<Article>();
-
-            for (int i = 0; i < 100; i++)
-            {
-                var articleId = identifierService.GetArticleIdAsync(default).Result;
-
-                articles.Add(new Article
+                _categories = new List<Category>
                 {
-                    Id = articleId,
-                    Title = "Article " + i.ToString(),
-                    Descr = "Descr " + i.ToString(),
-                    Category = (i < 50) ? firstCategory : lastCategory
-                });
-            }
+                    new Category
+                    {
+                        Name = "First Category"
+                    },
+                    new Category
+                    {
+                        Name = "Last Category"
+                    }
+                };
 
-            Accessor.Articles.AddRange(articles);
+                stores.Accessor.Categories.AddRange(_categories);
+            }
+            else
+            {
+                _categories = stores.Accessor.Categories.ToList();
+            }
+        }
+
+        private void InitializeArticles(IStoreHub<TestDbContextAccessor> stores)
+        {
+            if (!stores.Accessor.Categories.Any())
+            {
+                var articles = new List<Article>();
+
+                for (int i = 0; i < 100; i++)
+                {
+                    articles.Add(new Article
+                    {
+                        Id = Identifier.GetArticleIdAsync(default).Result,
+                        Title = "Article " + i.ToString(),
+                        Descr = "Descr " + i.ToString(),
+                        Category = (i < 50) ? _categories.First() : _categories.Last()
+                    });
+                }
+
+                stores.Accessor.Articles.AddRange(articles);
+            }
         }
 
     }

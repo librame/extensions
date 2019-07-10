@@ -21,6 +21,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 存储中心基类。
     /// </summary>
@@ -29,17 +31,7 @@ namespace Librame.Extensions.Data
         where TAccessor : DbContextAccessor
     {
         /// <summary>
-        /// 构造一个存储中心基类实例。
-        /// </summary>
-        /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        public StoreHubBase(TAccessor accessor)
-            : base(accessor)
-        {
-            Initialize();
-        }
-
-        /// <summary>
-        /// 构造一个存储中心基类实例。
+        /// 构造一个存储中心基类实例（可用于容器构造）。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         public StoreHubBase(IAccessor accessor)
@@ -48,17 +40,27 @@ namespace Librame.Extensions.Data
             Initialize();
         }
 
+        /// <summary>
+        /// 构造一个存储中心基类实例（可用于手动构造）。
+        /// </summary>
+        /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
+        protected StoreHubBase(TAccessor accessor)
+            : base(accessor)
+        {
+            Initialize();
+        }
+
 
         /// <summary>
-        /// 初始化
+        /// 初始化。
         /// </summary>
         protected virtual void Initialize()
         {
-            // 绑定数据库创建时的数据初始化服务
-            Accessor.DatabaseCreatedAction = () =>
+            // 绑定审计通知动作
+            Accessor.AuditNotificationAction = notification =>
             {
-                var initializer = GetRequiredService<IInitializerService<TAccessor>>();
-                initializer.Initialize(this);
+                var mediator = GetRequiredService<IMediator>();
+                mediator.Publish(notification);
             };
         }
 
@@ -130,19 +132,19 @@ namespace Librame.Extensions.Data
         where TStatus : struct
     {
         /// <summary>
-        /// 构造一个存储中心基类实例。
+        /// 构造一个存储中心基类实例（可用于容器构造）。
         /// </summary>
-        /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        public StoreHubBase(TAccessor accessor)
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        public StoreHubBase(IAccessor accessor)
             : base(accessor)
         {
         }
 
         /// <summary>
-        /// 构造一个存储中心基类实例。
+        /// 构造一个存储中心基类实例（可用于手动构造）。
         /// </summary>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public StoreHubBase(IAccessor accessor)
+        /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
+        protected StoreHubBase(TAccessor accessor)
             : base(accessor)
         {
         }
@@ -244,10 +246,7 @@ namespace Librame.Extensions.Data
         {
             var predicate = BuildUniqueTenantExpression(name, host);
 
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
-            {
-                return EnsureTenants().Where(predicate).Count() > 0;
-            });
+            return EnsureTenants().AnyAsync(predicate, cancellationToken);
         }
 
         /// <summary>

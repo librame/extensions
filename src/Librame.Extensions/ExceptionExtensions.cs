@@ -277,7 +277,7 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 来源类型实例是目标类型实例。
+        /// 将来源类型实例投射到目标类型实例。
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> 为空。
@@ -290,7 +290,7 @@ namespace Librame.Extensions
         /// <param name="source">给定的来源实例。</param>
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回目标类型实例或抛出异常。</returns>
-        public static TTarget IsValue<TSource, TTarget>(this TSource source, string paramName)
+        public static TTarget CastTo<TSource, TTarget>(this TSource source, string paramName)
         {
             if (source == null) // 未限定源类型为 Class
                 throw new ArgumentNullException(paramName);

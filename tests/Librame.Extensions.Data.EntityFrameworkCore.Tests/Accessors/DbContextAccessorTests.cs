@@ -8,21 +8,21 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void AllTest()
         {
-            using (var store = TestServiceProvider.Current.GetRequiredService<ITestStoreHub>())
+            using (var stores = TestServiceProvider.Current.GetRequiredService<ITestStoreHub>())
             {
-                var mediator = store.GetRequiredService<Core.IMediator>();
-                store.Accessor.AuditNotificationAction = notification => mediator.Publish(notification);
+                var initializer = stores.GetRequiredService<IInitializerService<TestDbContextAccessor>>();
+                initializer.InitializeService(stores);
 
-                var categories = store.GetCategories();
+                var categories = stores.GetCategories();
                 Assert.Empty(categories);
 
-                categories = store.UseWriteDbConnection().GetCategories();
+                categories = stores.UseWriteDbConnection().GetCategories();
                 Assert.NotEmpty(categories);
 
-                var articles = store.UseDefaultDbConnection().GetArticles();
+                var articles = stores.UseDefaultDbConnection().GetArticles();
                 Assert.Empty(articles);
 
-                articles = store.UseWriteDbConnection().GetArticles();
+                articles = stores.UseWriteDbConnection().GetArticles();
                 Assert.NotEmpty(articles);
             }
         }

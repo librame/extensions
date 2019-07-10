@@ -7,11 +7,13 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void GetEntityTypeNamesTest()
         {
+            var tableNames = nameof(Tenant).AsPluralize();
+
             var entityNames = TableSchema.GetEntityNames<Tenant>();
-            Assert.Equal("BaseTenants", entityNames);
+            Assert.Equal(tableNames, entityNames);
 
             entityNames = TableSchema.GetEntityNames<Tenant<int, DataStatus>>();
-            Assert.Equal("BaseTenants", entityNames);
+            Assert.Equal(tableNames, entityNames);
         }
 
     }

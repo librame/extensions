@@ -140,11 +140,11 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
-        public void SameTypeTest()
+        public void CastToTest()
         {
-            object obj = new BaseType();
+            IBaseType baseType = new BaseType();
 
-            var result = obj.IsValue<object, BaseType>(nameof(obj));
+            var result = baseType.CastTo<IBaseType, BaseType>(nameof(baseType));
             Assert.Equal(5, result.Number);
         }
 

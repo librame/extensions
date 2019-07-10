@@ -53,7 +53,7 @@ namespace Librame.Extensions.Data
 
                 b.HasKey(k => k.Id);
 
-                b.Property(p => p.Id).ValueGeneratedOnAdd();
+                b.Property(p => p.Id).ValueGeneratedNever();
                 b.Property(p => p.PropertyName).HasMaxLength(100).IsRequired();
                 b.Property(p => p.PropertyTypeName).HasMaxLength(200).IsRequired();
             });
