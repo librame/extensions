@@ -22,24 +22,28 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Network
 {
     using Core;
-    using Encryption;
 
     /// <summary>
     /// 内部邮箱服务。
     /// </summary>
-    internal class InternalEmailService : SafetyNetworkServiceBase, IEmailService
+    internal class InternalEmailService : NetworkServiceBase, IEmailService
     {
+        private readonly IByteCodecService _byteCodec;
+
+
         /// <summary>
         /// 构造一个 <see cref="InternalEmailService"/> 实例。
         /// </summary>
-        /// <param name="hash">给定的 <see cref="IHashService"/>。</param>
+        /// <param name="byteCodec">给定的 <see cref="IByteCodecService"/>。</param>
         /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalEmailService(IHashService hash, IOptions<CoreBuilderOptions> coreOptions,
+        public InternalEmailService(IByteCodecService byteCodec, IOptions<CoreBuilderOptions> coreOptions,
             IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(hash, coreOptions, options, loggerFactory)
+            : base(coreOptions, options, loggerFactory)
         {
+            _byteCodec = byteCodec.NotNull(nameof(byteCodec));
+
             SendCompletedCallback = (sender, e) =>
             {
                 // e.UserState = userToken
@@ -97,9 +101,11 @@ namespace Librame.Extensions.Network
             using (var message = new MailMessage(from, to))
             {
                 Logger.LogDebug($"Create mail message: from={Options.Email.EmailAddress}, to={toAddress}, encoding={Encoding.AsName()}");
-                message.Body = body;
+
+                message.Body = _byteCodec.EncodeString(body, Options.Email.EnableCodec);
                 message.BodyEncoding = Encoding;
-                message.Subject = subject;
+
+                message.Subject = _byteCodec.EncodeString(subject, Options.Email.EnableCodec);
                 message.SubjectEncoding = Encoding;
 
                 // Configure MailMessage

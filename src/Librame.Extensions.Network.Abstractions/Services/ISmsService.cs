@@ -18,7 +18,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 短信服务接口。
     /// </summary>
-    public interface ISmsService : ISafetyNetworkService
+    public interface ISmsService : INetworkService
     {
         /// <summary>
         /// 异步发送。

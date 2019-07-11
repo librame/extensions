@@ -21,30 +21,31 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Network
 {
     using Core;
-    using Encryption;
 
     /// <summary>
     /// 内部短信服务。
     /// </summary>
-    internal class InternalSmsService : SafetyNetworkServiceBase, ISmsService
+    internal class InternalSmsService : NetworkServiceBase, ISmsService
     {
         private readonly IRequestFactory<HttpWebRequest> _requestFactory;
+        private readonly IByteCodecService _byteCodec;
 
 
         /// <summary>
         /// 构造一个 <see cref="InternalSmsService"/> 实例。
         /// </summary>
         /// <param name="requestFactory">给定的 <see cref="IRequestFactory{HttpWebRequest}"/>。</param>
-        /// <param name="hash">给定的 <see cref="IHashService"/>。</param>
+        /// <param name="byteCodec">给定的 <see cref="IByteCodecService"/>。</param>
         /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public InternalSmsService(IRequestFactory<HttpWebRequest> requestFactory,
-            IHashService hash, IOptions<CoreBuilderOptions> coreOptions,
+            IByteCodecService byteCodec, IOptions<CoreBuilderOptions> coreOptions,
             IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(hash, coreOptions, options, loggerFactory)
+            : base(coreOptions, options, loggerFactory)
         {
             _requestFactory = requestFactory.NotNull(nameof(requestFactory));
+            _byteCodec = byteCodec.NotNull(nameof(byteCodec));
         }
 
 
@@ -81,25 +82,21 @@ namespace Librame.Extensions.Network
             });
         }
 
-        private WebResponse CreateResponse(string url, string message = null)
+        private WebResponse CreateResponse(string url, string message)
         {
             try
             {
-                var method = message.IsNullOrEmpty() ? "GET" : "POST";
-                var hwr = _requestFactory.CreateRequest(url, method);
+                var hwr = _requestFactory.CreateRequest(url);
                 hwr.Accept = "text/xml,text/javascript";
                 hwr.ContinueTimeout = Options.Sms.ContinueTimeout;
 
-                if (!message.IsNullOrEmpty())
-                {
-                    var buffer = ReadySendData(message);
-                    hwr.ContentLength = buffer.Length;
+                var buffer = _byteCodec.EncodeStringAsBytes(message, Options.Sms.EnableCodec);
+                hwr.ContentLength = buffer.Length;
 
-                    using (var s = hwr.GetRequestStream())
-                    {
-                        s.Write(buffer, 0, buffer.Length);
-                        Logger.LogDebug($"Send string: {message}");
-                    }
+                using (var s = hwr.GetRequestStream())
+                {
+                    s.Write(buffer, 0, buffer.Length);
+                    Logger.LogDebug($"Send string: {message}");
                 }
 
                 return hwr.GetResponse();

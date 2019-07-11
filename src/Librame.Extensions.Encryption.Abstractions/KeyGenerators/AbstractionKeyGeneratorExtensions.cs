@@ -19,6 +19,107 @@ namespace Librame.Extensions.Encryption
     /// </summary>
     public static class AbstractionKeyGeneratorExtensions
     {
+
+        #region Symmetric Key
+
+        /// <summary>
+        /// 获取 AES 密钥。
+        /// </summary>
+        /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
+        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GetAesKey(this IKeyGenerator keyGenerator, string identifier = null)
+        {
+            return keyGenerator.GetKey256(identifier).Memory.ToArray();
+        }
+
+        /// <summary>
+        /// 获取 DES 密钥。
+        /// </summary>
+        /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
+        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GetDesKey(this IKeyGenerator keyGenerator, string identifier = null)
+        {
+            return keyGenerator.GetKey64(identifier).Memory.ToArray();
+        }
+
+        /// <summary>
+        /// 获取 TripleDES 密钥。
+        /// </summary>
+        /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
+        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GetTripleDesKey(this IKeyGenerator keyGenerator, string identifier = null)
+        {
+            return keyGenerator.GetKey192(identifier).Memory.ToArray();
+        }
+
+        #endregion
+
+
+        #region HMAC Key
+
+        /// <summary>
+        /// 获取 HMAC MD5 密钥。
+        /// </summary>
+        /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
+        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GetHmacMd5Key(this IKeyGenerator keyGenerator, string identifier = null)
+        {
+            return keyGenerator.GetKey512(identifier).Memory.ToArray();
+        }
+
+        /// <summary>
+        /// 获取 HMAC SHA1 密钥。
+        /// </summary>
+        /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
+        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GetHmacSha1Key(this IKeyGenerator keyGenerator, string identifier = null)
+        {
+            return keyGenerator.GetKey512(identifier).Memory.ToArray();
+        }
+
+        /// <summary>
+        /// 获取 HMAC SHA256 密钥。
+        /// </summary>
+        /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
+        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GetHmacSha256Key(this IKeyGenerator keyGenerator, string identifier = null)
+        {
+            return keyGenerator.GetKey512(identifier).Memory.ToArray();
+        }
+
+        /// <summary>
+        /// 获取 HMAC SHA384 密钥。
+        /// </summary>
+        /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
+        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GetHmacSha384Key(this IKeyGenerator keyGenerator, string identifier = null)
+        {
+            return keyGenerator.GetKey1024(identifier).Memory.ToArray();
+        }
+
+        /// <summary>
+        /// 获取 HMAC SHA512 密钥。
+        /// </summary>
+        /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
+        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GetHmacSha512Key(this IKeyGenerator keyGenerator, string identifier = null)
+        {
+            return keyGenerator.GetKey1024(identifier).Memory.ToArray();
+        }
+
+        #endregion
+
+
+        #region Base Key
+
         /// <summary>
         /// 获取 64 位密钥。
         /// </summary>
@@ -106,6 +207,8 @@ namespace Librame.Extensions.Encryption
         {
             return keyGenerator.GenerateKey(256, identifier); // 2048
         }
+
+        #endregion
 
     }
 }

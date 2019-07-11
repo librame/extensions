@@ -26,6 +26,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddServices(this INetworkBuilder builder)
         {
+            builder.Services.AddScoped<IByteCodecService, InternalByteCodecService>();
             builder.Services.AddScoped<ICrawlerService, InternalCrawlerService>();
             builder.Services.AddScoped<IEmailService, InternalEmailService>();
             builder.Services.AddScoped<ISmsService, InternalSmsService>();

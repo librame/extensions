@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.0.816.201</Version>
+    <Version>6.0.817.201</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Network.Abstractions and DotNetty extension package.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Network.Abstractions and DotNetty extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.0.816.201</AssemblyVersion>
-    <FileVersion>6.0.1907.101</FileVersion>
+    <AssemblyVersion>6.0.817.201</AssemblyVersion>
+    <FileVersion>6.0.1907.111</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -40,6 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Librame.Extensions.Encryption\Librame.Extensions.Encryption.csproj" />
     <ProjectReference Include="..\Librame.Extensions.Network\Librame.Extensions.Network.csproj" />
   </ItemGroup>
 

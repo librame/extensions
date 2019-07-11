@@ -26,7 +26,7 @@ namespace Librame.Extensions.Encryption
 
 
         /// <summary>
-        /// 标识符（默认新建标识符；参考 <see cref="AlgorithmIdentifier"/>）。
+        /// 算法标识符（默认新建标识符；参考 <see cref="AlgorithmIdentifier"/>）。
         /// </summary>
         public string Identifier { get; set; }
             = AlgorithmIdentifier.Empty.ToString();

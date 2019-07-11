@@ -129,7 +129,7 @@ namespace Librame.Extensions.Drawing
     public class WatermarkOptions
     {
         /// <summary>
-        /// 是否生成随机（默认不随机）。
+        /// 是否生成随机坐标（默认不随机）。
         /// </summary>
         public bool IsRandom { get; set; }
             = false;
@@ -165,10 +165,11 @@ namespace Librame.Extensions.Drawing
         /// <summary>
         /// 字体。
         /// </summary>
-        public FontOptions Font { get; set; } = new FontOptions
-        {
-            Size = 32
-        };
+        public FontOptions Font { get; set; }
+            = new FontOptions
+            {
+                Size = 32
+            };
     }
 
 

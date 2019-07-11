@@ -72,8 +72,8 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
         public IByteBuffer HmacMd5(IByteBuffer buffer, string identifier = null)
         {
-            var keyBuffer = KeyGenerator.GetKey512(identifier);
-            var hash = new HMACMD5(keyBuffer.Memory.ToArray());
+            var key = KeyGenerator.GetHmacMd5Key(identifier);
+            var hash = new HMACMD5(key);
 
             return ComputeHash(buffer, hash);
         }
@@ -87,8 +87,8 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
         public IByteBuffer HmacSha1(IByteBuffer buffer, string identifier = null)
         {
-            var keyBuffer = KeyGenerator.GetKey512(identifier);
-            var hash = new HMACSHA1(keyBuffer.Memory.ToArray());
+            var key = KeyGenerator.GetHmacSha1Key(identifier);
+            var hash = new HMACSHA1(key);
 
             return ComputeHash(buffer, hash);
         }
@@ -102,8 +102,8 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
         public IByteBuffer HmacSha256(IByteBuffer buffer, string identifier = null)
         {
-            var keyBuffer = KeyGenerator.GetKey512(identifier);
-            var hash = new HMACSHA256(keyBuffer.Memory.ToArray());
+            var key = KeyGenerator.GetHmacSha256Key(identifier);
+            var hash = new HMACSHA256(key);
 
             return ComputeHash(buffer, hash);
         }
@@ -117,8 +117,8 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
         public IByteBuffer HmacSha384(IByteBuffer buffer, string identifier = null)
         {
-            var keyBuffer = KeyGenerator.GetKey1024(identifier);
-            var hash = new HMACSHA384(keyBuffer.Memory.ToArray());
+            var key = KeyGenerator.GetHmacSha384Key(identifier);
+            var hash = new HMACSHA384(key);
 
             return ComputeHash(buffer, hash);
         }
@@ -132,8 +132,8 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IBuffer{T}"/>。</returns>
         public IByteBuffer HmacSha512(IByteBuffer buffer, string identifier = null)
         {
-            var keyBuffer = KeyGenerator.GetKey1024(identifier);
-            var hash = new HMACSHA512(keyBuffer.Memory.ToArray());
+            var key = KeyGenerator.GetHmacSha512Key(identifier);
+            var hash = new HMACSHA512(key);
 
             return ComputeHash(buffer, hash);
         }

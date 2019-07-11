@@ -16,7 +16,6 @@ using System;
 namespace Librame.Extensions.Network
 {
     using Core;
-    using Encryption;
 
     /// <summary>
     /// 网络构建器静态扩展。
@@ -38,13 +37,6 @@ namespace Librame.Extensions.Network
         {
             var options = builder.Configure(configureOptions,
                 configuration, configureBinderOptions);
-
-            // Check EncryptionBuilder Dependency
-            if (!(builder is IEncryptionBuilder))
-            {
-                builder.AddEncryption(options.ConfigureEncryption)
-                    .AddDeveloperGlobalSigningCredentials();
-            }
 
             var networkBuilder = new InternalNetworkBuilder(builder, options);
 

@@ -8,8 +8,6 @@ using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {
-    using Encryption;
-
     public class CrawlerServiceTests
     {
         public class TestCrawlerService : ICrawlerService
@@ -17,8 +15,6 @@ namespace Librame.Extensions.Network.Tests
             public string[] ImageExtensions { get; set; }
 
             public ILoggerFactory LoggerFactory => throw new NotImplementedException();
-
-            public IHashService Hash => throw new NotImplementedException();
 
             public Encoding Encoding { get; set; }
 

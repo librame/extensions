@@ -17,6 +17,7 @@ using System;
 namespace Librame.Extensions.Network.DotNetty
 {
     using Core;
+    using Encryption;
     using Internal;
 
     /// <summary>
@@ -24,6 +25,10 @@ namespace Librame.Extensions.Network.DotNetty
     /// </summary>
     public static class DotNettyNetworkBuilderExtensions
     {
+        private static readonly AlgorithmIdentifier _defaultIdentifier
+            = AlgorithmIdentifier.New();
+
+
         /// <summary>
         /// 添加 DotNetty。
         /// </summary>
@@ -31,15 +36,39 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="configureOptions">给定的 <see cref="Action{DotNettyOptions}"/>（可选；高优先级）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
         /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
+        /// <param name="addEncryptionFactory">注册加密构建器扩展工厂方法（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
             Action<DotNettyOptions> configureOptions = null,
             IConfiguration configuration = null,
-            Action<BinderOptions> configureBinderOptions = null)
+            Action<BinderOptions> configureBinderOptions = null,
+            Func<INetworkBuilder, IEncryptionBuilder> addEncryptionFactory = null)
         {
             builder.Configure(configureOptions,
                 configuration, configureBinderOptions);
 
+            if (!(builder is IEncryptionBuilder))
+            {
+                if (addEncryptionFactory.IsNull())
+                {
+                    addEncryptionFactory = _builder =>
+                    {
+                        return _builder.AddEncryption(options =>
+                        {
+                            options.Identifier = _defaultIdentifier;
+                        })
+                        .AddDeveloperGlobalSigningCredentials();
+                    };
+                }
+
+                addEncryptionFactory.Invoke(builder);
+            }
+
+            return builder.AddDemo();
+        }
+
+        private static INetworkBuilder AddDemo(this INetworkBuilder builder)
+        {
             builder.Services.AddScoped<IDiscardClient, InternalDiscardClient>();
             builder.Services.AddSingleton<IDiscardServer, InternalDiscardServer>();
 

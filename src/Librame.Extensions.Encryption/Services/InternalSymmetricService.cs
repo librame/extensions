@@ -129,7 +129,7 @@ namespace Librame.Extensions.Encryption
         private Aes CreateAes(string identifier = null)
         {
             var algorithm = Aes.Create();
-            algorithm.Key = KeyGenerator.GetKey256(identifier).Memory.ToArray();
+            algorithm.Key = KeyGenerator.GetAesKey(identifier);
             Logger.LogDebug($"Use AES algorithm");
 
             return algorithm;
@@ -174,7 +174,7 @@ namespace Librame.Extensions.Encryption
         private DES CreateDes(string identifier = null)
         {
             var algorithm = DES.Create();
-            algorithm.Key = KeyGenerator.GetKey64(identifier).Memory.ToArray();
+            algorithm.Key = KeyGenerator.GetDesKey(identifier);
             Logger.LogDebug($"Use DES algorithm");
 
             return algorithm;
@@ -219,7 +219,7 @@ namespace Librame.Extensions.Encryption
         private TripleDES CreateTripleDes(string identifier = null)
         {
             var algorithm = TripleDES.Create();
-            algorithm.Key = KeyGenerator.GetKey192(identifier).Memory.ToArray();
+            algorithm.Key = KeyGenerator.GetTripleDesKey();
             Logger.LogDebug($"Use TripleDES algorithm");
 
             return algorithm;

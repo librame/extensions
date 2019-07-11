@@ -16,7 +16,6 @@ using System.Net;
 namespace Librame.Extensions.Network
 {
     using Core;
-    using Encryption;
 
     /// <summary>
     /// 网络构建器选项。
@@ -24,15 +23,10 @@ namespace Librame.Extensions.Network
     public class NetworkBuilderOptions : AbstractBuilderOptions
     {
         /// <summary>
-        /// 配置加密。
+        /// 字节编解码选项。
         /// </summary>
-        public Action<EncryptionBuilderOptions> ConfigureEncryption { get; set; }
-
-        /// <summary>
-        /// 加密数据。
-        /// </summary>
-        public bool Enciphered { get; set; }
-            = false;
+        public ByteCodecOptions ByteCodec { get; set; }
+            = new ByteCodecOptions();
 
         /// <summary>
         /// 抓取器选项。
@@ -63,6 +57,23 @@ namespace Librame.Extensions.Network
         /// </summary>
         public SmtpOptions Smtp { get; set; }
             = new SmtpOptions();
+    }
+
+
+    /// <summary>
+    /// 字节编解码选项。
+    /// </summary>
+    public class ByteCodecOptions
+    {
+        /// <summary>
+        /// 解码工厂方法。
+        /// </summary>
+        public Func<IServiceProvider, byte[], byte[]> DecodeFactory { get; set; }
+
+        /// <summary>
+        /// 编码工厂方法。
+        /// </summary>
+        public Func<IServiceProvider, byte[], byte[]> EncodeFactory { get; set; }
     }
 
 
@@ -122,6 +133,12 @@ namespace Librame.Extensions.Network
     public class EmailOptions
     {
         /// <summary>
+        /// 启用编解码。
+        /// </summary>
+        public bool EnableCodec { get; set; }
+            = false;
+
+        /// <summary>
         /// 邮箱地址。
         /// </summary>
         public string EmailAddress { get; set; }
@@ -140,6 +157,12 @@ namespace Librame.Extensions.Network
     /// </summary>
     public class SmsOptions
     {
+        /// <summary>
+        /// 启用编解码。
+        /// </summary>
+        public bool EnableCodec { get; set; }
+            = false;
+
         /// <summary>
         /// 在接收到来自服务器的 100 次连续响应之前要等待的超时（以毫秒为单位，默认为 10 秒）。
         /// </summary>

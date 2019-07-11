@@ -191,7 +191,7 @@ namespace Librame.Extensions.Drawing
                 isReverseY = true;
             }
 
-            // 如果使用随机位置水印
+            // 如果使用随机坐标水印
             if (Options.Watermark.IsRandom)
             {
                 var random = new Random();
