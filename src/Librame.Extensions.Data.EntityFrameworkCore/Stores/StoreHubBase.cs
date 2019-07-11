@@ -199,7 +199,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <typeparamref name="TAudit"/> 的异步操作。</returns>
         public virtual Task<TAudit> FindAuditAsync(CancellationToken cancellationToken, params object[] keyValues)
         {
-            return EnsureAudits().FindAsync(keyValues, keyValues);
+            return EnsureAudits().FindAsync(keyValues, cancellationToken);
         }
 
         /// <summary>
@@ -207,11 +207,15 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
+        /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TAudit}"/> 的异步操作。</returns>
-        public virtual Task<IPageable<TAudit>> GetPagingAuditsAsync(int index, int size, CancellationToken cancellationToken = default)
+        public virtual Task<IPageable<TAudit>> GetPagingAuditsAsync(int index, int size,
+            Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null, CancellationToken cancellationToken = default)
         {
-            return EnsureAudits().AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
+			var query = queryFactory?.Invoke(EnsureAudits()) ?? EnsureAudits();
+			
+            return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
                 index, size, cancellationToken);
         }
 
@@ -250,17 +254,6 @@ namespace Librame.Extensions.Data
         }
 
         /// <summary>
-        /// 异步查找指定租户。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="keyValues">给定的键值对数组或标识。</param>
-        /// <returns>返回一个包含 <typeparamref name="TTenant"/> 的异步操作。</returns>
-        public virtual Task<TTenant> FindTenantAsync(CancellationToken cancellationToken, params object[] keyValues)
-        {
-            return EnsureTenants().FindAsync(keyValues, keyValues);
-        }
-
-        /// <summary>
         /// 异步获取指定租户。
         /// </summary>
         /// <param name="name">给定的名称。</param>
@@ -275,6 +268,17 @@ namespace Librame.Extensions.Data
         }
 
         /// <summary>
+        /// 异步查找指定租户。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="keyValues">给定的键值对数组或标识。</param>
+        /// <returns>返回一个包含 <typeparamref name="TTenant"/> 的异步操作。</returns>
+        public virtual Task<TTenant> FindTenantAsync(CancellationToken cancellationToken, params object[] keyValues)
+        {
+            return EnsureTenants().FindAsync(keyValues, cancellationToken);
+        }
+
+        /// <summary>
         /// 异步获取所有分页租户集合。
         /// </summary>
         /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
@@ -285,7 +289,7 @@ namespace Librame.Extensions.Data
         {
             var query = queryFactory?.Invoke(EnsureTenants()) ?? EnsureTenants();
 
-            return query.ToListAsync();
+            return query.ToListAsync(cancellationToken);
         }
 
         /// <summary>
