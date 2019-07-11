@@ -211,7 +211,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TAudit}"/> 的异步操作。</returns>
         public virtual Task<IPageable<TAudit>> GetPagingAuditsAsync(int index, int size,
-            Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null, CancellationToken cancellationToken = default)
+            Func<IQueryable<TAudit>, IQueryable<TAudit>> queryFactory = null, CancellationToken cancellationToken = default)
         {
 			var query = queryFactory?.Invoke(EnsureAudits()) ?? EnsureAudits();
 			
