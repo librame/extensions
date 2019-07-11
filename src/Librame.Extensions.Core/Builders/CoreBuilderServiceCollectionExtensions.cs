@@ -18,9 +18,9 @@ namespace Microsoft.Extensions.DependencyInjection
     using Configuration;
 
     /// <summary>
-    /// 构建器服务集合静态扩展。
+    /// 核心构建器服务集合静态扩展。
     /// </summary>
-    public static class BuilderServiceCollectionExtensions
+    public static class CoreBuilderServiceCollectionExtensions
     {
         /// <summary>
         /// 添加 Librame。
