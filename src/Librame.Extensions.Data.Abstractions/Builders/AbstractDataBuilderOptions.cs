@@ -14,17 +14,6 @@ namespace Librame.Extensions.Data
 {
     using Core;
 	
-	/// <summary>
-    /// 抽象数据构建器选项。
-    /// </summary>
-    /// <typeparam name="TTableSchemaOptions">指定的表架构选项类型。</typeparam>
-    public abstract class AbstractDataBuilderOptions<TTableSchemaOptions>
-        : AbstractDataBuilderOptions<StoreOptions, TTableSchemaOptions>
-        where TTableSchemaOptions : ITableSchemaOptions, new()
-	{
-	}
-	
-
     /// <summary>
     /// 抽象数据构建器选项。
     /// </summary>
