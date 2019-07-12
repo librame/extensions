@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data
     /// 存储中心基类。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    public class StoreHubBase<TAccessor> : StoreHubBase<TAccessor, Audit, Tenant, float, DataStatus>, IStoreHub<TAccessor>
+    public class StoreHubBase<TAccessor> : StoreHubBase<TAccessor, Audit, Tenant>, IStoreHub<TAccessor>
         where TAccessor : DbContextAccessor
     {
         /// <summary>
@@ -82,37 +82,6 @@ namespace Librame.Extensions.Data
         {
             return Accessor.Tenants;
         }
-
-
-        #region Tenants
-
-        /// <summary>
-        /// 异步获取分页租户集合。
-        /// </summary>
-        /// <param name="index">给定的页索引。</param>
-        /// <param name="size">给定的页大小。</param>
-        /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IPageable{TTenant}"/> 的异步操作。</returns>
-        public override Task<IPageable<Tenant>> GetPagingTenantsAsync(int index, int size,
-            Func<IQueryable<Tenant>, IQueryable<Tenant>> queryFactory = null, CancellationToken cancellationToken = default)
-        {
-            var query = queryFactory?.Invoke(EnsureTenants()) ?? EnsureTenants();
-
-            return query.AsDescendingPagingByIndexAsync(index, size, cancellationToken);
-        }
-
-
-        /// <summary>
-        /// 尝试逻辑删除租户集合。
-        /// </summary>
-        /// <param name="tenants">给定的 <see cref="Tenant"/> 数组。</param>
-        /// <returns>返回 <see cref="EntityResult"/>。</returns>
-        public override EntityResult TryDelete(params Tenant[] tenants)
-            => EnsureTenants().TryLogicDelete(tenants);
-
-        #endregion
-
     }
 
 
@@ -122,14 +91,10 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-    /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
-    /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
-    public class StoreHubBase<TAccessor, TAudit, TTenant, TRank, TStatus> : AbstractStore<TAccessor>, IStoreHub<TAccessor, TAudit, TTenant>
-        where TAccessor : DbContext, IAccessor
+    public class StoreHubBase<TAccessor, TAudit, TTenant> : AbstractStore<TAccessor>, IStoreHub<TAccessor, TAudit, TTenant>
+        where TAccessor : DbContextAccessor
         where TAudit : Audit
-        where TTenant : Tenant<TRank, TStatus>
-        where TRank : struct
-        where TStatus : struct
+        where TTenant : Tenant
     {
         /// <summary>
         /// 构造一个存储中心基类实例（可用于容器构造）。
@@ -305,8 +270,7 @@ namespace Librame.Extensions.Data
         {
             var query = queryFactory?.Invoke(EnsureTenants()) ?? EnsureTenants();
 
-            return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.Id),
-                index, size, cancellationToken);
+            return query.AsDescendingPagingByIndexAsync(index, size, cancellationToken);
         }
 
 
@@ -333,7 +297,7 @@ namespace Librame.Extensions.Data
         /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
         /// <returns>返回 <see cref="EntityResult"/>。</returns>
         public virtual EntityResult TryDelete(params TTenant[] tenants)
-            => EnsureTenants().TryDelete(tenants);
+            => EnsureTenants().TryLogicDelete(tenants);
 
         #endregion
 

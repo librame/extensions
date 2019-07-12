@@ -31,5 +31,16 @@ namespace Librame.Extensions.Data
         /// 架构。
         /// </summary>
         public string Schema { get; set; }
+
+
+        /// <summary>
+        /// 转换为字符串。
+        /// </summary>
+        /// <returns>返回架构。</returns>
+        public override string ToString()
+        {
+            return Schema;
+        }
+
     }
 }

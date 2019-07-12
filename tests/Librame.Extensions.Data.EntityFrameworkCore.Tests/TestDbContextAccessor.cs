@@ -11,9 +11,11 @@ namespace Librame.Extensions.Data.Tests
         {
         }
 
+
         public DbSet<Category> Categories { get; set; }
 
         public DbSet<Article> Articles { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,9 +28,7 @@ namespace Librame.Extensions.Data.Tests
                 category.HasKey(x => x.Id);
 
                 category.Property(x => x.Id).ValueGeneratedOnAdd();
-                category.Property(x => x.Name).HasMaxLength(100).IsRequired();
-                category.Property(x => x.Rank);
-                category.Property(x => x.Status);
+                category.Property(x => x.Name).HasMaxLength(256).IsRequired();
 
                 // 关联
                 category.HasMany(x => x.Articles).WithOne(x => x.Category).IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -40,11 +40,8 @@ namespace Librame.Extensions.Data.Tests
 
                 article.HasKey(x => x.Id);
 
-                article.Property(x => x.Id).ValueGeneratedNever();
-                article.Property(x => x.Title).HasMaxLength(200).IsRequired();
-                article.Property(x => x.Descr).HasMaxLength(1000).IsRequired();
-                article.Property(x => x.Rank);
-                article.Property(x => x.Status);
+                article.Property(x => x.Id).HasMaxLength(256);
+                article.Property(x => x.Title).HasMaxLength(256).IsRequired();
             });
         }
 

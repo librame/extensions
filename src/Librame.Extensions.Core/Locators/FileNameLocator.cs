@@ -59,53 +59,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 比较指定的对象是否与当前实例相等。
-        /// </summary>
-        /// <param name="obj">给定的对象。</param>
-        /// <returns>返回是否相等的布尔值。</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is IFileNameLocator locator)
-                return Equals(locator);
-
-            return false;
-        }
-
-
-        /// <summary>
-        /// 获取哈希码。
-        /// </summary>
-        /// <returns>返回整数。</returns>
-        public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
-
-
-        /// <summary>
-        /// 比较两个 <see cref="FileNameLocator"/> 是否相等。
-        /// </summary>
-        /// <param name="a">给定的 <see cref="FileNameLocator"/>。</param>
-        /// <param name="b">给定的 <see cref="FileNameLocator"/>。</param>
-        /// <returns>返回是否相等的布尔值。</returns>
-        public static bool operator ==(FileNameLocator a, FileNameLocator b)
-        {
-            return a.ToString() == b.ToString();
-        }
-
-        /// <summary>
-        /// 比较两个 <see cref="FileNameLocator"/> 是否不等。
-        /// </summary>
-        /// <param name="a">给定的 <see cref="FileNameLocator"/>。</param>
-        /// <param name="b">给定的 <see cref="FileNameLocator"/>。</param>
-        /// <returns>返回是否不等的布尔值。</returns>
-        public static bool operator !=(FileNameLocator a, FileNameLocator b)
-        {
-            return !(a == b);
-        }
-
-
-        /// <summary>
         /// 隐式转换。
         /// </summary>
         /// <param name="locator">给定的 <see cref="FileNameLocator"/>。</param>

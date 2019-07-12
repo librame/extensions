@@ -90,5 +90,6 @@ namespace Librame.Extensions.Core
         {
             return Memory.ToString();
         }
+
     }
 }

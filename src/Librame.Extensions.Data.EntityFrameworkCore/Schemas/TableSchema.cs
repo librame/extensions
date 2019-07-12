@@ -11,7 +11,6 @@
 #endregion
 
 using System;
-using System.Linq;
 
 namespace Librame.Extensions.Data
 {
@@ -36,6 +35,19 @@ namespace Librame.Extensions.Data
         /// 名称。
         /// </summary>
         public string Name { get; }
+
+
+        /// <summary>
+        /// 转换为字符串。
+        /// </summary>
+        /// <returns>返回表名。</returns>
+        public override string ToString()
+        {
+            if (Schema.IsNotNullOrEmpty())
+                return $"{Schema}.{Name}";
+
+            return Name;
+        }
 
 
         /// <summary>

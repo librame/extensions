@@ -17,13 +17,22 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据构建器选项接口。
     /// </summary>
+    /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
     /// <typeparam name="TTableSchemaOptions">指定的表架构选项类型。</typeparam>
-    public interface IDataBuilderOptions<TTableSchemaOptions> : IBuilderOptions
+    public interface IDataBuilderOptions<TStoreOptions, TTableSchemaOptions> : IBuilderOptions
+        where TStoreOptions : IStoreOptions
         where TTableSchemaOptions : ITableSchemaOptions
     {
         /// <summary>
+        /// 存储选项。
+        /// </summary>
+        /// <value>返回 <typeparamref name="TStoreOptions"/>。</value>
+        TStoreOptions Stores { get; set; }
+
+        /// <summary>
         /// 表架构选项。
         /// </summary>
+        /// <value>返回 <typeparamref name="TTableSchemaOptions"/>。</value>
         TTableSchemaOptions TableSchemas { get; set; }
     }
 }

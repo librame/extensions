@@ -94,7 +94,7 @@ namespace Librame.Extensions.Data
             var audit = new Audit
             {
                 Id = Identifier.GetAuditIdAsync(cancellationToken).Result,
-                EntityName = entry.Metadata.ClrType.Name,
+                TableName = GetTableName(entry),
                 EntityTypeName = entry.Metadata.ClrType.FullName,
                 State = (int)entry.State,
                 StateName = entry.State.ToString()
@@ -158,6 +158,18 @@ namespace Librame.Extensions.Data
             }
 
             return audit;
+        }
+
+        /// <summary>
+        /// 获取表名。
+        /// </summary>
+        /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
+        /// <returns>返回字符串。</returns>
+        protected virtual string GetTableName(EntityEntry entry)
+        {
+            var relational = entry.Metadata?.Relational();
+
+            return new TableSchema(relational?.TableName, relational?.Schema).ToString();
         }
 
         /// <summary>

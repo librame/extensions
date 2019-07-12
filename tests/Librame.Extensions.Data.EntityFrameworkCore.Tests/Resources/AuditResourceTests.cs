@@ -24,7 +24,7 @@ namespace Librame.Extensions.Data.Tests
             var entityId = localizer[r => r.EntityId];
             Assert.False(entityId.ResourceNotFound);
 
-            var entityName = localizer[r => r.EntityName];
+            var entityName = localizer[r => r.TableName];
             Assert.False(entityName.ResourceNotFound);
 
             var entityTypeName = localizer[r => r.EntityTypeName];

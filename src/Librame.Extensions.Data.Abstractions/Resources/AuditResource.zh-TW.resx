@@ -126,9 +126,6 @@
   <data name="EntityId" xml:space="preserve">
     <value>實體標識</value>
   </data>
-  <data name="EntityName" xml:space="preserve">
-    <value>實體名稱</value>
-  </data>
   <data name="EntityTypeName" xml:space="preserve">
     <value>實體類型名稱</value>
   </data>
@@ -140,5 +137,8 @@
   </data>
   <data name="StateName" xml:space="preserve">
     <value>狀態名稱</value>
+  </data>
+  <data name="TableName" xml:space="preserve">
+    <value>表名</value>
   </data>
 </root>

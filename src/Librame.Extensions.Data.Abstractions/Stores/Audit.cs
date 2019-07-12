@@ -22,8 +22,14 @@ namespace Librame.Extensions.Data
     /// </summary>
     [NotAudited]
     [Description("审计")]
-    public class Audit : AbstractId
+    public class Audit : AbstractGenId
     {
+        /// <summary>
+        /// 表名。
+        /// </summary>
+        [Display(Name = nameof(TableName), ResourceType = typeof(AuditResource))]
+        public virtual string TableName { get; set; }
+
         /// <summary>
         /// 实体标识。
         /// </summary>
@@ -31,13 +37,7 @@ namespace Librame.Extensions.Data
         public virtual string EntityId { get; set; }
 
         /// <summary>
-        /// 实体名称。
-        /// </summary>
-        [Display(Name = nameof(EntityName), ResourceType = typeof(AuditResource))]
-        public virtual string EntityName { get; set; }
-
-        /// <summary>
-        /// 实体类型名称。
+        /// 实体类型名。
         /// </summary>
         [Display(Name = nameof(EntityTypeName), ResourceType = typeof(AuditResource))]
         public virtual string EntityTypeName { get; set; }

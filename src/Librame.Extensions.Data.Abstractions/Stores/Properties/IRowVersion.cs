@@ -13,12 +13,12 @@
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 行版本（即时间戳）接口。
+    /// 行版本接口。
     /// </summary>
     public interface IRowVersion
     {
         /// <summary>
-        /// 行版本（即时间戳）。
+        /// 行版本。
         /// </summary>
         byte[] RowVersion { get; set; }
     }

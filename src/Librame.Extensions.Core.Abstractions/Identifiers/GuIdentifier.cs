@@ -41,14 +41,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 转换为 BASE64 字符串。
-        /// </summary>
-        /// <returns>返回字符串。</returns>
-        public override string ToString()
-            => Buffer.AsBase64String();
-
-
-        /// <summary>
         /// 显式转换为 <see cref="GuIdentifier"/>。
         /// </summary>
         /// <param name="identifier">给定的全局唯一标识符。</param>

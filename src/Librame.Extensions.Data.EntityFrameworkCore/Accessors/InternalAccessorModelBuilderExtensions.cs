@@ -20,14 +20,16 @@ namespace Librame.Extensions.Data
     internal static class InternalAccessorModelBuilderExtensions
     {
         /// <summary>
-        /// 配置基础实体集合。
+        /// 配置存储中心基类。
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
-        public static void ConfigureBaseEntities(this ModelBuilder modelBuilder, DataBuilderOptions options)
+        public static void ConfigureStoreHubBase(this ModelBuilder modelBuilder, DataBuilderOptions options)
         {
             if (!options.DefaultSchema.IsNullOrEmpty())
                 modelBuilder.HasDefaultSchema(options.DefaultSchema);
+
+            var maxLength = options.Stores?.MaxLengthForProperties ?? 0;
 
             // 审计
             modelBuilder.Entity<Audit>(b =>
@@ -36,11 +38,18 @@ namespace Librame.Extensions.Data
 
                 b.HasKey(k => k.Id);
 
-                b.Property(p => p.Id).ValueGeneratedNever();
-                b.Property(p => p.EntityName).HasMaxLength(100).IsRequired();
-                b.Property(p => p.EntityTypeName).HasMaxLength(200).IsRequired();
-                b.Property(p => p.StateName).HasMaxLength(50);
-                b.Property(p => p.CreatedBy).HasMaxLength(50);
+                b.HasIndex(i => new { i.EntityTypeName, i.State }).HasName();
+
+                b.Property(p => p.Id).HasMaxLength(256);
+                b.Property(p => p.EntityTypeName).HasMaxLength(256).IsRequired();
+
+                if (maxLength > 0)
+                {
+                    b.Property(p => p.TableName).HasMaxLength(maxLength);
+                    b.Property(p => p.EntityId).HasMaxLength(maxLength);
+                    b.Property(p => p.StateName).HasMaxLength(maxLength);
+                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
+                }
 
                 // 关联
                 b.HasMany(p => p.Properties).WithOne(p => p.Audit).IsRequired().OnDelete(DeleteBehavior.Cascade);
@@ -53,9 +62,16 @@ namespace Librame.Extensions.Data
 
                 b.HasKey(k => k.Id);
 
-                b.Property(p => p.Id).ValueGeneratedNever();
-                b.Property(p => p.PropertyName).HasMaxLength(100).IsRequired();
-                b.Property(p => p.PropertyTypeName).HasMaxLength(200).IsRequired();
+                b.HasIndex(i => new { i.AuditId }).HasName();
+
+                b.Property(p => p.Id).HasMaxLength(256);
+                b.Property(p => p.AuditId).HasMaxLength(256).IsRequired();
+
+                if (maxLength > 0)
+                {
+                    b.Property(p => p.PropertyName).HasMaxLength(maxLength);
+                    b.Property(p => p.PropertyTypeName).HasMaxLength(maxLength);
+                }
             });
 
             // 租户
@@ -67,9 +83,15 @@ namespace Librame.Extensions.Data
 
                 b.HasIndex(i => new { i.Name, i.Host }).HasName().IsUnique();
 
-                b.Property(p => p.Id).ValueGeneratedNever();
-                b.Property(p => p.Name).HasMaxLength(100).IsRequired();
-                b.Property(p => p.Host).HasMaxLength(200).IsRequired();
+                b.Property(p => p.Id).HasMaxLength(256);
+                b.Property(p => p.Name).HasMaxLength(256).IsRequired();
+                b.Property(p => p.Host).HasMaxLength(256).IsRequired();
+
+                if (maxLength > 0)
+                {
+                    b.Property(p => p.DefaultConnectionString).HasMaxLength(maxLength).IsRequired();
+                    b.Property(p => p.WriteConnectionString).HasMaxLength(maxLength);
+                }
             });
         }
 

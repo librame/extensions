@@ -35,14 +35,6 @@ namespace Librame.Extensions.Core
         }
 
 
-        /// <summary>
-        /// 转换为 BASE64 字符串。
-        /// </summary>
-        /// <returns>返回字符串。</returns>
-        public override string ToString()
-            => Buffer.AsBase64String();
-
-
         private static byte[] GenerateBuffer(RandomNumberGenerator generator, int length = 32)
         {
             generator.NotNull(nameof(generator));

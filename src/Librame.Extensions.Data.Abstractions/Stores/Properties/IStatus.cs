@@ -13,7 +13,7 @@
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 状态接口。
+    /// 数据状态枚举型状态接口。
     /// </summary>
     public interface IStatus : IStatus<DataStatus>
     {

@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data.Tests
             InitializeArticles(stores);
         }
 
-        private void InitializeCategories(IStoreHub<TestDbContextAccessor> stores)
+        private void InitializeCategories(IStoreHub<TAccessor> stores)
         {
             if (!stores.Accessor.Categories.Any())
             {
@@ -51,7 +51,7 @@ namespace Librame.Extensions.Data.Tests
             }
         }
 
-        private void InitializeArticles(IStoreHub<TestDbContextAccessor> stores)
+        private void InitializeArticles(IStoreHub<TAccessor> stores)
         {
             if (!stores.Accessor.Categories.Any())
             {

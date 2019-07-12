@@ -12,14 +12,14 @@
 
 namespace Librame.Extensions.Data
 {
-    /// <summary>
-    /// 租户标识接口。
-    /// </summary>
-    public interface ITenantId
-    {
-        /// <summary>
-        /// 租户标识。
-        /// </summary>
-        string TenantId { get; set; }
-    }
+    ///// <summary>
+    ///// 租户标识接口。
+    ///// </summary>
+    //public interface ITenantId
+    //{
+    //    /// <summary>
+    //    /// 租户标识。
+    //    /// </summary>
+    //    string TenantId { get; set; }
+    //}
 }

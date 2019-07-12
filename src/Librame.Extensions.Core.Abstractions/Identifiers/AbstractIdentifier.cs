@@ -44,67 +44,17 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 转换为 16 进制字符串。
         /// </summary>
-        /// <returns></returns>
+        /// <returns>返回字符串。</returns>
         public virtual string ToHexString()
             => Buffer.AsHexString();
 
 
-        #region Overrrides
-
         /// <summary>
-        /// 是否相等。
+        /// 转换为 BASE64 字符串。
         /// </summary>
-        /// <param name="obj">给定的对象。</param>
-        /// <returns>返回布尔值。</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is AbstractIdentifier other)
-                return Equals(other);
-
-            return false;
-        }
-
-
-        /// <summary>
-        /// 获取哈希码。
-        /// </summary>
-        /// <returns>返回整数。</returns>
-        public override int GetHashCode()
-            => ToString().GetHashCode();
-
-        #endregion
-
-
-        #region Compares
-
-        /// <summary>
-        /// 是否相等。
-        /// </summary>
-        /// <param name="other">给定的 <see cref="AbstractIdentifier"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public virtual bool Equals(AbstractIdentifier other)
-            => this == other;
-
-
-        /// <summary>
-        /// 是否相等。
-        /// </summary>
-        /// <param name="a">给定的 <see cref="AbstractIdentifier"/>。</param>
-        /// <param name="b">给定的 <see cref="AbstractIdentifier"/>。</param>
-        /// <returns>返回是否相等的布尔值。</returns>
-        public static bool operator ==(AbstractIdentifier a, AbstractIdentifier b)
-            => a.ToString() == b.ToString();
-
-        /// <summary>
-        /// 是否不等。
-        /// </summary>
-        /// <param name="a">给定的 <see cref="AbstractIdentifier"/>。</param>
-        /// <param name="b">给定的 <see cref="AbstractIdentifier"/>。</param>
-        /// <returns>返回是否不等的布尔值。</returns>
-        public static bool operator !=(AbstractIdentifier a, AbstractIdentifier b)
-            => !(a == b);
-
-        #endregion
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => Buffer.AsBase64String();
 
 
         /// <summary>

@@ -10,22 +10,16 @@
 
 #endregion
 
-using System;
-using System.ComponentModel.DataAnnotations;
-
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 抽象标识。
+    /// 并发标记接口。
     /// </summary>
-    /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public abstract class AbstractId<TId> : IId<TId>
-        where TId : IEquatable<TId>
+    public interface IConcurrencyStamp
     {
         /// <summary>
-        /// 标识。
+        /// 并发标记。
         /// </summary>
-        [Display(Name = nameof(Id), GroupName = "GlobalGroup", ResourceType = typeof(AbstractEntityResource))]
-        public virtual TId Id { get; set; }
+        string ConcurrencyStamp { get; set; }
     }
 }

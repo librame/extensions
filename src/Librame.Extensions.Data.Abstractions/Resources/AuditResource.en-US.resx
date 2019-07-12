@@ -126,9 +126,6 @@
   <data name="EntityId" xml:space="preserve">
     <value>Entity id</value>
   </data>
-  <data name="EntityName" xml:space="preserve">
-    <value>Entity name</value>
-  </data>
   <data name="EntityTypeName" xml:space="preserve">
     <value>Entity type name</value>
   </data>
@@ -140,5 +137,8 @@
   </data>
   <data name="StateName" xml:space="preserve">
     <value>State name</value>
+  </data>
+  <data name="TableName" xml:space="preserve">
+    <value>Table name</value>
   </data>
 </root>

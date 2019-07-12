@@ -10,26 +10,24 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 单精度浮点排序接口。
+    /// 抽象增量式标识（默认标识类型为 <see cref="int"/>）。
     /// </summary>
-    public interface IRank : IRank<float>
+    public abstract class AbstractIncremId : AbstractIncremId<int>, IIncremId
     {
     }
 
 
     /// <summary>
-    /// 排序接口。
+    /// 抽象增量式标识。
     /// </summary>
-    /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
-    public interface IRank<TRank>
-        where TRank : struct
+    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+    public abstract class AbstractIncremId<TIncremId> : AbstractId<TIncremId>, IIncremId<TIncremId>
+        where TIncremId : IEquatable<TIncremId>
     {
-        /// <summary>
-        /// 排序。
-        /// </summary>
-        TRank Rank { get; set; }
     }
 }

@@ -76,29 +76,6 @@ namespace Librame.Extensions.Storage
             return Name == other?.Name;
         }
 
-        /// <summary>
-        /// 比较相等。
-        /// </summary>
-        /// <param name="obj">给定的对象。</param>
-        /// <returns>返回布尔值。</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is CapacityUnitDescriptor other)
-                return Equals(other);
-
-            return false;
-        }
-
-
-        /// <summary>
-        /// 获取哈希码。
-        /// </summary>
-        /// <returns>返回 32 位带符号整数。</returns>
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
-        }
-
 
         /// <summary>
         /// 转换为字符串。

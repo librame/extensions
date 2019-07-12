@@ -20,17 +20,17 @@ namespace Librame.Extensions.Data
     public class AuditResource : IResource
     {
         /// <summary>
+        /// 表名。
+        /// </summary>
+        public string TableName { get; set; }
+
+        /// <summary>
         /// 实体标识。
         /// </summary>
         public string EntityId { get; set; }
 
         /// <summary>
-        /// 实体名称。
-        /// </summary>
-        public string EntityName { get; set; }
-
-        /// <summary>
-        /// 实体类型名称。
+        /// 实体类型名。
         /// </summary>
         public string EntityTypeName { get; set; }
 

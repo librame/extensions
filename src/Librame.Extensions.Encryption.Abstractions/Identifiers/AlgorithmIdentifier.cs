@@ -71,30 +71,6 @@ namespace Librame.Extensions.Encryption
             => Memory;
 
 
-        #region Overrrides
-
-        /// <summary>
-        /// 是否相等。
-        /// </summary>
-        /// <param name="obj">给定的对象。</param>
-        /// <returns>返回布尔值。</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is AlgorithmIdentifier other)
-                return Equals(other);
-
-            return false;
-        }
-
-
-        /// <summary>
-        /// 获取哈希码。
-        /// </summary>
-        /// <returns>返回整数。</returns>
-        public override int GetHashCode()
-            => ToString().GetHashCode();
-
-
         /// <summary>
         /// 转换为 16 进制字符串。
         /// </summary>
@@ -102,10 +78,6 @@ namespace Librame.Extensions.Encryption
         public override string ToString()
             => Memory.ToArray().AsHexString();
 
-        #endregion
-
-
-        #region Compares
 
         /// <summary>
         /// 是否相等。
@@ -113,28 +85,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="other">给定的 <see cref="AlgorithmIdentifier"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(AlgorithmIdentifier other)
-            => this == other;
-
-
-        /// <summary>
-        /// 是否相等。
-        /// </summary>
-        /// <param name="a">给定的 <see cref="AlgorithmIdentifier"/>。</param>
-        /// <param name="b">给定的 <see cref="AlgorithmIdentifier"/>。</param>
-        /// <returns>返回是否相等的布尔值。</returns>
-        public static bool operator ==(AlgorithmIdentifier a, AlgorithmIdentifier b)
-            => a?.ToString() == b?.ToString();
-
-        /// <summary>
-        /// 是否不等。
-        /// </summary>
-        /// <param name="a">给定的 <see cref="AlgorithmIdentifier"/>。</param>
-        /// <param name="b">给定的 <see cref="AlgorithmIdentifier"/>。</param>
-        /// <returns>返回是否不等的布尔值。</returns>
-        public static bool operator !=(AlgorithmIdentifier a, AlgorithmIdentifier b)
-            => !(a == b);
-
-        #endregion
+            => ToString() == other?.ToString();
 
 
         #region Converts

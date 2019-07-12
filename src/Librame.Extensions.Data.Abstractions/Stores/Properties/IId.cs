@@ -17,14 +17,6 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 标识接口。
     /// </summary>
-    public interface IId : IId<string>
-    {
-    }
-
-
-    /// <summary>
-    /// 标识接口。
-    /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     public interface IId<TId>
         where TId : IEquatable<TId>

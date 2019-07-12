@@ -130,7 +130,7 @@ namespace Librame.Extensions.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ConfigureBaseEntities(BuilderOptions);
+            modelBuilder.ConfigureStoreHubBase(BuilderOptions);
         }
 
 

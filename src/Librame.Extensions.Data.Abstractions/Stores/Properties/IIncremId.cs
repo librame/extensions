@@ -11,21 +11,23 @@
 #endregion
 
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 抽象标识。
+    /// 增量式标识接口（默认标识类型为 <see cref="int"/>）。
     /// </summary>
-    /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public abstract class AbstractId<TId> : IId<TId>
-        where TId : IEquatable<TId>
+    public interface IIncremId : IIncremId<int>
     {
-        /// <summary>
-        /// 标识。
-        /// </summary>
-        [Display(Name = nameof(Id), GroupName = "GlobalGroup", ResourceType = typeof(AbstractEntityResource))]
-        public virtual TId Id { get; set; }
+    }
+
+
+    /// <summary>
+    /// 增量式标识接口。
+    /// </summary>
+    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+    public interface IIncremId<TIncremId> : IId<TIncremId>
+        where TIncremId : IEquatable<TIncremId>
+    {
     }
 }

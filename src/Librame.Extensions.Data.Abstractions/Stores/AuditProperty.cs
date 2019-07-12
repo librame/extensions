@@ -20,8 +20,14 @@ namespace Librame.Extensions.Data
     /// </summary>
     [NotAudited]
     [Description("审计属性")]
-    public class AuditProperty : AbstractId
+    public class AuditProperty : AbstractGenId
     {
+        /// <summary>
+        /// 审计标识。
+        /// </summary>
+        [Display(Name = nameof(AuditId), ResourceType = typeof(AuditPropertyResource))]
+        public virtual string AuditId { get; set; }
+
         /// <summary>
         /// 属性名称。
         /// </summary>
@@ -45,12 +51,6 @@ namespace Librame.Extensions.Data
         /// </summary>
         [Display(Name = nameof(NewValue), ResourceType = typeof(AuditPropertyResource))]
         public virtual string NewValue { get; set; }
-
-        /// <summary>
-        /// 审计标识。
-        /// </summary>
-        [Display(Name = nameof(AuditId), ResourceType = typeof(AuditPropertyResource))]
-        public virtual string AuditId { get; set; }
 
 
         /// <summary>
