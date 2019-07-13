@@ -73,6 +73,69 @@ namespace Librame.Extensions
         }
 
 
+        #region ForEach
+
+        /// <summary>
+        /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// action is null.
+        /// </exception>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="items">给定的元素集合。</param>
+        /// <param name="action">给定的遍历动作。</param>
+        /// <param name="breakFactory">给定跳出遍历的动作（可选）。</param>
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> action,
+            Func<T, bool> breakFactory = null)
+        {
+            if (items.IsNullOrEmpty())
+                return;
+
+            action.NotNull(nameof(action));
+
+            foreach (var item in items)
+            {
+                action.Invoke(item);
+
+                if (breakFactory?.Invoke(item) == true)
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// action is null.
+        /// </exception>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="items">给定的元素集合。</param>
+        /// <param name="action">给定的遍历动作。</param>
+        /// <param name="breakFactory">给定跳出遍历的动作（可选）。</param>
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T, int> action,
+            Func<T, int, bool> breakFactory = null)
+        {
+            if (items.IsNullOrEmpty())
+                return;
+
+            action.NotNull(nameof(action));
+
+            int i = 0;
+
+            foreach (var item in items)
+            {
+                action.Invoke(item, i);
+
+                if (breakFactory?.Invoke(item, i) == true)
+                    break;
+
+                i++;
+            }
+        }
+
+        #endregion
+
+
         #region Trim
 
         /// <summary>

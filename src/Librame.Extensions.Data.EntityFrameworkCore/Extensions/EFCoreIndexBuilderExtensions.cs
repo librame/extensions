@@ -32,8 +32,8 @@ namespace Librame.Extensions.Data
         {
             var sb = new StringBuilder();
 
-            // Prefix: EntityName
-            sb.Append(indexBuilder.Metadata.DeclaringEntityType.ClrType.Name);
+            // Prefix: EntityBodyName
+            sb.Append(indexBuilder.Metadata.DeclaringEntityType.ClrType.GetBodyName());
 
             foreach (var property in indexBuilder.Metadata.Properties)
                 sb.Append(property.Name);

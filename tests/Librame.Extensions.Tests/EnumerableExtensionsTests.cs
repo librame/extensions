@@ -26,6 +26,19 @@ namespace Librame.Extensions.Tests
         }
 
         [Fact]
+        public void ForEachTest()
+        {
+            var list = new List<int>
+            {
+                1,2,3,4,5,6,7,8,9
+            };
+
+            var sum = 0;
+            list.ForEach(i => sum += i, i => i < 6);
+            Assert.Equal(21, sum); // 1+...6
+        }
+
+        [Fact]
         public void TrimTest()
         {
             var list = new List<int>

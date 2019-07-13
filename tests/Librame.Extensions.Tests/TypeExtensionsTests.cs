@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Collections.Generic;
+using Xunit;
 
 namespace Librame.Extensions.Tests
 {
@@ -42,15 +43,42 @@ namespace Librame.Extensions.Tests
         }
 
 
-        //[Fact]
-        //public void CreateOrDefaultTest()
-        //{
-        //    var i = (int)typeof(int).CreateOrDefault();
-        //    Assert.Equal(default, i);
+        [Fact]
+        public void GetQualifiedNameTest()
+        {
+            var listType = typeof(IList<string>);
+            var qualifiedName = listType.GetQualifiedName();
+            Assert.Equal("System.Runtime, System.Collections.Generic.IList`1[System.String]", qualifiedName);
+        }
 
-        //    var obj = (TestClass1)typeof(TestClass1).CreateOrDefault();
-        //    Assert.NotNull(obj);
-        //}
+
+        [Fact]
+        public void GetBodyNameTest()
+        {
+            var dictType = typeof(IDictionary<string, IList<string>>);
+            var bodyName = dictType.GetBodyName();
+            Assert.Equal("IDictionary", bodyName);
+        }
+
+
+        [Fact]
+        public void GetStringTest()
+        {
+            var listType = typeof(IList<string>);
+            var dictType = typeof(IDictionary<string, IList<string>>);
+
+            // GetName
+            var listTypeName = listType.GetName();
+            var dictTypeName = dictType.GetName();
+            Assert.Equal("IList`1[String]", listTypeName);
+            Assert.Equal("IDictionary`2[String, IList`1[String]]", dictTypeName);
+
+            // GetFullName
+            listTypeName = listType.GetFullName();
+            dictTypeName = dictType.GetFullName();
+            Assert.Equal("System.Collections.Generic.IList`1[System.String]", listTypeName);
+            Assert.Equal("System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]", dictTypeName);
+        }
 
 
         [Fact]

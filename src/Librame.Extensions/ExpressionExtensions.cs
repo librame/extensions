@@ -35,17 +35,17 @@ namespace Librame.Extensions
 
             string propertyName = string.Empty;
             
-            //对象是不是一元运算符  
+            //对象是不是一元运算符
             if (propertyExpression.Body is UnaryExpression)
             {
                 propertyName = ((MemberExpression)((UnaryExpression)propertyExpression.Body).Operand).Member.Name;
             }
-            //对象是不是访问的字段或属性  
+            //对象是不是访问的字段或属性
             else if (propertyExpression.Body is MemberExpression)
             {
                 propertyName = ((MemberExpression)propertyExpression.Body).Member.Name;
             }
-            //对象是不是参数表达式  
+            //对象是不是参数表达式
             else if (propertyExpression.Body is ParameterExpression)
             {
                 propertyName = ((ParameterExpression)propertyExpression.Body).Type.Name;

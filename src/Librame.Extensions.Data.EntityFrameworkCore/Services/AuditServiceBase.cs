@@ -95,7 +95,7 @@ namespace Librame.Extensions.Data
             {
                 Id = Identifier.GetAuditIdAsync(cancellationToken).Result,
                 TableName = GetTableName(entry),
-                EntityTypeName = entry.Metadata.ClrType.FullName,
+                EntityTypeName = entry.Metadata.ClrType.GetFullName(),
                 State = (int)entry.State,
                 StateName = entry.State.ToString()
             };
@@ -112,7 +112,7 @@ namespace Librame.Extensions.Data
                 {
                     Id = Identifier.GetAuditPropertyIdAsync(cancellationToken).Result,
                     PropertyName = property.Name,
-                    PropertyTypeName = property.ClrType.FullName
+                    PropertyTypeName = property.ClrType.GetFullName()
                 };
 
                 switch (entry.State)
