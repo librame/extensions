@@ -18,6 +18,11 @@ namespace Librame.Extensions.Data
     public interface IStoreOptions
     {
         /// <summary>
+        /// 映射关系。
+        /// </summary>
+        bool MapRelationship { get; set; }
+
+        /// <summary>
         /// 属性的最大长度。
         /// </summary>
         int MaxLengthForProperties { get; set; }

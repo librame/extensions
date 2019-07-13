@@ -31,7 +31,6 @@ namespace Librame.Extensions.Data
         }
     }
 
-
     /// <summary>
     /// 抽象生成式标识实体（默认标识类型为 <see cref="string"/>）。
     /// </summary>
@@ -51,6 +50,15 @@ namespace Librame.Extensions.Data
         }
     }
 
+
+    /// <summary>
+    /// 抽象生成式标识实体（默认排序类型为 <see cref="float"/>、状态类型为 <see cref="DataStatus"/>）。
+    /// </summary>
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    public abstract class AbstractEntityWithGenId<TGenId> : AbstractEntity<TGenId>, IGenId<TGenId>
+        where TGenId : IEquatable<TGenId>
+    {
+    }
 
     /// <summary>
     /// 抽象生成式标识实体。

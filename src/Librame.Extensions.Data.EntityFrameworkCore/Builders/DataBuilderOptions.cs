@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据构建器选项。
     /// </summary>
-    public class DataBuilderOptions : AbstractDataBuilderOptions<StoreOptions, TableSchemaOptions>
+    public class DataBuilderOptions : DataBuilderOptionsBase
     {
         /// <summary>
         /// 默认架构。

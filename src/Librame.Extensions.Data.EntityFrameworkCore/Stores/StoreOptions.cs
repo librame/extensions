@@ -18,8 +18,15 @@ namespace Librame.Extensions.Data
     public class StoreOptions : IStoreOptions
     {
         /// <summary>
-        /// 属性的最大长度。
+        /// 映射关系（默认启用映射）。
+        /// </summary>
+        public bool MapRelationship { get; set; }
+            = true;
+
+        /// <summary>
+        /// 属性的最大长度（默认不设定）。
         /// </summary>
         public int MaxLengthForProperties { get; set; }
+            = 0;
     }
 }

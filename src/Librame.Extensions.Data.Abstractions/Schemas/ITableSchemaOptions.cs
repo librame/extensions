@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 表架构选项接口。

@@ -29,6 +29,7 @@ namespace Librame.Extensions.Data
             if (!options.DefaultSchema.IsNullOrEmpty())
                 modelBuilder.HasDefaultSchema(options.DefaultSchema);
 
+            var mapRelationship = options.Stores?.MapRelationship ?? false;
             var maxLength = options.Stores?.MaxLengthForProperties ?? 0;
 
             // 审计
@@ -51,8 +52,10 @@ namespace Librame.Extensions.Data
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
                 }
 
-                // 关联
-                b.HasMany(p => p.Properties).WithOne(p => p.Audit).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                if (mapRelationship)
+                {
+                    b.HasMany(p => p.Properties).WithOne(p => p.Audit).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                }
             });
 
             // 审计属性

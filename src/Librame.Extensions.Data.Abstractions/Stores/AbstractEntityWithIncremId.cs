@@ -21,7 +21,6 @@ namespace Librame.Extensions.Data
     {
     }
 
-
     /// <summary>
     /// 抽象增量式标识实体（默认标识类型为 <see cref="int"/>）。
     /// </summary>
@@ -33,6 +32,15 @@ namespace Librame.Extensions.Data
     {
     }
 
+
+    /// <summary>
+    /// 抽象增量式标识实体（默认排序类型为 <see cref="float"/>、状态类型为 <see cref="DataStatus"/>）。
+    /// </summary>
+    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+    public abstract class AbstractEntityWithIncremId<TIncremId> : AbstractEntity<TIncremId>, IIncremId<TIncremId>
+        where TIncremId : IEquatable<TIncremId>
+    {
+    }
 
     /// <summary>
     /// 抽象增量式标识实体。
