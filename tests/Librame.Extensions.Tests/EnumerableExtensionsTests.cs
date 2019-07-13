@@ -34,8 +34,8 @@ namespace Librame.Extensions.Tests
             };
 
             var sum = 0;
-            list.ForEach(i => sum += i, i => i < 6);
-            Assert.Equal(21, sum); // 1+...6
+            list.ForEach((n, i) => sum += n, (n, i) => i == 5); // 索引等于5则跳出
+            Assert.Equal(21, sum); // 1+...7
         }
 
         [Fact]

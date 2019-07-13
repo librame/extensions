@@ -104,7 +104,7 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 获取限定名称（格式：AssemblyFullName, TypeFullName）。
+        /// 获取限定名称（不包含版本及版本号；格式：AssemblyFullName, TypeFullName）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
@@ -112,9 +112,9 @@ namespace Librame.Extensions
         {
             type.NotNull(nameof(type));
 
-            var assemblyName = type.Assembly.GetName().FullName;
+            var assemblyName = type.Assembly.GetName().Name;
 
-            return Assembly.CreateQualifiedName(assemblyName, type.FullName);
+            return Assembly.CreateQualifiedName(assemblyName, type.GetFullName());
         }
 
 
