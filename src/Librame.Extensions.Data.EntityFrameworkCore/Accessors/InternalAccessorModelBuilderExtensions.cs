@@ -29,7 +29,7 @@ namespace Librame.Extensions.Data
             if (!options.DefaultSchema.IsNullOrEmpty())
                 modelBuilder.HasDefaultSchema(options.DefaultSchema);
 
-            var mapRelationship = options.Stores?.MapRelationship ?? false;
+            var mapRelationship = options.Stores?.MapRelationship ?? true;
             var maxLength = options.Stores?.MaxLengthForProperties ?? 0;
 
             // 审计
