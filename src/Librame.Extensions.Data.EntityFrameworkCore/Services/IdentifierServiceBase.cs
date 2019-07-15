@@ -42,7 +42,7 @@ namespace Librame.Extensions.Data
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string auditId = GuIdentifier.New();
+                string auditId = UniqueIdentifier.New();
                 Logger.LogInformation($"Get AuditId: {auditId}");
 
                 return auditId;
@@ -58,7 +58,7 @@ namespace Librame.Extensions.Data
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string auditPropertyId = GuIdentifier.New();
+                string auditPropertyId = UniqueIdentifier.New();
                 Logger.LogInformation($"Get AuditPropertyId: {auditPropertyId}");
 
                 return auditPropertyId;
@@ -75,7 +75,7 @@ namespace Librame.Extensions.Data
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string tenantId = GuIdentifier.New();
+                string tenantId = UniqueIdentifier.New();
                 Logger.LogInformation($"Get TenantId: {tenantId}");
 
                 return tenantId;

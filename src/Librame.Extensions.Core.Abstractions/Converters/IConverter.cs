@@ -20,17 +20,17 @@ namespace Librame.Extensions.Core
     public interface IConverter<TInput, TOutput>
     {
         /// <summary>
-        /// 转换为输出类型实例。
-        /// </summary>
-        /// <param name="input">给定的 <typeparamref name="TInput"/>。</param>
-        /// <returns>返回 <typeparamref name="TOutput"/>。</returns>
-        TOutput To(TInput input);
-
-        /// <summary>
         /// 转换为输入类型实例。
         /// </summary>
         /// <param name="output">给定的 <typeparamref name="TOutput"/>。</param>
         /// <returns>返回 <typeparamref name="TInput"/>。</returns>
         TInput From(TOutput output);
+
+        /// <summary>
+        /// 转换为输出类型实例。
+        /// </summary>
+        /// <param name="input">给定的 <typeparamref name="TInput"/>。</param>
+        /// <returns>返回 <typeparamref name="TOutput"/>。</returns>
+        TOutput To(TInput input);
     }
 }

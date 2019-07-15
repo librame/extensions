@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.0.819.202</Version>
+    <Version>6.0.821.201</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Data.Abstractions and EntityFrameworkCore extension package.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Data.Abstractions and EntityFrameworkCore extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.0.819.202</AssemblyVersion>
-    <FileVersion>6.0.1907.132</FileVersion>
+    <AssemblyVersion>6.0.821.201</AssemblyVersion>
+    <FileVersion>6.0.1907.151</FileVersion>
     <RootNamespace>Librame.Extensions.Data</RootNamespace>
   </PropertyGroup>
 
@@ -36,7 +36,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.2.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.2.6" />
   </ItemGroup>
 
   <ItemGroup>

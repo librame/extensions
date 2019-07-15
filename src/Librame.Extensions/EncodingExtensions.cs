@@ -275,6 +275,8 @@ namespace Librame.Extensions
         /// <returns>返回字节数组。</returns>
         public static byte[] FromHexString(this string hexString)
         {
+            hexString.NotNullOrEmpty(nameof(hexString));
+
             if (!hexString.Length.IsMultiples(2))
                 throw new ArgumentException("Hex length must be in multiples of 2.");
 

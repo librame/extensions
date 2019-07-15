@@ -45,7 +45,7 @@ namespace Librame.Extensions.Storage
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string accessToken = RngIdentifier.New();
+                string accessToken = RandomNumberIdentifier.New();
                 Logger.LogInformation($"Get access token: {accessToken}");
 
                 return accessToken;
@@ -61,7 +61,7 @@ namespace Librame.Extensions.Storage
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string authorizationCode = RngIdentifier.New();
+                string authorizationCode = RandomNumberIdentifier.New();
                 Logger.LogInformation($"Get authorization code: {authorizationCode}");
 
                 return authorizationCode;
@@ -77,7 +77,7 @@ namespace Librame.Extensions.Storage
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string cookieValue = RngIdentifier.New();
+                string cookieValue = RandomNumberIdentifier.New();
                 Logger.LogInformation($"Get cookie value: {cookieValue}");
 
                 return cookieValue;

@@ -12,45 +12,46 @@
 
 using System;
 using System.Linq;
+using System.Security.Cryptography;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Core
 {
-    using Core;
-
     /// <summary>
-    /// 算法标识符。
+    /// 随机数标识符。
     /// </summary>
-    public struct AlgorithmIdentifier : IIdentifier, IEquatable<AlgorithmIdentifier>
+    public struct RandomNumberIdentifier : IIdentifier, IEquatable<RandomNumberIdentifier>
     {
         /// <summary>
-        /// 构造一个 <see cref="AlgorithmIdentifier"/> 实例。
+        /// 构造一个 <see cref="RandomNumberIdentifier"/> 实例。
         /// </summary>
-        /// <param name="guid">给定的 <see cref="Guid"/> 。</param>
+        /// <param name="generator">给定的 <see cref="RandomNumberGenerator"/> 。</param>
+        /// <param name="length">给定要生成的字节数组长度（可选；默认 32 位）。</param>
         /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public AlgorithmIdentifier(Guid guid, IIdentifierConverter converter = null)
-            : this(guid.ToByteArray(), converter)
+        public RandomNumberIdentifier(RandomNumberGenerator generator, int length = 32,
+            IIdentifierConverter converter = null)
+            : this(generator.GenerateByteArray(length), converter)
         {
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AlgorithmIdentifier"/> 实例。
+        /// 构造一个 <see cref="RandomNumberIdentifier"/> 实例。
         /// </summary>
         /// <param name="memory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
         /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public AlgorithmIdentifier(ReadOnlyMemory<byte> memory, IIdentifierConverter converter = null)
+        public RandomNumberIdentifier(ReadOnlyMemory<byte> memory, IIdentifierConverter converter = null)
         {
             Memory = memory;
-            Converter = converter ?? new HexIdentifierConverter();
+            Converter = converter ?? new Base64IdentifierConverter();
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AlgorithmIdentifier"/> 实例。
+        /// 构造一个 <see cref="RandomNumberIdentifier"/> 实例。
         /// </summary>
         /// <param name="identifier">给定标识符的字符串形式。</param>
         /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public AlgorithmIdentifier(string identifier, IIdentifierConverter converter = null)
+        public RandomNumberIdentifier(string identifier, IIdentifierConverter converter = null)
         {
-            Converter = converter ?? new HexIdentifierConverter();
+            Converter = converter ?? new Base64IdentifierConverter();
             Memory = Converter.From(identifier);
         }
 
@@ -69,9 +70,9 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 是否相等。
         /// </summary>
-        /// <param name="other">给定的 <see cref="AlgorithmIdentifier"/>。</param>
+        /// <param name="other">给定的 <see cref="RandomNumberIdentifier"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(AlgorithmIdentifier other)
+        public bool Equals(RandomNumberIdentifier other)
         {
             return Memory.ToArray().SequenceEqual(other.Memory.ToArray());
             //return Memory.Equals(other.Memory);
@@ -95,7 +96,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
         {
-            if (obj is AlgorithmIdentifier identifier)
+            if (obj is RandomNumberIdentifier identifier)
                 return Equals(identifier);
 
             if (obj is ReadOnlyMemory<byte> memory)
@@ -117,10 +118,10 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 比较相等。
         /// </summary>
-        /// <param name="a">给定的 <see cref="AlgorithmIdentifier"/>。</param>
-        /// <param name="b">给定的 <see cref="AlgorithmIdentifier"/>。</param>
+        /// <param name="a">给定的 <see cref="RandomNumberIdentifier"/>。</param>
+        /// <param name="b">给定的 <see cref="RandomNumberIdentifier"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator ==(AlgorithmIdentifier a, AlgorithmIdentifier b)
+        public static bool operator ==(RandomNumberIdentifier a, RandomNumberIdentifier b)
         {
             return a.Equals(b);
         }
@@ -128,41 +129,36 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 比较不等。
         /// </summary>
-        /// <param name="a">给定的 <see cref="AlgorithmIdentifier"/>。</param>
-        /// <param name="b">给定的 <see cref="AlgorithmIdentifier"/>。</param>
+        /// <param name="a">给定的 <see cref="RandomNumberIdentifier"/>。</param>
+        /// <param name="b">给定的 <see cref="RandomNumberIdentifier"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator !=(AlgorithmIdentifier a, AlgorithmIdentifier b)
+        public static bool operator !=(RandomNumberIdentifier a, RandomNumberIdentifier b)
         {
             return !a.Equals(b);
         }
 
 
         /// <summary>
-        /// 显式转换为 <see cref="AlgorithmIdentifier"/>。
+        /// 显式转换为 <see cref="RandomNumberIdentifier"/>。
         /// </summary>
         /// <param name="identifier">给定标识符的字符串形式。</param>
-        public static explicit operator AlgorithmIdentifier(string identifier)
-            => new AlgorithmIdentifier(identifier);
+        public static explicit operator RandomNumberIdentifier(string identifier)
+            => new RandomNumberIdentifier(identifier);
 
         /// <summary>
         /// 隐式转换为字符串形式。
         /// </summary>
-        /// <param name="identifier">给定的 <see cref="AlgorithmIdentifier"/>。</param>
-        public static implicit operator string(AlgorithmIdentifier identifier)
+        /// <param name="identifier">给定的 <see cref="RandomNumberIdentifier"/>。</param>
+        public static implicit operator string(RandomNumberIdentifier identifier)
             => identifier.ToString();
 
 
         /// <summary>
-        /// 只读空实例。
-        /// </summary>
-        public static readonly AlgorithmIdentifier Empty
-            = new AlgorithmIdentifier(Guid.Empty);
-
-        /// <summary>
         /// 新建实例。
         /// </summary>
-        /// <returns>返回 <see cref="AlgorithmIdentifier"/>。</returns>
-        public static AlgorithmIdentifier New()
-            => new AlgorithmIdentifier(Guid.NewGuid());
+        /// <param name="length">给定要生成的字节数组长度（可选；默认 32 位）。</param>
+        /// <returns>返回 <see cref="RandomNumberIdentifier"/>。</returns>
+        public static RandomNumberIdentifier New(int length = 32)
+            => new RandomNumberIdentifier(RandomNumberGenerator.Create(), length);
     }
 }

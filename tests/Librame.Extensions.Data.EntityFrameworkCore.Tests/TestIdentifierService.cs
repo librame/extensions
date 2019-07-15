@@ -18,7 +18,7 @@ namespace Librame.Extensions.Data.Tests
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string articleId = GuIdentifier.New();
+                string articleId = UniqueIdentifier.New();
                 Logger.LogInformation($"Get ArticleId: {articleId}");
 
                 return articleId;

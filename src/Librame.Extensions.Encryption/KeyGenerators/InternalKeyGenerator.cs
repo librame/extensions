@@ -46,7 +46,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
         public IByteBuffer GenerateKey(int length, string identifier = null)
         {
-            Memory<byte> memory;
+            ReadOnlyMemory<byte> memory;
 
             if (!identifier.IsNullOrEmpty())
             {

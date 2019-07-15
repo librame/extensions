@@ -27,6 +27,7 @@ namespace Librame.Extensions.Core
         public Buffer(Memory<T> memory)
             : base(memory)
         {
+            Memory = memory;
         }
 
         /// <summary>
