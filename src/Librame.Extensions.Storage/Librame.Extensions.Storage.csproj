@@ -5,22 +5,22 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.0.821.201</Version>
+    <Version>6.0.822.201</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
-    <Description>Based Librame.Extensions.Storage.Abstractions extension package.</Description>
+    <Description>Based Librame.Extensions.Storage.Abstractions on .NET Standard extension implementation.</Description>
     <Copyright>Copyright © 2012-2018</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/librame/Librame</PackageProjectUrl>
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/10363349?v=3&amp;s=460</PackageIconUrl>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Storage,Extensions,Librame,NETStandard</PackageTags>
-    <PackageReleaseNotes>Based Librame.Extensions.Storage.Abstractions extension package.</PackageReleaseNotes>
+    <PackageTags>Librame,Extensions,Storage</PackageTags>
+    <PackageReleaseNotes>Based Librame.Extensions.Storage.Abstractions on .NET Standard extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.0.821.201</AssemblyVersion>
-    <FileVersion>6.0.1907.151</FileVersion>
+    <AssemblyVersion>6.0.822.201</AssemblyVersion>
+    <FileVersion>6.0.1907.161</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

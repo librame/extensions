@@ -17,9 +17,9 @@ using System.Linq;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    /// 抽象构建器服务集合静态扩展。
+    /// 抽象服务集合静态扩展。
     /// </summary>
-    public static class AbstractionBuilderServiceCollectionExtensions
+    public static class AbstractionServiceCollectionExtensions
     {
 
         #region TryGet
