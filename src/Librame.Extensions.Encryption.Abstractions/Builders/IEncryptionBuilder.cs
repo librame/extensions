@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 加密构建器接口。
     /// </summary>
-    public interface IEncryptionBuilder : IBuilder
+    public interface IEncryptionBuilder : IExtensionBuilder
     {
     }
 }

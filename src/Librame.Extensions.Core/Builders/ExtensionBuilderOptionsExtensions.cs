@@ -18,26 +18,26 @@ using System;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 构建器选项静态扩展。
+    /// 扩展构建器选项静态扩展。
     /// </summary>
-    public static class BuilderOptionsExtensions
+    public static class ExtensionBuilderOptionsExtensions
     {
         /// <summary>
         /// 配置构建器选项。
         /// </summary>
         /// <typeparam name="TOptions">指定的构建器选项类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="extensionBuilder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureOptions">给定的配置选项动作（可选；高优先级）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
         /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
         /// <returns>返回构建器选项实例。</returns>
-        public static TOptions Configure<TOptions>(this IBuilder builder,
+        public static TOptions Configure<TOptions>(this IExtensionBuilder extensionBuilder,
             Action<TOptions> configureOptions = null,
             IConfiguration configuration = null,
             Action<BinderOptions> configureBinderOptions = null)
-            where TOptions : class, IBuilderOptions, new()
+            where TOptions : class, IExtensionBuilderOptions, new()
         {
-            return builder.Services.ConfigureBuilder(configureOptions,
+            return extensionBuilder.Services.ConfigureBuilder(configureOptions,
                 configuration, configureBinderOptions);
         }
 
@@ -54,7 +54,7 @@ namespace Librame.Extensions.Core
             Action<TOptions> configureOptions = null,
             IConfiguration configuration = null,
             Action<BinderOptions> configureBinderOptions = null)
-            where TOptions : class, IBuilderOptions, new()
+            where TOptions : class, IExtensionBuilderOptions, new()
         {
             // 方式一
             // 优点：可直接使用 Options 实例进行其他功能配置

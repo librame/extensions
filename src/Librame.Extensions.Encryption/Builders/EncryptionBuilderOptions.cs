@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 加密构建器选项。
     /// </summary>
-    public class EncryptionBuilderOptions : AbstractBuilderOptions
+    public class EncryptionBuilderOptions : AbstractExtensionBuilderOptions
     {
         /// <summary>
         /// 全局键名。

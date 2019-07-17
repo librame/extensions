@@ -20,7 +20,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 网络构建器选项。
     /// </summary>
-    public class NetworkBuilderOptions : AbstractBuilderOptions
+    public class NetworkBuilderOptions : AbstractExtensionBuilderOptions
     {
         /// <summary>
         /// 字节编解码选项。

@@ -25,12 +25,12 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 添加加密扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureOptions">给定的 <see cref="Action{EncryptionBuilderOptions}"/>（可选；高优先级）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
         /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddEncryption(this IBuilder builder,
+        public static IEncryptionBuilder AddEncryption(this IExtensionBuilder builder,
             Action<EncryptionBuilderOptions> configureOptions = null,
             IConfiguration configuration = null,
             Action<BinderOptions> configureBinderOptions = null)

@@ -15,17 +15,17 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 构建器接口。
+    /// 扩展构建器接口。
     /// </summary>
-    public interface IBuilder
+    public interface IExtensionBuilder
     {
         /// <summary>
         /// 父构建器。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="IBuilder"/>。
+        /// 返回 <see cref="IExtensionBuilder"/>。
         /// </value>
-        IBuilder ParentBuilder { get; }
+        IExtensionBuilder ParentBuilder { get; }
 
         /// <summary>
         /// 服务集合。
@@ -34,13 +34,5 @@ namespace Librame.Extensions.Core
         /// 返回 <see cref="IServiceCollection"/>。
         /// </value>
         IServiceCollection Services { get; }
-
-        /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="IBuilderOptions"/>。
-        /// </value>
-        IBuilderOptions Options { get; }
     }
 }

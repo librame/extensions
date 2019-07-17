@@ -20,7 +20,7 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 图画构建器选项。
     /// </summary>
-    public class DrawingBuilderOptions : AbstractBuilderOptions
+    public class DrawingBuilderOptions : AbstractExtensionBuilderOptions
     {
         /// <summary>
         /// 图像格式（默认为 JPEG）。

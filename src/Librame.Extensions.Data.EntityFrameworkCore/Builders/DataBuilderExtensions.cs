@@ -25,12 +25,12 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 添加数据扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureOptions">给定的 <see cref="Action{DataBuilderOptions}"/>（可选；高优先级）。</param>
         /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
         /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddData(this IBuilder builder,
+        public static IDataBuilder AddData(this IExtensionBuilder builder,
             Action<DataBuilderOptions> configureOptions = null,
             IConfiguration configuration = null,
             Action<BinderOptions> configureBinderOptions = null)

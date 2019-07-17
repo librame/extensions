@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 核心构建器选项。
     /// </summary>
-    public class CoreBuilderOptions : AbstractBuilderOptions, IEncoding
+    public class CoreBuilderOptions : AbstractExtensionBuilderOptions, IEncoding
     {
         private static readonly CultureInfo _zhCNCultureInfo
             = new CultureInfo("zh-CN");
@@ -60,17 +60,5 @@ namespace Librame.Extensions.Core
         /// </summary>
         public Encoding Encoding { get; set; }
             = Encoding.UTF8;
-
-        /// <summary>
-        /// 启用自动注册中介者集合（默认不启用）。
-        /// </summary>
-        public bool EnableAutoRegistrationMediators { get; set; }
-            = false;
-
-        /// <summary>
-        /// 启用自动注册服务集合（默认不启用）。
-        /// </summary>
-        public bool EnableAutoRegistrationServices { get; set; }
-            = false;
     }
 }

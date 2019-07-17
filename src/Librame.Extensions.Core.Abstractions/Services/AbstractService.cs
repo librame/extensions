@@ -11,37 +11,9 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Librame.Extensions.Core
 {
-    /// <summary>
-    /// 抽象服务。
-    /// </summary>
-    /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public abstract class AbstractService<TBuilderOptions> : AbstractService, IService<TBuilderOptions>
-        where TBuilderOptions : class, IBuilderOptions, new()
-    {
-        /// <summary>
-        /// 构造一个 <see cref="AbstractService{TBuilderOptions}"/> 实例。
-        /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractService(IOptions<TBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(loggerFactory)
-        {
-            Options = options.NotNull(nameof(options)).Value;
-        }
-
-
-        /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        /// <value>返回 <typeparamref name="TBuilderOptions"/>。</value>
-        public TBuilderOptions Options { get; }
-    }
-
-
     /// <summary>
     /// 抽象服务。
     /// </summary>

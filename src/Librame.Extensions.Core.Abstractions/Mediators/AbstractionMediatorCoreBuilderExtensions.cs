@@ -20,20 +20,37 @@ using System.Reflection;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 服务集合静态扩展。
+    /// 抽象中介者核心构建器静态扩展。
     /// </summary>
-    public static class MediatorServiceCollectionExtensions
+    public static class AbstractionMediatorCoreBuilderExtensions
     {
         /// <summary>
-        /// 添加自动注册中介者集合。
+        /// 通过当前线程应用域的程序集数组添加中介者集合。
         /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        public static void AddAutoRegistrationMediators(this IServiceCollection services)
+        /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddMediatorsByCurrentDomainAssemblies(this ICoreBuilder builder)
         {
-            ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>), services, false);
-            ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>), services, true);
-            ConnectImplementationsToTypesClosing(typeof(IRequestPreProcessor<>), services, true);
-            ConnectImplementationsToTypesClosing(typeof(IRequestPostProcessor<,>), services, true);
+            return builder.AddMediatorsByAssemblies(AssemblyHelper.CurrentDomainAssembliesWithoutSystem);
+        }
+
+        /// <summary>
+        /// 通过指定的程序集数组添加中介者集合。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
+        /// <param name="assemblies">给定要查找的程序集数组。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddMediatorsByAssemblies(this ICoreBuilder builder,
+            params Assembly[] assemblies)
+        {
+            builder.Services.ConnectImplementationsToTypesClosing(assemblies,
+                typeof(IRequestHandler<,>), false);
+            builder.Services.ConnectImplementationsToTypesClosing(assemblies,
+                typeof(INotificationHandler<>), true);
+            builder.Services.ConnectImplementationsToTypesClosing(assemblies,
+                typeof(IRequestPreProcessor<>), true);
+            builder.Services.ConnectImplementationsToTypesClosing(assemblies,
+                typeof(IRequestPostProcessor<,>), true);
 
             var multiOpenInterfaces = new[]
             {
@@ -44,23 +61,25 @@ namespace Librame.Extensions.Core
 
             foreach (var multiOpenInterface in multiOpenInterfaces)
             {
-                BuilderGlobalization.RegisterTypes(type =>
+                assemblies.InvokeTypes(type =>
                 {
-                    services.AddTransient(multiOpenInterface, type);
+                    builder.Services.AddTransient(multiOpenInterface, type);
                 },
                 types => types
                     .Where(type => Enumerable.Any(type.FindInterfacesThatClose(multiOpenInterface)))
                     .Where(type => type.IsConcreteType() && type.IsOpenGenericType()));
             }
+
+            return builder;
         }
 
-        private static void ConnectImplementationsToTypesClosing(Type openRequestInterface,
-           IServiceCollection services, bool addIfAlreadyExists)
+        private static void ConnectImplementationsToTypesClosing(this IServiceCollection services,
+            Assembly[] assemblies, Type openRequestInterface, bool addIfAlreadyExists)
         {
             var concretions = new List<Type>();
             var interfaces = new List<Type>();
 
-            BuilderGlobalization.RegisterTypes(type =>
+            assemblies.InvokeTypes(type =>
             {
                 var interfaceTypes = Enumerable.ToArray(type.FindInterfacesThatClose(openRequestInterface));
                 if (interfaceTypes.Any())
@@ -103,7 +122,23 @@ namespace Librame.Extensions.Core
 
                 if (!@interface.IsOpenGenericType())
                 {
-                    AddConcretionsThatCouldBeClosed(@interface, concretions, services);
+                    services.AddConcretionsThatCouldBeClosed(@interface, concretions);
+                }
+            }
+        }
+
+        private static void AddConcretionsThatCouldBeClosed(this IServiceCollection services,
+            Type @interface, List<Type> concretions)
+        {
+            foreach (var type in concretions
+                .Where(x => x.IsOpenGenericType() && x.CouldCloseTo(@interface)))
+            {
+                try
+                {
+                    services.TryAddTransient(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
+                }
+                catch (Exception)
+                {
                 }
             }
         }
@@ -128,21 +163,6 @@ namespace Librame.Extensions.Core
             }
 
             return false;
-        }
-
-        private static void AddConcretionsThatCouldBeClosed(Type @interface, List<Type> concretions, IServiceCollection services)
-        {
-            foreach (var type in concretions
-                .Where(x => x.IsOpenGenericType() && x.CouldCloseTo(@interface)))
-            {
-                try
-                {
-                    services.TryAddTransient(@interface, type.MakeGenericType(@interface.GenericTypeArguments));
-                }
-                catch (Exception)
-                {
-                }
-            }
         }
 
         private static bool CouldCloseTo(this Type openConcretion, Type closedInterface)

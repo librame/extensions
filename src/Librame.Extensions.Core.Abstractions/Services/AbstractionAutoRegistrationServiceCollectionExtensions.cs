@@ -16,21 +16,22 @@ using System.Linq;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 服务集合静态扩展。
+    /// 抽象自注册服务集合静态扩展。
     /// </summary>
-    public static class ServiceCollectionExtensions
+    public static class AbstractionAutoRegistrationServiceCollectionExtensions
     {
         /// <summary>
-        /// 添加自动注册服务集合。
+        /// 添加自注册服务集合。
         /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        public static void AddAutoRegistrationServices(this IServiceCollection services)
+        /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddAutoRegistrationServices(this ICoreBuilder builder)
         {
             var objectType = typeof(object);
 
-            BuilderGlobalization.RegisterTypes(type =>
+            AssemblyHelper.CurrentDomainAssembliesWithoutSystem.InvokeTypes(type =>
             {
-                if (type.TryGetCustomAttribute(out RegistrationServiceAttribute serviceAttribute))
+                if (type.TryGetCustomAttribute(out AutoRegistrationServiceAttribute serviceAttribute))
                 {
                     var serviceType = serviceAttribute.ServiceType;
 
@@ -50,15 +51,15 @@ namespace Librame.Extensions.Core
                     switch (serviceAttribute.Lifetime)
                     {
                         case ServiceLifetime.Singleton:
-                            services.AddSingleton(serviceType, type);
+                            builder.Services.AddSingleton(serviceType, type);
                             break;
 
                         case ServiceLifetime.Scoped:
-                            services.AddScoped(serviceType, type);
+                            builder.Services.AddScoped(serviceType, type);
                             break;
 
                         case ServiceLifetime.Transient:
-                            services.AddTransient(serviceType, type);
+                            builder.Services.AddTransient(serviceType, type);
                             break;
 
                         default:
@@ -66,6 +67,8 @@ namespace Librame.Extensions.Core
                     }
                 }
             });
+
+            return builder;
         }
 
     }

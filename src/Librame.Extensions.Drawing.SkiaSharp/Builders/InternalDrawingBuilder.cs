@@ -19,14 +19,14 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部图画构建器。
     /// </summary>
-    internal class InternalDrawingBuilder : AbstractBuilder<DrawingBuilderOptions>, IDrawingBuilder
+    internal class InternalDrawingBuilder : AbstractExtensionBuilder<DrawingBuilderOptions>, IDrawingBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalDrawingBuilder"/> 实例。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="options">给定的 <see cref="DrawingBuilderOptions"/>。</param>
-        public InternalDrawingBuilder(IBuilder builder, DrawingBuilderOptions options)
+        public InternalDrawingBuilder(IExtensionBuilder builder, DrawingBuilderOptions options)
             : base(builder, options)
         {
             Services.AddSingleton<IDrawingBuilder>(this);

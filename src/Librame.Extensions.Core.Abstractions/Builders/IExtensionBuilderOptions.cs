@@ -13,13 +13,13 @@
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象构建器选项。
+    /// 扩展构建器选项接口。
     /// </summary>
-    public abstract class AbstractBuilderOptions : IBuilderOptions
+    public interface IExtensionBuilderOptions
     {
         /// <summary>
         /// 选项名称。
         /// </summary>
-        public string OptionsName { get; set; }
+        string OptionsName { get; set; }
     }
 }

@@ -88,5 +88,17 @@ namespace Librame.Extensions.Tests
             Assert.Equal(typeof(bool), type);
         }
 
+
+        [Fact]
+        public void InvokeTypesTest()
+        {
+            var count = typeof(TypeExtensionsTests).Assembly.InvokeTypes(type =>
+            {
+                Assert.NotNull(type);
+            });
+
+            Assert.True(count > 0);
+        }
+
     }
 }

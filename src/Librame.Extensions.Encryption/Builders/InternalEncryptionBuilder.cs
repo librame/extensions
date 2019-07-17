@@ -19,14 +19,14 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部加密构建器。
     /// </summary>
-    internal class InternalEncryptionBuilder : AbstractBuilder<EncryptionBuilderOptions>, IEncryptionBuilder
+    internal class InternalEncryptionBuilder : AbstractExtensionBuilder<EncryptionBuilderOptions>, IEncryptionBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalEncryptionBuilder"/> 实例。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IBuilder"/>。</param>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="options">给定的 <see cref="EncryptionBuilderOptions"/>。</param>
-        public InternalEncryptionBuilder(IBuilder builder, EncryptionBuilderOptions options)
+        public InternalEncryptionBuilder(IExtensionBuilder builder, EncryptionBuilderOptions options)
             : base(builder, options)
         {
             Services.AddSingleton<IEncryptionBuilder>(this);

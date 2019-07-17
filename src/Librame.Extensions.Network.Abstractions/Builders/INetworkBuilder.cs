@@ -17,7 +17,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 网络构建器接口。
     /// </summary>
-    public interface INetworkBuilder : IBuilder
+    public interface INetworkBuilder : IExtensionBuilder
     {
     }
 }

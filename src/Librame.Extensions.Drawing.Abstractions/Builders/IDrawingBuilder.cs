@@ -17,7 +17,7 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 图画构建器接口。
     /// </summary>
-    public interface IDrawingBuilder : IBuilder
+    public interface IDrawingBuilder : IExtensionBuilder
     {
     }
 }

@@ -11,6 +11,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -89,17 +91,6 @@ namespace Librame.Extensions
             type.NotNull(nameof(type));
 
             return type.GetProperties(CommonFlagsWithoutStatic);
-        }
-
-
-        /// <summary>
-        /// 解开可空类型。
-        /// </summary>
-        /// <param name="nullableType">给定的可空类型。</param>
-        /// <returns>返回基础类型或可空类型本身。</returns>
-        public static Type UnwrapNullableType(this Type nullableType)
-        {
-            return Nullable.GetUnderlyingType(nullableType) ?? nullableType;
         }
 
 
@@ -184,6 +175,56 @@ namespace Librame.Extensions
             }
 
             return sb.ToString();
+        }
+
+
+        /// <summary>
+        /// 解开可空类型。
+        /// </summary>
+        /// <param name="nullableType">给定的可空类型。</param>
+        /// <returns>返回基础类型或可空类型本身。</returns>
+        public static Type UnwrapNullableType(this Type nullableType)
+        {
+            return Nullable.GetUnderlyingType(nullableType) ?? nullableType;
+        }
+
+
+        /// <summary>
+        /// 调用类型集合。
+        /// </summary>
+        /// <param name="assembly">给定的 <see cref="Assembly"/>。</param>
+        /// <param name="action">给定的注册动作。</param>
+        /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
+        /// <returns>返回已调用的类型集合数。</returns>
+        public static int InvokeTypes(this Assembly assembly,
+            Action<Type> action, Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
+        {
+            assembly.NotNull(nameof(assembly));
+
+            return assembly.YieldEnumerable().InvokeTypes(action, filterTypes);
+        }
+        /// <summary>
+        /// 调用类型集合。
+        /// </summary>
+        /// <param name="assemblies">给定的 <see cref="IEnumerable{Assembly}"/>。</param>
+        /// <param name="action">给定的注册动作。</param>
+        /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
+        /// <returns>返回已调用的类型集合数。</returns>
+        public static int InvokeTypes(this IEnumerable<Assembly> assemblies,
+            Action<Type> action, Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
+        {
+            assemblies.NotNullOrEmpty(nameof(assemblies));
+            action.NotNull(nameof(action));
+
+            var allTypes = assemblies.SelectMany(a => a.ExportedTypes);
+
+            if (filterTypes.IsNotNull())
+                allTypes = filterTypes.Invoke(allTypes);
+
+            foreach (var type in allTypes)
+                action.Invoke(type);
+
+            return allTypes.Count();
         }
 
     }

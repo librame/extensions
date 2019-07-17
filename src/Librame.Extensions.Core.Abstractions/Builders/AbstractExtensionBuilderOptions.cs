@@ -10,14 +10,16 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Core
 {
-    using Core;
-
     /// <summary>
-    /// 数据构建器接口。
+    /// 抽象扩展构建器选项。
     /// </summary>
-    public interface IDataBuilder : IExtensionBuilder
+    public abstract class AbstractExtensionBuilderOptions : IExtensionBuilderOptions
     {
+        /// <summary>
+        /// 选项名称。
+        /// </summary>
+        public string OptionsName { get; set; }
     }
 }

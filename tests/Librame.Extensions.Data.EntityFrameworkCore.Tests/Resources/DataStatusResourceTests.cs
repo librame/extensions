@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data.Tests
 
         private void RunTest(IExpressionStringLocalizer<DataStatusResource> localizer, string cultureName)
         {
-            BuilderGlobalization.RegisterCultureInfos(cultureName);
+            AssemblyHelper.RegisterCultureInfos(cultureName);
 
             // Groups
             var globalGroup = localizer[r => r.GlobalGroup];

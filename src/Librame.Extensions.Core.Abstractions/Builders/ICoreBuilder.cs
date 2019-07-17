@@ -15,7 +15,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 核心构建器接口。
     /// </summary>
-    public interface ICoreBuilder : IBuilder
+    public interface ICoreBuilder : IExtensionBuilder
     {
     }
 }

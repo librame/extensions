@@ -17,18 +17,17 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 内部核心构建器。
     /// </summary>
-    internal class InternalCoreBuilder : AbstractBuilder<CoreBuilderOptions>, ICoreBuilder
+    internal class InternalCoreBuilder : AbstractExtensionBuilder, ICoreBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalCoreBuilder"/> 实例。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="options">给定的 <see cref="CoreBuilderOptions"/>。</param>
-        public InternalCoreBuilder(IServiceCollection services, CoreBuilderOptions options)
-            : base(services, options)
+        public InternalCoreBuilder(IServiceCollection services)
+            : base(services)
         {
             Services.AddSingleton<ICoreBuilder>(this);
-            Services.AddSingleton(serviceProvider => (IBuilder)serviceProvider.GetRequiredService<ICoreBuilder>());
+            Services.AddSingleton(sp => (IExtensionBuilder)sp.GetRequiredService<ICoreBuilder>());
         }
 
 
@@ -38,13 +37,7 @@ namespace Librame.Extensions.Core
         /// <param name="options">给定的 <see cref="CoreBuilderOptions"/>。</param>
         protected override void Initialize(CoreBuilderOptions options)
         {
-            BuilderGlobalization.RegisterCultureInfos(options.CultureInfo, options.CultureUIInfo);
-
-            if (options.EnableAutoRegistrationMediators)
-                Services.AddAutoRegistrationMediators();
-
-            if (options.EnableAutoRegistrationServices)
-                Services.AddAutoRegistrationServices();
+            AssemblyHelper.RegisterCultureInfos(options.CultureInfo, options.CultureUIInfo);
         }
 
     }

@@ -17,7 +17,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 存储构建器接口。
     /// </summary>
-    public interface IStorageBuilder : IBuilder
+    public interface IStorageBuilder : IExtensionBuilder
     {
     }
 }

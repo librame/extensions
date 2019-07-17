@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
     /// <typeparam name="TTableSchemaOptions">指定的表架构选项类型。</typeparam>
-    public interface IDataBuilderOptions<TStoreOptions, TTableSchemaOptions> : IBuilderOptions
+    public interface IDataBuilderOptions<TStoreOptions, TTableSchemaOptions> : IExtensionBuilderOptions
         where TStoreOptions : IStoreOptions
         where TTableSchemaOptions : ITableSchemaOptions
     {

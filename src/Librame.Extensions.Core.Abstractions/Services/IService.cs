@@ -19,7 +19,7 @@ namespace Librame.Extensions.Core
     /// </summary>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
     public interface IService<out TBuilderOptions> : IService
-        where TBuilderOptions : IBuilderOptions
+        where TBuilderOptions : IExtensionBuilderOptions
     {
         /// <summary>
         /// 构建器选项。
