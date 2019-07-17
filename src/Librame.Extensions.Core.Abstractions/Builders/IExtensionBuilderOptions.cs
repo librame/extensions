@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     public interface IExtensionBuilderOptions
     {
         /// <summary>
-        /// 选项名称。
+        /// 选项名称（兼容 ConfigurationSourceBinder 设计）。
         /// </summary>
         string OptionsName { get; set; }
     }

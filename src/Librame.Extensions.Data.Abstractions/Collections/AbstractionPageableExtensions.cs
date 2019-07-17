@@ -19,9 +19,9 @@ using System.Threading.Tasks;
 namespace System.Linq
 {
     /// <summary>
-    /// <see cref="IPageable{T}"/> 静态扩展。
+    /// 抽象可分页静态扩展。
     /// </summary>
-    public static class PageableExtensions
+    public static class AbstractionPageableExtensions
     {
 
         #region IList

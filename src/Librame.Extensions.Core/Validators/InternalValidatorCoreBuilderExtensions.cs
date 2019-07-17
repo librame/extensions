@@ -12,23 +12,21 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Core
 {
-    using Core;
-
     /// <summary>
-    /// 中介者数据构建器静态扩展。
+    /// 内部验证器核心构建器静态扩展。
     /// </summary>
-    public static class MediatorDataBuilderExtensions
+    internal static class InternalValidatorCoreBuilderExtensions
     {
         /// <summary>
-        /// 添加中介者集合。
+        /// 添加验证器集合扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddMediators(this IDataBuilder builder)
+        /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddValidators(this ICoreBuilder builder)
         {
-            builder.Services.AddScoped<INotificationHandler<AuditNotification>, InternalAuditNotificationHandler>();
+            builder.Services.AddSingleton<IStringValidator, StringValidator>();
 
             return builder;
         }

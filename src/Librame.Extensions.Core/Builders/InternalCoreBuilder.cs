@@ -29,16 +29,5 @@ namespace Librame.Extensions.Core
             Services.AddSingleton<ICoreBuilder>(this);
             Services.AddSingleton(sp => (IExtensionBuilder)sp.GetRequiredService<ICoreBuilder>());
         }
-
-
-        /// <summary>
-        /// 初始化构建器。
-        /// </summary>
-        /// <param name="options">给定的 <see cref="CoreBuilderOptions"/>。</param>
-        protected override void Initialize(CoreBuilderOptions options)
-        {
-            AssemblyHelper.RegisterCultureInfos(options.CultureInfo, options.CultureUIInfo);
-        }
-
     }
 }

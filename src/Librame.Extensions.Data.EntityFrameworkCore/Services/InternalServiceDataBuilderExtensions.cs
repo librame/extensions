@@ -15,9 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 服务数据构建器静态扩展。
+    /// 内部服务数据构建器静态扩展。
     /// </summary>
-    public static class ServiceDataBuilderExtensions
+    internal static class InternalServiceDataBuilderExtensions
     {
         /// <summary>
         /// 添加服务集合。

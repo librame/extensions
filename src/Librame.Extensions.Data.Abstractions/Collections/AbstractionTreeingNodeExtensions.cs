@@ -19,9 +19,9 @@ using System.Threading.Tasks;
 namespace System.Collections.Generic
 {
     /// <summary>
-    /// <see cref="TreeingNode{T, TId}"/> 静态扩展。
+    /// 抽象树形节点静态扩展。
     /// </summary>
-    public static class TreeingNodeExtensions
+    public static class AbstractionTreeingNodeExtensions
     {
         /// <summary>
         /// 转换为无层级树形节点列表。

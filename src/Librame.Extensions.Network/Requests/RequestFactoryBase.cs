@@ -21,7 +21,7 @@ namespace Librame.Extensions.Network
     /// 请求工厂基类。
     /// </summary>
     /// <typeparam name="TRequest">指定的请求类型。</typeparam>
-    public class RequestFactoryBase<TRequest> : BuilderOptionsEncodingBase, IRequestFactory<TRequest>
+    public class RequestFactoryBase<TRequest> : CoreBuilderOptionsEncodingBase, IRequestFactory<TRequest>
         where TRequest : class
     {
         /// <summary>

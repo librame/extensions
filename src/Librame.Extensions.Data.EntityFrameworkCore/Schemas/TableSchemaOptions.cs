@@ -14,12 +14,10 @@ using System;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
     /// 表架构选项。
     /// </summary>
-    public class TableSchemaOptions : ITableSchemaOptions
+    public class TableSchemaOptions
     {
         /// <summary>
         /// 审计工厂方法。

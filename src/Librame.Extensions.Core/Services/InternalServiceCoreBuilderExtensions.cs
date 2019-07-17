@@ -11,24 +11,24 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 本地化核心构建器静态扩展。
+    /// 内部服务核心构建器静态扩展。
     /// </summary>
-    public static class LocalizationCoreBuilderExtensions
+    internal static class InternalServiceCoreBuilderExtensions
     {
         /// <summary>
-        /// 添加本地化集合扩展。
+        /// 添加服务集合扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
-        public static ICoreBuilder AddLocalizations(this ICoreBuilder builder)
+        public static ICoreBuilder AddServices(this ICoreBuilder builder)
         {
-            builder.Services.AddScoped(typeof(IExpressionStringLocalizer<>), typeof(ExpressionStringLocalizer<>));
-            builder.Services.TryReplace<IStringLocalizerFactory, ExpressionStringLocalizerFactory>();
+            builder.Services.AddScoped<IHumanizationService, InternalHumanizationService>();
+            builder.Services.AddScoped<IInjectionService, InternalInjectionService>();
+            builder.Services.AddScoped<IPlatformService, InternalPlatformService>();
 
             return builder;
         }

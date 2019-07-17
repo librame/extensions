@@ -15,20 +15,18 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 服务核心构建器静态扩展。
+    /// 内部转换器核心构建器静态扩展。
     /// </summary>
-    public static class ServiceCoreBuilderExtensions
+    internal static class InternalConverterCoreBuilderExtensions
     {
         /// <summary>
-        /// 添加服务集合扩展。
+        /// 添加转换器集合扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
-        public static ICoreBuilder AddServices(this ICoreBuilder builder)
+        public static ICoreBuilder AddConverters(this ICoreBuilder builder)
         {
-            builder.Services.AddScoped<IHumanizationService, InternalHumanizationService>();
-            builder.Services.AddScoped<IInjectionService, InternalInjectionService>();
-            builder.Services.AddScoped<IPlatformService, InternalPlatformService>();
+            builder.Services.AddSingleton<IEncodingConverter, EncodingConverter>();
 
             return builder;
         }

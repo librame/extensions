@@ -10,13 +10,12 @@
 
 #endregion
 
+using Librame.Extensions;
 using Librame.Extensions.Core;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    using Configuration;
-
     /// <summary>
     /// 核心构建器服务集合静态扩展。
     /// </summary>
@@ -26,27 +25,35 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加 Librame。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{BuilderOptions}"/>（可选；高优先级）。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
-        /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
+        /// <param name="setupAction">给定的选项配置动作（可选）。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
-            Action<CoreBuilderOptions> configureOptions = null,
-            IConfiguration configuration = null,
-            Action<BinderOptions> configureBinderOptions = null)
+            Action<CoreBuilderOptions> setupAction = null)
         {
-            var options = services.ConfigureBuilder(configureOptions,
-                configuration, configureBinderOptions);
+            return services.AddLibrame(s => new InternalCoreBuilder(s), setupAction);
+        }
 
-            // AddLocalization
-            services.AddLocalization(options.ConfigureLocalization);
+        /// <summary>
+        /// 添加 Librame。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="createFactory">给定创建核心构建器的工厂方法。</param>
+        /// <param name="setupAction">给定的选项配置动作（可选）。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddLibrame(this IServiceCollection services,
+            Func<IServiceCollection, ICoreBuilder> createFactory,
+            Action<CoreBuilderOptions> setupAction = null)
+        {
+            createFactory.NotNull(nameof(createFactory));
 
-            // AddLogging
-            services.AddLogging(options.ConfigureLogging);
+            services.AddOptions().AddLogging();
 
-            var builder = new InternalCoreBuilder(services, options);
+            if (setupAction != null)
+                services.Configure(setupAction);
 
-            return builder
+            var coreBuilder = createFactory.Invoke(services);
+
+            return coreBuilder
                 .AddConverters()
                 .AddLocalizations()
                 .AddMediators()

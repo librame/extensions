@@ -12,24 +12,37 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using System.Reflection;
 
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象自注册服务集合静态扩展。
+    /// 抽象自注册服务核心构建器静态扩展。
     /// </summary>
-    public static class AbstractionAutoRegistrationServiceCollectionExtensions
+    public static class AbstractionAutoRegistrationServiceCoreBuilderExtensions
     {
         /// <summary>
-        /// 添加自注册服务集合。
+        /// 添加当前线程应用域的程序集数组中已定义 <see cref="AutoRegistrationServiceAttribute"/> 特性的服务集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddAutoRegistrationServices(this ICoreBuilder builder)
         {
+            return builder.AddAutoRegistrationServices(AssemblyHelper.CurrentDomainAssembliesWithoutSystem);
+        }
+
+        /// <summary>
+        /// 添加指定程序集数组中已定义 <see cref="AutoRegistrationServiceAttribute"/> 特性的服务集合。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
+        /// <param name="assemblies">给定要查找的程序集数组。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddAutoRegistrationServices(this ICoreBuilder builder,
+            params Assembly[] assemblies)
+        {
             var objectType = typeof(object);
 
-            AssemblyHelper.CurrentDomainAssembliesWithoutSystem.InvokeTypes(type =>
+            assemblies.InvokeTypes(type =>
             {
                 if (type.TryGetCustomAttribute(out AutoRegistrationServiceAttribute serviceAttribute))
                 {

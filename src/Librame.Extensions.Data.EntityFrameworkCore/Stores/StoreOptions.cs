@@ -15,7 +15,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 存储选项。
     /// </summary>
-    public class StoreOptions : IStoreOptions
+    public class StoreOptions
     {
         /// <summary>
         /// 映射关系（默认启用映射）。

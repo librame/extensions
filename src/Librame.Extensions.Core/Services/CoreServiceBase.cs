@@ -33,7 +33,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 构建器选项。
+        /// 核心构建器选项。
         /// </summary>
         /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
         public CoreBuilderOptions Options { get; }

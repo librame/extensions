@@ -16,15 +16,15 @@ using System.Text;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 构建器选项字符编码基类。
+    /// 核心构建器选项字符编码基类。
     /// </summary>
-    public class BuilderOptionsEncodingBase : IEncoding
+    public class CoreBuilderOptionsEncodingBase : IEncoding
     {
         /// <summary>
-        /// 构造一个 <see cref="BuilderOptionsEncodingBase"/> 实例。
+        /// 构造一个 <see cref="CoreBuilderOptionsEncodingBase"/> 实例。
         /// </summary>
         /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
-        protected BuilderOptionsEncodingBase(IOptions<CoreBuilderOptions> coreOptions)
+        public CoreBuilderOptionsEncodingBase(IOptions<CoreBuilderOptions> coreOptions)
         {
             CoreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
             Encoding = CoreOptions.Encoding;
@@ -34,7 +34,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 核心构建器选项。
         /// </summary>
-        protected CoreBuilderOptions CoreOptions { get; }
+        public CoreBuilderOptions CoreOptions { get; }
 
         /// <summary>
         /// 字符编码（默认使用构建器选项配置）。

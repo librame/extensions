@@ -19,15 +19,14 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 内部数据构建器。
     /// </summary>
-    internal class InternalDataBuilder : AbstractExtensionBuilder<DataBuilderOptions>, IDataBuilder
+    internal class InternalDataBuilder : AbstractExtensionBuilder, IDataBuilder
     {
         /// <summary>
         /// 构造一个 <see cref="InternalDataBuilder"/> 实例。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
-        public InternalDataBuilder(IExtensionBuilder builder, DataBuilderOptions options)
-            : base(builder, options)
+        public InternalDataBuilder(IExtensionBuilder builder)
+            : base(builder)
         {
             Services.AddSingleton<IDataBuilder>(this);
         }

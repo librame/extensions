@@ -20,18 +20,18 @@ using System.Reflection;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象中介者核心构建器静态扩展。
+    /// 抽象自注册中介者核心构建器静态扩展。
     /// </summary>
-    public static class AbstractionMediatorCoreBuilderExtensions
+    public static class AbstractionAutoRegistrationMediatorCoreBuilderExtensions
     {
         /// <summary>
         /// 通过当前线程应用域的程序集数组添加中介者集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
-        public static ICoreBuilder AddMediatorsByCurrentDomainAssemblies(this ICoreBuilder builder)
+        public static ICoreBuilder AddAutoRegistrationMediators(this ICoreBuilder builder)
         {
-            return builder.AddMediatorsByAssemblies(AssemblyHelper.CurrentDomainAssembliesWithoutSystem);
+            return builder.AddAutoRegistrationMediators(AssemblyHelper.CurrentDomainAssembliesWithoutSystem);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Librame.Extensions.Core
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <param name="assemblies">给定要查找的程序集数组。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
-        public static ICoreBuilder AddMediatorsByAssemblies(this ICoreBuilder builder,
+        public static ICoreBuilder AddAutoRegistrationMediators(this ICoreBuilder builder,
             params Assembly[] assemblies)
         {
             builder.Services.ConnectImplementationsToTypesClosing(assemblies,

@@ -15,9 +15,9 @@ using Librame.Extensions.Data;
 namespace System.Collections.Generic
 {
     /// <summary>
-    /// <see cref="ITreeable{T, TId}"/> 静态扩展。
+    /// 抽象可树形化静态扩展。
     /// </summary>
-    public static class TreeableExtensions
+    public static class AbstractionTreeableExtensions
     {
         /// <summary>
         /// 转换为可树形集合。

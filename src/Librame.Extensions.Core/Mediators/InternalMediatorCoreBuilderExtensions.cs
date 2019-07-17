@@ -15,9 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 中介者核心构建器静态扩展。
+    /// 内部中介者核心构建器静态扩展。
     /// </summary>
-    public static class MediatorCoreBuilderExtensions
+    internal static class InternalMediatorCoreBuilderExtensions
     {
         /// <summary>
         /// 添加中介者集合扩展。
