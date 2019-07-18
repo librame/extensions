@@ -32,7 +32,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// 添加 DotNetty。
         /// </summary>
         /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
-        /// <param name="setupAction">给定的 <see cref="Action{NetworkBuilderOptions}"/>（可选）。</param>
+        /// <param name="setupAction">给定的选项配置动作（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
             Action<DotNettyOptions> setupAction = null)

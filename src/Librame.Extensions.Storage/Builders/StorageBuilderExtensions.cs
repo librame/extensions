@@ -26,7 +26,7 @@ namespace Librame.Extensions.Storage
         /// 添加存储扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="setupAction">给定的 <see cref="Action{StorageBuilderOptions}"/>（可选）。</param>
+        /// <param name="setupAction">给定的选项配置动作（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
         public static IStorageBuilder AddStorage(this IExtensionBuilder builder,
             Action<StorageBuilderOptions> setupAction = null)
@@ -39,7 +39,7 @@ namespace Librame.Extensions.Storage
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="createFactory">给定创建存储构建器的工厂方法。</param>
-        /// <param name="setupAction">给定的 <see cref="Action{StorageBuilderOptions}"/>（可选）。</param>
+        /// <param name="setupAction">给定的选项配置动作（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
         public static IStorageBuilder AddStorage(this IExtensionBuilder builder,
             Func<IExtensionBuilder, IStorageBuilder> createFactory,
