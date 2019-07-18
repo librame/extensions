@@ -4,7 +4,7 @@ using System;
 
 namespace Librame.Extensions.Data.Tests
 {
-    internal class TestServiceProvider
+    internal static class TestServiceProvider
     {
         static TestServiceProvider()
         {

@@ -67,33 +67,35 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Models", "shared\Li
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Consoles", "examples\Librame.Extensions.Consoles\Librame.Extensions.Consoles.csproj", "{92AFAE63-85D6-43E3-826A-3BA9837427CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Examples", "examples\Librame.Extensions.Examples\Librame.Extensions.Examples.csproj", "{92AFAE63-85D6-43E3-826A-3BA9837427CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.SecureChat.Server", "examples\Librame.Extensions.SecureChat.Server\Librame.Extensions.SecureChat.Server.csproj", "{563594A3-858F-4D8E-A8DF-C9E782E8CA86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Extensions.Network.DotNetty.Core", "examples\Librame.Extensions.Network.DotNetty.Core\Librame.Extensions.Network.DotNetty.Core.csproj", "{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.SecureChat.Client", "examples\Librame.Extensions.SecureChat.Client\Librame.Extensions.SecureChat.Client.csproj", "{242F2D68-3B33-4C7E-B2BC-A11E080AEFC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.SecureChat.Server", "examples\Librame.Extensions.Network.DotNetty.SecureChat.Server\Librame.Extensions.Network.DotNetty.SecureChat.Server.csproj", "{563594A3-858F-4D8E-A8DF-C9E782E8CA86}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Telnet.Client", "examples\Librame.Extensions.Telnet.Client\Librame.Extensions.Telnet.Client.csproj", "{EDA8A026-7A54-434A-B291-BF3E3EB5B4B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.SecureChat.Client", "examples\Librame.Extensions.Network.DotNetty.SecureChat.Client\Librame.Extensions.Network.DotNetty.SecureChat.Client.csproj", "{242F2D68-3B33-4C7E-B2BC-A11E080AEFC9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Telnet.Server", "examples\Librame.Extensions.Telnet.Server\Librame.Extensions.Telnet.Server.csproj", "{B7E058CA-6CF7-40E2-8899-708B0245E223}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Telnet.Client", "examples\Librame.Extensions.Network.DotNetty.Telnet.Client\Librame.Extensions.Network.DotNetty.Telnet.Client.csproj", "{EDA8A026-7A54-434A-B291-BF3E3EB5B4B7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.WebSocket.Server", "examples\Librame.Extensions.WebSocket.Server\Librame.Extensions.WebSocket.Server.csproj", "{79050A64-DD57-410D-B209-108BADC94196}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Telnet.Server", "examples\Librame.Extensions.Network.DotNetty.Telnet.Server\Librame.Extensions.Network.DotNetty.Telnet.Server.csproj", "{B7E058CA-6CF7-40E2-8899-708B0245E223}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.WebSocket.Client", "examples\Librame.Extensions.WebSocket.Client\Librame.Extensions.WebSocket.Client.csproj", "{439ADCD1-2A92-4E49-9D5F-7F00516B740F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.WebSocket.Server", "examples\Librame.Extensions.Network.DotNetty.WebSocket.Server\Librame.Extensions.Network.DotNetty.WebSocket.Server.csproj", "{79050A64-DD57-410D-B209-108BADC94196}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Discard.Client", "examples\Librame.Extensions.Discard.Client\Librame.Extensions.Discard.Client.csproj", "{28436740-F027-4E6B-88F7-6A8127378F29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.WebSocket.Client", "examples\Librame.Extensions.Network.DotNetty.WebSocket.Client\Librame.Extensions.Network.DotNetty.WebSocket.Client.csproj", "{439ADCD1-2A92-4E49-9D5F-7F00516B740F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Discard.Server", "examples\Librame.Extensions.Discard.Server\Librame.Extensions.Discard.Server.csproj", "{7FEC6740-91A1-42E0-900F-C2F2D7B447EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Discard.Client", "examples\Librame.Extensions.Network.DotNetty.Discard.Client\Librame.Extensions.Network.DotNetty.Discard.Client.csproj", "{28436740-F027-4E6B-88F7-6A8127378F29}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Echo.Client", "examples\Librame.Extensions.Echo.Client\Librame.Extensions.Echo.Client.csproj", "{7FCB82C4-C3FA-4391-AFBC-4E806EE0DC53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Discard.Server", "examples\Librame.Extensions.Network.DotNetty.Discard.Server\Librame.Extensions.Network.DotNetty.Discard.Server.csproj", "{7FEC6740-91A1-42E0-900F-C2F2D7B447EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Echo.Server", "examples\Librame.Extensions.Echo.Server\Librame.Extensions.Echo.Server.csproj", "{4195739C-B5D7-4DAE-9725-4F385E2538D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Echo.Client", "examples\Librame.Extensions.Network.DotNetty.Echo.Client\Librame.Extensions.Network.DotNetty.Echo.Client.csproj", "{7FCB82C4-C3FA-4391-AFBC-4E806EE0DC53}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Factorial.Client", "examples\Librame.Extensions.Factorial.Client\Librame.Extensions.Factorial.Client.csproj", "{32207ED2-C106-47AD-8EAF-AF17DAAD8066}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Echo.Server", "examples\Librame.Extensions.Network.DotNetty.Echo.Server\Librame.Extensions.Network.DotNetty.Echo.Server.csproj", "{4195739C-B5D7-4DAE-9725-4F385E2538D5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Factorial.Server", "examples\Librame.Extensions.Factorial.Server\Librame.Extensions.Factorial.Server.csproj", "{7B846B98-C3BF-4BD1-99BA-6D46F3D351DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Factorial.Client", "examples\Librame.Extensions.Network.DotNetty.Factorial.Client\Librame.Extensions.Network.DotNetty.Factorial.Client.csproj", "{32207ED2-C106-47AD-8EAF-AF17DAAD8066}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.HttpServer", "examples\Librame.Extensions.HttpServer\Librame.Extensions.HttpServer.csproj", "{2ECCAEF5-764D-4C23-9E18-8FB51D311562}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Factorial.Server", "examples\Librame.Extensions.Network.DotNetty.Factorial.Server\Librame.Extensions.Network.DotNetty.Factorial.Server.csproj", "{7B846B98-C3BF-4BD1-99BA-6D46F3D351DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.HttpServer", "examples\Librame.Extensions.Network.DotNetty.HttpServer\Librame.Extensions.Network.DotNetty.HttpServer.csproj", "{2ECCAEF5-764D-4C23-9E18-8FB51D311562}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -269,6 +271,10 @@ Global
 		{2ECCAEF5-764D-4C23-9E18-8FB51D311562}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ECCAEF5-764D-4C23-9E18-8FB51D311562}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ECCAEF5-764D-4C23-9E18-8FB51D311562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -316,9 +322,10 @@ Global
 		{32207ED2-C106-47AD-8EAF-AF17DAAD8066} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 		{7B846B98-C3BF-4BD1-99BA-6D46F3D351DE} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 		{2ECCAEF5-764D-4C23-9E18-8FB51D311562} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4B0E8A00-41DB-40AA-826D-5EFA8FF281F0}
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45
+		SolutionGuid = {4B0E8A00-41DB-40AA-826D-5EFA8FF281F0}
 	EndGlobalSection
 EndGlobal

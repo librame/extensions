@@ -3,7 +3,7 @@ using System;
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    internal class TestServiceProvider
+    internal static class TestServiceProvider
     {
         private static readonly AlgorithmIdentifier _defaultIdentifier
             = AlgorithmIdentifier.New();
