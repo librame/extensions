@@ -21,7 +21,7 @@ namespace Librame.Extensions.Network.DotNetty
     /// <summary>
     /// 通道服务基类。
     /// </summary>
-    public class ChannelServiceBase : AbstractService<DotNettyOptions>, IChannelService
+    public class ChannelServiceBase : AbstractService, IChannelService
     {
         /// <summary>
         /// 构造一个 <see cref="ChannelServiceBase"/> 实例。
@@ -31,9 +31,10 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public ChannelServiceBase(ISigningCredentialsService signingCredentials,
             IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+            : base(loggerFactory)
         {
             SigningCredentials = signingCredentials.NotNull(nameof(signingCredentials));
+            Options = options.NotNull(nameof(options)).Value;
         }
 
 
@@ -44,5 +45,11 @@ namespace Librame.Extensions.Network.DotNetty
         /// 返回 <see cref="ISigningCredentialsService"/>。
         /// </value>
         public ISigningCredentialsService SigningCredentials { get; }
+
+        /// <summary>
+        /// DotNetty 构建器选项。
+        /// </summary>
+        /// <value>返回 <see cref="DotNettyOptions"/>。</value>
+        public DotNettyOptions Options { get; }
     }
 }

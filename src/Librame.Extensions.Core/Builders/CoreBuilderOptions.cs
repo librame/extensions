@@ -10,9 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Globalization;
 using System.Text;
 
@@ -26,22 +23,6 @@ namespace Librame.Extensions.Core
         private static readonly CultureInfo _zhCNCultureInfo
             = new CultureInfo("zh-CN");
 
-
-        /// <summary>
-        /// 配置本地化。
-        /// </summary>
-        public Action<LocalizationOptions> ConfigureLocalization { get; set; }
-            = options =>
-            {
-                // 初始限定资源目录名
-                options.ResourcesPath = "Resources";
-            };
-
-        /// <summary>
-        /// 配置日志。
-        /// </summary>
-        public Action<ILoggingBuilder> ConfigureLogging { get; set; }
-            = _ => { };
 
         /// <summary>
         /// 文化信息（默认为 zh-CN）。

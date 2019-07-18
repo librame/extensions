@@ -11,23 +11,22 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Encryption
 {
     /// <summary>
-    /// 请求网络构建器静态扩展。
+    /// 内部密钥生成器加密构建器静态扩展。
     /// </summary>
-    public static class RequestNetworkBuilderExtensions
+    internal static class InternalKeyGeneratorEncryptionBuilderExtensions
     {
         /// <summary>
-        /// 添加请求集合。
+        /// 添加密钥生成器集合。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
-        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddRequests(this INetworkBuilder builder)
+        /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
+        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        public static IEncryptionBuilder AddKeyGenerators(this IEncryptionBuilder builder)
         {
-            builder.Services.AddSingleton<IRequestFactory<HttpWebRequest>, InternalHttpWebRequestFactory>();
+            builder.Services.AddScoped<IKeyGenerator, InternalKeyGenerator>();
 
             return builder;
         }

@@ -5,7 +5,7 @@ namespace Librame.Extensions.Core.Tests
     public class ApplicationEnvironmentInfoTests
     {
         [Fact]
-        public void AddJobTest()
+        public void AllTest()
         {
             var info = new ApplicationEnvironmentInfo();
 

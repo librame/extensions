@@ -21,7 +21,7 @@ namespace Librame.Extensions.WebSocket.Client
 
             var services = new ServiceCollection();
 
-            services.AddLibrame(options => options.ConfigureLogging = loggingBuilder =>
+            services.AddLibrame(setupLoggingAction: loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
                 loggingBuilder.SetMinimumLevel(LogLevel.Trace);

@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class BuilderServiceCollectionExtensionsTests
+    public class CoreBuilderServiceCollectionExtensionsTests
     {
         [Fact]
         public void AddLibrameTest()

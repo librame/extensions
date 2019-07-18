@@ -15,9 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Network
 {
     /// <summary>
-    /// 服务网络构建器静态扩展。
+    /// 内部服务网络构建器静态扩展。
     /// </summary>
-    public static class ServiceNetworkBuilderExtensions
+    internal static class InternalServiceNetworkBuilderExtensions
     {
         /// <summary>
         /// 添加服务集合。

@@ -11,22 +11,23 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Network
 {
     /// <summary>
-    /// 缓冲区加密构建器静态扩展。
+    /// 内部请求网络构建器静态扩展。
     /// </summary>
-    public static class BufferEncryptionBuilderExtensions
+    internal static class InternalRequestNetworkBuilderExtensions
     {
         /// <summary>
-        /// 添加缓冲区集合。
+        /// 添加请求集合。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
-        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddBuffers(this IEncryptionBuilder builder)
+        /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
+        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
+        public static INetworkBuilder AddRequests(this INetworkBuilder builder)
         {
-            builder.Services.AddScoped(typeof(IEncryptionBuffer<,>), typeof(InternalEncryptionBuffer<,>));
+            builder.Services.AddSingleton<IRequestFactory<HttpWebRequest>, InternalHttpWebRequestFactory>();
 
             return builder;
         }

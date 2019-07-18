@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
 using Xunit;
 
 namespace Librame.Extensions.Core.Tests
@@ -19,7 +20,9 @@ namespace Librame.Extensions.Core.Tests
 
         private void RunTest(IExpressionStringLocalizer<HumanizationResource> localizer, string cultureName)
         {
-            AssemblyHelper.RegisterCultureInfos(cultureName);
+            CultureInfo.CurrentCulture
+                = CultureInfo.CurrentUICulture
+                = new CultureInfo(cultureName);
 
             var minutesAgo = localizer[r => r.HumanizedMinutesAgo];
             Assert.False(minutesAgo.ResourceNotFound);

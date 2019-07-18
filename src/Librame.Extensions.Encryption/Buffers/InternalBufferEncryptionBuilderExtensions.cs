@@ -15,18 +15,18 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Encryption
 {
     /// <summary>
-    /// 密钥生成器加密构建器静态扩展。
+    /// 内部缓冲区加密构建器静态扩展。
     /// </summary>
-    public static class KeyGeneratorEncryptionBuilderExtensions
+    internal static class InternalBufferEncryptionBuilderExtensions
     {
         /// <summary>
-        /// 添加密钥生成器集合。
+        /// 添加缓冲区集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddKeyGenerators(this IEncryptionBuilder builder)
+        public static IEncryptionBuilder AddBuffers(this IEncryptionBuilder builder)
         {
-            builder.Services.AddScoped<IKeyGenerator, InternalKeyGenerator>();
+            builder.Services.AddScoped(typeof(IEncryptionBuffer<,>), typeof(InternalEncryptionBuffer<,>));
 
             return builder;
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using System.Globalization;
 
 namespace Librame.Extensions.Data.Tests
 {
@@ -19,7 +20,9 @@ namespace Librame.Extensions.Data.Tests
 
         private void RunTest(IExpressionStringLocalizer<AuditResource> localizer, string cultureName)
         {
-            AssemblyHelper.RegisterCultureInfos(cultureName);
+            CultureInfo.CurrentCulture
+                = CultureInfo.CurrentUICulture
+                = new CultureInfo(cultureName);
 
             var entityId = localizer[r => r.EntityId];
             Assert.False(entityId.ResourceNotFound);

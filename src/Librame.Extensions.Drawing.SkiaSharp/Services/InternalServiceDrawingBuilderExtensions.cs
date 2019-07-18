@@ -15,9 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Drawing
 {
     /// <summary>
-    /// 服务图画构建器静态扩展。
+    /// 内部服务图画构建器静态扩展。
     /// </summary>
-    public static class ServiceDrawingBuilderExtensions
+    internal static class InternalServiceDrawingBuilderExtensions
     {
         /// <summary>
         /// 添加服务集合。

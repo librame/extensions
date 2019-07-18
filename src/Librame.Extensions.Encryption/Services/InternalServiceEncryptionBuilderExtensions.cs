@@ -15,19 +15,21 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Encryption
 {
     /// <summary>
-    /// 转换器加密构建器静态扩展。
+    /// 内部服务加密构建器静态扩展。
     /// </summary>
-    public static class ConverterEncryptionBuilderExtensions
+    internal static class InternalServiceEncryptionBuilderExtensions
     {
         /// <summary>
-        /// 添加转换器集合。
+        /// 添加服务集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddConverters(this IEncryptionBuilder builder)
+        public static IEncryptionBuilder AddServices(this IEncryptionBuilder builder)
         {
-            builder.Services.AddSingleton<ICiphertextConverter, CiphertextConverter>();
-            builder.Services.AddSingleton<IPlaintextConverter, PlaintextConverter>();
+            builder.Services.AddScoped<IHashService, InternalHashService>();
+            builder.Services.AddScoped<IKeyedHashService, InternalKeyedHashService>();
+            builder.Services.AddScoped<IRsaService, InternalRsaService>();
+            builder.Services.AddScoped<ISymmetricService, InternalSymmetricService>();
 
             return builder;
         }

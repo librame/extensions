@@ -21,7 +21,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 网络服务基类。
     /// </summary>
-    public class NetworkServiceBase : AbstractService<NetworkBuilderOptions>, INetworkService
+    public class NetworkServiceBase : AbstractService, INetworkService
     {
         /// <summary>
         /// 构造一个 <see cref="NetworkServiceBase"/> 实例。
@@ -31,9 +31,10 @@ namespace Librame.Extensions.Network
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public NetworkServiceBase(IOptions<CoreBuilderOptions> coreOptions,
             IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+            : base(loggerFactory)
         {
             CoreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
+            Options = options.NotNull(nameof(options)).Value;
             Encoding = CoreOptions.Encoding;
         }
 
@@ -41,7 +42,13 @@ namespace Librame.Extensions.Network
         /// <summary>
         /// 核心选项。
         /// </summary>
-        protected CoreBuilderOptions CoreOptions { get; }
+        public CoreBuilderOptions CoreOptions { get; }
+
+        /// <summary>
+        /// 网络构建器选项。
+        /// </summary>
+        /// <value>返回 <see cref="NetworkBuilderOptions"/>。</value>
+        public NetworkBuilderOptions Options { get; }
 
         /// <summary>
         /// 字符编码。

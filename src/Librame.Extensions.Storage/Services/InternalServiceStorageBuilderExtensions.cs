@@ -15,9 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Storage
 {
     /// <summary>
-    /// 服务存储构建器静态扩展。
+    /// 内部服务存储构建器静态扩展。
     /// </summary>
-    public static class ServiceStorageBuilderExtensions
+    internal static class InternalServiceStorageBuilderExtensions
     {
         /// <summary>
         /// 添加服务集合。

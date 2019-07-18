@@ -21,28 +21,10 @@ using System.Security.Cryptography.X509Certificates;
 namespace Librame.Extensions.Encryption
 {
     /// <summary>
-    /// 服务加密构建器静态扩展。
+    /// 签名证书加密构建器静态扩展。
     /// </summary>
-    public static class ServiceEncryptionBuilderExtensions
+    public static class SigningCredentialsEncryptionBuilderExtensions
     {
-        /// <summary>
-        /// 添加服务集合。
-        /// </summary>
-        /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
-        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddServices(this IEncryptionBuilder builder)
-        {
-            builder.Services.AddScoped<IHashService, InternalHashService>();
-            builder.Services.AddScoped<IKeyedHashService, InternalKeyedHashService>();
-            builder.Services.AddScoped<IRsaService, InternalRsaService>();
-            builder.Services.AddScoped<ISymmetricService, InternalSymmetricService>();
-
-            return builder;
-        }
-
-
-        #region SigningCredentials
-
         /// <summary>
         /// 添加签名证书集合。
         /// </summary>
@@ -113,7 +95,7 @@ namespace Librame.Extensions.Encryption
         }
 
         /// <summary>
-        /// 添加开发者全局签名证书。
+        /// 添加开发者全局签名证书（默认原生兼容 IdentityServer4 生成的临时密钥文件）。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <param name="persistKey">是否持久化密钥（可选；默认持久化）。</param>
@@ -125,8 +107,6 @@ namespace Librame.Extensions.Encryption
             var rsaKey = RsaSecurityKeyHelper.LoadRsaSecurityKey(fileName, persistKey);
             return builder.AddGlobalSigningCredentials(rsaKey);
         }
-
-        #endregion
 
     }
 }

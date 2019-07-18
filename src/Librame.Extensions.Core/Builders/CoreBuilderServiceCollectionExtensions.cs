@@ -12,6 +12,7 @@
 
 using Librame.Extensions;
 using Librame.Extensions.Core;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -26,11 +27,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="setupAction">给定的选项配置动作（可选）。</param>
+        /// <param name="setupLoggingAction">给定的日志配置动作（可选）。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
-            Action<CoreBuilderOptions> setupAction = null)
+            Action<CoreBuilderOptions> setupAction = null,
+            Action<ILoggingBuilder> setupLoggingAction = null)
         {
-            return services.AddLibrame(s => new InternalCoreBuilder(s), setupAction);
+            return services.AddLibrame(s => new InternalCoreBuilder(s), setupAction,
+                setupLoggingAction);
         }
 
         /// <summary>
@@ -39,17 +43,25 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="createFactory">给定创建核心构建器的工厂方法。</param>
         /// <param name="setupAction">给定的选项配置动作（可选）。</param>
+        /// <param name="setupLoggingAction">给定的日志配置动作（可选）。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
             Func<IServiceCollection, ICoreBuilder> createFactory,
-            Action<CoreBuilderOptions> setupAction = null)
+            Action<CoreBuilderOptions> setupAction = null,
+            Action<ILoggingBuilder> setupLoggingAction = null)
         {
             createFactory.NotNull(nameof(createFactory));
 
-            services.AddOptions().AddLogging();
+            // Add Dependencies
+            services
+                .AddOptions()
+                .AddLocalization(options =>
+                {
+                    options.ResourcesPath = "Resources";
+                })
+                .AddLogging(setupLoggingAction ?? (_ => { }));
 
-            if (setupAction != null)
-                services.Configure(setupAction);
+            services.OnlyConfigure(setupAction);
 
             var coreBuilder = createFactory.Invoke(services);
 

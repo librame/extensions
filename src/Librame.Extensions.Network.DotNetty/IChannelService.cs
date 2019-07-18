@@ -20,7 +20,7 @@ namespace Librame.Extensions.Network.DotNetty
     /// <summary>
     /// 通道服务接口。
     /// </summary>
-    public interface IChannelService : IService<DotNettyOptions>
+    public interface IChannelService : IService
     {
         /// <summary>
         /// 记录器工厂。
@@ -35,5 +35,11 @@ namespace Librame.Extensions.Network.DotNetty
         /// 返回 <see cref="ISigningCredentialsService"/>。
         /// </value>
         ISigningCredentialsService SigningCredentials { get; }
+
+        /// <summary>
+        /// DotNetty 构建器选项。
+        /// </summary>
+        /// <value>返回 <see cref="DotNettyOptions"/>。</value>
+        DotNettyOptions Options { get; }
     }
 }

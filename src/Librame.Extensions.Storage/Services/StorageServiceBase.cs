@@ -20,7 +20,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 存储服务基类。
     /// </summary>
-    public class StorageServiceBase : AbstractService<StorageBuilderOptions>
+    public class StorageServiceBase : AbstractService
     {
         /// <summary>
         /// 构造一个 <see cref="StorageServiceBase"/> 实例。
@@ -29,9 +29,16 @@ namespace Librame.Extensions.Storage
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public StorageServiceBase(IOptions<StorageBuilderOptions> options,
             ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+            : base(loggerFactory)
         {
+            Options = options.NotNull(nameof(options)).Value;
         }
 
+
+        /// <summary>
+        /// 存储构建器选项。
+        /// </summary>
+        /// <value>返回 <see cref="StorageBuilderOptions"/>。</value>
+        public StorageBuilderOptions Options { get; }
     }
 }

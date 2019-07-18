@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 数据构建器选项。
         /// </summary>
-        /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
+        /// <value>返回 <see cref="DataBuilderOptions"/>。</value>
         public DataBuilderOptions Options { get; }
     }
 }

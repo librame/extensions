@@ -98,5 +98,25 @@ namespace Librame.Extensions.Core
             return null;
         }
 
+
+        /// <summary>
+        /// 获取根命名空间特性。
+        /// </summary>
+        /// <param name="assembly">给定的程序集。</param>
+        /// <returns>返回 <see cref="RootNamespaceAttribute"/>。</returns>
+        protected override RootNamespaceAttribute GetRootNamespaceAttribute(Assembly assembly)
+        {
+            var attribute = assembly.GetCustomAttribute<RootNamespaceAttribute>();
+
+            if (attribute.IsNotNull())
+                return attribute;
+
+            var copy = assembly.GetCustomAttribute<AbstractionRootNamespaceAttribute>();
+            if (copy.IsNotNull())
+                attribute = new RootNamespaceAttribute(copy.RootNamespace);
+
+            return attribute;
+        }
+
     }
 }

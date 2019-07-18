@@ -10,7 +10,7 @@
 
 #endregion
 
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace Librame.Extensions.Encryption
@@ -26,19 +26,30 @@ namespace Librame.Extensions.Encryption
         /// 添加加密扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{EncryptionBuilderOptions}"/>（可选；高优先级）。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
-        /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
+        /// <param name="setupAction">给定的 <see cref="Action{EncryptionBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddEncryption(this IExtensionBuilder builder,
-            Action<EncryptionBuilderOptions> configureOptions = null,
-            IConfiguration configuration = null,
-            Action<BinderOptions> configureBinderOptions = null)
+            Action<EncryptionBuilderOptions> setupAction = null)
         {
-            var options = builder.Configure(configureOptions,
-                configuration, configureBinderOptions);
+            return builder.AddEncryption(b => new InternalEncryptionBuilder(b), setupAction);
+        }
 
-            var encryptionBuilder = new InternalEncryptionBuilder(builder, options);
+        /// <summary>
+        /// 添加加密扩展。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="createFactory">给定创建加密构建器的工厂方法。</param>
+        /// <param name="setupAction">给定的 <see cref="Action{EncryptionBuilderOptions}"/>（可选）。</param>
+        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        public static IEncryptionBuilder AddEncryption(this IExtensionBuilder builder,
+            Func<IExtensionBuilder, IEncryptionBuilder> createFactory,
+            Action<EncryptionBuilderOptions> setupAction = null)
+        {
+            createFactory.NotNull(nameof(createFactory));
+
+            builder.Services.OnlyConfigure(setupAction);
+
+            var encryptionBuilder = createFactory.Invoke(builder);
 
             return encryptionBuilder
                 .AddBuffers()

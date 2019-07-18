@@ -10,7 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -33,35 +32,21 @@ namespace Librame.Extensions.Network.DotNetty
         /// 添加 DotNetty。
         /// </summary>
         /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{DotNettyOptions}"/>（可选；高优先级）。</param>
-        /// <param name="configuration">给定的 <see cref="IConfiguration"/>（可选；次优先级）。</param>
-        /// <param name="configureBinderOptions">给定的配置绑定器选项动作（可选）。</param>
-        /// <param name="addEncryptionFactory">注册加密构建器扩展工厂方法（可选）。</param>
+        /// <param name="setupAction">给定的 <see cref="Action{NetworkBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
-            Action<DotNettyOptions> configureOptions = null,
-            IConfiguration configuration = null,
-            Action<BinderOptions> configureBinderOptions = null,
-            Func<INetworkBuilder, IEncryptionBuilder> addEncryptionFactory = null)
+            Action<DotNettyOptions> setupAction = null)
         {
-            builder.Configure(configureOptions,
-                configuration, configureBinderOptions);
+            builder.Services.OnlyConfigure(setupAction);
 
-            if (!(builder is IEncryptionBuilder))
+            // 如果未添加加密扩展，则自动添加
+            if (!builder.HasParentBuilder<IEncryptionBuilder>())
             {
-                if (addEncryptionFactory.IsNull())
+                builder.AddEncryption(options =>
                 {
-                    addEncryptionFactory = _builder =>
-                    {
-                        return _builder.AddEncryption(options =>
-                        {
-                            options.Identifier = _defaultIdentifier;
-                        })
-                        .AddDeveloperGlobalSigningCredentials();
-                    };
-                }
-
-                addEncryptionFactory.Invoke(builder);
+                    options.Identifier = _defaultIdentifier;
+                })
+                .AddDeveloperGlobalSigningCredentials();
             }
 
             return builder.AddDemo();

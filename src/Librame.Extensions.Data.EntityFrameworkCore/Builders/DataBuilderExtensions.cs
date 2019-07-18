@@ -38,7 +38,7 @@ namespace Librame.Extensions.Data
         /// 添加数据扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="createFactory">给定创建核心构建器的工厂方法。</param>
+        /// <param name="createFactory">给定创建数据构建器的工厂方法。</param>
         /// <param name="setupAction">给定的 <see cref="Action{DataBuilderOptions}"/>（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddData(this IExtensionBuilder builder,
@@ -47,8 +47,7 @@ namespace Librame.Extensions.Data
         {
             createFactory.NotNull(nameof(createFactory));
 
-            if (setupAction != null)
-                builder.Services.Configure(setupAction);
+            builder.Services.OnlyConfigure(setupAction);
 
             var dataBuilder = createFactory.Invoke(builder);
 

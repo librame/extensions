@@ -20,7 +20,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 加密服务基类。
     /// </summary>
-    public class EncryptionServiceBase : AbstractService<EncryptionBuilderOptions>
+    public class EncryptionServiceBase : AbstractService
     {
         /// <summary>
         /// 构造一个 <see cref="EncryptionServiceBase"/> 实例。
@@ -28,9 +28,16 @@ namespace Librame.Extensions.Encryption
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public EncryptionServiceBase(IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+            : base(loggerFactory)
         {
+            Options = options.NotNull(nameof(options)).Value;
         }
 
+
+        /// <summary>
+        /// 加密构建器选项。
+        /// </summary>
+        /// <value>返回 <see cref="EncryptionBuilderOptions"/>。</value>
+        public EncryptionBuilderOptions Options { get; }
     }
 }

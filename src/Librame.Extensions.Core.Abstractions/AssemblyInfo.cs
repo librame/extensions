@@ -11,8 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.Localization;
-using System.Reflection;
 
-[assembly: RootNamespace("Librame.Extensions.Core")]
+[assembly: AbstractionRootNamespace("Librame.Extensions.Core")]
 //[assembly: ResourceLocation("Resources")]
 [assembly: ResourceMapping]
