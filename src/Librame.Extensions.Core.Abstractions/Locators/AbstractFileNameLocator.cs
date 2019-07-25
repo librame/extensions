@@ -38,8 +38,7 @@ namespace Librame.Extensions.Core
         protected AbstractFileNameLocator(string baseName, string extension)
             : base(baseName + extension)
         {
-            // 存在有些没扩展名的文件名
-            Extension = extension;
+            Extension = extension; // 存在有些没扩展名的文件名
             BaseName = baseName.NotNullOrEmpty(nameof(baseName));
         }
 
@@ -66,7 +65,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="newBaseName">给定的新基础名。</param>
         /// <returns>返回 <see cref="IFileNameLocator"/>。</returns>
-        public virtual IFileNameLocator ChangeBaseName(string newBaseName)
+        public IFileNameLocator ChangeBaseName(string newBaseName)
         {
             BaseName = newBaseName.NotNullOrEmpty(nameof(newBaseName));
             return this;
@@ -77,7 +76,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="newExtension">给定的新扩展名。</param>
         /// <returns>返回 <see cref="IFileNameLocator"/>。</returns>
-        public virtual IFileNameLocator ChangeExtension(string newExtension)
+        public IFileNameLocator ChangeExtension(string newExtension)
         {
             Extension = newExtension.NotNullOrEmpty(nameof(newExtension));
             return this;

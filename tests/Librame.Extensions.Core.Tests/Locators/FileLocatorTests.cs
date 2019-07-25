@@ -11,7 +11,7 @@ namespace Librame.Extensions.Core.Tests
 
             var locator = path.AsFileLocator();
             Assert.Equal(@"c:\test", locator.BasePath);
-            Assert.Equal("file.ext", locator.FileName.ToString());
+            Assert.Equal("file.ext", locator.FileNameString);
             Assert.Equal(path, locator.ToString());
 
             Assert.Equal(locator, locator.ChangeBasePath(@"d:\123"));

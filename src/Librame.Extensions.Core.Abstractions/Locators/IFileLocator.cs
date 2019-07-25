@@ -29,6 +29,11 @@ namespace Librame.Extensions.Core
         /// </summary>
         IFileNameLocator FileName { get; }
 
+        /// <summary>
+        /// 文件名字符串。
+        /// </summary>
+        string FileNameString { get; }
+
 
         /// <summary>
         /// 改变基础路径。

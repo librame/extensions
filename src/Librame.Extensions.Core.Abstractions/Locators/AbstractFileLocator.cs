@@ -56,14 +56,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 创建 <see cref="IFileNameLocator"/> 实例。
-        /// </summary>
-        /// <param name="fileName">给定的文件名。</param>
-        /// <returns>返回 <see cref="IFileNameLocator"/>。</returns>
-        protected abstract IFileNameLocator CreateFileNameLocator(string fileName);
-
-
-        /// <summary>
         /// 基础路径。
         /// </summary>
         public string BasePath { get; private set; }
@@ -72,6 +64,11 @@ namespace Librame.Extensions.Core
         /// 文件名。
         /// </summary>
         public IFileNameLocator FileName { get; private set; }
+
+        /// <summary>
+        /// 文件名字符串。
+        /// </summary>
+        public string FileNameString => FileName.ToString();
 
 
         /// <summary>
@@ -85,7 +82,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="newBasePath">给定的新基础路径。</param>
         /// <returns>返回当前 <see cref="IFileLocator"/>。</returns>
-        public virtual IFileLocator ChangeBasePath(string newBasePath)
+        public IFileLocator ChangeBasePath(string newBasePath)
         {
             BasePath = newBasePath.NotNullOrEmpty(nameof(newBasePath));
             return this;
@@ -96,7 +93,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="newFileName">给定的新文件名。</param>
         /// <returns>返回当前 <see cref="IFileLocator"/>。</returns>
-        public virtual IFileLocator ChangeFileName(string newFileName)
+        public IFileLocator ChangeFileName(string newFileName)
         {
             return ChangeFileName(CreateFileNameLocator(newFileName));
         }
@@ -106,9 +103,9 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="newFileName">给定的新 <see cref="IFileNameLocator"/>。</param>
         /// <returns>返回当前 <see cref="IFileLocator"/>。</returns>
-        public virtual IFileLocator ChangeFileName(IFileNameLocator newFileName)
+        public IFileLocator ChangeFileName(IFileNameLocator newFileName)
         {
-            FileName = newFileName;
+            FileName = newFileName.NotNull(nameof(newFileName));
             return this;
         }
 
@@ -133,6 +130,14 @@ namespace Librame.Extensions.Core
         /// <param name="newFileName">给定的新 <see cref="IFileNameLocator"/>。</param>
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
         public abstract IFileLocator NewFileName(IFileNameLocator newFileName);
+
+
+        /// <summary>
+        /// 创建 <see cref="IFileNameLocator"/> 实例。
+        /// </summary>
+        /// <param name="fileName">给定的文件名。</param>
+        /// <returns>返回 <see cref="IFileNameLocator"/>。</returns>
+        protected abstract IFileNameLocator CreateFileNameLocator(string fileName);
 
 
         /// <summary>

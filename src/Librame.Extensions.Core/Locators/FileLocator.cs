@@ -48,17 +48,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 创建 <see cref="IFileNameLocator"/> 实例。
-        /// </summary>
-        /// <param name="fileName">给定的文件名。</param>
-        /// <returns>返回 <see cref="IFileNameLocator"/>。</returns>
-        protected override IFileNameLocator CreateFileNameLocator(string fileName)
-        {
-            return new FileNameLocator(fileName);
-        }
-
-
-        /// <summary>
         /// 依据当前文件定位器的文件名与指定的基础路径，新建一个文件定位器。
         /// </summary>
         /// <param name="newBasePath">给定的新基础路径。</param>
@@ -86,6 +75,17 @@ namespace Librame.Extensions.Core
         public override IFileLocator NewFileName(IFileNameLocator newFileName)
         {
             return new FileLocator(newFileName, BasePath);
+        }
+
+
+        /// <summary>
+        /// 创建 <see cref="IFileNameLocator"/> 实例。
+        /// </summary>
+        /// <param name="fileName">给定的文件名。</param>
+        /// <returns>返回 <see cref="IFileNameLocator"/>。</returns>
+        protected override IFileNameLocator CreateFileNameLocator(string fileName)
+        {
+            return new FileNameLocator(fileName);
         }
 
 
