@@ -72,7 +72,10 @@ namespace Librame.Extensions
         /// <returns>返回布尔值。</returns>
         public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> sources)
         {
-            return sources.IsNull() || !sources.Any();
+            if (sources.IsNull())
+                return true;
+
+            return !sources.Any();
         }
 
         /// <summary>
@@ -158,8 +161,10 @@ namespace Librame.Extensions
             bool equalMinimum = false, bool equalMaximum = false)
             where T : IComparable<T>
         {
-            return value.IsLesser(compareMinimum, equalMinimum)
-                || value.IsGreater(compareMaximum, equalMaximum);
+            if (value.IsLesser(compareMinimum, equalMinimum))
+                return true;
+
+            return value.IsGreater(compareMaximum, equalMaximum);
         }
 
         #endregion
@@ -389,7 +394,12 @@ namespace Librame.Extensions
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsLetter(this char c)
-            => c.IsUpper() || c.IsLower();
+        {
+            if (c.IsUpper())
+                return true;
+
+            return c.IsLower();
+        }
 
 
         /// <summary>
@@ -414,7 +424,12 @@ namespace Librame.Extensions
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsLetterAndDigit(this char c)
-            => c.IsUpper() || c.IsLower() || c.IsDigit();
+        {
+            if (c.IsLetter())
+                return true;
+
+            return c.IsDigit();
+        }
 
 
         /// <summary>
@@ -439,7 +454,12 @@ namespace Librame.Extensions
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsSafety(this char c)
-            => c.IsUpper() || c.IsLower() || c.IsDigit() || c.IsSpecial();
+        {
+            if (c.IsLetterAndDigit())
+                return true;
+
+            return c.IsSpecial();
+        }
 
         #endregion
 
