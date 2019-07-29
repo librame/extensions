@@ -58,6 +58,18 @@ namespace Librame.Extensions.Data
         /// 审计通知动作。
         /// </summary>
         public Action<AuditNotification> AuditNotificationAction { get; set; }
+		
+        /// <summary>
+        /// 服务提供程序。
+        /// </summary>
+        public IServiceProvider ServiceProvider
+            => this.GetInfrastructure();
+
+        /// <summary>
+        /// 记录器工厂。
+        /// </summary>
+        public ILoggerFactory LoggerFactory
+            => this.GetService<ILoggerFactory>();
 
 
         #region Entities
@@ -81,22 +93,10 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 服务提供程序。
-        /// </summary>
-        public IServiceProvider ServiceProvider
-            => this.GetInfrastructure();
-
-        /// <summary>
         /// 构建器选项。
         /// </summary>
         public DataBuilderOptions BuilderOptions
             => this.GetService<IOptions<DataBuilderOptions>>().Value;
-
-        /// <summary>
-        /// 记录器工厂。
-        /// </summary>
-        public ILoggerFactory LoggerFactory
-            => this.GetService<ILoggerFactory>();
 
         /// <summary>
         /// 记录器。
