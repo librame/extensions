@@ -47,12 +47,16 @@ namespace Librame.Extensions.Network
         {
             createFactory.NotNull(nameof(createFactory));
 
+            // Add Dependencies
+            builder.Services.AddHttpClient();
+
+            // Add Builder
             builder.Services.OnlyConfigure(setupAction);
 
             var networkBuilder = createFactory.Invoke(builder);
 
             return networkBuilder
-                .AddRequests()
+                .AddRequesters()
                 .AddServices();
         }
 

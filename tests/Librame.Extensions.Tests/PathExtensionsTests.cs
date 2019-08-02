@@ -31,21 +31,10 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void ChangeFileNameTest()
         {
-            var path = AppContext.BaseDirectory.AppendPathOrUri("test.txt");
+            var path = AppContext.BaseDirectory.CombinePath("test.txt");
             var changePath = path.ChangeFileName((baseName, ext) => $"change{ext}");
 
-            Assert.Equal(AppContext.BaseDirectory.AppendPathOrUri("change.txt"), changePath);
-        }
-
-
-        [Fact]
-        public void AppendPathOrUriTest()
-        {
-            var result = @"c:\temp\filename.ext";
-            Assert.Equal(result, @"c:\temp\1\2".AppendPathOrUri("..\\..\\filename.ext"));
-
-            result = @"http://www.domain.name/controller/action";
-            Assert.Equal(result, $"http://www.domain.name/webapi/entities".AppendPathOrUri("/controller/action"));
+            Assert.Equal(AppContext.BaseDirectory.CombinePath("change.txt"), changePath);
         }
 
 
@@ -62,17 +51,6 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
-        public void CombineUriTest()
-        {
-            var result = @"http://www.domain.name/controller/action";
-            var baseUri = "http://www.domain.name/";
-
-            Assert.Equal(result, baseUri.CombineUriToString("controller/action"));
-            Assert.Equal(result, $"{baseUri}webapi/entities".CombineUriToString("/controller/action"));
-        }
-
-
-        [Fact]
         public void ExtractHasExtensionTest()
         {
             var paths = new string[] { @"c:\temp\filename.jpg", @"c:\temp\filename.png", @"c:\temp\filename.gif", @"c:\temp\filename.mp3" };
@@ -80,7 +58,6 @@ namespace Librame.Extensions.Tests
             var results = paths.ExtractHasExtension(new string[] { ".jpg", ".mp3" });
             Assert.False(results.IsNullOrEmpty());
         }
-
 
         [Fact]
         public void TryHasExtensionTest()

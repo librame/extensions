@@ -21,20 +21,20 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部密钥生成器。
     /// </summary>
-    internal class InternalKeyGenerator : EncryptionServiceBase, IKeyGenerator
+    internal class InternalKeyGenerator : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IKeyGenerator
     {
-        private readonly AlgorithmIdentifier _optionIdentifier;
+        private readonly AlgorithmIdentifier _optionsIdentifier;
 
 
         /// <summary>
-        /// 构造一个 <see cref="InternalKeyGenerator"/> 实例。
+        /// 构造一个 <see cref="InternalKeyGenerator"/>。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public InternalKeyGenerator(IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
-            _optionIdentifier = (AlgorithmIdentifier)Options.Identifier;
+            _optionsIdentifier = (AlgorithmIdentifier)Options.Identifier;
         }
 
 
@@ -55,7 +55,7 @@ namespace Librame.Extensions.Encryption
             }
             else
             {
-                memory = _optionIdentifier.Memory;
+                memory = _optionsIdentifier.Memory;
                 Logger.LogDebug($"Use options identifier: {Options.Identifier}");
             }
 

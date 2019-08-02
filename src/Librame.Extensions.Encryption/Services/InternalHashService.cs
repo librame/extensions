@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
@@ -21,19 +20,16 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部散列服务。
     /// </summary>
-    internal class InternalHashService : EncryptionServiceBase, IHashService
+    internal class InternalHashService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IHashService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalHashService"/> 实例。
         /// </summary>
         /// <param name="rsa">给定的 <see cref="IRsaService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalHashService(IRsaService rsa,
-            IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+        public InternalHashService(IRsaService rsa)
+            : base(rsa.CastTo<IRsaService, ExtensionBuilderServiceBase<EncryptionBuilderOptions>>(nameof(rsa)))
         {
-            Rsa = rsa.NotNull(nameof(rsa));
+            Rsa = rsa;
         }
 
 

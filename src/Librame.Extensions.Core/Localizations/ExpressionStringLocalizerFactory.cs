@@ -32,14 +32,19 @@ namespace Librame.Extensions.Core
         public ExpressionStringLocalizerFactory(IOptions<LocalizationOptions> localizationOptions, ILoggerFactory loggerFactory)
             : base(localizationOptions, loggerFactory)
         {
-            Logger = loggerFactory.CreateLogger<ExpressionStringLocalizerFactory>();
+            LoggerFactory = loggerFactory;
         }
 
 
         /// <summary>
-        /// 记录器。
+        /// 日志工厂。
         /// </summary>
-        protected ILogger Logger { get; }
+        protected ILoggerFactory LoggerFactory { get; }
+
+        /// <summary>
+        /// 日志。
+        /// </summary>
+        protected ILogger Logger => LoggerFactory.CreateLogger<ExpressionStringLocalizerFactory>();
 
 
         /// <summary>
@@ -53,29 +58,28 @@ namespace Librame.Extensions.Core
         {
             var prefix = string.Empty;
 
-            var mappingAttribute = GetResourceMappingAttribute(typeInfo);
-            if (mappingAttribute.IsNotNull() && mappingAttribute.Enabled)
+            var resourceMapping = GetResourceMappingAttribute(typeInfo);
+            if (resourceMapping.IsNotNull() && resourceMapping.Enabled)
             {
-                if (mappingAttribute.PrefixFactory.IsNull())
+                if (resourceMapping.PrefixFactory.IsNull())
                 {
-                    mappingAttribute.PrefixFactory = (_baseNamespace, _resourcesRelativePath, _typeInfo) =>
+                    resourceMapping.PrefixFactory = (_baseNamespace, _resourcesRelativePath, _typeInfo) =>
                     {
                         if (resourcesRelativePath.IsNullOrEmpty())
                             return $"{_baseNamespace}.{_typeInfo.Name}";
-                        else
-                            return $"{_baseNamespace}.{_resourcesRelativePath}{_typeInfo.Name}"; // 已格式化为点分隔符（如：Resources.）
+
+                        // _resourcesRelativePath 已格式化为点分隔符（如：Resources.）
+                        return $"{_baseNamespace}.{_resourcesRelativePath}{_typeInfo.Name}";
                     };
                 }
 
-                prefix = mappingAttribute.PrefixFactory.Invoke(baseNamespace, resourcesRelativePath, typeInfo);
-
-                Logger.LogInformation($"The resource prefix: {prefix} ({nameof(ResourceMappingAttribute)}.{nameof(mappingAttribute.Enabled)}={mappingAttribute.Enabled})");
+                prefix = resourceMapping.PrefixFactory.Invoke(baseNamespace, resourcesRelativePath, typeInfo);
+                Logger.LogInformation($"Get resource prefix “{prefix}” by {nameof(ResourceMappingAttribute)}.PrefixFactory");
             }
             else
             {
                 prefix = base.GetResourcePrefix(typeInfo, baseNamespace, resourcesRelativePath);
-
-                Logger.LogInformation($"The resource prefix: {prefix} (from {nameof(ResourceManagerStringLocalizerFactory)})");
+                Logger.LogInformation($"Get resource prefix “{prefix}” by {nameof(ResourceManagerStringLocalizerFactory)}");
             }
 
             return prefix;
@@ -89,15 +93,14 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="ResourceMappingAttribute"/>。</returns>
         protected virtual ResourceMappingAttribute GetResourceMappingAttribute(TypeInfo typeInfo)
         {
-            if (typeInfo.TryGetCustomAttribute(out ResourceMappingAttribute typeAttribute))
-                return typeAttribute;
+            if (typeInfo.TryGetCustomAttribute(out ResourceMappingAttribute attribute))
+                return attribute;
 
-            if (typeInfo.Assembly.TryGetCustomAttribute(out ResourceMappingAttribute assemblyAttribute))
-                return assemblyAttribute;
+            if (typeInfo.Assembly.TryGetCustomAttribute(out attribute))
+                return attribute;
 
             return null;
         }
-
 
         /// <summary>
         /// 获取根命名空间特性。
@@ -106,16 +109,13 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="RootNamespaceAttribute"/>。</returns>
         protected override RootNamespaceAttribute GetRootNamespaceAttribute(Assembly assembly)
         {
-            var attribute = assembly.GetCustomAttribute<RootNamespaceAttribute>();
+            if (assembly.TryGetCustomAttribute(out RootNamespaceAttribute rootNamespace))
+                return rootNamespace;
 
-            if (attribute.IsNotNull())
-                return attribute;
+            if (assembly.TryGetCustomAttribute(out AbstractionRootNamespaceAttribute abstractionRootNamespace))
+                return new RootNamespaceAttribute(abstractionRootNamespace.RootNamespace);
 
-            var copy = assembly.GetCustomAttribute<AbstractionRootNamespaceAttribute>();
-            if (copy.IsNotNull())
-                attribute = new RootNamespaceAttribute(copy.RootNamespace);
-
-            return attribute;
+            return null;
         }
 
     }

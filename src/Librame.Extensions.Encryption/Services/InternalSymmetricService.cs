@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
@@ -21,19 +20,16 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部对称服务。
     /// </summary>
-    internal class InternalSymmetricService : EncryptionServiceBase, ISymmetricService
+    internal class InternalSymmetricService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, ISymmetricService
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalSymmetricService"/> 实例。
+        /// 构造一个 <see cref="InternalSymmetricService"/>。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalSymmetricService(IKeyGenerator keyGenerator,
-            IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+        public InternalSymmetricService(IKeyGenerator keyGenerator)
+            : base(keyGenerator.CastTo<IKeyGenerator, ExtensionBuilderServiceBase<EncryptionBuilderOptions>>(nameof(keyGenerator)))
         {
-            KeyGenerator = keyGenerator.NotNull(nameof(keyGenerator));
+            KeyGenerator = keyGenerator;
         }
 
 

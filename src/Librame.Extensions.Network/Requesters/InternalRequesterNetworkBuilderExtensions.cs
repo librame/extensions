@@ -11,23 +11,23 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
 
 namespace Librame.Extensions.Network
 {
     /// <summary>
-    /// 内部请求网络构建器静态扩展。
+    /// 内部请求程序网络构建器静态扩展。
     /// </summary>
-    internal static class InternalRequestNetworkBuilderExtensions
+    internal static class InternalRequesterNetworkBuilderExtensions
     {
         /// <summary>
-        /// 添加请求集合。
+        /// 添加请求程序集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddRequests(this INetworkBuilder builder)
+        public static INetworkBuilder AddRequesters(this INetworkBuilder builder)
         {
-            builder.Services.AddSingleton<IRequestFactory<HttpWebRequest>, InternalHttpWebRequestFactory>();
+            builder.Services.AddSingleton<IUriRequester, InternalHttpClientRequester>();
+            builder.Services.AddSingleton<IUriRequester, InternalHttpWebRequester>();
 
             return builder;
         }

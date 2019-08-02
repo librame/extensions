@@ -86,26 +86,10 @@ namespace Librame.Extensions
 
         #region Combine
 
-        /// <summary>
-        /// 附加到路径或 URI。
-        /// </summary>
-        /// <param name="basePathOrUri">给定的基础路径或 URI。</param>
-        /// <param name="relativeOrAbsolutePath">给定要附加的相对或绝对路径（绝对路径仅支持 URI）。</param>
-        /// <returns>返回路径字符串。</returns>
-        public static string AppendPathOrUri(this string basePathOrUri, string relativeOrAbsolutePath)
-        {
-            if (basePathOrUri.IsNullOrEmpty()) return relativeOrAbsolutePath;
-
-            if (basePathOrUri.Contains(Uri.SchemeDelimiter))
-                return CombineUriToString(basePathOrUri, relativeOrAbsolutePath);
-
-            return CombinePath(basePathOrUri, relativeOrAbsolutePath);
-        }
-
-
         private static readonly string DirectorySeparator = Path.DirectorySeparatorChar.ToString();
-        private static readonly string AltDirectorySeparator = Path.AltDirectorySeparatorChar.ToString();
+        //private static readonly string AltDirectorySeparator = Path.AltDirectorySeparatorChar.ToString();
         private static readonly string ParentDirectorySeparatorKey = $"..{DirectorySeparator}";
+
 
         /// <summary>
         /// 合并路径。
@@ -115,7 +99,8 @@ namespace Librame.Extensions
         /// <returns>返回路径字符串。</returns>
         public static string CombinePath(this string basePath, string relativePath)
         {
-            if (relativePath.IsNullOrEmpty()) return basePath;
+            basePath.NotNullOrEmpty(nameof(basePath));
+            relativePath.NotNullOrEmpty(nameof(relativePath));
 
             // RelativePath: filename.ext
             if (!relativePath.Contains(DirectorySeparator))
@@ -135,6 +120,7 @@ namespace Librame.Extensions
 
             return $"{basePath}{relativePath}";
         }
+
         private static (DirectoryInfo Info, string RelativePath) BackParentPath(DirectoryInfo info, string relativePath)
         {
             if (!relativePath.StartsWith(ParentDirectorySeparatorKey))
@@ -142,65 +128,6 @@ namespace Librame.Extensions
 
             // 链式返回（按层递进查找）
             return BackParentPath(info.Parent, relativePath.TrimStart(ParentDirectorySeparatorKey, false));
-        }
-
-
-        /// <summary>
-        /// 合并 URI。
-        /// </summary>
-        /// <param name="baseUri">给定的基础 URI。</param>
-        /// <param name="relativeOrAbsoluteUri">给定的相对或绝对虚拟路径。</param>
-        /// <returns>返回 <see cref="Uri"/>。</returns>
-        public static Uri CombineUri(this Uri baseUri, string relativeOrAbsoluteUri)
-        {
-            return new Uri(baseUri, relativeOrAbsoluteUri);
-        }
-        /// <summary>
-        /// 合并 URI 字符串。
-        /// </summary>
-        /// <param name="baseUri">给定的基础 URI。</param>
-        /// <param name="relativeOrAbsoluteUri">给定的相对或绝对虚拟路径。</param>
-        /// <returns>返回字符串。</returns>
-        public static string CombineUriToString(this Uri baseUri, string relativeOrAbsoluteUri)
-        {
-            return CombineUri(baseUri, relativeOrAbsoluteUri).ToString();
-        }
-
-        /// <summary>
-        /// 合并 URI。
-        /// </summary>
-        /// <param name="baseUri">给定的基础 URI 字符串。</param>
-        /// <param name="relativeOrAbsoluteUri">给定的相对或绝对虚拟路径。</param>
-        /// <returns>返回 <see cref="Uri"/>。</returns>
-        public static Uri CombineUri(this string baseUri, string relativeOrAbsoluteUri)
-        {
-            return CombineUri(new Uri(baseUri), relativeOrAbsoluteUri);
-        }
-        /// <summary>
-        /// 合并 URI 字符串。
-        /// </summary>
-        /// <remarks>
-        /// 样例1：
-        /// <code>
-        /// var baseUri = "http://www.domain.name/";
-        /// var relativeOrAbsoluteUri = "controller/action";
-        /// // http://www.domain.name/controller/action
-        /// return baseUri.CombineUriToString(relativeOrAbsoluteUri);
-        /// </code>
-        /// 样例2：
-        /// <code>
-        /// var baseUri = "http://www.domain.name/webapi/entities";
-        /// var relativeOrAbsoluteUri = "/controller/action";
-        /// // http://www.domain.name/controller/action
-        /// return baseUri.CombineUriToString(relativeOrAbsoluteUri);
-        /// </code>
-        /// </remarks>
-        /// <param name="baseUri">给定的基础 URI 字符串。</param>
-        /// <param name="relativeOrAbsoluteUri">给定的相对或绝对虚拟路径。</param>
-        /// <returns>返回字符串。</returns>
-        public static string CombineUriToString(this string baseUri, string relativeOrAbsoluteUri)
-        {
-            return CombineUri(baseUri, relativeOrAbsoluteUri).ToString();
         }
 
         #endregion

@@ -47,6 +47,7 @@ namespace Librame.Extensions.Drawing
         {
             createFactory.NotNull(nameof(createFactory));
 
+            // Add Builder
             builder.Services.OnlyConfigure(setupAction);
 
             var drawingBuilder = createFactory.Invoke(builder);

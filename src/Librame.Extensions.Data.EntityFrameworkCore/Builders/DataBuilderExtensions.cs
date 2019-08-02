@@ -47,6 +47,7 @@ namespace Librame.Extensions.Data
         {
             createFactory.NotNull(nameof(createFactory));
 
+            // Add Builder
             builder.Services.OnlyConfigure(setupAction);
 
             var dataBuilder = createFactory.Invoke(builder);

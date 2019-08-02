@@ -10,13 +10,11 @@
 
 #endregion
 
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,26 +28,30 @@ namespace Librame.Extensions.Network
     /// </summary>
     internal class InternalCrawlerService : NetworkServiceBase, ICrawlerService
     {
-        private readonly IRequestFactory<HttpWebRequest> _requestFactory;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IServicesManager<IUriRequester, InternalHttpClientRequester> _requesters;
 
 
         /// <summary>
         /// 构造一个 <see cref="InternalCrawlerService"/> 实例。
         /// </summary>
-        /// <param name="requestFactory">给定的 <see cref="IRequestFactory{HttpWebRequest}"/>。</param>
-        /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalCrawlerService(IRequestFactory<HttpWebRequest> requestFactory,
-            IOptions<CoreBuilderOptions> coreOptions,
-            IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(coreOptions, options, loggerFactory)
+        /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
+        /// <param name="requesters">给定的 <see cref="IServicesManager{IUriRequester, InternalHttpClientRequester}"/>。</param>
+        public InternalCrawlerService(IMemoryCache memoryCache, IServicesManager<IUriRequester, InternalHttpClientRequester> requesters)
+            : base(requesters.Defaulter.CastTo<IUriRequester, NetworkServiceBase>(nameof(requesters)))
         {
-            _requestFactory = requestFactory.NotNull(nameof(requestFactory));
+            _memoryCache = memoryCache.NotNull(nameof(memoryCache));
+            _requesters = requesters;
+
             ImageExtensions = Options.Crawler.ImageExtensions.Split(',');
         }
 
-        
+
+        /// <summary>
+        /// 请求程序管理器。
+        /// </summary>
+        public IServicesManager<IUriRequester> Requesters => _requesters;
+
         /// <summary>
         /// 图像文件扩展名集合。
         /// </summary>
@@ -166,52 +168,15 @@ namespace Librame.Extensions.Network
         public Task<string> GetContentAsync(string url, string postData = null,
             CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            var key = $"url:{url}|postData:{postData}";
+
+            return _memoryCache.GetOrCreateAsync(key, entry =>
             {
-                string response = null;
+                entry.SetAbsoluteExpiration(TimeSpan.FromSeconds(Options.Crawler.CacheExpirationSeconds));
 
-                using (var s = CreateResponse(url, postData).GetResponseStream())
-                {
-                    if (s.IsNotNull())
-                    {
-                        using (var sr = new StreamReader(s, Encoding))
-                        {
-                            response = sr.ReadToEnd();
-                            Logger.LogDebug($"Response: {response}");
-                        }
-                    }
-                }
-
-                return response;
+                return _requesters.Defaulter.GetResponseStringAsync(url, postData,
+                    cancellationToken: cancellationToken);
             });
-        }
-
-        private WebResponse CreateResponse(string url, string postData = null)
-        {
-            try
-            {
-                var method = postData.IsNullOrEmpty() ? "GET" : "POST";
-                var hwr = _requestFactory.CreateRequest(url, method);
-
-                if (!postData.IsNullOrEmpty())
-                {
-                    var buffer = Encoding.GetBytes(postData);
-                    hwr.ContentLength = buffer.Length;
-
-                    using (var s = hwr.GetRequestStream())
-                    {
-                        s.Write(buffer, 0, buffer.Length);
-                        Logger.LogDebug($"Send string: {postData}");
-                    }
-                }
-
-                return hwr.GetResponse();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, ex.AsInnerMessage());
-                throw ex;
-            }
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Librame.Extensions.Core;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,6 +13,8 @@ namespace Librame.Extensions.Network.Tests
     {
         public class TestCrawlerService : ICrawlerService
         {
+            public IServicesManager<IUriRequester> Requesters { get; }
+
             public string[] ImageExtensions { get; set; }
 
             public ILoggerFactory LoggerFactory => throw new NotImplementedException();

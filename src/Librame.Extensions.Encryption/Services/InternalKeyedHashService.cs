@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
@@ -21,19 +20,16 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部键控散列服务。
     /// </summary>
-    internal class InternalKeyedHashService : EncryptionServiceBase, IKeyedHashService
+    internal class InternalKeyedHashService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IKeyedHashService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalKeyedHashService"/> 实例。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalKeyedHashService(IKeyGenerator keyGenerator,
-            IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+        public InternalKeyedHashService(IKeyGenerator keyGenerator)
+            : base(keyGenerator.CastTo<IKeyGenerator, ExtensionBuilderServiceBase<EncryptionBuilderOptions>>(nameof(keyGenerator)))
         {
-            KeyGenerator = keyGenerator.NotNull(nameof(keyGenerator));
+            KeyGenerator = keyGenerator;
         }
 
 

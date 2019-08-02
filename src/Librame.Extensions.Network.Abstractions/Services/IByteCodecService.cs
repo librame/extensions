@@ -37,8 +37,9 @@ namespace Librame.Extensions.Network
         /// 解码字节数组。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="enableCodec">启用编解码。</param>
         /// <returns>返回经过解码的字节数组。</returns>
-        byte[] Decode(byte[] buffer);
+        byte[] Decode(byte[] buffer, bool enableCodec);
 
 
         /// <summary>
@@ -61,7 +62,8 @@ namespace Librame.Extensions.Network
         /// 编码字节数组。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="enableCodec">启用编解码。</param>
         /// <returns>返回经过编码的字节数组。</returns>
-        byte[] Encode(byte[] buffer);
+        byte[] Encode(byte[] buffer, bool enableCodec);
     }
 }

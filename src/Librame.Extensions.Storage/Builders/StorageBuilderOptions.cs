@@ -10,8 +10,6 @@
 
 #endregion
 
-using System.IO;
-
 namespace Librame.Extensions.Storage
 {
     using Core;
@@ -29,34 +27,28 @@ namespace Librame.Extensions.Storage
 
 
         /// <summary>
-        /// 文件系统。
+        /// 文件传输。
         /// </summary>
-        public FileSystemOptions FileSystem { get; set; }
-            = new FileSystemOptions();
+        public FileTransferOptions FileTransfer { get; set; }
+            = new FileTransferOptions();
     }
 
 
     /// <summary>
-    /// 文件系统选项。
+    /// 文件传输选项。
     /// </summary>
-    public class FileSystemOptions
+    public class FileTransferOptions
     {
         /// <summary>
-        /// 初始路径。
+        /// 超时（毫秒）。
         /// </summary>
-        public string InitPath { get; set; }
-            = Directory.GetCurrentDirectory();
+        public int Timeout { get; set; }
+            = 10000;
 
         /// <summary>
-        /// 查找模式。
+        /// 浏览器代理。
         /// </summary>
-        public string SearchPattern { get; set; }
-            = "*";
-
-        /// <summary>
-        /// 查找选项枚举。
-        /// </summary>
-        public SearchOption SearchOption { get; set; }
-            = SearchOption.TopDirectoryOnly;
+        public string UserAgent { get; set; }
+            = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36";
     }
 }

@@ -20,13 +20,13 @@ namespace Librame.Extensions.Network.DotNetty
 
                 var services = new ServiceCollection();
 
-                services.AddLibrame(setupLoggingAction: loggingBuilder =>
+                services.AddLibrame(dependency => dependency.LoggingSetupAction = logging =>
                 {
-                    loggingBuilder.ClearProviders();
-                    loggingBuilder.SetMinimumLevel(LogLevel.Trace);
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(LogLevel.Trace);
 
-                    loggingBuilder.AddConsole(logger => logger.IncludeScopes = false);
-                    loggingBuilder.AddFilter((str, level) => true);
+                    logging.AddConsole(logger => logger.IncludeScopes = false);
+                    logging.AddFilter((str, level) => true);
                 })
                 .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
                 .AddNetwork().AddDotNetty();

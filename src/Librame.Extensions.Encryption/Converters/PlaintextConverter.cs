@@ -10,6 +10,8 @@
 
 #endregion
 
+using Microsoft.Extensions.Options;
+
 namespace Librame.Extensions.Encryption
 {
     using Core;
@@ -22,8 +24,9 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 构造一个 <see cref="PlaintextConverter"/> 实例。
         /// </summary>
-        public PlaintextConverter()
-            : base()
+        /// <param name="options">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
+        public PlaintextConverter(IOptions<CoreBuilderOptions> options)
+            : base(options)
         {
         }
 

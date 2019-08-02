@@ -24,6 +24,15 @@ namespace Librame.Extensions.Storage
     public interface IFileService : IService
     {
         /// <summary>
+        /// 异步获取内容。
+        /// </summary>
+        /// <param name="root">给定的根。</param>
+        /// <param name="subpath">给定的子路径。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
+        Task<string> GetContentAsync(string root, string subpath, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// 异步获取提供程序。
         /// </summary>
         /// <param name="root">给定的根。</param>

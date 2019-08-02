@@ -23,37 +23,37 @@ namespace Librame.Extensions.Network
     public class NetworkBuilderOptions : AbstractExtensionBuilderOptions
     {
         /// <summary>
-        /// 字节编解码选项。
+        /// 字节编解码。
         /// </summary>
         public ByteCodecOptions ByteCodec { get; set; }
             = new ByteCodecOptions();
 
         /// <summary>
-        /// 抓取器选项。
+        /// 抓取器。
         /// </summary>
         public CrawlerOptions Crawler { get; set; }
             = new CrawlerOptions();
 
         /// <summary>
-        /// 请求选项。
+        /// 请求程序。
         /// </summary>
-        public RequestOptions Request { get; set; }
-            = new RequestOptions();
+        public RequesterOptions Requester { get; set; }
+            = new RequesterOptions();
 
         /// <summary>
-        /// 邮件选项。
+        /// 邮件。
         /// </summary>
         public EmailOptions Email { get; set; }
             = new EmailOptions();
 
         /// <summary>
-        /// 短信选项。
+        /// 短信。
         /// </summary>
         public SmsOptions Sms { get; set; }
             = new SmsOptions();
 
         /// <summary>
-        /// SMTP 选项。
+        /// SMTP。
         /// </summary>
         public SmtpOptions Smtp { get; set; }
             = new SmtpOptions();
@@ -87,20 +87,20 @@ namespace Librame.Extensions.Network
         /// </summary>
         public string ImageExtensions { get; set; }
             = ".jpg,.jpeg,.png,.bmp";
+
+        /// <summary>
+        /// 缓存过期秒数（默认 3600 秒后过期，即相同 URL 与提交数据在一小时内不会重复发起请求）。
+        /// </summary>
+        public int CacheExpirationSeconds { get; set; }
+            = 3600;
     }
 
 
     /// <summary>
     /// 请求程序选项。
     /// </summary>
-    public class RequestOptions
+    public class RequesterOptions
     {
-        /// <summary>
-        /// 允许自动重定向。
-        /// </summary>
-        public bool AllowAutoRedirect { get; set; }
-            = true;
-
         /// <summary>
         /// 连接次数。
         /// </summary>
@@ -108,13 +108,13 @@ namespace Librame.Extensions.Network
             = 10;
 
         /// <summary>
-        /// 引用页。
+        /// 重试次数。
         /// </summary>
-        public string Referer { get; set; }
-            = string.Empty;
+        public int RetryCount { get; set; }
+            = 3;
 
         /// <summary>
-        /// 超时。
+        /// 超时（毫秒）。
         /// </summary>
         public int Timeout { get; set; }
             = 10000;

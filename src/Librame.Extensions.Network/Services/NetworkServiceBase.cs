@@ -21,20 +21,30 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 网络服务基类。
     /// </summary>
-    public class NetworkServiceBase : AbstractService, INetworkService
+    public class NetworkServiceBase : ExtensionBuilderServiceBase<NetworkBuilderOptions>, INetworkService
     {
         /// <summary>
-        /// 构造一个 <see cref="NetworkServiceBase"/> 实例。
+        /// 构造一个 <see cref="NetworkServiceBase"/>。
         /// </summary>
         /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public NetworkServiceBase(IOptions<CoreBuilderOptions> coreOptions,
+        protected NetworkServiceBase(IOptions<CoreBuilderOptions> coreOptions,
             IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+            : base(options, loggerFactory)
         {
             CoreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
-            Options = options.NotNull(nameof(options)).Value;
+            Encoding = CoreOptions.Encoding;
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="NetworkServiceBase"/>。
+        /// </summary>
+        /// <param name="serviceBase">给定的 <see cref="NetworkServiceBase"/>。</param>
+        protected NetworkServiceBase(NetworkServiceBase serviceBase)
+            : base(serviceBase)
+        {
+            CoreOptions = serviceBase.CoreOptions;
             Encoding = CoreOptions.Encoding;
         }
 
@@ -42,17 +52,13 @@ namespace Librame.Extensions.Network
         /// <summary>
         /// 核心选项。
         /// </summary>
+        /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
         public CoreBuilderOptions CoreOptions { get; }
-
-        /// <summary>
-        /// 网络构建器选项。
-        /// </summary>
-        /// <value>返回 <see cref="NetworkBuilderOptions"/>。</value>
-        public NetworkBuilderOptions Options { get; }
 
         /// <summary>
         /// 字符编码。
         /// </summary>
+        /// <value>返回 <see cref="System.Text.Encoding"/>。</value>
         public Encoding Encoding { get; set; }
     }
 }

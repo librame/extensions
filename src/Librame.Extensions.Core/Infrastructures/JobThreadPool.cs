@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Librame.Extensions.Core
@@ -22,7 +23,7 @@ namespace Librame.Extensions.Core
     /// </summary>
     public class JobThreadPool : AbstractDisposable, IJobThreadPool
     {
-        private List<Thread> _threads;
+        private readonly List<Thread> _threads;
         private ConcurrentQueue<JobDescriptor> _jobs;
 
         
@@ -82,17 +83,20 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 工作队列为空。
         /// </summary>
-        public bool JobsIsEmpty => _jobs.IsEmpty;
+        public bool JobsIsEmpty
+            => _jobs.IsEmpty;
 
         /// <summary>
         /// 工作队列数量。
         /// </summary>
-        public int JobsCount => _jobs.Count;
+        public int JobsCount
+            => _jobs.Count;
 
         /// <summary>
         /// 线程集合数量。
         /// </summary>
-        public int ThreadsCount => _threads.Count;
+        public int ThreadsCount
+            => _threads.Count;
 
 
         /// <summary>
@@ -107,17 +111,12 @@ namespace Librame.Extensions.Core
 
         private void ExecuteJobs()
         {
-            while (true && _jobs.IsNotNull() && Enabled)
+            while (_jobs.Any() && Enabled)
             {
-                JobDescriptor job = null;
-
-                if ((_jobs?.TryDequeue(out job)).Value)
+                if (_jobs.TryDequeue(out JobDescriptor job))
                 {
                     if (job.IsNull())
-                    {
-                        Thread.Sleep(10);
                         continue;
-                    }
 
                     var thread = Thread.CurrentThread;
 
@@ -146,7 +145,7 @@ namespace Librame.Extensions.Core
         {
             ThrowIfDisposed();
 
-            _jobs?.Enqueue(descriptor);
+            _jobs.Enqueue(descriptor);
         }
 
 
@@ -169,9 +168,9 @@ namespace Librame.Extensions.Core
         {
             Enabled = false;
 
-            _jobs = null;
+            _jobs = new ConcurrentQueue<JobDescriptor>();
 
-            if (_threads.IsNotNull())
+            if (_threads.Any())
             {
                 foreach (var t in _threads)
                 {
@@ -179,7 +178,7 @@ namespace Librame.Extensions.Core
                     t.Join(); //t.Abort();
                 }
 
-                _threads = null;
+                _threads.Clear();
             }
         }
     }

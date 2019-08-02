@@ -47,6 +47,7 @@ namespace Librame.Extensions.Storage
         {
             createFactory.NotNull(nameof(createFactory));
 
+            // Add Builder
             builder.Services.OnlyConfigure(setupAction);
 
             var storageBuilder = createFactory.Invoke(builder);

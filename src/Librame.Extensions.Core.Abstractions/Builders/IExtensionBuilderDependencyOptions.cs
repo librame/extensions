@@ -13,9 +13,9 @@
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 字符串验证器接口。
+    /// 扩展构建器依赖选项接口。
     /// </summary>
-    public interface IStringValidator : IValidator<string>
+    public interface IExtensionBuilderDependencyOptions
     {
     }
 }

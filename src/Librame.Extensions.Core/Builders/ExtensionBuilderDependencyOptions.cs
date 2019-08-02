@@ -10,17 +10,20 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 验证器接口。
+    /// 扩展构建器依赖选项。
     /// </summary>
-    /// <typeparam name="TSource">指定的源类型。</typeparam>
-    public interface IValidator<out TSource>
+    /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
+    public class ExtensionBuilderDependencyOptions<TBuilderOptions> : IExtensionBuilderDependencyOptions
+        where TBuilderOptions : IExtensionBuilderOptions
     {
         /// <summary>
-        /// 原始源实例。
+        /// <typeparamref name="TBuilderOptions"/> 配置动作。
         /// </summary>
-        TSource RawSource { get; }
+        public Action<TBuilderOptions> SetupAction { get; set; }
     }
 }

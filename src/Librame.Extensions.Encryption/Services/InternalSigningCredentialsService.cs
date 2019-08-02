@@ -18,16 +18,18 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Encryption
 {
+    using Core;
+
     /// <summary>
     /// 内部签名证书服务。
     /// </summary>
-    internal class InternalSigningCredentialsService : EncryptionServiceBase, ISigningCredentialsService
+    internal class InternalSigningCredentialsService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, ISigningCredentialsService
     {
         private readonly ConcurrentDictionary<string, SigningCredentials> _credentials;
 
 
         /// <summary>
-        /// 构造一个 <see cref="InternalSigningCredentialsService"/> 实例。
+        /// 构造一个 <see cref="InternalSigningCredentialsService"/>。
         /// </summary>
         /// <param name="credentials">给定的签名证书集合。</param>
         /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>

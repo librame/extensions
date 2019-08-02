@@ -18,16 +18,18 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 内部租户服务。
     /// </summary>
-    internal class InternalTenantService : DataServiceBase, ITenantService
+    internal class InternalTenantService : ExtensionBuilderServiceBase<DataBuilderOptions>, ITenantService
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalTenantService"/> 实例。
+        /// 构造一个 <see cref="InternalTenantService"/>。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILogger{InternalTenantService}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public InternalTenantService(IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {

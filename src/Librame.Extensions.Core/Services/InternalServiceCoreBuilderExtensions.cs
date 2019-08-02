@@ -26,6 +26,9 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddServices(this ICoreBuilder builder)
         {
+            builder.Services.AddSingleton(typeof(IServicesManager<>), typeof(InternalServicesManager<>));
+            builder.Services.AddSingleton(typeof(IServicesManager<,>), typeof(InternalServicesManager<,>));
+
             builder.Services.AddScoped<IHumanizationService, InternalHumanizationService>();
             builder.Services.AddScoped<IInjectionService, InternalInjectionService>();
             builder.Services.AddScoped<IPlatformService, InternalPlatformService>();

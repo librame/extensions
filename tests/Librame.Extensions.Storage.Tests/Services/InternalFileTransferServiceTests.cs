@@ -19,8 +19,8 @@ namespace Librame.Extensions.Storage.Tests
         [Fact]
         public async void DownloadFileAsync()
         {
-            var url = "https://github.com/librame/Librame/raw/dev/SPECIFICATION.md";
-            var filePath = @"d:\SPECIFICATION.md";
+            var url = "https://mat1.gtimg.com/pingjs/ext2020/qqindex2018/dist/img/qq_logo_2x.png";
+            var filePath = @"d:\qq_logo.png";
 
             var locator = await _fileTransfer.DownloadFileAsync(url, filePath);
             Assert.NotNull(locator);

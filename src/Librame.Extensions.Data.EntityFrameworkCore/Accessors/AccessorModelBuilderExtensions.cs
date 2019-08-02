@@ -15,9 +15,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 内部访问器模型构建器静态扩展。
+    /// 访问器模型构建器静态扩展。
     /// </summary>
-    internal static class InternalAccessorModelBuilderExtensions
+    public static class AccessorModelBuilderExtensions
     {
         /// <summary>
         /// 配置存储中心基类。

@@ -16,11 +16,18 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
+    using Core;
+
     /// <summary>
     /// 抓取器服务接口。
     /// </summary>
     public interface ICrawlerService : INetworkService
     {
+        /// <summary>
+        /// 请求程序管理器。
+        /// </summary>
+        IServicesManager<IUriRequester> Requesters { get; }
+
         /// <summary>
         /// 图像文件扩展名集合。
         /// </summary>

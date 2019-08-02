@@ -26,7 +26,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 内部文件传输服务。
     /// </summary>
-    internal class InternalFileTransferService : StorageServiceBase, IFileTransferService
+    internal class InternalFileTransferService : ExtensionBuilderServiceBase<StorageBuilderOptions>, IFileTransferService
     {
         private readonly IFilePermissionService _permissionService;
 
@@ -34,16 +34,13 @@ namespace Librame.Extensions.Storage
         /// <summary>
         /// 构造一个 <see cref="InternalFileTransferService"/> 实例。
         /// </summary>
-        /// <param name="permissionService">给定的 <see cref="IFilePermissionService"/>。</param>
+        /// <param name="permission">给定的 <see cref="IFilePermissionService"/>。</param>
         /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{StorageBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalFileTransferService(IFilePermissionService permissionService,
-            IOptions<CoreBuilderOptions> coreOptions,
-            IOptions<StorageBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+        public InternalFileTransferService(IFilePermissionService permission, IOptions<CoreBuilderOptions> coreOptions)
+            : base(permission.CastTo<IFilePermissionService, ExtensionBuilderServiceBase<StorageBuilderOptions>>(nameof(permission)))
         {
-            _permissionService = permissionService.NotNull(nameof(permissionService));
+            _permissionService = permission;
+
             Encoding = coreOptions.NotNull(nameof(coreOptions)).Value.Encoding;
         }
 
@@ -76,11 +73,6 @@ namespace Librame.Extensions.Storage
         /// </summary>
         public bool UseBreakpointResume { get; set; }
             = true;
-
-        /// <summary>
-        /// 后置头部集合动作。
-        /// </summary>
-        public Action<WebHeaderCollection> PostHeadersAction { get; set; }
 
         /// <summary>
         /// 进度动作（传入参数依次为总长度、当前位置）。
@@ -208,11 +200,11 @@ namespace Librame.Extensions.Storage
         private async Task<HttpWebRequest> CreateRequestAsync(string url, string method = "POST",
             CancellationToken cancellationToken = default)
         {
+            var opts = Options.FileTransfer;
+
             var hwr = WebRequest.CreateHttp(url);
-            //hwr.AllowAutoRedirect = opts.AllowAutoRedirect;
-            //hwr.Referer = opts.Referer;
-            //hwr.Timeout = opts.Timeout;
-            hwr.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36";
+            hwr.Timeout = opts.Timeout;
+            hwr.UserAgent = opts.UserAgent;
             hwr.Method = method;
 
             if (method.Equals("post", StringComparison.OrdinalIgnoreCase))
@@ -235,8 +227,6 @@ namespace Librame.Extensions.Storage
                 var cookieValue = await _permissionService.GetCookieValueAsync(cancellationToken);
                 hwr.Headers.Add(HttpRequestHeader.Cookie, cookieValue);
             }
-
-            PostHeadersAction?.Invoke(hwr.Headers);
 
             return hwr;
         }

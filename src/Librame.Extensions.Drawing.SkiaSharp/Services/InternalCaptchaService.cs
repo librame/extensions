@@ -27,10 +27,10 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部验证码服务。
     /// </summary>
-    internal class InternalCaptchaService : DrawingServiceBase, ICaptchaService
+    internal class InternalCaptchaService : ExtensionBuilderServiceBase<DrawingBuilderOptions>, ICaptchaService
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalCaptchaService"/> 实例。
+        /// 构造一个 <see cref="InternalCaptchaService"/>。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>

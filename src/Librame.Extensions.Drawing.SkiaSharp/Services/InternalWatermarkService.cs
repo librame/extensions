@@ -26,15 +26,14 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部水印服务。
     /// </summary>
-    internal class InternalWatermarkService : DrawingServiceBase, IWatermarkService
+    internal class InternalWatermarkService : ExtensionBuilderServiceBase<DrawingBuilderOptions>, IWatermarkService
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalWatermarkService"/> 实例。
+        /// 构造一个 <see cref="InternalWatermarkService"/>。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalWatermarkService(IOptions<DrawingBuilderOptions> options,
-            ILoggerFactory loggerFactory)
+        public InternalWatermarkService(IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
         }

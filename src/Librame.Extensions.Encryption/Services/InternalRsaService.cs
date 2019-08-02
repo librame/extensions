@@ -10,8 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 
@@ -22,7 +20,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 内部 RSA 服务。
     /// </summary>
-    internal class InternalRsaService : EncryptionServiceBase, IRsaService
+    internal class InternalRsaService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IRsaService
     {
         private RSA _rsa = null;
 
@@ -31,13 +29,10 @@ namespace Librame.Extensions.Encryption
         /// 构造一个 <see cref="InternalRsaService"/> 实例。
         /// </summary>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{EncryptionBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalRsaService(ISigningCredentialsService signingCredentials,
-            IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+        public InternalRsaService(ISigningCredentialsService signingCredentials)
+            : base(signingCredentials.CastTo<ISigningCredentialsService, ExtensionBuilderServiceBase<EncryptionBuilderOptions>>(nameof(signingCredentials)))
         {
-            SigningCredentials = signingCredentials.NotNull(nameof(signingCredentials));
+            SigningCredentials = signingCredentials;
 
             InitializeRsa();
         }

@@ -11,7 +11,6 @@
 #endregion
 
 using System;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,11 +42,6 @@ namespace Librame.Extensions.Storage
         /// 使用断点续传（默认使用）。
         /// </summary>
         bool UseBreakpointResume { get; set; }
-
-        /// <summary>
-        /// 后置头部集合动作。
-        /// </summary>
-        Action<WebHeaderCollection> PostHeadersAction { get; set; }
 
         /// <summary>
         /// 进度动作（传入参数依次为总长度、当前位置）。

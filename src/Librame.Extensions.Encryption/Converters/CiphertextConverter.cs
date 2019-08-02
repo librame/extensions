@@ -39,29 +39,29 @@ namespace Librame.Extensions.Encryption
 
 
         /// <summary>
-        /// 转换为字节缓冲区。
-        /// </summary>
-        /// <param name="source">给定的密文字符串。</param>
-        /// <returns>返回缓冲区。</returns>
-        public IByteBuffer To(string source)
-        {
-            var buffer = source.AsByteBufferFromBase64String();
-            Logger.LogDebug($"From BASE64 String: {source}");
-
-            return buffer;
-        }
-
-        /// <summary>
         /// 转换为密文。
         /// </summary>
-        /// <param name="result">给定的缓冲区。</param>
+        /// <param name="output">给定的缓冲区。</param>
         /// <returns>返回字符串。</returns>
-        public string From(IByteBuffer result)
+        public string From(IByteBuffer output)
         {
-            string str = result.AsBase64String();
+            string str = output.AsBase64String();
             Logger.LogDebug($"Convert to BASE64 String: {str}");
 
             return str;
+        }
+
+        /// <summary>
+        /// 转换为字节缓冲区。
+        /// </summary>
+        /// <param name="input">给定的密文字符串。</param>
+        /// <returns>返回缓冲区。</returns>
+        public IByteBuffer To(string input)
+        {
+            var buffer = input.AsByteBufferFromBase64String();
+            Logger.LogDebug($"From BASE64 String: {input}");
+
+            return buffer;
         }
 
     }

@@ -47,6 +47,7 @@ namespace Librame.Extensions.Encryption
         {
             createFactory.NotNull(nameof(createFactory));
 
+            // Add Builder
             builder.Services.OnlyConfigure(setupAction);
 
             var encryptionBuilder = createFactory.Invoke(builder);

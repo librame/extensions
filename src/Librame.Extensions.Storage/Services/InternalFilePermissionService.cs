@@ -22,15 +22,14 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 内部存储令牌服务。
     /// </summary>
-    internal class InternalFilePermissionService : StorageServiceBase, IFilePermissionService
+    internal class InternalFilePermissionService : ExtensionBuilderServiceBase<StorageBuilderOptions>, IFilePermissionService
     {
         /// <summary>
         /// 构造一个 <see cref="InternalFilePermissionService"/> 实例。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{StorageBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalFilePermissionService(IOptions<StorageBuilderOptions> options,
-            ILoggerFactory loggerFactory)
+        public InternalFilePermissionService(IOptions<StorageBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
         }

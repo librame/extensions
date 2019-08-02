@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -27,18 +28,15 @@ namespace Librame.Extensions.Network
 
 
         /// <summary>
-        /// 构造一个 <see cref="InternalByteCodecService"/> 实例。
+        /// 构造一个 <see cref="InternalByteCodecService"/>。
         /// </summary>
         /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
-        /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalByteCodecService(IServiceProvider serviceProvider,
-            IOptions<CoreBuilderOptions> coreOptions, IOptions<NetworkBuilderOptions> options,
-            ILoggerFactory loggerFactory)
-            : base(coreOptions, options, loggerFactory)
+        public InternalByteCodecService(IServiceProvider serviceProvider)
+            : base(serviceProvider?.GetService<IOptions<CoreBuilderOptions>>(),
+                  serviceProvider?.GetService<IOptions<NetworkBuilderOptions>>(),
+                  serviceProvider?.GetService<ILoggerFactory>())
         {
-            _serviceProvider = serviceProvider.NotNull(nameof(serviceProvider));
+            _serviceProvider = serviceProvider;
         }
 
 
@@ -50,7 +48,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回原始字符串。</returns>
         public string DecodeStringFromBytes(byte[] buffer, bool enableCodec)
         {
-            buffer = enableCodec ? Decode(buffer) : buffer;
+            buffer = Decode(buffer, enableCodec);
 
             return buffer.FromEncodingBytes(Encoding);
         }
@@ -64,7 +62,7 @@ namespace Librame.Extensions.Network
         public string DecodeString(string encode, bool enableCodec)
         {
             var buffer = encode.FromBase64String();
-            buffer = enableCodec ? Decode(buffer) : buffer;
+            buffer = Decode(buffer, enableCodec);
 
             return buffer.FromEncodingBytes(Encoding);
         }
@@ -73,10 +71,14 @@ namespace Librame.Extensions.Network
         /// 解码字节数组。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="enableCodec">启用编解码。</param>
         /// <returns>返回经过解码的字节数组。</returns>
-        public byte[] Decode(byte[] buffer)
+        public byte[] Decode(byte[] buffer, bool enableCodec)
         {
-            return Options.ByteCodec.DecodeFactory?.Invoke(_serviceProvider, buffer) ?? buffer;
+            if (enableCodec)
+                return Options.ByteCodec.DecodeFactory?.Invoke(_serviceProvider, buffer) ?? buffer;
+
+            return buffer;
         }
 
 
@@ -90,7 +92,7 @@ namespace Librame.Extensions.Network
         {
             var buffer = str.AsEncodingBytes(Encoding);
 
-            return enableCodec ? Encode(buffer) : buffer;
+            return Encode(buffer, enableCodec);
         }
 
         /// <summary>
@@ -102,7 +104,7 @@ namespace Librame.Extensions.Network
         public string EncodeString(string str, bool enableCodec)
         {
             var buffer = str.AsEncodingBytes(Encoding);
-            buffer = enableCodec ? Encode(buffer) : buffer;
+            buffer = Encode(buffer, enableCodec);
 
             return buffer.AsBase64String();
         }
@@ -111,10 +113,14 @@ namespace Librame.Extensions.Network
         /// 编码字节数组。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="enableCodec">启用编解码。</param>
         /// <returns>返回经过编码的字节数组。</returns>
-        public byte[] Encode(byte[] buffer)
+        public byte[] Encode(byte[] buffer, bool enableCodec)
         {
-            return Options.ByteCodec.EncodeFactory?.Invoke(_serviceProvider, buffer) ?? buffer;
+            if (enableCodec)
+                return Options.ByteCodec.EncodeFactory?.Invoke(_serviceProvider, buffer) ?? buffer;
+
+            return buffer;
         }
 
     }

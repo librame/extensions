@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -27,19 +26,16 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 内部缩放服务。
     /// </summary>
-    internal class InternalScaleService : DrawingServiceBase, IScaleService
+    internal class InternalScaleService : ExtensionBuilderServiceBase<DrawingBuilderOptions>, IScaleService
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalScaleService"/> 实例。
+        /// 构造一个 <see cref="InternalScaleService"/>。
         /// </summary>
         /// <param name="watermark">给定的 <see cref="IWatermarkService"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DrawingBuilderOptions}"/></param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InternalScaleService(IWatermarkService watermark,
-            IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+        public InternalScaleService(IWatermarkService watermark)
+            : base(watermark.CastTo<IWatermarkService, ExtensionBuilderServiceBase<DrawingBuilderOptions>>(nameof(watermark)))
         {
-            Watermark = watermark.NotNull(nameof(watermark));
+            Watermark = watermark;
         }
 
 

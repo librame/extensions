@@ -20,7 +20,7 @@ namespace Librame.Extensions.Examples
 
             var services = new ServiceCollection();
 
-            services.AddLibrame(setupLoggingAction: loggingBuilder =>
+            services.AddLibrame(dependency => dependency.LoggingSetupAction = loggingBuilder =>
             {
                 // configure Logging with NLog
                 loggingBuilder.ClearProviders();
