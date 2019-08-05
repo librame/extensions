@@ -28,6 +28,8 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IFileNameLocator"/> 集合。</returns>
         public static IFileNameLocator[] AsArray(this IFileNameLocator locator)
         {
+            locator.NotNull(nameof(locator));
+            
             return new IFileNameLocator[] { locator };
         }
 
@@ -38,6 +40,8 @@ namespace Librame.Extensions.Core
         /// <returns>返回字符串集合。</returns>
         public static IEnumerable<string> ToStrings(this IEnumerable<IFileNameLocator> locators)
         {
+            locators.NotNullOrEmpty(nameof(locators));
+            
             return locators.Select(locator => locator?.ToString());
         }
 

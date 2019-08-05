@@ -25,7 +25,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
         public static IFileLocator AsFileLocator(this string fileName, string basePath = null)
         {
-            var locator = new FileLocator(fileName);
+            var locator = (FileLocator)fileName;
 
             if (!basePath.IsNullOrEmpty())
                 locator.ChangeBasePath(basePath);

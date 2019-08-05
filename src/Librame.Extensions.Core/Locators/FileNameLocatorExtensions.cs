@@ -24,7 +24,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
         public static IFileNameLocator AsFileNameLocator(this string fileName)
         {
-            return new FileNameLocator(fileName);
+            return (FileNameLocator)fileName;
         }
         /// <summary>
         /// 转换为文件名定位器。

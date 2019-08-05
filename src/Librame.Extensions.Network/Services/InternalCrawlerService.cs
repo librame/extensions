@@ -29,7 +29,7 @@ namespace Librame.Extensions.Network
     internal class InternalCrawlerService : NetworkServiceBase, ICrawlerService
     {
         private readonly IMemoryCache _memoryCache;
-        private readonly IServicesManager<IUriRequester, InternalHttpClientRequester> _requesters;
+        private readonly IServicesManager<IUriRequester, HttpClientRequester> _requesters;
 
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Librame.Extensions.Network
         /// </summary>
         /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
         /// <param name="requesters">给定的 <see cref="IServicesManager{IUriRequester, InternalHttpClientRequester}"/>。</param>
-        public InternalCrawlerService(IMemoryCache memoryCache, IServicesManager<IUriRequester, InternalHttpClientRequester> requesters)
+        public InternalCrawlerService(IMemoryCache memoryCache, IServicesManager<IUriRequester, HttpClientRequester> requesters)
             : base(requesters.Defaulter.CastTo<IUriRequester, NetworkServiceBase>(nameof(requesters)))
         {
             _memoryCache = memoryCache.NotNull(nameof(memoryCache));
@@ -86,6 +86,10 @@ namespace Librame.Extensions.Network
         /// <returns>返回一个包含超链接列表的异步操作。</returns>
         public async Task<IList<string>> GetHyperLinksAsync(string url, string pattern = null)
         {
+            var response = await GetContentAsync(url);
+
+            var links = new List<string>();
+
             pattern = pattern.EnsureString(() =>
             {
                 return @"(?<url>((http(s)?|ftp|file|ws):)?//([\w-]+\.)+[\w-]+(/[\w- ./?%&=]+)?)|(?<path>(/*[\w- ./?%&=]+\.[\w- .]+)?)";
@@ -94,15 +98,11 @@ namespace Librame.Extensions.Network
             var regex = new Regex(pattern, RegexOptions.IgnoreCase);
             Logger.LogDebug($"Create hyper link regex: {pattern}");
 
-            var links = new List<string>();
-
-            var response = await GetContentAsync(url);
             var matches = regex.Matches(response);
             if (matches.Count < 1)
                 return links;
             
             Logger.LogDebug($"Match count: {matches.Count}");
-
             for (int i = 0; i <= matches.Count - 1; i++)
             {
                 var groups = matches[i].Groups;

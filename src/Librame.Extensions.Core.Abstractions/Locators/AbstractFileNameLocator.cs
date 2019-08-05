@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     public abstract class AbstractFileNameLocator : AbstractLocator<string>, IFileNameLocator
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractFileNameLocator"/> 实例。
+        /// 构造一个 <see cref="AbstractFileNameLocator"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         public AbstractFileNameLocator(string fileName)
@@ -31,7 +31,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractFileNameLocator"/> 实例。
+        /// 构造一个 <see cref="AbstractFileNameLocator"/>。
         /// </summary>
         /// <param name="baseName">给定的基础名。</param>
         /// <param name="extension">给定的扩展名。</param>
@@ -57,7 +57,8 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 重写源实例。
         /// </summary>
-        public override string Source => BaseName + Extension;
+        public override string Source
+            => BaseName + Extension;
 
 
         /// <summary>

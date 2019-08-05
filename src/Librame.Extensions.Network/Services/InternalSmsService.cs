@@ -22,14 +22,14 @@ namespace Librame.Extensions.Network
     /// </summary>
     internal class InternalSmsService : NetworkServiceBase, ISmsService
     {
-        private readonly IServicesManager<IUriRequester, InternalHttpClientRequester> _requesters;
+        private readonly IServicesManager<IUriRequester, HttpClientRequester> _requesters;
 
 
         /// <summary>
         /// 构造一个 <see cref="InternalSmsService"/> 实例。
         /// </summary>
         /// <param name="requesters">给定的 <see cref="IServicesManager{IUriRequester, InternalHttpClientRequester}"/>。</param>
-        public InternalSmsService(IServicesManager<IUriRequester, InternalHttpClientRequester> requesters)
+        public InternalSmsService(IServicesManager<IUriRequester, HttpClientRequester> requesters)
             : base(requesters.Defaulter.CastTo<IUriRequester, NetworkServiceBase>(nameof(requesters)))
         {
             _requesters = requesters;

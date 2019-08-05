@@ -11,6 +11,8 @@
 #endregion
 
 using System;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Librame.Extensions
 {
@@ -19,6 +21,22 @@ namespace Librame.Extensions
     /// </summary>
     public static class UriExtensions
     {
+        /// <summary>
+        /// 是否为绝对虚拟路径。
+        /// </summary>
+        /// <example>
+        /// ~/VirtualPath or /VirtualPath.
+        /// </example>
+        /// <param name="path">给定的路径。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsAbsoluteVirtualPath(this string path)
+        {
+            path.NotNullOrEmpty(nameof(path));
+
+            return path.StartsWith("~/") || path.StartsWith("/");
+        }
+
+
         /// <summary>
         /// 表示为绝对 URI。
         /// </summary>
@@ -84,6 +102,81 @@ namespace Librame.Extensions
         }
 
 
+        /// <summary>
+        /// 获取 URI 字符串中的主机。
+        /// </summary>
+        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetHost(this string uriString)
+        {
+            return uriString.GetHost(out _);
+        }
+        /// <summary>
+        /// 获取 URI 字符串中的主机。
+        /// </summary>
+        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <param name="result">输出可能存在的 <see cref="Uri"/>。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetHost(this string uriString, out Uri result)
+        {
+            if (uriString.IsAbsoluteUri(out result))
+                return result.Authority;
+
+            return uriString;
+        }
+
+
+        /// <summary>
+        /// 获取指定路径或 URI 中的路径。
+        /// </summary>
+        /// <param name="pathOrUri">给定的路径或 URI。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetPath(this string pathOrUri)
+        {
+            return pathOrUri.GetPath(out _);
+        }
+        /// <summary>
+        /// 获取指定路径或 URI 中的路径。
+        /// </summary>
+        /// <param name="pathOrUri">给定的路径或 URI。</param>
+        /// <param name="result">输出可能存在的 <see cref="Uri"/>。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetPath(this string pathOrUri, out Uri result)
+        {
+            if (pathOrUri.IsAbsoluteUri(out result))
+                return result.AbsolutePath;
+
+            if (pathOrUri.StartsWith("~/"))
+                return pathOrUri.TrimStart('~');
+
+            return pathOrUri;
+        }
+
+
+        /// <summary>
+        /// 获取 URI 字符串中的查询。
+        /// </summary>
+        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetQuery(this string uriString)
+        {
+            return uriString.GetQuery(out _);
+        }
+        /// <summary>
+        /// 获取 URI 字符串中的查询。
+        /// </summary>
+        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <param name="result">输出可能存在的 <see cref="Uri"/>。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetQuery(this string uriString, out Uri result)
+        {
+            if (uriString.IsAbsoluteUri(out result))
+                return result.Query;
+
+            return uriString;
+        }
+
+
         #region CombineUri
 
         /// <summary>
@@ -143,6 +236,120 @@ namespace Librame.Extensions
         public static Uri CombineUri(this Uri baseUri, string relativeUri)
         {
             return new Uri(baseUri, relativeUri);
+        }
+
+        #endregion
+
+
+        #region IPAddress
+
+        /// <summary>
+        /// 是否为 NULL、IPv4.None 或 IPv6.None。
+        /// </summary>
+        /// <param name="address">给定的 <see cref="IPAddress"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNullOrNone(this IPAddress address)
+        {
+            return address.IsNull()
+                || IPAddress.None.Equals(address)
+                || IPAddress.IPv6None.Equals(address);
+        }
+
+
+        /// <summary>
+        /// 是本机 IPv6 地址。
+        /// </summary>
+        /// <param name="ip">给定的 IP。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLocalIPv6(this string ip)
+        {
+            return ip.IsIPv6(out IPAddress address) && IPAddress.IPv6Loopback.Equals(address);
+        }
+
+        /// <summary>
+        /// 是本机 IPv4 地址。
+        /// </summary>
+        /// <param name="ip">给定的 IP。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLocalIPv4(this string ip)
+        {
+            return ip.IsIPv4(out IPAddress address) && IPAddress.Loopback.Equals(address);
+        }
+
+        /// <summary>
+        /// 是本机 IP 地址。
+        /// </summary>
+        /// <param name="ip">给定的 IP。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLocalIPAddress(this string ip)
+        {
+            return ip.IsIPAddress(out IPAddress address) && IPAddress.IsLoopback(address);
+        }
+
+
+        /// <summary>
+        /// 是 IPv6 地址。
+        /// </summary>
+        /// <param name="ip">给定的 IP。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPv6(this string ip)
+        {
+            return ip.IsIPv6(out _);
+        }
+
+        /// <summary>
+        /// 是 IPv6 地址。
+        /// </summary>
+        /// <param name="ip">给定的 IP。</param>
+        /// <param name="address">输出 <see cref="IPAddress"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPv6(this string ip, out IPAddress address)
+        {
+            return ip.IsIPAddress(out address) && address.AddressFamily == AddressFamily.InterNetworkV6;
+        }
+
+
+        /// <summary>
+        /// 是 IPv4 地址。
+        /// </summary>
+        /// <param name="ip">给定的 IP。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPv4(this string ip)
+        {
+            return ip.IsIPv4(out _);
+        }
+
+        /// <summary>
+        /// 是 IPv4 地址。
+        /// </summary>
+        /// <param name="ip">给定的 IP。</param>
+        /// <param name="address">输出 <see cref="IPAddress"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPv4(this string ip, out IPAddress address)
+        {
+            return ip.IsIPAddress(out address) && address.AddressFamily == AddressFamily.InterNetwork;
+        }
+
+
+        /// <summary>
+        /// 是 IP 地址。
+        /// </summary>
+        /// <param name="ip">给定的 IP。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPAddress(this string ip)
+        {
+            return ip.IsIPAddress(out _);
+        }
+
+        /// <summary>
+        /// 是 IP 地址。
+        /// </summary>
+        /// <param name="ip">给定的 IP。</param>
+        /// <param name="address">输出 <see cref="IPAddress"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPAddress(this string ip, out IPAddress address)
+        {
+            return IPAddress.TryParse(ip, out address);
         }
 
         #endregion

@@ -26,8 +26,8 @@ namespace Librame.Extensions.Network
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddRequesters(this INetworkBuilder builder)
         {
-            builder.Services.AddSingleton<IUriRequester, InternalHttpClientRequester>();
-            builder.Services.AddSingleton<IUriRequester, InternalHttpWebRequester>();
+            builder.Services.AddSingleton<IUriRequester, HttpClientRequester>();
+            builder.Services.AddSingleton<IUriRequester, HttpWebRequester>();
 
             return builder;
         }

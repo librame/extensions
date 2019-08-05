@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     public abstract class AbstractFileLocator : AbstractLocator<string>, IFileLocator
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractFileLocator"/> 实例。
+        /// 构造一个 <see cref="AbstractFileLocator"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         public AbstractFileLocator(string fileName)
@@ -31,7 +31,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractFileLocator"/> 实例。
+        /// 构造一个 <see cref="AbstractFileLocator"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         /// <param name="basePath">给定的基础路径。</param>
@@ -43,7 +43,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractFileLocator"/> 实例。
+        /// 构造一个 <see cref="AbstractFileLocator"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         /// <param name="basePath">给定的基础路径。</param>
@@ -68,13 +68,15 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 文件名字符串。
         /// </summary>
-        public string FileNameString => FileName.ToString();
+        public string FileNameString
+            => FileName.ToString();
 
 
         /// <summary>
         /// 重写源实例。
         /// </summary>
-        public override string Source => BasePath.CombinePath(FileName.ToString());
+        public override string Source
+            => BasePath.CombinePath(FileName.ToString());
 
 
         /// <summary>

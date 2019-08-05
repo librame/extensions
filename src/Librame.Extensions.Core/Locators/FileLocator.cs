@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     public class FileLocator : AbstractFileLocator, IFileLocator
     {
         /// <summary>
-        /// 构造一个 <see cref="FileLocator"/> 实例。
+        /// 构造一个 <see cref="FileLocator"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         public FileLocator(string fileName)
@@ -27,7 +27,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="FileLocator"/> 实例。
+        /// 构造一个 <see cref="FileLocator"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         /// <param name="basePath">给定的基础路径。</param>
@@ -37,7 +37,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="FileLocator"/> 实例。
+        /// 构造一个 <see cref="FileLocator"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         /// <param name="basePath">给定的基础路径。</param>

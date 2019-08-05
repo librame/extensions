@@ -29,6 +29,8 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IFileLocator"/> 集合。</returns>
         public static IFileLocator[] AsArray(this IFileLocator locator)
         {
+            locator.NotNull(nameof(locator));
+            
             return new IFileLocator[] { locator };
         }
 
@@ -39,6 +41,8 @@ namespace Librame.Extensions.Core
         /// <returns>返回字符串集合。</returns>
         public static IEnumerable<string> ToStrings(this IEnumerable<IFileLocator> locators)
         {
+            locators.NotNullOrEmpty(nameof(locators));
+
             return locators.Select(locator => locator?.ToString());
         }
 
@@ -51,7 +55,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IFileLocator"/> 集合。</returns>
         public static IEnumerable<IFileLocator> ChangeBasePath(this IEnumerable<IFileLocator> locators, string newBasePath)
         {
-            locators.NotNull(nameof(locators));
+            locators.NotNullOrEmpty(nameof(locators));
 
             foreach (var locator in locators)
                 locator?.ChangeBasePath(newBasePath);

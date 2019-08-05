@@ -21,15 +21,15 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Network
 {
     /// <summary>
-    /// 内部 <see cref="HttpWebRequest"/> 请求程序。
+    /// <see cref="HttpWebRequest"/> 请求程序。
     /// </summary>
-    internal class InternalHttpWebRequester : UriRequesterBase, IUriRequester
+    public class HttpWebRequester : UriRequesterBase, IUriRequester
     {
         /// <summary>
-        /// 构造一个 <see cref="InternalHttpWebRequester"/>。
+        /// 构造一个 <see cref="HttpWebRequester"/>。
         /// </summary>
         /// <param name="byteCodec">给定的 <see cref="IByteCodecService"/>。</param>
-        public InternalHttpWebRequester(IByteCodecService byteCodec)
+        public HttpWebRequester(IByteCodecService byteCodec)
             : base(byteCodec)
         {
         }

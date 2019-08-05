@@ -22,23 +22,26 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Network
 {
     /// <summary>
-    /// 内部 <see cref="HttpClient"/> 请求程序。
+    /// <see cref="HttpClient"/> 请求程序。
     /// </summary>
-    internal class InternalHttpClientRequester : UriRequesterBase, IUriRequester
+    public class HttpClientRequester : UriRequesterBase, IUriRequester
     {
-        private readonly IHttpClientFactory _factory;
-
-
         /// <summary>
-        /// 构造一个 <see cref="InternalHttpClientRequester"/> 实例。
+        /// 构造一个 <see cref="HttpClientRequester"/> 实例。
         /// </summary>
         /// <param name="factory">给定的 <see cref="IHttpClientFactory"/>。</param>
         /// <param name="byteCodec">给定的 <see cref="IByteCodecService"/>。</param>
-        public InternalHttpClientRequester(IHttpClientFactory factory, IByteCodecService byteCodec)
+        public HttpClientRequester(IHttpClientFactory factory, IByteCodecService byteCodec)
             : base(byteCodec)
         {
-            _factory = factory.NotNull(nameof(factory));
+            Factory = factory.NotNull(nameof(factory));
         }
+
+
+        /// <summary>
+        /// <see cref="HttpClient"/> 工厂。
+        /// </summary>
+        public IHttpClientFactory Factory { get; }
 
 
         /// <summary>
@@ -98,12 +101,22 @@ namespace Librame.Extensions.Network
             return await message.Content.ReadAsStreamAsync();
         }
 
-        private Task<HttpResponseMessage> GetResponseMessage(Uri uri, string postData = null,
+
+        /// <summary>
+        /// 获取响应消息。
+        /// </summary>
+        /// <param name="uri">给定的 <see cref="Uri"/>。</param>
+        /// <param name="postData">给定要提交的数据（可选）。</param>
+        /// <param name="enableCodec">启用字节编解码传输（可选）。</param>
+        /// <param name="parameters">给定的自定义参数（可选）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="HttpResponseMessage"/> 的异步操作。</returns>
+        protected virtual Task<HttpResponseMessage> GetResponseMessage(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
             var opts = Options.Requester;
 
-            var client = _factory.CreateClient();
+            var client = Factory.CreateClient();
             client.Timeout = TimeSpan.FromMilliseconds(opts.Timeout);
             client.DefaultRequestHeaders.Add("User-Agent", opts.UserAgent);
 

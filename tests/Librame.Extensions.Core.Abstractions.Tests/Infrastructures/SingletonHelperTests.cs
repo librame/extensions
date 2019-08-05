@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class SingletonHelpersTests
+    public class SingletonHelperTests
     {
         [Fact]
         public void AllTest()
