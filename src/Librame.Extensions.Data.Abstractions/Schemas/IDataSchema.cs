@@ -13,9 +13,9 @@
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 架构接口。
+    /// 数据架构接口。
     /// </summary>
-    public interface ISchema
+    public interface IDataSchema
     {
         /// <summary>
         /// 架构。

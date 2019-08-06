@@ -4,7 +4,7 @@ namespace Librame.Extensions.Data.Tests
 {
     public class AbstractionTableSchemaExtensionsTests
     {
-        public class TestTableSchema : AbstractSchema, ITableSchema
+        public class TestTableSchema : AbstractDataSchema, ITableSchema
         {
             public string Name => nameof(TestTableSchema);
         }

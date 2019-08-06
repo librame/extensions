@@ -13,15 +13,15 @@
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 抽象架构。
+    /// 抽象数据架构。
     /// </summary>
-    public abstract class AbstractSchema : ISchema
+    public abstract class AbstractDataSchema : IDataSchema
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractSchema"/> 实例。
+        /// 构造一个 <see cref="AbstractDataSchema"/> 实例。
         /// </summary>
         /// <param name="schema">给定的架构（可选）。</param>
-        public AbstractSchema(string schema = null)
+        public AbstractDataSchema(string schema = null)
         {
             Schema = schema;
         }

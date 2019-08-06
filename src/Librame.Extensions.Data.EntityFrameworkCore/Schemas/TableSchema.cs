@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 表架构。
     /// </summary>
-    public class TableSchema : AbstractSchema, ITableSchema
+    public class TableSchema : AbstractDataSchema, ITableSchema
     {
         /// <summary>
         /// 构造一个 <see cref="TableSchema"/> 实例。
