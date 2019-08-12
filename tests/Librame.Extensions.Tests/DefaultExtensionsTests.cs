@@ -20,26 +20,6 @@ namespace Librame.Extensions.Tests
         }
 
         [Fact]
-        public void EnsureCreateTest()
-        {
-            var test = typeof(TestClass1).EnsureCreate();
-            Assert.NotNull(test);
-
-            var test1 = DefaultExtensions.EnsureCreate<TestClass1>();
-            Assert.NotNull(test1);
-
-            Assert.Equal((test as TestClass1).Property3, test1.Property3);
-
-            // Change Property
-            test1.Property3 = nameof(EnsureCreateTest);
-
-            var testParameter = test1.EnsureCreate<TestParameterCreate>();
-            Assert.NotNull(testParameter);
-
-            Assert.Equal(testParameter.TestClass.Property3, test1.Property3);
-        }
-
-        [Fact]
         public void EnsureStringTest()
         {
             var defaultString = "1";
@@ -62,6 +42,28 @@ namespace Librame.Extensions.Tests
             var defaultGuid = Guid.Empty;
             Guid? guid = null;
             Assert.Equal(defaultGuid, guid.EnsureValue(defaultGuid));
+        }
+
+        [Fact]
+        public void EnsureCreateTest()
+        {
+            var test = typeof(TestClass1).EnsureCreateObject();
+            Assert.NotNull(test);
+
+            var test1 = typeof(TestClass2).EnsureCreate<TestClass1>();
+            Assert.NotNull(test1);
+
+            Assert.Equal((test as TestClass1).Property3, test1.Property3);
+
+            // Change Property
+            test1.Property3 = nameof(EnsureCreateTest);
+
+            var testParameter = test1.EnsureConstruct<TestParameterCreate>();
+                // == DefaultExtensions.EnsureCreate<TestParameterCreate>();
+                // == typeof(TestParameterCreate).EnsureCreate<TestParameterCreate>(test1);
+            Assert.NotNull(testParameter);
+
+            Assert.Equal(testParameter.TestClass.Property3, test1.Property3);
         }
 
 
