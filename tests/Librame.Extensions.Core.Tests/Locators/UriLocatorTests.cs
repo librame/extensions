@@ -27,6 +27,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.False(locator == locator.NewAnchor("#/get-started")); // BUG: Assert.NotEqual
 
             Assert.Equal("?query=testQuery", locator.ChangeQuery("?query=testQuery").Query);
+            Assert.NotEmpty(locator.Queries);
             var newQueriesLocator = locator.NewQueries(queries =>
             {
                 Assert.True(queries.ContainsKey("query"));

@@ -50,6 +50,11 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <value>返回 <see cref="IDomainNameLocator"/>。</value>
         IDomainNameLocator DomainName { get; }
+        
+        /// <summary>
+        /// 查询参数集合。
+        /// </summary>
+        ConcurrentDictionary<string, string> Queries { get; }
 
 
         /// <summary>

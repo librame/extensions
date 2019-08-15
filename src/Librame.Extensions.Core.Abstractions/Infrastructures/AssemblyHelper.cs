@@ -21,6 +21,10 @@ namespace Librame.Extensions.Core
     /// </summary>
     public static class AssemblyHelper
     {
+        private static readonly string[] _withoutSystemAssemblyPrefixes
+            = new string[] { "microsoft", "mscorlib", "netstandard", "sos", "system", "window" };
+
+
         static AssemblyHelper()
         {
             CurrentDomainAssemblies = CurrentDomainAssemblies.EnsureSingleton(() =>
@@ -30,12 +34,15 @@ namespace Librame.Extensions.Core
 
             CurrentDomainAssembliesWithoutSystem = CurrentDomainAssembliesWithoutSystem.EnsureSingleton(() =>
             {
-                return CurrentDomainAssemblies.SkipWhile(assembly =>
+                var assemblies = CurrentDomainAssemblies.AsEnumerable();
+
+                _withoutSystemAssemblyPrefixes.ForEach(prefix =>
                 {
-                    var name = assembly.GetName().Name;
-                    return !name.StartsWith("Microsoft.") || !name.StartsWith("System.");
-                })
-                .ToArray();
+                    assemblies = assemblies.Where(assembly => !assembly
+                        .FullName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+                });
+
+                return assemblies.ToArray();
             });
         }
 

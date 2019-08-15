@@ -90,6 +90,12 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <value>返回 <see cref="IDomainNameLocator"/>。</value>
         public virtual IDomainNameLocator DomainName { get; }
+        
+        /// <summary>
+        /// 查询参数集合。
+        /// </summary>
+        public virtual ConcurrentDictionary<string, string> Queries
+            => FromQuery(Query);
 
 
         /// <summary>
@@ -108,7 +114,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>
         public IUriLocator ChangeScheme(string newScheme)
         {
-            Scheme = newScheme.NotNullOrEmpty(newScheme);
+            Scheme = newScheme.NotNullOrEmpty(nameof(newScheme));
             return this;
         }
 
@@ -119,7 +125,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>
         public IUriLocator ChangeHost(string newHost)
         {
-            Host = newHost;
+            Host = newHost.NotNullOrEmpty(nameof(newHost));
             return this;
         }
 
@@ -152,10 +158,9 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>
         public IUriLocator ChangeQueries(Action<ConcurrentDictionary<string, string>> queriesAction)
         {
-            var queries = FromQuery(Query.ToString());
-            queriesAction.Invoke(queries);
+            queriesAction.NotNull(nameof(queriesAction)).Invoke(Queries);
 
-            var queryString = ToQuery(queries);
+            var queryString = ToQuery(Queries);
             return ChangeQuery(queryString);
         }
 
@@ -166,7 +171,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>
         public IUriLocator ChangeAnchor(string newAnchor)
         {
-            Anchor = newAnchor.NotNullOrEmpty(newAnchor);
+            Anchor = newAnchor;
             return this;
         }
 
