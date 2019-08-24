@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core
     public abstract class AbstractReadOnlyBuffer<T> : AbstractCloneable<IReadOnlyBuffer<T>>, IReadOnlyBuffer<T>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractReadOnlyBuffer{T}"/> 实例。
+        /// 构造一个 <see cref="AbstractReadOnlyBuffer{T}"/>。
         /// </summary>
         /// <param name="readOnlyMemory">给定的 <see cref="ReadOnlyMemory{T}"/>。</param>
         public AbstractReadOnlyBuffer(ReadOnlyMemory<T> readOnlyMemory)
@@ -30,7 +30,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractReadOnlyBuffer{T}"/> 实例。
+        /// 构造一个 <see cref="AbstractReadOnlyBuffer{T}"/>。
         /// </summary>
         /// <param name="array">给定的数组。</param>
         public AbstractReadOnlyBuffer(T[] array)

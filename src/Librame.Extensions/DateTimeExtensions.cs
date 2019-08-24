@@ -19,6 +19,55 @@ namespace Librame.Extensions
     /// </summary>
     public static class DateTimeExtensions
     {
+        /// <summary>
+        /// 转换为文件名（除同一日期与时间对象外，其余调用可确保唯一）。
+        /// </summary>
+        /// <param name="dateTime">给定的日期时间。</param>
+        /// <param name="extension">给定以“.”开始的扩展名。</param>
+        /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
+        /// <param name="connector">给定的连接符（可选；默认为“_”）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AsFileName(this DateTimeOffset dateTime, string extension,
+            bool containsDate = true, string connector = "_")
+        {
+            var prefix = dateTime.ToString("HHssmm");
+            if (containsDate)
+                prefix = $"{dateTime.ToString("yyyyMMdd")}{connector}{prefix}";
+
+            return ToFileName(dateTime.ToFileTime(), prefix, connector, extension);
+        }
+
+        /// <summary>
+        /// 转换为文件名（除同一日期与时间对象外，其余调用可确保唯一）。
+        /// </summary>
+        /// <param name="dateTime">给定的日期时间。</param>
+        /// <param name="extension">给定以“.”开始的扩展名。</param>
+        /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
+        /// <param name="connector">给定的连接符（可选；默认为“_”）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AsFileName(this DateTime dateTime, string extension,
+            bool containsDate = true, string connector = "_")
+        {
+            var prefix = dateTime.ToString("HHssmm");
+            if (containsDate)
+                prefix = $"{dateTime.ToString("yyyyMMdd")}{connector}{prefix}";
+
+            return ToFileName(dateTime.ToFileTime(), prefix, connector, extension);
+        }
+
+        private static string ToFileName(long fileTime, string prefix, string connector, string extension)
+        {
+            // 100 纳秒级唯一（连续两次通过 DateTimeOffset.Now 调用可保后五位整数不同）
+            var suffix = fileTime.ToString();
+            suffix = suffix.Substring(suffix.Length - 7);
+
+            var random = new Random((int)fileTime);
+            var id = AlgorithmExtensions.UPPER[random.Next(AlgorithmExtensions.UPPER.Length)];
+
+            // 20190822_192042_3801723A.txt
+            return $"{prefix}{connector}{suffix}{id}{extension}";
+        }
+
 
         #region DateOfYear
 
@@ -31,6 +80,7 @@ namespace Librame.Extensions
         {
             return ComputeWeekOfYear(dateTime.Year, dateTime.DayOfYear);
         }
+
         /// <summary>
         /// 转换为当年周数。
         /// </summary>
@@ -40,6 +90,7 @@ namespace Librame.Extensions
         {
             return ComputeWeekOfYear(dateTimeOffset.Year, dateTimeOffset.DayOfYear);
         }
+
         private static int ComputeWeekOfYear(int year, int dayOfYear)
         {
             // 得到今年第一天是周几
@@ -54,6 +105,7 @@ namespace Librame.Extensions
             return Convert.ToInt32(Math.Ceiling((dayOfYear - weekDay) / 7.0)) + 1;
         }
 
+
         /// <summary>
         /// 转换为当年季度数。
         /// </summary>
@@ -63,6 +115,7 @@ namespace Librame.Extensions
         {
             return dateTime.Month / 3 + (dateTime.Month % 3 > 0 ? 1 : 0);
         }
+
         /// <summary>
         /// 转换为当年季度数。
         /// </summary>

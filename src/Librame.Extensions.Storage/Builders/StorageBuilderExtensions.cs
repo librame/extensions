@@ -31,7 +31,7 @@ namespace Librame.Extensions.Storage
         public static IStorageBuilder AddStorage(this IExtensionBuilder builder,
             Action<StorageBuilderOptions> setupAction = null)
         {
-            return builder.AddStorage(b => new InternalStorageBuilder(b), setupAction);
+            return builder.AddStorage(b => new StorageBuilder(b), setupAction);
         }
 
         /// <summary>

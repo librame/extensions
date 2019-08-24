@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core
     public class ReadOnlyBuffer<T> : AbstractReadOnlyBuffer<T>, IReadOnlyBuffer<T>
     {
         /// <summary>
-        /// 构造一个 <see cref="ReadOnlyBuffer{T}"/> 实例。
+        /// 构造一个 <see cref="ReadOnlyBuffer{T}"/>。
         /// </summary>
         /// <param name="readOnlyMemory">给定的 <see cref="ReadOnlyMemory{T}"/>。</param>
         public ReadOnlyBuffer(ReadOnlyMemory<T> readOnlyMemory)
@@ -30,7 +30,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="ReadOnlyBuffer{T}"/> 实例。
+        /// 构造一个 <see cref="ReadOnlyBuffer{T}"/>。
         /// </summary>
         /// <param name="array">给定的数组。</param>
         public ReadOnlyBuffer(T[] array)

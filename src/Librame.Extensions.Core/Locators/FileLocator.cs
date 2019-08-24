@@ -68,7 +68,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个 <see cref="IFileLocator"/> 实例。
+        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个 <see cref="IFileLocator"/>。
         /// </summary>
         /// <param name="newFileName">给定的新 <see cref="IFileNameLocator"/>。</param>
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
@@ -79,7 +79,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 创建 <see cref="IFileNameLocator"/> 实例。
+        /// 创建 <see cref="IFileNameLocator"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         /// <returns>返回 <see cref="IFileNameLocator"/>。</returns>

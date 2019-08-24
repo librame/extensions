@@ -42,7 +42,7 @@ namespace Librame.Extensions.Encryption
                 var keyFile = File.ReadAllText(fileName);
                 var tempKey = JsonConvert.DeserializeObject<TemporaryRsaKey>(keyFile, new JsonSerializerSettings
                 {
-                    ContractResolver = new InternalRsaKeyContractResolver()
+                    ContractResolver = new RsaKeyContractResolver()
                 });
 
                 key = CreateRsaSecurityKey(tempKey.Parameters, tempKey.KeyId);
@@ -68,7 +68,7 @@ namespace Librame.Extensions.Encryption
                 {
                     File.WriteAllText(fileName, JsonConvert.SerializeObject(tempKey, new JsonSerializerSettings
                     {
-                        ContractResolver = new InternalRsaKeyContractResolver()
+                        ContractResolver = new RsaKeyContractResolver()
                     }));
                 }
             }

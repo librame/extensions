@@ -24,7 +24,7 @@ namespace Librame.Extensions.Core
         where TNotification : INotification
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractNotificationHandler{TNotification}"/> 实例。
+        /// 构造一个 <see cref="AbstractNotificationHandler{TNotification}"/>。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public AbstractNotificationHandler(ILoggerFactory loggerFactory)

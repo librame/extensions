@@ -15,9 +15,9 @@ namespace Librame.Extensions.Data.Tests
                 services.AddLibrame()
                     .AddData(options =>
                     {
-                        options.DefaultTenant.DefaultConnectionString = "Data Source=.;Initial Catalog=librame_default;Integrated Security=True";
-                        options.DefaultTenant.WriteConnectionString = "Data Source=.;Initial Catalog=librame_write;Integrated Security=True";
-                        options.DefaultTenant.WriteConnectionSeparation = true;
+                        options.DefaultTenant.DefaultConnectionString = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
+                        options.DefaultTenant.WritingConnectionString = "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True";
+                        options.DefaultTenant.WritingSeparation = true;
                     })
                     .AddAccessor<TestDbContextAccessor>((options, optionsBuilder) =>
                     {

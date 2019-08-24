@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     public class ReadOnlyByteBuffer : ReadOnlyBuffer<byte>, IReadOnlyByteBuffer
     {
         /// <summary>
-        /// 构造一个 <see cref="ReadOnlyCharBuffer"/> 实例。
+        /// 构造一个 <see cref="ReadOnlyCharBuffer"/>。
         /// </summary>
         /// <param name="readOnlyMemory">给定的只读存储器。</param>
         public ReadOnlyByteBuffer(ReadOnlyMemory<byte> readOnlyMemory)
@@ -29,7 +29,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="ReadOnlyCharBuffer"/> 实例。
+        /// 构造一个 <see cref="ReadOnlyCharBuffer"/>。
         /// </summary>
         /// <param name="array">给定的字节数组。</param>
         public ReadOnlyByteBuffer(byte[] array)

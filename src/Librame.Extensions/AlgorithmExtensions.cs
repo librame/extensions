@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
@@ -223,9 +224,13 @@ namespace Librame.Extensions
             return buffer.Hash(HashAlgorithmName.SHA512, rsa, padding);
         }
 
+
+        private static ConcurrentDictionary<HashAlgorithmName, HashAlgorithm> _algorithms
+            = new ConcurrentDictionary<HashAlgorithmName, HashAlgorithm>();
+
         private static byte[] Hash(this byte[] buffer, HashAlgorithmName algorithmName, RSA rsa = null, RSASignaturePadding padding = null)
         {
-            var algorithm = HashAlgorithm.Create(algorithmName.Name);
+            var algorithm = _algorithms.GetOrAdd(algorithmName, name => HashAlgorithm.Create(name.Name));
             var hash = algorithm.ComputeHash(buffer);
 
             if (rsa.IsNotNull())

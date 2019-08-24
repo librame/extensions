@@ -17,10 +17,7 @@ namespace Librame.Extensions.Tests
         public void EncodingBytesTest()
         {
             var str = nameof(EncodingExtensionsTests);
-
             var buffer = str.AsEncodingBytes();
-            Assert.NotNull(buffer);
-
             Assert.Equal(str, buffer.FromEncodingBytes());
         }
 
@@ -38,7 +35,7 @@ namespace Librame.Extensions.Tests
         {
             var str = nameof(EncodingExtensionsTests);
             var base64 = str.AsEncodingBase64String();
-            // "RW5JB2RPBMDFEHRLBNNPB25ZVGVZDHM=" Length: 32
+            // "RW5jb2RpbmdFeHRlbnNpb25zVGVzdHM=" Length: 32
             Assert.Equal(str, base64.FromEncodingBase64String());
         }
 

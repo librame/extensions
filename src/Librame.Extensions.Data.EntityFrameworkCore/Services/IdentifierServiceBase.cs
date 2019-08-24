@@ -24,7 +24,7 @@ namespace Librame.Extensions.Data
     public class IdentifierServiceBase : AbstractService, IIdentifierService
     {
         /// <summary>
-        /// 构造一个 <see cref="IdentifierServiceBase"/> 实例。
+        /// 构造一个 <see cref="IdentifierServiceBase"/>。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public IdentifierServiceBase(ILoggerFactory loggerFactory)

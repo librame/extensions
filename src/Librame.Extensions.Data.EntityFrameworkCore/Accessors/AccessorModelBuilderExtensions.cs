@@ -93,7 +93,7 @@ namespace Librame.Extensions.Data
                 if (maxLength > 0)
                 {
                     b.Property(p => p.DefaultConnectionString).HasMaxLength(maxLength).IsRequired();
-                    b.Property(p => p.WriteConnectionString).HasMaxLength(maxLength);
+                    b.Property(p => p.WritingConnectionString).HasMaxLength(maxLength);
                 }
             });
         }

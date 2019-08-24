@@ -23,25 +23,15 @@ namespace Librame.Extensions
     public static class PathExtensions
     {
         /// <summary>
-        /// 转换为文件信息。
-        /// </summary>
-        /// <param name="fileName">给定的文件名。</param>
-        /// <returns>返回 <see cref="FileInfo"/>。</returns>
-        public static FileInfo AsFileInfo(this string fileName)
-        {
-            return new FileInfo(fileName);
-        }
-
-        /// <summary>
-        /// 转换为目录信息。
+        /// 子目录。
         /// </summary>
         /// <param name="directoryName">给定的目录名。</param>
+        /// <param name="folderName">给定的目录名称。</param>
         /// <returns>返回 <see cref="DirectoryInfo"/>。</returns>
-        public static DirectoryInfo AsDirectoryInfo(this string directoryName)
+        public static DirectoryInfo Subdirectory(this string directoryName, string folderName)
         {
-            return new DirectoryInfo(directoryName);
+            return new DirectoryInfo(directoryName).Subdirectory(folderName);
         }
-
         /// <summary>
         /// 子目录。
         /// </summary>
@@ -52,7 +42,7 @@ namespace Librame.Extensions
         {
             var subpath = directory.FullName.CombinePath(folderName);
 
-            return subpath.AsDirectoryInfo();
+            return new DirectoryInfo(subpath);
         }
 
 

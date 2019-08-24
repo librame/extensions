@@ -8,10 +8,11 @@ namespace Librame.Extensions.Network.DotNetty.Factorial.Server
         static void Main(string[] args)
         {
             var server = DotNettyServiceProvider.Current.GetRequiredService<IFactorialServer>();
-
-            server.StartAsync(channel =>
+            server.StartAsync(async channel =>
             {
                 Console.ReadLine();
+
+                await channel.CloseAsync();
             })
             .Wait();
         }

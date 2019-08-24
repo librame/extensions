@@ -1,6 +1,5 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs.Http.WebSockets;
-using DotNetty.Common.Internal.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -20,22 +19,24 @@ namespace Librame.Extensions.Network.DotNetty.WebSocket.Client
                     {
                         break;
                     }
-                    else if ("bye".Equals(msg.ToLower()))
+                    else if ("bye".Equals(msg, StringComparison.OrdinalIgnoreCase))
                     {
                         await channel.WriteAndFlushAsync(new CloseWebSocketFrame());
                         break;
                     }
-                    else if ("ping".Equals(msg.ToLower()))
+                    else if ("ping".Equals(msg, StringComparison.OrdinalIgnoreCase))
                     {
                         var frame = new PingWebSocketFrame(Unpooled.WrappedBuffer(new byte[] { 8, 1, 8, 1 }));
                         await channel.WriteAndFlushAsync(frame);
                     }
                     else
                     {
-                        WebSocketFrame frame = new TextWebSocketFrame(msg);
+                        var frame = new TextWebSocketFrame(msg);
                         await channel.WriteAndFlushAsync(frame);
                     }
                 }
+
+                await channel.CloseAsync();
             })
             .Wait();
         }

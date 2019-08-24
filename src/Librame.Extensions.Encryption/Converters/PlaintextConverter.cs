@@ -22,7 +22,7 @@ namespace Librame.Extensions.Encryption
     public class PlaintextConverter : EncodingConverter, IPlaintextConverter
     {
         /// <summary>
-        /// 构造一个 <see cref="PlaintextConverter"/> 实例。
+        /// 构造一个 <see cref="PlaintextConverter"/>。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         public PlaintextConverter(IOptions<CoreBuilderOptions> options)

@@ -30,7 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
             Action<CoreBuilderDependencyOptions> dependencySetupAction = null)
         {
-            return services.AddLibrame(s => new InternalCoreBuilder(s),
+            return services.AddLibrame(s => new CoreBuilder(s),
                 dependencySetupAction);
         }
 

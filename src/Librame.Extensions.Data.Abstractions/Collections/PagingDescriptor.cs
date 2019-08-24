@@ -18,7 +18,7 @@ namespace System.Collections.Generic
     public class PagingDescriptor : IPagingInfo
     {
         /// <summary>
-        /// 构造一个 <see cref="PagingDescriptor"/> 实例。
+        /// 构造一个 <see cref="PagingDescriptor"/>。
         /// </summary>
         /// <param name="total">给定的总条数。</param>
         public PagingDescriptor(int total)

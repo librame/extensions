@@ -31,7 +31,7 @@ namespace Librame.Extensions.Drawing
         public static IDrawingBuilder AddDrawing(this IExtensionBuilder builder,
             Action<DrawingBuilderOptions> setupAction = null)
         {
-            return builder.AddDrawing(b => new InternalDrawingBuilder(b), setupAction);
+            return builder.AddDrawing(b => new DrawingBuilder(b), setupAction);
         }
 
         /// <summary>

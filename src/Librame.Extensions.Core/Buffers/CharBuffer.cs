@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     public class CharBuffer : Buffer<char>, ICharBuffer
     {
         /// <summary>
-        /// 构造一个 <see cref="CharBuffer"/> 实例。
+        /// 构造一个 <see cref="CharBuffer"/>。
         /// </summary>
         /// <param name="memory">给定的 <see cref="Memory{Char}"/>。</param>
         public CharBuffer(Memory<char> memory)
@@ -29,7 +29,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="CharBuffer"/> 实例。
+        /// 构造一个 <see cref="CharBuffer"/>。
         /// </summary>
         /// <param name="array">给定的字符数组。</param>
         public CharBuffer(char[] array)

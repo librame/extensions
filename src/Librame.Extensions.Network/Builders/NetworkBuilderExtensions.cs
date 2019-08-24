@@ -31,7 +31,7 @@ namespace Librame.Extensions.Network
         public static INetworkBuilder AddNetwork(this IExtensionBuilder builder,
             Action<NetworkBuilderOptions> setupAction = null)
         {
-            return builder.AddNetwork(b => new InternalNetworkBuilder(b), setupAction);
+            return builder.AddNetwork(b => new NetworkBuilder(b), setupAction);
         }
 
         /// <summary>

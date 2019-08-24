@@ -93,7 +93,7 @@ namespace Librame.Extensions.Data
             stores.NotNull(nameof(stores));
 
             // 提前切换为写入数据库，以便支持数据重复验证
-            stores.Accessor.TryChangeDbConnection(tenant => tenant.WriteConnectionString);
+            stores.Accessor.TryChangeDbConnection(tenant => tenant.WritingConnectionString);
 
             InitializeStores(stores);
 

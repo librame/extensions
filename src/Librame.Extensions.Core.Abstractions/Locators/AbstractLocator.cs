@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
         where TSource : class
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractLocator{TSource}"/> 实例。
+        /// 构造一个 <see cref="AbstractLocator{TSource}"/>。
         /// </summary>
         /// <param name="source">给定的定位源。</param>
         public AbstractLocator(TSource source)

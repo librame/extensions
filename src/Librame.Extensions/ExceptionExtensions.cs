@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -48,9 +49,23 @@ namespace Librame.Extensions
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回源或抛出异常。</returns>
         public static TSource NotNull<TSource>(this TSource source, string paramName)
-            where TSource : class
         {
-            return source ?? throw new ArgumentNullException(paramName);
+            return source.IsNotNull() ? source : throw new ArgumentNullException(paramName);
+        }
+
+
+        /// <summary>
+        /// 得到不为 NULL 或空格的字符串。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="str"/> 为空或空字符串。
+        /// </exception>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="paramName">给定的参数名。</param>
+        /// <returns>返回字符串或抛出异常。</returns>
+        public static string NotNullOrWhiteSpace(this string str, string paramName)
+        {
+            return str.IsNotNullOrWhiteSpace() ? str : throw new ArgumentNullException(paramName);
         }
 
 
@@ -65,7 +80,23 @@ namespace Librame.Extensions
         /// <returns>返回字符串或抛出异常。</returns>
         public static string NotNullOrEmpty(this string str, string paramName)
         {
-            return !str.IsNullOrEmpty() ? str : throw new ArgumentNullException(paramName);
+            return str.IsNotNullOrEmpty() ? str : throw new ArgumentNullException(paramName);
+        }
+
+        /// <summary>
+        /// 得到不为 NULL 或空集合的集合。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="sources"/> 为空或空集合。
+        /// </exception>
+        /// <typeparam name="TSources">指定的源集合类型。</typeparam>
+        /// <param name="sources">给定的 <see cref="IEnumerable"/>。</param>
+        /// <param name="paramName">给定的参数名。</param>
+        /// <returns>返回集合或抛出异常。</returns>
+        public static TSources NotNullOrEmpty<TSources>(this TSources sources, string paramName)
+            where TSources : IEnumerable
+        {
+            return sources.IsNotNullOrEmpty() ? sources : throw new ArgumentNullException(paramName);
         }
 
         /// <summary>
@@ -80,43 +111,7 @@ namespace Librame.Extensions
         /// <returns>返回集合或抛出异常。</returns>
         public static IEnumerable<TSource> NotNullOrEmpty<TSource>(this IEnumerable<TSource> sources, string paramName)
         {
-            return !sources.IsNullOrEmpty() ? sources : throw new ArgumentNullException(paramName);
-        }
-
-        /// <summary>
-        /// 得到不为 NULL 或 EMPTY 的列表。
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// items 为 DEFAULT 或空列表。
-        /// </exception>
-        /// <typeparam name="T">指定的元素类型。</typeparam>
-        /// <param name="items">给定的元素集合。</param>
-        /// <param name="paramName">给定的参数名。</param>
-        /// <returns>返回集合或抛出异常。</returns>
-        public static IList<T> NotNullOrEmpty<T>(this IList<T> items, string paramName)
-        {
-            if (items.IsNullOrEmpty())
-                throw new ArgumentNullException(paramName);
-
-            return items;
-        }
-
-        /// <summary>
-        /// 得到不为 NULL 或 EMPTY 的数组。
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// items 为 DEFAULT 或空数组。
-        /// </exception>
-        /// <typeparam name="T">指定的元素类型。</typeparam>
-        /// <param name="items">给定的元素集合。</param>
-        /// <param name="paramName">给定的参数名。</param>
-        /// <returns>返回集合或抛出异常。</returns>
-        public static T[] NotNullOrEmpty<T>(this T[] items, string paramName)
-        {
-            if (items.IsNullOrEmpty())
-                throw new ArgumentNullException(paramName);
-
-            return items;
+            return sources.IsNotNullOrEmpty() ? sources : throw new ArgumentNullException(paramName);
         }
 
         #endregion
@@ -277,7 +272,7 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 将来源类型实例投射到目标类型实例。
+        /// 将来源类型实例转换为目标类型实例。
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="source"/> 为空。

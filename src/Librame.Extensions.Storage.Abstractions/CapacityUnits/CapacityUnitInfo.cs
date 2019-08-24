@@ -18,7 +18,7 @@ namespace Librame.Extensions.Storage
     public class CapacityUnitInfo
     {
         /// <summary>
-        /// 构造一个 <see cref="CapacityUnitInfo"/> 实例。
+        /// 构造一个 <see cref="CapacityUnitInfo"/>。
         /// </summary>
         /// <param name="format">给定的格式。</param>
         public CapacityUnitInfo(CapacityUnitFormat format)

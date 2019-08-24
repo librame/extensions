@@ -18,8 +18,10 @@ namespace Librame.Extensions.Core.Tests
                         Assert.True(t.ManagedThreadId > 0);
                     };
 
-                    pool.AddJob(job);
+                    pool.Add(job);
                 }
+
+                pool.Execute();
             }
         }
 

@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core
     public class JobDescriptor
     {
         /// <summary>
-        /// 构造一个 <see cref="JobDescriptor"/> 实例。
+        /// 构造一个 <see cref="JobDescriptor"/>。
         /// </summary>
         /// <param name="parameters">给定的参数数组。</param>
         public JobDescriptor(params object[] parameters)
@@ -34,6 +34,12 @@ namespace Librame.Extensions.Core
         /// 参数数组。
         /// </summary>
         public object[] Parameters { get; }
+
+        /// <summary>
+        /// 已启用。
+        /// </summary>
+        public bool Enabled { get; set; }
+            = true;
 
         /// <summary>
         /// 执行动作。

@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core
         where TBuilder : class
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractExtensionBuilder"/> 实例。
+        /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="rawBuilder">给定的原始 <typeparamref name="TBuilder"/>。</param>
@@ -33,7 +33,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractExtensionBuilder"/> 实例。
+        /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="rawBuilder">给定的原始 <typeparamref name="TBuilder"/>。</param>

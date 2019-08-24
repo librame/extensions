@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     public abstract class AbstractService : AbstractDisposable, IService
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractService"/> 实例。
+        /// 构造一个 <see cref="AbstractService"/>。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected AbstractService(ILoggerFactory loggerFactory)

@@ -8,32 +8,32 @@ namespace Librame.Extensions.Network.DotNetty.Telnet.Client
         static void Main(string[] args)
         {
             var client = DotNettyServiceProvider.Current.GetRequiredService<ITelnetClient>();
-
             client.StartAsync(async channel =>
             {
-                for (; ; )
+                for (; ;)
                 {
-                    string line = Console.ReadLine();
-                    if (string.IsNullOrEmpty(line))
+                    string msg = Console.ReadLine();
+                    if (string.IsNullOrEmpty(msg))
                     {
                         continue;
                     }
 
                     try
                     {
-                        await channel.WriteAndFlushAsync(line + "\r\n");
+                        await channel.WriteAndFlushAsync(msg + "\r\n");
                     }
                     catch
                     {
                     }
 
                     var clientOptions = client.Options.SecureChatClient;
-                    if (string.Equals(line, clientOptions.ExitCommand, StringComparison.OrdinalIgnoreCase))
+                    if (clientOptions.ExitCommand.Equals(msg, StringComparison.OrdinalIgnoreCase))
                     {
-                        await channel.CloseAsync();
                         break;
                     }
                 }
+
+                await channel.CloseAsync();
             })
             .Wait();
         }

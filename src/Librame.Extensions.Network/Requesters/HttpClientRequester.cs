@@ -27,7 +27,7 @@ namespace Librame.Extensions.Network
     public class HttpClientRequester : UriRequesterBase, IUriRequester
     {
         /// <summary>
-        /// 构造一个 <see cref="HttpClientRequester"/> 实例。
+        /// 构造一个 <see cref="HttpClientRequester"/>。
         /// </summary>
         /// <param name="factory">给定的 <see cref="IHttpClientFactory"/>。</param>
         /// <param name="byteCodec">给定的 <see cref="IByteCodecService"/>。</param>
@@ -136,10 +136,10 @@ namespace Librame.Extensions.Network
 
             return Policy
                 .Handle<HttpRequestException>()
-                .OrResult<HttpResponseMessage>(p => p.StatusCode == HttpStatusCode.BadGateway)
+                .OrResult<HttpResponseMessage>(r => r.StatusCode == HttpStatusCode.BadGateway)
                 .RetryAsync(opts.RetryCount, (exception, retryCount, context) =>
                 {
-                    Logger.LogDebug($"Start the {retryCount} retry: ");
+                    Logger.LogDebug($"Start the {retryCount} retry");
                 })
                 .ExecuteAsync(GetResponseMessageAsync);
 

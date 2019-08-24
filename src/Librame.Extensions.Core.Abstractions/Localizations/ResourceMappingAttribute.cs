@@ -23,7 +23,7 @@ namespace Microsoft.Extensions.Localization
     public class ResourceMappingAttribute : Attribute
     {
         /// <summary>
-        /// 构造一个 <see cref="ResourceMappingAttribute"/> 实例。
+        /// 构造一个 <see cref="ResourceMappingAttribute"/>。
         /// </summary>
         /// <remarks>
         /// 如果启用，则使用 <see cref="PrefixFactory"/> 设定加载资源文件；反之，则使用原始规则加载资源文件。

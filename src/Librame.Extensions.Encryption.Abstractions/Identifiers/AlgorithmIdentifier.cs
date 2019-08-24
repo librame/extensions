@@ -23,7 +23,7 @@ namespace Librame.Extensions.Encryption
     public struct AlgorithmIdentifier : IIdentifier, IEquatable<AlgorithmIdentifier>
     {
         /// <summary>
-        /// 构造一个 <see cref="AlgorithmIdentifier"/> 实例。
+        /// 构造一个 <see cref="AlgorithmIdentifier"/>。
         /// </summary>
         /// <param name="guid">给定的 <see cref="Guid"/> 。</param>
         /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
@@ -33,7 +33,7 @@ namespace Librame.Extensions.Encryption
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AlgorithmIdentifier"/> 实例。
+        /// 构造一个 <see cref="AlgorithmIdentifier"/>。
         /// </summary>
         /// <param name="memory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
         /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
@@ -44,7 +44,7 @@ namespace Librame.Extensions.Encryption
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AlgorithmIdentifier"/> 实例。
+        /// 构造一个 <see cref="AlgorithmIdentifier"/>。
         /// </summary>
         /// <param name="identifier">给定标识符的字符串形式。</param>
         /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>

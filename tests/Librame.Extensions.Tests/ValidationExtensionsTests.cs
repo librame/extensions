@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Librame.Extensions.Tests
@@ -17,6 +19,18 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
+        public void IsNullOrWhiteSpaceTest()
+        {
+            string str = null;
+            Assert.True(str.IsNullOrWhiteSpace());
+
+            str = " ";
+            Assert.True(str.IsNullOrWhiteSpace());
+
+            Assert.True("123".IsNotNullOrWhiteSpace());
+        }
+
+        [Fact]
         public void IsNullOrEmptyTest()
         {
             string str = null;
@@ -25,11 +39,21 @@ namespace Librame.Extensions.Tests
             str = string.Empty;
             Assert.True(str.IsNullOrEmpty());
 
-            Assert.False("123".IsNullOrEmpty());
+            Assert.True("123".IsNotNullOrEmpty());
 
             // IEnumerable
+            IEnumerable enumerable = new int[0];
+            Assert.True(enumerable.IsNullOrEmpty());
+
+            enumerable = new int[1] { 1 };
+            Assert.True(enumerable.IsNotNullOrEmpty());
+
+            // IEnumerable<string>
             IEnumerable<string> items = null;
             Assert.True(items.IsNullOrEmpty());
+
+            items = Enumerable.Range(1, 10).Select(s => s.ToString());
+            Assert.True(items.IsNotNullOrEmpty());
         }
 
         [Fact]

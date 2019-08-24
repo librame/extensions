@@ -69,7 +69,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{23
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Examples", "examples\Librame.Extensions.Examples\Librame.Extensions.Examples.csproj", "{92AFAE63-85D6-43E3-826A-3BA9837427CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Extensions.Network.DotNetty.Core", "examples\Librame.Extensions.Network.DotNetty.Core\Librame.Extensions.Network.DotNetty.Core.csproj", "{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Core", "examples\Librame.Extensions.Network.DotNetty.Core\Librame.Extensions.Network.DotNetty.Core.csproj", "{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.SecureChat.Server", "examples\Librame.Extensions.Network.DotNetty.SecureChat.Server\Librame.Extensions.Network.DotNetty.SecureChat.Server.csproj", "{563594A3-858F-4D8E-A8DF-C9E782E8CA86}"
 EndProject
@@ -96,6 +96,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.Factorial.Server", "examples\Librame.Extensions.Network.DotNetty.Factorial.Server\Librame.Extensions.Network.DotNetty.Factorial.Server.csproj", "{7B846B98-C3BF-4BD1-99BA-6D46F3D351DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.HttpServer", "examples\Librame.Extensions.Network.DotNetty.HttpServer\Librame.Extensions.Network.DotNetty.HttpServer.csproj", "{2ECCAEF5-764D-4C23-9E18-8FB51D311562}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client", "examples\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client.csproj", "{4111D5EA-3EAE-49A1-81AB-466350C72F5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server", "examples\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server.csproj", "{AF2AB323-D90D-4FFD-AE2B-F6CA02D40B22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -219,6 +223,10 @@ Global
 		{92AFAE63-85D6-43E3-826A-3BA9837427CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92AFAE63-85D6-43E3-826A-3BA9837427CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92AFAE63-85D6-43E3-826A-3BA9837427CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{563594A3-858F-4D8E-A8DF-C9E782E8CA86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{563594A3-858F-4D8E-A8DF-C9E782E8CA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{563594A3-858F-4D8E-A8DF-C9E782E8CA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -271,10 +279,14 @@ Global
 		{2ECCAEF5-764D-4C23-9E18-8FB51D311562}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2ECCAEF5-764D-4C23-9E18-8FB51D311562}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2ECCAEF5-764D-4C23-9E18-8FB51D311562}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4111D5EA-3EAE-49A1-81AB-466350C72F5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4111D5EA-3EAE-49A1-81AB-466350C72F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4111D5EA-3EAE-49A1-81AB-466350C72F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4111D5EA-3EAE-49A1-81AB-466350C72F5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF2AB323-D90D-4FFD-AE2B-F6CA02D40B22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF2AB323-D90D-4FFD-AE2B-F6CA02D40B22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF2AB323-D90D-4FFD-AE2B-F6CA02D40B22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF2AB323-D90D-4FFD-AE2B-F6CA02D40B22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -309,6 +321,7 @@ Global
 		{9C7C7A52-1510-4EE5-81E4-DD040F6D5A36} = {02A1AB01-0F0B-4ECD-9FCB-DB4B3FDDC487}
 		{59BDC86A-C0CC-43C2-8253-0DE3826B785E} = {6EF2B224-183D-4538-974D-B36BD0EF083E}
 		{92AFAE63-85D6-43E3-826A-3BA9837427CD} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
+		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 		{563594A3-858F-4D8E-A8DF-C9E782E8CA86} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 		{242F2D68-3B33-4C7E-B2BC-A11E080AEFC9} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 		{EDA8A026-7A54-434A-B291-BF3E3EB5B4B7} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
@@ -322,10 +335,11 @@ Global
 		{32207ED2-C106-47AD-8EAF-AF17DAAD8066} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 		{7B846B98-C3BF-4BD1-99BA-6D46F3D351DE} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 		{2ECCAEF5-764D-4C23-9E18-8FB51D311562} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
-		{A9CB446D-5924-4828-AE66-8FD97B3B9F5C} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
+		{4111D5EA-3EAE-49A1-81AB-466350C72F5A} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
+		{AF2AB323-D90D-4FFD-AE2B-F6CA02D40B22} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45
 		SolutionGuid = {4B0E8A00-41DB-40AA-826D-5EFA8FF281F0}
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45
 	EndGlobalSection
 EndGlobal

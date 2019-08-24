@@ -25,7 +25,7 @@ namespace Librame.Extensions.Core
         where TRequest : IRequest<TResponse>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractRequestHandler{TRequest, TResponse}"/> 实例。
+        /// 构造一个 <see cref="AbstractRequestHandler{TRequest, TResponse}"/>。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public AbstractRequestHandler(ILoggerFactory loggerFactory)

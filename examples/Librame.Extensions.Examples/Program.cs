@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 using System;
 
 namespace Librame.Extensions.Examples
@@ -13,6 +12,9 @@ namespace Librame.Extensions.Examples
     {
         static void Main(string[] args)
         {
+            // Add NLog Configuration
+            NLog.LogManager.LoadConfiguration("../../../configs/nlog.config");
+
             var config = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory.CombinePath(@"..\..\..\"))
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -20,24 +22,18 @@ namespace Librame.Extensions.Examples
 
             var services = new ServiceCollection();
 
-            services.AddLibrame(dependency => dependency.LoggingSetupAction = loggingBuilder =>
+            services.AddLibrame(dependency => dependency.LoggingSetupAction = logging =>
             {
-                // configure Logging with NLog
-                loggingBuilder.ClearProviders();
-                loggingBuilder.SetMinimumLevel(LogLevel.Trace);
-                loggingBuilder.AddNLog(config);
+                logging.ClearProviders();
+                logging.SetMinimumLevel(LogLevel.Trace);
+
+                logging.AddConsole(logger => logger.IncludeScopes = false);
+                logging.AddFilter((str, level) => true);
             })
             .AddEncryption()
             .AddDeveloperGlobalSigningCredentials();
 
             var serviceProvider = services.BuildServiceProvider();
-
-            // Configure NLog
-            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-            loggerFactory.AddNLog(new NLogProviderOptions { CaptureMessageTemplates = true, CaptureMessageProperties = true });
-
-            // Add NLog Configuration
-            NLog.LogManager.LoadConfiguration("../../../configs/nlog.config");
 
             RunEncryption(serviceProvider);
 
@@ -52,7 +48,7 @@ namespace Librame.Extensions.Examples
             Console.WriteLine("Please input some content:");
 
             var content = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(content))
+            if (content.IsNullOrWhiteSpace())
             {
                 Console.WriteLine("Content is null, empty or white space.");
                 RunEncryption(serviceProvider);
@@ -76,8 +72,10 @@ namespace Librame.Extensions.Examples
                     job.FinishCallback = (t, args) => Console.WriteLine($"{args[0]}_{t.ManagedThreadId}_finished.");
                     job.ErrorCallback = (t, args, ex) => Console.WriteLine(ex.AsInnerMessage());
 
-                    pool.AddJob(job);
+                    pool.Add(job);
                 }
+
+                pool.Execute();
             }
         }
 

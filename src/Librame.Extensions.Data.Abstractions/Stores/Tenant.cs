@@ -58,18 +58,18 @@ namespace Librame.Extensions.Data
         /// 默认连接字符串。
         /// </summary>
         [Display(Name = nameof(DefaultConnectionString), ResourceType = typeof(TenantResource))]
-        public virtual string DefaultConnectionString { get; set; } = "librame_default";
+        public virtual string DefaultConnectionString { get; set; } = "librame_data_default";
 
         /// <summary>
         /// 写入连接字符串。
         /// </summary>
-        [Display(Name = nameof(WriteConnectionString), ResourceType = typeof(TenantResource))]
-        public virtual string WriteConnectionString { get; set; } = "librame_writer";
+        [Display(Name = nameof(WritingConnectionString), ResourceType = typeof(TenantResource))]
+        public virtual string WritingConnectionString { get; set; } = "librame_data_writing";
 
         /// <summary>
         /// 写入连接分离（默认不启用）。
         /// </summary>
-        [Display(Name = nameof(WriteConnectionSeparation), ResourceType = typeof(TenantResource))]
-        public virtual bool WriteConnectionSeparation { get; set; } = false;
+        [Display(Name = nameof(WritingSeparation), ResourceType = typeof(TenantResource))]
+        public virtual bool WritingSeparation { get; set; } = false;
     }
 }

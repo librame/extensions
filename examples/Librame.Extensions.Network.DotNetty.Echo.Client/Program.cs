@@ -8,10 +8,11 @@ namespace Librame.Extensions.Network.DotNetty.Echo.Client
         static void Main(string[] args)
         {
             var client = DotNettyServiceProvider.Current.GetRequiredService<IEchoClient>();
-
-            client.StartAsync(channel =>
+            client.StartAsync(async channel =>
             {
                 Console.ReadLine();
+
+                await channel.CloseAsync();
             })
             .Wait();
         }

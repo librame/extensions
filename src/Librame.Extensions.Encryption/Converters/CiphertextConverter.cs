@@ -22,7 +22,7 @@ namespace Librame.Extensions.Encryption
     public class CiphertextConverter : ICiphertextConverter
     {
         /// <summary>
-        /// 构造一个 <see cref="CiphertextConverter"/> 实例。
+        /// 构造一个 <see cref="CiphertextConverter"/>。
         /// </summary>
         /// <param name="logger">给定的 <see cref="ILogger{CiphertextConverter}"/>。</param>
         public CiphertextConverter(ILogger<CiphertextConverter> logger)

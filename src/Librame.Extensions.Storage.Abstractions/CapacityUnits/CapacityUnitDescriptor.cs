@@ -20,7 +20,7 @@ namespace Librame.Extensions.Storage
     public class CapacityUnitDescriptor : IEquatable<CapacityUnitDescriptor>
     {
         /// <summary>
-        /// 构造一个 <see cref="CapacityUnitDescriptor"/> 实例。
+        /// 构造一个 <see cref="CapacityUnitDescriptor"/>。
         /// </summary>
         /// <param name="name">给定的名称。</param>
         /// <param name="abbr">给定的缩写。</param>
@@ -32,7 +32,7 @@ namespace Librame.Extensions.Storage
             Size = (long)Math.Pow(baseNumber, exponent);
         }
         /// <summary>
-        /// 构造一个 <see cref="CapacityUnitDescriptor"/> 实例。
+        /// 构造一个 <see cref="CapacityUnitDescriptor"/>。
         /// </summary>
         /// <param name="name">给定的名称。</param>
         /// <param name="abbr">给定的缩写。</param>

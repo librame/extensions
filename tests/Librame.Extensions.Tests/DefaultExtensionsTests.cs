@@ -5,17 +5,17 @@ namespace Librame.Extensions.Tests
 {
     public class DefaultExtensionsTests
     {
-        private string _str;
-
         [Fact]
         public void EnsureSingletonTest()
         {
-            _str = _str.EnsureSingleton(() => "123");
-            Assert.NotEmpty(_str);
+            string str = null;
+
+            str = str.EnsureSingleton(() => DateTime.Now.ToString());
+            Assert.NotEmpty(str);
 
             for (var i = 0; i < 10; i++)
             {
-                Assert.NotEmpty(_str.EnsureSingleton(() => string.Empty));
+                Assert.NotEmpty(str.EnsureSingleton(() => string.Empty));
             }
         }
 

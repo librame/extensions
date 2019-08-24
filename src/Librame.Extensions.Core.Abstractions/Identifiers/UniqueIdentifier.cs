@@ -21,35 +21,27 @@ namespace Librame.Extensions.Core
     public struct UniqueIdentifier : IIdentifier, IEquatable<UniqueIdentifier>
     {
         /// <summary>
-        /// 构造一个 <see cref="UniqueIdentifier"/> 实例。
+        /// 构造一个 <see cref="UniqueIdentifier"/>。
         /// </summary>
         /// <param name="guid">给定的 <see cref="Guid"/> 。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选；默认使用 <see cref="HexIdentifierConverter"/>）。</param>
         public UniqueIdentifier(Guid guid, IIdentifierConverter converter = null)
-            : this(guid.ToByteArray(), converter)
         {
+            Memory = guid.ToByteArray();
+            Converter = converter ?? new HexIdentifierConverter();
+            RawGuid = guid;
         }
 
         /// <summary>
-        /// 构造一个 <see cref="UniqueIdentifier"/> 实例。
-        /// </summary>
-        /// <param name="memory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public UniqueIdentifier(ReadOnlyMemory<byte> memory, IIdentifierConverter converter = null)
-        {
-            Memory = memory;
-            Converter = converter ?? new Base64IdentifierConverter();
-        }
-
-        /// <summary>
-        /// 构造一个 <see cref="UniqueIdentifier"/> 实例。
+        /// 构造一个 <see cref="UniqueIdentifier"/>。
         /// </summary>
         /// <param name="identifier">给定标识符的字符串形式。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public UniqueIdentifier(string identifier, IIdentifierConverter converter = null)
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>。</param>
+        public UniqueIdentifier(string identifier, IIdentifierConverter converter)
         {
-            Converter = converter ?? new Base64IdentifierConverter();
+            Converter = converter.NotNull(nameof(converter));
             Memory = Converter.From(identifier);
+            RawGuid = new Guid(Memory.ToArray());
         }
 
 
@@ -61,7 +53,12 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 转换器。
         /// </summary>
-        public IIdentifierConverter Converter { get; set; }
+        public IIdentifierConverter Converter { get; }
+
+        /// <summary>
+        /// 原始 GUID。
+        /// </summary>
+        public Guid RawGuid { get; }
 
 
         /// <summary>
@@ -75,6 +72,36 @@ namespace Librame.Extensions.Core
             //return Memory.Equals(other.Memory);
         }
 
+
+        /// <summary>
+        /// 使用有顺序的 GUID 与当前转换器，构造一个新唯一标识符。
+        /// </summary>
+        /// <returns>返回 <see cref="UniqueIdentifier"/>。</returns>
+        public UniqueIdentifier ToCombUniqueIdentifier()
+        {
+            return new UniqueIdentifier(RawGuid.AsCombId(), Converter);
+        }
+
+        /// <summary>
+        /// 转换为短字符串（可用作排序）。
+        /// </summary>
+        /// <param name="toUpper">转换为大写形式（可选；默认启用转换）。</param>
+        /// <returns>返回字符串。</returns>
+        public string ToShortString(bool toUpper = true)
+        {
+            var i = 1L;
+
+            foreach (var b in Memory.ToArray())
+                i *= b + 1;
+
+            // 8d7225f69933e15
+            var str = string.Format("{0:x}", _ = DateTimeOffset.UtcNow.Ticks);
+
+            if (toUpper)
+                return str.ToUpperInvariant();
+
+            return str;
+        }
 
         /// <summary>
         /// 转换为 BASE64 字符串。
@@ -136,13 +163,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 显式转换为 <see cref="UniqueIdentifier"/>。
-        /// </summary>
-        /// <param name="identifier">给定标识符的字符串形式。</param>
-        public static explicit operator UniqueIdentifier(string identifier)
-            => new UniqueIdentifier(identifier);
-
-        /// <summary>
         /// 隐式转换为字符串形式。
         /// </summary>
         /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>。</param>
@@ -156,11 +176,30 @@ namespace Librame.Extensions.Core
         public static readonly UniqueIdentifier Empty
             = new UniqueIdentifier(Guid.Empty);
 
+
         /// <summary>
         /// 新建实例。
         /// </summary>
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选；默认使用 <see cref="HexIdentifierConverter"/>）。</param>
         /// <returns>返回 <see cref="UniqueIdentifier"/>。</returns>
-        public static UniqueIdentifier New()
-            => new UniqueIdentifier(Guid.NewGuid());
+        public static UniqueIdentifier New(IIdentifierConverter converter = null)
+            => new UniqueIdentifier(Guid.NewGuid(), converter);
+
+        /// <summary>
+        /// 新建数组实例。
+        /// </summary>
+        /// <param name="count">给定要生成的实例数量。</param>
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选；默认使用 <see cref="HexIdentifierConverter"/>）。</param>
+        /// <returns>返回 <see cref="UniqueIdentifier"/> 数组。</returns>
+        public static UniqueIdentifier[] NewArray(int count, IIdentifierConverter converter = null)
+        {
+            var identifiers = new UniqueIdentifier[count];
+
+            for (var i = 0; i < count; i++)
+                identifiers[i] = New(converter);
+
+            return identifiers;
+        }
+
     }
 }

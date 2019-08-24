@@ -25,7 +25,7 @@ namespace System.Collections.Generic
 
 
         /// <summary>
-        /// 构造一个 <see cref="Paging{T}"/> 实例。
+        /// 构造一个 <see cref="Paging{T}"/>。
         /// </summary>
         /// <param name="rows">给定的行集合。</param>
         /// <param name="descriptor">给定的描述符。</param>

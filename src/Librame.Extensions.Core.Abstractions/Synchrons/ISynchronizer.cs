@@ -44,27 +44,11 @@ namespace Librame.Extensions.Core
         void Write(Action<TWriter> action);
     }
 
+
     /// <summary>
     /// 同步程序接口。
     /// </summary>
     public interface ISynchronizer
     {
-        /// <summary>
-        /// 同步读取。
-        /// </summary>
-        /// <param name="action">给定的 <see cref="Action{ISynchronReader}"/>。</param>
-        void Read(Action<ISyncReader> action);
-
-        /// <summary>
-        /// 同步可升级读取。
-        /// </summary>
-        /// <param name="action">给定的 <see cref="Action{ISynchron}"/>。</param>
-        void EnterUpgradeableReadLock(Action<ISyncManager> action);
-
-        /// <summary>
-        /// 同步写入。
-        /// </summary>
-        /// <param name="action">给定的 <see cref="Action{ISynchronWriter}"/>。</param>
-        void Write(Action<ISyncWriter> action);
     }
 }

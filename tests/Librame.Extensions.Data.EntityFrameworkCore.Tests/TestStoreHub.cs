@@ -5,26 +5,6 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
 
-    public interface ITestStoreHub : IStoreHub<TestDbContextAccessor>
-    {
-        IList<Category> GetCategories();
-
-        IPageable<Article> GetArticles();
-
-        /// <summary>
-        /// 供手动切换读取写入库测试。
-        /// </summary>
-        /// <returns></returns>
-        ITestStoreHub UseWriteDbConnection();
-
-        /// <summary>
-        /// 供手动切换读取写入库测试。
-        /// </summary>
-        /// <returns></returns>
-        ITestStoreHub UseDefaultDbConnection();
-    }
-
-
     public class TestStoreHub : StoreHubBase<TestDbContextAccessor>, ITestStoreHub
     {
         public TestStoreHub(IAccessor accessor)
@@ -45,7 +25,7 @@ namespace Librame.Extensions.Data.Tests
 
         public ITestStoreHub UseWriteDbConnection()
         {
-            Accessor.TryChangeDbConnection(t => t.WriteConnectionString);
+            Accessor.TryChangeDbConnection(t => t.WritingConnectionString);
             return this;
         }
 
@@ -56,4 +36,25 @@ namespace Librame.Extensions.Data.Tests
         }
 
     }
+
+
+    public interface ITestStoreHub : IStoreHub<TestDbContextAccessor>
+    {
+        IList<Category> GetCategories();
+
+        IPageable<Article> GetArticles();
+
+        /// <summary>
+        /// 供手动切换读取写入库测试。
+        /// </summary>
+        /// <returns></returns>
+        ITestStoreHub UseWriteDbConnection();
+
+        /// <summary>
+        /// 供手动切换读取写入库测试。
+        /// </summary>
+        /// <returns></returns>
+        ITestStoreHub UseDefaultDbConnection();
+    }
+
 }

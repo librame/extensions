@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.Localization
     public class AbstractionRootNamespaceAttribute : Attribute
     {
         /// <summary>
-        /// 构建一个 <see cref="AbstractionRootNamespaceAttribute"/> 实例。
+        /// 构建一个 <see cref="AbstractionRootNamespaceAttribute"/>。
         /// </summary>
         /// <param name="rootNamespace">给定的程序集根命名空间。</param>
         public AbstractionRootNamespaceAttribute(string rootNamespace)

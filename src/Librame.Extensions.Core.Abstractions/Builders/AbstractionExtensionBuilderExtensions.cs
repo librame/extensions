@@ -34,7 +34,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="parentBuilder">输出父级 <see cref="IExtensionBuilder"/> 实例。</param>
+        /// <param name="parentBuilder">输出父级 <see cref="IExtensionBuilder"/>。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
         public static bool TryGetParentBuilder<TParentBuilder>(this IExtensionBuilder builder,
             out TParentBuilder parentBuilder)

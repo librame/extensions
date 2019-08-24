@@ -25,7 +25,7 @@ namespace Librame.Extensions.Core
     public class ExpressionStringLocalizerFactory : ResourceManagerStringLocalizerFactory, IStringLocalizerFactory
     {
         /// <summary>
-        /// 构造一个 <see cref="ExpressionStringLocalizerFactory"/> 实例。
+        /// 构造一个 <see cref="ExpressionStringLocalizerFactory"/>。
         /// </summary>
         /// <param name="localizationOptions">给定的 <see cref="IOptions{LocalizationOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>

@@ -95,17 +95,17 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 获取限定名称（不包含版本及版本号；格式：AssemblyFullName, TypeFullName）。
+        /// 获取简短的程序集限定名（不包含版本及版本号；格式：TypeFullName, AssemblyFullName）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetQualifiedName(this Type type)
+        public static string GetShortAssemblyQualifiedName(this Type type)
         {
             type.NotNull(nameof(type));
 
             var assemblyName = type.Assembly.GetName().Name;
 
-            return Assembly.CreateQualifiedName(assemblyName, type.GetFullName());
+            return Assembly.CreateQualifiedName(assemblyName, type.GetCustomFullName());
         }
 
 
@@ -126,32 +126,32 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 获取名称（如泛类型 IDictionary{string, IList{string}} 的名称为 IDictionary`2[String, IList`1[String]]）。
+        /// 获取自定义名称（如泛类型 IDictionary{string, IList{string}} 的名称为 IDictionary`2[String, IList`1[String]]）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetName(this Type type)
+        public static string GetCustomName(this Type type)
         {
-            return type.GetString(t => t.Name);
+            return type.GetCustomString(t => t.Name);
         }
 
         /// <summary>
-        /// 获取带命名空间的完整名称（如泛类型 IDictionary{string, IList{string}} 的名称为 System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]）。
+        /// 获取自定义带命名空间的完整名称（如泛类型 IDictionary{string, IList{string}} 的名称为 System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetFullName(this Type type)
+        public static string GetCustomFullName(this Type type)
         {
-            return type.GetString(t => $"{t.Namespace}.{t.Name}"); // not t.FullName
+            return type.GetCustomString(t => $"{t.Namespace}.{t.Name}"); // not t.FullName
         }
 
         /// <summary>
-        /// 获取类型字符串。
+        /// 获取自定义字符串。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <param name="factory">给定的类型字符串工厂方法。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetString(this Type type, Func<Type, string> factory)
+        public static string GetCustomString(this Type type, Func<Type, string> factory)
         {
             type.NotNull(nameof(type));
 
@@ -165,7 +165,7 @@ namespace Librame.Extensions
 
                 argumentTypes.ForEach((argType, i) =>
                 {
-                    sb.Append(argType.GetString(factory));
+                    sb.Append(argType.GetCustomString(factory));
 
                     if (i < argumentTypes.Length - 1)
                         sb.Append(", ");

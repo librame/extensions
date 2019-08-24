@@ -14,6 +14,12 @@ namespace Librame.Extensions.Tests
             static string Property1 { get; set; }
             string Property2 { get; set; }
             public string Property3 { get; set; }
+
+            public void TestMethod()
+            {
+                Assert.Null(_field1);
+                Assert.Null(_field2);
+            }
         }
 
 
@@ -44,10 +50,10 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
-        public void GetQualifiedNameTest()
+        public void GetShortAssemblyQualifiedNameTest()
         {
             var listType = typeof(IList<string>);
-            var qualifiedName = listType.GetQualifiedName();
+            var qualifiedName = listType.GetShortAssemblyQualifiedName();
             Assert.Equal("System.Collections.Generic.IList`1[System.String], System.Private.CoreLib", qualifiedName);
         }
 
@@ -62,20 +68,20 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
-        public void GetStringTest()
+        public void GetCustomStringTest()
         {
             var listType = typeof(IList<string>);
             var dictType = typeof(IDictionary<string, IList<string>>);
 
             // GetName
-            var listTypeName = listType.GetName();
-            var dictTypeName = dictType.GetName();
+            var listTypeName = listType.GetCustomName();
+            var dictTypeName = dictType.GetCustomName();
             Assert.Equal("IList`1[String]", listTypeName);
             Assert.Equal("IDictionary`2[String, IList`1[String]]", dictTypeName);
 
             // GetFullName
-            listTypeName = listType.GetFullName();
-            dictTypeName = dictType.GetFullName();
+            listTypeName = listType.GetCustomFullName();
+            dictTypeName = dictType.GetCustomFullName();
             Assert.Equal("System.Collections.Generic.IList`1[System.String]", listTypeName);
             Assert.Equal("System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]", dictTypeName);
         }

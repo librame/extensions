@@ -27,6 +27,6 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 转换器。
         /// </summary>
-        IIdentifierConverter Converter { get; set; }
+        IIdentifierConverter Converter { get; }
     }
 }

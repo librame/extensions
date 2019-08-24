@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data
         }
 
         /// <summary>
-        /// 构造一个 <see cref="EntityError"/> 实例。
+        /// 构造一个 <see cref="EntityError"/>。
         /// </summary>
         /// <param name="code">给定的代码。</param>
         /// <param name="description">给定的描述。</param>

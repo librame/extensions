@@ -25,7 +25,7 @@ namespace System.Collections.Generic
         where T : IParentId<int>
     {
         /// <summary>
-        /// 构造一个 <see cref="Treeing{T}"/> 实例。
+        /// 构造一个 <see cref="Treeing{T}"/>。
         /// </summary>
         /// <param name="items">给定的类型实例集合。</param>
         public Treeing(IEnumerable<T> items)
@@ -34,7 +34,7 @@ namespace System.Collections.Generic
         }
 
         /// <summary>
-        /// 构造一个 <see cref="Treeing{T}"/> 实例。
+        /// 构造一个 <see cref="Treeing{T}"/>。
         /// </summary>
         /// <param name="nodes">给定的节点列表。</param>
         public Treeing(IEnumerable<TreeingNode<T, int>> nodes)
@@ -58,7 +58,7 @@ namespace System.Collections.Generic
 
 
         /// <summary>
-        /// 构造一个 <see cref="Treeing{T, TId}"/> 实例。
+        /// 构造一个 <see cref="Treeing{T, TId}"/>。
         /// </summary>
         /// <param name="items">给定的类型实例集合。</param>
         public Treeing(IEnumerable<T> items)
@@ -66,7 +66,7 @@ namespace System.Collections.Generic
             _nodes = items.AsTreeingNodes<T, TId>();
         }
         /// <summary>
-        /// 构造一个 <see cref="Treeing{T, TId}"/> 实例。
+        /// 构造一个 <see cref="Treeing{T, TId}"/>。
         /// </summary>
         /// <param name="nodes">给定的节点列表。</param>
         public Treeing(IEnumerable<TreeingNode<T, TId>> nodes)

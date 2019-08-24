@@ -24,7 +24,7 @@ namespace Librame.Extensions.Core
         where TResource : class
     {
         /// <summary>
-        /// 构造一个 <see cref="ExpressionStringLocalizer{TResource}"/> 实例。
+        /// 构造一个 <see cref="ExpressionStringLocalizer{TResource}"/>。
         /// </summary>
         /// <param name="factory">给定的 <see cref="IStringLocalizerFactory"/>。</param>
         public ExpressionStringLocalizer(IStringLocalizerFactory factory)

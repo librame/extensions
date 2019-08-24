@@ -28,7 +28,7 @@ namespace Librame.Extensions.Data
     public class AuditServiceBase : AbstractService, IAuditService
     {
         /// <summary>
-        /// 构造一个 <see cref="AuditServiceBase"/> 实例。
+        /// 构造一个 <see cref="AuditServiceBase"/>。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="identifier">给定的 <see cref="IIdentifierService"/>。</param>
@@ -95,7 +95,7 @@ namespace Librame.Extensions.Data
             {
                 Id = Identifier.GetAuditIdAsync(cancellationToken).Result,
                 TableName = GetTableName(entry),
-                EntityTypeName = entry.Metadata.ClrType.GetFullName(),
+                EntityTypeName = entry.Metadata.ClrType.GetCustomFullName(),
                 State = (int)entry.State,
                 StateName = entry.State.ToString()
             };
@@ -112,7 +112,7 @@ namespace Librame.Extensions.Data
                 {
                     Id = Identifier.GetAuditPropertyIdAsync(cancellationToken).Result,
                     PropertyName = property.Name,
-                    PropertyTypeName = property.ClrType.GetFullName()
+                    PropertyTypeName = property.ClrType.GetCustomFullName()
                 };
 
                 switch (entry.State)

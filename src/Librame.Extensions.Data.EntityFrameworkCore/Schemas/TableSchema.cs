@@ -20,7 +20,7 @@ namespace Librame.Extensions.Data
     public class TableSchema : AbstractDataSchema, ITableSchema
     {
         /// <summary>
-        /// 构造一个 <see cref="TableSchema"/> 实例。
+        /// 构造一个 <see cref="TableSchema"/>。
         /// </summary>
         /// <param name="name">给定的名称。</param>
         /// <param name="schema">给定的架构（可选）。</param>

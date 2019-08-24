@@ -65,7 +65,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 使用指定的新协议新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新协议新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="newScheme">给定的新协议。</param>
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>
@@ -75,7 +75,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 使用指定的新主机新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新主机新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="newHost">给定的新主机。</param>
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>
@@ -85,7 +85,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 使用指定的新路径新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新路径新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="newPath">给定的新路径。</param>
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>
@@ -95,7 +95,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 使用指定的新查询新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新查询新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="newQuery">给定的新查询。</param>
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>
@@ -105,7 +105,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 使用指定的查询参数数组新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的查询参数数组新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="queriesAction">给定的改变查询参数集合动作（内部支持对参数值的特殊字符进行转码处理）。</param>
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>
@@ -119,7 +119,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 使用指定的新锚点新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新锚点新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="newAnchor">给定以 # 开始的新锚点。</param>
         /// <returns>返回 <see cref="IUriLocator"/>。</returns>

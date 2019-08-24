@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core
     public class Buffer<T> : AbstractBuffer<T>, IBuffer<T>
     {
         /// <summary>
-        /// 构造一个 <see cref="Buffer{T}"/> 实例。
+        /// 构造一个 <see cref="Buffer{T}"/>。
         /// </summary>
         /// <param name="memory">给定的 <see cref="Memory{T}"/>。</param>
         public Buffer(Memory<T> memory)
@@ -31,7 +31,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="Buffer{T}"/> 实例。
+        /// 构造一个 <see cref="Buffer{T}"/>。
         /// </summary>
         /// <param name="array">给定的数组。</param>
         public Buffer(T[] array)

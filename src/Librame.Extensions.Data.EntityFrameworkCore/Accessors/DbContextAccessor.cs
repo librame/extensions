@@ -34,7 +34,7 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 构造一个 <see cref="DbContextAccessor"/> 实例。
+        /// 构造一个 <see cref="DbContextAccessor"/>。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
         public DbContextAccessor(DbContextOptions options)
@@ -168,7 +168,7 @@ namespace Librame.Extensions.Data
         {
             // 改变为写入数据库（支持读写分离）
             if (BuilderOptions.EnableTenant)
-                TryChangeDbConnection(tenant => tenant.WriteConnectionString);
+                TryChangeDbConnection(tenant => tenant.WritingConnectionString);
 
             if (BuilderOptions.EnableAudit)
                 AuditSaveChangesAsync().Wait();
@@ -193,7 +193,7 @@ namespace Librame.Extensions.Data
         {
             // 改变为写入数据库（支持读写分离）
             if (BuilderOptions.EnableTenant)
-                TryChangeDbConnection(tenant => tenant.WriteConnectionString);
+                TryChangeDbConnection(tenant => tenant.WritingConnectionString);
 
             if (BuilderOptions.EnableAudit)
                 await AuditSaveChangesAsync(cancellationToken);
@@ -243,7 +243,7 @@ namespace Librame.Extensions.Data
             if (tenant.IsNull() || connectionStringFactory.IsNull())
                 return false;
 
-            if (!tenant.WriteConnectionSeparation)
+            if (!tenant.WritingSeparation)
             {
                 Logger?.LogInformation($"The tenant({tenant.Name}:{tenant.Host}) connection write separation is disable.");
                 return false;

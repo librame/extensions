@@ -22,19 +22,19 @@ namespace Librame.Extensions.Core
     public struct RandomNumberIdentifier : IIdentifier, IEquatable<RandomNumberIdentifier>
     {
         /// <summary>
-        /// 构造一个 <see cref="RandomNumberIdentifier"/> 实例。
+        /// 构造一个 <see cref="RandomNumberIdentifier"/>。
         /// </summary>
         /// <param name="generator">给定的 <see cref="RandomNumberGenerator"/> 。</param>
         /// <param name="length">给定要生成的字节数组长度（可选；默认 32 位）。</param>
         /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
         public RandomNumberIdentifier(RandomNumberGenerator generator, int length = 32,
             IIdentifierConverter converter = null)
-            : this(generator.GenerateByteArray(length), converter)
+            : this(GenerateByteArray(generator, length), converter)
         {
         }
 
         /// <summary>
-        /// 构造一个 <see cref="RandomNumberIdentifier"/> 实例。
+        /// 构造一个 <see cref="RandomNumberIdentifier"/>。
         /// </summary>
         /// <param name="memory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
         /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
@@ -45,7 +45,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="RandomNumberIdentifier"/> 实例。
+        /// 构造一个 <see cref="RandomNumberIdentifier"/>。
         /// </summary>
         /// <param name="identifier">给定标识符的字符串形式。</param>
         /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
@@ -160,5 +160,23 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="RandomNumberIdentifier"/>。</returns>
         public static RandomNumberIdentifier New(int length = 32)
             => new RandomNumberIdentifier(RandomNumberGenerator.Create(), length);
+
+
+        /// <summary>
+        /// 生成字节数组。
+        /// </summary>
+        /// <param name="generator">给定的 <see cref="RandomNumberGenerator"/>。</param>
+        /// <param name="length">给定要生成的字节数组长度。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GenerateByteArray(RandomNumberGenerator generator, int length)
+        {
+            generator.NotNull(nameof(generator));
+
+            var buffer = new byte[length];
+            generator.GetBytes(buffer);
+
+            return buffer;
+        }
+
     }
 }

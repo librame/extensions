@@ -47,7 +47,7 @@ namespace Librame.Extensions.Encryption
                 var options = provider.GetRequiredService<IOptions<EncryptionBuilderOptions>>();
                 var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
 
-                return new InternalSigningCredentialsService(credentials, options, loggerFactory);
+                return new SigningCredentialsService(credentials, options, loggerFactory);
             });
 
             return builder;

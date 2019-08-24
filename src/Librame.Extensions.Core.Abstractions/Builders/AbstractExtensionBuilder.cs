@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     public abstract class AbstractExtensionBuilder : IExtensionBuilder
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractExtensionBuilder"/> 实例。
+        /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         protected AbstractExtensionBuilder(IServiceCollection services)
@@ -30,7 +30,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractExtensionBuilder"/> 实例。
+        /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         protected AbstractExtensionBuilder(IExtensionBuilder builder)

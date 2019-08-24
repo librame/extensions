@@ -31,7 +31,7 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddData(this IExtensionBuilder builder,
             Action<DataBuilderOptions> setupAction = null)
         {
-            return builder.AddData(b => new InternalDataBuilder(b), setupAction);
+            return builder.AddData(b => new DataBuilder(b), setupAction);
         }
 
         /// <summary>

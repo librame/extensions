@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Xunit;
 
 namespace Librame.Extensions.Tests
@@ -6,25 +7,13 @@ namespace Librame.Extensions.Tests
     public class PathExtensionsTests
     {
         [Fact]
-        public void AsFileInfoTest()
-        {
-            var file = "C:\\Windows\\notepad.exe".AsFileInfo();
-            Assert.NotNull(file);
-        }
-
-        [Fact]
-        public void AsDirectoryInfoTest()
-        {
-            var directory = "C:\\Users".AsDirectoryInfo();
-            Assert.NotNull(directory);
-        }
-
-        [Fact]
         public void SubdirectoryTest()
         {
-            var directory = "C:\\Users".AsDirectoryInfo();
-            directory = directory.Subdirectory("Administrator");
-            Assert.NotNull(directory);
+            var directoryName = "C:\\Users";
+            var directory = new DirectoryInfo(directoryName);
+
+            Assert.Equal(directoryName.Subdirectory("Administrator").FullName,
+                directory.Subdirectory("Administrator").FullName);
         }
 
 

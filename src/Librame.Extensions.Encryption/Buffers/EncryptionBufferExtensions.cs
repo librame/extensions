@@ -96,7 +96,7 @@ namespace Librame.Extensions
         public static IEncryptionBuffer<TConverter, TSource> AsEncryptionBuffer<TConverter, TSource>(this TConverter converter, TSource source)
             where TConverter : IAlgorithmConverter<TSource>
         {
-            return new InternalEncryptionBuffer<TConverter, TSource>(converter, source);
+            return new EncryptionBuffer<TConverter, TSource>(converter, source);
         }
 
     }

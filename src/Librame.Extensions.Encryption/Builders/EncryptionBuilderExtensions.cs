@@ -31,7 +31,7 @@ namespace Librame.Extensions.Encryption
         public static IEncryptionBuilder AddEncryption(this IExtensionBuilder builder,
             Action<EncryptionBuilderOptions> setupAction = null)
         {
-            return builder.AddEncryption(b => new InternalEncryptionBuilder(b), setupAction);
+            return builder.AddEncryption(b => new EncryptionBuilder(b), setupAction);
         }
 
         /// <summary>

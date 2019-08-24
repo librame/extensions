@@ -1,6 +1,7 @@
-﻿using global::DotNetty.Common.Internal.Logging;
+﻿using DotNetty.Common.Internal.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using System;
 using System.Security.Cryptography.X509Certificates;
 
@@ -10,7 +11,7 @@ namespace Librame.Extensions.Network.DotNetty
     using Encryption;
     using Network;
 
-    public static class DotNettyServiceProvider
+    public class DotNettyServiceProvider
     {
         static DotNettyServiceProvider()
         {
@@ -32,7 +33,8 @@ namespace Librame.Extensions.Network.DotNetty
                 .AddNetwork().AddDotNetty();
 
                 // Use DotNetty LoggerFactory
-                services.TryReplace(InternalLoggerFactory.DefaultFactory);
+                InternalLoggerFactory.DefaultFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));
+                //services.TryReplace(InternalLoggerFactory.DefaultFactory);
 
                 return services.BuildServiceProvider();
             });
@@ -40,5 +42,6 @@ namespace Librame.Extensions.Network.DotNetty
 
 
         public static IServiceProvider Current { get; }
+
     }
 }

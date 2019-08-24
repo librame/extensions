@@ -46,14 +46,14 @@ namespace System.Collections.Generic
 
 
         /// <summary>
-        /// 构造一个 <see cref="TreeingNode{T, TId}"/> 实例。
+        /// 构造一个 <see cref="TreeingNode{T, TId}"/>。
         /// </summary>
         public TreeingNode()
             : this(default)
         {
         }
         /// <summary>
-        /// 构造一个 <see cref="TreeingNode{T, TId}"/> 实例。
+        /// 构造一个 <see cref="TreeingNode{T, TId}"/>。
         /// </summary>
         /// <param name="item">给定的项。</param>
         /// <param name="depthLevel">给定的深度等级。</param>

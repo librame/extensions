@@ -17,7 +17,6 @@ namespace Librame.Extensions.Network.DotNetty
 {
     using Core;
     using Encryption;
-    using Internal;
 
     /// <summary>
     /// DotNetty 网络构建器静态扩展。
@@ -49,30 +48,17 @@ namespace Librame.Extensions.Network.DotNetty
                 .AddDeveloperGlobalSigningCredentials();
             }
 
-            return builder.AddDemo();
+            return builder
+                .AddWrappers()
+                .AddDemo();
         }
 
-        private static INetworkBuilder AddDemo(this INetworkBuilder builder)
+        private static INetworkBuilder AddWrappers(this INetworkBuilder builder)
         {
-            builder.Services.AddScoped<IDiscardClient, InternalDiscardClient>();
-            builder.Services.AddSingleton<IDiscardServer, InternalDiscardServer>();
-
-            builder.Services.AddScoped<IEchoClient, InternalEchoClient>();
-            builder.Services.AddSingleton<IEchoServer, InternalEchoServer>();
-
-            builder.Services.AddScoped<IFactorialClient, InternalFactorialClient>();
-            builder.Services.AddSingleton<IFactorialServer, InternalFactorialServer>();
-
-            builder.Services.AddSingleton<IHttpServer, InternalHttpServer>();
-
-            builder.Services.AddScoped<ISecureChatClient, InternalSecureChatClient>();
-            builder.Services.AddSingleton<ISecureChatServer, InternalSecureChatServer>();
-
-            builder.Services.AddScoped<ITelnetClient, InternalTelnetClient>();
-            builder.Services.AddSingleton<ITelnetServer, InternalTelnetServer>();
-
-            builder.Services.AddScoped<IWebSocketClient, InternalWebSocketClient>();
-            builder.Services.AddSingleton<IWebSocketServer, InternalWebSocketServer>();
+            builder.Services.AddSingleton<IBootstrapWrapperFactory, BootstrapWrapperFactory>();
+            builder.Services.AddSingleton<IBootstrapWrapper, BootstrapWrapper>();
+            builder.Services.AddSingleton<IServerBootstrapWrapper, ServerBootstrapWrapper>();
+            builder.Services.AddSingleton(typeof(IBootstrapWrapper<,>), typeof(BootstrapWrapper<,>));
 
             return builder;
         }

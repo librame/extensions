@@ -80,10 +80,11 @@ namespace Librame.Extensions.Network
                 }
 
                 return Policy
-                    .Handle<WebException>()
+                    .Handle<IOException>()
+                    .OrResult<Stream>(r => r.IsNull())
                     .Retry(opts.RetryCount, (exception, retryCount, context) =>
                     {
-                        Logger.LogDebug($"Start the {retryCount} retry: ");
+                        Logger.LogDebug($"Start the {retryCount} retry");
                     })
                     .Execute(GetResponseStream);
             });

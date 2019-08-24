@@ -26,7 +26,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 构造一个 <see cref="ApplicationEnvironmentInfo"/> 实例。
+        /// 构造一个 <see cref="ApplicationEnvironmentInfo"/>。
         /// </summary>
         /// <param name="environment">给定的 <see cref="ApplicationEnvironment"/>（可选）。</param>
         public ApplicationEnvironmentInfo(ApplicationEnvironment environment = null)

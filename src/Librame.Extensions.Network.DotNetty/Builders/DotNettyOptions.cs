@@ -38,45 +38,56 @@ namespace Librame.Extensions.Network.DotNetty
             = new HttpServerOptions();
 
         /// <summary>
-        /// 弃用客户端。
+        /// Discard 客户端。
         /// </summary>
         public ClientOptions DiscardClient { get; set; }
             = new ClientOptions();
         /// <summary>
-        /// 弃用服务端。
+        /// Discard 服务端。
         /// </summary>
         public ServerOptions DiscardServer { get; set; }
             = new ServerOptions();
 
         /// <summary>
-        /// 回流客户端。
+        /// Echo 客户端。
         /// </summary>
         public ClientOptions EchoClient { get; set; }
             = new ClientOptions();
         /// <summary>
-        /// 回流服务端。
+        /// Echo 服务端。
         /// </summary>
         public ServerOptions EchoServer { get; set; }
             = new ServerOptions();
 
         /// <summary>
-        /// 析因客户端。
+        /// Factorial 客户端。
         /// </summary>
         public FactorialClientOptions FactorialClient { get; set; }
             = new FactorialClientOptions();
         /// <summary>
-        /// 析因服务端。
+        /// Factorial 服务端。
         /// </summary>
         public ServerOptions FactorialServer { get; set; }
             = new ServerOptions();
 
         /// <summary>
-        /// 安全聊天客户端。
+        /// QuoteOfTheMoment 客户端。
+        /// </summary>
+        public ClientOptions QuoteOfTheMomentClient { get; set; }
+            = new ClientOptions();
+        /// <summary>
+        /// QuoteOfTheMoment 服务端。
+        /// </summary>
+        public ServerOptions QuoteOfTheMomentServer { get; set; }
+            = new ServerOptions();
+
+        /// <summary>
+        /// SecureChat 客户端。
         /// </summary>
         public ClientOptions SecureChatClient { get; set; }
             = new ClientOptions();
         /// <summary>
-        /// 安全聊天服务端。
+        /// SecureChat 服务端。
         /// </summary>
         public ServerOptions SecureChatServer { get; set; }
             = new ServerOptions();
@@ -128,12 +139,6 @@ namespace Librame.Extensions.Network.DotNetty
         /// </summary>
         public string Path { get; set; }
             = "/websocket";
-
-        /// <summary>
-        /// 使用 Libuv（默认使用）。
-        /// </summary>
-        public bool UseLibuv { get; set; }
-            = true;
     }
 
 
@@ -160,6 +165,12 @@ namespace Librame.Extensions.Network.DotNetty
         /// </summary>
         public int BufferSize { get; set; }
             = 256;
+
+        /// <summary>
+        /// 重试次数。
+        /// </summary>
+        public int RetryCount { get; set; }
+            = 3;
     }
 
 
@@ -168,11 +179,6 @@ namespace Librame.Extensions.Network.DotNetty
     /// </summary>
     public class ServerOptions : ConnectionOptions
     {
-        /// <summary>
-        /// 使用 Libuv（默认使用）。
-        /// </summary>
-        public bool UseLibuv { get; set; }
-            = true;
     }
 
 
@@ -181,6 +187,12 @@ namespace Librame.Extensions.Network.DotNetty
     /// </summary>
     public class ConnectionOptions
     {
+        /// <summary>
+        /// 使用 Libuv（默认使用）。
+        /// </summary>
+        public bool UseLibuv { get; set; }
+            = false;
+
         /// <summary>
         /// 退出命名。
         /// </summary>
@@ -194,9 +206,9 @@ namespace Librame.Extensions.Network.DotNetty
             = EncryptionBuilderOptions.GLOBAL_KEY;
 
         /// <summary>
-        /// 使用 SSL（默认使用）。
+        /// 是 SSL（默认不是）。
         /// </summary>
-        public bool UseSSL { get; set; }
+        public bool IsSsl { get; set; }
             = false;
 
         /// <summary>

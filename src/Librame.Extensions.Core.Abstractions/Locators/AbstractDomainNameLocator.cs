@@ -40,7 +40,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="allLevelSegments">给定的所有级别片段列表。</param>
         protected AbstractDomainNameLocator(List<string> allLevelSegments)
-            : base(string.Join(".", allLevelSegments.NotNullOrEmpty(nameof(allLevelSegments)).Reverse()))
+            : base(string.Join(".", (allLevelSegments.NotNullOrEmpty(nameof(allLevelSegments)) as IList<string>).Reverse()))
         {
             _allLevelSegments = allLevelSegments;
         }

@@ -103,7 +103,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 依据当前文件定位器的文件名与指定的基础路径，新建一个 <see cref="IFileLocator"/> 实例。
+        /// 依据当前文件定位器的文件名与指定的基础路径，新建一个 <see cref="IFileLocator"/>。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IFileLocator"/>。</param>
         /// <param name="newBasePathFactory">给定的新基础路径工厂方法（输入参数为当前基础路径）。</param>
@@ -116,7 +116,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个 <see cref="IFileLocator"/> 实例。
+        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个 <see cref="IFileLocator"/>。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IFileLocator"/>。</param>
         /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
@@ -128,7 +128,7 @@ namespace Librame.Extensions.Core
             return locator.NewFileName(newFileNameFactory?.Invoke(locator.FileName));
         }
         /// <summary>
-        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个 <see cref="IFileLocator"/> 实例。
+        /// 依据当前文件定位器的基础路径与指定的文件名，新建一个 <see cref="IFileLocator"/>。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IFileLocator"/>。</param>
         /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>

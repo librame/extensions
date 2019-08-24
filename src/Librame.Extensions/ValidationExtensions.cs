@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,10 +33,10 @@ namespace Librame.Extensions
         /// <param name="source">给定的源实例。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsNull<TSource>(this TSource source)
-            where TSource : class
         {
             return null == source;
         }
+
         /// <summary>
         /// 是否不为 NULL。
         /// </summary>
@@ -43,9 +44,35 @@ namespace Librame.Extensions
         /// <param name="source">给定的源实例。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsNotNull<TSource>(this TSource source)
-            where TSource : class
         {
             return null != source;
+        }
+
+
+        /// <summary>
+        /// 是否为 NULL 或空格。
+        /// </summary>
+        /// <remarks>
+        /// 详情参考 <see cref="string.IsNullOrWhiteSpace(string)"/>。
+        /// </remarks>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNullOrWhiteSpace(this string str)
+        {
+            return string.IsNullOrWhiteSpace(str);
+        }
+
+        /// <summary>
+        /// 是否不为 NULL 或空格。
+        /// </summary>
+        /// <remarks>
+        /// 详情参考 <see cref="string.IsNullOrWhiteSpace(string)"/>。
+        /// </remarks>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNotNullOrWhiteSpace(this string str)
+        {
+            return !string.IsNullOrWhiteSpace(str);
         }
 
 
@@ -61,6 +88,57 @@ namespace Librame.Extensions
         {
             return string.IsNullOrEmpty(str);
         }
+
+        /// <summary>
+        /// 是否不为 NULL 或空字符串。
+        /// </summary>
+        /// <remarks>
+        /// 详情参考 <see cref="string.IsNullOrEmpty(string)"/>。
+        /// </remarks>
+        /// <param name="str">给定的字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNotNullOrEmpty(this string str)
+        {
+            return !string.IsNullOrEmpty(str);
+        }
+
+
+        /// <summary>
+        /// 是否为 NULL 或空集合。
+        /// </summary>
+        /// <typeparam name="TSources">指定的源集合类型。</typeparam>
+        /// <param name="sources">给定的 <see cref="IEnumerable"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNullOrEmpty<TSources>(this TSources sources)
+            where TSources : IEnumerable
+        {
+            if (sources.IsNull())
+                return true;
+
+            var i = 0;
+            foreach (var source in sources)
+            {
+                if (i > 0)
+                    break;
+                i++;
+            }
+
+            return i < 1;
+        }
+
+        /// <summary>
+        /// 是否不为 NULL 或空集合。
+        /// </summary>
+        /// <typeparam name="TSources">指定的源集合类型。</typeparam>
+        /// <param name="sources">给定的 <see cref="IEnumerable"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsNotNullOrEmpty<TSources>(this TSources sources)
+            where TSources : IEnumerable
+        {
+            return !sources.IsNullOrEmpty();
+        }
+
+
         /// <summary>
         /// 是否为 NULL 或空集合。
         /// </summary>
@@ -78,18 +156,6 @@ namespace Librame.Extensions
             return !sources.Any();
         }
 
-        /// <summary>
-        /// 是否不为 NULL 或空字符串。
-        /// </summary>
-        /// <remarks>
-        /// 详情参考 <see cref="string.IsNullOrEmpty(string)"/>。
-        /// </remarks>
-        /// <param name="str">给定的字符串。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool IsNotNullOrEmpty(this string str)
-        {
-            return !string.IsNullOrEmpty(str);
-        }
         /// <summary>
         /// 是否不为 NULL 或空集合。
         /// </summary>
@@ -132,6 +198,8 @@ namespace Librame.Extensions
         public static bool IsGreater<T>(this T value, T compare, bool equals = false)
             where T : IComparable<T>
         {
+            value.NotNull(nameof(value));
+
             return equals ? value.CompareTo(compare) >= 0 : value.CompareTo(compare) > 0;
         }
         /// <summary>
@@ -145,6 +213,8 @@ namespace Librame.Extensions
         public static bool IsLesser<T>(this T value, T compare, bool equals = false)
             where T : IComparable<T>
         {
+            value.NotNull(nameof(value));
+
             return equals ? value.CompareTo(compare) <= 0 : value.CompareTo(compare) < 0;
         }
 

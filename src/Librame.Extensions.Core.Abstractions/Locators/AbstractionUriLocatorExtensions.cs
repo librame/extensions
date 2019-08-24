@@ -101,7 +101,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 使用指定的新协议新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新协议新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IUriLocator"/>。</param>
         /// <param name="newSchemeFactory">给定的新协议字符串工厂方法。</param>
@@ -117,7 +117,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 使用指定的新主机新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新主机新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IUriLocator"/>。</param>
         /// <param name="newHostFactory">给定可能包含端口号的新主机字符串工厂方法。</param>
@@ -133,7 +133,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 使用指定的新路径新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新路径新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IUriLocator"/>。</param>
         /// <param name="newPathFactory">给定以 / 开始的新路径字符串工厂方法。</param>
@@ -149,7 +149,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 使用指定的新查询字符串新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新查询字符串新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IUriLocator"/>。</param>
         /// <param name="newQueryFactory">给定以 ? 开始的新查询字符串工厂方法。</param>
@@ -165,7 +165,7 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 使用指定的新锚点新建一个 <see cref="IUriLocator"/> 实例。
+        /// 使用指定的新锚点新建一个 <see cref="IUriLocator"/>。
         /// </summary>
         /// <param name="locator">给定的 <see cref="IUriLocator"/>。</param>
         /// <param name="newAnchorFactory">给定以 # 开始的新锚点字符串工厂方法。</param>

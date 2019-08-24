@@ -18,7 +18,7 @@ namespace Librame.Extensions.Data
     public abstract class AbstractDataSchema : IDataSchema
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractDataSchema"/> 实例。
+        /// 构造一个 <see cref="AbstractDataSchema"/>。
         /// </summary>
         /// <param name="schema">给定的架构（可选）。</param>
         public AbstractDataSchema(string schema = null)
