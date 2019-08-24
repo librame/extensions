@@ -40,18 +40,18 @@
     services.AddLibrame()
         .AddData(options =>
         {
-            options.LocalTenant.DefaultConnectionString = "default database connection string";
-            options.LocalTenant.WriteConnectionString = "write database connection string";
-            options.LocalTenant.WriteConnectionSeparation = true;
+            options.DefaultTenant.DefaultConnectionString = "default database connection string";
+            options.DefaultTenant.WritingConnectionString = "write database connection string";
+            options.DefaultTenant.WritingSeparation = true;
         })
         .AddAccessor<TestDbContextAccessor>((options, optionsBuilder) =>
         {
-            optionsBuilder.UseSqlServer(options.LocalTenant.DefaultConnectionString,
+            optionsBuilder.UseSqlServer(options.DefaultTenant.DefaultConnectionString,
                 sql => sql.MigrationsAssembly("AssemblyName"));
         });
     
     // Use Store
-    services.AddTransient<ITestStore, TestStore>();
+    services.AddTransient<ITestStoreHub, TestStoreHub>();
     
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();
@@ -104,7 +104,7 @@
     }
     
     // Store
-    public interface ITestStore : IBaseStore
+    public interface ITestStoreHub : IStoreHub<TestDbContextAccessor>
     {
         IList<Category> GetCategories();
 
@@ -115,7 +115,7 @@
 
         ITestStore UseWriteStore();
     }
-    public class TestStore : AbstractBaseStore, ITestStore
+    public class TestStoreHub : StoreHubBase<TestDbContextAccessor>, ITestStoreHub
     {
         public TestStore(IAccessor accessor)
             : base(accessor)
@@ -124,30 +124,24 @@
         
         public IList<Category> GetCategories()
         {
-            if (Accessor is TestDbContextAccessor dbContextAccessor)
-                return dbContextAccessor.Categories.ToList();
-
-            return null;
+            return Accessor.Categories.ToList();
         }
 
-        public IPagingList<Article> GetArticles()
+        public IPageable<Article> GetArticles()
         {
-            if (Accessor is TestDbContextAccessor dbContextAccessor)
-                return dbContextAccessor.Articles.AsPagingListByIndex(ordered => ordered.OrderBy(a => a.Id), 1, 10);
-
-            return null;
+            return Accessor.Articles.AsDescendingPagingByIndex(1, 10);
         }
 
 
-        public ITestStore UseDefaultStore()
+        public ITestStoreHub UseWriteDbConnection()
         {
-            Accessor.ChangeDbConnection(t => t.WriteConnectionString);
+            Accessor.TryChangeDbConnection(t => t.WritingConnectionString);
             return this;
         }
 
-        public ITestStore UseWriteStore()
+        public ITestStoreHub UseDefaultDbConnection()
         {
-            Accessor.ChangeDbConnection(t => t.DefaultConnectionString);
+            Accessor.TryChangeDbConnection(t => t.DefaultConnectionString);
             return this;
         }
     }
@@ -158,19 +152,23 @@
         [Fact]
         public void AllTest()
         {
-            var store = TestServiceProvider.Current.GetRequiredService<ITestStore>();
+            using (var stores = serviceProvider.GetRequiredService<ITestStoreHub>())
+            {
+                //var initializer = stores.GetRequiredService<IInitializerService<TestDbContextAccessor>>();
+                //initializer.InitializeService(stores);
 
-            var categories = store.GetCategories();
-            Assert.Empty(categories);
+                var categories = stores.GetCategories();
+                Assert.Empty(categories);
 
-            categories = store.UseWriteDbConnection().GetCategories();
-            Assert.NotEmpty(categories);
+                categories = stores.UseWriteDbConnection().GetCategories();
+                Assert.NotEmpty(categories);
 
-            var articles = store.UseDefaultDbConnection().GetArticles();
-            Assert.Empty(articles);
+                var articles = stores.UseDefaultDbConnection().GetArticles();
+                Assert.Empty(articles);
 
-            articles = store.UseWriteDbConnection().GetArticles();
-            Assert.NotEmpty(articles);
+                articles = stores.UseWriteDbConnection().GetArticles();
+                Assert.NotEmpty(articles);
+            }
         }
     }
 
@@ -201,7 +199,7 @@
 
         public InternalCaptchaServiceTests()
         {
-            _drawing = TestServiceProvider.Current.GetRequiredService<ICaptchaService>();
+            _drawing = serviceProvider.GetRequiredService<ICaptchaService>();
         }
 
         [Fact]
@@ -228,7 +226,7 @@
 
         public InternalScaleServiceTests()
         {
-            _drawing = TestServiceProvider.Current.GetRequiredService<IScaleService>();
+            _drawing = serviceProvider.GetRequiredService<IScaleService>();
         }
 
         [Fact]
@@ -262,7 +260,7 @@
 
         public InternalWatermarkServiceTests()
         {
-            _drawing = TestServiceProvider.Current.GetRequiredService<IWatermarkService>();
+            _drawing = serviceProvider.GetRequiredService<IWatermarkService>();
         }
 
         [Fact]
@@ -304,9 +302,9 @@
         public void JointTest()
         {
             var str = nameof(EncryptionBuilderExtensionsTests);
-            var plaintextBuffer = str.AsPlaintextBuffer(TestServiceProvider.Current);
+            var plaintextBuffer = str.AsPlaintextBuffer(serviceProvider);
             
-            var hashString = plaintextBuffer.ApplyServiceProvider(TestServiceProvider.Current)
+            var hashString = plaintextBuffer.ApplyServiceProvider(serviceProvider)
                 .Md5()
                 .Sha1()
                 .Sha256()
@@ -328,7 +326,7 @@
                 .AsCiphertextString();
             Assert.NotEmpty(ciphertextString);
 
-            var ciphertextBuffer = ciphertextString.AsCiphertextBuffer(TestServiceProvider.Current)
+            var ciphertextBuffer = ciphertextString.AsCiphertextBuffer(serviceProvider)
                 .FromRsa()
                 .FromAes()
                 .FromTripleDes()
@@ -366,7 +364,7 @@
 
         public InternalCrawlerServiceTests()
         {
-            _crawler = TestServiceProvider.Current.GetRequiredService<ICrawlerService>();
+            _crawler = serviceProvider.GetRequiredService<ICrawlerService>();
         }
 
         [Fact]
@@ -398,7 +396,7 @@
 
         public InternalEmailServiceTests()
         {
-            _service = TestServiceProvider.Current.GetRequiredService<IEmailService>();
+            _service = serviceProvider.GetRequiredService<IEmailService>();
         }
         
         [Fact]
@@ -417,7 +415,7 @@
 
         public InternalSmsServiceTests()
         {
-            _service = TestServiceProvider.Current.GetRequiredService<ISmsService>();
+            _service = serviceProvider.GetRequiredService<ISmsService>();
         }
 
         [Fact]
@@ -442,19 +440,20 @@
     var locator = "dotnetty.com.pfx".AsDefaultFileLocator("BasePath");
     
     // Register Librame
-    services.AddLibrame(configureLogging: loggingBuilder =>
+    services.AddLibrame(dependency => dependency.LoggingSetupAction = logging =>
     {
-        loggingBuilder.ClearProviders();
-        loggingBuilder.SetMinimumLevel(LogLevel.Trace);
+        logging.ClearProviders();
+        logging.SetMinimumLevel(LogLevel.Trace);
 
-        loggingBuilder.AddConsole(options => options.IncludeScopes = false);
-        loggingBuilder.AddFilter((str, level) => true);
+        logging.AddConsole(logger => logger.IncludeScopes = false);
+        logging.AddFilter((str, level) => true);
     })
-        .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
-        .AddNetwork().AddDotNetty();
+    .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
+    .AddNetwork().AddDotNetty();
     
     // Use DotNetty LoggerFactory
-    services.TryReplace(InternalLoggerFactory.DefaultFactory);
+    InternalLoggerFactory.DefaultFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));
+    //services.TryReplace(InternalLoggerFactory.DefaultFactory);
     
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();
@@ -463,9 +462,10 @@
 
     // WebSocketServer Console
     var server = serviceProvider.GetRequiredService<IWebSocketServer>();
-    server.StartAsync(channel =>
+    server.StartAsync(async channel =>
     {
         Console.ReadLine();
+        await channel.CloseAsync();
     })
     .Wait();
     
@@ -476,26 +476,28 @@
         while (true)
         {
             string msg = Console.ReadLine();
-            if (msg == null)
+            if (msg.IsNull())
             {
                 break;
             }
-            else if ("bye".Equals(msg.ToLower()))
+            else if ("bye".Equals(msg, StringComparison.OrdinalIgnoreCase))
             {
                 await channel.WriteAndFlushAsync(new CloseWebSocketFrame());
                 break;
             }
-            else if ("ping".Equals(msg.ToLower()))
+            else if ("ping".Equals(msg, StringComparison.OrdinalIgnoreCase))
             {
                 var frame = new PingWebSocketFrame(Unpooled.WrappedBuffer(new byte[] { 8, 1, 8, 1 }));
                 await channel.WriteAndFlushAsync(frame);
             }
             else
             {
-                WebSocketFrame frame = new TextWebSocketFrame(msg);
+                var frame = new TextWebSocketFrame(msg);
                 await channel.WriteAndFlushAsync(frame);
             }
         }
+
+        await channel.CloseAsync();
     })
     .Wait();
     ......
@@ -520,40 +522,17 @@
 
 ## Test Extension
 
-    public class InternalPhysicalFileServiceTests
-    {
-        private IFileService _file;
-
-        public InternalPhysicalFileServiceTests()
-        {
-            _file = TestServiceProvider.Current.GetRequiredService<IFileService>();
-        }
-
-        [Fact]
-        public void GetProviderAsyncTest()
-        {
-            var provider = _file.GetProviderAsync(“root”).Result;
-            var files = provider.GetDirectoryContents("subpath");
-            Assert.NotEmpty(files);
-        }
-    }
+    // IFileService
+    var file = serviceProvider.GetRequiredService<IFileService>();
+    var provider = await file.GetProviderAsync(root);
+    var files = provider.GetDirectoryContents(folder);
+    Assert.NotEmpty(files);
     
-    public class InternalFileUploadServiceTests
-    {
-        private IFileUploadService _fileUpload;
-
-        public InternalFileUploadServiceTests()
-        {
-            _fileUpload = TestServiceProvider.Current.GetRequiredService<IFileUploadService>();
-        }
-
-        [Fact]
-        public void UploadFileAsync()
-        {
-            var uploadApi = "https://domain.com/api/upload";
-            var uploadFile = @"c:\temp.txt";
-
-            var result = _fileUpload.UploadFileAsync(uploadApi, uploadFile).Result;
-            Assert.NotEmpty(result);
-        }
-    }
+    // IFileTransferService
+    var url = "https://www.domain.com/test.txt";
+    var filePath = @"d:\test.txt";
+    
+    var fileTransfer = serviceProvider.GetRequiredService<IFileTransferService>();
+    var locator = await fileTransfer.DownloadFileAsync(url, filePath);
+    Assert.True(locator.Exists());
+    locator = fileTransfer.UploadFileAsync(url, filePath);
