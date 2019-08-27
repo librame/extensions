@@ -12,7 +12,6 @@
 
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
@@ -30,9 +29,9 @@ namespace Librame.Extensions.Core
         }
 
 
-        public Task<string> HumanizeAsync(DateTime dateTime, CancellationToken cancellationToken = default)
+        public Task<string> HumanizeAsync(DateTime dateTime)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return Task.Run(() =>
             {
                 var now = DateTime.Now;
 
@@ -46,9 +45,9 @@ namespace Librame.Extensions.Core
             });
         }
 
-        public Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset, CancellationToken cancellationToken = default)
+        public Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return Task.Run(() =>
             {
                 var now = DateTimeOffset.Now;
 

@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 
 namespace Librame.Extensions.Core
@@ -19,7 +20,7 @@ namespace Librame.Extensions.Core
     {
         public static ICoreBuilder AddLocalizations(this ICoreBuilder builder)
         {
-            builder.Services.AddScoped(typeof(IExpressionStringLocalizer<>), typeof(ExpressionStringLocalizer<>));
+            builder.Services.TryAddTransient(typeof(IExpressionStringLocalizer<>), typeof(ExpressionStringLocalizer<>));
             builder.Services.TryReplace<IStringLocalizerFactory, ExpressionStringLocalizerFactory>();
 
             return builder;

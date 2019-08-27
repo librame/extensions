@@ -10,7 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -18,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
 {
-    class ServiceProviderMediator : IMediator
+    class ServiceFactoryMediator : IMediator
     {
         private static readonly ConcurrentDictionary<Type, IRequestHandlerWrapper> _requestHandlers
             = new ConcurrentDictionary<Type, IRequestHandlerWrapper>();
@@ -26,12 +25,12 @@ namespace Librame.Extensions.Core
         private static readonly ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers
             = new ConcurrentDictionary<Type, INotificationHandlerWrapper>();
 
-        private readonly IServiceProvider _serviceProvider = null;
+        private readonly ServiceFactoryDelegate _serviceFactory = null;
 
 
-        public ServiceProviderMediator(IServiceProvider serviceProvider)
+        public ServiceFactoryMediator(ServiceFactoryDelegate serviceFactory)
         {
-            _serviceProvider = serviceProvider.NotNull(nameof(serviceProvider));
+            _serviceFactory = serviceFactory.NotNull(nameof(serviceFactory));
         }
 
 
@@ -42,9 +41,9 @@ namespace Librame.Extensions.Core
                 throw new ArgumentNullException(nameof(request));
 
             var handlerWrapper = (IRequestHandlerWrapper<TRequest, TResponse>)_requestHandlers.GetOrAdd(typeof(TRequest),
-                type => _serviceProvider.GetRequiredService<IRequestHandlerWrapper<TRequest, TResponse>>());
+                type => _serviceFactory.GetRequiredService<IRequestHandlerWrapper<TRequest, TResponse>>());
 
-            return handlerWrapper.HandleAsync(request, _serviceProvider, cancellationToken);
+            return handlerWrapper.HandleAsync(request, _serviceFactory, cancellationToken);
         }
 
         public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
@@ -55,7 +54,7 @@ namespace Librame.Extensions.Core
             var handlerWrapperType = typeof(IRequestHandlerWrapper<,>).MakeGenericType(requestType, typeof(TResponse));
 
             var handlerWrapper = _requestHandlers.GetOrAdd(requestType,
-                type => (IRequestHandlerWrapper)_serviceProvider.GetRequiredService(handlerWrapperType));
+                type => (IRequestHandlerWrapper)_serviceFactory.GetRequiredService(handlerWrapperType));
 
             //var method = handlerWrapperType.GetMethod("HandleAsync");
             //return (Task<TResponse>)method.Invoke(handlerWrapper, new object[]
@@ -63,7 +62,7 @@ namespace Librame.Extensions.Core
             //    request, _serviceProvider, cancellationToken
             //});
             
-            return ((dynamic)handlerWrapper).HandleAsync(request, _serviceProvider, cancellationToken);
+            return ((dynamic)handlerWrapper).HandleAsync(request, _serviceFactory, cancellationToken);
         }
 
 
@@ -84,9 +83,9 @@ namespace Librame.Extensions.Core
                 throw new ArgumentNullException(nameof(notification));
 
             var handlerWrapper = (INotificationHandlerWrapper<TNotification>)_notificationHandlers.GetOrAdd(typeof(TNotification),
-                type => _serviceProvider.GetRequiredService<INotificationHandlerWrapper<TNotification>>());
+                type => _serviceFactory.GetRequiredService<INotificationHandlerWrapper<TNotification>>());
 
-            return handlerWrapper.HandleAsync(notification, _serviceProvider, cancellationToken);
+            return handlerWrapper.HandleAsync(notification, _serviceFactory, cancellationToken);
         }
 
         public Task Publish(INotification notification, CancellationToken cancellationToken = default)
@@ -95,7 +94,7 @@ namespace Librame.Extensions.Core
             var handlerWrapperType = typeof(INotificationHandlerWrapper<>).MakeGenericType(notificationType);
 
             var handlerWrapper = _notificationHandlers.GetOrAdd(notificationType,
-                type => (INotificationHandlerWrapper)_serviceProvider.GetRequiredService(handlerWrapperType));
+                type => (INotificationHandlerWrapper)_serviceFactory.GetRequiredService(handlerWrapperType));
 
             //var method = handlerWrapperType.GetMethod("HandleAsync");
             //return (Task)method.Invoke(handlerWrapper, new object[]
@@ -103,7 +102,7 @@ namespace Librame.Extensions.Core
             //    notification, _serviceProvider, cancellationToken
             //});
 
-            return ((dynamic)handlerWrapper).HandleAsync(notification, _serviceProvider, cancellationToken);
+            return ((dynamic)handlerWrapper).HandleAsync(notification, _serviceFactory, cancellationToken);
         }
 
     }

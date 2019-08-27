@@ -19,16 +19,16 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 随机数标识符。
     /// </summary>
-    public struct RandomNumberIdentifier : IIdentifier, IEquatable<RandomNumberIdentifier>
+    public struct RandomNumberIdentifier : IIdentifier<byte>, IEquatable<RandomNumberIdentifier>
     {
         /// <summary>
         /// 构造一个 <see cref="RandomNumberIdentifier"/>。
         /// </summary>
         /// <param name="generator">给定的 <see cref="RandomNumberGenerator"/> 。</param>
         /// <param name="length">给定要生成的字节数组长度（可选；默认 32 位）。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>（可选）。</param>
         public RandomNumberIdentifier(RandomNumberGenerator generator, int length = 32,
-            IIdentifierConverter converter = null)
+            IIdentifierConverter<byte> converter = null)
             : this(GenerateByteArray(generator, length), converter)
         {
         }
@@ -37,8 +37,8 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="RandomNumberIdentifier"/>。
         /// </summary>
         /// <param name="memory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public RandomNumberIdentifier(ReadOnlyMemory<byte> memory, IIdentifierConverter converter = null)
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>（可选）。</param>
+        public RandomNumberIdentifier(ReadOnlyMemory<byte> memory, IIdentifierConverter<byte> converter = null)
         {
             Memory = memory;
             Converter = converter ?? new Base64IdentifierConverter();
@@ -48,8 +48,8 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="RandomNumberIdentifier"/>。
         /// </summary>
         /// <param name="identifier">给定标识符的字符串形式。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public RandomNumberIdentifier(string identifier, IIdentifierConverter converter = null)
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>（可选）。</param>
+        public RandomNumberIdentifier(string identifier, IIdentifierConverter<byte> converter = null)
         {
             Converter = converter ?? new Base64IdentifierConverter();
             Memory = Converter.From(identifier);
@@ -64,7 +64,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 转换器。
         /// </summary>
-        public IIdentifierConverter Converter { get; set; }
+        public IIdentifierConverter<byte> Converter { get; set; }
 
 
         /// <summary>

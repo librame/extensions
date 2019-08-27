@@ -12,7 +12,6 @@
 
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
@@ -25,9 +24,9 @@ namespace Librame.Extensions.Core
         }
 
 
-        public Task<IEnvironmentInfo> GetEnvironmentInfoAsync(CancellationToken cancellationToken = default)
+        public Task<IEnvironmentInfo> GetEnvironmentInfoAsync()
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return Task.Run(() =>
             {
                 IEnvironmentInfo info = new ApplicationEnvironmentInfo();
                 Logger.LogInformation($"Refresh environment info at {DateTimeOffset.Now.ToString()}");

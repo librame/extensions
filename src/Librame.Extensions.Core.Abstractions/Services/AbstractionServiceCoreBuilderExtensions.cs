@@ -17,9 +17,9 @@ using System.Reflection;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象自注册服务核心构建器静态扩展。
+    /// 抽象服务核心构建器静态扩展。
     /// </summary>
-    public static class AbstractionAutoRegistrationServiceCoreBuilderExtensions
+    public static class AbstractionServiceCoreBuilderExtensions
     {
         /// <summary>
         /// 添加当前线程应用域的程序集数组中已定义 <see cref="AutoRegistrationServiceAttribute"/> 特性的服务集合。

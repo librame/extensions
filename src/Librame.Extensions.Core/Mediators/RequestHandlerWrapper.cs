@@ -10,7 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,12 +21,10 @@ namespace Librame.Extensions.Core
     class RequestHandlerWrapper<TRequest, TResponse> : IRequestHandlerWrapper<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
-        public Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
+        public Task<TResponse> HandleAsync(IRequest<TResponse> request, ServiceFactoryDelegate serviceFactory,
             CancellationToken cancellationToken = default)
         {
-            serviceProvider.NotNull(nameof(serviceProvider));
-
-            var behaviors = serviceProvider.GetRequiredService<IEnumerable<IRequestPipelineBehavior<TRequest, TResponse>>>();
+            var behaviors = serviceFactory.GetRequiredService<IEnumerable<IRequestPipelineBehavior<TRequest, TResponse>>>();
 
             return behaviors
                 .Reverse()
@@ -36,7 +33,7 @@ namespace Librame.Extensions.Core
 
             Task<TResponse> HandlerCoreAsync()
             {
-                var handler = serviceProvider.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
+                var handler = serviceFactory.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
 
                 return handler.HandleAsync((TRequest)request, cancellationToken);
             }

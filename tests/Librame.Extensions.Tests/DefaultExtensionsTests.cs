@@ -80,7 +80,7 @@ namespace Librame.Extensions.Tests
         class TestClass1
         {
             static string _field1 = nameof(_field1);
-            string _field2;
+            //string _field2 = null;
             public string Field3;
 
             static string Property1 { get; set; }

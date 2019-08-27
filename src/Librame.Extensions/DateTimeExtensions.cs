@@ -20,52 +20,80 @@ namespace Librame.Extensions
     public static class DateTimeExtensions
     {
         /// <summary>
-        /// 转换为文件名（除同一日期与时间对象外，其余调用可确保唯一）。
+        /// 转换为文件名。
         /// </summary>
         /// <param name="dateTime">给定的日期时间。</param>
-        /// <param name="extension">给定以“.”开始的扩展名。</param>
+        /// <param name="extension">给定以 . 开始的扩展名。</param>
         /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
-        /// <param name="connector">给定的连接符（可选；默认为“_”）。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsFileName(this DateTimeOffset dateTime, string extension,
-            bool containsDate = true, string connector = "_")
+        public static string AsFileName(this DateTime dateTime, string extension,
+            bool containsDate = true)
         {
-            var prefix = dateTime.ToString("HHssmm");
-            if (containsDate)
-                prefix = $"{dateTime.ToString("yyyyMMdd")}{connector}{prefix}";
-
-            return ToFileName(dateTime.ToFileTime(), prefix, connector, extension);
+            return dateTime.AsCombIdentifier(containsDate)
+                + extension.NotNullOrEmpty(nameof(extension));
         }
 
         /// <summary>
-        /// 转换为文件名（除同一日期与时间对象外，其余调用可确保唯一）。
+        /// 转换为文件名。
         /// </summary>
-        /// <param name="dateTime">给定的日期时间。</param>
-        /// <param name="extension">给定以“.”开始的扩展名。</param>
+        /// <param name="dateTimeOffset">给定的日期时间。</param>
+        /// <param name="extension">给定以 . 开始的扩展名。</param>
         /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
-        /// <param name="connector">给定的连接符（可选；默认为“_”）。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsFileName(this DateTime dateTime, string extension,
-            bool containsDate = true, string connector = "_")
+        public static string AsFileName(this DateTimeOffset dateTimeOffset, string extension,
+            bool containsDate = true)
         {
-            var prefix = dateTime.ToString("HHssmm");
-            if (containsDate)
-                prefix = $"{dateTime.ToString("yyyyMMdd")}{connector}{prefix}";
-
-            return ToFileName(dateTime.ToFileTime(), prefix, connector, extension);
+            return dateTimeOffset.AsCombIdentifier(containsDate)
+                + extension.NotNullOrEmpty(nameof(extension));
         }
 
-        private static string ToFileName(long fileTime, string prefix, string connector, string extension)
+
+        /// <summary>
+        /// 转换为有顺序的标识符。
+        /// </summary>
+        /// <param name="dateTime">给定的 <see cref="DateTime"/>。</param>
+        /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
+        /// <returns>返回长度 14/22 的字符串。</returns>
+        public static string AsCombIdentifier(this DateTime dateTime,
+            bool containsDate = true)
         {
-            // 100 纳秒级唯一（连续两次通过 DateTimeOffset.Now 调用可保后五位整数不同）
-            var suffix = fileTime.ToString();
-            suffix = suffix.Substring(suffix.Length - 7);
+            if (containsDate)
+            {
+                // 长度 22
+                return ToCombIdentifier(dateTime.ToString("yyyyMMddHHmmssfff"),
+                    dateTime.ToFileTime().ToString());
+            }
 
-            var random = new Random((int)fileTime);
-            var id = AlgorithmExtensions.UPPER[random.Next(AlgorithmExtensions.UPPER.Length)];
+            // 长度 14
+            return ToCombIdentifier(dateTime.ToString("HHmmssfff"),
+                dateTime.ToFileTime().ToString());
+        }
 
-            // 20190822_192042_3801723A.txt
-            return $"{prefix}{connector}{suffix}{id}{extension}";
+        /// <summary>
+        /// 转换为有顺序的标识符。
+        /// </summary>
+        /// <param name="dateTimeOffset">给定的 <see cref="DateTimeOffset"/>。</param>
+        /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
+        /// <returns>返回长度 14/22 的字符串。</returns>
+        public static string AsCombIdentifier(this DateTimeOffset dateTimeOffset,
+            bool containsDate = true)
+        {
+            if (containsDate)
+            {
+                // 长度 22
+                return ToCombIdentifier(dateTimeOffset.ToString("yyyyMMddHHmmssfff"),
+                    dateTimeOffset.ToFileTime().ToString());
+            }
+
+            // 长度 14
+            return ToCombIdentifier(dateTimeOffset.ToString("HHmmssfff"),
+                dateTimeOffset.ToFileTime().ToString());
+        }
+
+        private static string ToCombIdentifier(string dateTime, string fileTime)
+        {
+            // 后 5 位转换为毫秒
+            return dateTime + fileTime.Substring(fileTime.Length - 5);
         }
 
 

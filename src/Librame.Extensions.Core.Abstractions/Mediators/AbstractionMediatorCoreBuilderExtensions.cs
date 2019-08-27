@@ -20,9 +20,9 @@ using System.Reflection;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象自注册中介者核心构建器静态扩展。
+    /// 抽象中介者核心构建器静态扩展。
     /// </summary>
-    public static class AbstractionAutoRegistrationMediatorCoreBuilderExtensions
+    public static class AbstractionMediatorCoreBuilderExtensions
     {
         /// <summary>
         /// 通过当前线程应用域的程序集数组添加中介者集合。

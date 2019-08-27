@@ -7,8 +7,8 @@ namespace Librame.Extensions.Tests
     {
         class TestClass
         {
-            static string _field1;
-            string _field2;
+            static string _field1 = null;
+            string _field2 = null;
             public string Field3 = string.Empty;
 
             static string Property1 { get; set; }

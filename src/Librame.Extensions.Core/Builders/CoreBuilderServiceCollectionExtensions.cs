@@ -77,7 +77,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddDistributedCache(this ICoreBuilder builder, Action<IServiceCollection> addAction)
         {
-            addAction.Invoke(builder.Services);
+            addAction?.Invoke(builder.Services);
 
             return builder;
         }

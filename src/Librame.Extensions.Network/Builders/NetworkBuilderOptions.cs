@@ -68,12 +68,12 @@ namespace Librame.Extensions.Network
         /// <summary>
         /// 解码工厂方法。
         /// </summary>
-        public Func<IServiceProvider, byte[], byte[]> DecodeFactory { get; set; }
+        public Func<ServiceFactoryDelegate, byte[], byte[]> DecodeFactory { get; set; }
 
         /// <summary>
         /// 编码工厂方法。
         /// </summary>
-        public Func<IServiceProvider, byte[], byte[]> EncodeFactory { get; set; }
+        public Func<ServiceFactoryDelegate, byte[], byte[]> EncodeFactory { get; set; }
     }
 
 

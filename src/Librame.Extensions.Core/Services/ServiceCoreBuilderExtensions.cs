@@ -18,6 +18,8 @@ namespace Librame.Extensions.Core
     {
         public static ICoreBuilder AddServices(this ICoreBuilder builder)
         {
+            builder.Services.AddTransient<ServiceFactoryDelegate>(serviceProvider => serviceProvider.GetService);
+
             builder.Services.AddSingleton(typeof(IServicesManager<>), typeof(ServicesManager<>));
             builder.Services.AddSingleton(typeof(IServicesManager<,>), typeof(ServicesManager<,>));
 

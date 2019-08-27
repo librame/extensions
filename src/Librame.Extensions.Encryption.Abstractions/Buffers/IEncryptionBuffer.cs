@@ -33,6 +33,9 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 服务提供程序。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// ServiceProvider is null. Make sure of used <see cref="ApplyServiceProvider(IServiceProvider)"/>.
+        /// </exception>
         /// <value>
         /// 返回 <see cref="IServiceProvider"/> 或抛出空异常。
         /// </value>
@@ -43,7 +46,7 @@ namespace Librame.Extensions.Encryption
         /// 应用服务提供程序。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// ServiceProvider is null. Make sure of used <see cref="ApplyServiceProvider(IServiceProvider)"/>。
+        /// serviceProvider is null.
         /// </exception>
         /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuffer{TConverter, TSource}"/>。</returns>

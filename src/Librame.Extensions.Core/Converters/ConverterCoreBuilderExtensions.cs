@@ -10,7 +10,7 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Core
 {
@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     {
         public static ICoreBuilder AddConverters(this ICoreBuilder builder)
         {
-            builder.Services.AddSingleton<IEncodingConverter, EncodingConverter>();
+            builder.Services.TryAddSingleton<IEncodingConverter, EncodingConverter>();
 
             return builder;
         }

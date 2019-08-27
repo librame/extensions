@@ -20,7 +20,7 @@ namespace Librame.Extensions.Data
     {
         public static IDataBuilder AddMediators(this IDataBuilder builder)
         {
-            builder.Services.AddScoped<INotificationHandler<AuditNotification>, AuditNotificationHandler>();
+            builder.Services.AddTransient<INotificationHandler<AuditNotification>, AuditNotificationHandler>();
 
             return builder;
         }

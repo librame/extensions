@@ -10,7 +10,6 @@
 
 #endregion
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,10 +27,10 @@ namespace Librame.Extensions.Core
         /// 异步处理请求。
         /// </summary>
         /// <param name="request">给定的 <see cref="IRequest{TResponse}"/>。</param>
-        /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
+        /// <param name="serviceFactory">给定的 <see cref="ServiceFactoryDelegate"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TResponse"/> 异步操作。</returns>
-        Task<TResponse> HandleAsync(IRequest<TResponse> request, IServiceProvider serviceProvider,
+        Task<TResponse> HandleAsync(IRequest<TResponse> request, ServiceFactoryDelegate serviceFactory,
             CancellationToken cancellationToken = default);
     }
 

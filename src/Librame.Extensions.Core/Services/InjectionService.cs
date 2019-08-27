@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -20,8 +21,8 @@ namespace Librame.Extensions.Core
 {
     class InjectionService : AbstractService, IInjectionService
     {
-        Dictionary<Type, Action<object, IServiceProvider>> _injectedActions
-            = new Dictionary<Type, Action<object, IServiceProvider>>();
+        ConcurrentDictionary<Type, Action<object, IServiceProvider>> _injectedActions
+            = new ConcurrentDictionary<Type, Action<object, IServiceProvider>>();
 
 
         public InjectionService(IServiceProvider serviceProvider,

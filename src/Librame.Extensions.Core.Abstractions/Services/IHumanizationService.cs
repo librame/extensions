@@ -11,7 +11,6 @@
 #endregion
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
@@ -25,16 +24,14 @@ namespace Librame.Extensions.Core
         /// 异步人性化。
         /// </summary>
         /// <param name="dateTime">给定的 <see cref="DateTime"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        Task<string> HumanizeAsync(DateTime dateTime, CancellationToken cancellationToken = default);
+        Task<string> HumanizeAsync(DateTime dateTime);
 
         /// <summary>
         /// 异步人性化。
         /// </summary>
         /// <param name="dateTimeOffset">给定的 <see cref="DateTimeOffset"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset, CancellationToken cancellationToken = default);
+        Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset);
     }
 }

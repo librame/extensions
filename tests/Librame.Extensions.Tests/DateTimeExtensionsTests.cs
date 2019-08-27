@@ -8,13 +8,26 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void AsFileNameTest()
         {
-            var fileName = DateTime.Now.AsFileName(".txt");
-            var newFileName = DateTime.Now.AsFileName(".txt");
-            Assert.NotEqual(fileName, newFileName);
+            var extension = ".txt";
+            var current = DateTime.Now.AsFileName(extension);
+            for (var i = 0; i < 100; i++)
+            {
+                var next = DateTime.Now.AsFileName(extension);
+                Assert.NotEqual(current, next);
+                current = next;
+            }
+        }
 
-            fileName = DateTimeOffset.Now.AsFileName(".txt");
-            newFileName = DateTimeOffset.Now.AsFileName(".txt");
-            Assert.NotEqual(fileName, newFileName);
+        [Fact]
+        public void AsCombIdentifierTest()
+        {
+            var current = DateTime.Now.AsCombIdentifier();
+            for (var i = 0; i < 100; i++)
+            {
+                var next = DateTime.Now.AsCombIdentifier();
+                Assert.NotEqual(current, next);
+                current = next;
+            }
         }
 
         [Fact]

@@ -17,7 +17,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// BASE64 标识符转换器。
     /// </summary>
-    public class Base64IdentifierConverter : IIdentifierConverter
+    public class Base64IdentifierConverter : IIdentifierConverter<byte>
     {
         /// <summary>
         /// 转换为字节只读存储器。

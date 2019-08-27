@@ -15,6 +15,7 @@ using System;
 
 namespace Librame.Extensions
 {
+    using Core;
     using Encryption;
 
     /// <summary>
@@ -22,7 +23,7 @@ namespace Librame.Extensions
     /// </summary>
     public static class EncryptionBufferExtensions
     {
-        
+
         #region ICiphertextBuffer
 
         /// <summary>

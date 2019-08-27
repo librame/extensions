@@ -20,14 +20,14 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 算法标识符。
     /// </summary>
-    public struct AlgorithmIdentifier : IIdentifier, IEquatable<AlgorithmIdentifier>
+    public struct AlgorithmIdentifier : IIdentifier<byte>, IEquatable<AlgorithmIdentifier>
     {
         /// <summary>
         /// 构造一个 <see cref="AlgorithmIdentifier"/>。
         /// </summary>
         /// <param name="guid">给定的 <see cref="Guid"/> 。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public AlgorithmIdentifier(Guid guid, IIdentifierConverter converter = null)
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>（可选）。</param>
+        public AlgorithmIdentifier(Guid guid, IIdentifierConverter<byte> converter = null)
             : this(guid.ToByteArray(), converter)
         {
         }
@@ -36,8 +36,8 @@ namespace Librame.Extensions.Encryption
         /// 构造一个 <see cref="AlgorithmIdentifier"/>。
         /// </summary>
         /// <param name="memory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public AlgorithmIdentifier(ReadOnlyMemory<byte> memory, IIdentifierConverter converter = null)
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>（可选）。</param>
+        public AlgorithmIdentifier(ReadOnlyMemory<byte> memory, IIdentifierConverter<byte> converter = null)
         {
             Memory = memory;
             Converter = converter ?? new HexIdentifierConverter();
@@ -47,8 +47,8 @@ namespace Librame.Extensions.Encryption
         /// 构造一个 <see cref="AlgorithmIdentifier"/>。
         /// </summary>
         /// <param name="identifier">给定标识符的字符串形式。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选）。</param>
-        public AlgorithmIdentifier(string identifier, IIdentifierConverter converter = null)
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>（可选）。</param>
+        public AlgorithmIdentifier(string identifier, IIdentifierConverter<byte> converter = null)
         {
             Converter = converter ?? new HexIdentifierConverter();
             Memory = Converter.From(identifier);
@@ -63,7 +63,7 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 转换器。
         /// </summary>
-        public IIdentifierConverter Converter { get; set; }
+        public IIdentifierConverter<byte> Converter { get; set; }
 
 
         /// <summary>

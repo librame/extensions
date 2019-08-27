@@ -27,7 +27,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 服务注入。
         /// </summary>
-        /// <param name="service">给定的服务对象。</param>
+        /// <param name="service">给定要注入的服务对象。</param>
         void Inject(object service);
     }
 }

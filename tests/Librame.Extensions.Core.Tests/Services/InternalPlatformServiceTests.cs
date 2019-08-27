@@ -9,7 +9,7 @@ namespace Librame.Extensions.Core.Tests
         public async void AllTest()
         {
             var service = TestServiceProvider.Current.GetRequiredService<IPlatformService>();
-            var info = await service.GetEnvironmentInfoAsync(default);
+            var info = await service.GetEnvironmentInfoAsync();
             Assert.NotEmpty(info.ApplicationName);
         }
 

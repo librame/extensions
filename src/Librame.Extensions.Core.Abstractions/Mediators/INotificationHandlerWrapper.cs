@@ -10,7 +10,6 @@
 
 #endregion
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,10 +26,10 @@ namespace Librame.Extensions.Core
         /// 异步处理通知。
         /// </summary>
         /// <param name="notification">给定的 <see cref="INotification"/>。</param>
-        /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
+        /// <param name="serviceFactory">给定的 <see cref="ServiceFactoryDelegate"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个异步操作。</returns>
-        Task HandleAsync(INotification notification, IServiceProvider serviceProvider,
+        Task HandleAsync(INotification notification, ServiceFactoryDelegate serviceFactory,
             CancellationToken cancellationToken = default);
     }
 

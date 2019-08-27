@@ -10,10 +10,8 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 
 namespace Librame.Extensions.Network
 {
@@ -21,15 +19,15 @@ namespace Librame.Extensions.Network
 
     class ByteCodecService : NetworkServiceBase, IByteCodecService
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly ServiceFactoryDelegate _serviceFactory;
 
 
-        public ByteCodecService(IServiceProvider serviceProvider)
-            : base(serviceProvider?.GetService<IOptions<CoreBuilderOptions>>(),
-                  serviceProvider?.GetService<IOptions<NetworkBuilderOptions>>(),
-                  serviceProvider?.GetService<ILoggerFactory>())
+        public ByteCodecService(ServiceFactoryDelegate serviceFactory)
+            : base(serviceFactory.GetService<IOptions<CoreBuilderOptions>>(),
+                  serviceFactory.GetService<IOptions<NetworkBuilderOptions>>(),
+                  serviceFactory.GetService<ILoggerFactory>())
         {
-            _serviceProvider = serviceProvider;
+            _serviceFactory = serviceFactory;
         }
 
 
@@ -51,7 +49,7 @@ namespace Librame.Extensions.Network
         public byte[] Decode(byte[] buffer, bool enableCodec)
         {
             if (enableCodec)
-                return Options.ByteCodec.DecodeFactory?.Invoke(_serviceProvider, buffer) ?? buffer;
+                return Options.ByteCodec.DecodeFactory?.Invoke(_serviceFactory, buffer) ?? buffer;
 
             return buffer;
         }
@@ -75,7 +73,7 @@ namespace Librame.Extensions.Network
         public byte[] Encode(byte[] buffer, bool enableCodec)
         {
             if (enableCodec)
-                return Options.ByteCodec.EncodeFactory?.Invoke(_serviceProvider, buffer) ?? buffer;
+                return Options.ByteCodec.EncodeFactory?.Invoke(_serviceFactory, buffer) ?? buffer;
 
             return buffer;
         }

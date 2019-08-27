@@ -18,14 +18,14 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 唯一标识符。
     /// </summary>
-    public struct UniqueIdentifier : IIdentifier, IEquatable<UniqueIdentifier>
+    public struct UniqueIdentifier : IIdentifier<byte>, IEquatable<UniqueIdentifier>
     {
         /// <summary>
         /// 构造一个 <see cref="UniqueIdentifier"/>。
         /// </summary>
         /// <param name="guid">给定的 <see cref="Guid"/> 。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选；默认使用 <see cref="HexIdentifierConverter"/>）。</param>
-        public UniqueIdentifier(Guid guid, IIdentifierConverter converter = null)
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>（可选；默认使用 <see cref="HexIdentifierConverter"/>）。</param>
+        public UniqueIdentifier(Guid guid, IIdentifierConverter<byte> converter = null)
         {
             Memory = guid.ToByteArray();
             Converter = converter ?? new HexIdentifierConverter();
@@ -36,8 +36,8 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="UniqueIdentifier"/>。
         /// </summary>
         /// <param name="identifier">给定标识符的字符串形式。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>。</param>
-        public UniqueIdentifier(string identifier, IIdentifierConverter converter)
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>。</param>
+        public UniqueIdentifier(string identifier, IIdentifierConverter<byte> converter)
         {
             Converter = converter.NotNull(nameof(converter));
             Memory = Converter.From(identifier);
@@ -53,7 +53,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 转换器。
         /// </summary>
-        public IIdentifierConverter Converter { get; }
+        public IIdentifierConverter<byte> Converter { get; }
 
         /// <summary>
         /// 原始 GUID。
@@ -180,18 +180,18 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 新建实例。
         /// </summary>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选；默认使用 <see cref="HexIdentifierConverter"/>）。</param>
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>（可选；默认使用 <see cref="HexIdentifierConverter"/>）。</param>
         /// <returns>返回 <see cref="UniqueIdentifier"/>。</returns>
-        public static UniqueIdentifier New(IIdentifierConverter converter = null)
+        public static UniqueIdentifier New(IIdentifierConverter<byte> converter = null)
             => new UniqueIdentifier(Guid.NewGuid(), converter);
 
         /// <summary>
         /// 新建数组实例。
         /// </summary>
         /// <param name="count">给定要生成的实例数量。</param>
-        /// <param name="converter">给定的 <see cref="IIdentifierConverter"/>（可选；默认使用 <see cref="HexIdentifierConverter"/>）。</param>
+        /// <param name="converter">给定的 <see cref="IIdentifierConverter{Byte}"/>（可选；默认使用 <see cref="HexIdentifierConverter"/>）。</param>
         /// <returns>返回 <see cref="UniqueIdentifier"/> 数组。</returns>
-        public static UniqueIdentifier[] NewArray(int count, IIdentifierConverter converter = null)
+        public static UniqueIdentifier[] NewArray(int count, IIdentifierConverter<byte> converter = null)
         {
             var identifiers = new UniqueIdentifier[count];
 

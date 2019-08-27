@@ -17,7 +17,8 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 标识符转换器接口。
     /// </summary>
-    public interface IIdentifierConverter : IConverter<ReadOnlyMemory<byte>, string>
+    /// <typeparam name="T">指定的类型。</typeparam>
+    public interface IIdentifierConverter<T> : IConverter<ReadOnlyMemory<T>, string>
     {
     }
 }

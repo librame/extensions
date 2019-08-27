@@ -17,7 +17,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 16 进制标识符转换器。
     /// </summary>
-    public class HexIdentifierConverter : IIdentifierConverter
+    public class HexIdentifierConverter : IIdentifierConverter<byte>
     {
         /// <summary>
         /// 转换为字节只读存储器。
