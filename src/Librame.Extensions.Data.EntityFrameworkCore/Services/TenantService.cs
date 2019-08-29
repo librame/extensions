@@ -12,7 +12,6 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,16 +27,26 @@ namespace Librame.Extensions.Data
         }
 
 
-        public Task<ITenant> GetTenantAsync<TTenant>(IQueryable<TTenant> queryable, CancellationToken cancellationToken = default)
-            where TTenant : ITenant
+        public Task<ITenant> GetTenantAsync(IAccessor accessor, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            if (accessor is DbContextAccessor dbContextAccessor)
             {
-                var tenant = Options.DefaultTenant;
-                Logger.LogInformation($"Get Tenant: Name={tenant?.Name}, Host={tenant.Host}");
+                return cancellationToken.RunFactoryOrCancellationAsync(() =>
+                {
+                    var tenant = Options.Tenants.Default;
+                    Logger.LogInformation($"Get Default Tenant: Name={tenant?.Name}, Host={tenant?.Host}");
 
-                return tenant;
-            });
+                    return tenant;
+                });
+            }
+
+            return Task.FromResult((ITenant)null);
+        }
+
+
+        public Task<ITenant> AddTenantAsync()
+        {
+
         }
 
     }

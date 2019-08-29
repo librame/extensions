@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,12 +51,6 @@ namespace Librame.Extensions.Data
             if (BuilderOptions.IsCreateDatabase)
                 EnsureDatabaseCreated(Database.GetDbConnection());
         }
-
-
-        /// <summary>
-        /// 审计通知动作。
-        /// </summary>
-        public Action<AuditNotification> AuditNotificationAction { get; set; }
 
 
         #region Entities
@@ -166,17 +159,18 @@ namespace Librame.Extensions.Data
         /// <returns>返回受影响的行数。</returns>
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            // 改变为写入数据库（支持读写分离）
-            if (BuilderOptions.EnableTenant)
+            // 读写分离：尝试切换为写入数据库
+            if (BuilderOptions.Tenants.Enabled)
                 TryChangeDbConnection(tenant => tenant.WritingConnectionString);
 
-            if (BuilderOptions.EnableAudit)
-                AuditSaveChangesAsync().Wait();
+            // 审计实体
+            if (BuilderOptions.Audits.Enabled)
+                AuditSaveChangesAsync(default).Wait();
 
             var count = base.SaveChanges(acceptAllChangesOnSuccess);
 
-            // 尝试还原改变的数据库连接
-            if (BuilderOptions.EnableTenant)
+            // 读写分离：尝试切换为默认数据库
+            if (BuilderOptions.Tenants.Enabled)
                 TryChangeDbConnection(tenant => tenant.DefaultConnectionString);
 
             return count;
@@ -191,18 +185,19 @@ namespace Librame.Extensions.Data
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
-            // 改变为写入数据库（支持读写分离）
-            if (BuilderOptions.EnableTenant)
-                TryChangeDbConnection(tenant => tenant.WritingConnectionString);
+            // 读写分离：尝试切换为写入数据库
+            if (BuilderOptions.Tenants.Enabled)
+                TryChangeDbConnection(tenant => tenant.WritingConnectionString, cancellationToken);
 
-            if (BuilderOptions.EnableAudit)
+            // 审计实体
+            if (BuilderOptions.Audits.Enabled)
                 await AuditSaveChangesAsync(cancellationToken);
 
             var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
-            // 尝试还原改变的数据库连接
-            if (BuilderOptions.EnableTenant)
-                TryChangeDbConnection(tenant => tenant.DefaultConnectionString);
+            // 读写分离：尝试切换为默认数据库
+            if (BuilderOptions.Tenants.Enabled)
+                TryChangeDbConnection(tenant => tenant.DefaultConnectionString, cancellationToken);
 
             return count;
         }
@@ -212,23 +207,11 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        protected virtual async Task AuditSaveChangesAsync(CancellationToken cancellationToken = default)
+        protected virtual async Task AuditSaveChangesAsync(CancellationToken cancellationToken)
         {
-            // 默认仅拦截实体的增删改操作
-            var entityStates = new EntityState[] { EntityState.Added, EntityState.Modified, EntityState.Deleted };
-
-            // 得到变化的实体集合
-            var entityEntries = ChangeTracker.Entries()
-                .Where(m => m.Entity.IsNotNull() && entityStates.Contains(m.State)).ToList();
-
-            // 获取注册的实体入口处理器集合
             var auditService = this.GetService<IAuditService>();
-            var audits = await auditService.GetAuditsAsync(entityEntries, cancellationToken);
 
-            await Audits.AddRangeAsync(audits, cancellationToken);
-
-            // 通知审计实体列表（此处直接通过 this.GetService 解析 IMediator 会无响应，因此使用委托方式实现通知）
-            AuditNotificationAction?.Invoke(new AuditNotification { Audits = audits });
+            await auditService.AuditAsync(this, cancellationToken);
         }
 
 
@@ -236,16 +219,22 @@ namespace Librame.Extensions.Data
         /// 尝试改变数据库连接。
         /// </summary>
         /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        public virtual bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory)
+        public virtual bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory,
+            CancellationToken cancellationToken = default)
         {
-            var tenant = this.GetService<ITenantService>().GetTenantAsync(Tenants).Result;
-            if (tenant.IsNull() || connectionStringFactory.IsNull())
+            if (connectionStringFactory.IsNull())
+                return false;
+
+            var tenantService = this.GetService<ITenantService>();
+            var tenant = tenantService.GetTenantAsync(this, cancellationToken).Result;
+            if (tenant.IsNull())
                 return false;
 
             if (!tenant.WritingSeparation)
             {
-                Logger?.LogInformation($"The tenant({tenant.Name}:{tenant.Host}) connection write separation is disable.");
+                Logger.LogTrace($"The tenant({tenant.Name}:{tenant.Host}) connection write separation is disable.");
                 return false;
             }
 
@@ -253,7 +242,7 @@ namespace Librame.Extensions.Data
             var connection = Database.GetDbConnection();
             if (connection.ConnectionString.Equals(connectionString, StringComparison.OrdinalIgnoreCase))
             {
-                Logger?.LogInformation($"The tenant({tenant.Name}:{tenant.Host}) same as the current connection string.");
+                Logger.LogTrace($"The tenant({tenant.Name}:{tenant.Host}) same as the current connection string.");
                 return false;
             }
 
@@ -263,13 +252,11 @@ namespace Librame.Extensions.Data
                 {
                     ChangeDbConnectionCore();
                 }
-
                 return true;
             }
             catch (Exception ex)
             {
-                Logger?.LogError(ex, ex.AsInnerMessage());
-
+                Logger.LogError(ex, ex.AsInnerMessage());
                 return false;
             }
 
@@ -278,7 +265,7 @@ namespace Librame.Extensions.Data
                 if (connection.State != ConnectionState.Closed)
                 {
                     connection.Close();
-                    Logger?.LogInformation("Close connection");
+                    Logger.LogTrace("Close connection");
                 }
 
                 // MYSql: System.InvalidOperationException

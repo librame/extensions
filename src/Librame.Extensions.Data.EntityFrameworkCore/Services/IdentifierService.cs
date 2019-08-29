@@ -19,17 +19,35 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 标识符服务基类。
+    /// 标识符服务。
     /// </summary>
-    public class IdentifierServiceBase : AbstractService, IIdentifierService
+    public class IdentifierService : AbstractService, IIdentifierService
     {
         /// <summary>
-        /// 构造一个 <see cref="IdentifierServiceBase"/>。
+        /// 构造一个 <see cref="IdentifierService"/>。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public IdentifierServiceBase(ILoggerFactory loggerFactory)
+        public IdentifierService(ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
+        }
+
+
+        /// <summary>
+        /// 异步生成标识。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="idTraceName">标识跟踪名称。</param>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
+        protected virtual Task<string> GenerateIdAsync(CancellationToken cancellationToken, string idTraceName)
+        {
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            {
+                string combId = UniqueIdentifier.New().ToCombUniqueIdentifier();
+                Logger.LogTrace($"Generate {idTraceName}: {combId}");
+
+                return combId;
+            });
         }
 
 
@@ -40,13 +58,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetAuditIdAsync(CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
-            {
-                string auditId = UniqueIdentifier.New();
-                Logger.LogInformation($"Get AuditId: {auditId}");
-
-                return auditId;
-            });
+            return GenerateIdAsync(cancellationToken, "AuditId");
         }
 
         /// <summary>
@@ -56,13 +68,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetAuditPropertyIdAsync(CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
-            {
-                string auditPropertyId = UniqueIdentifier.New();
-                Logger.LogInformation($"Get AuditPropertyId: {auditPropertyId}");
-
-                return auditPropertyId;
-            });
+            return GenerateIdAsync(cancellationToken, "AuditPropertyId");
         }
 
 
@@ -73,13 +79,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetTenantIdAsync(CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
-            {
-                string tenantId = UniqueIdentifier.New();
-                Logger.LogInformation($"Get TenantId: {tenantId}");
-
-                return tenantId;
-            });
+            return GenerateIdAsync(cancellationToken, "TenantId");
         }
 
     }

@@ -37,7 +37,6 @@ namespace Librame.Extensions.Data
         public StoreHubBase(IAccessor accessor)
             : base(accessor)
         {
-            Initialize();
         }
 
         /// <summary>
@@ -47,21 +46,6 @@ namespace Librame.Extensions.Data
         protected StoreHubBase(TAccessor accessor)
             : base(accessor)
         {
-            Initialize();
-        }
-
-
-        /// <summary>
-        /// 初始化。
-        /// </summary>
-        protected virtual void Initialize()
-        {
-            // 绑定审计通知动作
-            Accessor.AuditNotificationAction = notification =>
-            {
-                var mediator = GetRequiredService<IMediator>();
-                mediator.Publish(notification);
-            };
         }
 
 

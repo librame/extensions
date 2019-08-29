@@ -6,7 +6,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Core;
 
-    public class TestIdentifierService : IdentifierServiceBase
+    public class TestIdentifierService : IdentifierService
     {
         public TestIdentifierService(ILoggerFactory loggerFactory)
             : base(loggerFactory)

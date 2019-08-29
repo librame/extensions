@@ -23,12 +23,6 @@ namespace Librame.Extensions.Data
     public interface IAccessor : IDisposable
     {
         /// <summary>
-        /// 审计通知动作。
-        /// </summary>
-        Action<AuditNotification> AuditNotificationAction { get; set; }
-
-
-        /// <summary>
         /// 执行 SQL 命令。
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>
@@ -41,7 +35,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>
         /// <param name="parameters">给定的参数集合。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
 
@@ -66,7 +60,8 @@ namespace Librame.Extensions.Data
         /// 尝试改变数据库连接。
         /// </summary>
         /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory);
+        bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory, CancellationToken cancellationToken = default);
     }
 }

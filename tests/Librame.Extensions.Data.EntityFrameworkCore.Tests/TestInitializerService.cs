@@ -6,7 +6,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
 
-    public class TestInitializerService<TAccessor> : InitializerServiceBase<TAccessor, TestIdentifierService>
+    public class TestInitializerService<TAccessor> : InitializerService<TAccessor, TestIdentifierService>
         where TAccessor : TestDbContextAccessor
     {
         private IList<Category> _categories;

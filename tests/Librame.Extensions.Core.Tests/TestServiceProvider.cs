@@ -17,7 +17,7 @@ namespace Librame.Extensions.Core.Tests
                 services.AddSingleton<IRequestPreProcessor<Ping>, PingPreProcessor>();
                 services.AddSingleton<IRequestPostProcessor<Ping, Pong>, PingPongPostProcessor>();
 
-                services.AddScoped<InjectionServiceTest>();
+                services.AddScoped<TestInjectionService>();
 
                 return services.BuildServiceProvider();
             });

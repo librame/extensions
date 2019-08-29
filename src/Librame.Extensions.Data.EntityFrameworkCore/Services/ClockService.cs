@@ -43,7 +43,7 @@ namespace Librame.Extensions.Data
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
                 var now = DateTimeOffset.Now;
-                Logger.LogInformation($"Get UTC DateTime: {now.ToString()}");
+                Logger.LogInformation($"Get DateTimeOffset: {now.ToString()}");
 
                 return now;
             });

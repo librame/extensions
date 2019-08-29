@@ -15,14 +15,14 @@ namespace Librame.Extensions.Data.Tests
                 services.AddLibrame()
                     .AddData(options =>
                     {
-                        options.DefaultTenant.DefaultConnectionString = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
-                        options.DefaultTenant.WritingConnectionString = "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True";
-                        options.DefaultTenant.WritingSeparation = true;
+                        options.Tenants.Default.DefaultConnectionString = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
+                        options.Tenants.Default.WritingConnectionString = "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True";
+                        options.Tenants.Default.WritingSeparation = true;
                     })
                     .AddAccessor<TestDbContextAccessor>((options, optionsBuilder) =>
                     {
                         var migrationsAssembly = typeof(TestServiceProvider).Assembly.GetName().Name;
-                        optionsBuilder.UseSqlServer(options.DefaultTenant.DefaultConnectionString,
+                        optionsBuilder.UseSqlServer(options.Tenants.Default.DefaultConnectionString,
                             sql => sql.MigrationsAssembly(migrationsAssembly));
                     });
 

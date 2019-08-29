@@ -17,20 +17,20 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 初始化器服务基类。
+    /// 初始化器服务。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TIdentifier">指定的标识符服务类型。</typeparam>
-    public class InitializerServiceBase<TAccessor, TIdentifier> : InitializerServiceBase<TAccessor>, IInitializerService<TAccessor, TIdentifier>
+    public class InitializerService<TAccessor, TIdentifier> : InitializerService<TAccessor>, IInitializerService<TAccessor, TIdentifier>
         where TAccessor : DbContextAccessor
         where TIdentifier : IIdentifierService
     {
         /// <summary>
-        /// 构造一个初始化器服务基类实例（可用于容器构造）。
+        /// 构造一个 <see cref="InitializerService{TAccessor, TIdentifier}"/>（可用于容器构造）。
         /// </summary>
         /// <param name="identifier">给定的 <see cref="IIdentifierService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InitializerServiceBase(IIdentifierService identifier, ILoggerFactory loggerFactory)
+        public InitializerService(IIdentifierService identifier, ILoggerFactory loggerFactory)
             : base(identifier, loggerFactory)
         {
             // Cast
@@ -38,11 +38,11 @@ namespace Librame.Extensions.Data
         }
 
         /// <summary>
-        /// 构造一个初始化器服务基类实例（可用于手动构造）。
+        /// 构造一个 <see cref="InitializerService{TAccessor, TIdentifier}"/>（可用于手动构造）。
         /// </summary>
         /// <param name="identifier">给定的 <typeparamref name="TIdentifier"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected InitializerServiceBase(TIdentifier identifier, ILoggerFactory loggerFactory)
+        protected InitializerService(TIdentifier identifier, ILoggerFactory loggerFactory)
             : base(identifier, loggerFactory)
         {
             // Override
@@ -59,18 +59,18 @@ namespace Librame.Extensions.Data
 
 
     /// <summary>
-    /// 初始化器服务基类。
+    /// 初始化器服务。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    public class InitializerServiceBase<TAccessor> : AbstractService, IInitializerService<TAccessor>
+    public class InitializerService<TAccessor> : AbstractService, IInitializerService<TAccessor>
         where TAccessor : DbContextAccessor
     {
         /// <summary>
-        /// 构造一个初始化器服务基类实例。
+        /// 构造一个 <see cref="InitializerService{TAccessor}"/>。
         /// </summary>
         /// <param name="identifier">给定的 <see cref="IIdentifierService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public InitializerServiceBase(IIdentifierService identifier, ILoggerFactory loggerFactory)
+        public InitializerService(IIdentifierService identifier, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             Identifier = identifier.NotNull(nameof(identifier));
@@ -116,8 +116,9 @@ namespace Librame.Extensions.Data
         /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
         protected virtual void InitializeTenants(IStoreHub<TAccessor> stores)
         {
-            var defaultTenant = stores.Accessor.BuilderOptions.DefaultTenant;
-            if (!stores.ContainTenantAsync(defaultTenant.Name, defaultTenant.Host).Result)
+            var defaultTenant = stores.Accessor.BuilderOptions.Tenants.Default;
+            if (defaultTenant.IsNotNull()
+                && !stores.ContainTenantAsync(defaultTenant.Name, defaultTenant.Host).Result)
             {
                 Tenant tenant;
 
@@ -135,7 +136,7 @@ namespace Librame.Extensions.Data
                 tenant.Id = Identifier.GetTenantIdAsync().Result;
 
                 stores.TryCreateAsync(default, tenant).Wait();
-                Logger.LogInformation($"Add default tenant to database.");
+                Logger.LogTrace($"Add default tenant (name={tenant.Name}, host={tenant.Host}) to database.");
             }
         }
 

@@ -3,13 +3,13 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class InjectionServiceTest
+    public class TestInjectionService
     {
         [InjectionService]
         ICoreBuilder _fieldBuilder = null;
 
 
-        public InjectionServiceTest(IInjectionService injectionService)
+        public TestInjectionService(IInjectionService injectionService)
         {
             injectionService.Inject(this);
         }
@@ -28,12 +28,12 @@ namespace Librame.Extensions.Core.Tests
     }
 
 
-    public class InternalInjectionServiceTests
+    public class InjectionServiceTests
     {
         [Fact]
         public void AllTest()
         {
-            var service = TestServiceProvider.Current.GetRequiredService<InjectionServiceTest>();
+            var service = TestServiceProvider.Current.GetRequiredService<TestInjectionService>();
             service.InjectTest();
         }
     }

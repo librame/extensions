@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class InternalHumanizationServiceTests
+    public class HumanizationServiceTests
     {
         [Fact]
         public async void AllTest()

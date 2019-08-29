@@ -10,7 +10,6 @@
 
 #endregion
 
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,12 +24,11 @@ namespace Librame.Extensions.Data
     public interface IAuditService : IService
     {
         /// <summary>
-        /// 异步获取审计列表。
+        /// 异步审计。
         /// </summary>
-        /// <param name="changeEntities">给定的 <see cref="IList{EntityEntry}"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含 <see cref="List{BaseAudit}"/> 的异步操作。</returns>
-        Task<List<Audit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
-            CancellationToken cancellationToken = default);
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="List{Audit}"/> 的异步操作。</returns>
+        Task<List<Audit>> AuditAsync(IAccessor accessor, CancellationToken cancellationToken = default);
     }
 }

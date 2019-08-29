@@ -12,9 +12,12 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,24 +26,31 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 审计服务基类。
+    /// 审计服务。
     /// </summary>
-    public class AuditServiceBase : AbstractService, IAuditService
+    public class AuditService : AbstractService, IAuditService
     {
         /// <summary>
-        /// 构造一个 <see cref="AuditServiceBase"/>。
+        /// 构造一个 <see cref="AuditService"/>。
         /// </summary>
+        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="identifier">给定的 <see cref="IIdentifierService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AuditServiceBase(IClockService clock, IIdentifierService identifier,
-            ILoggerFactory loggerFactory)
+        public AuditService(IOptions<DataBuilderOptions> options, IClockService clock,
+            IIdentifierService identifier, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
+            Options = options.NotNull(nameof(options)).Value;
             Clock = clock.NotNull(nameof(clock));
             Identifier = identifier.NotNull(nameof(identifier));
         }
 
+
+        /// <summary>
+        /// 构建器选项。
+        /// </summary>
+        protected DataBuilderOptions Options { get; }
 
         /// <summary>
         /// 时钟服务。
@@ -54,34 +64,75 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 异步处理。
+        /// 异步审计。
         /// </summary>
-        /// <param name="changeEntities">给定的 <see cref="IList{EntityEntry}"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含 <see cref="List{BaseAudit}"/> 的异步操作。</returns>
-        public virtual Task<List<Audit>> GetAuditsAsync(IList<EntityEntry> changeEntities,
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="List{Audit}"/> 的异步操作。</returns>
+        public virtual async Task<List<Audit>> AuditAsync(IAccessor accessor,
             CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            if (accessor.IsNotNull() && accessor is DbContextAccessor dbContextAccessor)
             {
-                var audits = new List<Audit>();
+                var audits = GetAudits(dbContextAccessor.ChangeTracker, cancellationToken);
 
-                if (changeEntities.IsNullOrEmpty())
-                    return audits;
-
-                foreach (var entry in changeEntities)
-                {
-                    if (entry.Metadata.ClrType.IsDefined<NotAuditedAttribute>())
-                        continue; // 如果不审计，则忽略
-
-                    var audit = ToAudit(entry, cancellationToken);
-                    audits.Add(audit);
-                }
+                await ProcessAuditsAsync(dbContextAccessor, audits, cancellationToken);
 
                 return audits;
-            });
+            }
+
+            return null;
         }
 
+        /// <summary>
+        /// 异步处理审计。
+        /// </summary>
+        /// <param name="accessor">给定的 <see cref="DbContextAccessor"/>。</param>
+        /// <param name="audits">给定要处理的审计列表。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个异步操作。</returns>
+        protected virtual async Task ProcessAuditsAsync(DbContextAccessor accessor, List<Audit> audits,
+            CancellationToken cancellationToken = default)
+        {
+            await accessor.Audits.AddRangeAsync(audits, cancellationToken);
+
+            var mediator = accessor.ServiceProvider.GetRequiredService<IMediator>();
+            await mediator.Publish(new AuditNotification { Audits = audits });
+        }
+
+
+        #region GetAudits
+
+        /// <summary>
+        /// 异步获取审计。
+        /// </summary>
+        /// <param name="changeTracker">给定的 <see cref="ChangeTracker"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回 <see cref="List{Audit}"/>。</returns>
+        protected virtual List<Audit> GetAudits(ChangeTracker changeTracker, CancellationToken cancellationToken)
+        {
+            var entityStates = Options.Audits.AuditEntityStates;
+
+            // 得到变化的实体集合
+            var entityEntries = changeTracker.Entries()
+                .Where(m => m.Entity.IsNotNull() && entityStates.Contains(m.State)).ToList();
+
+            var audits = new List<Audit>();
+
+            if (entityEntries.IsNullOrEmpty())
+                return audits;
+
+            foreach (var entry in entityEntries)
+            {
+                if (entry.Metadata.ClrType.IsDefined<NotAuditedAttribute>())
+                    continue; // 如果不审计，则忽略
+
+                var audit = ToAudit(entry, cancellationToken);
+                audits.Add(audit);
+            }
+
+            return audits;
+        }
 
         /// <summary>
         /// 转换为审计。
@@ -89,7 +140,7 @@ namespace Librame.Extensions.Data
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回审计。</returns>
-        protected virtual Audit ToAudit(EntityEntry entry, CancellationToken cancellationToken = default)
+        protected virtual Audit ToAudit(EntityEntry entry, CancellationToken cancellationToken)
         {
             var audit = new Audit
             {
@@ -144,17 +195,17 @@ namespace Librame.Extensions.Data
 
             if (entry.State == EntityState.Modified && entry.Entity is IUpdation updation)
             {
-                audit.CreatedTime = ToDateTime(updation.GetUpdatedTime());
+                audit.CreatedTime = ToDateTime(updation.GetUpdatedTime(), cancellationToken);
                 audit.CreatedBy = ToBy(updation.GetUpdatedBy());
             }
             else if (entry.Entity is ICreation creation)
             {
-                audit.CreatedTime = ToDateTime(creation.GetCreatedTime());
+                audit.CreatedTime = ToDateTime(creation.GetCreatedTime(), cancellationToken);
                 audit.CreatedBy = ToBy(creation.GetCreatedBy());
             }
             else
             {
-                audit.CreatedTime = Clock.GetUtcNowAsync(default).Result;
+                audit.CreatedTime = Clock.GetUtcNowAsync(cancellationToken).Result;
             }
 
             return audit;
@@ -189,11 +240,12 @@ namespace Librame.Extensions.Data
         /// 转换为日期时间格式。
         /// </summary>
         /// <param name="obj">给定的对象。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <see cref="DateTimeOffset"/>。</returns>
-        protected virtual DateTimeOffset ToDateTime(object obj)
+        protected virtual DateTimeOffset ToDateTime(object obj, CancellationToken cancellationToken)
         {
             if (obj.IsNull())
-                return Clock.GetUtcNowAsync(default).Result;
+                return Clock.GetUtcNowAsync(cancellationToken).Result;
 
             if (obj is DateTimeOffset dateTimeOffset)
                 return dateTimeOffset;
@@ -216,6 +268,8 @@ namespace Librame.Extensions.Data
 
             return obj?.ToString();
         }
+
+        #endregion
 
     }
 }

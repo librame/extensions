@@ -20,11 +20,10 @@ namespace Librame.Extensions.Data
         {
             builder.Services.AddScoped<IClockService, ClockService>();
             builder.Services.AddScoped<ITenantService, TenantService>();
-
-            builder.Services.AddScoped<IAuditService, AuditServiceBase>();
-            builder.Services.AddScoped<IIdentifierService, IdentifierServiceBase>();
-            builder.Services.AddScoped(typeof(IInitializerService<>), typeof(InitializerServiceBase<>));
-            builder.Services.AddScoped(typeof(IInitializerService<,>), typeof(InitializerServiceBase<,>));
+            builder.Services.AddScoped<IAuditService, AuditService>();
+            builder.Services.AddScoped<IIdentifierService, IdentifierService>();
+            builder.Services.AddScoped(typeof(IInitializerService<>), typeof(InitializerService<>));
+            builder.Services.AddScoped(typeof(IInitializerService<,>), typeof(InitializerService<,>));
 
             return builder;
         }
