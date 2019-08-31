@@ -11,26 +11,31 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
-    /// 标识符服务。
+    /// 存储标识符基类。
     /// </summary>
-    public class IdentifierService : AbstractService, IIdentifierService
+    public class StoreIdentifierBase : IStoreIdentifier
     {
         /// <summary>
-        /// 构造一个 <see cref="IdentifierService"/>。
+        /// 构造一个 <see cref="StoreIdentifierBase"/>。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public IdentifierService(ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+        public StoreIdentifierBase(ILoggerFactory loggerFactory)
         {
+            Logger = loggerFactory.CreateLogger<StoreIdentifierBase>();
         }
+
+
+        /// <summary>
+        /// 日志。
+        /// </summary>
+        protected ILogger Logger { get; }
 
 
         /// <summary>
@@ -43,10 +48,10 @@ namespace Librame.Extensions.Data
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string combId = UniqueIdentifier.New().ToCombUniqueIdentifier();
-                Logger.LogTrace($"Generate {idTraceName}: {combId}");
+                string combGuid = Guid.NewGuid().AsCombGuid().ToString();
+                Logger.LogTrace($"Generate {idTraceName}: {combGuid}");
 
-                return combId;
+                return combGuid;
             });
         }
 

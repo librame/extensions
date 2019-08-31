@@ -23,8 +23,8 @@ namespace Librame.Extensions.Network.DotNetty
     /// </summary>
     public static class DotNettyNetworkBuilderExtensions
     {
-        private static readonly AlgorithmIdentifier _defaultIdentifier
-            = AlgorithmIdentifier.New();
+        private static readonly UniqueIdentifier _defaultIdentifier
+            = UniqueIdentifier.New();
 
 
         /// <summary>
@@ -44,6 +44,7 @@ namespace Librame.Extensions.Network.DotNetty
                 builder.AddEncryption(options =>
                 {
                     options.Identifier = _defaultIdentifier;
+                    options.IdentifierConverter = _defaultIdentifier.Converter;
                 })
                 .AddDeveloperGlobalSigningCredentials();
             }

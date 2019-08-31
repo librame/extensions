@@ -3,10 +3,12 @@ using System;
 
 namespace Librame.Extensions.Encryption.Tests
 {
+    using Core;
+
     internal static class TestServiceProvider
     {
-        private static readonly AlgorithmIdentifier _defaultIdentifier
-            = AlgorithmIdentifier.New();
+        private static readonly UniqueIdentifier _defaultIdentifier
+            = UniqueIdentifier.New();
 
 
         static TestServiceProvider()
@@ -19,6 +21,7 @@ namespace Librame.Extensions.Encryption.Tests
                     .AddEncryption(options =>
                     {
                         options.Identifier = _defaultIdentifier;
+                        options.IdentifierConverter = _defaultIdentifier.Converter;
                     })
                     .AddDeveloperGlobalSigningCredentials();
 

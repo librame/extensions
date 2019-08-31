@@ -6,28 +6,27 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
 
-    public class TestInitializerService<TAccessor> : InitializerService<TAccessor, TestIdentifierService>
-        where TAccessor : TestDbContextAccessor
+    public class TestStoreInitializer : StoreInitializerBase<TestDbContextAccessor, TestStoreIdentifier>
     {
         private IList<Category> _categories;
 
 
-        public TestInitializerService(IIdentifierService identifier, ILoggerFactory loggerFactory)
+        public TestStoreInitializer(IStoreIdentifier identifier, ILoggerFactory loggerFactory)
             : base(identifier, loggerFactory)
         {
         }
 
 
-        protected override void InitializeStores(IStoreHub<TAccessor> stores)
+        protected override void InitializeCore(IStoreHub<TestDbContextAccessor> stores)
         {
-            base.InitializeStores(stores);
+            base.InitializeCore(stores);
 
             InitializeCategories(stores);
 
             InitializeArticles(stores);
         }
 
-        private void InitializeCategories(IStoreHub<TAccessor> stores)
+        private void InitializeCategories(IStoreHub<TestDbContextAccessor> stores)
         {
             if (!stores.Accessor.Categories.Any())
             {
@@ -51,7 +50,7 @@ namespace Librame.Extensions.Data.Tests
             }
         }
 
-        private void InitializeArticles(IStoreHub<TAccessor> stores)
+        private void InitializeArticles(IStoreHub<TestDbContextAccessor> stores)
         {
             if (!stores.Accessor.Categories.Any())
             {
@@ -59,9 +58,11 @@ namespace Librame.Extensions.Data.Tests
 
                 for (int i = 0; i < 100; i++)
                 {
+                    var articleId = Identifier.GetArticleIdAsync().Result;
+
                     articles.Add(new Article
                     {
-                        Id = Identifier.GetArticleIdAsync(default).Result,
+                        Id = articleId,
                         Title = "Article " + i.ToString(),
                         Descr = "Descr " + i.ToString(),
                         Category = (i < 50) ? _categories.First() : _categories.Last()

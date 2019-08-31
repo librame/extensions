@@ -8,10 +8,9 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void AllTest()
         {
-            using (var stores = TestServiceProvider.Current.GetRequiredService<ITestStoreHub>())
+            using (var stores = TestServiceProvider.Current.GetRequiredService<TestStoreHub>())
             {
-                var initializer = stores.GetRequiredService<IInitializerService<TestDbContextAccessor>>();
-                initializer.InitializeService(stores);
+                stores.Initializer.Initialize(stores);
 
                 var categories = stores.GetCategories();
                 Assert.Empty(categories);

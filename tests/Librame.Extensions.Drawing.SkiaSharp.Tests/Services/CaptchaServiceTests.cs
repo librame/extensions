@@ -6,12 +6,12 @@ namespace Librame.Extensions.Drawing.Tests
 {
     using Core;
 
-    public class InternalCaptchaServiceTests
+    public class CaptchaServiceTests
     {
         private ICaptchaService _drawing = null;
         private string[] _captchas = null;
 
-        public InternalCaptchaServiceTests()
+        public CaptchaServiceTests()
         {
             _drawing = TestServiceProvider.Current.GetRequiredService<ICaptchaService>();
 
@@ -25,7 +25,6 @@ namespace Librame.Extensions.Drawing.Tests
         public async void DrawCaptchaBytesTest()
         {
             var captcha = _captchas[new Random().Next(0, _captchas.Length)];
-
             var buffer = await _drawing.DrawBytesAsync(captcha);
             Assert.NotNull(buffer);
         }
@@ -35,9 +34,8 @@ namespace Librame.Extensions.Drawing.Tests
         {
             var captcha = _captchas[new Random().Next(0, _captchas.Length)];
             var saveFile = "captcha.png".AsFileLocator(TestServiceProvider.ResourcesPath);
-
-            var succeed = await _drawing.DrawFileAsync(captcha, saveFile.ToString());
-            Assert.True(succeed);
+            var result = await _drawing.DrawFileAsync(captcha, saveFile);
+            Assert.True(result);
         }
 
     }

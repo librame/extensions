@@ -3,12 +3,12 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    public class InternalIdentifierServiceTests
+    public class StoreIdentifierTests
     {
         [Fact]
         public async void AllTest()
         {
-            var service = TestServiceProvider.Current.GetRequiredService<IIdentifierService>();
+            var service = TestServiceProvider.Current.GetRequiredService<IStoreIdentifier>();
 
             var auditId = await service.GetAuditIdAsync();
             Assert.NotEmpty(auditId);

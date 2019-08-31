@@ -3,14 +3,14 @@ using Xunit;
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    public class InternalHashServiceTests
+    public class HashServiceTests
     {
         [Fact]
-        public void InternalHashAlgorithmServiceTest()
+        public void AllTest()
         {
             var hash = TestServiceProvider.Current.GetRequiredService<IHashService>();
 
-            var plaintextString = nameof(InternalHashServiceTests);
+            var plaintextString = nameof(HashServiceTests);
 
             // Create IPlaintextAlgorithmBuffer
             var plaintextBuffer = plaintextString.AsPlaintextBuffer(TestServiceProvider.Current);

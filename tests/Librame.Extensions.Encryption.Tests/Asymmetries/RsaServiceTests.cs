@@ -2,12 +2,12 @@
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    public class InternalRsaServiceTests
+    public class RsaServiceTests
     {
         [Fact]
-        public void RsaAlgorithmServiceTest()
+        public void AllTest()
         {
-            var rawPlaintextString = nameof(InternalRsaServiceTests);
+            var rawPlaintextString = nameof(RsaServiceTests);
 
             // Create IPlaintextBuffer
             var plaintextBuffer = rawPlaintextString.AsPlaintextBuffer(TestServiceProvider.Current);

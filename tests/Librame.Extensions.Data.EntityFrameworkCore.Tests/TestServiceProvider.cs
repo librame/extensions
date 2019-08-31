@@ -24,11 +24,10 @@ namespace Librame.Extensions.Data.Tests
                         var migrationsAssembly = typeof(TestServiceProvider).Assembly.GetName().Name;
                         optionsBuilder.UseSqlServer(options.Tenants.Default.DefaultConnectionString,
                             sql => sql.MigrationsAssembly(migrationsAssembly));
-                    });
-
-                services.TryReplace<IIdentifierService, TestIdentifierService>();
-                services.TryReplace(typeof(IInitializerService<>), typeof(TestInitializerService<>));
-                services.AddScoped<ITestStoreHub, TestStoreHub>();
+                    })
+                    .AddStoreHub<TestStoreHub>() // IStoreHub<TestDbContextAccessor>
+                    .AddInitializer<TestStoreInitializer>() // IStoreInitializer<TestDbContextAccessor>
+                    .AddIdentifier<TestStoreIdentifier>(); // IStoreIdentifier
 
                 return services.BuildServiceProvider();
             });

@@ -27,29 +27,23 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal(identifier.GetHashCode(), other.GetHashCode());
             Assert.Equal(identifier.ToString(), other.ToString());
 
-            var combIdentifier = identifier.ToCombUniqueIdentifier();
-            Assert.False(identifier == combIdentifier);
-            Assert.True(identifier != combIdentifier);
-            Assert.False(identifier.Equals(combIdentifier));
-
-            Assert.NotEqual(guid, combIdentifier.RawGuid);
-
-            Assert.NotEqual(identifier.GetHashCode(), combIdentifier.GetHashCode());
-            Assert.NotEqual(identifier.ToString(), combIdentifier.ToString());
+            var combGuid = identifier.RawGuid.AsCombGuid();
+            Assert.False(guid == combGuid);
+            Assert.True(guid != combGuid);
 
             var identifiers = UniqueIdentifier.NewArray(10);
             Assert.NotEmpty(identifiers);
 
-            var guidShorts = identifiers.Select(id =>
+            var shorts = identifiers.Select(id =>
             {
                 return new KeyValuePair<Guid, string>(id.RawGuid, id.ToShortString());
             })
             .ToArray();
-            Assert.NotEmpty(guidShorts);
+            Assert.NotEmpty(shorts);
 
             var combidShorts = identifiers.Select(id =>
             {
-                return new KeyValuePair<Guid, string>(id.RawGuid.AsCombId(), id.ToShortString());
+                return new KeyValuePair<Guid, string>(id.RawGuid.AsCombGuid(), id.ToShortString());
             })
             .ToArray();
             Assert.NotEmpty(combidShorts);

@@ -20,29 +20,29 @@ namespace Librame.Extensions.Encryption
 
     class KeyGenerator : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IKeyGenerator
     {
-        private readonly AlgorithmIdentifier _optionsIdentifier;
+        private readonly UniqueIdentifier _optionsIdentifier;
 
 
         public KeyGenerator(IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
-            _optionsIdentifier = (AlgorithmIdentifier)Options.Identifier;
+            _optionsIdentifier = new UniqueIdentifier(Options.Identifier, Options.IdentifierConverter);
         }
 
 
-        public IByteBuffer GenerateKey(int length, string identifier = null)
+        public IByteBuffer GenerateKey(int length, UniqueIdentifier? identifier = null)
         {
             ReadOnlyMemory<byte> memory;
 
-            if (!identifier.IsNullOrEmpty())
+            if (identifier.HasValue)
             {
-                memory = ((AlgorithmIdentifier)identifier).Memory;
-                Logger.LogDebug($"Use set identifier: {identifier}");
+                memory = identifier.Value.Memory;
+                Logger.LogDebug($"Use set identifier: {identifier.Value}");
             }
             else
             {
                 memory = _optionsIdentifier.Memory;
-                Logger.LogDebug($"Use options identifier: {Options.Identifier}");
+                Logger.LogDebug($"Use options identifier: {_optionsIdentifier}");
             }
 
             return GenerateKey(memory.ToArray(), length);

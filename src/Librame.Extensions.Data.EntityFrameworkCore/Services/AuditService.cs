@@ -12,7 +12,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -35,10 +34,10 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="IIdentifierService"/>。</param>
+        /// <param name="identifier">给定的 <see cref="IStoreIdentifier"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public AuditService(IOptions<DataBuilderOptions> options, IClockService clock,
-            IIdentifierService identifier, ILoggerFactory loggerFactory)
+            IStoreIdentifier identifier, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             Options = options.NotNull(nameof(options)).Value;
@@ -60,7 +59,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 标识符服务。
         /// </summary>
-        protected IIdentifierService Identifier { get; }
+        protected IStoreIdentifier Identifier { get; }
 
 
         /// <summary>
@@ -96,7 +95,7 @@ namespace Librame.Extensions.Data
         {
             await accessor.Audits.AddRangeAsync(audits, cancellationToken);
 
-            var mediator = accessor.ServiceProvider.GetRequiredService<IMediator>();
+            var mediator = accessor.ServiceFactory.GetRequiredService<IMediator>();
             await mediator.Publish(new AuditNotification { Audits = audits });
         }
 

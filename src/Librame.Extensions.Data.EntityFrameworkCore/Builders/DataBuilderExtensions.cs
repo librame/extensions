@@ -54,8 +54,7 @@ namespace Librame.Extensions.Data
 
             return dataBuilder
                 .AddMediators()
-                .AddServices()
-                .AddStores();
+                .AddServices();
         }
 
     }

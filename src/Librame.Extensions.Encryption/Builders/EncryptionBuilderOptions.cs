@@ -19,6 +19,9 @@ namespace Librame.Extensions.Encryption
     /// </summary>
     public class EncryptionBuilderOptions : AbstractExtensionBuilderOptions
     {
+        private static readonly UniqueIdentifier _defaultIdentifier
+            = UniqueIdentifier.Empty;
+
         /// <summary>
         /// 全局键名。
         /// </summary>
@@ -26,10 +29,17 @@ namespace Librame.Extensions.Encryption
 
 
         /// <summary>
-        /// 算法标识符（默认新建标识符；参考 <see cref="AlgorithmIdentifier"/>）。
+        /// 标识符。
         /// </summary>
         public string Identifier { get; set; }
-            = AlgorithmIdentifier.Empty.ToString();
+            = _defaultIdentifier;
+
+        /// <summary>
+        /// 标识符转换器。
+        /// </summary>
+        public IIdentifierConverter<byte> IdentifierConverter { get; set; }
+            = _defaultIdentifier.Converter;
+
 
         /// <summary>
         /// 签名证书键名（默认使用全局键名）。
@@ -52,7 +62,7 @@ namespace Librame.Extensions.Encryption
     public class KeyGeneratorOptions
     {
         /// <summary>
-        /// 是否生成随机密钥（默认不生成）。
+        /// 是否生成随机密钥（默认不随机生成）。
         /// </summary>
         public bool IsRandomKey { get; set; }
             = false;

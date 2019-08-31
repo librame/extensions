@@ -41,7 +41,7 @@ namespace Librame.Extensions.Encryption
         }
 
 
-        public IByteBuffer HmacMd5(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer HmacMd5(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var key = KeyGenerator.GetHmacMd5Key(identifier);
             var hash = new HMACMD5(key);
@@ -49,7 +49,7 @@ namespace Librame.Extensions.Encryption
             return ComputeHash(buffer, hash);
         }
 
-        public IByteBuffer HmacSha1(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer HmacSha1(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var key = KeyGenerator.GetHmacSha1Key(identifier);
             var hash = new HMACSHA1(key);
@@ -57,7 +57,7 @@ namespace Librame.Extensions.Encryption
             return ComputeHash(buffer, hash);
         }
 
-        public IByteBuffer HmacSha256(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer HmacSha256(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var key = KeyGenerator.GetHmacSha256Key(identifier);
             var hash = new HMACSHA256(key);
@@ -65,7 +65,7 @@ namespace Librame.Extensions.Encryption
             return ComputeHash(buffer, hash);
         }
 
-        public IByteBuffer HmacSha384(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer HmacSha384(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var key = KeyGenerator.GetHmacSha384Key(identifier);
             var hash = new HMACSHA384(key);
@@ -73,7 +73,7 @@ namespace Librame.Extensions.Encryption
             return ComputeHash(buffer, hash);
         }
 
-        public IByteBuffer HmacSha512(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer HmacSha512(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var key = KeyGenerator.GetHmacSha512Key(identifier);
             var hash = new HMACSHA512(key);

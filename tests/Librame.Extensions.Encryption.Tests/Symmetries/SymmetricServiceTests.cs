@@ -2,12 +2,12 @@
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    public class InternalSymmetricServiceTests
+    public class SymmetricServiceTests
     {
         [Fact]
         public void AesTest()
         {
-            var rawPlaintextString = nameof(InternalSymmetricServiceTests);
+            var rawPlaintextString = nameof(SymmetricServiceTests);
 
             // Create IPlaintextAlgorithmBuffer
             var plaintextBuffer = rawPlaintextString.AsPlaintextBuffer(TestServiceProvider.Current);
@@ -28,7 +28,7 @@ namespace Librame.Extensions.Encryption.Tests
         [Fact]
         public void DesTest()
         {
-            var rawPlaintextString = nameof(InternalSymmetricServiceTests);
+            var rawPlaintextString = nameof(SymmetricServiceTests);
 
             // Create IPlaintextAlgorithmBuffer
             var plaintextBuffer = rawPlaintextString.AsPlaintextBuffer(TestServiceProvider.Current);
@@ -49,7 +49,7 @@ namespace Librame.Extensions.Encryption.Tests
         [Fact]
         public void TripleDesTest()
         {
-            var rawPlaintextString = nameof(InternalSymmetricServiceTests);
+            var rawPlaintextString = nameof(SymmetricServiceTests);
 
             // Create IPlaintextAlgorithmBuffer
             var plaintextBuffer = rawPlaintextString.AsPlaintextBuffer(TestServiceProvider.Current);

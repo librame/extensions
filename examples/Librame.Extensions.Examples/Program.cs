@@ -37,7 +37,7 @@ namespace Librame.Extensions.Examples
 
             RunEncryption(serviceProvider);
 
-            RunThreadPoolTest();
+            RunThreadPool();
 
             // Close NLog
             NLog.LogManager.Shutdown();
@@ -60,7 +60,7 @@ namespace Librame.Extensions.Examples
             Console.WriteLine($"Content MD5: {hash.Md5(plaintextBuffer).AsBase64String()}");
         }
 
-        private static void RunThreadPoolTest()
+        private static void RunThreadPool()
         {
             using (var pool = new JobThreadPool())
             {

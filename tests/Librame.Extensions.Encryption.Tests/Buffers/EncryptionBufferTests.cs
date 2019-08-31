@@ -2,12 +2,12 @@
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    public class InternalEncryptionBufferTests
+    public class EncryptionBufferTests
     {
         [Fact]
-        public void InternalEncryptionBufferTest()
+        public void AllTest()
         {
-            var rawPlaintextString = nameof(InternalEncryptionBufferTests);
+            var rawPlaintextString = nameof(EncryptionBufferTests);
 
             // Create IPlaintextAlgorithmBuffer
             var plaintextBuffer = rawPlaintextString.AsPlaintextBuffer(TestServiceProvider.Current);

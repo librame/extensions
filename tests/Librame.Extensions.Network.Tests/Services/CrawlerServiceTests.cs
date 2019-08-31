@@ -3,11 +3,11 @@ using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {
-    public class InternalCrawlerServiceTests
+    public class CrawlerServiceTests
     {
         private ICrawlerService _crawler;
 
-        public InternalCrawlerServiceTests()
+        public CrawlerServiceTests()
         {
             _crawler = TestServiceProvider.Current.GetRequiredService<ICrawlerService>();
         }
@@ -24,16 +24,16 @@ namespace Librame.Extensions.Network.Tests
         [Fact]
         public async void GetHyperLinksTest()
         {
-            var result = await _crawler.GetHyperLinksAsync("https://www.baidu.com");
-            Assert.True(result.Count > 0);
+            var links = await _crawler.GetHyperLinksAsync("https://www.baidu.com");
+            Assert.NotEmpty(links);
         }
 
 
         [Fact]
         public async void GetImageLinksTest()
         {
-            var result = await _crawler.GetImageLinksAsync("https://www.baidu.com");
-            Assert.True(result.Count > 0);
+            var images = await _crawler.GetImageLinksAsync("https://www.baidu.com");
+            Assert.NotEmpty(images);
         }
 
     }

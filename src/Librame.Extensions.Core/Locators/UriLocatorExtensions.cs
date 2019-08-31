@@ -29,8 +29,8 @@ namespace Librame.Extensions.Core
         /// <param name="newPath">给定以 / 开始的新路径（可选）。</param>
         /// <param name="newQuery">给定以 ? 开始的新查询（可选）。</param>
         /// <param name="newAnchor">给定以 # 开始的新锚点（可选）。</param>
-        /// <returns>返回 <see cref="IUriLocator"/>。</returns>
-        public static IUriLocator AsUriLocator(this string uriString, string newScheme = null,
+        /// <returns>返回 <see cref="UriLocator"/>。</returns>
+        public static UriLocator AsUriLocator(this string uriString, string newScheme = null,
             string newHost = null, string newPath = null, string newQuery = null,
             string newAnchor = null)
         {
@@ -49,8 +49,8 @@ namespace Librame.Extensions.Core
         /// <param name="newHost">给定可能包含端口号的新主机（可选）。</param>
         /// <param name="newPath">给定以 / 开始的新路径（可选）。</param>
         /// <param name="newAnchor">给定以 # 开始的新锚点（可选）。</param>
-        /// <returns>返回 <see cref="IUriLocator"/>。</returns>
-        public static IUriLocator AsUriLocator(this string uriString,
+        /// <returns>返回 <see cref="UriLocator"/>。</returns>
+        public static UriLocator AsUriLocator(this string uriString,
             Action<ConcurrentDictionary<string, string>> queriesAction, string newScheme = null,
             string newHost = null, string newPath = null, string newAnchor = null)
         {
@@ -70,8 +70,8 @@ namespace Librame.Extensions.Core
         /// <param name="newPath">给定以 / 开始的新路径（可选）。</param>
         /// <param name="newQuery">给定以 ? 开始的新查询（可选）。</param>
         /// <param name="newAnchor">给定以 # 开始的新锚点（可选）。</param>
-        /// <returns>返回 <see cref="IUriLocator"/>。</returns>
-        public static IUriLocator AsUriLocator(this Uri uri, string newScheme = null,
+        /// <returns>返回 <see cref="UriLocator"/>。</returns>
+        public static UriLocator AsUriLocator(this Uri uri, string newScheme = null,
             string newHost = null, string newPath = null, string newQuery = null,
             string newAnchor = null)
         {
@@ -90,8 +90,8 @@ namespace Librame.Extensions.Core
         /// <param name="newHost">给定可能包含端口号的新主机（可选）。</param>
         /// <param name="newPath">给定以 / 开始的新路径（可选）。</param>
         /// <param name="newAnchor">给定以 # 开始的新锚点（可选）。</param>
-        /// <returns>返回 <see cref="IUriLocator"/>。</returns>
-        public static IUriLocator AsUriLocator(this Uri uri,
+        /// <returns>返回 <see cref="UriLocator"/>。</returns>
+        public static UriLocator AsUriLocator(this Uri uri,
             Action<ConcurrentDictionary<string, string>> queriesAction, string newScheme = null,
             string newHost = null, string newPath = null, string newAnchor = null)
         {
@@ -102,7 +102,7 @@ namespace Librame.Extensions.Core
         }
 
 
-        private static IUriLocator ChangeParameters(this IUriLocator locator, string newScheme = null,
+        private static UriLocator ChangeParameters(this UriLocator locator, string newScheme = null,
             string newHost = null, string newPath = null, string newQuery = null,
             Action<ConcurrentDictionary<string, string>> queriesAction = null, string newAnchor = null)
         {

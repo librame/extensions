@@ -14,6 +14,8 @@ using System;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 存储接口。
     /// </summary>
@@ -22,7 +24,7 @@ namespace Librame.Extensions.Data
         where TAccessor : IAccessor
     {
         /// <summary>
-        /// 覆盖数据访问器。
+        /// 覆盖数据访问器接口实例。
         /// </summary>
         /// <value>返回 <typeparamref name="TAccessor"/>。</value>
         new TAccessor Accessor { get; }
@@ -39,5 +41,16 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <value>返回 <see cref="IAccessor"/>。</value>
         IAccessor Accessor { get; }
+
+
+        /// <summary>
+        /// 服务提供程序。
+        /// </summary>
+        IServiceProvider ServiceProvider { get; }
+
+        /// <summary>
+        /// 服务工厂。
+        /// </summary>
+        ServiceFactoryDelegate ServiceFactory { get; }
     }
 }

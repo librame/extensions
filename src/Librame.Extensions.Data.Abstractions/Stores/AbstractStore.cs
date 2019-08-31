@@ -10,6 +10,8 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Data
 {
     using Core;
@@ -22,7 +24,7 @@ namespace Librame.Extensions.Data
         where TAccessor : IAccessor
     {
         /// <summary>
-        /// 构造一个抽象存储实例（可用于容器构造）。
+        /// 构造一个 <see cref="AbstractStore{TAccessor}"/>。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         public AbstractStore(IAccessor accessor)
@@ -33,10 +35,10 @@ namespace Librame.Extensions.Data
         }
 
         /// <summary>
-        /// 构造一个抽象存储实例（可用于手动构造）。
+        /// 构造一个 <see cref="AbstractStore{TAccessor}"/>。
         /// </summary>
         /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        protected AbstractStore(TAccessor accessor)
+        public AbstractStore(TAccessor accessor)
             : base(accessor)
         {
             // Override
@@ -45,7 +47,7 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 覆盖数据访问器。
+        /// 覆盖数据访问器接口实例。
         /// </summary>
         /// <value>返回 <typeparamref name="TAccessor"/>。</value>
         public new TAccessor Accessor { get; }
@@ -72,6 +74,19 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <value>返回 <see cref="IAccessor"/>。</value>
         public IAccessor Accessor { get; }
+
+
+        /// <summary>
+        /// 服务提供程序。
+        /// </summary>
+        public IServiceProvider ServiceProvider
+            => Accessor.ServiceProvider;
+
+        /// <summary>
+        /// 服务工厂。
+        /// </summary>
+        public ServiceFactoryDelegate ServiceFactory
+            => Accessor.ServiceFactory;
 
 
         /// <summary>

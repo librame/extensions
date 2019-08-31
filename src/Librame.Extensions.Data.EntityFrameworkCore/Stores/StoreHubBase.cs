@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +20,6 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
     /// 存储中心基类。
     /// </summary>
@@ -31,20 +28,22 @@ namespace Librame.Extensions.Data
         where TAccessor : DbContextAccessor
     {
         /// <summary>
-        /// 构造一个存储中心基类实例（可用于容器构造）。
+        /// 构造一个 <see cref="StoreHubBase{TAccessor}"/>。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public StoreHubBase(IAccessor accessor)
-            : base(accessor)
+        /// <param name="initializer">给定的 <see cref="IStoreInitializer{TAccessor}"/>。</param>
+        public StoreHubBase(IAccessor accessor, IStoreInitializer<TAccessor> initializer)
+            : base(accessor, initializer)
         {
         }
 
         /// <summary>
-        /// 构造一个存储中心基类实例（可用于手动构造）。
+        /// 构造一个 <see cref="StoreHubBase{TAccessor}"/>。
         /// </summary>
         /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        protected StoreHubBase(TAccessor accessor)
-            : base(accessor)
+        /// <param name="initializer">给定的 <see cref="IStoreInitializer{TAccessor}"/>。</param>
+        public StoreHubBase(TAccessor accessor, IStoreInitializer<TAccessor> initializer)
+            : base(accessor, initializer)
         {
         }
 
@@ -81,42 +80,32 @@ namespace Librame.Extensions.Data
         where TTenant : Tenant
     {
         /// <summary>
-        /// 构造一个存储中心基类实例（可用于容器构造）。
+        /// 构造一个 <see cref="StoreHubBase{TAccessor, TAudit, TTenant}"/>。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public StoreHubBase(IAccessor accessor)
+        /// <param name="initializer">给定的 <see cref="IStoreInitializer{TAccessor}"/>。</param>
+        public StoreHubBase(IAccessor accessor, IStoreInitializer<TAccessor> initializer)
             : base(accessor)
         {
+            Initializer = initializer.NotNull(nameof(initializer));
         }
 
         /// <summary>
-        /// 构造一个存储中心基类实例（可用于手动构造）。
+        /// 构造一个 <see cref="StoreHubBase{TAccessor, TAudit, TTenant}"/>。
         /// </summary>
         /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        protected StoreHubBase(TAccessor accessor)
+        /// <param name="initializer">给定的 <see cref="IStoreInitializer{TAccessor}"/>。</param>
+        public StoreHubBase(TAccessor accessor, IStoreInitializer<TAccessor> initializer)
             : base(accessor)
         {
+            Initializer = initializer.NotNull(nameof(initializer));
         }
 
 
         /// <summary>
-        /// 获取当前服务提供程序中的指定服务实例。
+        /// 初始化器。
         /// </summary>
-        /// <typeparam name="TService">指定的服务类型。</typeparam>
-        /// <returns>返回 <typeparamref name="TService"/>。</returns>
-        public virtual TService GetRequiredService<TService>()
-        {
-            return Accessor.GetService<TService>();
-        }
-
-        /// <summary>
-        /// 获取当前服务提供程序。
-        /// </summary>
-        /// <returns>返回 <see cref="IServiceProvider"/>。</returns>
-        public virtual IServiceProvider GetServiceProvider()
-        {
-            return Accessor.GetInfrastructure();
-        }
+        public IStoreInitializer<TAccessor> Initializer { get; }
 
 
         /// <summary>
@@ -174,12 +163,12 @@ namespace Librame.Extensions.Data
         #region Tenants
 
         /// <summary>
-        /// 建立唯一租户表达式。
+        /// 建立租户唯一表达式。
         /// </summary>
         /// <param name="name">给定的名称。</param>
         /// <param name="host">给定的主机。</param>
         /// <returns>返回查询表达式。</returns>
-        protected virtual Expression<Func<TTenant, bool>> BuildUniqueTenantExpression(string name, string host)
+        protected Expression<Func<TTenant, bool>> BuildTenantUniqueExpression(string name, string host)
         {
             name.NotNullOrEmpty(nameof(name));
             host.NotNullOrEmpty(nameof(host));
@@ -197,7 +186,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含布尔值的异步操作。</returns>
         public virtual Task<bool> ContainTenantAsync(string name, string host, CancellationToken cancellationToken = default)
         {
-            var predicate = BuildUniqueTenantExpression(name, host);
+            var predicate = BuildTenantUniqueExpression(name, host);
 
             return EnsureTenants().AnyAsync(predicate, cancellationToken);
         }
@@ -211,7 +200,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <typeparamref name="TTenant"/> 的异步操作。</returns>
         public virtual Task<TTenant> GetTenantAsync(string name, string host, CancellationToken cancellationToken = default)
         {
-            var predicate = BuildUniqueTenantExpression(name, host);
+            var predicate = BuildTenantUniqueExpression(name, host);
 
             return EnsureTenants().SingleOrDefaultAsync(predicate, cancellationToken);
         }

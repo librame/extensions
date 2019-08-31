@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Storage.Tests
 {
-    public class InternalFilePermissionServiceTests
+    public class FilePermissionServiceTests
     {
         [Fact]
         public async void AllTest()

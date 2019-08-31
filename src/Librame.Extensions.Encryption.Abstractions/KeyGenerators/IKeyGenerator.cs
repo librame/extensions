@@ -23,8 +23,8 @@ namespace Librame.Extensions.Encryption
         /// 生成密钥。
         /// </summary>
         /// <param name="length">给定要生成的密钥长度。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer GenerateKey(int length, string identifier = null);
+        IByteBuffer GenerateKey(int length, UniqueIdentifier? identifier = null);
     }
 }

@@ -17,11 +17,24 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 访问器接口。
     /// </summary>
     public interface IAccessor : IDisposable
     {
+        /// <summary>
+        /// 服务提供程序。
+        /// </summary>
+        IServiceProvider ServiceProvider { get; }
+
+        /// <summary>
+        /// 服务工厂。
+        /// </summary>
+        ServiceFactoryDelegate ServiceFactory { get; }
+
+
         /// <summary>
         /// 执行 SQL 命令。
         /// </summary>
@@ -57,11 +70,11 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 尝试改变数据库连接。
+        /// 切换租户。
         /// </summary>
-        /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
+        /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory, CancellationToken cancellationToken = default);
+        bool ToggleTenant(Func<ITenant, string> changeConnectionStringFactory, CancellationToken cancellationToken = default);
     }
 }

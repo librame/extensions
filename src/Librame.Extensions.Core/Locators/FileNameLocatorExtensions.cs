@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
-        public static IFileNameLocator AsFileNameLocator(this string fileName)
+        public static FileNameLocator AsFileNameLocator(this string fileName)
         {
             return (FileNameLocator)fileName;
         }
@@ -32,7 +32,7 @@ namespace Librame.Extensions.Core
         /// <param name="baseName">给定的基础名。</param>
         /// <param name="extension">给定的扩展名。</param>
         /// <returns>返回 <see cref="IFileLocator"/>。</returns>
-        public static IFileNameLocator AsFileNameLocator(this string baseName, string extension = null)
+        public static FileNameLocator AsFileNameLocator(this string baseName, string extension = null)
         {
             return new FileNameLocator(baseName, extension);
         }
@@ -42,9 +42,9 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="fileNames">给定的文件名数组。</param>
         /// <returns>返回 <see cref="IFileLocator"/> 数组。</returns>
-        public static IFileNameLocator[] AsFileNameLocators(this string[] fileNames)
+        public static FileNameLocator[] AsFileNameLocators(this string[] fileNames)
         {
-            var locators = new IFileNameLocator[fileNames.Length];
+            var locators = new FileNameLocator[fileNames.Length];
 
             for (var i = 0; i < fileNames.Length; i++)
                 locators[i] = fileNames[i].AsFileNameLocator();

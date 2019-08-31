@@ -27,26 +27,20 @@ namespace Librame.Extensions.Data
         }
 
 
-        public Task<ITenant> GetTenantAsync(IAccessor accessor, CancellationToken cancellationToken = default)
+        public Task<ITenant> GetCurrentTenantAsync(IAccessor accessor, CancellationToken cancellationToken = default)
         {
             if (accessor is DbContextAccessor dbContextAccessor)
             {
                 return cancellationToken.RunFactoryOrCancellationAsync(() =>
                 {
-                    var tenant = Options.Tenants.Default;
-                    Logger.LogInformation($"Get Default Tenant: Name={tenant?.Name}, Host={tenant?.Host}");
+                    var defaultTenant = Options.Tenants.Default;
+                    Logger.LogInformation($"Get Default Tenant: Name={defaultTenant?.Name}, Host={defaultTenant?.Host}");
 
-                    return tenant;
+                    return defaultTenant;
                 });
             }
 
             return Task.FromResult((ITenant)null);
-        }
-
-
-        public Task<ITenant> AddTenantAsync()
-        {
-
         }
 
     }

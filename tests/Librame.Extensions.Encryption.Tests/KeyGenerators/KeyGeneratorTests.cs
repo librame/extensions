@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    public class InternalKeyGeneratorTests
+    public class KeyGeneratorTests
     {
         [Fact]
         public void InternalKeyGeneratorServiceTest()

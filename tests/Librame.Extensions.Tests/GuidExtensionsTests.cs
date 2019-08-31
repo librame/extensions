@@ -11,12 +11,12 @@ namespace Librame.Extensions.Tests
         public void CombIdTest()
         {
             var guid = Guid.NewGuid();
-            Assert.NotEqual(guid, guid.AsCombId());
+            Assert.NotEqual(guid, guid.AsCombGuid());
 
             var guids = 10.GenerateGuids();
             Assert.Equal(10, guids.Count());
 
-            var combids = guids.AsCombIds();
+            var combids = guids.AsCombGuids();
             Assert.False(guids.SequenceEqual(combids));
 
             var newCombids = 10.GenerateCombIds(out IEnumerable<Guid> newGuids);

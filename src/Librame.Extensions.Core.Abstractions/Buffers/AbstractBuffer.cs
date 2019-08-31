@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Linq;
 
 namespace Librame.Extensions.Core
 {
@@ -55,7 +56,8 @@ namespace Librame.Extensions.Core
         {
             other.NotNull(nameof(other));
 
-            return Memory.Equals(other.Memory);
+            return Memory.ToArray().SequenceEqual(other.Memory.ToArray());
+            //return Memory.Equals(other.Memory);
         }
 
         /// <summary>

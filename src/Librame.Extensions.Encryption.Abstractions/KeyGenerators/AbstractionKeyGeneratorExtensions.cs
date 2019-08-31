@@ -26,9 +26,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 AES 密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GetAesKey(this IKeyGenerator keyGenerator, string identifier = null)
+        public static byte[] GetAesKey(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GetKey256(identifier).Memory.ToArray();
         }
@@ -37,9 +37,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 DES 密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GetDesKey(this IKeyGenerator keyGenerator, string identifier = null)
+        public static byte[] GetDesKey(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GetKey64(identifier).Memory.ToArray();
         }
@@ -48,9 +48,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 TripleDES 密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GetTripleDesKey(this IKeyGenerator keyGenerator, string identifier = null)
+        public static byte[] GetTripleDesKey(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GetKey192(identifier).Memory.ToArray();
         }
@@ -64,9 +64,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 HMAC MD5 密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GetHmacMd5Key(this IKeyGenerator keyGenerator, string identifier = null)
+        public static byte[] GetHmacMd5Key(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GetKey512(identifier).Memory.ToArray();
         }
@@ -75,9 +75,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 HMAC SHA1 密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GetHmacSha1Key(this IKeyGenerator keyGenerator, string identifier = null)
+        public static byte[] GetHmacSha1Key(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GetKey512(identifier).Memory.ToArray();
         }
@@ -86,9 +86,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 HMAC SHA256 密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GetHmacSha256Key(this IKeyGenerator keyGenerator, string identifier = null)
+        public static byte[] GetHmacSha256Key(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GetKey512(identifier).Memory.ToArray();
         }
@@ -97,9 +97,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 HMAC SHA384 密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GetHmacSha384Key(this IKeyGenerator keyGenerator, string identifier = null)
+        public static byte[] GetHmacSha384Key(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GetKey1024(identifier).Memory.ToArray();
         }
@@ -108,9 +108,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 HMAC SHA512 密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GetHmacSha512Key(this IKeyGenerator keyGenerator, string identifier = null)
+        public static byte[] GetHmacSha512Key(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GetKey1024(identifier).Memory.ToArray();
         }
@@ -124,9 +124,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 64 位密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        public static IByteBuffer GetKey64(this IKeyGenerator keyGenerator, string identifier = null)
+        public static IByteBuffer GetKey64(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GenerateKey(8, identifier); // 64
         }
@@ -135,9 +135,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 128 位密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        public static IByteBuffer GetKey128(this IKeyGenerator keyGenerator, string identifier = null)
+        public static IByteBuffer GetKey128(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GenerateKey(16, identifier); // 128
         }
@@ -146,9 +146,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 192 位密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        public static IByteBuffer GetKey192(this IKeyGenerator keyGenerator, string identifier = null)
+        public static IByteBuffer GetKey192(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GenerateKey(24, identifier); // 192
         }
@@ -157,9 +157,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 256 位密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        public static IByteBuffer GetKey256(this IKeyGenerator keyGenerator, string identifier = null)
+        public static IByteBuffer GetKey256(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GenerateKey(32, identifier); // 256
         }
@@ -168,9 +168,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 384 位密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        public static IByteBuffer GetKey384(this IKeyGenerator keyGenerator, string identifier = null)
+        public static IByteBuffer GetKey384(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GenerateKey(48, identifier); // 384
         }
@@ -179,9 +179,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 512 位密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        public static IByteBuffer GetKey512(this IKeyGenerator keyGenerator, string identifier = null)
+        public static IByteBuffer GetKey512(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GenerateKey(64, identifier); // 512
         }
@@ -190,9 +190,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 1024 位密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        public static IByteBuffer GetKey1024(this IKeyGenerator keyGenerator, string identifier = null)
+        public static IByteBuffer GetKey1024(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GenerateKey(128, identifier); // 1024
         }
@@ -201,9 +201,9 @@ namespace Librame.Extensions.Encryption
         /// 获取 2048 位密钥。
         /// </summary>
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
-        /// <param name="identifier">给定的标识符（可选；默认使用选项配置。详情可参考 <see cref="AlgorithmIdentifier"/>）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        public static IByteBuffer GetKey2048(this IKeyGenerator keyGenerator, string identifier = null)
+        public static IByteBuffer GetKey2048(this IKeyGenerator keyGenerator, UniqueIdentifier? identifier = null)
         {
             return keyGenerator.GenerateKey(256, identifier); // 2048
         }

@@ -3,11 +3,11 @@ using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {
-    public class InternalSmsServiceTests
+    public class SmsServiceTests
     {
         private ISmsService _service;
 
-        public InternalSmsServiceTests()
+        public SmsServiceTests()
         {
             _service = TestServiceProvider.Current.GetRequiredService<ISmsService>();
         }

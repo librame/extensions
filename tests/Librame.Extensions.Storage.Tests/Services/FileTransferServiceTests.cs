@@ -6,11 +6,11 @@ namespace Librame.Extensions.Storage.Tests
 {
     using Core;
 
-    public class InternalFileTransferServiceTests
+    public class FileTransferServiceTests
     {
         private IFileTransferService _fileTransfer;
 
-        public InternalFileTransferServiceTests()
+        public FileTransferServiceTests()
         {
             _fileTransfer = TestServiceProvider.Current.GetRequiredService<IFileTransferService>();
         }

@@ -74,15 +74,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 使用有顺序的 GUID 与当前转换器，构造一个新唯一标识符。
-        /// </summary>
-        /// <returns>返回 <see cref="UniqueIdentifier"/>。</returns>
-        public UniqueIdentifier ToCombUniqueIdentifier()
-        {
-            return new UniqueIdentifier(RawGuid.AsCombId(), Converter);
-        }
-
-        /// <summary>
         /// 转换为短字符串（可用作排序）。
         /// </summary>
         /// <param name="toUpper">转换为大写形式（可选；默认启用转换）。</param>

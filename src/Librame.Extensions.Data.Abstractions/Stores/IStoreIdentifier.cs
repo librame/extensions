@@ -15,12 +15,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
-    /// 标识符服务接口。
+    /// 存储标识符接口。
     /// </summary>
-    public interface IIdentifierService : IService
+    public interface IStoreIdentifier
     {
         /// <summary>
         /// 异步获取审计标识。

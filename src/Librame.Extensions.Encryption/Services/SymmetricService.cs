@@ -66,21 +66,21 @@ namespace Librame.Extensions.Encryption
 
         #region AES
 
-        public IByteBuffer ToAes(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer ToAes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateAes(identifier);
 
             return Encrypt(algorithm, buffer);
         }
 
-        public IByteBuffer FromAes(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer FromAes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateAes(identifier);
 
             return Decrypt(algorithm, buffer);
         }
 
-        private Aes CreateAes(string identifier = null)
+        private Aes CreateAes(UniqueIdentifier? identifier = null)
         {
             var algorithm = Aes.Create();
             algorithm.Key = KeyGenerator.GetAesKey(identifier);
@@ -94,21 +94,21 @@ namespace Librame.Extensions.Encryption
 
         #region DES
 
-        public IByteBuffer ToDes(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer ToDes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateDes(identifier);
 
             return Encrypt(algorithm, buffer);
         }
 
-        public IByteBuffer FromDes(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer FromDes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateDes(identifier);
 
             return Decrypt(algorithm, buffer);
         }
 
-        private DES CreateDes(string identifier = null)
+        private DES CreateDes(UniqueIdentifier? identifier = null)
         {
             var algorithm = DES.Create();
             algorithm.Key = KeyGenerator.GetDesKey(identifier);
@@ -122,24 +122,24 @@ namespace Librame.Extensions.Encryption
 
         #region TripleDES
 
-        public IByteBuffer ToTripleDes(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer ToTripleDes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateTripleDes(identifier);
 
             return Encrypt(algorithm, buffer);
         }
 
-        public IByteBuffer FromTripleDes(IByteBuffer buffer, string identifier = null)
+        public IByteBuffer FromTripleDes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateTripleDes(identifier);
 
             return Decrypt(algorithm, buffer);
         }
 
-        private TripleDES CreateTripleDes(string identifier = null)
+        private TripleDES CreateTripleDes(UniqueIdentifier? identifier = null)
         {
             var algorithm = TripleDES.Create();
-            algorithm.Key = KeyGenerator.GetTripleDesKey();
+            algorithm.Key = KeyGenerator.GetTripleDesKey(identifier);
             Logger.LogDebug($"Use TripleDES algorithm");
 
             return algorithm;

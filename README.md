@@ -3,9 +3,22 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/librame/Librame/blob/master/LICENSE)
 [![Available on NuGet https://www.nuget.org/packages?q=Librame.Extensions.Core](https://img.shields.io/nuget/v/Librame.Extensions.Core.svg?style=flat-square)](https://www.nuget.org/packages?q=Librame.Extensions.Core)
 
-## Use
+## Open Source
 
 * Official releases are on [NuGet](https://www.nuget.org/packages?q=Librame).
+
+## Use
+
+    // Install-Package Microsoft.Extensions.DependencyInjection
+    var services = new ServiceCollection();
+    
+    // Install-Package Librame.Extensions.Core
+    // Register Librame Entry
+    services.AddLibrame();
+    
+    // Build ServiceProvider
+    var serviceProvider = services.BuildServiceProvider();
+    ......
 
 ### Librame.Extensions.Core
 
@@ -15,15 +28,49 @@
 
 ## Register Extension
 
-    // Use DependencyInjection
-    var services = new ServiceCollection();
-    
-    // Register Librame
     services.AddLibrame();
+
+## Test Extension
+
+    // MediatR
+    var mediator = serviceProvider.GetRequiredService<IMediator>();
+    var response = await mediator.Send(new Ping { Message = "Ping" });
+    Assert.Contains("Ping Pong Ping", response.Message);
+    // Librame.Extensions.Core.Tests.RequestPostProcessorBehaviorTests
     
-    // Build ServiceProvider
-    var serviceProvider = services.BuildServiceProvider();
+    // Localization
+    var localizer = serviceProvider.GetRequiredService<IExpressionStringLocalizer<TestResource>>();
+    Assert.True(localizer[r => r.Name].ResourceNotFound);
+    // Librame.Extensions.Core.Tests.ExpressionStringLocalizerTests
+    
+    // Locator
+    var uriString = "https://1.2.3.4.developer.microsoft.com/en-us/fabric#/get-started";
+    var uriLocator = (UriLocator)uriString;
+    Assert.Equal("https", uriLocator.Scheme);
+    Assert.Equal("developer.microsoft.com", uriLocator.Host);
+    Assert.Equal("/en-us/fabric", uriLocator.Path);
     ......
+    // Librame.Extensions.Core.Tests.UriLocatorTests
+    
+    var domainLocator = (DomainNameLocator)uriString.GetHost(); // uriLocator.Host
+    Assert.Equal("com", domainLocator.Root);
+    Assert.Equal("microsoft.com", domainLocator.TopLevel);
+    Assert.Equal("developer.microsoft.com", domainLocator.SecondLevel);
+    ......
+    // Librame.Extensions.Core.Tests.DomainNameLocatorTests
+    
+    var path = @"c:\test\file.ext";
+    var fileLocator = path.AsFileLocator();
+    Assert.Equal(@"c:\test", fileLocator.BasePath);
+    Assert.Equal("file.ext", fileLocator.FileNameString);
+    ......
+    // Librame.Extensions.Core.Tests.FileLocatorTests
+    
+    var fileNameLocator = path.AsFileNameLocator();
+    Assert.Equal("file", fileNameLocator.BaseName);
+    Assert.Equal(".ext", fileNameLocator.Extension);
+    ......
+    // Librame.Extensions.Core.Tests.FileNameLocatorTests
 
 ### Librame.Extensions.Data.EntityFrameworkCore
 
@@ -33,94 +80,33 @@
 
 ## Register Extension
 
-    // Use DependencyInjection
-    var services = new ServiceCollection();
-    
-    // Register Librame
     services.AddLibrame()
         .AddData(options =>
         {
-            options.DefaultTenant.DefaultConnectionString = "default database connection string";
-            options.DefaultTenant.WritingConnectionString = "write database connection string";
-            options.DefaultTenant.WritingSeparation = true;
+            // Multi-Tenancy, Reading and writing separation
+            options.Tenants.Default.DefaultConnectionString = "default database connection string";
+            options.Tenants.Default.WritingConnectionString = "write database connection string";
+            options.Tenants.Default.WritingSeparation = true;
         })
         .AddAccessor<TestDbContextAccessor>((options, optionsBuilder) =>
         {
-            optionsBuilder.UseSqlServer(options.DefaultTenant.DefaultConnectionString,
+            optionsBuilder.UseSqlServer(options.Tenants.Default.DefaultConnectionString,
                 sql => sql.MigrationsAssembly("AssemblyName"));
-        });
-    
-    // Use Store
-    services.AddTransient<ITestStoreHub, TestStoreHub>();
-    
-    // Build ServiceProvider
-    var serviceProvider = services.BuildServiceProvider();
+        })
+        .AddStoreHub<TestStoreHub>() // IStoreHub<TestDbContextAccessor>
+        .AddInitializer<TestStoreInitializer>() // IStoreInitializer<TestDbContextAccessor>
+        .AddIdentifier<TestStoreIdentifier>(); // IStoreIdentifier
 
 ## Test Extension
 
-    // Accessor
-    public class TestDbContextAccessor : DbContextAccessor, IAccessor
+    // StoreHub
+    public class TestStoreHub : StoreHubBase<TestDbContextAccessor>
     {
-        public TestDbContextAccessor(DbContextOptions options)
-            : base(options)
+        public TestStore(IAccessor accessor, IStoreInitializer<TestDbContextAccessor> initializer)
+            : base(accessor, initializer)
         {
         }
-
-        public DbSet<Category> Categories { get; set; }
-
-        public DbSet<Article> Articles { get; set; }
         
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Category>(category =>
-            {
-                category.ToTable(new TableSchema<Category>());
-
-                category.HasKey(x => x.Id);
-
-                category.Property(x => x.Id).ValueGeneratedOnAdd();
-                category.Property(x => x.Name).HasMaxLength(100).IsRequired();
-                category.Property(x => x.Rank);
-                category.Property(x => x.Status);
-
-                category.HasMany(x => x.Articles).WithOne(x => x.Category).IsRequired().OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<Article>(article =>
-            {
-                article.ToTable(TableSchema<Article>.BuildEveryYear(DateTime.Now));
-
-                article.HasKey(x => x.Id);
-
-                article.Property(x => x.Id).ValueGeneratedNever();
-                article.Property(x => x.Title).HasMaxLength(200).IsRequired();
-                article.Property(x => x.Descr).HasMaxLength(1000).IsRequired();
-                article.Property(x => x.Rank);
-                article.Property(x => x.Status);
-            });
-        }
-    }
-    
-    // Store
-    public interface ITestStoreHub : IStoreHub<TestDbContextAccessor>
-    {
-        IList<Category> GetCategories();
-
-        IPagingList<Article> GetArticles();
-
-
-        ITestStore UseDefaultStore();
-
-        ITestStore UseWriteStore();
-    }
-    public class TestStoreHub : StoreHubBase<TestDbContextAccessor>, ITestStoreHub
-    {
-        public TestStore(IAccessor accessor)
-            : base(accessor)
-        {
-        }
         
         public IList<Category> GetCategories()
         {
@@ -133,44 +119,60 @@
         }
 
 
-        public ITestStoreHub UseWriteDbConnection()
+        public TestStoreHub UseWriteDbConnection()
         {
             Accessor.TryChangeDbConnection(t => t.WritingConnectionString);
             return this;
         }
 
-        public ITestStoreHub UseDefaultDbConnection()
+        public TestStoreHub UseDefaultDbConnection()
         {
             Accessor.TryChangeDbConnection(t => t.DefaultConnectionString);
             return this;
         }
     }
     
-    // Test
-    public class DbContextAccessorTests
+    // DbContextAccessor
+    public class TestDbContextAccessor : DbContextAccessor
     {
-        [Fact]
-        public void AllTest()
+        public TestDbContextAccessor(DbContextOptions options)
+            : base(options)
         {
-            using (var stores = serviceProvider.GetRequiredService<ITestStoreHub>())
-            {
-                //var initializer = stores.GetRequiredService<IInitializerService<TestDbContextAccessor>>();
-                //initializer.InitializeService(stores);
+        }
 
-                var categories = stores.GetCategories();
-                Assert.Empty(categories);
 
-                categories = stores.UseWriteDbConnection().GetCategories();
-                Assert.NotEmpty(categories);
+        public DbSet<Category> Categories { get; set; }
 
-                var articles = stores.UseDefaultDbConnection().GetArticles();
-                Assert.Empty(articles);
+        public DbSet<Article> Articles { get; set; }
 
-                articles = stores.UseWriteDbConnection().GetArticles();
-                Assert.NotEmpty(articles);
-            }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            ......
         }
     }
+    
+    // Test
+    using (var stores = serviceProvider.GetRequiredService<TestStoreHub>())
+    {
+        stores.Initializer.Initialize(stores);
+
+        var categories = stores.GetCategories();
+        Assert.Empty(categories);
+
+        categories = stores.UseWriteDbConnection().GetCategories();
+        Assert.NotEmpty(categories);
+
+        var articles = stores.UseDefaultDbConnection().GetArticles();
+        Assert.Empty(articles);
+
+        articles = stores.UseWriteDbConnection().GetArticles();
+        Assert.NotEmpty(articles);
+    }
+    ......
+    // Librame.Extensions.Data.Tests.DbContextAccessorTests
 
 ### Librame.Extensions.Drawing.SkiaSharp
 
@@ -180,100 +182,43 @@
 
 ## Register Extension
 
-    // Use DependencyInjection
-    var services = new ServiceCollection();
-    
-    // Register Librame
     services.AddLibrame()
-        .AddDrawing();
-    
-    // Build ServiceProvider
-    var serviceProvider = services.BuildServiceProvider();
+        .AddDrawing(options =>
+        {
+            options.Captcha.Font.FileLocator.ChangeBasePath("FontFilePath");
+            options.Watermark.Font.FileLocator.ChangeBasePath("FontFilePath");
+            options.Watermark.ImageFileLocator.ChangeBasePath("WatermarkFilePath");
+        });
 
 ## Test Extension
 
     // Captcha
-    public class InternalCaptchaServiceTests
-    {
-        private ICaptchaService _drawing = null;
-
-        public InternalCaptchaServiceTests()
-        {
-            _drawing = serviceProvider.GetRequiredService<ICaptchaService>();
-        }
-
-        [Fact]
-        public async void DrawCaptchaBytesTest()
-        {
-            var buffer = await _drawing.DrawBytes("1234");
-            Assert.NotNull(buffer);
-        }
-
-        [Fact]
-        public async void DrawCaptchaFileTest()
-        {
-            var saveFile = "captcha.png".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
-
-            var succeed = await _drawing.DrawFile("1234", saveFile.ToString());
-            Assert.True(succeed);
-        }
-    }
+    var captchaService = serviceProvider.GetRequiredService<ICaptchaService>();
+    var buffer = await captchaService.DrawBytesAsync("1234");
+    Assert.NotNull(buffer);
+    
+    var saveFile = "captcha.png".AsFileLocator("SavePath");
+    var result = await captchaService.DrawFileAsync("1234", saveFile);
+    Assert.True(result);
+    // Librame.Extensions.Drawing.Tests.CaptchaServiceTests
     
     // Scale
-    public class InternalScaleServiceTests
-    {
-        private IScaleService _drawing = null;
-
-        public InternalScaleServiceTests()
-        {
-            _drawing = serviceProvider.GetRequiredService<IScaleService>();
-        }
-
-        [Fact]
-        public async void DrawScaleTest()
-        {
-            // 5K 2.21MB
-            var imageFile = "test.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
-            
-            var succeed = await _drawing.DrawFile(imageFile.ToString());
-            Assert.True(succeed);
-        }
-
-        [Fact]
-        public async void DrawScalesByDirectoryTest()
-        {
-            // 5K 2.21MB
-            var directory = TestServiceProvider.ResourcesPath.CombinePath(@"pictures");
-            
-            // Clear
-            var count = _drawing.DeleteScalesByDirectory(directory);
-
-            count = await _drawing.DrawFilesByDirectory(directory);
-            Assert.True(count > 0);
-        }
-    }
-
+    var scaleService = serviceProvider.GetRequiredService<IScaleService>();
+    var imageFile = "test.jpg".AsFileLocator("ImagePath");
+    var result = scaleService.DrawFile(imageFile);
+    Assert.True(result);
+    
+    var count = await scaleService.DrawFilesByDirectoryAsync("FolderPath");
+    Assert.True(count > 0);
+    // Librame.Extensions.Drawing.Tests.ScaleServiceTests
+    
     // Watermark
-    public class InternalWatermarkServiceTests
-    {
-        private IWatermarkService _drawing = null;
-
-        public InternalWatermarkServiceTests()
-        {
-            _drawing = serviceProvider.GetRequiredService<IWatermarkService>();
-        }
-
-        [Fact]
-        public async void DrawWatermarkTest()
-        {
-            // 5K 2.21MB
-            var imageFile = "test.jpg".AsDefaultFileLocator(TestServiceProvider.ResourcesPath);
-            var saveFile = imageFile.NewFileName("test-watermark.png");
-            
-            var succeed = await _drawing.DrawFile(imageFile.ToString(), saveFile.ToString());
-            Assert.True(succeed);
-        }
-    }
+    var watermarkService = serviceProvider.GetRequiredService<IWatermarkService>();
+    var imageFile = "test.jpg".AsFileLocator("ImagePath");
+    var saveFile = imageFile.NewFileName("test-watermark.png") as FileLocator;
+    var result = await watermarkService.DrawFileAsync(imageFile, saveFile);
+    Assert.True(result);
+    // Librame.Extensions.Drawing.Tests.WatermarkServiceTests
 
 ### Librame.Extensions.Encryption
 
@@ -283,58 +228,51 @@
 
 ## Register Extension
 
-    // Use DependencyInjection
-    var services = new ServiceCollection();
-    
-    // Register Librame
     services.AddLibrame()
-        .AddEncryption()
-        .AddDeveloperGlobalSigningCredentials(); //.AddSigningCredentials();
-    
-    // Build ServiceProvider
-    var serviceProvider = services.BuildServiceProvider();
+        .AddEncryption(options =>
+        {
+            var identifier = UniqueIdentifier.New();
+            options.Identifier = identifier;
+            options.IdentifierConverter = identifier.Converter;
+        })
+        .AddDeveloperGlobalSigningCredentials(); // AddSigningCredentials();
 
 ## Test Extension
 
-    public class EncryptionBuilderExtensionsTests
-    {
-        [Fact]
-        public void JointTest()
-        {
-            var str = nameof(EncryptionBuilderExtensionsTests);
-            var plaintextBuffer = str.AsPlaintextBuffer(serviceProvider);
-            
-            var hashString = plaintextBuffer.ApplyServiceProvider(serviceProvider)
-                .Md5()
-                .Sha1()
-                .Sha256()
-                .Sha384()
-                .Sha512()
-                .HmacMd5()
-                .HmacSha1()
-                .HmacSha256()
-                .HmacSha384()
-                .HmacSha512()
-                .AsCiphertextString();
+    var str = "TestString";
+    var plaintextBuffer = str.AsPlaintextBuffer(serviceProvider);
+    
+    var hashString = plaintextBuffer
+        .Md5()
+        .Sha1()
+        .Sha256()
+        .Sha384()
+        .Sha512()
+        .HmacMd5()
+        .HmacSha1()
+        .HmacSha256()
+        .HmacSha384()
+        .HmacSha512()
+        .AsCiphertextString();
 
-            var plaintextBufferCopy = plaintextBuffer.Copy();
-            var ciphertextString = plaintextBufferCopy
-                .AsDes()
-                .AsTripleDes()
-                .AsAes()
-                .AsRsa()
-                .AsCiphertextString();
-            Assert.NotEmpty(ciphertextString);
+    var plaintextBufferCopy = plaintextBuffer.Copy();
+    var ciphertextString = plaintextBufferCopy
+        .AsDes()
+        .AsTripleDes()
+        .AsAes()
+        .AsRsa()
+        .AsCiphertextString();
+    Assert.NotEmpty(ciphertextString);
 
-            var ciphertextBuffer = ciphertextString.AsCiphertextBuffer(serviceProvider)
-                .FromRsa()
-                .FromAes()
-                .FromTripleDes()
-                .FromDes();
-                
-            Assert.Equal(hashString, ciphertextBuffer.AsCiphertextString());
-        }
-    }
+    var ciphertextBuffer = ciphertextString.AsCiphertextBuffer(serviceProvider)
+        .FromRsa()
+        .FromAes()
+        .FromTripleDes()
+        .FromDes();
+    
+    Assert.True(plaintextBuffer.Equals(ciphertextBuffer));
+    Assert.Equal(hashString, ciphertextBuffer.AsCiphertextString());
+    // Librame.Extensions.Encryption.Tests.EncryptionBufferExtensionsTests
 
 ### Librame.Extensions.Network
 
@@ -344,87 +282,34 @@
 
 ## Register Extension
 
-    // Use DependencyInjection
-    var services = new ServiceCollection();
-    
-    // Register Librame
     services.AddLibrame()
-        .AddEncryption().AddDeveloperGlobalSigningCredentials()
         .AddNetwork();
-    
-    // Build ServiceProvider
-    var serviceProvider = services.BuildServiceProvider();
 
 ## Test Extension
 
     // Crawler
-    public class InternalCrawlerServiceTests
-    {
-        private ICrawlerService _crawler;
-
-        public InternalCrawlerServiceTests()
-        {
-            _crawler = serviceProvider.GetRequiredService<ICrawlerService>();
-        }
-
-        [Fact]
-        public async void GetStringTest()
-        {
-            var result = await _crawler.GetString("https://www.cnblogs.com");
-            Assert.NotEmpty(result);
-        }
-
-        [Fact]
-        public async void GetHyperLinksTest()
-        {
-            var result = await _crawler.GetHyperLinks("https://www.baidu.com");
-            Assert.True(result.Count > 0);
-        }
-
-        [Fact]
-        public async void GetImageHyperLinksTest()
-        {
-            var result = await _crawler.GetImageHyperLinks("https://www.baidu.com");
-            Assert.True(result.Count > 0);
-        }
-    }
+    var crawler = serviceProvider.GetRequiredService<ICrawlerService>();
+    var content = await crawler.GetContentAsync("https://www.cnblogs.com");
+    Assert.NotEmpty(content);
+    
+    var links = await crawler.GetHyperLinksAsync("https://www.baidu.com");
+    Assert.NotEmpty(links);
+    
+    var images = await crawler.GetImageHyperLinks("https://www.baidu.com");
+    Assert.NotEmpty(images);
+    // Librame.Extensions.Network.Tests.CrawlerServiceTests
 
     // Email
-    public class InternalEmailServiceTests
-    {
-        private IEmailService _service;
-
-        public InternalEmailServiceTests()
-        {
-            _service = serviceProvider.GetRequiredService<IEmailService>();
-        }
-        
-        [Fact]
-        public async void SendAsyncTest()
-        {
-            async _service.SendAsync("receiver@domain.com",
-                "Email Subject",
-                "Email Body");
-        }
-    }
+    var email = serviceProvider.GetRequiredService<IEmailService>();
+    async email.SendAsync("receiver@domain.com",
+        "Email Subject",
+        "Email Body");
+    // Librame.Extensions.Network.Tests.EmailServiceTests
     
     // Message
-    public class InternalSmsServiceTests
-    {
-        private ISmsService _service;
-
-        public InternalSmsServiceTests()
-        {
-            _service = serviceProvider.GetRequiredService<ISmsService>();
-        }
-
-        [Fact]
-        public async void SendAsyncTest()
-        {
-            var result = async _service.SendAsync("TestData: 123456");
-            Assert.Empty(result);
-        }
-    }
+    var sms = serviceProvider.GetRequiredService<ISmsService>();
+    var result = async sms.SendAsync("TestData: 123456");
+    Assert.Empty(result);
 
 ### Librame.Extensions.Network.DotNetty
 
@@ -434,12 +319,7 @@
 
 ## Register Extension
 
-    // Use DependencyInjection
-    var services = new ServiceCollection();
-    
     var locator = "dotnetty.com.pfx".AsDefaultFileLocator("BasePath");
-    
-    // Register Librame
     services.AddLibrame(dependency => dependency.LoggingSetupAction = logging =>
     {
         logging.ClearProviders();
@@ -454,9 +334,6 @@
     // Use DotNetty LoggerFactory
     InternalLoggerFactory.DefaultFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));
     //services.TryReplace(InternalLoggerFactory.DefaultFactory);
-    
-    // Build ServiceProvider
-    var serviceProvider = services.BuildServiceProvider();
 
 ## Test Extension
 
@@ -468,6 +345,7 @@
         await channel.CloseAsync();
     })
     .Wait();
+    // Librame.Extensions.Network.DotNetty.WebSocket.Server
     
     // WebSocketClient Console
     var client = serviceProvider.GetRequiredService<IWebSocketClient>();
@@ -500,7 +378,7 @@
         await channel.CloseAsync();
     })
     .Wait();
-    ......
+    // Librame.Extensions.Network.DotNetty.WebSocket.Client
 
 ### Librame.Extensions.Storage
 
@@ -510,29 +388,39 @@
 
 ## Register Extension
 
-    // Use DependencyInjection
-    var services = new ServiceCollection();
-    
-    // Register Librame
     services.AddLibrame()
         .AddStorage();
-    
-    // Build ServiceProvider
-    var serviceProvider = services.BuildServiceProvider();
 
 ## Test Extension
 
-    // IFileService
+    // FileService
     var file = serviceProvider.GetRequiredService<IFileService>();
+    
     var provider = await file.GetProviderAsync(root);
     var files = provider.GetDirectoryContents(folder);
     Assert.NotEmpty(files);
+    // Librame.Extensions.Storage.Tests.PhysicalFileServiceTests
     
-    // IFileTransferService
+    // FileTransferService
     var url = "https://www.domain.com/test.txt";
     var filePath = @"d:\test.txt";
-    
     var fileTransfer = serviceProvider.GetRequiredService<IFileTransferService>();
+    
     var locator = await fileTransfer.DownloadFileAsync(url, filePath);
     Assert.True(locator.Exists());
+    
     locator = fileTransfer.UploadFileAsync(url, filePath);
+    // Librame.Extensions.Storage.Tests.FileTransferServiceTests
+    
+    // FilePermissionService
+    var permission = TestServiceProvider.Current.GetRequiredService<IFilePermissionService>();
+
+    var accessToken = await service.GeAccessTokenAsync();
+    Assert.NotEmpty(accessToken);
+
+    var authorizationCode = await service.GetAuthorizationCodeAsync();
+    Assert.NotEmpty(authorizationCode);
+
+    var cookieValue = await service.GetCookieValueAsync();
+    Assert.NotEmpty(cookieValue);
+    // Librame.Extensions.Storage.Tests.FilePermissionServiceTests

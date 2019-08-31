@@ -27,37 +27,31 @@ namespace Librame.Extensions.Storage
         }
 
 
-        public Task<string> GeAccessTokenAsync(CancellationToken cancellationToken = default)
+        private Task<string> GenerateTokenAsync(CancellationToken cancellationToken, string idTraceName)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string accessToken = RandomNumberIdentifier.New();
-                Logger.LogInformation($"Get access token: {accessToken}");
+                string token = RandomNumberIdentifier.New();
+                Logger.LogTrace($"Generate {idTraceName}: {token}");
 
-                return accessToken;
+                return token;
             });
+        }
+
+
+        public Task<string> GeAccessTokenAsync(CancellationToken cancellationToken = default)
+        {
+            return GenerateTokenAsync(cancellationToken, "access token");
         }
 
         public Task<string> GetAuthorizationCodeAsync(CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
-            {
-                string authorizationCode = RandomNumberIdentifier.New();
-                Logger.LogInformation($"Get authorization code: {authorizationCode}");
-
-                return authorizationCode;
-            });
+            return GenerateTokenAsync(cancellationToken, "authorization code");
         }
 
         public Task<string> GetCookieValueAsync(CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
-            {
-                string cookieValue = RandomNumberIdentifier.New();
-                Logger.LogInformation($"Get cookie value: {cookieValue}");
-
-                return cookieValue;
-            });
+            return GenerateTokenAsync(cancellationToken, "cookie value");
         }
 
     }

@@ -4,11 +4,11 @@ using Xunit;
 
 namespace Librame.Extensions.Storage.Tests
 {
-    public class InternalPhysicalFileServiceTests
+    public class PhysicalFileServiceTests
     {
         private IFileService _file;
 
-        public InternalPhysicalFileServiceTests()
+        public PhysicalFileServiceTests()
         {
             _file = TestServiceProvider.Current.GetRequiredService<IFileService>();
         }

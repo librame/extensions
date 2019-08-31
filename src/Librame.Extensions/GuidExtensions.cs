@@ -26,9 +26,9 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="guids">给定的 <see cref="IEnumerable{Guid}"/>。</param>
         /// <returns>返回 <see cref="IEnumerable{Guid}"/>。</returns>
-        public static IEnumerable<Guid> AsCombIds(this IEnumerable<Guid> guids)
+        public static IEnumerable<Guid> AsCombGuids(this IEnumerable<Guid> guids)
         {
-            return guids.Select(id => id.AsCombId());
+            return guids.Select(id => id.AsCombGuid());
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="guid">给定的 <see cref="Guid"/>。</param>
         /// <returns>返回 <see cref="Guid"/>。</returns>
-        public static Guid AsCombId(this Guid guid)
+        public static Guid AsCombGuid(this Guid guid)
         {
             var buffer = guid.ToByteArray();
 
@@ -96,7 +96,7 @@ namespace Librame.Extensions
         {
             guids = count.GenerateGuids();
 
-            return guids.AsCombIds();
+            return guids.AsCombGuids();
         }
 
     }

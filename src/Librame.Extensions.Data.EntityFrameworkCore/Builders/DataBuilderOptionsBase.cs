@@ -10,6 +10,8 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Data
 {
     using Core;
@@ -56,5 +58,49 @@ namespace Librame.Extensions.Data
         /// <value>返回 <typeparamref name="TTableSchemaOptions"/>。</value>
         public TTableSchemaOptions TableSchemas { get; set; }
             = new TTableSchemaOptions();
+    }
+
+
+    /// <summary>
+    /// 存储选项。
+    /// </summary>
+    public class StoreOptions
+    {
+        /// <summary>
+        /// 映射关系（默认启用映射）。
+        /// </summary>
+        public bool MapRelationship { get; set; }
+            = true;
+
+        /// <summary>
+        /// 属性的最大长度（默认不设定）。
+        /// </summary>
+        public int MaxLengthForProperties { get; set; }
+            = 0;
+    }
+
+
+    /// <summary>
+    /// 表架构选项。
+    /// </summary>
+    public class TableSchemaOptions
+    {
+        /// <summary>
+        /// 审计工厂方法。
+        /// </summary>
+        public Func<Type, ITableSchema> AuditFactory { get; set; }
+            = type => type.AsInternalTableSchema();
+
+        /// <summary>
+        /// 审计属性工厂方法。
+        /// </summary>
+        public Func<Type, ITableSchema> AuditPropertyFactory { get; set; }
+            = type => type.AsInternalTableSchema();
+
+        /// <summary>
+        /// 租户工厂方法。
+        /// </summary>
+        public Func<Type, ITableSchema> TenantFactory { get; set; }
+            = type => type.AsInternalTableSchema();
     }
 }

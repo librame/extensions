@@ -4,11 +4,11 @@ using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {
-    public class InternalEmailServiceTests
+    public class EmailServiceTests
     {
         private IEmailService _service;
 
-        public InternalEmailServiceTests()
+        public EmailServiceTests()
         {
             _service = TestServiceProvider.Current.GetRequiredService<IEmailService>();
         }

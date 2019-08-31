@@ -2,15 +2,15 @@
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    public class EncryptionBuilderExtensionsTests
+    public class EncryptionBufferExtensionsTests
     {
         [Fact]
-        public void JointTest()
+        public void AllTest()
         {
-            var str = nameof(EncryptionBuilderExtensionsTests);
+            var str = nameof(EncryptionBufferExtensionsTests);
             var plaintextBuffer = str.AsPlaintextBuffer(TestServiceProvider.Current);
             
-            var hashString = plaintextBuffer.ApplyServiceProvider(TestServiceProvider.Current)
+            var hashString = plaintextBuffer
                 .Md5()
                 .Sha1()
                 .Sha256()
@@ -38,9 +38,8 @@ namespace Librame.Extensions.Encryption.Tests
                 .FromAes()
                 .FromTripleDes()
                 .FromDes();
-            
-            // 明文的只读副本与解密后的缓冲区数据一致
-            // plaintextBufferCopy.ReadOnlyMemory == ciphertextBuffer.Memory
+
+            Assert.True(plaintextBuffer.Equals(ciphertextBuffer));
             Assert.Equal(hashString, ciphertextBuffer.AsCiphertextString());
         }
 

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    public class InternalRsaKeyGeneratorTests
+    public class RsaKeyGeneratorTests
     {
         [Fact]
         public void InternalRsaKeyGeneratorServiceTest()
@@ -15,7 +15,7 @@ namespace Librame.Extensions.Encryption.Tests
 
             var rsa = credentials.ResolveRsa();
 
-            var str = nameof(InternalRsaKeyGeneratorTests);
+            var str = nameof(RsaKeyGeneratorTests);
 
             var encryptString = rsa.Encrypt(str.AsEncodingBytes(), RSAEncryptionPadding.Pkcs1)
                 .AsBase64String();

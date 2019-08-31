@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    public class InternalClockServiceTests
+    public class ClockServiceTests
     {
         [Fact]
         public async void AllTest()

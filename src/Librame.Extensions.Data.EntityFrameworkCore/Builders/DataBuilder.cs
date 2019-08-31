@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Librame.Extensions.Data
 {
@@ -24,5 +25,6 @@ namespace Librame.Extensions.Data
             Services.AddSingleton<IDataBuilder>(this);
         }
 
+        public Type AccessorType { get; set; }
     }
 }

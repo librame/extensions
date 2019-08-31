@@ -24,6 +24,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// <see cref="DbContext"/> 访问器。
     /// </summary>
@@ -78,6 +80,12 @@ namespace Librame.Extensions.Data
         /// </summary>
         public IServiceProvider ServiceProvider
             => this.GetInfrastructure();
+
+        /// <summary>
+        /// 服务工厂。
+        /// </summary>
+        public ServiceFactoryDelegate ServiceFactory
+            => this.GetService<ServiceFactoryDelegate>();
 
         /// <summary>
         /// 构建器选项。
@@ -161,17 +169,17 @@ namespace Librame.Extensions.Data
         {
             // 读写分离：尝试切换为写入数据库
             if (BuilderOptions.Tenants.Enabled)
-                TryChangeDbConnection(tenant => tenant.WritingConnectionString);
+                ToggleTenant(tenant => tenant.WritingConnectionString);
 
             // 审计实体
             if (BuilderOptions.Audits.Enabled)
-                AuditSaveChangesAsync(default).Wait();
+                AuditAsync(default).Wait();
 
             var count = base.SaveChanges(acceptAllChangesOnSuccess);
 
             // 读写分离：尝试切换为默认数据库
             if (BuilderOptions.Tenants.Enabled)
-                TryChangeDbConnection(tenant => tenant.DefaultConnectionString);
+                ToggleTenant(tenant => tenant.DefaultConnectionString);
 
             return count;
         }
@@ -187,27 +195,27 @@ namespace Librame.Extensions.Data
         {
             // 读写分离：尝试切换为写入数据库
             if (BuilderOptions.Tenants.Enabled)
-                TryChangeDbConnection(tenant => tenant.WritingConnectionString, cancellationToken);
+                ToggleTenant(tenant => tenant.WritingConnectionString, cancellationToken);
 
             // 审计实体
             if (BuilderOptions.Audits.Enabled)
-                await AuditSaveChangesAsync(cancellationToken);
+                await AuditAsync(cancellationToken);
 
             var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
             // 读写分离：尝试切换为默认数据库
             if (BuilderOptions.Tenants.Enabled)
-                TryChangeDbConnection(tenant => tenant.DefaultConnectionString, cancellationToken);
+                ToggleTenant(tenant => tenant.DefaultConnectionString, cancellationToken);
 
             return count;
         }
 
         /// <summary>
-        /// 异步审计保存更改。
+        /// 异步审计。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        protected virtual async Task AuditSaveChangesAsync(CancellationToken cancellationToken)
+        protected virtual async Task AuditAsync(CancellationToken cancellationToken)
         {
             var auditService = this.GetService<IAuditService>();
 
@@ -216,33 +224,33 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 尝试改变数据库连接。
+        /// 切换租户。
         /// </summary>
-        /// <param name="connectionStringFactory">给定改变数据库连接的工厂方法。</param>
+        /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        public virtual bool TryChangeDbConnection(Func<ITenant, string> connectionStringFactory,
+        public virtual bool ToggleTenant(Func<ITenant, string> changeConnectionStringFactory,
             CancellationToken cancellationToken = default)
         {
-            if (connectionStringFactory.IsNull())
+            if (changeConnectionStringFactory.IsNull())
                 return false;
 
             var tenantService = this.GetService<ITenantService>();
-            var tenant = tenantService.GetTenantAsync(this, cancellationToken).Result;
-            if (tenant.IsNull())
+            var currentTenant = tenantService.GetCurrentTenantAsync(this, cancellationToken).Result;
+            if (currentTenant.IsNull())
                 return false;
 
-            if (!tenant.WritingSeparation)
+            if (!currentTenant.WritingSeparation)
             {
-                Logger.LogTrace($"The tenant({tenant.Name}:{tenant.Host}) connection write separation is disable.");
+                Logger.LogTrace($"The tenant({currentTenant.Name}:{currentTenant.Host}) write separation is disable.");
                 return false;
             }
 
-            var connectionString = connectionStringFactory.Invoke(tenant);
+            var changeConnectionString = changeConnectionStringFactory.Invoke(currentTenant);
             var connection = Database.GetDbConnection();
-            if (connection.ConnectionString.Equals(connectionString, StringComparison.OrdinalIgnoreCase))
+            if (connection.ConnectionString.Equals(changeConnectionString, StringComparison.OrdinalIgnoreCase))
             {
-                Logger.LogTrace($"The tenant({tenant.Name}:{tenant.Host}) same as the current connection string.");
+                Logger.LogTrace($"The tenant({currentTenant.Name}:{currentTenant.Host}) same as the current connection string.");
                 return false;
             }
 
@@ -250,7 +258,7 @@ namespace Librame.Extensions.Data
             {
                 lock (_locker)
                 {
-                    ChangeDbConnectionCore();
+                    ChangeDbConnection();
                 }
                 return true;
             }
@@ -260,12 +268,12 @@ namespace Librame.Extensions.Data
                 return false;
             }
 
-            void ChangeDbConnectionCore()
+            void ChangeDbConnection()
             {
                 if (connection.State != ConnectionState.Closed)
                 {
                     connection.Close();
-                    Logger.LogTrace("Close connection");
+                    Logger.LogTrace($"Close connection string: {connection.ConnectionString}");
                 }
 
                 // MYSql: System.InvalidOperationException
@@ -274,8 +282,8 @@ namespace Librame.Extensions.Data
                 //  Source = MySqlConnector
                 // connection.ChangeDatabase(connectionString);
 
-                connection.ConnectionString = connectionString;
-                Logger?.LogInformation($"The tenant({tenant.Name}:{tenant.Host}) change connection string: {connectionString}");
+                connection.ConnectionString = changeConnectionString;
+                Logger?.LogInformation($"The tenant({currentTenant.Name}:{currentTenant.Host}) change connection string: {changeConnectionString}");
 
                 if (connection.State != ConnectionState.Open)
                 {
@@ -285,7 +293,7 @@ namespace Librame.Extensions.Data
                     if (connection.State == ConnectionState.Closed)
                     {
                         connection.Open();
-                        Logger?.LogInformation("Open connection");
+                        Logger?.LogInformation($"Open connection string: {connection.ConnectionString}");
                     }
                 }
             }

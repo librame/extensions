@@ -21,8 +21,8 @@ namespace Librame.Extensions.Core
         /// 转换为域名定位器。
         /// </summary>
         /// <param name="domainName">给定的域名。</param>
-        /// <returns>返回 <see cref="IDomainNameLocator"/>。</returns>
-        public static IDomainNameLocator AsDomainNameLocator(this string domainName)
+        /// <returns>返回 <see cref="DomainNameLocator"/>。</returns>
+        public static DomainNameLocator AsDomainNameLocator(this string domainName)
         {
             return (DomainNameLocator)domainName;
         }

@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.0.864.201</Version>
+    <Version>6.1.868.201</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Data.Abstractions on EntityFrameworkCore extension implementation.</Description>
@@ -15,12 +15,12 @@
     <PackageIconUrl>https://avatars0.githubusercontent.com/u/10363349?v=3&amp;s=460</PackageIconUrl>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Librame,Extensions,Data,EntityFrameworkCore</PackageTags>
+    <PackageTags>Librame,Extensions,Data,EntityFrameworkCore,Multi-Tenancy,Reading and writing separation</PackageTags>
     <PackageReleaseNotes>Based Librame.Extensions.Data.Abstractions on EntityFrameworkCore extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.0.864.201</AssemblyVersion>
-    <FileVersion>6.0.1908.2701</FileVersion>
+    <AssemblyVersion>6.1.868.201</AssemblyVersion>
+    <FileVersion>6.1.1908.3101</FileVersion>
     <RootNamespace>Librame.Extensions.Data</RootNamespace>
   </PropertyGroup>
 

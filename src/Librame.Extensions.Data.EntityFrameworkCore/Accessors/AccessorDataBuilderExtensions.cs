@@ -39,19 +39,19 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 添加数据库访问器（即上下文）集合。
         /// </summary>
-        /// <typeparam name="TAccessorService">指定的访问器服务类型。</typeparam>
-        /// <typeparam name="TAccessorImplementation">指定的访问器实现类型。</typeparam>
+        /// <typeparam name="TService">指定的访问器服务类型。</typeparam>
+        /// <typeparam name="TImplementation">指定的访问器实现类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="setupAction">给定的 <see cref="Action{DataBuilderOptions, DbContextOptionsBuilder}"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddAccessor<TAccessorService, TAccessorImplementation>(this IDataBuilder builder,
+        public static IDataBuilder AddAccessor<TService, TImplementation>(this IDataBuilder builder,
             Action<DataBuilderOptions, DbContextOptionsBuilder> setupAction)
-            where TAccessorService : IAccessor
-            where TAccessorImplementation : DbContext, TAccessorService
+            where TService : IAccessor
+            where TImplementation : DbContext, TService
         {
             setupAction.NotNull(nameof(setupAction));
 
-            builder.Services.AddDbContext<TAccessorService, TAccessorImplementation>((serviceProvider, optionsBuilder) =>
+            builder.Services.AddDbContext<TService, TImplementation>((serviceProvider, optionsBuilder) =>
             {
                 var options = serviceProvider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
                 setupAction.Invoke(options, optionsBuilder);
@@ -59,8 +59,11 @@ namespace Librame.Extensions.Data
 
             builder.Services.AddScoped(serviceProvider =>
             {
-                return (TAccessorImplementation)serviceProvider.GetRequiredService<TAccessorService>();
+                return (TImplementation)serviceProvider.GetRequiredService<TService>();
             });
+
+            if (builder is DataBuilder dataBuilder)
+                dataBuilder.AccessorType = typeof(TImplementation);
 
             return builder;
         }
