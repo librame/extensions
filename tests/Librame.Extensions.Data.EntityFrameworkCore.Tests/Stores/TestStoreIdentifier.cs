@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Tests
 {
-    public class TestStoreIdentifier : StoreIdentifierBase
+    public class TestStoreIdentifier : AbstractStoreIdentifier
     {
         public TestStoreIdentifier(ILoggerFactory loggerFactory)
             : base(loggerFactory)
@@ -12,7 +12,7 @@ namespace Librame.Extensions.Data.Tests
         }
 
 
-        public virtual Task<string> GetArticleIdAsync(CancellationToken cancellationToken = default)
+        public Task<string> GetArticleIdAsync(CancellationToken cancellationToken = default)
         {
             return GenerateIdAsync(cancellationToken, "ArticleId");
         }

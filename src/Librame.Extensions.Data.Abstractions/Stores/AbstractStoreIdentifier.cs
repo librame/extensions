@@ -18,24 +18,28 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 存储标识符基类。
+    /// 抽象存储标识符。
     /// </summary>
-    public class StoreIdentifierBase : IStoreIdentifier
+    public abstract class AbstractStoreIdentifier : IStoreIdentifier
     {
+        private readonly ILoggerFactory _loggerFactory;
+
+
         /// <summary>
-        /// 构造一个 <see cref="StoreIdentifierBase"/>。
+        /// 构造一个 <see cref="AbstractStoreIdentifier"/>。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public StoreIdentifierBase(ILoggerFactory loggerFactory)
+        public AbstractStoreIdentifier(ILoggerFactory loggerFactory)
         {
-            Logger = loggerFactory.CreateLogger<StoreIdentifierBase>();
+            _loggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
         }
 
 
         /// <summary>
         /// 日志。
         /// </summary>
-        protected ILogger Logger { get; }
+        protected ILogger Logger
+            => _loggerFactory.CreateLogger(GetType());
 
 
         /// <summary>
@@ -86,6 +90,5 @@ namespace Librame.Extensions.Data
         {
             return GenerateIdAsync(cancellationToken, "TenantId");
         }
-
     }
 }

@@ -14,20 +14,25 @@ using System;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
     /// 抽象生成式标识（默认标识类型为 <see cref="string"/>）。
     /// </summary>
     public abstract class AbstractGenId : AbstractGenId<string>, IGenId
     {
         /// <summary>
+        /// 空标识。
+        /// </summary>
+        public static readonly string EmptyId
+            = Guid.Empty.AsCombGuid().ToString();
+
+
+        /// <summary>
         /// 构造一个 <see cref="AbstractGenId"/> 默认实例。
         /// </summary>
         public AbstractGenId()
         {
-            // 默认使用空标识符，新增推荐使用服务注入
-            Id = UniqueIdentifier.Empty;
+            // 默认使用空标识，新增推荐使用服务注入
+            Id = EmptyId;
         }
     }
 

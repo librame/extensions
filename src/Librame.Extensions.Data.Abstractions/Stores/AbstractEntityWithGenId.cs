@@ -14,8 +14,6 @@ using System;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
     /// 抽象生成式标识实体（默认标识类型为 <see cref="string"/>、排序类型为 <see cref="float"/>、状态类型为 <see cref="DataStatus"/>）。
     /// </summary>
@@ -26,8 +24,8 @@ namespace Librame.Extensions.Data
         /// </summary>
         public AbstractEntityWithGenId()
         {
-            // 默认使用空标识符，新增推荐使用服务注入
-            Id = UniqueIdentifier.Empty;
+            // 默认使用空标识，新增推荐使用服务注入
+            Id =  AbstractGenId.EmptyId;
         }
     }
 
@@ -45,8 +43,8 @@ namespace Librame.Extensions.Data
         /// </summary>
         public AbstractEntityWithGenId()
         {
-            // 默认使用空标识符，新增推荐使用服务注入
-            Id = UniqueIdentifier.Empty;
+            // 默认使用空标识，新增推荐使用服务注入
+            Id = AbstractGenId.EmptyId;
         }
     }
 

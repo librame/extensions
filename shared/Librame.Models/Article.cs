@@ -5,7 +5,7 @@ namespace Librame.Models
     using Extensions.Data;
 
     [Description("文章")]
-    public class Article : AbstractEntity<string>
+    public class Article : AbstractEntityWithGenId
     {
         public string Title { get; set; }
 

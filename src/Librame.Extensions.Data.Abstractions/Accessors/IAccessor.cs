@@ -56,6 +56,12 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 重载保存更改。
         /// </summary>
+        /// <returns>返回受影响的行数。</returns>
+        int SaveChanges();
+
+        /// <summary>
+        /// 重载保存更改。
+        /// </summary>
         /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
         /// <returns>返回受影响的行数。</returns>
         int SaveChanges(bool acceptAllChangesOnSuccess);

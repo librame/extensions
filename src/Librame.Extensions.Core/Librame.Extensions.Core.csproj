@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.1.868.201</Version>
+    <Version>6.1.869.201</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Core.Abstractions on .NET Standard extension implementation.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Core.Abstractions on .NET Standard extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.1.868.201</AssemblyVersion>
-    <FileVersion>6.1.1908.3101</FileVersion>
+    <AssemblyVersion>6.1.869.201</AssemblyVersion>
+    <FileVersion>6.1.1909.101</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
