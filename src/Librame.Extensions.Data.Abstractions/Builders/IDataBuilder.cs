@@ -10,8 +10,6 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Data
 {
     using Core;
@@ -21,9 +19,5 @@ namespace Librame.Extensions.Data
     /// </summary>
     public interface IDataBuilder : IExtensionBuilder
     {
-        /// <summary>
-        /// 访问器类型。
-        /// </summary>
-        Type AccessorType { get; }
     }
 }

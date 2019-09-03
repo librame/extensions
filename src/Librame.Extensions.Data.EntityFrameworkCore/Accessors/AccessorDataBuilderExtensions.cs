@@ -62,9 +62,6 @@ namespace Librame.Extensions.Data
                 return (TImplementation)serviceProvider.GetRequiredService<TService>();
             });
 
-            if (builder is DataBuilder dataBuilder)
-                dataBuilder.AccessorType = typeof(TImplementation);
-
             return builder;
         }
 

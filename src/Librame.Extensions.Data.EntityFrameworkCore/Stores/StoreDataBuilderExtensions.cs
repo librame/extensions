@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 
 namespace Librame.Extensions.Data
 {
@@ -20,6 +21,11 @@ namespace Librame.Extensions.Data
     /// </summary>
     public static class StoreDataBuilderExtensions
     {
+        private static readonly Type _accessorMarkType = typeof(IAccessor);
+        private static readonly Type _initializerMarkType = typeof(IStoreInitializer);
+        private static readonly Type _storeHubMarkType = typeof(IStoreHub);
+
+
         /// <summary>
         /// 增加存储集合。
         /// </summary>
@@ -48,9 +54,8 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddStoreHubWithAccessor<TStoreHub>(this IDataBuilder builder)
             where TStoreHub : class, IStoreHub
         {
-            builder.AccessorTypeNotNull();
-
-            var serviceType = typeof(IStoreHub<>).MakeGenericType(builder.AccessorType);
+            var storeHubType = typeof(TStoreHub);
+            var serviceType = FindInterfaceWithAccessorType(storeHubType, _storeHubMarkType);
 
             builder.Services.AddScoped(serviceType, typeof(TStoreHub));
             builder.Services.AddScoped(serviceProvider =>
@@ -91,11 +96,10 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddInitializerWithAccessor<TInitializer>(this IDataBuilder builder)
             where TInitializer : class, IStoreInitializer
         {
-            builder.AccessorTypeNotNull();
+            var initializerType = typeof(TInitializer);
+            var serviceType = FindInterfaceWithAccessorType(initializerType, _initializerMarkType);
 
-            var serviceType = typeof(IStoreInitializer<>).MakeGenericType(builder.AccessorType);
-
-            builder.Services.AddScoped(serviceType, typeof(TInitializer));
+            builder.Services.AddScoped(serviceType, initializerType);
             builder.Services.AddScoped(serviceProvider =>
             {
                 return (TInitializer)serviceProvider.GetRequiredService(serviceType);
@@ -161,12 +165,17 @@ namespace Librame.Extensions.Data
         }
 
 
-        private static IDataBuilder AccessorTypeNotNull(this IDataBuilder builder)
+        private static Type FindInterfaceWithAccessorType(Type findType, Type markType)
         {
-            if (builder.AccessorType.IsNull())
-                throw new ArgumentException($"Required {nameof(builder)}.AddAccessor<TAccessor>()");
+            var withAccessorTypes = findType.GetInterfaces()
+                .Where(p => p.IsAssignableToBaseType(markType)
+                    && p.GenericTypeArguments.Length > 0
+                    && p.GenericTypeArguments.Any(a => a.IsAssignableToBaseType(_accessorMarkType)));
 
-            return builder;
+            return withAccessorTypes
+                .OrderByDescending(k => k.GenericTypeArguments.Length)
+                .FirstOrDefault()
+                ?? throw new ArgumentNullException($"The {findType} does not implement {markType.GetCustomFullName()}<TAccessor>");
         }
 
     }
