@@ -55,12 +55,13 @@ namespace Librame.Extensions.Data
             where TStoreHub : class, IStoreHub
         {
             var storeHubType = typeof(TStoreHub);
-            var serviceType = FindInterfaceWithAccessorType(storeHubType, _storeHubMarkType);
 
-            builder.Services.AddScoped(serviceType, typeof(TStoreHub));
+            var serviceTypes = FindInterfaceWithAccessorTypes(storeHubType, _storeHubMarkType);
+            serviceTypes.ForEach(type => builder.Services.AddScoped(type, storeHubType));
+
             builder.Services.AddScoped(serviceProvider =>
             {
-                return (TStoreHub)serviceProvider.GetRequiredService(serviceType);
+                return (TStoreHub)serviceProvider.GetRequiredService(serviceTypes.Last());
             });
 
             return builder;
@@ -97,12 +98,13 @@ namespace Librame.Extensions.Data
             where TInitializer : class, IStoreInitializer
         {
             var initializerType = typeof(TInitializer);
-            var serviceType = FindInterfaceWithAccessorType(initializerType, _initializerMarkType);
 
-            builder.Services.AddScoped(serviceType, initializerType);
+            var serviceTypes = FindInterfaceWithAccessorTypes(initializerType, _initializerMarkType);
+            serviceTypes.ForEach(type => builder.Services.AddScoped(type, initializerType));
+
             builder.Services.AddScoped(serviceProvider =>
             {
-                return (TInitializer)serviceProvider.GetRequiredService(serviceType);
+                return (TInitializer)serviceProvider.GetRequiredService(serviceTypes.Last());
             });
 
             return builder;
@@ -165,17 +167,18 @@ namespace Librame.Extensions.Data
         }
 
 
-        private static Type FindInterfaceWithAccessorType(Type findType, Type markType)
+        private static Type[] FindInterfaceWithAccessorTypes(Type findType, Type markType)
         {
             var withAccessorTypes = findType.GetInterfaces()
                 .Where(p => p.IsAssignableToBaseType(markType)
                     && p.GenericTypeArguments.Length > 0
-                    && p.GenericTypeArguments.Any(a => a.IsAssignableToBaseType(_accessorMarkType)));
+                    && p.GenericTypeArguments.Any(a => a.IsAssignableToBaseType(_accessorMarkType)))
+                .ToArray();
 
-            return withAccessorTypes
-                .OrderByDescending(k => k.GenericTypeArguments.Length)
-                .FirstOrDefault()
-                ?? throw new ArgumentNullException($"The {findType} does not implement {markType.GetCustomFullName()}<TAccessor>");
+            if (withAccessorTypes.IsNullOrEmpty())
+                throw new ArgumentNullException($"The {findType} does not implement {markType.GetCustomFullName()}<TAccessor>");
+
+            return withAccessorTypes;
         }
 
     }
