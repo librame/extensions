@@ -140,8 +140,17 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddIdentifier<TIdentifier>(this IDataBuilder builder)
             where TIdentifier : class, IStoreIdentifier
         {
-            if (!builder.Services.TryReplace<IStoreIdentifier, TIdentifier>())
-                builder.Services.AddSingleton<IStoreIdentifier, TIdentifier>();
+            if (builder.Services.TryReplace<IStoreIdentifier, TIdentifier>())
+            {
+                builder.Services.AddSingleton(serviceProvider =>
+                {
+                    return (TIdentifier)serviceProvider.GetRequiredService<IStoreIdentifier>();
+                });
+            }
+            else
+            {
+                builder.AddIdentifier<IStoreIdentifier, TIdentifier>();
+            }
 
             return builder;
         }
