@@ -25,8 +25,8 @@ namespace Librame.Extensions.Data.Tests
                         optionsBuilder.UseSqlServer(options.Tenants.Default.DefaultConnectionString,
                             sql => sql.MigrationsAssembly(migrationsAssembly));
                     })
-                    .AddStoreHub<TestStoreHub>() // IStoreHub<TestDbContextAccessor>
-                    .AddInitializer<TestStoreInitializer>() // IStoreInitializer<TestDbContextAccessor>
+                    .AddStoreHubWithAccessor<TestStoreHub>() // IStoreHub<TestDbContextAccessor>
+                    .AddInitializerWithAccessor<TestStoreInitializer>() // IStoreInitializer<TestDbContextAccessor>
                     .AddIdentifier<TestStoreIdentifier>(); // IStoreIdentifier
 
                 return services.BuildServiceProvider();

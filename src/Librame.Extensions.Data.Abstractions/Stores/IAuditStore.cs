@@ -28,6 +28,12 @@ namespace Librame.Extensions.Data
         where TAudit : class
     {
         /// <summary>
+        /// 审核查询。
+        /// </summary>
+        IQueryable<TAudit> Audits { get; }
+
+
+        /// <summary>
         /// 异步查找审计。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>

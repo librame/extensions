@@ -20,10 +20,20 @@ namespace Librame.Extensions.Data
     /// </summary>
     public static class StoreDataBuilderExtensions
     {
-        private static IDataBuilder AccessorTypeNotNull(this IDataBuilder builder)
+        /// <summary>
+        /// 增加存储集合。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
+        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        internal static IDataBuilder AddStores(this IDataBuilder builder)
         {
-            if (builder.AccessorType.IsNull())
-                throw new ArgumentException($"Required {nameof(builder)}.AddAccessor<TAccessor>()");
+            builder.Services.AddSingleton<IStoreIdentifier, StoreIdentifierBase>();
+
+            builder.Services.AddScoped(typeof(IStoreInitializer<>), typeof(StoreInitializerBase<>));
+            builder.Services.AddScoped(typeof(IStoreInitializer<,>), typeof(StoreInitializerBase<,>));
+
+            builder.Services.AddScoped(typeof(IStoreHub<>), typeof(StoreHubBase<>));
+            builder.Services.AddScoped(typeof(IStoreHub<,,>), typeof(StoreHubBase<,,>));
 
             return builder;
         }
@@ -35,7 +45,7 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TStoreHub">指定继承自 <see cref="IStoreHub{TAccessor}"/> 的存储中心类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddStoreHub<TStoreHub>(this IDataBuilder builder)
+        public static IDataBuilder AddStoreHubWithAccessor<TStoreHub>(this IDataBuilder builder)
             where TStoreHub : class, IStoreHub
         {
             builder.AccessorTypeNotNull();
@@ -68,9 +78,6 @@ namespace Librame.Extensions.Data
                 return (TImplementation)serviceProvider.GetRequiredService<TService>();
             });
 
-            //builder.Services.AddScoped(typeof(IStoreHub<>), typeof(StoreHubBase<>));
-            //builder.Services.AddScoped(typeof(IStoreHub<,,>), typeof(StoreHubBase<,,>));
-
             return builder;
         }
 
@@ -81,7 +88,7 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TInitializer">指定继承自 <see cref="IStoreInitializer{TAccessor}"/> 的初始化器类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddInitializer<TInitializer>(this IDataBuilder builder)
+        public static IDataBuilder AddInitializerWithAccessor<TInitializer>(this IDataBuilder builder)
             where TInitializer : class, IStoreInitializer
         {
             builder.AccessorTypeNotNull();
@@ -108,14 +115,11 @@ namespace Librame.Extensions.Data
             where TService : class, IStoreInitializer
             where TImplementation : class, TService
         {
-            builder.Services.AddSingleton<TService, TImplementation>();
-            builder.Services.AddSingleton(serviceProvider =>
+            builder.Services.AddScoped<TService, TImplementation>();
+            builder.Services.AddScoped(serviceProvider =>
             {
                 return (TImplementation)serviceProvider.GetRequiredService<TService>();
             });
-
-            //builder.Services.AddSingleton(typeof(IStoreInitializer<>), typeof(StoreInitializerBase<>));
-            //builder.Services.AddSingleton(typeof(IStoreInitializer<,>), typeof(StoreInitializerBase<,>));
 
             return builder;
         }
@@ -130,7 +134,10 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddIdentifier<TIdentifier>(this IDataBuilder builder)
             where TIdentifier : class, IStoreIdentifier
         {
-            return builder.AddIdentifier<IStoreIdentifier, TIdentifier>();
+            if (!builder.Services.TryReplace<IStoreIdentifier, TIdentifier>())
+                builder.Services.AddSingleton<IStoreIdentifier, TIdentifier>();
+
+            return builder;
         }
 
         /// <summary>
@@ -149,6 +156,15 @@ namespace Librame.Extensions.Data
             {
                 return (TImplementation)serviceProvider.GetRequiredService<TService>();
             });
+
+            return builder;
+        }
+
+
+        private static IDataBuilder AccessorTypeNotNull(this IDataBuilder builder)
+        {
+            if (builder.AccessorType.IsNull())
+                throw new ArgumentException($"Required {nameof(builder)}.AddAccessor<TAccessor>()");
 
             return builder;
         }

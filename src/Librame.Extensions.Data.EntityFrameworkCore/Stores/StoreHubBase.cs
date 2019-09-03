@@ -109,6 +109,19 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 审核查询。
+        /// </summary>
+        public IQueryable<TAudit> Audits
+            => EnsureAudits();
+
+        /// <summary>
+        /// 租户查询。
+        /// </summary>
+        public IQueryable<TTenant> Tenants
+            => EnsureTenants();
+
+
+        /// <summary>
         /// 确保审计数据集。
         /// </summary>
         /// <returns>返回 <see cref="DbSet{TEntity}"/>。</returns>
@@ -151,7 +164,7 @@ namespace Librame.Extensions.Data
         public virtual Task<IPageable<TAudit>> GetPagingAuditsAsync(int index, int size,
             Func<IQueryable<TAudit>, IQueryable<TAudit>> queryFactory = null, CancellationToken cancellationToken = default)
         {
-			var query = queryFactory?.Invoke(EnsureAudits()) ?? EnsureAudits();
+			var query = queryFactory?.Invoke(Audits) ?? Audits;
 			
             return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
                 index, size, cancellationToken);
@@ -188,7 +201,7 @@ namespace Librame.Extensions.Data
         {
             var predicate = BuildTenantUniqueExpression(name, host);
 
-            return EnsureTenants().AnyAsync(predicate, cancellationToken);
+            return Tenants.AnyAsync(predicate, cancellationToken);
         }
 
         /// <summary>
@@ -202,7 +215,7 @@ namespace Librame.Extensions.Data
         {
             var predicate = BuildTenantUniqueExpression(name, host);
 
-            return EnsureTenants().SingleOrDefaultAsync(predicate, cancellationToken);
+            return Tenants.SingleOrDefaultAsync(predicate, cancellationToken);
         }
 
         /// <summary>
@@ -225,7 +238,7 @@ namespace Librame.Extensions.Data
         public virtual Task<List<TTenant>> GetAllTenantsAsync(Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
             CancellationToken cancellationToken = default)
         {
-            var query = queryFactory?.Invoke(EnsureTenants()) ?? EnsureTenants();
+            var query = queryFactory?.Invoke(Tenants) ?? Tenants;
 
             return query.ToListAsync(cancellationToken);
         }
@@ -241,7 +254,7 @@ namespace Librame.Extensions.Data
         public virtual Task<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size,
             Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null, CancellationToken cancellationToken = default)
         {
-            var query = queryFactory?.Invoke(EnsureTenants()) ?? EnsureTenants();
+            var query = queryFactory?.Invoke(Tenants) ?? Tenants;
 
             return query.AsDescendingPagingByIndexAsync(index, size, cancellationToken);
         }

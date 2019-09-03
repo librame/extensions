@@ -46,6 +46,7 @@ namespace Librame.Extensions.Data
             }
         }
 
+
         /// <summary>
         /// 尝试更新集合。
         /// </summary>
@@ -67,6 +68,7 @@ namespace Librame.Extensions.Data
                 return EntityResult.Failed(ex);
             }
         }
+
 
         /// <summary>
         /// 尝试删除集合。

@@ -25,7 +25,7 @@ namespace Librame.Extensions.Data
         public AbstractEntityWithGenId()
         {
             // 默认使用空标识，新增推荐使用服务注入
-            Id =  AbstractGenId.EmptyId;
+            Id = AbstractGenId.EmptyId;
         }
     }
 

@@ -43,7 +43,7 @@
     Assert.True(localizer[r => r.Name].ResourceNotFound);
     // Librame.Extensions.Core.Tests.ExpressionStringLocalizerTests
     
-    // Locator
+    // Locators
     var uriString = "https://1.2.3.4.developer.microsoft.com/en-us/fabric#/get-started";
     var uriLocator = (UriLocator)uriString;
     Assert.Equal("https", uriLocator.Scheme);
@@ -71,6 +71,20 @@
     Assert.Equal(".ext", fileNameLocator.Extension);
     ......
     // Librame.Extensions.Core.Tests.FileNameLocatorTests
+    
+    // ServicesManager
+    // public interface ILetterService : IService {}
+    // services.AddSingleton<ILetterService, AService>();
+    // services.AddSingleton<ILetterService, BService>();
+    // services.AddSingleton<ILetterService, CService>();
+    
+    var letters = serviceProvider.GetRequiredService<IServiceManager<ILetterService>>();
+    Assert.NotEmpty(letters.Services) // IEnumerable<ILetterService>
+    Assert.NotNull(letters.Defaulter) // default letters.Services.First()
+    
+    letters = serviceProvider.GetRequiredService<IServiceManager<ILetterService, CService>>();
+    Assert.NotEmpty(letters.Services) // IEnumerable<ILetterService>
+    Assert.NotNull(letters.Defaulter) // default CService
 
 ### Librame.Extensions.Data.EntityFrameworkCore
 

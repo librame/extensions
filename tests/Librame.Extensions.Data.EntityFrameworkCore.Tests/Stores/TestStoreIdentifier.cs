@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Tests
 {
-    public class TestStoreIdentifier : AbstractStoreIdentifier
+    public class TestStoreIdentifier : StoreIdentifierBase
     {
         public TestStoreIdentifier(ILoggerFactory loggerFactory)
             : base(loggerFactory)

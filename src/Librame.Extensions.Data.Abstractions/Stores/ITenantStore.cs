@@ -28,6 +28,12 @@ namespace Librame.Extensions.Data
         where TTenant : class
     {
         /// <summary>
+        /// 租户查询。
+        /// </summary>
+        IQueryable<TTenant> Tenants { get; }
+
+
+        /// <summary>
         /// 异步包含指定租户。
         /// </summary>
         /// <param name="name">给定的名称。</param>
