@@ -32,7 +32,7 @@ namespace Librame.Extensions.Drawing
         }
 
 
-        public IFileLocator FontFileLocator => Options.Captcha.Font.FileLocator;
+        public FileLocator FontFileLocator => Options.Captcha.Font.FileLocator;
 
 
         public Task<bool> DrawFileAsync(string captcha, string savePath, CancellationToken cancellationToken = default)

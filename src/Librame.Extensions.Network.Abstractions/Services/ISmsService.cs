@@ -10,32 +10,28 @@
 
 #endregion
 
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
-    using Core;
-
     /// <summary>
     /// 短信服务接口。
     /// </summary>
     public interface ISmsService : INetworkService
     {
         /// <summary>
-        /// 请求程序管理器。
+        /// 异步发送。
         /// </summary>
-        IServicesManager<IUriRequester> Requesters { get; }
-
+        /// <param name="mobile">给定的手机。</param>
+        /// <param name="text">给定的文本。</param>
+        /// <returns>返回一个包含响应内容的异步操作。</returns>
+        Task<string> SendAsync(string mobile, string text);
 
         /// <summary>
         /// 异步发送。
         /// </summary>
-        /// <param name="message">给定要发送的消息。</param>
-        /// <param name="gatewayUrl">给定的短信网关 URL（可选；默认为选项设定）。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含响应内容的异步操作。</returns>
-        Task<string> SendAsync(string message, string gatewayUrl = null,
-            CancellationToken cancellationToken = default);
+        /// <param name="descriptors">给定的 <see cref="ShortMessageDescriptor"/> 数组。</param>
+        /// <returns>返回一个包含响应内容数组的异步操作。</returns>
+        Task<string[]> SendAsync(params ShortMessageDescriptor[] descriptors);
     }
 }

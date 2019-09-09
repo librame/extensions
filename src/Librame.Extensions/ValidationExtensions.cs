@@ -33,9 +33,7 @@ namespace Librame.Extensions
         /// <param name="source">给定的源实例。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsNull<TSource>(this TSource source)
-        {
-            return null == source;
-        }
+            => null == source;
 
         /// <summary>
         /// 是否不为 NULL。
@@ -44,9 +42,7 @@ namespace Librame.Extensions
         /// <param name="source">给定的源实例。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsNotNull<TSource>(this TSource source)
-        {
-            return null != source;
-        }
+            => null != source;
 
 
         /// <summary>
@@ -58,9 +54,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsNullOrWhiteSpace(this string str)
-        {
-            return string.IsNullOrWhiteSpace(str);
-        }
+            => string.IsNullOrWhiteSpace(str);
 
         /// <summary>
         /// 是否不为 NULL 或空格。
@@ -71,9 +65,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsNotNullOrWhiteSpace(this string str)
-        {
-            return !string.IsNullOrWhiteSpace(str);
-        }
+            => !string.IsNullOrWhiteSpace(str);
 
 
         /// <summary>
@@ -85,9 +77,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsNullOrEmpty(this string str)
-        {
-            return string.IsNullOrEmpty(str);
-        }
+            => string.IsNullOrEmpty(str);
 
         /// <summary>
         /// 是否不为 NULL 或空字符串。
@@ -98,9 +88,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsNotNullOrEmpty(this string str)
-        {
-            return !string.IsNullOrEmpty(str);
-        }
+            => !string.IsNullOrEmpty(str);
 
 
         /// <summary>
@@ -134,9 +122,7 @@ namespace Librame.Extensions
         /// <returns>返回布尔值。</returns>
         public static bool IsNotNullOrEmpty<TSources>(this TSources sources)
             where TSources : IEnumerable
-        {
-            return !sources.IsNullOrEmpty();
-        }
+            => !sources.IsNullOrEmpty();
 
 
         /// <summary>
@@ -166,9 +152,7 @@ namespace Librame.Extensions
         /// <param name="sources">给定的 <see cref="IEnumerable{TSource}"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsNotNullOrEmpty<TSource>(this IEnumerable<TSource> sources)
-        {
-            return !sources.IsNullOrEmpty();
-        }
+            => !sources.IsNullOrEmpty();
 
         #endregion
 
@@ -182,9 +166,7 @@ namespace Librame.Extensions
         /// <param name="multiples">给定的倍数。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsMultiples(this int value, int multiples)
-        {
-            return 0 == value % multiples;
-        }
+            => 0 == value % multiples;
 
 
         /// <summary>
@@ -199,7 +181,6 @@ namespace Librame.Extensions
             where T : IComparable<T>
         {
             value.NotNull(nameof(value));
-
             return equals ? value.CompareTo(compare) >= 0 : value.CompareTo(compare) > 0;
         }
         /// <summary>
@@ -214,7 +195,6 @@ namespace Librame.Extensions
             where T : IComparable<T>
         {
             value.NotNull(nameof(value));
-
             return equals ? value.CompareTo(compare) <= 0 : value.CompareTo(compare) < 0;
         }
 
@@ -243,16 +223,12 @@ namespace Librame.Extensions
         #region Type
 
         /// <summary>
-        /// 是否为具体实类型（非接口与抽象类型，即可实例化类型）。
+        /// 是否为具实类型（非接口与抽象类型，即可实例化类型）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsConcreteType(this Type type)
-        {
-            return type.IsNotNull()
-                && !type.IsAbstract
-                && !type.IsInterface;
-        }
+            => type.IsNotNull() && !type.IsAbstract && !type.IsInterface;
 
         /// <summary>
         /// 是否为开放式泛型（泛类型定义或包含泛型参数集合）。
@@ -285,10 +261,7 @@ namespace Librame.Extensions
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsStringType(this Type type)
-        {
-            return type.IsNotNull()
-                && type == TypeExtensions.StringType;
-        }
+            => type.IsNotNull() && type == TypeExtensions.StringType;
 
         /// <summary>
         /// 是否可以从目标类型分配。
@@ -333,9 +306,7 @@ namespace Librame.Extensions
         /// <param name="baseType">给定的基础类型。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsAssignableToBaseType(this Type targetType, Type baseType)
-        {
-            return baseType.IsAssignableFromTargetType(targetType);
-        }
+            => baseType.IsAssignableFromTargetType(targetType);
 
         #endregion
 

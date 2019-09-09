@@ -39,7 +39,6 @@ namespace Librame.Extensions.Network.DotNetty
         public IBootstrapWrapper Create(bool useLibuv, out IEventLoopGroup group)
         {
             var bootstrap = CreateBootstrap(useLibuv, out group);
-
             return new BootstrapWrapper(bootstrap, _loggerFactory);
         }
 
@@ -47,7 +46,6 @@ namespace Librame.Extensions.Network.DotNetty
             out IEventLoopGroup bossGroup, out IEventLoopGroup workerGroup)
         {
             var bootstrap = CreateServerBootstrap(useLibuv, out bossGroup, out workerGroup);
-
             return new ServerBootstrapWrapper(bootstrap, _loggerFactory);
         }
 
@@ -56,7 +54,6 @@ namespace Librame.Extensions.Network.DotNetty
             out IEventLoopGroup group)
         {
             var bootstrap = CreateBootstrap(useLibuv, out group);
-
             return new BootstrapWrapper<Bootstrap, IChannel>(bootstrap, _loggerFactory);
         }
 
@@ -64,7 +61,6 @@ namespace Librame.Extensions.Network.DotNetty
             out IEventLoopGroup bossGroup, out IEventLoopGroup workerGroup)
         {
             var bootstrap = CreateServerBootstrap(useLibuv, out bossGroup, out workerGroup);
-
             return new BootstrapWrapper<ServerBootstrap, IServerChannel>(bootstrap, _loggerFactory);
         }
 
@@ -88,7 +84,7 @@ namespace Librame.Extensions.Network.DotNetty
             Logger.LogInformation("Transport type: " + (useLibuv ? "Libuv" : "Socket"));
 
             var bootstrap = new Bootstrap().Group(group);
-            Logger.LogDebug($"Use group: {group.GetType().GetCustomFullName()}");
+            Logger.LogDebug($"Use group: {group.GetType().GetSimpleFullName()}");
 
             return bootstrap;
         }
@@ -122,8 +118,8 @@ namespace Librame.Extensions.Network.DotNetty
             Logger.LogInformation("Transport type: " + (useLibuv ? "Libuv" : "Socket"));
 
             var bootstrap = new ServerBootstrap().Group(bossGroup, workerGroup);
-            Logger.LogDebug($"Use boss group: {bossGroup.GetType().GetCustomFullName()}");
-            Logger.LogDebug($"Use worker group: {workerGroup.GetType().GetCustomFullName()}");
+            Logger.LogDebug($"Use boss group: {bossGroup.GetType().GetSimpleFullName()}");
+            Logger.LogDebug($"Use worker group: {workerGroup.GetType().GetSimpleFullName()}");
 
             return bootstrap;
         }

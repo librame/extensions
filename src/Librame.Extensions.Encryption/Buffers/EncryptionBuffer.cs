@@ -40,9 +40,7 @@ namespace Librame.Extensions.Encryption
         private IServiceProvider _serviceProvider;
 
         public IServiceProvider ServiceProvider
-        {
-            get { return _serviceProvider.NotNull(nameof(_serviceProvider)); }
-        }
+            => _serviceProvider.NotNull(nameof(_serviceProvider));
 
 
         public IEncryptionBuffer<TConverter, TSource> ApplyServiceProvider(IServiceProvider serviceProvider)

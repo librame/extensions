@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 
 namespace Librame.Extensions.Storage.Tests
 {
@@ -12,7 +13,10 @@ namespace Librame.Extensions.Storage.Tests
                 var services = new ServiceCollection();
 
                 services.AddLibrame()
-                    .AddStorage();
+                    .AddStorage(options =>
+                    {
+                        options.FileProviders.Add(new PhysicalStorageFileProvider(Path.GetTempPath()));
+                    });
 
                 return services.BuildServiceProvider();
             });

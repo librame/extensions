@@ -56,7 +56,6 @@ namespace Librame.Extensions
             CapacityUnitNotation notation = CapacityUnitNotation.Binary)
         {
             var descriptor = CapacityUnitManager.GetDescriptor(format, notation);
-
             return fileSize.FormatCapacityUnitString(descriptor);
         }
 
@@ -115,7 +114,6 @@ namespace Librame.Extensions
             CapacityUnitNotation notation = CapacityUnitNotation.Binary)
         {
             var descriptor = CapacityUnitManager.GetDescriptor(format, notation);
-
             return fileSize.FormatCapacityUnitString(descriptor);
         }
 

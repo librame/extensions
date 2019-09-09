@@ -82,7 +82,7 @@ namespace Librame.Extensions.Network
         {
             var buffer = await GetResponseBytesAsync(uri, postData, enableCodec, parameters, cancellationToken);
             if (buffer.IsNotNullOrEmpty())
-                return buffer.FromEncodingBytes(Encoding);
+                return buffer.AsEncodingString(Encoding);
 
             return null;
         }
@@ -98,9 +98,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回一个包含 <see cref="Stream"/> 的异步操作。</returns>
         public virtual Task<Stream> GetResponseStreamAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
     }
 }

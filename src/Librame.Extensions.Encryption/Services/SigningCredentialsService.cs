@@ -34,14 +34,10 @@ namespace Librame.Extensions.Encryption
 
 
         public SigningCredentials GetGlobalSigningCredentials()
-        {
-            return GetSigningCredentials(EncryptionBuilderOptions.GLOBAL_KEY);
-        }
+            => GetSigningCredentials(EncryptionBuilderOptions.GLOBAL_KEY);
 
         public SigningCredentials GetSigningCredentials(string key)
-        {
-            return _credentials[key];
-        }
+            => _credentials[key];
 
     }
 }

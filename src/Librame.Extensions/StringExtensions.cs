@@ -30,9 +30,8 @@ namespace Librame.Extensions
         /// <param name="number">给定的 32 位带符号整数。</param>
         /// <returns>返回字符串。</returns>
         public static string FormatString(this int number)
-        {
-            return number.FormatString(2);
-        }
+            => number.FormatString(2);
+
         /// <summary>
         /// 将数值格式化为指定长度的字符串。
         /// </summary>
@@ -52,9 +51,8 @@ namespace Librame.Extensions
         /// <param name="number">给定的 64 位带符号整数。</param>
         /// <returns>返回字符串。</returns>
         public static string FormatString(this long number)
-        {
-            return number.FormatString(2);
-        }
+            => number.FormatString(2);
+
         /// <summary>
         /// 将数值格式化为指定长度的字符串。
         /// </summary>
@@ -248,9 +246,7 @@ namespace Librame.Extensions
         /// <param name="str">指定的字符串。</param>
         /// <returns>返回清除后的字符串。</returns>
         public static string TrimComma(this string str)
-        {
-            return Trim(str, ",");
-        }
+            => Trim(str, ",");
 
         /// <summary>
         /// 清除首尾英文句号。
@@ -258,9 +254,7 @@ namespace Librame.Extensions
         /// <param name="str">指定的字符串。</param>
         /// <returns>返回清除后的字符串。</returns>
         public static string TrimPeriod(this string str)
-        {
-            return Trim(str, ".");
-        }
+            => Trim(str, ".");
 
         /// <summary>
         /// 清除首尾英文分号。
@@ -268,9 +262,7 @@ namespace Librame.Extensions
         /// <param name="str">指定的字符串。</param>
         /// <returns>返回清除后的字符串。</returns>
         public static string TrimSemicolon(this string str)
-        {
-            return Trim(str, ";");
-        }
+            => Trim(str, ";");
 
 
         /// <summary>
@@ -283,7 +275,6 @@ namespace Librame.Extensions
         public static string Trim(this string str, string trim, bool loops = true)
         {
             str = TrimStart(str, trim, loops);
-
             str = TrimEnd(str, trim, loops);
 
             return str;
@@ -301,7 +292,6 @@ namespace Librame.Extensions
             if (trim.IsNotNullOrEmpty() && str.StartsWith(trim, StringComparison.OrdinalIgnoreCase))
             {
                 str = str.Substring(trim.Length);
-
                 if (loops)
                     str = TrimStart(str, trim);
             }
@@ -321,7 +311,6 @@ namespace Librame.Extensions
             if (trim.IsNotNullOrEmpty() && str.EndsWith(trim, StringComparison.OrdinalIgnoreCase))
             {
                 str = str.Substring(0, str.Length - trim.Length);
-
                 if (loops)
                     str = TrimEnd(str, trim);
             }

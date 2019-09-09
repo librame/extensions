@@ -87,14 +87,10 @@ namespace System.Collections.Generic
         /// </summary>
         /// <returns>返回枚举数。</returns>
         public IEnumerator<TreeingNode<T, TId>> GetEnumerator()
-        {
-            return _nodes.GetEnumerator();
-        }
+            => _nodes.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+            => GetEnumerator();
 
     }
 }

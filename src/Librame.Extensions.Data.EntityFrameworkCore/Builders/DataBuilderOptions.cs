@@ -21,11 +21,6 @@ namespace Librame.Extensions.Data
     public class DataBuilderOptions : DataBuilderOptionsBase
     {
         /// <summary>
-        /// 默认架构。
-        /// </summary>
-        public string DefaultSchema { get; set; }
-
-        /// <summary>
         /// 是否创建数据库（如果数据库不存在；默认已启用）。
         /// </summary>
         public bool IsCreateDatabase { get; set; }
@@ -38,28 +33,15 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 审计。
+        /// 是 UTC 时钟。
         /// </summary>
-        public AuditOptions Audits { get; set; }
-            = new AuditOptions();
-
-        /// <summary>
-        /// 租户。
-        /// </summary>
-        public TenantOptions Tenants { get; set; }
-            = new TenantOptions();
-    }
+        public bool IsUtcClock { get; set; }
 
 
-    /// <summary>
-    /// 审计选项。
-    /// </summary>
-    public class AuditOptions
-    {
         /// <summary>
         /// 启用审计（默认已启用）。
         /// </summary>
-        public bool Enabled { get; set; }
+        public bool AuditEnabled { get; set; }
             = true;
 
         /// <summary>
@@ -67,24 +49,31 @@ namespace Librame.Extensions.Data
         /// </summary>
         public EntityState[] AuditEntityStates { get; set; }
             = new EntityState[] { EntityState.Added, EntityState.Modified, EntityState.Deleted };
-    }
 
 
-    /// <summary>
-    /// 租户选项。
-    /// </summary>
-    public class TenantOptions
-    {
+        /// <summary>
+        /// 启用实体表（默认已启用）。
+        /// </summary>
+        public bool TableEnabled { get; set; }
+            = true;
+
+
         /// <summary>
         /// 启用租户（默认已启用）。
         /// </summary>
-        public bool Enabled { get; set; }
+        public bool TenantEnabled { get; set; }
             = true;
 
         /// <summary>
         /// 默认租户。
         /// </summary>
-        public ITenant Default { get; set; }
-            = new Tenant();
+        public ITenant DefaultTenant { get; set; }
+            = new DataTenant
+            {
+                Name = "DefaultTenant",
+                Host = "localhost",
+                DefaultConnectionString = "librame_data_default",
+                WritingConnectionString = "librame_data_writing",
+            };
     }
 }

@@ -135,4 +135,34 @@
   <data name="DataGroup" xml:space="preserve">
     <value>Data group</value>
   </data>
+  <data name="ConcurrencyStamp" xml:space="preserve">
+    <value>Concurrency stamp</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>Created by</value>
+  </data>
+  <data name="CreatedTime" xml:space="preserve">
+    <value>Created time</value>
+  </data>
+  <data name="IsDefaultValue" xml:space="preserve">
+    <value>Is default value</value>
+  </data>
+  <data name="LockoutEnabled" xml:space="preserve">
+    <value>Lockout enabled</value>
+  </data>
+  <data name="LockoutEndTime" xml:space="preserve">
+    <value>Lockout end time</value>
+  </data>
+  <data name="ParentId" xml:space="preserve">
+    <value>Parent id</value>
+  </data>
+  <data name="RowVersion" xml:space="preserve">
+    <value>Row version</value>
+  </data>
+  <data name="UpdatedBy" xml:space="preserve">
+    <value>Updated by</value>
+  </data>
+  <data name="UpdatedTime" xml:space="preserve">
+    <value>Updated time</value>
+  </data>
 </root>

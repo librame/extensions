@@ -30,9 +30,7 @@ namespace Librame.Extensions.Drawing
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
         public static IDrawingBuilder AddDrawing(this IExtensionBuilder builder,
             Action<DrawingBuilderOptions> setupAction = null)
-        {
-            return builder.AddDrawing(b => new DrawingBuilder(b), setupAction);
-        }
+            => builder.AddDrawing(b => new DrawingBuilder(b), setupAction);
 
         /// <summary>
         /// 添加图画扩展。

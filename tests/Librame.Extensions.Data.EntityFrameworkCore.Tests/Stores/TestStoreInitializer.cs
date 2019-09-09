@@ -11,8 +11,9 @@ namespace Librame.Extensions.Data.Tests
         private IList<Category> _categories;
 
 
-        public TestStoreInitializer(IStoreIdentifier identifier, ILoggerFactory loggerFactory)
-            : base(identifier, loggerFactory)
+        public TestStoreInitializer(IClockService clock,
+            IStoreIdentifier identifier, ILoggerFactory loggerFactory)
+            : base(clock, identifier, loggerFactory)
         {
         }
 
@@ -21,14 +22,14 @@ namespace Librame.Extensions.Data.Tests
         {
             base.InitializeCore(stores);
 
-            InitializeCategories(stores);
+            InitializeCategories(stores.Accessor);
 
-            InitializeArticles(stores);
+            InitializeArticles(stores.Accessor);
         }
 
-        private void InitializeCategories(IStoreHub<TestDbContextAccessor> stores)
+        private void InitializeCategories(TestDbContextAccessor accessor)
         {
-            if (!stores.Accessor.Categories.Any())
+            if (!accessor.Categories.Any())
             {
                 _categories = new List<Category>
                 {
@@ -42,17 +43,17 @@ namespace Librame.Extensions.Data.Tests
                     }
                 };
 
-                stores.Accessor.Categories.AddRange(_categories);
+                accessor.Categories.AddRange(_categories);
             }
             else
             {
-                _categories = stores.Accessor.Categories.ToList();
+                _categories = accessor.Categories.ToList();
             }
         }
 
-        private void InitializeArticles(IStoreHub<TestDbContextAccessor> stores)
+        private void InitializeArticles(TestDbContextAccessor stores)
         {
-            if (!stores.Accessor.Categories.Any())
+            if (!stores.Categories.Any())
             {
                 var articles = new List<Article>();
 
@@ -69,7 +70,7 @@ namespace Librame.Extensions.Data.Tests
                     });
                 }
 
-                stores.Accessor.Articles.AddRange(articles);
+                stores.Articles.AddRange(articles);
             }
         }
 

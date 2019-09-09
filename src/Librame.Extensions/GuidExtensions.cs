@@ -27,9 +27,7 @@ namespace Librame.Extensions
         /// <param name="guids">给定的 <see cref="IEnumerable{Guid}"/>。</param>
         /// <returns>返回 <see cref="IEnumerable{Guid}"/>。</returns>
         public static IEnumerable<Guid> AsCombGuids(this IEnumerable<Guid> guids)
-        {
-            return guids.Select(id => id.AsCombGuid());
-        }
+            => guids.Select(id => id.AsCombGuid());
 
         /// <summary>
         /// 转换为有顺序的 GUID。
@@ -83,9 +81,8 @@ namespace Librame.Extensions
         /// <param name="count">给定要生成的数量。</param>
         /// <returns>返回有顺序的 <see cref="IEnumerable{Guid}"/>。</returns>
         public static IEnumerable<Guid> GenerateCombIds(this int count)
-        {
-            return count.GenerateCombIds(out _);
-        }
+            => count.GenerateCombIds(out _);
+
         /// <summary>
         /// 生成有顺序的 GUID 集合。
         /// </summary>
@@ -95,7 +92,6 @@ namespace Librame.Extensions
         public static IEnumerable<Guid> GenerateCombIds(this int count, out IEnumerable<Guid> guids)
         {
             guids = count.GenerateGuids();
-
             return guids.AsCombGuids();
         }
 

@@ -29,9 +29,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回字符缓冲区。</returns>
         public static TCharBuffer Change<TCharBuffer>(this TCharBuffer buffer, Func<Memory<char>, Memory<char>> changeFactory)
             where TCharBuffer : ICharBuffer
-        {
-            return buffer.Change(changeFactory.Invoke(buffer.Memory));
-        }
+            => buffer.Change(changeFactory.Invoke(buffer.Memory));
 
         /// <summary>
         /// 改变存储器。
@@ -71,9 +69,7 @@ namespace Librame.Extensions.Core
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串键值对。</returns>
         public static KeyValuePair<string, string> SplitKeyValueStringByIndexOf(this ICharBuffer buffer, char separator)
-        {
-            return buffer.SplitKeyValueByIndexOf(separator, key => key.ToString(), value => value.ToString());
-        }
+            => buffer.SplitKeyValueByIndexOf(separator, key => key.ToString(), value => value.ToString());
 
         /// <summary>
         /// 分拆为字符串键值对。
@@ -82,9 +78,7 @@ namespace Librame.Extensions.Core
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串键值对。</returns>
         public static KeyValuePair<string, string> SplitKeyValueStringByIndexOf(this ICharBuffer buffer, string separator)
-        {
-            return buffer.SplitKeyValueByIndexOf(separator, key => key.ToString(), value => value.ToString());
-        }
+            => buffer.SplitKeyValueByIndexOf(separator, key => key.ToString(), value => value.ToString());
 
 
         /// <summary>
@@ -94,9 +88,7 @@ namespace Librame.Extensions.Core
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串键值对。</returns>
         public static KeyValuePair<string, string> SplitKeyValueStringByLastIndexOf(this ICharBuffer buffer, char separator)
-        {
-            return buffer.SplitKeyValueByLastIndexOf(separator, key => key.ToString(), value => value.ToString());
-        }
+            => buffer.SplitKeyValueByLastIndexOf(separator, key => key.ToString(), value => value.ToString());
 
         /// <summary>
         /// 分拆为字符串键值对。
@@ -105,9 +97,7 @@ namespace Librame.Extensions.Core
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串键值对。</returns>
         public static KeyValuePair<string, string> SplitKeyValueStringByLastIndexOf(this ICharBuffer buffer, string separator)
-        {
-            return buffer.SplitKeyValueByLastIndexOf(separator, key => key.ToString(), value => value.ToString());
-        }
+            => buffer.SplitKeyValueByLastIndexOf(separator, key => key.ToString(), value => value.ToString());
 
 
         /// <summary>
@@ -125,9 +115,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回键值对。</returns>
         public static KeyValuePair<TKey, TValue> SplitKeyValueByIndexOf<TKey, TValue>(this ICharBuffer buffer, char separator,
             Func<Memory<char>, TKey> keyConverter, Func<Memory<char>, TValue> valueConverter)
-        {
-            return buffer.SplitKeyValueByIndexOf(separator.ToString(), keyConverter, valueConverter);
-        }
+            => buffer.SplitKeyValueByIndexOf(separator.ToString(), keyConverter, valueConverter);
 
         /// <summary>
         /// 分拆为键值对。
@@ -146,7 +134,6 @@ namespace Librame.Extensions.Core
             Func<Memory<char>, TKey> keyConverter, Func<Memory<char>, TValue> valueConverter)
         {
             var separatorIndex = buffer.ToString().IndexOf(separator);
-
             return buffer.SplitKeyValue(separatorIndex, separator.Length, keyConverter, valueConverter);
         }
 
@@ -166,9 +153,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回键值对。</returns>
         public static KeyValuePair<TKey, TValue> SplitKeyValueByLastIndexOf<TKey, TValue>(this ICharBuffer buffer, char separator,
             Func<Memory<char>, TKey> keyConverter, Func<Memory<char>, TValue> valueConverter)
-        {
-            return buffer.SplitKeyValueByLastIndexOf(separator.ToString(), keyConverter, valueConverter);
-        }
+            => buffer.SplitKeyValueByLastIndexOf(separator.ToString(), keyConverter, valueConverter);
 
         /// <summary>
         /// 分拆为键值对。
@@ -187,7 +172,6 @@ namespace Librame.Extensions.Core
             Func<Memory<char>, TKey> keyConverter, Func<Memory<char>, TValue> valueConverter)
         {
             var separatorIndex = buffer.ToString().LastIndexOf(separator);
-
             return buffer.SplitKeyValue(separatorIndex, separator.Length, keyConverter, valueConverter);
         }
 

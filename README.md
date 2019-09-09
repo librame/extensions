@@ -45,14 +45,14 @@
     
     // Locators
     var uriString = "https://1.2.3.4.developer.microsoft.com/en-us/fabric#/get-started";
-    var uriLocator = (UriLocator)uriString;
+    var uriLocator = uriString.AsUriLocator();
     Assert.Equal("https", uriLocator.Scheme);
     Assert.Equal("developer.microsoft.com", uriLocator.Host);
     Assert.Equal("/en-us/fabric", uriLocator.Path);
     ......
     // Librame.Extensions.Core.Tests.UriLocatorTests
     
-    var domainLocator = (DomainNameLocator)uriString.GetHost(); // uriLocator.Host
+    var domainLocator = uriString.GetHost().AsDomainNameLocator(); // uriLocator.Host
     Assert.Equal("com", domainLocator.Root);
     Assert.Equal("microsoft.com", domainLocator.TopLevel);
     Assert.Equal("developer.microsoft.com", domainLocator.SecondLevel);
@@ -98,18 +98,19 @@
         .AddData(options =>
         {
             // Multi-Tenancy, Reading and writing separation
-            options.Tenants.Default.DefaultConnectionString = "default database connection string";
-            options.Tenants.Default.WritingConnectionString = "write database connection string";
-            options.Tenants.Default.WritingSeparation = true;
+            options.DefaultTenant.DefaultConnectionString = "default database connection string";
+            options.DefaultTenant.WritingConnectionString = "write database connection string";
+            options.DefaultTenant.WritingSeparation = true;
         })
         .AddAccessor<TestDbContextAccessor>((options, optionsBuilder) =>
         {
-            optionsBuilder.UseSqlServer(options.Tenants.Default.DefaultConnectionString,
+            // Install-Package Microsoft.EntityFrameworkCore.SqlServer
+            optionsBuilder.UseSqlServer(options.DefaultTenant.DefaultConnectionString,
                 sql => sql.MigrationsAssembly("AssemblyName"));
         })
-        .AddStoreHub<TestStoreHub>() // IStoreHub<TestDbContextAccessor>
-        .AddInitializer<TestStoreInitializer>() // IStoreInitializer<TestDbContextAccessor>
-        .AddIdentifier<TestStoreIdentifier>(); // IStoreIdentifier
+        .AddStoreHubWithAccessor<TestStoreHub>()
+        .AddInitializerWithAccessor<TestStoreInitializer>()
+        .AddIdentifier<TestStoreIdentifier>();
 
 ## Test Extension
 
@@ -171,8 +172,6 @@
     // Test
     using (var stores = serviceProvider.GetRequiredService<TestStoreHub>())
     {
-        stores.Initializer.Initialize(stores);
-
         var categories = stores.GetCategories();
         Assert.Empty(categories);
 
@@ -322,7 +321,7 @@
     
     // Message
     var sms = serviceProvider.GetRequiredService<ISmsService>();
-    var result = async sms.SendAsync("TestData: 123456");
+    var result = async sms.SendAsync("13012345678", "TestData: 123456");
     Assert.Empty(result);
 
 ### Librame.Extensions.Network.DotNetty
@@ -333,7 +332,7 @@
 
 ## Register Extension
 
-    var locator = "dotnetty.com.pfx".AsDefaultFileLocator("BasePath");
+    var locator = "dotnetty.com.pfx".AsFileLocator("BasePath");
     services.AddLibrame(dependency => dependency.LoggingSetupAction = logging =>
     {
         logging.ClearProviders();
@@ -403,17 +402,30 @@
 ## Register Extension
 
     services.AddLibrame()
-        .AddStorage();
+        .AddStorage(options =>
+        {
+            options.FileProviders.Add(new PhysicalStorageFileProvider("Root"));
+        });
 
 ## Test Extension
 
     // FileService
-    var file = serviceProvider.GetRequiredService<IFileService>();
+    var service = serviceProvider.GetRequiredService<IFileService>();
+    var fileInfo = await service.GetFileInfoAsync("Subpath");
     
-    var provider = await file.GetProviderAsync(root);
-    var files = provider.GetDirectoryContents(folder);
-    Assert.NotEmpty(files);
-    // Librame.Extensions.Storage.Tests.PhysicalFileServiceTests
+    // fileInfo save as WriteFile
+    using (var writeStream = new FileStream("WriteFile", FileMode.Create))
+    {
+        await service.ReadAsync(fileInfo, writeStream);
+    }
+    Assert.Equal(File.ReadAllText(fileInfo.PhysicalPath), File.ReadAllText("WriteFile"));
+    
+    using (var readStream = new FileStream("ReadFile", FileMode.Open))
+    {
+        await service.WriteAsync(fileInfo, readStream);
+    }
+    Assert.Equal(File.ReadAllText("ReadFile"), File.ReadAllText(fileInfo.PhysicalPath));
+    // Librame.Extensions.Storage.Tests.FileServiceTests
     
     // FileTransferService
     var url = "https://www.domain.com/test.txt";

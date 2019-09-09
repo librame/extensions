@@ -10,7 +10,8 @@
 
 #endregion
 
-using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
@@ -29,22 +30,32 @@ namespace Librame.Extensions.Network
         }
 
 
-        public IServicesManager<IUriRequester> Requesters => _requesters;
-
-
-        public Task<string> SendAsync(string message, string gatewayUrl = null,
-            CancellationToken cancellationToken = default)
+        public async Task<string> SendAsync(string mobile, string text)
         {
-            if (gatewayUrl.IsNullOrEmpty())
-                gatewayUrl = Options.Sms.GetewayUrl;
+            var list = await SendAsync(new ShortMessageDescriptor(mobile, text));
+            return list.First();
+        }
 
+        public async Task<string[]> SendAsync(params ShortMessageDescriptor[] descriptors)
+        {
             var parameters = new RequestParameters
             {
                 Accept = "text/xml,text/javascript"
             };
 
-            return _requesters.Defaulter.GetResponseStringAsync(gatewayUrl, message,
-                Options.Sms.EnableCodec, parameters, cancellationToken);
+            var list = new List<string>();
+
+            foreach (var descr in descriptors)
+            {
+                var gatewayUrl = Options.Sms.GetewayUrlFactory.Invoke(Options.Sms.PlatformInfo, descr);
+
+                var result = await _requesters.Defaulter.GetResponseStringAsync(gatewayUrl, postData: null,
+                    Options.Sms.EnableCodec, parameters);
+
+                list.Add(result);
+            }
+
+            return list.ToArray();
         }
 
     }

@@ -28,10 +28,7 @@ namespace Librame.Extensions
         /// <returns>返回 <see cref="Process"/>。</returns>
         public static Process StartLocateInExplorer(this string fileName,
             Action<ProcessStartInfo> startInfoAction = null)
-        {
-            return "explorer.exe".StartProcess("/e,/select," + fileName,
-                startInfoAction);
-        }
+            => "explorer.exe".StartProcess("/e,/select," + fileName, startInfoAction);
 
 
         /// <summary>
@@ -48,7 +45,6 @@ namespace Librame.Extensions
             {
                 Arguments = arguments ?? string.Empty
             };
-
             startInfoAction?.Invoke(startInfo);
 
             return Process.Start(startInfo);

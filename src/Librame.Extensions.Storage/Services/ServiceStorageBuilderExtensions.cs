@@ -18,7 +18,7 @@ namespace Librame.Extensions.Storage
     {
         public static IStorageBuilder AddServices(this IStorageBuilder builder)
         {
-            builder.Services.AddScoped<IFileService, PhysicalFileService>();
+            builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<IFileTransferService, FileTransferService>();
             builder.Services.AddScoped<IFilePermissionService, FilePermissionService>();
 

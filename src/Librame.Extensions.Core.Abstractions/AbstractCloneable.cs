@@ -29,28 +29,21 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 <typeparamref name="TCloneable"/>。</returns>
         public virtual object Clone()
-        {
-            return MemberwiseClone();
-        }
+            => MemberwiseClone();
 
         /// <summary>
         /// 复制副本（相当于 <see cref="ICloneable.Clone()"/> 的泛型版本；默认返回浅副本）。
         /// </summary>
         /// <returns>返回 <typeparamref name="TCloneable"/>。</returns>
         public virtual TCloneable Copy()
-        {
-            return ShallowClone();
-        }
+            => ShallowClone();
 
         /// <summary>
-        /// 创建一个浅副本。
+        /// 创建一个浅副本（在副本中对引用类型的字段值做修改会影响到源对象本身）。
         /// </summary>
         /// <returns>返回 <typeparamref name="TCloneable"/>。</returns>
         public virtual TCloneable ShallowClone()
-        {
-            // 在副本中对引用类型的字段值做修改会影响到源对象本身
-            return (TCloneable)Clone();
-        }
+            => (TCloneable)Clone();
 
         /// <summary>
         /// 创建一个深副本。

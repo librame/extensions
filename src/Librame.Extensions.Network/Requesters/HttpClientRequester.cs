@@ -79,7 +79,7 @@ namespace Librame.Extensions.Network
         {
             var buffer = await GetResponseBytesAsync(uri, postData, enableCodec, parameters, cancellationToken);
             if (buffer.IsNotNullOrEmpty())
-                return buffer.FromEncodingBytes(Encoding);
+                return buffer.AsEncodingString(Encoding);
 
             return null;
         }
@@ -97,7 +97,6 @@ namespace Librame.Extensions.Network
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
             var message = await GetResponseMessage(uri, postData, enableCodec, parameters, cancellationToken);
-            
             return await message.Content.ReadAsStreamAsync();
         }
 

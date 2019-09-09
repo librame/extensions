@@ -42,10 +42,38 @@ namespace Librame.Extensions.Core
         /// 创建副本。
         /// </summary>
         /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        public virtual new IByteBuffer Copy()
-        {
-            return new ByteBuffer(Memory);
-        }
+        public new IByteBuffer Copy()
+            => new ByteBuffer(Memory);
+
+
+        /// <summary>
+        /// 隐式转换为字节存储器。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="ByteBuffer"/>。</param>
+        public static implicit operator Memory<byte>(ByteBuffer buffer)
+            => buffer.Memory;
+
+        /// <summary>
+        /// 隐式转换为字节数组。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="ByteBuffer"/>。</param>
+        public static implicit operator byte[](ByteBuffer buffer)
+            => buffer.Memory.ToArray();
+
+
+        /// <summary>
+        /// 显式转换为字节缓冲区。
+        /// </summary>
+        /// <param name="bytes">给定的 <see cref="Memory{Byte}"/>。</param>
+        public static explicit operator ByteBuffer(Memory<byte> bytes)
+            => new ByteBuffer(bytes);
+
+        /// <summary>
+        /// 显式转换为字节缓冲区。
+        /// </summary>
+        /// <param name="bytes">给定的字节数组。</param>
+        public static explicit operator ByteBuffer(byte[] bytes)
+            => new ByteBuffer(bytes);
 
     }
 }

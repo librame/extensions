@@ -42,10 +42,52 @@ namespace Librame.Extensions.Core
         /// 创建副本。
         /// </summary>
         /// <returns>返回 <see cref="IReadOnlyCharBuffer"/>。</returns>
-        public virtual new IReadOnlyCharBuffer Copy()
-        {
-            return new ReadOnlyCharBuffer(Memory);
-        }
+        public new IReadOnlyCharBuffer Copy()
+            => new ReadOnlyCharBuffer(Memory);
+
+
+        /// <summary>
+        /// 隐式转换为只读字符存储器。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="ReadOnlyCharBuffer"/>。</param>
+        public static implicit operator ReadOnlyMemory<char>(ReadOnlyCharBuffer buffer)
+            => buffer.NotNull(nameof(buffer)).Memory;
+
+        /// <summary>
+        /// 隐式转换为字符数组。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="ReadOnlyCharBuffer"/>。</param>
+        public static implicit operator char[](ReadOnlyCharBuffer buffer)
+            => buffer.NotNull(nameof(buffer)).Memory.ToArray();
+
+        /// <summary>
+        /// 隐式转换为字符数组。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="ReadOnlyCharBuffer"/>。</param>
+        public static implicit operator string(ReadOnlyCharBuffer buffer)
+            => new string(buffer.NotNull(nameof(buffer)).Memory.ToArray());
+
+
+        /// <summary>
+        /// 显式转换为只读字符缓冲区。
+        /// </summary>
+        /// <param name="chars">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
+        public static explicit operator ReadOnlyCharBuffer(ReadOnlyMemory<char> chars)
+            => new ReadOnlyCharBuffer(chars);
+
+        /// <summary>
+        /// 显式转换为只读字符缓冲区。
+        /// </summary>
+        /// <param name="chars">给定的字符数组。</param>
+        public static explicit operator ReadOnlyCharBuffer(char[] chars)
+            => new ReadOnlyCharBuffer(chars);
+
+        /// <summary>
+        /// 显式转换为只读字符缓冲区。
+        /// </summary>
+        /// <param name="str">给定的字符数组。</param>
+        public static explicit operator ReadOnlyCharBuffer(string str)
+            => new ReadOnlyCharBuffer(str.NotNullOrEmpty(nameof(str)).ToCharArray());
 
     }
 }

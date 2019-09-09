@@ -33,17 +33,8 @@ namespace Librame.Extensions.Data.Tests
             var entityTypeName = localizer[r => r.EntityTypeName];
             Assert.False(entityTypeName.ResourceNotFound);
 
-            var state = localizer[r => r.State];
-            Assert.False(state.ResourceNotFound);
-
             var stateName = localizer[r => r.StateName];
             Assert.False(stateName.ResourceNotFound);
-
-            var createdBy = localizer[r => r.CreatedBy];
-            Assert.False(createdBy.ResourceNotFound);
-
-            var createdTime = localizer[r => r.CreatedTime];
-            Assert.False(createdTime.ResourceNotFound);
 
             var properties = localizer[r => r.Properties];
             Assert.False(properties.ResourceNotFound);

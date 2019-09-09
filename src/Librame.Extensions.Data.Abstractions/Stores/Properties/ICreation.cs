@@ -17,21 +17,21 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 创建接口。
     /// </summary>
-    /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TDateTime">指定的日期与时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
-    public interface ICreation<TId, TDateTime> : ICreation
-        where TId : IEquatable<TId>
-        where TDateTime : struct
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+    /// <typeparam name="TCreatedTime">指定的创建时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
+    public interface ICreation<TCreatedBy, TCreatedTime> : ICreation
+        where TCreatedBy : IEquatable<TCreatedBy>
+        where TCreatedTime : struct
     {
         /// <summary>
         /// 创建时间。
         /// </summary>
-        TDateTime CreatedTime { get; set; }
+        TCreatedTime CreatedTime { get; set; }
 
         /// <summary>
         /// 创建者。
         /// </summary>
-        TId CreatedBy { get; set; }
+        TCreatedBy CreatedBy { get; set; }
     }
 
 

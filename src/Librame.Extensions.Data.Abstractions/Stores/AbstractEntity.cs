@@ -16,7 +16,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 抽象实体（默认排序类型为 <see cref="float"/>、状态类型为 <see cref="DataStatus"/>）。
+    /// 抽象实体。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>, IRank, IStatus
@@ -27,8 +27,8 @@ namespace Librame.Extensions.Data
         /// </summary>
         public AbstractEntity()
         {
-            Rank = 10;
-            Status = DataStatus.Public;
+            Rank = EntityUtility.DefaultRank;
+            Status = EntityUtility.DefaultStatus;
         }
     }
 

@@ -36,7 +36,6 @@ namespace Librame.Extensions
             IServiceProvider serviceProvider)
         {
             var converter = serviceProvider.GetRequiredService<ICiphertextConverter>();
-
             return str.AsCiphertextBuffer(converter).ApplyServiceProvider(serviceProvider);
         }
 
@@ -48,9 +47,7 @@ namespace Librame.Extensions
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<ICiphertextConverter, string> AsCiphertextBuffer(this string str,
             ICiphertextConverter converter)
-        {
-            return converter.AsEncryptionBuffer(str);
-        }
+            => converter.AsEncryptionBuffer(str);
 
         #endregion
 
@@ -67,7 +64,6 @@ namespace Librame.Extensions
             IServiceProvider serviceProvider)
         {
             var converter = serviceProvider.GetRequiredService<IPlaintextConverter>();
-
             return str.AsPlaintextBuffer(converter).ApplyServiceProvider(serviceProvider);
         }
 
@@ -79,9 +75,7 @@ namespace Librame.Extensions
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<IPlaintextConverter, string> AsPlaintextBuffer(this string str,
             IPlaintextConverter converter)
-        {
-            return converter.AsEncryptionBuffer(str);
-        }
+            => converter.AsEncryptionBuffer(str);
 
         #endregion
 
@@ -96,9 +90,7 @@ namespace Librame.Extensions
         /// <returns>返回 <see cref="IEncryptionBuffer{TConverter, TSource}"/>。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsEncryptionBuffer<TConverter, TSource>(this TConverter converter, TSource source)
             where TConverter : IAlgorithmConverter<TSource>
-        {
-            return new EncryptionBuffer<TConverter, TSource>(converter, source);
-        }
+            => new EncryptionBuffer<TConverter, TSource>(converter, source);
 
     }
 }

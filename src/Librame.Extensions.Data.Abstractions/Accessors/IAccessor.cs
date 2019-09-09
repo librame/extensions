@@ -76,6 +76,14 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 异步迁移。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        Task MigratorAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
         /// 切换租户。
         /// </summary>
         /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>

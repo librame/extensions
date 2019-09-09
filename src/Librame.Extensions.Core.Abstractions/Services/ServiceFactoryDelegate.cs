@@ -38,7 +38,6 @@ namespace Librame.Extensions.Core
             where TImplementation : TService
         {
             var service = serviceFactory.GetService<TService, TImplementation>(out Type implementationType);
-
             return service.NotNullService(implementationType);
         }
 
@@ -52,7 +51,6 @@ namespace Librame.Extensions.Core
         public static TService GetRequiredService<TService>(this ServiceFactoryDelegate serviceFactory, Type implementationType)
         {
             var service = serviceFactory.GetService<TService>(implementationType);
-
             return service.NotNullService(implementationType);
         }
 
@@ -65,7 +63,6 @@ namespace Librame.Extensions.Core
         public static TService GetRequiredService<TService>(this ServiceFactoryDelegate serviceFactory)
         {
             var service = serviceFactory.GetService<TService>(out Type serviceType);
-
             return service.NotNullService(serviceType);
         }
 
@@ -78,14 +75,13 @@ namespace Librame.Extensions.Core
         public static object GetRequiredService(this ServiceFactoryDelegate serviceFactory, Type serviceType)
         {
             var service = serviceFactory.GetService(serviceType);
-
             return service.NotNullService(serviceType);
         }
 
         private static TService NotNullService<TService>(this TService service, Type serviceType)
         {
             if (service.IsNull())
-                throw new ArgumentException($"Cannot resolve service {serviceType.GetCustomFullName()}");
+                throw new ArgumentException($"Cannot resolve service {serviceType.GetSimpleFullName()}");
 
             return service;
         }
@@ -100,9 +96,8 @@ namespace Librame.Extensions.Core
         /// <returns>返回服务。</returns>
         public static TService GetService<TService, TImplementation>(this ServiceFactoryDelegate serviceFactory)
             where TImplementation : TService
-        {
-            return serviceFactory.GetService<TService, TImplementation>(out _);
-        }
+            => serviceFactory.GetService<TService, TImplementation>(out _);
+
         private static TService GetService<TService, TImplementation>(this ServiceFactoryDelegate serviceFactory, out Type implementationType)
             where TImplementation : TService
         {
@@ -120,7 +115,6 @@ namespace Librame.Extensions.Core
         public static TService GetService<TService>(this ServiceFactoryDelegate serviceFactory, Type implementationType)
         {
             implementationType.AssignableToBase(typeof(TService));
-
             return (TService)serviceFactory.GetService(implementationType);
         }
 
@@ -131,9 +125,8 @@ namespace Librame.Extensions.Core
         /// <param name="serviceFactory">给定的 <see cref="ServiceFactoryDelegate"/>。</param>
         /// <returns>返回服务。</returns>
         public static TService GetService<TService>(this ServiceFactoryDelegate serviceFactory)
-        {
-            return serviceFactory.GetService<TService>(out _);
-        }
+            => serviceFactory.GetService<TService>(out _);
+
         private static TService GetService<TService>(this ServiceFactoryDelegate serviceFactory, out Type serviceType)
         {
             serviceType = typeof(TService);
@@ -147,11 +140,7 @@ namespace Librame.Extensions.Core
         /// <param name="serviceType">给定的服务类型。</param>
         /// <returns>返回对象。</returns>
         public static object GetService(this ServiceFactoryDelegate serviceFactory, Type serviceType)
-        {
-            serviceFactory.NotNull(nameof(serviceFactory));
-
-            return serviceFactory.Invoke(serviceType);
-        }
+            => serviceFactory.NotNull(nameof(serviceFactory)).Invoke(serviceType);
 
     }
 }

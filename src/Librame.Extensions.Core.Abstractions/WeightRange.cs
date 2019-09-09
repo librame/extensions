@@ -48,9 +48,7 @@ namespace Librame.Extensions.Core
         /// <param name="weight">指定的权重。</param>
         /// <returns>返回布尔值。</returns>
         public bool IsRange(double weight)
-        {
-            return weight > Min && weight <= Max;
-        }
+            => weight > Min && weight <= Max;
 
     }
 }

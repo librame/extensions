@@ -85,9 +85,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <returns>返回 <see cref="IEnumerable{ServiceDescriptor}"/>。</returns>
         public static IEnumerable<ServiceDescriptor> TryGetConfigureOptions<TConfigureOptions>(this IServiceCollection services)
-        {
-            return services.TryGetConfigureOptions(typeof(TConfigureOptions));
-        }
+            => services.TryGetConfigureOptions(typeof(TConfigureOptions));
 
         /// <summary>
         /// 尝试获取配置选项已添加的服务描述符集合。
@@ -118,9 +116,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool TryReplaceConfigureOptions<TConfigureOptions>(this IServiceCollection services)
-        {
-            return services.TryReplaceConfigureOptions(typeof(TConfigureOptions));
-        }
+            => services.TryReplaceConfigureOptions(typeof(TConfigureOptions));
 
         /// <summary>
         /// 尝试替换配置选项。

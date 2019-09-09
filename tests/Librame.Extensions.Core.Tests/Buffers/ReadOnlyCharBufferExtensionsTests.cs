@@ -9,7 +9,7 @@ namespace Librame.Extensions.Core.Tests
         public void SplitKeyValueStringByIndexOfTest()
         {
             var str = "123:456=789:987";
-            var buffer = str.AsReadOnlyCharBuffer();
+            var buffer = (ReadOnlyCharBuffer)str;
 
             // IndexOf: char separator
             var pair = buffer.SplitKeyValueStringByIndexOf(':');

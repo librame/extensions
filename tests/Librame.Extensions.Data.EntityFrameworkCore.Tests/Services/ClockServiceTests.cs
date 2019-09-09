@@ -14,7 +14,7 @@ namespace Librame.Extensions.Data.Tests
             var now = await service.GetNowAsync(default);
             Assert.Equal(now.Day, DateTime.Now.Day);
 
-            var utcNow = await service.GetUtcNowAsync(default);
+            var utcNow = await service.GetOffsetNowAsync(default);
             Assert.Equal(utcNow.Day, DateTimeOffset.Now.Day);
         }
 

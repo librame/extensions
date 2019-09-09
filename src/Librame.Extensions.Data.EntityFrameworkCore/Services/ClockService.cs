@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,28 +22,38 @@ namespace Librame.Extensions.Data
 
     class ClockService : AbstractService, IClockService
     {
-        public ClockService(ILoggerFactory loggerFactory)
+        private readonly DataBuilderOptions _options;
+
+
+        public ClockService(IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
+            _options = options.Value;
         }
 
 
-        public Task<DateTime> GetNowAsync(CancellationToken cancellationToken = default)
+        public Task<DateTime> GetNowAsync(bool? isUtc = null, CancellationToken cancellationToken = default)
         {
+            if (!isUtc.HasValue)
+                isUtc = _options.IsUtcClock;
+
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                var now = DateTime.Now;
+                var now = isUtc.Value ? DateTime.UtcNow : DateTime.Now;
                 Logger.LogInformation($"Get DateTime: {now.ToString()}");
 
                 return now;
             });
         }
 
-        public Task<DateTimeOffset> GetUtcNowAsync(CancellationToken cancellationToken = default)
+        public Task<DateTimeOffset> GetOffsetNowAsync(bool? isUtc = null, CancellationToken cancellationToken = default)
         {
+            if (!isUtc.HasValue)
+                isUtc = _options.IsUtcClock;
+
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                var now = DateTimeOffset.Now;
+                var now = isUtc.Value ? DateTimeOffset.UtcNow : DateTimeOffset.Now;
                 Logger.LogInformation($"Get DateTimeOffset: {now.ToString()}");
 
                 return now;

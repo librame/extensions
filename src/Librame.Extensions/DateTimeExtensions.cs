@@ -29,7 +29,7 @@ namespace Librame.Extensions
         public static string AsFileName(this DateTime dateTime, string extension,
             bool containsDate = true)
         {
-            return dateTime.AsCombIdentifier(containsDate)
+            return dateTime.AsCombFileTime(containsDate)
                 + extension.NotNullOrEmpty(nameof(extension));
         }
 
@@ -43,54 +43,54 @@ namespace Librame.Extensions
         public static string AsFileName(this DateTimeOffset dateTimeOffset, string extension,
             bool containsDate = true)
         {
-            return dateTimeOffset.AsCombIdentifier(containsDate)
+            return dateTimeOffset.AsCombFileTime(containsDate)
                 + extension.NotNullOrEmpty(nameof(extension));
         }
 
 
         /// <summary>
-        /// 转换为有顺序的标识符。
+        /// 转换为有顺序的文件时间。
         /// </summary>
         /// <param name="dateTime">给定的 <see cref="DateTime"/>。</param>
         /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
         /// <returns>返回长度 14/22 的字符串。</returns>
-        public static string AsCombIdentifier(this DateTime dateTime,
+        public static string AsCombFileTime(this DateTime dateTime,
             bool containsDate = true)
         {
             if (containsDate)
             {
                 // 长度 22
-                return ToCombIdentifier(dateTime.ToString("yyyyMMddHHmmssfff"),
+                return CombineFileTime(dateTime.ToString("yyyyMMddHHmmssfff"),
                     dateTime.ToFileTime().ToString());
             }
 
             // 长度 14
-            return ToCombIdentifier(dateTime.ToString("HHmmssfff"),
+            return CombineFileTime(dateTime.ToString("HHmmssfff"),
                 dateTime.ToFileTime().ToString());
         }
 
         /// <summary>
-        /// 转换为有顺序的标识符。
+        /// 转换为有顺序的文件时间。
         /// </summary>
         /// <param name="dateTimeOffset">给定的 <see cref="DateTimeOffset"/>。</param>
         /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
         /// <returns>返回长度 14/22 的字符串。</returns>
-        public static string AsCombIdentifier(this DateTimeOffset dateTimeOffset,
+        public static string AsCombFileTime(this DateTimeOffset dateTimeOffset,
             bool containsDate = true)
         {
             if (containsDate)
             {
                 // 长度 22
-                return ToCombIdentifier(dateTimeOffset.ToString("yyyyMMddHHmmssfff"),
+                return CombineFileTime(dateTimeOffset.ToString("yyyyMMddHHmmssfff"),
                     dateTimeOffset.ToFileTime().ToString());
             }
 
             // 长度 14
-            return ToCombIdentifier(dateTimeOffset.ToString("HHmmssfff"),
+            return CombineFileTime(dateTimeOffset.ToString("HHmmssfff"),
                 dateTimeOffset.ToFileTime().ToString());
         }
 
-        private static string ToCombIdentifier(string dateTime, string fileTime)
+        private static string CombineFileTime(string dateTime, string fileTime)
         {
             // 后 5 位转换为毫秒
             return dateTime + fileTime.Substring(fileTime.Length - 5);
@@ -105,9 +105,7 @@ namespace Librame.Extensions
         /// <param name="dateTime">给定的日期时间。</param>
         /// <returns>返回整数。</returns>
         public static int AsWeekOfYear(this DateTime dateTime)
-        {
-            return ComputeWeekOfYear(dateTime.Year, dateTime.DayOfYear);
-        }
+            => ComputeWeekOfYear(dateTime.Year, dateTime.DayOfYear);
 
         /// <summary>
         /// 转换为当年周数。
@@ -115,9 +113,7 @@ namespace Librame.Extensions
         /// <param name="dateTimeOffset">给定的日期时间。</param>
         /// <returns>返回整数。</returns>
         public static int AsWeekOfYear(this DateTimeOffset dateTimeOffset)
-        {
-            return ComputeWeekOfYear(dateTimeOffset.Year, dateTimeOffset.DayOfYear);
-        }
+            => ComputeWeekOfYear(dateTimeOffset.Year, dateTimeOffset.DayOfYear);
 
         private static int ComputeWeekOfYear(int year, int dayOfYear)
         {
@@ -140,9 +136,7 @@ namespace Librame.Extensions
         /// <param name="dateTime">给定的日期时间。</param>
         /// <returns>返回整数。</returns>
         public static int AsQuarterOfYear(this DateTime dateTime)
-        {
-            return dateTime.Month / 3 + (dateTime.Month % 3 > 0 ? 1 : 0);
-        }
+            => dateTime.Month / 3 + (dateTime.Month % 3 > 0 ? 1 : 0);
 
         /// <summary>
         /// 转换为当年季度数。
@@ -150,9 +144,7 @@ namespace Librame.Extensions
         /// <param name="dateTimeOffset">给定的日期时间。</param>
         /// <returns>返回整数。</returns>
         public static int AsQuarterOfYear(this DateTimeOffset dateTimeOffset)
-        {
-            return dateTimeOffset.Month / 3 + (dateTimeOffset.Month % 3 > 0 ? 1 : 0);
-        }
+            => dateTimeOffset.Month / 3 + (dateTimeOffset.Month % 3 > 0 ? 1 : 0);
 
         #endregion
 

@@ -27,29 +27,23 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 审计服务。
     /// </summary>
-    public class AuditService : AbstractService, IAuditService
+    public class AuditService : ExtensionBuilderServiceBase<DataBuilderOptions>, IAuditService
     {
         /// <summary>
         /// 构造一个 <see cref="AuditService"/>。
         /// </summary>
-        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="identifier">给定的 <see cref="IStoreIdentifier"/>。</param>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AuditService(IOptions<DataBuilderOptions> options, IClockService clock,
-            IStoreIdentifier identifier, ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+        public AuditService(IStoreIdentifier identifier, IClockService clock,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(options, loggerFactory)
         {
-            Options = options.NotNull(nameof(options)).Value;
-            Clock = clock.NotNull(nameof(clock));
-            Identifier = identifier.NotNull(nameof(identifier));
+            Clock = clock;
+            Identifier = identifier;
         }
 
-
-        /// <summary>
-        /// 构建器选项。
-        /// </summary>
-        protected DataBuilderOptions Options { get; }
 
         /// <summary>
         /// 时钟服务。
@@ -63,19 +57,19 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 异步审计。
+        /// 异步注册。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="List{Audit}"/> 的异步操作。</returns>
-        public virtual async Task<List<Audit>> AuditAsync(IAccessor accessor,
+        public virtual async Task<List<DataAudit>> RegistAsync(IAccessor accessor,
             CancellationToken cancellationToken = default)
         {
             if (accessor.IsNotNull() && accessor is DbContextAccessor dbContextAccessor)
             {
                 var audits = GetAudits(dbContextAccessor.ChangeTracker, cancellationToken);
 
-                await ProcessAuditsAsync(dbContextAccessor, audits, cancellationToken);
+                await AddAsync(dbContextAccessor, audits, cancellationToken);
 
                 return audits;
             }
@@ -84,13 +78,13 @@ namespace Librame.Extensions.Data
         }
 
         /// <summary>
-        /// 异步处理审计。
+        /// 异步增加。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="DbContextAccessor"/>。</param>
         /// <param name="audits">给定要处理的审计列表。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个异步操作。</returns>
-        protected virtual async Task ProcessAuditsAsync(DbContextAccessor accessor, List<Audit> audits,
+        protected virtual async Task AddAsync(DbContextAccessor accessor, List<DataAudit> audits,
             CancellationToken cancellationToken = default)
         {
             await accessor.Audits.AddRangeAsync(audits, cancellationToken);
@@ -108,15 +102,15 @@ namespace Librame.Extensions.Data
         /// <param name="changeTracker">给定的 <see cref="ChangeTracker"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <see cref="List{Audit}"/>。</returns>
-        protected virtual List<Audit> GetAudits(ChangeTracker changeTracker, CancellationToken cancellationToken)
+        protected virtual List<DataAudit> GetAudits(ChangeTracker changeTracker, CancellationToken cancellationToken)
         {
-            var entityStates = Options.Audits.AuditEntityStates;
+            var entityStates = Options.AuditEntityStates;
 
             // 得到变化的实体集合
             var entityEntries = changeTracker.Entries()
                 .Where(m => m.Entity.IsNotNull() && entityStates.Contains(m.State)).ToList();
 
-            var audits = new List<Audit>();
+            var audits = new List<DataAudit>();
 
             if (entityEntries.IsNullOrEmpty())
                 return audits;
@@ -139,13 +133,13 @@ namespace Librame.Extensions.Data
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回审计。</returns>
-        protected virtual Audit ToAudit(EntityEntry entry, CancellationToken cancellationToken)
+        protected virtual DataAudit ToAudit(EntityEntry entry, CancellationToken cancellationToken)
         {
-            var audit = new Audit
+            var audit = new DataAudit
             {
                 Id = Identifier.GetAuditIdAsync(cancellationToken).Result,
                 TableName = GetTableName(entry),
-                EntityTypeName = entry.Metadata.ClrType.GetCustomFullName(),
+                EntityTypeName = entry.Metadata.ClrType.GetSimpleFullName(),
                 State = (int)entry.State,
                 StateName = entry.State.ToString()
             };
@@ -158,11 +152,11 @@ namespace Librame.Extensions.Data
                 if (property.IsPrimaryKey())
                     audit.EntityId = GetEntityId(entry.Property(property.Name));
 
-                var auditProperty = new AuditProperty()
+                var auditProperty = new DataAuditProperty()
                 {
                     Id = Identifier.GetAuditPropertyIdAsync(cancellationToken).Result,
                     PropertyName = property.Name,
-                    PropertyTypeName = property.ClrType.GetCustomFullName()
+                    PropertyTypeName = property.ClrType.GetSimpleFullName()
                 };
 
                 switch (entry.State)
@@ -204,7 +198,7 @@ namespace Librame.Extensions.Data
             }
             else
             {
-                audit.CreatedTime = Clock.GetUtcNowAsync(cancellationToken).Result;
+                audit.CreatedTime = Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).Result;
             }
 
             return audit;
@@ -218,8 +212,7 @@ namespace Librame.Extensions.Data
         protected virtual string GetTableName(EntityEntry entry)
         {
             var relational = entry.Metadata?.Relational();
-
-            return new TableSchema(relational?.TableName, relational?.Schema).ToString();
+            return new TableNameSchema(relational?.TableName, relational?.Schema);
         }
 
         /// <summary>
@@ -244,7 +237,7 @@ namespace Librame.Extensions.Data
         protected virtual DateTimeOffset ToDateTime(object obj, CancellationToken cancellationToken)
         {
             if (obj.IsNull())
-                return Clock.GetUtcNowAsync(cancellationToken).Result;
+                return Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).Result;
 
             if (obj is DateTimeOffset dateTimeOffset)
                 return dateTimeOffset;

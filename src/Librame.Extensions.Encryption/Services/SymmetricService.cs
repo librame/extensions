@@ -69,14 +69,12 @@ namespace Librame.Extensions.Encryption
         public IByteBuffer ToAes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateAes(identifier);
-
             return Encrypt(algorithm, buffer);
         }
 
         public IByteBuffer FromAes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateAes(identifier);
-
             return Decrypt(algorithm, buffer);
         }
 
@@ -97,14 +95,12 @@ namespace Librame.Extensions.Encryption
         public IByteBuffer ToDes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateDes(identifier);
-
             return Encrypt(algorithm, buffer);
         }
 
         public IByteBuffer FromDes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateDes(identifier);
-
             return Decrypt(algorithm, buffer);
         }
 
@@ -125,14 +121,12 @@ namespace Librame.Extensions.Encryption
         public IByteBuffer ToTripleDes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateTripleDes(identifier);
-
             return Encrypt(algorithm, buffer);
         }
 
         public IByteBuffer FromTripleDes(IByteBuffer buffer, UniqueIdentifier? identifier = null)
         {
             var algorithm = CreateTripleDes(identifier);
-
             return Decrypt(algorithm, buffer);
         }
 

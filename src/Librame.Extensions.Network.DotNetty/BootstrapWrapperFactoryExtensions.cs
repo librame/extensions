@@ -31,11 +31,9 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="group">输出 <see cref="IEventLoopGroup"/>。</param>
         /// <returns>返回 <see cref="IBootstrapWrapper"/>。</returns>
         public static IBootstrapWrapper CreateUdp(this IBootstrapWrapperFactory factory, out IEventLoopGroup group)
-        {
-            return factory
+            => factory
                 .Create(false, out group)
                 .Configure(bootstrap => bootstrap.Channel<SocketDatagramChannel>());
-        }
 
 
         /// <summary>
@@ -46,8 +44,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="group">输出 <see cref="IEventLoopGroup"/>。</param>
         /// <returns>返回 <see cref="IBootstrapWrapper"/>。</returns>
         public static IBootstrapWrapper CreateTcp(this IBootstrapWrapperFactory factory, bool useLibuv, out IEventLoopGroup group)
-        {
-            return factory
+            => factory
                 .Create(useLibuv, out group)
                 .Configure(bootstrap =>
                 {
@@ -58,7 +55,6 @@ namespace Librame.Extensions.Network.DotNetty
                     else
                         bootstrap.Channel<TcpSocketChannel>();
                 });
-        }
 
         /// <summary>
         /// 创建 TCP 协议服务端封装器。
@@ -70,8 +66,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <returns>返回 <see cref="IServerBootstrapWrapper"/>。</returns>
         public static IServerBootstrapWrapper CreateTcpServer(this IBootstrapWrapperFactory factory, bool useLibuv,
             out IEventLoopGroup bossGroup, out IEventLoopGroup workerGroup)
-        {
-            return factory
+            => factory
                 .CreateServer(useLibuv, out bossGroup, out workerGroup)
                 .Configure(bootstrap =>
                 {
@@ -94,7 +89,6 @@ namespace Librame.Extensions.Network.DotNetty
                         bootstrap.Channel<TcpServerSocketChannel>();
                     }
                 });
-        }
 
     }
 }

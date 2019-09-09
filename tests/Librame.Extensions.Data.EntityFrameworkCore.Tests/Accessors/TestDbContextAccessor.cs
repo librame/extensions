@@ -21,27 +21,28 @@ namespace Librame.Extensions.Data.Tests
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Category>(category =>
+            modelBuilder.Entity<Category>(b =>
             {
-                category.ToTable(type => type.AsTableSchema());
+                b.ToTable();
 
-                category.HasKey(x => x.Id);
+                b.HasKey(x => x.Id);
 
-                category.Property(x => x.Id).ValueGeneratedOnAdd();
-                category.Property(x => x.Name).HasMaxLength(256).IsRequired();
+                b.Property(x => x.Id).ValueGeneratedOnAdd();
+                b.Property(x => x.Name).HasMaxLength(256).IsRequired();
 
                 // 关联
-                category.HasMany(x => x.Articles).WithOne(x => x.Category).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                b.HasMany(x => x.Articles).WithOne(x => x.Category)
+                    .IsRequired().OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<Article>(article =>
+            modelBuilder.Entity<Article>(b =>
             {
-                article.ToTable(type => type.AsDateTimeTableSchema(now => now.ToString("yy")));
+                b.ToTable(descr => descr.ChangeDateSuffix(now => now.ToString("yy"))); // descr.ChangeDateSuffix(now => now.ToString("yy")) // descr.ChangeSuffix("20")
 
-                article.HasKey(x => x.Id);
+                b.HasKey(x => x.Id);
 
-                article.Property(x => x.Id).HasMaxLength(256);
-                article.Property(x => x.Title).HasMaxLength(256).IsRequired();
+                b.Property(x => x.Id).HasMaxLength(256);
+                b.Property(x => x.Title).HasMaxLength(256).IsRequired();
             });
         }
 

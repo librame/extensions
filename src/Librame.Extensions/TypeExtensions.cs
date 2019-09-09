@@ -55,7 +55,6 @@ namespace Librame.Extensions
         public static FieldInfo[] GetAllFields(this Type type)
         {
             type.NotNull(nameof(type));
-
             return type.GetFields(CommonFlags);
         }
         /// <summary>
@@ -66,7 +65,6 @@ namespace Librame.Extensions
         public static FieldInfo[] GetAllFieldsWithoutStatic(this Type type)
         {
             type.NotNull(nameof(type));
-
             return type.GetFields(CommonFlagsWithoutStatic);
         }
 
@@ -78,7 +76,6 @@ namespace Librame.Extensions
         public static PropertyInfo[] GetAllProperties(this Type type)
         {
             type.NotNull(nameof(type));
-
             return type.GetProperties(CommonFlags);
         }
         /// <summary>
@@ -89,23 +86,7 @@ namespace Librame.Extensions
         public static PropertyInfo[] GetAllPropertiesWithoutStatic(this Type type)
         {
             type.NotNull(nameof(type));
-
             return type.GetProperties(CommonFlagsWithoutStatic);
-        }
-
-
-        /// <summary>
-        /// 获取简短的程序集限定名（不包含版本及版本号；格式：TypeFullName, AssemblyFullName）。
-        /// </summary>
-        /// <param name="type">给定的类型。</param>
-        /// <returns>返回字符串。</returns>
-        public static string GetShortAssemblyQualifiedName(this Type type)
-        {
-            type.NotNull(nameof(type));
-
-            var assemblyName = type.Assembly.GetName().Name;
-
-            return Assembly.CreateQualifiedName(assemblyName, type.GetCustomFullName());
         }
 
 
@@ -125,25 +106,52 @@ namespace Librame.Extensions
         }
 
 
-        /// <summary>
-        /// 获取自定义名称（如泛类型 IDictionary{string, IList{string}} 的名称为 IDictionary`2[String, IList`1[String]]）。
-        /// </summary>
-        /// <param name="type">给定的类型。</param>
-        /// <returns>返回字符串。</returns>
-        public static string GetCustomName(this Type type)
-        {
-            return type.GetCustomString(t => t.Name);
-        }
+        #region GetSimpleName
 
         /// <summary>
-        /// 获取自定义带命名空间的完整名称（如泛类型 IDictionary{string, IList{string}} 的名称为 System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]）。
+        /// 获取简单名（参考 <see cref="AssemblyName.Name"/>）。
+        /// </summary>
+        /// <param name="assembly">给定的 <see cref="Assembly"/>。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetSimpleName(this Assembly assembly)
+            => assembly.GetName().Name;
+
+        /// <summary>
+        /// 获取简单程序集名（参考 <see cref="AssemblyName.Name"/>）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetCustomFullName(this Type type)
+        public static string GetSimpleAssemblyName(this Type type)
+            => type.Assembly.GetSimpleName();
+
+
+        /// <summary>
+        /// 获取简单程序集限定名（不包含版本及版本号；格式：System.Collections.Generic.IList`1[System.String], System.Private.CoreLib）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetSimpleAssemblyQualifiedName(this Type type)
         {
-            return type.GetCustomString(t => $"{t.Namespace}.{t.Name}"); // not t.FullName
+            type.NotNull(nameof(type));
+            return Assembly.CreateQualifiedName(type.GetSimpleAssemblyName(), type.GetSimpleFullName());
         }
+
+
+        /// <summary>
+        /// 获取简单完整名（如泛类型 IDictionary{string, IList{string}} 的名称为 IDictionary`2[String, IList`1[String]]）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetSimpleName(this Type type)
+            => type.GetCustomString(t => t.Name);
+
+        /// <summary>
+        /// 获取带命名空间的简单完整名（如泛类型 IDictionary{string, IList{string}} 的名称为 System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回字符串。</returns>
+        public static string GetSimpleFullName(this Type type)
+            => type.GetCustomString(t => $"{t.Namespace}.{t.Name}"); // not t.FullName
 
         /// <summary>
         /// 获取自定义字符串。
@@ -177,6 +185,8 @@ namespace Librame.Extensions
             return sb.ToString();
         }
 
+        #endregion
+
 
         /// <summary>
         /// 解开可空类型。
@@ -184,9 +194,7 @@ namespace Librame.Extensions
         /// <param name="nullableType">给定的可空类型。</param>
         /// <returns>返回基础类型或可空类型本身。</returns>
         public static Type UnwrapNullableType(this Type nullableType)
-        {
-            return Nullable.GetUnderlyingType(nullableType) ?? nullableType;
-        }
+            => Nullable.GetUnderlyingType(nullableType) ?? nullableType;
 
 
         /// <summary>
@@ -200,9 +208,9 @@ namespace Librame.Extensions
             Action<Type> action, Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
         {
             assembly.NotNull(nameof(assembly));
-
             return assembly.YieldEnumerable().InvokeTypes(action, filterTypes);
         }
+
         /// <summary>
         /// 调用类型集合。
         /// </summary>

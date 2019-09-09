@@ -135,4 +135,34 @@
   <data name="DataGroup" xml:space="preserve">
     <value>數據組</value>
   </data>
+  <data name="ConcurrencyStamp" xml:space="preserve">
+    <value>并發標識</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>創建者</value>
+  </data>
+  <data name="CreatedTime" xml:space="preserve">
+    <value>創建時間</value>
+  </data>
+  <data name="IsDefaultValue" xml:space="preserve">
+    <value>為默認值</value>
+  </data>
+  <data name="LockoutEnabled" xml:space="preserve">
+    <value>啓用鎖定</value>
+  </data>
+  <data name="LockoutEndTime" xml:space="preserve">
+    <value>解鎖時間</value>
+  </data>
+  <data name="ParentId" xml:space="preserve">
+    <value>父標識</value>
+  </data>
+  <data name="RowVersion" xml:space="preserve">
+    <value>行版本</value>
+  </data>
+  <data name="UpdatedBy" xml:space="preserve">
+    <value>編輯者</value>
+  </data>
+  <data name="UpdatedTime" xml:space="preserve">
+    <value>編輯時間</value>
+  </data>
 </root>

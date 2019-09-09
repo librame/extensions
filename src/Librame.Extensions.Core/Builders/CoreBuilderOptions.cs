@@ -10,6 +10,7 @@
 
 #endregion
 
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -41,5 +42,18 @@ namespace Librame.Extensions.Core
         /// </summary>
         public Encoding Encoding { get; set; }
             = Encoding.UTF8;
+
+        /// <summary>
+        /// 资源映射工厂方法。
+        /// </summary>
+        public Func<ResourceMappingDescriptor, string> ResourceMappingFactory { get; set; }
+            = descr =>
+            {
+                if (descr.RelativePath.IsNullOrEmpty())
+                    return $"{descr.BaseNamespace}.{descr.TypeInfo.Name}";
+
+                // _resourcesRelativePath 已格式化为点分隔符（如：Resources.）
+                return $"{descr.BaseNamespace}.{descr.RelativePath}{descr.TypeInfo.Name}";
+            };
     }
 }

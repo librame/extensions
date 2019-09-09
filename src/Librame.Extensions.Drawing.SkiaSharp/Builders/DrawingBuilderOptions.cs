@@ -143,8 +143,8 @@ namespace Librame.Extensions.Drawing
         /// <summary>
         /// 水印图片文件定位器。
         /// </summary>
-        public IFileLocator ImageFileLocator { get; set; }
-            = "watermark.png".AsFileLocator();
+        public FileLocator ImageFileLocator { get; set; }
+            = (FileLocator)"watermark.png";
 
         /// <summary>
         /// 水印位置（负值表示反向）。
@@ -212,8 +212,8 @@ namespace Librame.Extensions.Drawing
         /// <summary>
         /// 字体文件定位器。
         /// </summary>
-        public IFileLocator FileLocator { get; set; }
-            = "font.ttf".AsFileLocator();
+        public FileLocator FileLocator { get; set; }
+            = (FileLocator)"font.ttf";
 
         /// <summary>
         /// 大小。

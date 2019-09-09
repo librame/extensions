@@ -10,6 +10,8 @@
 
 #endregion
 
+using Microsoft.Extensions.Logging;
+
 namespace Librame.Extensions.Data
 {
     /// <summary>
@@ -40,6 +42,18 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
         void Initialize(IStoreHub<TAccessor> stores);
+
+        /// <summary>
+        /// 初始化。
+        /// </summary>
+        /// <typeparam name="TAudit">指定的审计类型。</typeparam>
+        /// <typeparam name="TTable">指定的实体表类型。</typeparam>
+        /// <typeparam name="TTenant">指定的租户类型。</typeparam>
+        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor, TAudit, TTable, TTenant}"/>。</param>
+        void Initialize<TAudit, TTable, TTenant>(IStoreHub<TAccessor, TAudit, TTable, TTenant> stores)
+            where TAudit : DataAudit
+            where TTable : DataEntity
+            where TTenant : DataTenant;
     }
 
 
@@ -49,9 +63,20 @@ namespace Librame.Extensions.Data
     public interface IStoreInitializer
     {
         /// <summary>
+        /// 时钟。
+        /// </summary>
+        IClockService Clock { get; }
+
+        /// <summary>
         /// 标识符。
         /// </summary>
         IStoreIdentifier Identifier { get; }
+
+        /// <summary>
+        /// 日志工厂。
+        /// </summary>
+        ILoggerFactory LoggerFactory { get; }
+
 
         /// <summary>
         /// 是否已完成初始化。

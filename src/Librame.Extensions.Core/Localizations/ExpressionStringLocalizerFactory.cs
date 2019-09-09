@@ -24,15 +24,21 @@ namespace Librame.Extensions.Core
     /// </summary>
     public class ExpressionStringLocalizerFactory : ResourceManagerStringLocalizerFactory, IStringLocalizerFactory
     {
+        private readonly CoreBuilderOptions _builderOptions;
+
+
         /// <summary>
         /// 构造一个 <see cref="ExpressionStringLocalizerFactory"/>。
         /// </summary>
         /// <param name="localizationOptions">给定的 <see cref="IOptions{LocalizationOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public ExpressionStringLocalizerFactory(IOptions<LocalizationOptions> localizationOptions, ILoggerFactory loggerFactory)
+        /// <param name="builderOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
+        public ExpressionStringLocalizerFactory(IOptions<LocalizationOptions> localizationOptions, ILoggerFactory loggerFactory,
+            IOptions<CoreBuilderOptions> builderOptions)
             : base(localizationOptions, loggerFactory)
         {
             LoggerFactory = loggerFactory;
+            _builderOptions = builderOptions.Value;
         }
 
 
@@ -61,20 +67,11 @@ namespace Librame.Extensions.Core
             var resourceMapping = GetResourceMappingAttribute(typeInfo);
             if (resourceMapping.IsNotNull() && resourceMapping.Enabled)
             {
-                if (resourceMapping.PrefixFactory.IsNull())
-                {
-                    resourceMapping.PrefixFactory = (_baseNamespace, _resourcesRelativePath, _typeInfo) =>
-                    {
-                        if (resourcesRelativePath.IsNullOrEmpty())
-                            return $"{_baseNamespace}.{_typeInfo.Name}";
+                if (resourceMapping.Factory.IsNull())
+                    resourceMapping.Factory = _builderOptions.ResourceMappingFactory;
 
-                        // _resourcesRelativePath 已格式化为点分隔符（如：Resources.）
-                        return $"{_baseNamespace}.{_resourcesRelativePath}{_typeInfo.Name}";
-                    };
-                }
-
-                prefix = resourceMapping.PrefixFactory.Invoke(baseNamespace, resourcesRelativePath, typeInfo);
-                Logger.LogInformation($"Get resource prefix “{prefix}” by {nameof(ResourceMappingAttribute)}.PrefixFactory");
+                prefix = resourceMapping.Factory.Invoke(new ResourceMappingDescriptor(typeInfo, baseNamespace, resourcesRelativePath));
+                Logger.LogInformation($"Get resource prefix “{prefix}” by {nameof(ExpressionStringLocalizerFactory)}");
             }
             else
             {

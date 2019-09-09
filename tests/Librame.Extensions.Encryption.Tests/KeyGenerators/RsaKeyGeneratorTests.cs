@@ -17,12 +17,12 @@ namespace Librame.Extensions.Encryption.Tests
 
             var str = nameof(RsaKeyGeneratorTests);
 
-            var encryptString = rsa.Encrypt(str.AsEncodingBytes(), RSAEncryptionPadding.Pkcs1)
+            var encryptString = rsa.Encrypt(str.FromEncodingString(), RSAEncryptionPadding.Pkcs1)
                 .AsBase64String();
 
             var decryptBuffer = rsa.Decrypt(encryptString.FromBase64String(), RSAEncryptionPadding.Pkcs1);
 
-            Assert.Equal(str, decryptBuffer.FromEncodingBytes());
+            Assert.Equal(str, decryptBuffer.AsEncodingString());
         }
 
     }

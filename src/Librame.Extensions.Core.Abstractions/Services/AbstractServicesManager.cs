@@ -83,14 +83,10 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 <see cref="IEnumerator{TService}"/>。</returns>
         public IEnumerator<TService> GetEnumerator()
-        {
-            return Services.GetEnumerator();
-        }
+            => Services.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+            => GetEnumerator();
 
     }
 }

@@ -29,10 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
             Action<CoreBuilderDependencyOptions> dependencySetupAction = null)
-        {
-            return services.AddLibrame(s => new CoreBuilder(s),
-                dependencySetupAction);
-        }
+            => services.AddLibrame(s => new CoreBuilder(s), dependencySetupAction);
 
         /// <summary>
         /// 添加 Librame。
@@ -78,7 +75,6 @@ namespace Microsoft.Extensions.DependencyInjection
         public static ICoreBuilder AddDistributedCache(this ICoreBuilder builder, Action<IServiceCollection> addAction)
         {
             addAction?.Invoke(builder.Services);
-
             return builder;
         }
 

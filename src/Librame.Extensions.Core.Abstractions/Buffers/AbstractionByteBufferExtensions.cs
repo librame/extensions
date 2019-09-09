@@ -28,9 +28,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回字节缓冲区。</returns>
         public static TByteBuffer Change<TByteBuffer>(this TByteBuffer buffer, Func<Memory<byte>, Memory<byte>> changeFactory)
             where TByteBuffer : IByteBuffer
-        {
-            return buffer.Change(changeFactory.Invoke(buffer.Memory));
-        }
+            => buffer.Change(changeFactory.Invoke(buffer.Memory));
 
         /// <summary>
         /// 改变存储器。

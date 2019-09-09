@@ -25,9 +25,7 @@ namespace Librame.Extensions.Core
         /// <param name="output">给定的 BASE64 字符串。</param>
         /// <returns>返回 <see cref="ReadOnlyMemory{Byte}"/>。</returns>
         public ReadOnlyMemory<byte> From(string output)
-        {
-            return output.FromBase64String();
-        }
+            => output.FromBase64String();
 
         /// <summary>
         /// 转换为 BASE64 字符串。
@@ -35,8 +33,6 @@ namespace Librame.Extensions.Core
         /// <param name="input">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
         /// <returns>返回字符串。</returns>
         public string To(ReadOnlyMemory<byte> input)
-        {
-            return input.ToArray().AsBase64String();
-        }
+            => input.ToArray().AsBase64String();
     }
 }

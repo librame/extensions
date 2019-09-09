@@ -55,8 +55,8 @@ namespace Librame.Extensions.Storage
         /// <param name="downloadUrl">给定用于下载文件的远程 URL。</param>
         /// <param name="savePath">给定的保存路径。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回一个包含 <see cref="IFileLocator"/> 的异步操作。</returns>
-        Task<IFileLocator> DownloadFileAsync(string downloadUrl, string savePath,
+        /// <returns>返回一个包含 <see cref="FileLocator"/> 的异步操作。</returns>
+        Task<FileLocator> DownloadFileAsync(string downloadUrl, string savePath,
             CancellationToken cancellationToken = default);
 
 

@@ -17,21 +17,21 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 更新接口。
     /// </summary>
-    /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TDateTime">指定的日期与时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
-    public interface IUpdation<TId, TDateTime> : ICreation<TId, TDateTime>
-        where TId : IEquatable<TId>
-        where TDateTime : struct
+    /// <typeparam name="TUpdatedBy">指定的更新者。</typeparam>
+    /// <typeparam name="TUpdatedTime">指定的更新时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
+    public interface IUpdation<TUpdatedBy, TUpdatedTime> : ICreation<TUpdatedBy, TUpdatedTime>
+        where TUpdatedBy : IEquatable<TUpdatedBy>
+        where TUpdatedTime : struct
     {
         /// <summary>
         /// 更新时间。
         /// </summary>
-        TDateTime UpdatedTime { get; set; }
+        TUpdatedTime UpdatedTime { get; set; }
 
         /// <summary>
         /// 更新者。
         /// </summary>
-        TId UpdatedBy { get; set; }
+        TUpdatedBy UpdatedBy { get; set; }
     }
 
 

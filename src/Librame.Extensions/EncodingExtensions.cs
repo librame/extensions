@@ -27,10 +27,7 @@ namespace Librame.Extensions
         /// <param name="encoding">给定的字符编码。</param>
         /// <returns>返回代码页名称。</returns>
         public static string AsName(this Encoding encoding)
-        {
-            // WebName or BodyName
-            return encoding?.WebName;
-        }
+            => encoding?.WebName;
 
         /// <summary>
         /// 从名称的字符串形式还原字符编码。
@@ -38,32 +35,26 @@ namespace Librame.Extensions
         /// <param name="name">首选编码的代码页名称。</param>
         /// <returns>返回与指定代码页关联的编码。</returns>
         public static Encoding FromName(this string name)
-        {
-            return Encoding.GetEncoding(name);
-        }
+            => Encoding.GetEncoding(name);
 
 
         /// <summary>
-        /// 转换为字符编码字节数组。
-        /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="System.Text.Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
-        /// <returns>返回字节数组。</returns>
-        public static byte[] AsEncodingBytes(this string str, Encoding encoding = null)
-        {
-            return (encoding ?? Encoding.UTF8).GetBytes(str);
-        }
-
-        /// <summary>
-        /// 还原字符编码字节数组。
+        /// 转换为字符编码的字符串。
         /// </summary>
         /// <param name="bytes">给定的字节数组。</param>
-        /// <param name="encoding">给定的 <see cref="System.Text.Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string FromEncodingBytes(this byte[] bytes, Encoding encoding = null)
-        {
-            return (encoding ?? Encoding.UTF8).GetString(bytes);
-        }
+        public static string AsEncodingString(this byte[] bytes, Encoding encoding = null)
+            => (encoding ?? Encoding.UTF8).GetString(bytes);
+
+        /// <summary>
+        /// 还原为字符编码的字节数组。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] FromEncodingString(this string str, Encoding encoding = null)
+            => (encoding ?? Encoding.UTF8).GetBytes(str);
 
 
         #region Base32
@@ -132,7 +123,7 @@ namespace Librame.Extensions
         }
 
         /// <summary>
-        /// 还原 BASE32 字符串。
+        /// 还原为 BASE32 字符串。
         /// </summary>
         /// <param name="base32String">给定的 BASE32 字符串。</param>
         /// <returns>返回字节数组。</returns>
@@ -192,20 +183,16 @@ namespace Librame.Extensions
         /// <param name="encoding">给定的 <see cref="System.Text.Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string AsEncodingBase32String(this string str, Encoding encoding = null)
-        {
-            return str.AsEncodingBytes(encoding).AsBase32String();
-        }
+            => str.FromEncodingString(encoding).AsBase32String();
 
         /// <summary>
-        /// 还原经过字符编码的 BASE32 字符串。
+        /// 还原为经过字符编码的 BASE32 字符串。
         /// </summary>
         /// <param name="base32String">给定的 BASE32 字符串。</param>
         /// <param name="encoding">给定的 <see cref="System.Text.Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string FromEncodingBase32String(this string base32String, Encoding encoding = null)
-        {
-            return base32String.FromBase32String().FromEncodingBytes(encoding);
-        }
+            => base32String.FromBase32String().AsEncodingString(encoding);
 
         #endregion
 
@@ -218,18 +205,15 @@ namespace Librame.Extensions
         /// <param name="bytes">给定的字节数组。</param>
         /// <returns>返回字符串。</returns>
         public static string AsBase64String(this byte[] bytes)
-        {
-            return Convert.ToBase64String(bytes);
-        }
+            => Convert.ToBase64String(bytes);
+
         /// <summary>
-        /// 还原 BASE64 字符串。
+        /// 还原为 BASE64 字符串。
         /// </summary>
         /// <param name="base64String">给定的 BASE64 字符串。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromBase64String(this string base64String)
-        {
-            return Convert.FromBase64String(base64String);
-        }
+            => Convert.FromBase64String(base64String);
 
 
         /// <summary>
@@ -239,19 +223,16 @@ namespace Librame.Extensions
         /// <param name="encoding">给定的 <see cref="System.Text.Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string AsEncodingBase64String(this string str, Encoding encoding = null)
-        {
-            return str.AsEncodingBytes(encoding).AsBase64String();
-        }
+            => str.FromEncodingString(encoding).AsBase64String();
+
         /// <summary>
-        /// 还原经过字符编码的 BASE64 字符串。
+        /// 还原为经过字符编码的 BASE64 字符串。
         /// </summary>
         /// <param name="base64String">给定的 BASE64 字符串。</param>
         /// <param name="encoding">给定的 <see cref="System.Text.Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string FromEncodingBase64String(this string base64String, Encoding encoding = null)
-        {
-            return base64String.FromBase64String().FromEncodingBytes(encoding);
-        }
+            => base64String.FromBase64String().AsEncodingString(encoding);
 
         #endregion
 
@@ -264,12 +245,10 @@ namespace Librame.Extensions
         /// <param name="bytes">给定的字节数组。</param>
         /// <returns>返回字符串。</returns>
         public static string AsHexString(this byte[] bytes)
-        {
-            return BitConverter.ToString(bytes).Replace("-", string.Empty);
-        }
+            => BitConverter.ToString(bytes).Replace("-", string.Empty);
 
         /// <summary>
-        /// 还原 16 进制字符串。
+        /// 还原为 16 进制字符串。
         /// </summary>
         /// <param name="hexString">给定的 16 进制字符串。</param>
         /// <returns>返回字节数组。</returns>
@@ -299,19 +278,16 @@ namespace Librame.Extensions
         /// <param name="encoding">给定的 <see cref="System.Text.Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string AsEncodingHexString(this string str, Encoding encoding = null)
-        {
-            return str.AsEncodingBytes(encoding).AsHexString();
-        }
+            => str.FromEncodingString(encoding).AsHexString();
+
         /// <summary>
-        /// 还原经过字符编码的 16 进制字符串。
+        /// 还原为经过字符编码的 16 进制字符串。
         /// </summary>
         /// <param name="hexString">给定的 16 进制字符串。</param>
         /// <param name="encoding">给定的 <see cref="System.Text.Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string FromEncodingHexString(this string hexString, Encoding encoding = null)
-        {
-            return hexString.FromHexString().FromEncodingBytes(encoding);
-        }
+            => hexString.FromHexString().AsEncodingString(encoding);
 
         #endregion
 

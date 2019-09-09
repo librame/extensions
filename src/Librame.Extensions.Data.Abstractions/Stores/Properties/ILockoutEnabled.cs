@@ -10,14 +10,14 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 启用锁定。
     /// </summary>
-    public interface ILockoutEnabled
+    /// <typeparam name="TLockoutEndTime">指定的锁定结束时间类型。</typeparam>
+    public interface ILockoutEnabled<TLockoutEndTime>
+        where TLockoutEndTime : struct
     {
         /// <summary>
         /// 启用锁定。
@@ -27,6 +27,6 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 锁定结束时间。
         /// </summary>
-        DateTimeOffset? LockoutEndTime { get; set; }
+        TLockoutEndTime? LockoutEndTime { get; set; }
     }
 }

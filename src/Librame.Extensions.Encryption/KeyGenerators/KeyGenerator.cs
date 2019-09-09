@@ -84,7 +84,7 @@ namespace Librame.Extensions.Encryption
             }
             Logger.LogDebug($"Generate key length: {length}");
 
-            return result.AsByteBuffer();
+            return (ByteBuffer)result;
         }
 
     }

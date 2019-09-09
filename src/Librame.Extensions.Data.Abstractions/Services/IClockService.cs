@@ -26,15 +26,17 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 异步获取当前日期和时间。
         /// </summary>
+        /// <param name="isUtc">相对于协调世界时（可选；默认使用选项设置）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="DateTimeOffset"/> 的异步操作。</returns>
-        Task<DateTime> GetNowAsync(CancellationToken cancellationToken = default);
+        Task<DateTime> GetNowAsync(bool? isUtc = null, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// 异步获取当前协调世界时(UTC)的日期和时间。
+        /// 异步获取相对于协调世界时(UTC)的日期和时间。
         /// </summary>
+        /// <param name="isUtc">相对于协调世界时（可选；默认使用选项设置）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="DateTimeOffset"/> 的异步操作。</returns>
-        Task<DateTimeOffset> GetUtcNowAsync(CancellationToken cancellationToken = default);
+        Task<DateTimeOffset> GetOffsetNowAsync(bool? isUtc = null, CancellationToken cancellationToken = default);
     }
 }

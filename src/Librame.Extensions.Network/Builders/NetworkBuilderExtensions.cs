@@ -30,9 +30,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddNetwork(this IExtensionBuilder builder,
             Action<NetworkBuilderOptions> setupAction = null)
-        {
-            return builder.AddNetwork(b => new NetworkBuilder(b), setupAction);
-        }
+            => builder.AddNetwork(b => new NetworkBuilder(b), setupAction);
 
         /// <summary>
         /// 添加网络扩展。

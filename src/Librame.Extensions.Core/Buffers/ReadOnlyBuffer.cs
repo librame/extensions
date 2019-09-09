@@ -44,19 +44,44 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 <see cref="IReadOnlyBuffer{T}"/>。</returns>
         public override IReadOnlyBuffer<T> ShallowClone()
-        {
-            return new ReadOnlyBuffer<T>(Memory);
-        }
+            => new ReadOnlyBuffer<T>(Memory);
 
         /// <summary>
         /// 创建一个深副本。
         /// </summary>
         /// <returns>返回 <see cref="IReadOnlyBuffer{T}"/>。</returns>
         public override IReadOnlyBuffer<T> DeepClone()
-        {
-            // ReadOnlyMemory<T> 结构体是值类型，无谓深浅
-            return ShallowClone();
-        }
+            => ShallowClone(); // ReadOnlyMemory<T> 结构体是值类型，无谓深浅
+
+
+        /// <summary>
+        /// 隐式转换为只读存储器。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="ReadOnlyBuffer{T}"/>。</param>
+        public static implicit operator ReadOnlyMemory<T>(ReadOnlyBuffer<T> buffer)
+            => buffer.Memory;
+
+        /// <summary>
+        /// 隐式转换为数组。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="ReadOnlyBuffer{T}"/>。</param>
+        public static implicit operator T[](ReadOnlyBuffer<T> buffer)
+            => buffer.Memory.ToArray();
+
+
+        /// <summary>
+        /// 显式转换为只读缓冲区。
+        /// </summary>
+        /// <param name="bytes">给定的 <see cref="ReadOnlyMemory{T}"/>。</param>
+        public static explicit operator ReadOnlyBuffer<T>(ReadOnlyMemory<T> bytes)
+            => new ReadOnlyBuffer<T>(bytes);
+
+        /// <summary>
+        /// 显式转换为只读缓冲区。
+        /// </summary>
+        /// <param name="bytes">给定的数组。</param>
+        public static explicit operator ReadOnlyBuffer<T>(T[] bytes)
+            => new ReadOnlyBuffer<T>(bytes);
 
     }
 }

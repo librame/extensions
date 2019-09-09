@@ -36,9 +36,7 @@ namespace System.Linq
         /// <returns>返回 <see cref="IPageable{T}"/>。</returns>
         public static IPageable<T> AsPagingByIndex<T>(this IList<T> list, int index, int size)
             where T : class
-        {
-            return list.AsPaging(paging => paging.ComputeByIndex(index, size));
-        }
+            => list.AsPaging(paging => paging.ComputeByIndex(index, size));
 
         /// <summary>
         /// 转换为可分页集合（即内存分页）。
@@ -80,10 +78,8 @@ namespace System.Linq
         public static Task<IPageable<TEntity>> AsAscendingPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
             int index, int size, CancellationToken cancellationToken = default)
             where TEntity : class, IRank
-        {
-            return query.AsPagingByIndexAsync(ordered => ordered.OrderBy(k => k.Rank),
-                index, size, cancellationToken);
-        }
+            => query.AsPagingByIndexAsync(ordered => ordered.OrderBy(k => k.Rank), index, size, cancellationToken);
+
         /// <summary>
         /// 异步转换为可降序分页集合（注：默认按排序字段进行排序）。
         /// </summary>
@@ -96,10 +92,7 @@ namespace System.Linq
         public static Task<IPageable<TEntity>> AsDescendingPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
             int index, int size, CancellationToken cancellationToken = default)
             where TEntity : class, IRank
-        {
-            return query.AsPagingByIndexAsync(ordered => ordered.OrderByDescending(k => k.Rank),
-                index, size, cancellationToken);
-        }
+            => query.AsPagingByIndexAsync(ordered => ordered.OrderByDescending(k => k.Rank), index, size, cancellationToken);
 
         /// <summary>
         /// 异步转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
@@ -115,10 +108,7 @@ namespace System.Linq
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
             int index, int size, CancellationToken cancellationToken = default)
             where TEntity : class
-        {
-            return query.AsPagingAsync(orderedFactory,
-                paging => paging.ComputeByIndex(index, size), cancellationToken);
-        }
+            => query.AsPagingAsync(orderedFactory, paging => paging.ComputeByIndex(index, size), cancellationToken);
 
 
         /// <summary>
@@ -132,10 +122,8 @@ namespace System.Linq
         public static Task<IPageable<TEntity>> AsAscendingPagingAsync<TEntity>(this IQueryable<TEntity> query,
             Action<PagingDescriptor> computeAction, CancellationToken cancellationToken = default)
             where TEntity : class, IRank
-        {
-            return query.AsPagingAsync(ordered => ordered.OrderBy(k => k.Rank),
-                computeAction, cancellationToken);
-        }
+            => query.AsPagingAsync(ordered => ordered.OrderBy(k => k.Rank), computeAction, cancellationToken);
+
         /// <summary>
         /// 异步转换为可降序分页集合（注：默认按排序字段进行排序）。
         /// </summary>
@@ -147,10 +135,7 @@ namespace System.Linq
         public static Task<IPageable<TEntity>> AsDescendingPagingAsync<TEntity>(this IQueryable<TEntity> query,
             Action<PagingDescriptor> computeAction, CancellationToken cancellationToken = default)
             where TEntity : class, IRank
-        {
-            return query.AsPagingAsync(ordered => ordered.OrderByDescending(k => k.Rank),
-                computeAction, cancellationToken);
-        }
+            => query.AsPagingAsync(ordered => ordered.OrderByDescending(k => k.Rank), computeAction, cancellationToken);
 
         /// <summary>
         /// 异步转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
@@ -165,11 +150,8 @@ namespace System.Linq
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
             Action<PagingDescriptor> computeAction, CancellationToken cancellationToken = default)
             where TEntity : class
-        {
-            orderedFactory.NotNull(nameof(orderedFactory));
-
-            return orderedFactory.Invoke(query).AsPagingAsync(computeAction, cancellationToken);
-        }
+            => orderedFactory.NotNull(nameof(orderedFactory))
+            .Invoke(query).AsPagingAsync(computeAction, cancellationToken);
 
 
         /// <summary>
@@ -183,10 +165,8 @@ namespace System.Linq
         public static IPageable<TEntity> AsAscendingPagingByIndex<TEntity>(this IQueryable<TEntity> query,
             int index, int size)
             where TEntity : class, IRank
-        {
-            return query.AsPagingByIndex(ordered => ordered.OrderBy(k => k.Rank),
-                index, size);
-        }
+            => query.AsPagingByIndex(ordered => ordered.OrderBy(k => k.Rank), index, size);
+
         /// <summary>
         /// 转换为可降序分页集合（注：默认按排序字段进行排序）。
         /// </summary>
@@ -198,10 +178,7 @@ namespace System.Linq
         public static IPageable<TEntity> AsDescendingPagingByIndex<TEntity>(this IQueryable<TEntity> query,
             int index, int size)
             where TEntity : class, IRank
-        {
-            return query.AsPagingByIndex(ordered => ordered.OrderByDescending(k => k.Rank),
-                index, size);
-        }
+            => query.AsPagingByIndex(ordered => ordered.OrderByDescending(k => k.Rank), index, size);
 
         /// <summary>
         /// 转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
@@ -216,9 +193,7 @@ namespace System.Linq
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
             int index, int size)
             where TEntity : class
-        {
-            return query.AsPaging(orderedFactory, paging => paging.ComputeByIndex(index, size));
-        }
+            => query.AsPaging(orderedFactory, paging => paging.ComputeByIndex(index, size));
 
 
         /// <summary>
@@ -231,10 +206,8 @@ namespace System.Linq
         public static IPageable<TEntity> AsAscendingPaging<TEntity>(this IQueryable<TEntity> query,
             Action<PagingDescriptor> computeAction)
             where TEntity : class, IRank
-        {
-            return query.AsPaging(ordered => ordered.OrderBy(k => k.Rank),
-                computeAction);
-        }
+            => query.AsPaging(ordered => ordered.OrderBy(k => k.Rank), computeAction);
+
         /// <summary>
         /// 转换为可降序分页集合（注：默认按排序字段进行排序）。
         /// </summary>
@@ -245,10 +218,7 @@ namespace System.Linq
         public static IPageable<TEntity> AsDescendingPaging<TEntity>(this IQueryable<TEntity> query,
             Action<PagingDescriptor> computeAction)
             where TEntity : class, IRank
-        {
-            return query.AsPaging(ordered => ordered.OrderByDescending(k => k.Rank),
-                computeAction);
-        }
+            => query.AsPaging(ordered => ordered.OrderByDescending(k => k.Rank), computeAction);
 
         /// <summary>
         /// 转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
@@ -264,7 +234,6 @@ namespace System.Linq
             where TEntity : class
         {
             orderedFactory.NotNull(nameof(orderedFactory));
-
             return orderedFactory.Invoke(query).AsPaging(computeAction);
         }
 
@@ -308,9 +277,7 @@ namespace System.Linq
         public static IPageable<TEntity> AsPagingByIndex<TEntity>(this IOrderedQueryable<TEntity> orderedQuery,
             int index, int size)
             where TEntity : class
-        {
-            return orderedQuery.AsPaging(paging => paging.ComputeByIndex(index, size));
-        }
+            => orderedQuery.AsPaging(paging => paging.ComputeByIndex(index, size));
 
         /// <summary>
         /// 转换为可分页集合（注：需要对查询接口进行排序操作，否则 LINQ 会抛出未排序异常）。
@@ -322,11 +289,7 @@ namespace System.Linq
         public static IPageable<TEntity> AsPaging<TEntity>(this IOrderedQueryable<TEntity> orderedQuery,
             Action<PagingDescriptor> computeAction)
             where TEntity : class
-        {
-            orderedQuery.NotNull(nameof(orderedQuery));
-
-            return orderedQuery.AsPagingCore(computeAction);
-        }
+            => orderedQuery.NotNull(nameof(orderedQuery)).AsPagingCore(computeAction);
 
 
         private static IPageable<TEntity> AsPagingCore<TEntity>(this IOrderedQueryable<TEntity> orderedQuery,

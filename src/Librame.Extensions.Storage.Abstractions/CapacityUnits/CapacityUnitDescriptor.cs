@@ -72,19 +72,7 @@ namespace Librame.Extensions.Storage
         /// <param name="other">给定的 <see cref="CapacityUnitDescriptor"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(CapacityUnitDescriptor other)
-        {
-            return Name == other?.Name;
-        }
-
-
-        /// <summary>
-        /// 转换为字符串。
-        /// </summary>
-        /// <returns>返回字符串。</returns>
-        public override string ToString()
-        {
-            return $"{Name},{Abbr},{Size}";
-        }
+            => Name == other?.Name;
 
     }
 }

@@ -24,18 +24,19 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
-        public static void ConfigureStoreHubBase(this ModelBuilder modelBuilder, DataBuilderOptions options)
+        public static void ConfigureStoreHubBase(this ModelBuilder modelBuilder,
+            DataBuilderOptions options)
         {
-            if (!options.DefaultSchema.IsNullOrEmpty())
-                modelBuilder.HasDefaultSchema(options.DefaultSchema);
+            if (options.Tables.DefaultSchema.IsNotNullOrEmpty())
+                modelBuilder.HasDefaultSchema(options.Tables.DefaultSchema);
 
             var mapRelationship = options.Stores?.MapRelationship ?? true;
             var maxLength = options.Stores?.MaxLengthForProperties ?? 0;
 
             // 审计
-            modelBuilder.Entity<Audit>(b =>
+            modelBuilder.Entity<DataAudit>(b =>
             {
-                b.ToTable(options.TableSchemas.AuditFactory);
+                b.ToTable(options.Tables.AuditFactory);
 
                 b.HasKey(k => k.Id);
 
@@ -43,7 +44,7 @@ namespace Librame.Extensions.Data
 
                 b.Property(p => p.Id).HasMaxLength(256);
                 b.Property(p => p.EntityTypeName).HasMaxLength(256).IsRequired();
-
+                
                 if (maxLength > 0)
                 {
                     b.Property(p => p.TableName).HasMaxLength(maxLength);
@@ -54,14 +55,15 @@ namespace Librame.Extensions.Data
 
                 if (mapRelationship)
                 {
-                    b.HasMany(p => p.Properties).WithOne(p => p.Audit).IsRequired().OnDelete(DeleteBehavior.Cascade);
+                    b.HasMany(p => p.Properties).WithOne(p => p.Audit)
+                        .IsRequired().OnDelete(DeleteBehavior.Cascade);
                 }
             });
 
             // 审计属性
-            modelBuilder.Entity<AuditProperty>(b =>
+            modelBuilder.Entity<DataAuditProperty>(b =>
             {
-                b.ToTable(options.TableSchemas.AuditPropertyFactory);
+                b.ToTable(options.Tables.AuditPropertyFactory);
 
                 b.HasKey(k => k.Id);
 
@@ -77,10 +79,52 @@ namespace Librame.Extensions.Data
                 }
             });
 
-            // 租户
-            modelBuilder.Entity<Tenant>(b =>
+            // 实体
+            modelBuilder.Entity<DataEntity>(b =>
             {
-                b.ToTable(options.TableSchemas.TenantFactory);
+                b.ToTable(options.Tables.EntityFactory);
+
+                b.HasKey(k => k.Id);
+
+                b.HasIndex(i => new { i.Schema, i.Name }).HasName().IsUnique();
+
+                b.Property(p => p.Id).HasMaxLength(256);
+                b.Property(p => p.Schema).HasMaxLength(256).IsRequired();
+                b.Property(p => p.Name).HasMaxLength(256).IsRequired();
+
+                if (maxLength > 0)
+                {
+                    b.Property(p => p.EntityName).HasMaxLength(maxLength);
+                    b.Property(p => p.AssemblyName).HasMaxLength(maxLength);
+                    b.Property(p => p.Description).HasMaxLength(maxLength);
+                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
+                }
+            });
+
+            //// 模型
+            //modelBuilder.Entity<DataMigration>(b =>
+            //{
+            //    b.ToTable(options.Tables.ModelFactory);
+
+            //    b.HasKey(k => k.Id);
+
+            //    b.HasIndex(i => new { i.AttributeId, i.ProductVersion }).HasName().IsUnique();
+
+            //    b.Property(p => p.Id).HasMaxLength(256);
+            //    b.Property(p => p.AttributeId).HasMaxLength(256).IsRequired();
+            //    b.Property(p => p.ProductVersion).HasMaxLength(256).IsRequired();
+
+            //    if (maxLength > 0)
+            //    {
+            //        b.Property(p => p.ModelHash).HasMaxLength(maxLength);
+            //        b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
+            //    }
+            //});
+
+            // 租户
+            modelBuilder.Entity<DataTenant>(b =>
+            {
+                b.ToTable(options.Tables.TenantFactory);
 
                 b.HasKey(k => k.Id);
 
@@ -94,6 +138,7 @@ namespace Librame.Extensions.Data
                 {
                     b.Property(p => p.DefaultConnectionString).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.WritingConnectionString).HasMaxLength(maxLength);
+                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
                 }
             });
         }

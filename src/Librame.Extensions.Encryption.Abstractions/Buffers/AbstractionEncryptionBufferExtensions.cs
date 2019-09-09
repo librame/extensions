@@ -45,9 +45,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IEncryptionBuffer{ICiphertextAlgorithmConverter, String}"/>。</param>
         /// <returns>返回字符串。</returns>
         public static string AsCiphertextString(this IEncryptionBuffer<ICiphertextConverter, string> buffer)
-        {
-            return buffer.Converter.From(buffer);
-        }
+            => buffer.Converter.From(buffer);
 
         /// <summary>
         /// 还原密文字符串。
@@ -56,9 +54,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IEncryptionBuffer{ICiphertextAlgorithmConverter, String}"/>。</param>
         /// <returns>返回缓冲区。</returns>
         public static IByteBuffer FromCiphertextString(this string str, IEncryptionBuffer<ICiphertextConverter, string> buffer)
-        {
-            return buffer.Converter.To(str);
-        }
+            => buffer.Converter.To(str);
 
         #endregion
 
@@ -98,7 +94,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
-
             return buffer.Md5(hash, isSigned);
         }
         /// <summary>
@@ -113,7 +108,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             hash.Md5(buffer, isSigned);
-
             return buffer;
         }
         
@@ -130,7 +124,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
-
             return buffer.Sha1(hash, isSigned);
         }
         /// <summary>
@@ -145,7 +138,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             hash.Sha1(buffer, isSigned);
-
             return buffer;
         }
         
@@ -162,7 +154,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
-
             return buffer.Sha256(hash, isSigned);
         }
         /// <summary>
@@ -177,7 +168,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             hash.Sha256(buffer, isSigned);
-
             return buffer;
         }
         
@@ -194,7 +184,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
-
             return buffer.Sha384(hash, isSigned);
         }
         /// <summary>
@@ -209,7 +198,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             hash.Sha384(buffer, isSigned);
-
             return buffer;
         }
         
@@ -226,7 +214,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
-
             return buffer.Sha512(hash, isSigned);
         }
         /// <summary>
@@ -241,7 +228,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             hash.Sha512(buffer, isSigned);
-
             return buffer;
         }
 
@@ -263,7 +249,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
-
             return buffer.HmacMd5(keyedHash, identifier);
         }
         /// <summary>
@@ -278,7 +263,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             keyedHash.HmacMd5(buffer, identifier);
-
             return buffer;
         }
 
@@ -295,7 +279,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
-
             return buffer.HmacSha1(keyedHash, identifier);
         }
         /// <summary>
@@ -310,7 +293,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             keyedHash.HmacSha1(buffer, identifier);
-
             return buffer;
         }
 
@@ -327,7 +309,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
-
             return buffer.HmacSha256(keyedHash, identifier);
         }
         /// <summary>
@@ -342,7 +323,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             keyedHash.HmacSha256(buffer, identifier);
-
             return buffer;
         }
 
@@ -359,7 +339,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
-
             return buffer.HmacSha384(keyedHash, identifier);
         }
         /// <summary>
@@ -374,7 +353,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             keyedHash.HmacSha384(buffer, identifier);
-
             return buffer;
         }
 
@@ -391,7 +369,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
-
             return buffer.HmacSha512(keyedHash, identifier);
         }
         /// <summary>
@@ -406,7 +383,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             keyedHash.HmacSha512(buffer, identifier);
-
             return buffer;
         }
 
@@ -428,7 +404,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
-
             return buffer.AsAes(symmetric, identifier);
         }
         /// <summary>
@@ -443,7 +418,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             symmetric.ToAes(buffer, identifier);
-
             return buffer;
         }
 
@@ -460,7 +434,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
-
             return buffer.FromAes(symmetric, identifier);
         }
         /// <summary>
@@ -475,7 +448,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             symmetric.FromAes(buffer, identifier);
-
             return buffer;
         }
 
@@ -493,7 +465,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
-
             return buffer.AsDes(symmetric, identifier);
         }
         /// <summary>
@@ -508,7 +479,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             symmetric.ToDes(buffer, identifier);
-
             return buffer;
         }
 
@@ -525,7 +495,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
-
             return buffer.FromDes(symmetric, identifier);
         }
         /// <summary>
@@ -540,7 +509,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             symmetric.FromDes(buffer, identifier);
-
             return buffer;
         }
 
@@ -558,7 +526,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
-
             return buffer.AsTripleDes(symmetric, identifier);
         }
         /// <summary>
@@ -573,7 +540,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             symmetric.ToTripleDes(buffer, identifier);
-
             return buffer;
         }
 
@@ -590,7 +556,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
-
             return buffer.FromTripleDes(symmetric, identifier);
         }
         /// <summary>
@@ -605,7 +570,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             symmetric.FromTripleDes(buffer, identifier);
-
             return buffer;
         }
 
@@ -625,7 +589,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var rsa = buffer.ServiceProvider.GetRequiredService<IRsaService>();
-
             return buffer.AsRsa(rsa);
         }
         /// <summary>
@@ -639,7 +602,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             rsa.Encrypt(buffer);
-
             return buffer;
         }
 
@@ -654,7 +616,6 @@ namespace Librame.Extensions.Encryption
             where TConverter : IAlgorithmConverter<TSource>
         {
             var rsa = buffer.ServiceProvider.GetRequiredService<IRsaService>();
-
             return buffer.FromRsa(rsa);
         }
         /// <summary>
@@ -668,7 +629,6 @@ namespace Librame.Extensions.Encryption
             where TBuffer : IByteBuffer
         {
             rsa.Decrypt(buffer);
-
             return buffer;
         }
 

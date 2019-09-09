@@ -79,9 +79,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 <see cref="int"/>。</returns>
         public override int GetHashCode()
-        {
-            return Memory.GetHashCode();
-        }
+            => Memory.GetHashCode();
 
 
         /// <summary>
@@ -89,9 +87,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-        {
-            return Memory.ToString();
-        }
+            => Memory.ToString();
 
     }
 }

@@ -51,9 +51,7 @@ namespace Librame.Extensions.Core
         /// <param name="output">给定的缓冲区。</param>
         /// <returns>返回字符串。</returns>
         public virtual string From(IByteBuffer output)
-        {
-            return output.Memory.ToArray().FromEncodingBytes(Encoding);
-        }
+            => output.AsEncodingString(Encoding);
 
         /// <summary>
         /// 转换为字节缓冲区。
@@ -61,9 +59,7 @@ namespace Librame.Extensions.Core
         /// <param name="input">给定的明文字符串。</param>
         /// <returns>返回缓冲区。</returns>
         public virtual IByteBuffer To(string input)
-        {
-            return input.AsEncodingBytes(Encoding).AsByteBuffer();
-        }
+            => input.AsByteBufferFromEncodingString(Encoding);
 
     }
 }

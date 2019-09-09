@@ -24,6 +24,6 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 审计集合。
         /// </summary>
-        public List<Audit> Audits { get; set; }
+        public List<DataAudit> Audits { get; set; }
     }
 }

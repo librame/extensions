@@ -25,9 +25,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回是否成功获取的布尔值。</returns>
         public static bool HasParentBuilder<TParentBuilder>(this IExtensionBuilder builder)
             where TParentBuilder : IExtensionBuilder
-        {
-            return builder.TryGetParentBuilder<TParentBuilder>(out _);
-        }
+            => builder.TryGetParentBuilder<TParentBuilder>(out _);
 
         /// <summary>
         /// 尝试获取指定父级构建器类型的实例。

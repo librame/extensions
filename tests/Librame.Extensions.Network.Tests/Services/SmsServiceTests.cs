@@ -18,7 +18,7 @@ namespace Librame.Extensions.Network.Tests
         {
             Assert.ThrowsAsync<System.Net.WebException>(() =>
             {
-                return _service.SendAsync("TestData: 123456");
+                return _service.SendAsync("13012345678", "TestData: 123456");
             });
         }
 

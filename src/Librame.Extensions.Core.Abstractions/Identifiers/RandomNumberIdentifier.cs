@@ -73,10 +73,7 @@ namespace Librame.Extensions.Core
         /// <param name="other">给定的 <see cref="RandomNumberIdentifier"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(RandomNumberIdentifier other)
-        {
-            return Memory.ToArray().SequenceEqual(other.Memory.ToArray());
-            //return Memory.Equals(other.Memory);
-        }
+            => Memory.ToArray().SequenceEqual(other.Memory.ToArray());
 
 
         /// <summary>
@@ -84,9 +81,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-        {
-            return Converter.To(Memory);
-        }
+            => Converter.To(Memory);
 
 
         /// <summary>
@@ -96,8 +91,8 @@ namespace Librame.Extensions.Core
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
         {
-            if (obj is RandomNumberIdentifier identifier)
-                return Equals(identifier);
+            if (obj is RandomNumberIdentifier other)
+                return Equals(other);
 
             if (obj is ReadOnlyMemory<byte> memory)
                 return Memory.Equals(memory);
@@ -105,15 +100,14 @@ namespace Librame.Extensions.Core
             return false;
         }
 
+
         /// <summary>
         /// 定义比较相等静态方法需强制重写此方法。
         /// </summary>
         /// <returns>返回 32 位带符号整数。</returns>
         public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-            //return Memory.GetHashCode();
-        }
+            => ToString().GetHashCode();
+
 
         /// <summary>
         /// 比较相等。
@@ -122,9 +116,7 @@ namespace Librame.Extensions.Core
         /// <param name="b">给定的 <see cref="RandomNumberIdentifier"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator ==(RandomNumberIdentifier a, RandomNumberIdentifier b)
-        {
-            return a.Equals(b);
-        }
+            => a.Equals(b);
 
         /// <summary>
         /// 比较不等。
@@ -133,9 +125,7 @@ namespace Librame.Extensions.Core
         /// <param name="b">给定的 <see cref="RandomNumberIdentifier"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator !=(RandomNumberIdentifier a, RandomNumberIdentifier b)
-        {
-            return !a.Equals(b);
-        }
+            => !a.Equals(b);
 
 
         /// <summary>

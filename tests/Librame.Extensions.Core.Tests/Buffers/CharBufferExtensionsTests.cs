@@ -9,7 +9,7 @@ namespace Librame.Extensions.Core.Tests
         public void SplitKeyValueStringByIndexOfTest()
         {
             var str = "123456";
-            var buffer = str.AsCharBuffer();
+            var buffer = (CharBuffer)str;
 
             // Change
             buffer.Change("123:456=789:987".ToCharArray());

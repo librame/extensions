@@ -10,7 +10,9 @@
 
 #endregion
 
-using Microsoft.Extensions.FileProviders;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,20 +26,75 @@ namespace Librame.Extensions.Storage
     public interface IFileService : IService
     {
         /// <summary>
-        /// 异步获取内容。
+        /// 进度动作。
         /// </summary>
-        /// <param name="root">给定的根。</param>
-        /// <param name="subpath">给定的子路径。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含字符串的异步操作。</returns>
-        Task<string> GetContentAsync(string root, string subpath, CancellationToken cancellationToken = default);
+        Action<StorageProgressDescriptor> ProgressAction { get; set; }
+
 
         /// <summary>
-        /// 异步获取提供程序。
+        /// 异步获取文件信息。
         /// </summary>
-        /// <param name="root">给定的根。</param>
+        /// <param name="subpath">给定的子路径。</param>
+        /// <param name="providerFactory">给定要使用的 <see cref="IStorageFileProvider"/> 工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IFileProvider"/> 的异步操作。</returns>
-        Task<IFileProvider> GetProviderAsync(string root, CancellationToken cancellationToken = default);
+        /// <returns>返回 <see cref="Task{IStorageFileInfo}"/>。</returns>
+        Task<IStorageFileInfo> GetFileInfoAsync(string subpath,
+            Func<IEnumerable<IStorageFileProvider>, IStorageFileProvider> providerFactory = null,
+            CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 异步获取目录内容集合。
+        /// </summary>
+        /// <param name="subpath">给定的子路径。</param>
+        /// <param name="providerFactory">给定要使用的 <see cref="IStorageFileProvider"/> 工厂方法（可选）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task{IStorageDirectoryContents}"/>。</returns>
+        Task<IStorageDirectoryContents> GetDirectoryContentsAsync(string subpath,
+            Func<IEnumerable<IStorageFileProvider>, IStorageFileProvider> providerFactory = null,
+            CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 异步读取字符串。
+        /// </summary>
+        /// <param name="subpath">给定的子路径。</param>
+        /// <param name="providerFactory">给定要使用的 <see cref="IStorageFileProvider"/> 工厂方法（可选）。</param>
+        /// <returns>返回 <see cref="Task{String}"/>。</returns>
+        Task<string> ReadStringAsync(string subpath,
+            Func<IEnumerable<IStorageFileProvider>, IStorageFileProvider> providerFactory = null);
+
+        /// <summary>
+        /// 异步读取字符串。
+        /// </summary>
+        /// <param name="fileInfo">给定的 <see cref="IStorageFileInfo"/>。</param>
+        /// <returns>返回 <see cref="Task{String}"/>。</returns>
+        Task<string> ReadStringAsync(IStorageFileInfo fileInfo);
+
+        /// <summary>
+        /// 异步读取。
+        /// </summary>
+        /// <param name="fileInfo">给定的 <see cref="IStorageFileInfo"/>。</param>
+        /// <param name="writeStream">给定的写入 <see cref="Stream"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        Task ReadAsync(IStorageFileInfo fileInfo, Stream writeStream, CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 异步写入字符串。
+        /// </summary>
+        /// <param name="fileInfo">给定的 <see cref="IStorageFileInfo"/>。</param>
+        /// <param name="content">给定的写入字符串。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        Task WriteStringAsync(IStorageFileInfo fileInfo, string content);
+
+        /// <summary>
+        /// 异步写入。
+        /// </summary>
+        /// <param name="fileInfo">给定的 <see cref="IStorageFileInfo"/>。</param>
+        /// <param name="readStream">给定的读取 <see cref="Stream"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        Task WriteAsync(IStorageFileInfo fileInfo, Stream readStream, CancellationToken cancellationToken = default);
     }
 }

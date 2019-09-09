@@ -59,9 +59,8 @@ namespace Librame.Extensions
         /// <param name="defaultString">给定的默认字符串。</param>
         /// <returns>返回字符串。</returns>
         public static string EnsureString(this string str, string defaultString)
-        {
-            return string.IsNullOrEmpty(str) ? defaultString : str;
-        }
+            => string.IsNullOrEmpty(str) ? defaultString : str;
+
         /// <summary>
         /// 确保字符串（如果当前字符串为 NULL 或空字符串，则返回默认值）。
         /// </summary>
@@ -69,9 +68,7 @@ namespace Librame.Extensions
         /// <param name="defaultStringFactory">给定的默认字符串工厂方法。</param>
         /// <returns>返回字符串。</returns>
         public static string EnsureString(this string str, Func<string> defaultStringFactory)
-        {
-            return string.IsNullOrEmpty(str) ? defaultStringFactory?.Invoke() : str;
-        }
+            => string.IsNullOrEmpty(str) ? defaultStringFactory?.Invoke() : str;
 
 
         /// <summary>
@@ -83,9 +80,8 @@ namespace Librame.Extensions
         /// <returns>返回值或默认值。</returns>
         public static TValue EnsureValue<TValue>(this TValue? nullable, TValue defaultValue)
             where TValue : struct
-        {
-            return nullable.HasValue ? nullable.Value : defaultValue;
-        }
+            => nullable.HasValue ? nullable.Value : defaultValue;
+
         /// <summary>
         /// 确保可空值（如果当前可空值为 NULL，则返回默认值）。
         /// </summary>
@@ -95,9 +91,7 @@ namespace Librame.Extensions
         /// <returns>返回值或默认值。</returns>
         public static TValue EnsureValue<TValue>(this TValue? nullable, Func<TValue> defaultValueFactory)
             where TValue : struct
-        {
-            return nullable.HasValue ? nullable.Value : defaultValueFactory.Invoke();
-        }
+            => nullable.HasValue ? nullable.Value : defaultValueFactory.Invoke();
 
 
         /// <summary>
@@ -256,9 +250,7 @@ namespace Librame.Extensions
         /// <param name="type">给定的类型。</param>
         /// <returns>返回 <typeparamref name="T"/>。</returns>
         public static T EnsureCreate<T>(this Type type)
-        {
-            return (T)type.EnsureCreateObject();
-        }
+            => (T)type.EnsureCreateObject();
 
         /// <summary>
         /// 确保创建对象实例。
@@ -283,9 +275,7 @@ namespace Librame.Extensions
         /// <param name="parameter">给定的参数对象。</param>
         /// <returns>返回 <typeparamref name="T"/>。</returns>
         public static T EnsureConstruct<T>(this object parameter)
-        {
-            return EnsureCreate<T>(parameter);
-        }
+            => EnsureCreate<T>(parameter);
 
         /// <summary>
         /// 利用当前对象数组为构造函数的参数数组来确保构造实例。
@@ -294,9 +284,7 @@ namespace Librame.Extensions
         /// <param name="parameters">给定的参数对象数组。</param>
         /// <returns>返回 <typeparamref name="T"/>。</returns>
         public static T EnsureConstruct<T>(this object[] parameters)
-        {
-            return EnsureCreate<T>(parameters);
-        }
+            => EnsureCreate<T>(parameters);
 
 
         /// <summary>
@@ -306,9 +294,7 @@ namespace Librame.Extensions
         /// <param name="parameters">给定的参数对象数组。</param>
         /// <returns>返回 <typeparamref name="T"/>。</returns>
         public static T EnsureCreate<T>(params object[] parameters)
-        {
-            return (T)typeof(T).EnsureCreateObject(parameters);
-        }
+            => (T)typeof(T).EnsureCreateObject(parameters);
 
         /// <summary>
         /// 通过指定的对象数组为构造函数的参数数组来确保创建实例。
@@ -318,9 +304,7 @@ namespace Librame.Extensions
         /// <param name="parameters">给定的参数对象数组。</param>
         /// <returns>返回 <typeparamref name="T"/>。</returns>
         public static T EnsureCreate<T>(this Type type, params object[] parameters)
-        {
-            return (T)type.EnsureCreateObject(parameters);
-        }
+            => (T)type.EnsureCreateObject(parameters);
 
         /// <summary>
         /// 通过指定的对象数组为构造函数的参数数组来确保创建对象实例。

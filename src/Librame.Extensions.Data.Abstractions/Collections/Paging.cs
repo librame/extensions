@@ -87,14 +87,10 @@ namespace System.Collections.Generic
         /// </summary>
         /// <returns>返回枚举器。</returns>
         public IEnumerator<T> GetEnumerator()
-        {
-            return _rows.GetEnumerator();
-        }
+            => _rows.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+            => GetEnumerator();
 
     }
 }

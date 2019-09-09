@@ -43,5 +43,10 @@ namespace Librame.Extensions.Data
         /// 写入分离。
         /// </summary>
         public string WriteConnectionSeparation { get; set; }
+
+        /// <summary>
+        /// 创建时间。
+        /// </summary>
+        public string CreatedTime { get; set; }
     }
 }

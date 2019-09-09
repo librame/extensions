@@ -33,11 +33,8 @@ namespace Librame.Extensions.Network
         /// <returns>返回一个包含字节数组的异步操作。</returns>
         public static Task<byte[]> GetResponseBytesAsync(this IUriRequester requester, string url, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
-        {
-            requester.NotNull(nameof(requester));
-
-            return requester.GetResponseBytesAsync(url.AsAbsoluteUri(), postData, enableCodec, parameters, cancellationToken);
-        }
+            => requester.NotNull(nameof(requester))
+            .GetResponseBytesAsync(url.AsAbsoluteUri(), postData, enableCodec, parameters, cancellationToken);
 
         /// <summary>
         /// 异步获取响应字符串。
@@ -51,11 +48,8 @@ namespace Librame.Extensions.Network
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public static Task<string> GetResponseStringAsync(this IUriRequester requester, string url, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
-        {
-            requester.NotNull(nameof(requester));
-
-            return requester.GetResponseStringAsync(url.AsAbsoluteUri(), postData, enableCodec, parameters, cancellationToken);
-        }
+            => requester.NotNull(nameof(requester))
+            .GetResponseStringAsync(url.AsAbsoluteUri(), postData, enableCodec, parameters, cancellationToken);
 
         /// <summary>
         /// 异步获取响应流。
@@ -69,11 +63,8 @@ namespace Librame.Extensions.Network
         /// <returns>返回一个包含 <see cref="Stream"/> 的异步操作。</returns>
         public static Task<Stream> GetResponseStreamAsync(this IUriRequester requester, string url, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
-        {
-            requester.NotNull(nameof(requester));
-
-            return requester.GetResponseStreamAsync(url.AsAbsoluteUri(), postData, enableCodec, parameters, cancellationToken);
-        }
+            => requester.NotNull(nameof(requester))
+            .GetResponseStreamAsync(url.AsAbsoluteUri(), postData, enableCodec, parameters, cancellationToken);
 
     }
 }

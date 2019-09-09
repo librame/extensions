@@ -164,16 +164,16 @@ namespace Librame.Extensions.Network
             = false;
 
         /// <summary>
-        /// 在接收到来自服务器的 100 次连续响应之前要等待的超时（以毫秒为单位，默认为 10 秒）。
+        /// 平台信息。
         /// </summary>
-        public int ContinueTimeout { get; set; }
-            = 10000;
+        public SmsPlatformInfo PlatformInfo { get; set; }
+            = new SmsPlatformInfo();
 
         /// <summary>
-        /// 网关链接。
+        /// 网关链接（传入参数依次为）。
         /// </summary>
-        public string GetewayUrl { get; set; }
-            = "https://sms.contoso.com";
+        public Func<SmsPlatformInfo, ShortMessageDescriptor, string> GetewayUrlFactory { get; set; }
+            = (info, descr) => $"https://sms.contoso.com/?id={info.AccountId}&key={info.AccountKey}&mobile={descr.Mobile}&text={descr.Text}";
     }
 
 

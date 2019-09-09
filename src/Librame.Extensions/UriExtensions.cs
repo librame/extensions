@@ -32,7 +32,6 @@ namespace Librame.Extensions
         public static bool IsAbsoluteVirtualPath(this string path)
         {
             path.NotNullOrEmpty(nameof(path));
-
             return path.StartsWith("~/") || path.StartsWith("/");
         }
 
@@ -60,9 +59,8 @@ namespace Librame.Extensions
         /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsAbsoluteUri(this string absoluteUriString)
-        {
-            return absoluteUriString.IsAbsoluteUri(out _);
-        }
+            => absoluteUriString.IsAbsoluteUri(out _);
+
         /// <summary>
         /// 是绝对 URI。
         /// </summary>
@@ -70,9 +68,7 @@ namespace Librame.Extensions
         /// <param name="result">输出 <see cref="Uri"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsAbsoluteUri(this string absoluteUriString, out Uri result)
-        {
-            return Uri.TryCreate(absoluteUriString, UriKind.Absolute, out result);
-        }
+            => Uri.TryCreate(absoluteUriString, UriKind.Absolute, out result);
 
 
         /// <summary>
@@ -97,7 +93,6 @@ namespace Librame.Extensions
         public static bool SameHost(this Uri absoluteUri, string host)
         {
             absoluteUri.NotNull(nameof(absoluteUri));
-
             return absoluteUri.Authority.Equals(host, StringComparison.OrdinalIgnoreCase);
         }
 
@@ -108,9 +103,8 @@ namespace Librame.Extensions
         /// <param name="uriString">给定的 URI 字符串。</param>
         /// <returns>返回字符串。</returns>
         public static string GetHost(this string uriString)
-        {
-            return uriString.GetHost(out _);
-        }
+            => uriString.GetHost(out _);
+
         /// <summary>
         /// 获取 URI 字符串中的主机。
         /// </summary>
@@ -132,9 +126,8 @@ namespace Librame.Extensions
         /// <param name="pathOrUri">给定的路径或 URI。</param>
         /// <returns>返回字符串。</returns>
         public static string GetPath(this string pathOrUri)
-        {
-            return pathOrUri.GetPath(out _);
-        }
+            => pathOrUri.GetPath(out _);
+
         /// <summary>
         /// 获取指定路径或 URI 中的路径。
         /// </summary>
@@ -159,9 +152,8 @@ namespace Librame.Extensions
         /// <param name="uriString">给定的 URI 字符串。</param>
         /// <returns>返回字符串。</returns>
         public static string GetQuery(this string uriString)
-        {
-            return uriString.GetQuery(out _);
-        }
+            => uriString.GetQuery(out _);
+
         /// <summary>
         /// 获取 URI 字符串中的查询。
         /// </summary>
@@ -202,9 +194,8 @@ namespace Librame.Extensions
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回字符串。</returns>
         public static string CombineUriToString(this string baseUriString, string relativeUri)
-        {
-            return baseUriString.CombineUri(relativeUri).ToString();
-        }
+            => baseUriString.CombineUri(relativeUri).ToString();
+
         /// <summary>
         /// 合并 URI 字符串。
         /// </summary>
@@ -212,9 +203,7 @@ namespace Librame.Extensions
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回字符串。</returns>
         public static string CombineUriToString(this Uri baseUri, string relativeUri)
-        {
-            return baseUri.CombineUri(relativeUri).ToString();
-        }
+            => baseUri.CombineUri(relativeUri).ToString();
 
 
         /// <summary>
@@ -224,9 +213,8 @@ namespace Librame.Extensions
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回 <see cref="Uri"/>。</returns>
         public static Uri CombineUri(this string baseUriString, string relativeUri)
-        {
-            return new Uri(baseUriString).CombineUri(relativeUri);
-        }
+            => new Uri(baseUriString).CombineUri(relativeUri);
+
         /// <summary>
         /// 合并 URI。
         /// </summary>
@@ -234,9 +222,7 @@ namespace Librame.Extensions
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回 <see cref="Uri"/>。</returns>
         public static Uri CombineUri(this Uri baseUri, string relativeUri)
-        {
-            return new Uri(baseUri, relativeUri);
-        }
+            => new Uri(baseUri, relativeUri);
 
         #endregion
 
@@ -262,9 +248,7 @@ namespace Librame.Extensions
         /// <param name="ip">给定的 IP。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsLocalIPv6(this string ip)
-        {
-            return ip.IsIPv6(out IPAddress address) && IPAddress.IPv6Loopback.Equals(address);
-        }
+            => ip.IsIPv6(out IPAddress address) && IPAddress.IPv6Loopback.Equals(address);
 
         /// <summary>
         /// 是本机 IPv4 地址。
@@ -272,9 +256,7 @@ namespace Librame.Extensions
         /// <param name="ip">给定的 IP。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsLocalIPv4(this string ip)
-        {
-            return ip.IsIPv4(out IPAddress address) && IPAddress.Loopback.Equals(address);
-        }
+            => ip.IsIPv4(out IPAddress address) && IPAddress.Loopback.Equals(address);
 
         /// <summary>
         /// 是本机 IP 地址。
@@ -282,9 +264,7 @@ namespace Librame.Extensions
         /// <param name="ip">给定的 IP。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsLocalIPAddress(this string ip)
-        {
-            return ip.IsIPAddress(out IPAddress address) && IPAddress.IsLoopback(address);
-        }
+            => ip.IsIPAddress(out IPAddress address) && IPAddress.IsLoopback(address);
 
 
         /// <summary>
@@ -293,9 +273,7 @@ namespace Librame.Extensions
         /// <param name="ip">给定的 IP。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsIPv6(this string ip)
-        {
-            return ip.IsIPv6(out _);
-        }
+            => ip.IsIPv6(out _);
 
         /// <summary>
         /// 是 IPv6 地址。
@@ -304,9 +282,7 @@ namespace Librame.Extensions
         /// <param name="address">输出 <see cref="IPAddress"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsIPv6(this string ip, out IPAddress address)
-        {
-            return ip.IsIPAddress(out address) && address.AddressFamily == AddressFamily.InterNetworkV6;
-        }
+            => ip.IsIPAddress(out address) && address.AddressFamily == AddressFamily.InterNetworkV6;
 
 
         /// <summary>
@@ -315,9 +291,7 @@ namespace Librame.Extensions
         /// <param name="ip">给定的 IP。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsIPv4(this string ip)
-        {
-            return ip.IsIPv4(out _);
-        }
+            => ip.IsIPv4(out _);
 
         /// <summary>
         /// 是 IPv4 地址。
@@ -326,9 +300,7 @@ namespace Librame.Extensions
         /// <param name="address">输出 <see cref="IPAddress"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsIPv4(this string ip, out IPAddress address)
-        {
-            return ip.IsIPAddress(out address) && address.AddressFamily == AddressFamily.InterNetwork;
-        }
+            => ip.IsIPAddress(out address) && address.AddressFamily == AddressFamily.InterNetwork;
 
 
         /// <summary>
@@ -337,9 +309,7 @@ namespace Librame.Extensions
         /// <param name="ip">给定的 IP。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsIPAddress(this string ip)
-        {
-            return ip.IsIPAddress(out _);
-        }
+            => ip.IsIPAddress(out _);
 
         /// <summary>
         /// 是 IP 地址。
@@ -348,9 +318,7 @@ namespace Librame.Extensions
         /// <param name="address">输出 <see cref="IPAddress"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsIPAddress(this string ip, out IPAddress address)
-        {
-            return IPAddress.TryParse(ip, out address);
-        }
+            => IPAddress.TryParse(ip, out address);
 
         #endregion
 

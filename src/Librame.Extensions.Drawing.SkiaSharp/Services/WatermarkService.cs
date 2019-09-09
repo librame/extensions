@@ -31,9 +31,9 @@ namespace Librame.Extensions.Drawing
         }
 
         
-        public IFileLocator ImageFileLocator => Options.Watermark.ImageFileLocator;
+        public FileLocator ImageFileLocator => Options.Watermark.ImageFileLocator;
 
-        public IFileLocator FontFileLocator => Options.Watermark.Font.FileLocator;
+        public FileLocator FontFileLocator => Options.Watermark.Font.FileLocator;
 
 
         public Task<bool> DrawFileAsync(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)

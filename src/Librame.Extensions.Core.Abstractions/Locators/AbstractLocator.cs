@@ -16,7 +16,7 @@ namespace Librame.Extensions.Core
     /// 抽象定位器。
     /// </summary>
     /// <typeparam name="TSource">指定的源类型。</typeparam>
-    public abstract class AbstractLocator<TSource> : ILocator<TSource>
+    public abstract class AbstractLocator<TSource>
         where TSource : class
     {
         /// <summary>

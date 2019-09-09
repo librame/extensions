@@ -30,9 +30,7 @@ namespace Librame.Extensions.Core
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串键值对。</returns>
         public static KeyValuePair<string, string> SplitKeyValueStringByIndexOf(this IReadOnlyCharBuffer buffer, char separator)
-        {
-            return buffer.SplitKeyValueByIndexOf(separator, key => key.ToString(), value => value.ToString());
-        }
+            => buffer.SplitKeyValueByIndexOf(separator, key => key.ToString(), value => value.ToString());
 
         /// <summary>
         /// 分拆为字符串键值对。
@@ -41,9 +39,7 @@ namespace Librame.Extensions.Core
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串键值对。</returns>
         public static KeyValuePair<string, string> SplitKeyValueStringByIndexOf(this IReadOnlyCharBuffer buffer, string separator)
-        {
-            return buffer.SplitKeyValueByIndexOf(separator, key => key.ToString(), value => value.ToString());
-        }
+            => buffer.SplitKeyValueByIndexOf(separator, key => key.ToString(), value => value.ToString());
 
 
         /// <summary>
@@ -53,9 +49,7 @@ namespace Librame.Extensions.Core
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串键值对。</returns>
         public static KeyValuePair<string, string> SplitKeyValueStringByLastIndexOf(this IReadOnlyCharBuffer buffer, char separator)
-        {
-            return buffer.SplitKeyValueByLastIndexOf(separator, key => key.ToString(), value => value.ToString());
-        }
+            => buffer.SplitKeyValueByLastIndexOf(separator, key => key.ToString(), value => value.ToString());
 
         /// <summary>
         /// 分拆为字符串键值对。
@@ -64,9 +58,7 @@ namespace Librame.Extensions.Core
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串键值对。</returns>
         public static KeyValuePair<string, string> SplitKeyValueStringByLastIndexOf(this IReadOnlyCharBuffer buffer, string separator)
-        {
-            return buffer.SplitKeyValueByLastIndexOf(separator, key => key.ToString(), value => value.ToString());
-        }
+            => buffer.SplitKeyValueByLastIndexOf(separator, key => key.ToString(), value => value.ToString());
 
 
         /// <summary>
@@ -84,9 +76,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回键值对。</returns>
         public static KeyValuePair<TKey, TValue> SplitKeyValueByIndexOf<TKey, TValue>(this IReadOnlyCharBuffer buffer, char separator,
             Func<ReadOnlyMemory<char>, TKey> keyConverter, Func<ReadOnlyMemory<char>, TValue> valueConverter)
-        {
-            return buffer.SplitKeyValueByIndexOf(separator.ToString(), keyConverter, valueConverter);
-        }
+            => buffer.SplitKeyValueByIndexOf(separator.ToString(), keyConverter, valueConverter);
 
         /// <summary>
         /// 分拆为键值对。
@@ -105,7 +95,6 @@ namespace Librame.Extensions.Core
             Func<ReadOnlyMemory<char>, TKey> keyConverter, Func<ReadOnlyMemory<char>, TValue> valueConverter)
         {
             var separatorIndex = buffer.ToString().IndexOf(separator);
-
             return buffer.SplitKeyValue(separatorIndex, separator.Length, keyConverter, valueConverter);
         }
 
@@ -125,9 +114,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回键值对。</returns>
         public static KeyValuePair<TKey, TValue> SplitKeyValueByLastIndexOf<TKey, TValue>(this IReadOnlyCharBuffer buffer, char separator,
             Func<ReadOnlyMemory<char>, TKey> keyConverter, Func<ReadOnlyMemory<char>, TValue> valueConverter)
-        {
-            return buffer.SplitKeyValueByLastIndexOf(separator.ToString(), keyConverter, valueConverter);
-        }
+            => buffer.SplitKeyValueByLastIndexOf(separator.ToString(), keyConverter, valueConverter);
 
         /// <summary>
         /// 分拆为键值对。
@@ -146,7 +133,6 @@ namespace Librame.Extensions.Core
             Func<ReadOnlyMemory<char>, TKey> keyConverter, Func<ReadOnlyMemory<char>, TValue> valueConverter)
         {
             var separatorIndex = buffer.ToString().LastIndexOf(separator);
-
             return buffer.SplitKeyValue(separatorIndex, separator.Length, keyConverter, valueConverter);
         }
 

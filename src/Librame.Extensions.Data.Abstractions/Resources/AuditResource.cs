@@ -35,24 +35,9 @@ namespace Librame.Extensions.Data
         public string EntityTypeName { get; set; }
 
         /// <summary>
-        /// 状态。
-        /// </summary>
-        public string State { get; set; }
-
-        /// <summary>
         /// 状态名称。
         /// </summary>
         public string StateName { get; set; }
-
-        /// <summary>
-        /// 创建者。
-        /// </summary>
-        public string CreatedBy { get; set; }
-
-        /// <summary>
-        /// 创建时间。
-        /// </summary>
-        public string CreatedTime { get; set; }
 
         /// <summary>
         /// 属性集合。

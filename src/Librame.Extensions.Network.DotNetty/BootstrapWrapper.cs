@@ -65,7 +65,6 @@ namespace Librame.Extensions.Network.DotNetty
         public IBootstrapWrapper Configure(Action<Bootstrap> configureAction)
         {
             configureAction.Invoke(Bootstrap);
-
             return this;
         }
 
@@ -73,7 +72,6 @@ namespace Librame.Extensions.Network.DotNetty
         public Task<IChannel> ConnectAsync(string host, int port, int retryCount = 3)
         {
             var address = IPAddress.Parse(host);
-
             return ConnectAsync(new IPEndPoint(address, port), retryCount);
         }
 
@@ -113,19 +111,13 @@ namespace Librame.Extensions.Network.DotNetty
 
 
         public Task<IChannel> BindAsync(int port)
-        {
-            return Bootstrap.BindAsync(port);
-        }
+            => Bootstrap.BindAsync(port);
 
         public Task<IChannel> BindAsync(string host, int port)
-        {
-            return Bootstrap.BindAsync(host, port);
-        }
+            => Bootstrap.BindAsync(host, port);
 
         public Task<IChannel> BindAsync(IPEndPoint endPoint)
-        {
-            return Bootstrap.BindAsync(endPoint);
-        }
+            => Bootstrap.BindAsync(endPoint);
 
     }
 

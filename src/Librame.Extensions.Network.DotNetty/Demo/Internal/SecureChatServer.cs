@@ -41,9 +41,7 @@ namespace Librame.Extensions.Network.DotNetty
 
 
         public Task StartAsync(Action<IChannel> configureProcess, string host = null, int? port = null)
-        {
-            return StartAsync(new SecureChatServerHandler(this), configureProcess, host, port);
-        }
+            => StartAsync(new SecureChatServerHandler(this), configureProcess, host, port);
 
         public async Task StartAsync<TChannelHandler>(TChannelHandler channelHandler,
             Action<IChannel> configureProcess, string host = null, int? port = null)

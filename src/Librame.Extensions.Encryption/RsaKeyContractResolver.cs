@@ -21,7 +21,6 @@ namespace Librame.Extensions.Encryption
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             var property = base.CreateProperty(member, memberSerialization);
-
             property.Ignored = false;
 
             return property;

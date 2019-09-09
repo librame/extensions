@@ -57,7 +57,6 @@ namespace Librame.Extensions.Network.DotNetty
         public IServerBootstrapWrapper Configure(Action<ServerBootstrap> configureAction)
         {
             configureAction.Invoke(Bootstrap);
-
             return this;
         }
 

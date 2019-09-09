@@ -201,8 +201,8 @@ namespace System.Collections.Generic
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
         {
-            if (obj is TreeingNode<T, TId> node)
-                return Equals(node);
+            if (obj is TreeingNode<T, TId> other)
+                return Equals(other);
 
             return false;
         }

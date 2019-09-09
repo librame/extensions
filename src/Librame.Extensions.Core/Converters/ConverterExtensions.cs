@@ -27,9 +27,7 @@ namespace Librame.Extensions
         /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回 <see cref="IEncodingConverter"/>。</returns>
         public static IEncodingConverter AsEncodingConverter(this Encoding encoding)
-        {
-            return new EncodingConverter(encoding);
-        }
+            => new EncodingConverter(encoding);
 
     }
 }

@@ -5,7 +5,8 @@ namespace Librame.Models
     using Extensions.Data;
 
     [Description("文章")]
-    public class Article : AbstractEntityWithGenId
+    [TableNameSchema(IsSharding = true)]
+    public class Article : AbstractEntity<string>
     {
         public string Title { get; set; }
 

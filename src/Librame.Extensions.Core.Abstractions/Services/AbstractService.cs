@@ -40,6 +40,19 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <value>返回 <see cref="ILogger"/>。</value>
         protected virtual ILogger Logger
-            => LoggerFactory.CreateLogger(GetDisposableType());
+            => LoggerFactory.CreateLogger(GetType());
+
+
+        /// <summary>
+        /// 释放服务。
+        /// </summary>
+        protected override void DisposeCore()
+        {
+            Logger.LogTrace($"The {GetType().GetSimpleFullName()} was disposed.");
+
+            LoggerFactory.Dispose();
+            Logger.LogTrace($"The {LoggerFactory.GetType().GetSimpleFullName()} was disposed.");
+        }
+
     }
 }

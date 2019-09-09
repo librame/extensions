@@ -19,7 +19,6 @@ namespace Librame.Extensions.Core
         public static ICoreBuilder AddConverters(this ICoreBuilder builder)
         {
             builder.Services.TryAddSingleton<IEncodingConverter, EncodingConverter>();
-
             return builder;
         }
 

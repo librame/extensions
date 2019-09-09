@@ -50,15 +50,6 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
-        public void GetShortAssemblyQualifiedNameTest()
-        {
-            var listType = typeof(IList<string>);
-            var qualifiedName = listType.GetShortAssemblyQualifiedName();
-            Assert.Equal("System.Collections.Generic.IList`1[System.String], System.Private.CoreLib", qualifiedName);
-        }
-
-
-        [Fact]
         public void GetBodyNameTest()
         {
             var dictType = typeof(IDictionary<string, IList<string>>);
@@ -68,20 +59,29 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
-        public void GetCustomStringTest()
+        public void GetSimpleAssemblyQualifiedNameTest()
+        {
+            var listType = typeof(IList<string>);
+            var qualifiedName = listType.GetSimpleAssemblyQualifiedName();
+            Assert.Equal("System.Collections.Generic.IList`1[System.String], System.Private.CoreLib", qualifiedName);
+        }
+
+
+        [Fact]
+        public void GetSimpleNameTest()
         {
             var listType = typeof(IList<string>);
             var dictType = typeof(IDictionary<string, IList<string>>);
 
-            // GetName
-            var listTypeName = listType.GetCustomName();
-            var dictTypeName = dictType.GetCustomName();
+            // GetSimpleName
+            var listTypeName = listType.GetSimpleName();
+            var dictTypeName = dictType.GetSimpleName();
             Assert.Equal("IList`1[String]", listTypeName);
             Assert.Equal("IDictionary`2[String, IList`1[String]]", dictTypeName);
 
             // GetFullName
-            listTypeName = listType.GetCustomFullName();
-            dictTypeName = dictType.GetCustomFullName();
+            listTypeName = listType.GetSimpleFullName();
+            dictTypeName = dictType.GetSimpleFullName();
             Assert.Equal("System.Collections.Generic.IList`1[System.String]", listTypeName);
             Assert.Equal("System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]", dictTypeName);
         }

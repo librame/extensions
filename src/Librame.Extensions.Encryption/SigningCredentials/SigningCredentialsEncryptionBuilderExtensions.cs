@@ -60,9 +60,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="credentials">给定的 <see cref="SigningCredentials"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddGlobalSigningCredentials(this IEncryptionBuilder builder, SigningCredentials credentials)
-        {
-            return builder.AddSigningCredentials(new KeyValuePair<string, SigningCredentials>(EncryptionBuilderOptions.GLOBAL_KEY, credentials));
-        }
+            => builder.AddSigningCredentials(new KeyValuePair<string, SigningCredentials>(EncryptionBuilderOptions.GLOBAL_KEY, credentials));
 
         /// <summary>
         /// 添加全局签名证书。
@@ -104,7 +102,7 @@ namespace Librame.Extensions.Encryption
         public static IEncryptionBuilder AddDeveloperGlobalSigningCredentials(this IEncryptionBuilder builder,
             bool persistKey = true, string fileName = null)
         {
-            var rsaKey = RsaSecurityKeyHelper.LoadRsaSecurityKey(fileName, persistKey);
+            var rsaKey = RsaSecurityKeyLoader.LoadRsaSecurityKey(fileName, persistKey);
             return builder.AddGlobalSigningCredentials(rsaKey);
         }
 

@@ -30,9 +30,7 @@ namespace Librame.Extensions.Storage
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
         public static IStorageBuilder AddStorage(this IExtensionBuilder builder,
             Action<StorageBuilderOptions> setupAction = null)
-        {
-            return builder.AddStorage(b => new StorageBuilder(b), setupAction);
-        }
+            => builder.AddStorage(b => new StorageBuilder(b), setupAction);
 
         /// <summary>
         /// 添加存储扩展。

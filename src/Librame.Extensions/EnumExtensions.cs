@@ -30,9 +30,7 @@ namespace Librame.Extensions
         /// <returns>返回字符串。</returns>
         public static string AsEnumName<TEnum>(this TEnum enumField)
             where TEnum : struct
-        {
-            return Enum.GetName(typeof(TEnum), enumField);
-        }
+            => Enum.GetName(typeof(TEnum), enumField);
 
 
         #region AsEnum
@@ -45,9 +43,8 @@ namespace Librame.Extensions
         /// <returns>返回枚举对象。</returns>
         public static TEnum AsEnum<TEnum>(this string name)
             where TEnum : struct
-        {
-            return (TEnum)Enum.Parse(typeof(TEnum), name);
-        }
+            => (TEnum)Enum.Parse(typeof(TEnum), name);
+
         /// <summary>
         /// 转换为特定枚举。
         /// </summary>
@@ -57,9 +54,7 @@ namespace Librame.Extensions
         /// <returns>返回枚举对象。</returns>
         public static TEnum AsEnum<TEnum, TValue>(this TValue value)
             where TEnum : struct
-        {
-            return (TEnum)Enum.Parse(typeof(TEnum), value.ToString());
-        }
+            => (TEnum)Enum.Parse(typeof(TEnum), value.ToString());
 
         /// <summary>
         /// 将输入枚举字段转换为输出枚举字段（通过匹配枚举字段名称实现）。
@@ -71,9 +66,7 @@ namespace Librame.Extensions
         public static TOutputEnum AsOutputEnumByName<TInputEnum, TOutputEnum>(this TInputEnum input)
             where TInputEnum : struct
             where TOutputEnum : struct
-        {
-            return input.AsEnumName().AsEnum<TOutputEnum>();
-        }
+            => input.AsEnumName().AsEnum<TOutputEnum>();
 
         #endregion
 
@@ -86,9 +79,7 @@ namespace Librame.Extensions
         /// <param name="enumType">给定的枚举类型。</param>
         /// <returns>返回字段信息数组。</returns>
         public static FieldInfo[] AsEnumFields(this Type enumType)
-        {
-            return enumType.GetTypeInfo().GetFields(BindingFlags.Static | BindingFlags.Public);
-        }
+            => enumType.GetTypeInfo().GetFields(BindingFlags.Static | BindingFlags.Public);
 
         #endregion
 
@@ -144,9 +135,8 @@ namespace Librame.Extensions
         /// <param name="enumType">给定的枚举类型。</param>
         /// <returns>返回结果字典。</returns>
         public static Dictionary<string, int> AsEnumDictionary(this Type enumType)
-        {
-            return enumType.AsEnumDictionary<int>();
-        }
+            => enumType.AsEnumDictionary<int>();
+
         /// <summary>
         /// 当作枚举字典。
         /// </summary>
@@ -155,9 +145,7 @@ namespace Librame.Extensions
         /// <returns>返回结果字典。</returns>
         public static Dictionary<string, TConst> AsEnumDictionary<TConst>(this Type enumType)
             where TConst : struct
-        {
-            return enumType.AsEnumDictionary(field => (TConst)field.GetValue(null));
-        }
+            => enumType.AsEnumDictionary(field => (TConst)field.GetValue(null));
 
         /// <summary>
         /// 当作枚举结果字典。

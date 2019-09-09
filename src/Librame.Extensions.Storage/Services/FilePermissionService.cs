@@ -40,19 +40,13 @@ namespace Librame.Extensions.Storage
 
 
         public Task<string> GeAccessTokenAsync(CancellationToken cancellationToken = default)
-        {
-            return GenerateTokenAsync(cancellationToken, "access token");
-        }
+            => GenerateTokenAsync(cancellationToken, "access token");
 
         public Task<string> GetAuthorizationCodeAsync(CancellationToken cancellationToken = default)
-        {
-            return GenerateTokenAsync(cancellationToken, "authorization code");
-        }
+            => GenerateTokenAsync(cancellationToken, "authorization code");
 
         public Task<string> GetCookieValueAsync(CancellationToken cancellationToken = default)
-        {
-            return GenerateTokenAsync(cancellationToken, "cookie value");
-        }
+            => GenerateTokenAsync(cancellationToken, "cookie value");
 
     }
 }

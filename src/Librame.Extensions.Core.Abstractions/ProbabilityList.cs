@@ -106,14 +106,10 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 <see cref="IEnumerator{WeightRange}"/>。</returns>
         public IEnumerator<WeightRange> GetEnumerator()
-        {
-            return _weightRanges.GetEnumerator();
-        }
+            => _weightRanges.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+            => GetEnumerator();
 
     }
 }

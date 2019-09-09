@@ -25,7 +25,6 @@ namespace Librame.Extensions.Core
             CancellationToken cancellationToken = default)
         {
             var handlers = serviceFactory.GetRequiredService<IEnumerable<INotificationHandler<TNotification>>>();
-
             var factories = handlers.Select(handler => new Func<Task>(() => handler.HandleAsync((TNotification)notification, cancellationToken)));
 
             return PublishAsync();

@@ -32,9 +32,7 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddAccessor<TAccessor>(this IDataBuilder builder,
             Action<DataBuilderOptions, DbContextOptionsBuilder> setupAction)
             where TAccessor : DbContext, IAccessor
-        {
-            return builder.AddAccessor<IAccessor, TAccessor>(setupAction);
-        }
+            => builder.AddAccessor<IAccessor, TAccessor>(setupAction);
 
         /// <summary>
         /// 添加数据库访问器（即上下文）集合。

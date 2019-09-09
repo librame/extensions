@@ -40,9 +40,7 @@ namespace Librame.Extensions
         /// <param name="b">给定的另一个数。</param>
         /// <returns>返回整数。</returns>
         public static int ComputeLCM(this int a, int b)
-        {
-            return a * b / ComputeGCD(a, b);
-        }
+            => a * b / ComputeGCD(a, b);
 
     }
 }

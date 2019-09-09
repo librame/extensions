@@ -30,9 +30,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddEncryption(this IExtensionBuilder builder,
             Action<EncryptionBuilderOptions> setupAction = null)
-        {
-            return builder.AddEncryption(b => new EncryptionBuilder(b), setupAction);
-        }
+            => builder.AddEncryption(b => new EncryptionBuilder(b), setupAction);
 
         /// <summary>
         /// 添加加密扩展。

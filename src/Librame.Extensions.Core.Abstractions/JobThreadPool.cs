@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core
     /// </summary>
     public class JobThreadPool : AbstractDisposable
     {
-        private readonly List<Thread> _threads;
+        private readonly List<Thread> _threadPool;
         private readonly ConcurrentQueue<JobDescriptor> _jobs;
 
         
@@ -62,10 +62,10 @@ namespace Librame.Extensions.Core
         {
             _jobs = jobs ?? new ConcurrentQueue<JobDescriptor>();
 
-            _threads = new List<Thread>(threadsCount);
+            _threadPool = new List<Thread>(threadsCount);
             for (int i = 0; i < threadsCount; i++)
             {
-                _threads.Add(new Thread(ExecuteJobsAction));
+                _threadPool.Add(new Thread(ExecuteJobsAction));
             }
         }
 
@@ -88,18 +88,14 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="descriptor">给定的 <see cref="JobDescriptor"/>。</param>
         public void Add(JobDescriptor descriptor)
-        {
-            _jobs.Enqueue(descriptor);
-        }
+            => _jobs.Enqueue(descriptor);
 
 
         /// <summary>
         /// 执行工作。
         /// </summary>
         public void Execute()
-        {
-            _threads.ForEach(thread => thread.Start());
-        }
+            => _threadPool.ForEach(thread => thread.Start());
 
         private void ExecuteJobsAction()
         {
@@ -127,20 +123,11 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 释放。
+        /// 释放线程池。
         /// </summary>
-        public override void Dispose()
+        protected override void DisposeCore()
         {
-            StopThreads();
-            base.Dispose();
-        }
-
-        /// <summary>
-        /// 停止线程池工作。
-        /// </summary>
-        private void StopThreads()
-        {
-            _threads.ForEach(thread =>
+            _threadPool.ForEach(thread =>
             {
                 if (thread.ThreadState == ThreadState.Running)
                     thread.Abort();

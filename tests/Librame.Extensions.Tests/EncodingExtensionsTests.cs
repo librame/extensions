@@ -6,7 +6,7 @@ namespace Librame.Extensions.Tests
     public class EncodingExtensionsTests
     {
         [Fact]
-        public void EncodingTest()
+        public void NameTest()
         {
             var encoding = Encoding.UTF8;
             var encodingName = encoding.AsName();
@@ -14,11 +14,11 @@ namespace Librame.Extensions.Tests
         }
 
         [Fact]
-        public void EncodingBytesTest()
+        public void EncodingStringTest()
         {
             var str = nameof(EncodingExtensionsTests);
-            var buffer = str.AsEncodingBytes();
-            Assert.Equal(str, buffer.FromEncodingBytes());
+            var buffer = str.FromEncodingString();
+            Assert.Equal(str, buffer.AsEncodingString());
         }
 
         [Fact]

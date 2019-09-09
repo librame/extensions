@@ -49,9 +49,7 @@ namespace Librame.Extensions
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回源或抛出异常。</returns>
         public static TSource NotNull<TSource>(this TSource source, string paramName)
-        {
-            return source.IsNotNull() ? source : throw new ArgumentNullException(paramName);
-        }
+            => source.IsNotNull() ? source : throw new ArgumentNullException(paramName);
 
 
         /// <summary>
@@ -64,9 +62,7 @@ namespace Librame.Extensions
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回字符串或抛出异常。</returns>
         public static string NotNullOrWhiteSpace(this string str, string paramName)
-        {
-            return str.IsNotNullOrWhiteSpace() ? str : throw new ArgumentNullException(paramName);
-        }
+            => str.IsNotNullOrWhiteSpace() ? str : throw new ArgumentNullException(paramName);
 
 
         /// <summary>
@@ -79,9 +75,7 @@ namespace Librame.Extensions
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回字符串或抛出异常。</returns>
         public static string NotNullOrEmpty(this string str, string paramName)
-        {
-            return str.IsNotNullOrEmpty() ? str : throw new ArgumentNullException(paramName);
-        }
+            => str.IsNotNullOrEmpty() ? str : throw new ArgumentNullException(paramName);
 
         /// <summary>
         /// 得到不为 NULL 或空集合的集合。
@@ -95,9 +89,7 @@ namespace Librame.Extensions
         /// <returns>返回集合或抛出异常。</returns>
         public static TSources NotNullOrEmpty<TSources>(this TSources sources, string paramName)
             where TSources : IEnumerable
-        {
-            return sources.IsNotNullOrEmpty() ? sources : throw new ArgumentNullException(paramName);
-        }
+            => sources.IsNotNullOrEmpty() ? sources : throw new ArgumentNullException(paramName);
 
         /// <summary>
         /// 得到不为 NULL 或空集合的集合。
@@ -110,9 +102,7 @@ namespace Librame.Extensions
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回集合或抛出异常。</returns>
         public static IEnumerable<TSource> NotNullOrEmpty<TSource>(this IEnumerable<TSource> sources, string paramName)
-        {
-            return sources.IsNotNullOrEmpty() ? sources : throw new ArgumentNullException(paramName);
-        }
+            => sources.IsNotNullOrEmpty() ? sources : throw new ArgumentNullException(paramName);
 
         #endregion
 
@@ -266,9 +256,7 @@ namespace Librame.Extensions
         /// <param name="baseType">给定的基础类型。</param>
         /// <returns>返回目标类型或抛出异常。</returns>
         public static Type AssignableToBase(this Type targetType, Type baseType)
-        {
-            return baseType.AssignableFromTarget(targetType);
-        }
+            => baseType.AssignableFromTarget(targetType);
 
 
         /// <summary>

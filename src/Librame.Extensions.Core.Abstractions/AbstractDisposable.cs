@@ -21,12 +21,6 @@ namespace Librame.Extensions.Core
     {
         private bool _disposed = false;
 
-        /// <summary>
-        /// 获取可处置对象类型。
-        /// </summary>
-        /// <returns>返回 <see cref="Type"/>。</returns>
-        protected virtual Type GetDisposableType()
-            => GetType();
 
         /// <summary>
         /// 如果已处置则抛出异常。
@@ -34,27 +28,37 @@ namespace Librame.Extensions.Core
         protected virtual void ThrowIfDisposed()
         {
             if (_disposed)
-                throw new ObjectDisposedException(GetDisposableType()?.Name);
+                throw new ObjectDisposedException(GetType().Name);
         }
 
+
         /// <summary>
-        /// 释放资源。
+        /// 释放对象。
         /// </summary>
-        public virtual void Dispose()
+        public void Dispose()
         {
             Dispose(true);
         }
+
         /// <summary>
-        /// 释放资源。
+        /// 释放对象。
         /// </summary>
         /// <param name="disposing">是否立即释放。</param>
-        protected virtual void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
-            if (_disposed)
+            // 如果不释放或已释放
+            if (!disposing || _disposed)
                 return;
 
+            DisposeCore();
+
             if (disposing)
-                _disposed = true;
+                _disposed = disposing;
         }
+
+        /// <summary>
+        /// 释放核心对象。
+        /// </summary>
+        protected abstract void DisposeCore();
     }
 }

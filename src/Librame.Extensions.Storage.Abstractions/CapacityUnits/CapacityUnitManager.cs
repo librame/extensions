@@ -107,9 +107,7 @@ namespace Librame.Extensions.Storage
         /// <param name="format">给定的单位格式。</param>
         /// <returns>返回 <see cref="CapacityUnitInfo"/>。</returns>
         public static CapacityUnitInfo GetInfo(CapacityUnitFormat format)
-        {
-            return Infos.First(info => info.Format == format);
-        }
+            => Infos.First(info => info.Format == format);
 
 
         /// <summary>
@@ -121,7 +119,6 @@ namespace Librame.Extensions.Storage
         public static CapacityUnitDescriptor GetDescriptor(CapacityUnitFormat format, CapacityUnitNotation notation)
         {
             var info = GetInfo(format);
-
             return notation == CapacityUnitNotation.Binary ? info.Binary : info.Decimal;
         }
 

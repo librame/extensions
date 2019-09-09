@@ -87,11 +87,13 @@ namespace Librame.Extensions.Core
         }
 
 
-        public override void Dispose()
+        /// <summary>
+        /// 释放注入动作集合。
+        /// </summary>
+        protected override void DisposeCore()
         {
             _injectedActions.Clear();
-
-            base.Dispose();
+            base.DisposeCore();
         }
 
     }

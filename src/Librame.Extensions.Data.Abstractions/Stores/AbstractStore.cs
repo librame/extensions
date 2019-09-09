@@ -90,14 +90,10 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 处置对象。
+        /// 释放存储。
         /// </summary>
-        public override void Dispose()
-        {
-            Accessor.Dispose();
-
-            base.Dispose();
-        }
+        protected override void DisposeCore()
+            => Accessor.Dispose();
 
     }
 }

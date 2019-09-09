@@ -29,9 +29,8 @@ namespace Librame.Extensions
         /// <param name="folderName">给定的目录名称。</param>
         /// <returns>返回 <see cref="DirectoryInfo"/>。</returns>
         public static DirectoryInfo Subdirectory(this string directoryName, string folderName)
-        {
-            return new DirectoryInfo(directoryName).Subdirectory(folderName);
-        }
+            => new DirectoryInfo(directoryName).Subdirectory(folderName);
+
         /// <summary>
         /// 子目录。
         /// </summary>
@@ -41,7 +40,6 @@ namespace Librame.Extensions
         public static DirectoryInfo Subdirectory(this DirectoryInfo directory, string folderName)
         {
             var subpath = directory.FullName.CombinePath(folderName);
-
             return new DirectoryInfo(subpath);
         }
 
@@ -132,9 +130,7 @@ namespace Librame.Extensions
         /// <param name="extensions">给定的扩展名集合。</param>
         /// <returns>返回提取的路径集合。</returns>
         public static IEnumerable<string> ExtractHasExtension(this IEnumerable<string> paths, IEnumerable<string> extensions)
-        {
-            return paths.ExtractHasExtension(extensions, (path, ext) => path.EndsWith(ext));
-        }
+            => paths.ExtractHasExtension(extensions, (path, ext) => path.EndsWith(ext));
 
         /// <summary>
         /// 提取具备某扩展名的元素集合。
@@ -146,9 +142,7 @@ namespace Librame.Extensions
         /// <returns>返回提取的集合。</returns>
         public static IEnumerable<T> ExtractHasExtension<T>(this IEnumerable<T> items, IEnumerable<string> extensions,
             Func<T, string, bool> hasExtensionFactory)
-        {
-            return items.Where(item => item.TryHasExtension(extensions, hasExtensionFactory)).ToList();
-        }
+            => items.Where(item => item.TryHasExtension(extensions, hasExtensionFactory)).ToList();
 
 
         /// <summary>
@@ -158,9 +152,7 @@ namespace Librame.Extensions
         /// <param name="extensions">给定的扩展名集合。</param>
         /// <returns>返回布尔值。</returns>
         public static bool TryHasExtension(this string path, IEnumerable<string> extensions)
-        {
-            return path.TryHasExtension(extensions, out string extension);
-        }
+            => path.TryHasExtension(extensions, out string extension);
 
         /// <summary>
         /// 尝试检测路径具备某扩展名。
@@ -170,9 +162,7 @@ namespace Librame.Extensions
         /// <param name="extension">输出具有的扩展名。</param>
         /// <returns>返回布尔值。</returns>
         public static bool TryHasExtension(this string path, IEnumerable<string> extensions, out string extension)
-        {
-            return path.TryHasExtension(extensions, (p, ext) => p.EndsWith(ext), out extension);
-        }
+            => path.TryHasExtension(extensions, (p, ext) => p.EndsWith(ext), out extension);
 
 
         /// <summary>
@@ -185,9 +175,7 @@ namespace Librame.Extensions
         /// <returns>返回布尔值。</returns>
         public static bool TryHasExtension<T>(this T item, IEnumerable<string> extensions,
             Func<T, string, bool> hasExtensionFactory)
-        {
-            return item.TryHasExtension(extensions, hasExtensionFactory, out _);
-        }
+            => item.TryHasExtension(extensions, hasExtensionFactory, out _);
 
         /// <summary>
         /// 尝试检测元素具备某扩展名。

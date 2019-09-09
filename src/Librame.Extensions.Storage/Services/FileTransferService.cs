@@ -54,7 +54,7 @@ namespace Librame.Extensions.Storage
         public Action<long, long> ProgressAction { get; set; }
 
 
-        public async Task<IFileLocator> DownloadFileAsync(string downloadUrl, string savePath,
+        public async Task<FileLocator> DownloadFileAsync(string downloadUrl, string savePath,
             CancellationToken cancellationToken = default)
         {
             var hwr = await CreateRequestAsync(downloadUrl, "GET", cancellationToken);

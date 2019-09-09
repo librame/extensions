@@ -43,7 +43,7 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void PerformanceTest()
         {
-            var results = StopwatchHelper.Run(() =>
+            var results = StopwatchUtility.Run(() =>
             {
                 var guid = GuidSingleton.Instance.Guid;
 
@@ -52,10 +52,10 @@ namespace Librame.Extensions.Core.Tests
             },
             () =>
             {
-                var guid = SingletonHelper<GuidSingletonHelper>.Instance.Guid;
+                var guid = LazySingleton<GuidSingletonHelper>.Instance.Guid;
 
                 for (var i = 0; i < 1000; i++)
-                    Assert.Equal(guid, SingletonHelper<GuidSingletonHelper>.Instance.Guid);
+                    Assert.Equal(guid, LazySingleton<GuidSingletonHelper>.Instance.Guid);
             });
 
             Assert.NotEqual(results.First(), results.Last());

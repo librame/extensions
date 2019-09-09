@@ -12,6 +12,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -60,17 +61,22 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 审计。
         /// </summary>
-        public DbSet<Audit> Audits { get; set; }
+        public DbSet<DataAudit> Audits { get; set; }
 
         /// <summary>
         /// 审计属性。
         /// </summary>
-        public DbSet<AuditProperty> AuditProperties { get; set; }
+        public DbSet<DataAuditProperty> AuditProperties { get; set; }
+
+        /// <summary>
+        /// 实体表。
+        /// </summary>
+        public DbSet<DataEntity> Tables { get; set; }
 
         /// <summary>
         /// 租户。
         /// </summary>
-        public DbSet<Tenant> Tenants { get; set; }
+        public DbSet<DataTenant> Tenants { get; set; }
 
         #endregion
 		
@@ -111,15 +117,18 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="dbConnection">给定的 <see cref="DbConnection"/>。</param>
         /// <returns>返回是否已创建的布尔值。</returns>
-        protected virtual void EnsureDatabaseCreated(DbConnection dbConnection)
+        protected virtual bool EnsureDatabaseCreated(DbConnection dbConnection)
         {
             if (Database.EnsureCreated())
             {
                 if (dbConnection.IsNotNull())
                     Logger.LogInformation($"Database created: {dbConnection.ConnectionString}.");
-
+                
                 BuilderOptions.DatabaseCreatedAction?.Invoke(this);
+                return true;
             }
+
+            return false;
         }
 
 
@@ -130,7 +139,6 @@ namespace Librame.Extensions.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.ConfigureStoreHubBase(BuilderOptions);
         }
 
@@ -142,22 +150,18 @@ namespace Librame.Extensions.Data
         /// <param name="parameters">给定的参数集合。</param>
         /// <returns>返回受影响的行数。</returns>
         public virtual int ExecuteSqlCommand(string sql, params object[] parameters)
-        {
-            return Database.ExecuteSqlCommand(sql, parameters);
-        }
+            => Database.ExecuteSqlCommand(sql, parameters);
 
         /// <summary>
         /// 异步执行 SQL 命令。
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>
         /// <param name="parameters">给定的参数集合。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         public virtual Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters,
             CancellationToken cancellationToken = default)
-        {
-            return Database.ExecuteSqlCommandAsync(sql, parameters, cancellationToken);
-        }
+            => Database.ExecuteSqlCommandAsync(sql, parameters, cancellationToken);
 
 
         /// <summary>
@@ -168,17 +172,21 @@ namespace Librame.Extensions.Data
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             // 读写分离：尝试切换为写入数据库
-            if (BuilderOptions.Tenants.Enabled)
+            if (BuilderOptions.TenantEnabled)
                 ToggleTenant(tenant => tenant.WritingConnectionString);
 
+            // 注册实体表
+            if (BuilderOptions.TableEnabled)
+                RegistTableAsync().Wait();
+
             // 审计实体
-            if (BuilderOptions.Audits.Enabled)
-                AuditAsync(default).Wait();
+            if (BuilderOptions.AuditEnabled)
+                RegistAuditAsync().Wait();
 
             var count = base.SaveChanges(acceptAllChangesOnSuccess);
 
             // 读写分离：尝试切换为默认数据库
-            if (BuilderOptions.Tenants.Enabled)
+            if (BuilderOptions.TenantEnabled)
                 ToggleTenant(tenant => tenant.DefaultConnectionString);
 
             return count;
@@ -188,38 +196,71 @@ namespace Librame.Extensions.Data
         /// 重载异步保存更改。
         /// </summary>
         /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
             // 读写分离：尝试切换为写入数据库
-            if (BuilderOptions.Tenants.Enabled)
+            if (BuilderOptions.TenantEnabled)
                 ToggleTenant(tenant => tenant.WritingConnectionString, cancellationToken);
 
+            // 注册实体表
+            if (BuilderOptions.TableEnabled)
+                await RegistTableAsync(cancellationToken);
+
             // 审计实体
-            if (BuilderOptions.Audits.Enabled)
-                await AuditAsync(cancellationToken);
+            if (BuilderOptions.AuditEnabled)
+                await RegistAuditAsync(cancellationToken);
 
             var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
             // 读写分离：尝试切换为默认数据库
-            if (BuilderOptions.Tenants.Enabled)
+            if (BuilderOptions.TenantEnabled)
                 ToggleTenant(tenant => tenant.DefaultConnectionString, cancellationToken);
 
             return count;
         }
 
         /// <summary>
-        /// 异步审计。
+        /// 异步注册实体表。
         /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        protected virtual async Task AuditAsync(CancellationToken cancellationToken)
+        protected virtual async Task RegistTableAsync(CancellationToken cancellationToken = default)
+        {
+            var tableService = this.GetService<IEntityService>();
+            await tableService.RegistAsync(this, cancellationToken);
+        }
+
+        /// <summary>
+        /// 异步注册审计。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        protected virtual async Task RegistAuditAsync(CancellationToken cancellationToken = default)
         {
             var auditService = this.GetService<IAuditService>();
+            await auditService.RegistAsync(this, cancellationToken);
+        }
 
-            await auditService.AuditAsync(this, cancellationToken);
+
+        /// <summary>
+        /// 异步迁移。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        public virtual Task MigratorAsync(CancellationToken cancellationToken = default)
+        {
+            //var appliedMigrations = await Database.GetAppliedMigrationsAsync(cancellationToken);
+            //var pendingMigrations = await Database.GetPendingMigrationsAsync(cancellationToken);
+
+            //var dependencies = ServiceProvider.GetRequiredService<HistoryRepositoryDependencies>();
+            //var diff = dependencies.ModelDiffer.GetDifferences(null, Model);
+            //var differ = ServiceFactory.GetRequiredService<IMigrationsModelDiffer>();
+            //var diff = differ.GetDifferences(null, Model);
+
+            return Database.MigrateAsync(cancellationToken);
         }
 
 
@@ -227,7 +268,7 @@ namespace Librame.Extensions.Data
         /// 切换租户。
         /// </summary>
         /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回是否切换的布尔值。</returns>
         public virtual bool ToggleTenant(Func<ITenant, string> changeConnectionStringFactory,
             CancellationToken cancellationToken = default)
@@ -281,20 +322,16 @@ namespace Librame.Extensions.Data
                 //  Message = Cannot change connection string on a connection that has already been opened.
                 //  Source = MySqlConnector
                 // connection.ChangeDatabase(connectionString);
-
                 connection.ConnectionString = changeConnectionString;
                 Logger?.LogInformation($"The tenant({currentTenant.Name}:{currentTenant.Host}) change connection string: {changeConnectionString}");
 
+                if (BuilderOptions.IsCreateDatabase)
+                    EnsureDatabaseCreated(connection);
+
                 if (connection.State != ConnectionState.Open)
                 {
-                    if (BuilderOptions.IsCreateDatabase)
-                        EnsureDatabaseCreated(connection);
-
-                    if (connection.State == ConnectionState.Closed)
-                    {
-                        connection.Open();
-                        Logger?.LogInformation($"Open connection string: {connection.ConnectionString}");
-                    }
+                    connection.Open();
+                    Logger?.LogInformation($"Open connection string: {connection.ConnectionString}");
                 }
             }
         }

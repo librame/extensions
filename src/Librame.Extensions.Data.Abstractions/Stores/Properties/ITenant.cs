@@ -15,7 +15,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 租户接口。
     /// </summary>
-    public interface ITenant : IGenId
+    public interface ITenant
     {
         /// <summary>
         /// 名称。

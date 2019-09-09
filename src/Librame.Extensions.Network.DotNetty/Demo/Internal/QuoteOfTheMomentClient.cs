@@ -36,9 +36,7 @@ namespace Librame.Extensions.Network.DotNetty
 
 
         public Task StartAsync(Action<IChannel> configureProcess)
-        {
-            return StartAsync(new QuoteOfTheMomentClientHandler(this), configureProcess);
-        }
+            => StartAsync(new QuoteOfTheMomentClientHandler(this), configureProcess);
 
         public async Task StartAsync<TChannelHandler>(TChannelHandler channelHandler,
             Action<IChannel> configureProcess)

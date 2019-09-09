@@ -10,6 +10,8 @@
 
 #endregion
 
+using System.Collections.Generic;
+
 namespace Librame.Extensions.Storage
 {
     using Core;
@@ -24,6 +26,13 @@ namespace Librame.Extensions.Storage
         /// </summary>
         public int BufferSize { get; set; }
             = 512;
+
+
+        /// <summary>
+        /// 文件提供程序列表。
+        /// </summary>
+        public IList<IStorageFileProvider> FileProviders { get; set; }
+            = new List<IStorageFileProvider>();
 
 
         /// <summary>

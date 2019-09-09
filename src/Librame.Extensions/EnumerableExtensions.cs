@@ -41,9 +41,8 @@ namespace Librame.Extensions
         /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <returns>返回 <see cref="IReadOnlyList{T}"/>。</returns>
         public static IReadOnlyList<T> AsReadOnlyList<T>(this IEnumerable<T> enumerable)
-        {
-            return new ReadOnlyCollection<T>(enumerable?.ToList());
-        }
+            => new ReadOnlyCollection<T>(enumerable?.ToList());
+
         /// <summary>
         /// 转换为只读列表集合。
         /// </summary>
@@ -51,9 +50,7 @@ namespace Librame.Extensions
         /// <param name="list">给定的 <see cref="IList{T}"/>。</param>
         /// <returns>返回 <see cref="IReadOnlyList{T}"/>。</returns>
         public static IReadOnlyList<T> AsReadOnlyList<T>(this IList<T> list)
-        {
-            return new ReadOnlyCollection<T>(list);
-        }
+            => new ReadOnlyCollection<T>(list);
 
 
         /// <summary>
@@ -68,7 +65,7 @@ namespace Librame.Extensions
 
             if (list.Contains(value))
                 return;
-
+            
             list.Add(value);
         }
 
@@ -147,9 +144,7 @@ namespace Librame.Extensions
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
         public static IEnumerable<T> Trim<T>(this IEnumerable<T> enumerable, T trim, bool isLoop = true)
-        {
-            return enumerable.Trim(item => item.Equals(trim), isLoop);
-        }
+            => enumerable.Trim(item => item.Equals(trim), isLoop);
 
         /// <summary>
         /// 修剪可枚举集合的指定初始与末尾项。
@@ -160,9 +155,7 @@ namespace Librame.Extensions
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
         public static IEnumerable<T> Trim<T>(this IEnumerable<T> enumerable, Func<T, bool> predicateFactory, bool isLoop = true)
-        {
-            return enumerable.TrimStart(predicateFactory, isLoop).TrimEnd(predicateFactory, isLoop);
-        }
+            => enumerable.TrimStart(predicateFactory, isLoop).TrimEnd(predicateFactory, isLoop);
 
 
         /// <summary>
@@ -174,9 +167,7 @@ namespace Librame.Extensions
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
         public static IEnumerable<T> TrimEnd<T>(this IEnumerable<T> enumerable, T endItem, bool isLoop = true)
-        {
-            return enumerable.TrimEnd(item => item.Equals(endItem), isLoop);
-        }
+            => enumerable.TrimEnd(item => item.Equals(endItem), isLoop);
 
         /// <summary>
         /// 修剪可枚举集合的指定末尾项。
@@ -189,7 +180,6 @@ namespace Librame.Extensions
         public static IEnumerable<T> TrimEnd<T>(this IEnumerable<T> enumerable, Func<T, bool> endFactory, bool isLoop = true)
         {
             endFactory.NotNull(nameof(endFactory));
-
             return enumerable.TrimLast(endFactory, isLoop);
         }
 
@@ -203,9 +193,7 @@ namespace Librame.Extensions
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
         public static IEnumerable<T> TrimStart<T>(this IEnumerable<T> enumerable, T startItem, bool isLoop = true)
-        {
-            return enumerable.TrimStart(item => item.Equals(startItem), isLoop);
-        }
+            => enumerable.TrimStart(item => item.Equals(startItem), isLoop);
 
         /// <summary>
         /// 修剪可枚举集合的指定初始项。
@@ -218,7 +206,6 @@ namespace Librame.Extensions
         public static IEnumerable<T> TrimStart<T>(this IEnumerable<T> enumerable, Func<T, bool> startFactory, bool isLoop = true)
         {
             startFactory.NotNull(nameof(startFactory));
-
             return enumerable.Reverse().TrimLast(startFactory, isLoop).Reverse();
         }
 

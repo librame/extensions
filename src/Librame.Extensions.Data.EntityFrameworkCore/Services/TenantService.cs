@@ -33,7 +33,7 @@ namespace Librame.Extensions.Data
             {
                 return cancellationToken.RunFactoryOrCancellationAsync(() =>
                 {
-                    var defaultTenant = Options.Tenants.Default;
+                    var defaultTenant = Options.DefaultTenant;
                     Logger.LogInformation($"Get Default Tenant: Name={defaultTenant?.Name}, Host={defaultTenant?.Host}");
 
                     return defaultTenant;

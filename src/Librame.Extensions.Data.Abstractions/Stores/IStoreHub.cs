@@ -16,7 +16,7 @@ namespace Librame.Extensions.Data
     /// 存储中心接口。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    public interface IStoreHub<TAccessor> : IStoreHub<TAccessor, Audit, Tenant>
+    public interface IStoreHub<TAccessor> : IStoreHub<TAccessor, DataAudit, DataEntity, DataTenant>
         where TAccessor : IAccessor
     {
     }
@@ -27,10 +27,16 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
+    /// <typeparam name="TTable">指定的实体表类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-    public interface IStoreHub<TAccessor, TAudit, TTenant> : IStoreHub, IAuditStore<TAccessor, TAudit>, ITenantStore<TAccessor, TTenant>
+    public interface IStoreHub<TAccessor, TAudit, TTable, TTenant>
+        : IStoreHub
+        , IAuditStore<TAccessor, TAudit>
+        , ITableStore<TAccessor, TTable>
+        , ITenantStore<TAccessor, TTenant>
         where TAccessor : IAccessor
         where TAudit : class
+        where TTable : class
         where TTenant : class
     {
         /// <summary>

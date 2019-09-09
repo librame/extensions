@@ -38,8 +38,7 @@ namespace Microsoft.Extensions.Localization
             Expression<Func<TResource, TProperty>> propertyExpression)
             where TResource : class
         {
-            string name = propertyExpression.AsPropertyName();
-
+            var name = propertyExpression.AsPropertyName();
             return localizer[name];
         }
         /// <summary>
@@ -55,8 +54,7 @@ namespace Microsoft.Extensions.Localization
             Expression<Func<TResource, TProperty>> propertyExpression, params object[] arguments)
             where TResource : class
         {
-            string name = propertyExpression.AsPropertyName();
-
+            var name = propertyExpression.AsPropertyName();
             return localizer[name, arguments];
         }
 
@@ -72,10 +70,8 @@ namespace Microsoft.Extensions.Localization
         /// <param name="cultureName">给定的文化名称。</param>
         /// <returns>返回 <see cref="IStringLocalizer"/>。</returns>
         public static IStringLocalizer WithCulture(this IStringLocalizer localizer, string cultureName)
-        {
-            return localizer.WithCulture(CultureInfo.CreateSpecificCulture(cultureName));
-        }
-        
+            => localizer.WithCulture(CultureInfo.CreateSpecificCulture(cultureName));
+
         /// <summary>
         /// 创建一个指定文化名称的字符串定位器副本。
         /// </summary>
@@ -84,9 +80,8 @@ namespace Microsoft.Extensions.Localization
         /// <param name="cultureName">给定的文化名称。</param>
         /// <returns>返回 <see cref="IStringLocalizer{TResource}"/>。</returns>
         public static IStringLocalizer<TResource> WithCulture<TResource>(this IStringLocalizer<TResource> localizer, string cultureName)
-        {
-            return localizer.WithCulture<TResource>(CultureInfo.CreateSpecificCulture(cultureName));
-        }
+            => localizer.WithCulture<TResource>(CultureInfo.CreateSpecificCulture(cultureName));
+
         /// <summary>
         /// 创建一个指定文化名称的字符串定位器副本。
         /// </summary>
@@ -97,7 +92,6 @@ namespace Microsoft.Extensions.Localization
         public static IStringLocalizer<TResource> WithCulture<TResource>(this IStringLocalizer<TResource> localizer, CultureInfo culture)
         {
             localizer.WithCulture(culture);
-
             return localizer;
         }
 
@@ -109,9 +103,8 @@ namespace Microsoft.Extensions.Localization
         /// <param name="cultureName">给定的文化名称。</param>
         /// <returns>返回 <see cref="IExpressionStringLocalizer{TResource}"/>。</returns>
         public static IExpressionStringLocalizer<TResource> WithCulture<TResource>(this IExpressionStringLocalizer<TResource> localizer, string cultureName)
-        {
-            return localizer.WithCulture<TResource>(CultureInfo.CreateSpecificCulture(cultureName));
-        }
+            => localizer.WithCulture<TResource>(CultureInfo.CreateSpecificCulture(cultureName));
+
         /// <summary>
         /// 创建一个指定文化名称的字符串定位器副本。
         /// </summary>
@@ -122,7 +115,6 @@ namespace Microsoft.Extensions.Localization
         public static IExpressionStringLocalizer<TResource> WithCulture<TResource>(this IExpressionStringLocalizer<TResource> localizer, CultureInfo culture)
         {
             localizer.WithCulture(culture);
-
             return localizer;
         }
 

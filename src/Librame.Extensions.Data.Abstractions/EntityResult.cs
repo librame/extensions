@@ -44,18 +44,17 @@ namespace Librame.Extensions.Data
         /// </remarks>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-        {
-            return Succeeded ?
-                   "Succeeded" :
-                   string.Format("{0} : {1}", "Failed", string.Join(",", Errors.Select(x => x.Code).ToList()));
-        }
+            => Succeeded
+            ? "Succeeded"
+            : string.Format("{0} : {1}", "Failed", string.Join(",", Errors.Select(x => x.Code).ToList()));
 
 
         /// <summary>
         /// 表示操作成功的实体结果。
         /// </summary>
         /// <returns>返回 <see cref="EntityResult"/>。</returns>
-        public static EntityResult Success { get; } = new EntityResult { Succeeded = true };
+        public static EntityResult Success { get; }
+            = new EntityResult { Succeeded = true };
 
         /// <summary>
         /// 创建操作失败的实体结果。
@@ -65,10 +64,10 @@ namespace Librame.Extensions.Data
         public static EntityResult Failed(params EntityError[] errors)
         {
             var result = new EntityResult { Succeeded = false };
-            if (errors.IsNotNull())
-            {
+
+            if (errors.IsNotNullOrEmpty())
                 result._errors.AddRange(errors);
-            }
+
             return result;
         }
 
@@ -78,8 +77,6 @@ namespace Librame.Extensions.Data
         /// <param name="exception">给定的 <see cref="Exception"/>。</param>
         /// <returns>返回 <see cref="EntityResult"/>。</returns>
         public static EntityResult Failed(Exception exception)
-        {
-            return Failed(EntityError.ToError(exception));
-        }
+            => Failed(EntityError.ToError(exception));
     }
 }

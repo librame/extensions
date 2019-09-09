@@ -30,9 +30,7 @@ namespace Librame.Extensions.Core
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddAutoRegistrationMediators(this ICoreBuilder builder)
-        {
-            return builder.AddAutoRegistrationMediators(AssemblyHelper.CurrentDomainAssembliesWithoutSystem);
-        }
+            => builder.AddAutoRegistrationMediators(AssemblyUtility.CurrentDomainAssembliesWithoutSystem);
 
         /// <summary>
         /// 通过指定的程序集数组添加中介者集合。
@@ -184,9 +182,7 @@ namespace Librame.Extensions.Core
         }
 
         private static IEnumerable<Type> FindInterfacesThatClose(this Type pluggedType, Type templateType)
-        {
-            return Enumerable.Distinct(FindInterfacesThatClosesCore(pluggedType, templateType));
-        }
+            => Enumerable.Distinct(FindInterfacesThatClosesCore(pluggedType, templateType));
 
         private static IEnumerable<Type> FindInterfacesThatClosesCore(Type pluggedType, Type templateType)
         {

@@ -19,12 +19,12 @@ namespace Librame.Extensions.Tests
         }
 
         [Fact]
-        public void AsCombIdentifierTest()
+        public void AsCombFileTimeTest()
         {
-            var current = DateTime.Now.AsCombIdentifier();
+            var current = DateTime.Now.AsCombFileTime();
             for (var i = 0; i < 100; i++)
             {
-                var next = DateTime.Now.AsCombIdentifier();
+                var next = DateTime.Now.AsCombFileTime();
                 Assert.NotEqual(current, next);
                 current = next;
             }

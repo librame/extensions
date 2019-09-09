@@ -90,7 +90,7 @@ namespace Librame.Extensions.Network
                     Logger.LogDebug($"Create smtp client: server={client.Host}, port={client.Port}");
 
                     client.Credentials = Options.Smtp.Credential;
-                    Logger.LogDebug($"Set credentials: domain={Options.Smtp.Credential.Domain}, username={Options.Smtp.Credential.UserName}, password=***");
+                    Logger.LogDebug($"Set credentials: domain={Options.Smtp.Credential.Domain}, username={Options.Smtp.Credential.UserName}");
 
                     client.SendCompleted += new SendCompletedEventHandler(SendCompletedCallback);
 

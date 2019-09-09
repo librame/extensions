@@ -30,7 +30,7 @@ namespace Librame.Extensions.Data
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                Logger.LogInformation($"{notification.Audits.Count} Audits have been processed.");
+                Logger.LogInformation($"{notification.Audits.Count} Audits have been added.");
 
                 return Task.CompletedTask;
             });

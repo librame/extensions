@@ -90,12 +90,10 @@ namespace Librame.Extensions.Core
         }
 
 
+        // DateTime.Now.Ticks 会生成长度 19 的负值
+        // DateTime.Now.ToFileTime() 则会生成长度 17 的正值
         private static long GetTimestamp()
-        {
-            // DateTime.Now.Ticks 会生成长度 19 的负值
-            // DateTime.Now.ToFileTime() 则会生成长度 17 的正值
-            return DateTime.Now.ToFileTime();
-        }
+            => DateTime.Now.ToFileTime();
 
         private static long GetNextTimestamp(long lastTimestamp)
         {

@@ -29,6 +29,6 @@ namespace Librame.Extensions.Data
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="List{Audit}"/> 的异步操作。</returns>
-        Task<List<Audit>> AuditAsync(IAccessor accessor, CancellationToken cancellationToken = default);
+        Task<List<DataAudit>> RegistAsync(IAccessor accessor, CancellationToken cancellationToken = default);
     }
 }

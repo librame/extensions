@@ -59,5 +59,60 @@ namespace Librame.Extensions.Data
 
         #endregion
 
+
+        #region Properties
+
+        /// <summary>
+        /// 并发标记。
+        /// </summary>
+        public string ConcurrencyStamp { get; set; }
+
+        /// <summary>
+        /// 创建时间。
+        /// </summary>
+        public string CreatedTime { get; set; }
+
+        /// <summary>
+        /// 创建者。
+        /// </summary>
+        public string CreatedBy { get; set; }
+
+        /// <summary>
+        /// 更新时间。
+        /// </summary>
+        public string UpdatedTime { get; set; }
+
+        /// <summary>
+        /// 更新者。
+        /// </summary>
+        public string UpdatedBy { get; set; }
+
+        /// <summary>
+        /// 是默认值。
+        /// </summary>
+        public string IsDefaultValue { get; set; }
+
+        /// <summary>
+        /// 启用锁定。
+        /// </summary>
+        public string LockoutEnabled { get; set; }
+
+        /// <summary>
+        /// 解锁时间。
+        /// </summary>
+        public string LockoutEndTime { get; set; }
+
+        /// <summary>
+        /// 父标识。
+        /// </summary>
+        public string ParentId { get; set; }
+
+        /// <summary>
+        /// 行版本。
+        /// </summary>
+        public string RowVersion { get; set; }
+
+        #endregion
+
     }
 }

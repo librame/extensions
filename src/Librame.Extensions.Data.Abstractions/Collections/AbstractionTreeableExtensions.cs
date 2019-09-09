@@ -27,9 +27,7 @@ namespace System.Collections.Generic
         /// <returns>返回树形化接口。</returns>
         public static ITreeable<T> AsTreeing<T>(this IEnumerable<T> items)
             where T : IParentId<int>
-        {
-            return new Treeing<T>(items);
-        }
+            => new Treeing<T>(items);
 
         /// <summary>
         /// 转换为可树形集合。
@@ -41,9 +39,7 @@ namespace System.Collections.Generic
         public static ITreeable<T, TId> AsTreeing<T, TId>(this IEnumerable<T> items)
             where T : IParentId<TId>
             where TId : IEquatable<TId>
-        {
-            return new Treeing<T, TId>(items);
-        }
+            => new Treeing<T, TId>(items);
 
     }
 }

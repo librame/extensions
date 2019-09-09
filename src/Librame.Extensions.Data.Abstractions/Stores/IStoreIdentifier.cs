@@ -36,6 +36,22 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 异步获取实体标识。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
+        Task<string> GetEntityIdAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 异步获取迁移标识。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含字符串的异步操作。</returns>
+        Task<string> GetMigrationIdAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
         /// 异步获取租户标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>

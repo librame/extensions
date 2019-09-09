@@ -70,9 +70,7 @@ namespace System.Collections.Generic
             CancellationToken cancellationToken = default)
             where T : IParentId<TId>
             where TId : IEquatable<TId>
-        {
-            return Task.Run(() => items.AsTreeingNodes<T, TId>(), cancellationToken);
-        }
+            => Task.Run(() => items.AsTreeingNodes<T, TId>(), cancellationToken);
 
         /// <summary>
         /// 转换为树形节点列表。

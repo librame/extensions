@@ -30,9 +30,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddData(this IExtensionBuilder builder,
             Action<DataBuilderOptions> setupAction = null)
-        {
-            return builder.AddData(b => new DataBuilder(b), setupAction);
-        }
+            => builder.AddData(b => new DataBuilder(b), setupAction);
 
         /// <summary>
         /// 添加数据扩展。

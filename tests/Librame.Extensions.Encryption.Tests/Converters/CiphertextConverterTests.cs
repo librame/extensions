@@ -8,7 +8,7 @@ namespace Librame.Extensions.Encryption.Tests
         [Fact]
         public void DefaultCiphertextAlgorithmConverterTest()
         {
-            var rawCiphertextString = nameof(CiphertextConverterTests).AsEncodingBytes().AsBase64String();
+            var rawCiphertextString = nameof(CiphertextConverterTests).FromEncodingString().AsBase64String();
             
             var converter = TestServiceProvider.Current.GetRequiredService<ICiphertextConverter>();
 

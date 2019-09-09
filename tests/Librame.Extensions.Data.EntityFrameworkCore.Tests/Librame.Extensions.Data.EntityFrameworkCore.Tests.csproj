@@ -10,6 +10,17 @@
     <RootNamespace>Librame.Extensions.Data.Tests</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20190905115211_CreateTestDbContextAccessor.cs" />
+    <Compile Remove="Migrations\20190905115211_CreateTestDbContextAccessor.Designer.cs" />
+    <Compile Remove="Migrations\20190906095717_Create.cs" />
+    <Compile Remove="Migrations\20190906095717_Create.Designer.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.6">
@@ -27,6 +38,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Librame.Models\Librame.Models.csproj" />
     <ProjectReference Include="..\..\src\Librame.Extensions.Data.EntityFrameworkCore\Librame.Extensions.Data.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -35,7 +35,7 @@ namespace Librame.Extensions.Network
         {
             buffer = Decode(buffer, enableCodec);
 
-            return buffer.FromEncodingBytes(Encoding);
+            return buffer.AsEncodingString(Encoding);
         }
 
         public string DecodeString(string encode, bool enableCodec)
@@ -43,7 +43,7 @@ namespace Librame.Extensions.Network
             var buffer = encode.FromBase64String();
             buffer = Decode(buffer, enableCodec);
 
-            return buffer.FromEncodingBytes(Encoding);
+            return buffer.AsEncodingString(Encoding);
         }
 
         public byte[] Decode(byte[] buffer, bool enableCodec)
@@ -57,14 +57,14 @@ namespace Librame.Extensions.Network
 
         public byte[] EncodeStringAsBytes(string str, bool enableCodec)
         {
-            var buffer = str.AsEncodingBytes(Encoding);
+            var buffer = str.FromEncodingString(Encoding);
 
             return Encode(buffer, enableCodec);
         }
 
         public string EncodeString(string str, bool enableCodec)
         {
-            var buffer = str.AsEncodingBytes(Encoding);
+            var buffer = str.FromEncodingString(Encoding);
             buffer = Encode(buffer, enableCodec);
 
             return buffer.AsBase64String();
