@@ -109,13 +109,13 @@ namespace Librame.Extensions.Core
             if (newScheme.IsNotNullOrEmpty())
                 locator.ChangeScheme(newScheme);
 
-            if (newHost.HasValue)
+            if (newHost.IsNotNullOrEmpty())
                 locator.ChangeHost(newHost);
 
-            if (newPath.HasValue)
+            if (newPath.IsNotNullOrEmpty())
                 locator.ChangePath(newPath);
 
-            if (newQuery.HasValue)
+            if (newQuery.IsNotNullOrEmpty())
                 locator.ChangeQuery(newQuery);
 
             if (queriesAction.IsNotNull())

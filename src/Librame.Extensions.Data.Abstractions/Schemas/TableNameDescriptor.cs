@@ -24,15 +24,15 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 构造一个 <see cref="TableNameDescriptor"/>。
         /// </summary>
+        /// <param name="bodyNameFactory">给定的主体名称工厂方法（可选；默认为实体类型名称的复数形式）。</param>
         /// <param name="suffix">给定的后缀（可选）。</param>
         /// <param name="prefix">给定的前缀（可选）。</param>
-        public TableNameDescriptor(
-            string suffix = null,
-            string prefix = null)
-            : base(typeof(TEntity), suffix, prefix)
+        /// <param name="connector">给定的连接符（可选；默认为下划线）。</param>
+        public TableNameDescriptor(Func<Type, string> bodyNameFactory = null,
+            string suffix = null, string prefix = null, string connector = CONNECTOR)
+            : base(typeof(TEntity), bodyNameFactory, suffix, prefix, connector)
         {
         }
-
     }
 
 
@@ -41,47 +41,44 @@ namespace Librame.Extensions.Data
     /// </summary>
     public class TableNameDescriptor : IEquatable<TableNameDescriptor>
     {
+        /// <summary>
+        /// 默认连接符。
+        /// </summary>
+        protected const string CONNECTOR
+            = "_";
+
         private static readonly Func<Type, string> _defaultBodyNameFactory
             = type => type.GetBodyName().AsPluralize();
-
-        private static readonly string _defaultConnector
-            = "_";
 
 
         /// <summary>
         /// 构造一个 <see cref="TableNameDescriptor"/>。
         /// </summary>
         /// <param name="entityType">给定的实体类型。</param>
+        /// <param name="bodyNameFactory">给定的主体名称工厂方法（可选；默认为实体类型名称的复数形式）。</param>
         /// <param name="suffix">给定的后缀（可选）。</param>
         /// <param name="prefix">给定的前缀（可选）。</param>
-        public TableNameDescriptor(
-            Type entityType,
-            string suffix = null,
-            string prefix = null)
+        /// <param name="connector">给定的连接符（可选；默认为下划线）。</param>
+        public TableNameDescriptor(Type entityType, Func<Type, string> bodyNameFactory = null,
+            string suffix = null, string prefix = null, string connector = CONNECTOR)
         {
             EntityType = entityType.NotNull(nameof(entityType));
             Suffix = suffix;
             Prefix = prefix;
+            Connector = connector;
+            BodyName = (bodyNameFactory ?? _defaultBodyNameFactory).Invoke(entityType);
         }
-
-
-        /// <summary>
-        /// 主体名称工厂方法。
-        /// </summary>
-        public Func<Type, string> BodyNameFactory { get; private set; }
-            = _defaultBodyNameFactory;
-
-        /// <summary>
-        /// 连接符（默认为下划线）。
-        /// </summary>
-        public string Connector { get; private set; }
-            = _defaultConnector;
 
 
         /// <summary>
         /// 实体类型。
         /// </summary>
         public Type EntityType { get; }
+
+        /// <summary>
+        /// 主体名称。
+        /// </summary>
+        public string BodyName { get; private set; }
 
         /// <summary>
         /// 前缀。
@@ -93,17 +90,22 @@ namespace Librame.Extensions.Data
         /// </summary>
         public string Suffix { get; private set; }
 
+        /// <summary>
+        /// 连接符。
+        /// </summary>
+        public string Connector { get; private set; }
+
 
         #region Change
 
         /// <summary>
-        /// 改变主体名称工厂方法。
+        /// 改变主体名称。
         /// </summary>
-        /// <param name="newBodyNameFactory">给定的新工厂方法。</param>
+        /// <param name="newBodyNameFactory">给定的新主体名称工厂方法。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
-        public TableNameDescriptor ChangeBodyNameFactory(Func<Type, string> newBodyNameFactory)
+        public TableNameDescriptor ChangeBodyName(Func<string, string> newBodyNameFactory)
         {
-            BodyNameFactory = newBodyNameFactory.NotNull(nameof(newBodyNameFactory));
+            BodyName = newBodyNameFactory.NotNull(nameof(newBodyNameFactory)).Invoke(BodyName);
             return this;
         }
 
@@ -174,8 +176,8 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public TableNameDescriptor Reset()
         {
-            BodyNameFactory = _defaultBodyNameFactory;
-            Connector = _defaultConnector;
+            BodyName = _defaultBodyNameFactory.Invoke(EntityType);
+            Connector = CONNECTOR;
 
             Prefix = null;
             Suffix = null;
@@ -233,8 +235,7 @@ namespace Librame.Extensions.Data
                 sb.Append(Connector);
             }
 
-            var bodyName = BodyNameFactory.Invoke(EntityType);
-            sb.Append(bodyName);
+            sb.Append(BodyName);
 
             if (Suffix.IsNotNullOrEmpty())
             {

@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.1.877.201</Version>
+    <Version>6.1.878.201</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Core.Abstractions on Encryption extension package.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Core.Abstractions on Encryption extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.1.877.201</AssemblyVersion>
-    <FileVersion>6.1.1909.901</FileVersion>
+    <AssemblyVersion>6.1.878.201</AssemblyVersion>
+    <FileVersion>6.1.1909.1001</FileVersion>
     <RootNamespace>Librame.Extensions.Encryption</RootNamespace>
   </PropertyGroup>
 

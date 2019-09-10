@@ -198,6 +198,21 @@ namespace Librame.Extensions
             return equals ? value.CompareTo(compare) <= 0 : value.CompareTo(compare) < 0;
         }
 
+
+        /// <summary>
+        /// 是否不超出或等于范围对比值。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="value">给定的值。</param>
+        /// <param name="compareMinimum">给定的最小比较值。</param>
+        /// <param name="compareMaximum">给定的最大比较值。</param>
+        /// <param name="equalMinimum">是否比较等于最小值（可选；默认不比较）。</param>
+        /// <param name="equalMaximum">是否比较等于最大值（可选；默认不比较）。</param>
+        public static bool IsNotOutOfRange<T>(this T value, T compareMinimum, T compareMaximum,
+            bool equalMinimum = false, bool equalMaximum = false)
+            where T : IComparable<T>
+            => !value.IsOutOfRange(compareMinimum, compareMaximum, equalMinimum, equalMaximum);
+
         /// <summary>
         /// 是否超出或等于范围对比值。
         /// </summary>

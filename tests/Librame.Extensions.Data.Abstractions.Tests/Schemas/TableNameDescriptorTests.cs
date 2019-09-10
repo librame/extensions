@@ -21,8 +21,11 @@ namespace Librame.Extensions.Data.Tests
             descriptor.ChangeDateSuffix(now => now.ToString("yyyy"));
             Assert.Equal($"Data_AbstractEntities_{year}", descriptor);
 
+            descriptor.ChangeBodyName(names => names.TrimStart("Abstract"));
+            Assert.Equal($"Data_Entities_{year}", descriptor);
+
             descriptor.ChangeConnector("-");
-            Assert.Equal($"Data-AbstractEntities-{year}", descriptor);
+            Assert.Equal($"Data-Entities-{year}", descriptor);
 
             descriptor.Reset();
             Assert.Equal("AbstractEntities", descriptor);

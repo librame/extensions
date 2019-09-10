@@ -75,8 +75,8 @@ namespace Librame.Extensions.Network.DotNetty
             Action<IChannel> configureProcess, string host = null, int? port = null)
             where TChannelHandler : IChannelHandler
         {
-            host = host.EnsureString(_clientOptions.Host);
-            port = port.EnsureValue(_clientOptions.Port);
+            host = host.RequiredNotNullOrEmpty(_clientOptions.Host);
+            port = port.RequiredNotNull(_clientOptions.Port);
 
             var builder = new UriBuilder
             {
