@@ -36,7 +36,7 @@ namespace Librame.Extensions.Encryption
             if (converter.IsNull())
                 converter = buffer.ServiceProvider.GetRequiredService<ICiphertextConverter>();
 
-            return converter.From(buffer);
+            return converter.To(buffer);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IEncryptionBuffer{ICiphertextAlgorithmConverter, String}"/>。</param>
         /// <returns>返回字符串。</returns>
         public static string AsCiphertextString(this IEncryptionBuffer<ICiphertextConverter, string> buffer)
-            => buffer.Converter.From(buffer);
+            => buffer.Converter.To(buffer);
 
         /// <summary>
         /// 还原密文字符串。
@@ -53,8 +53,8 @@ namespace Librame.Extensions.Encryption
         /// <param name="str">给定的密文字符串。</param>
         /// <param name="buffer">给定的 <see cref="IEncryptionBuffer{ICiphertextAlgorithmConverter, String}"/>。</param>
         /// <returns>返回缓冲区。</returns>
-        public static IByteBuffer FromCiphertextString(this string str, IEncryptionBuffer<ICiphertextConverter, string> buffer)
-            => buffer.Converter.To(str);
+        public static IByteMemoryBuffer FromCiphertextString(this string str, IEncryptionBuffer<ICiphertextConverter, string> buffer)
+            => buffer.Converter.From(str);
 
         #endregion
 
@@ -73,7 +73,7 @@ namespace Librame.Extensions.Encryption
             if (converter.IsNull())
                 converter = buffer.ServiceProvider.GetRequiredService<IPlaintextConverter>();
 
-            return converter.From(buffer);
+            return converter.To(buffer);
         }
 
         #endregion
@@ -91,7 +91,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Md5<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IAlgorithmConverter<TSource>
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Md5(hash, isSigned);
@@ -105,7 +105,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="isSigned">是否使用 RSA 非对称算法签名（默认不签名）。</param>
         /// <returns>返回缓冲区。</returns>
         public static TBuffer Md5<TBuffer>(this TBuffer buffer, IHashService hash, bool isSigned = false)
-            where TBuffer : IByteBuffer
+            where TBuffer : IByteMemoryBuffer
         {
             hash.Md5(buffer, isSigned);
             return buffer;
@@ -121,7 +121,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Sha1<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IAlgorithmConverter<TSource>
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Sha1(hash, isSigned);
@@ -135,7 +135,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="isSigned">是否使用 RSA 非对称算法签名（默认不签名）。</param>
         /// <returns>返回缓冲区。</returns>
         public static TBuffer Sha1<TBuffer>(this TBuffer buffer, IHashService hash, bool isSigned = false)
-            where TBuffer : IByteBuffer
+            where TBuffer : IByteMemoryBuffer
         {
             hash.Sha1(buffer, isSigned);
             return buffer;
@@ -151,7 +151,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Sha256<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IAlgorithmConverter<TSource>
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Sha256(hash, isSigned);
@@ -165,7 +165,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="isSigned">是否使用 RSA 非对称算法签名（默认不签名）。</param>
         /// <returns>返回缓冲区。</returns>
         public static TBuffer Sha256<TBuffer>(this TBuffer buffer, IHashService hash, bool isSigned = false)
-            where TBuffer : IByteBuffer
+            where TBuffer : IByteMemoryBuffer
         {
             hash.Sha256(buffer, isSigned);
             return buffer;
@@ -181,7 +181,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Sha384<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IAlgorithmConverter<TSource>
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Sha384(hash, isSigned);
@@ -195,7 +195,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="isSigned">是否使用 RSA 非对称算法签名（默认不签名）。</param>
         /// <returns>返回缓冲区。</returns>
         public static TBuffer Sha384<TBuffer>(this TBuffer buffer, IHashService hash, bool isSigned = false)
-            where TBuffer : IByteBuffer
+            where TBuffer : IByteMemoryBuffer
         {
             hash.Sha384(buffer, isSigned);
             return buffer;
@@ -211,7 +211,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Sha512<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IAlgorithmConverter<TSource>
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Sha512(hash, isSigned);
@@ -225,7 +225,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="isSigned">是否使用 RSA 非对称算法签名（默认不签名）。</param>
         /// <returns>返回缓冲区。</returns>
         public static TBuffer Sha512<TBuffer>(this TBuffer buffer, IHashService hash, bool isSigned = false)
-            where TBuffer : IByteBuffer
+            where TBuffer : IByteMemoryBuffer
         {
             hash.Sha512(buffer, isSigned);
             return buffer;
@@ -242,11 +242,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacMd5<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacMd5(keyedHash, identifier);
@@ -257,10 +257,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="keyedHash">给定的 <see cref="IKeyedHashService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer HmacMd5<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer HmacMd5<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             keyedHash.HmacMd5(buffer, identifier);
             return buffer;
@@ -272,11 +272,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacSha1<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacSha1(keyedHash, identifier);
@@ -287,10 +287,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="keyedHash">给定的 <see cref="IKeyedHashService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer HmacSha1<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer HmacSha1<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             keyedHash.HmacSha1(buffer, identifier);
             return buffer;
@@ -302,11 +302,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacSha256<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacSha256(keyedHash, identifier);
@@ -317,10 +317,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="keyedHash">给定的 <see cref="IKeyedHashService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer HmacSha256<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer HmacSha256<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             keyedHash.HmacSha256(buffer, identifier);
             return buffer;
@@ -332,11 +332,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacSha384<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacSha384(keyedHash, identifier);
@@ -347,10 +347,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="keyedHash">给定的 <see cref="IKeyedHashService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer HmacSha384<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer HmacSha384<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             keyedHash.HmacSha384(buffer, identifier);
             return buffer;
@@ -362,11 +362,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacSha512<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacSha512(keyedHash, identifier);
@@ -377,10 +377,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="keyedHash">给定的 <see cref="IKeyedHashService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer HmacSha512<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer HmacSha512<TBuffer>(this TBuffer buffer, IKeyedHashService keyedHash, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             keyedHash.HmacSha512(buffer, identifier);
             return buffer;
@@ -397,11 +397,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsAes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.AsAes(symmetric, identifier);
@@ -412,10 +412,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="symmetric">给定的 <see cref="ISymmetricService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer AsAes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer AsAes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             symmetric.ToAes(buffer, identifier);
             return buffer;
@@ -427,11 +427,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> FromAes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.FromAes(symmetric, identifier);
@@ -442,10 +442,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="symmetric">给定的 <see cref="ISymmetricService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer FromAes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer FromAes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             symmetric.FromAes(buffer, identifier);
             return buffer;
@@ -458,11 +458,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsDes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.AsDes(symmetric, identifier);
@@ -473,10 +473,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="symmetric">给定的 <see cref="ISymmetricService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer AsDes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer AsDes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             symmetric.ToDes(buffer, identifier);
             return buffer;
@@ -488,11 +488,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> FromDes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.FromDes(symmetric, identifier);
@@ -503,10 +503,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="symmetric">给定的 <see cref="ISymmetricService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer FromDes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer FromDes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             symmetric.FromDes(buffer, identifier);
             return buffer;
@@ -519,11 +519,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsTripleDes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.AsTripleDes(symmetric, identifier);
@@ -534,10 +534,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="symmetric">给定的 <see cref="ISymmetricService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer AsTripleDes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer AsTripleDes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             symmetric.ToTripleDes(buffer, identifier);
             return buffer;
@@ -549,11 +549,11 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <param name="buffer">给定的算法缓冲区。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> FromTripleDes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
-            UniqueIdentifier? identifier = null)
-            where TConverter : IAlgorithmConverter<TSource>
+            UniqueAlgorithmIdentifier identifier = null)
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.FromTripleDes(symmetric, identifier);
@@ -564,10 +564,10 @@ namespace Librame.Extensions.Encryption
         /// <typeparam name="TBuffer">指定的缓冲区类型。</typeparam>
         /// <param name="buffer">给定的缓冲区。</param>
         /// <param name="symmetric">给定的 <see cref="ISymmetricService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回缓冲区。</returns>
-        public static TBuffer FromTripleDes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueIdentifier? identifier = null)
-            where TBuffer : IByteBuffer
+        public static TBuffer FromTripleDes<TBuffer>(this TBuffer buffer, ISymmetricService symmetric, UniqueAlgorithmIdentifier identifier = null)
+            where TBuffer : IByteMemoryBuffer
         {
             symmetric.FromTripleDes(buffer, identifier);
             return buffer;
@@ -586,7 +586,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的算法缓冲区。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsRsa<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer)
-            where TConverter : IAlgorithmConverter<TSource>
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var rsa = buffer.ServiceProvider.GetRequiredService<IRsaService>();
             return buffer.AsRsa(rsa);
@@ -599,7 +599,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="rsa">给定的 <see cref="IRsaService"/>。</param>
         /// <returns>返回缓冲区。</returns>
         public static TBuffer AsRsa<TBuffer>(this TBuffer buffer, IRsaService rsa)
-            where TBuffer : IByteBuffer
+            where TBuffer : IByteMemoryBuffer
         {
             rsa.Encrypt(buffer);
             return buffer;
@@ -613,7 +613,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的算法缓冲区。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> FromRsa<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer)
-            where TConverter : IAlgorithmConverter<TSource>
+            where TConverter : IByteMemoryBufferConverter<TSource>
         {
             var rsa = buffer.ServiceProvider.GetRequiredService<IRsaService>();
             return buffer.FromRsa(rsa);
@@ -626,7 +626,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="rsa">给定的 <see cref="IRsaService"/>。</param>
         /// <returns>返回缓冲区。</returns>
         public static TBuffer FromRsa<TBuffer>(this TBuffer buffer, IRsaService rsa)
-            where TBuffer : IByteBuffer
+            where TBuffer : IByteMemoryBuffer
         {
             rsa.Decrypt(buffer);
             return buffer;

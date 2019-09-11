@@ -12,10 +12,12 @@
 
 namespace Librame.Extensions.Encryption
 {
+    using Core;
+
     /// <summary>
     /// 密文转换器接口。
     /// </summary>
-    public interface ICiphertextConverter : IAlgorithmConverter<string>
+    public interface ICiphertextConverter : IByteMemoryBufferConverter
     {
     }
 }

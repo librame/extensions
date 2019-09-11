@@ -7,8 +7,8 @@ namespace Librame.Extensions.Encryption.Tests
 
     internal static class TestServiceProvider
     {
-        private static readonly UniqueIdentifier _defaultIdentifier
-            = UniqueIdentifier.New();
+        private static readonly UniqueAlgorithmIdentifier _defaultIdentifier
+            = UniqueAlgorithmIdentifier.New();
 
 
         static TestServiceProvider()

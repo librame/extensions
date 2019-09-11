@@ -80,12 +80,7 @@ namespace Librame.Extensions.Data
         /// <param name="other">给定的其他 <see cref="DataTenant"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(DataTenant other)
-        {
-            if (other.IsNull())
-                return false;
-
-            return Name == other.Name && Host == other.Host;
-        }
+            => Name == other.Name && Host == other.Host;
 
         /// <summary>
         /// 重写是否相等。
@@ -93,12 +88,7 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-        {
-            if (obj is DataTenant other)
-                return Equals(other);
-
-            return false;
-        }
+            => (obj is DataTenant other) ? Equals(other) : false;
 
 
         /// <summary>
@@ -107,5 +97,24 @@ namespace Librame.Extensions.Data
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
             => Name.GetHashCode() ^ Host.GetHashCode();
+
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="DataTenant"/>。</param>
+        /// <param name="b">给定的 <see cref="DataTenant"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator ==(DataTenant a, DataTenant b)
+            => a.Equals(b);
+
+        /// <summary>
+        /// 是否不等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="DataTenant"/>。</param>
+        /// <param name="b">给定的 <see cref="DataTenant"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator !=(DataTenant a, DataTenant b)
+            => !a.Equals(b);
     }
 }

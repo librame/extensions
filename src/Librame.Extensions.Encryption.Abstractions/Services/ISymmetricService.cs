@@ -34,17 +34,17 @@ namespace Librame.Extensions.Encryption
         /// 转换为 AES。
         /// </summary>
         /// <param name="buffer">给定待加密的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        IByteBuffer ToAes(IByteBuffer buffer, UniqueIdentifier? identifier = null);
+        IByteMemoryBuffer ToAes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null);
 
         /// <summary>
         /// 还原 AES。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        IByteBuffer FromAes(IByteBuffer buffer, UniqueIdentifier? identifier = null);
+        IByteMemoryBuffer FromAes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null);
 
         #endregion
 
@@ -55,17 +55,17 @@ namespace Librame.Extensions.Encryption
         /// 转换为 DES。
         /// </summary>
         /// <param name="buffer">给定待加密的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        IByteBuffer ToDes(IByteBuffer buffer, UniqueIdentifier? identifier = null);
+        IByteMemoryBuffer ToDes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null);
 
         /// <summary>
         /// 还原 DES。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        IByteBuffer FromDes(IByteBuffer buffer, UniqueIdentifier? identifier = null);
+        IByteMemoryBuffer FromDes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null);
 
         #endregion
 
@@ -76,17 +76,17 @@ namespace Librame.Extensions.Encryption
         /// 转换为 TripleDES。
         /// </summary>
         /// <param name="buffer">给定待加密的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        IByteBuffer ToTripleDes(IByteBuffer buffer, UniqueIdentifier? identifier = null);
+        IByteMemoryBuffer ToTripleDes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null);
 
         /// <summary>
         /// 还原 TripleDES。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        IByteBuffer FromTripleDes(IByteBuffer buffer, UniqueIdentifier? identifier = null);
+        IByteMemoryBuffer FromTripleDes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null);
 
         #endregion
 

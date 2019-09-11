@@ -15,22 +15,22 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 转换器接口。
     /// </summary>
-    /// <typeparam name="TInput">指定的输入类型。</typeparam>
-    /// <typeparam name="TOutput">指定的输出类型。</typeparam>
-    public interface IConverter<TInput, TOutput>
+    /// <typeparam name="TFrom">指定的还原类型。</typeparam>
+    /// <typeparam name="TTo">指定的转换类型。</typeparam>
+    public interface IConverter<TFrom, TTo>
     {
         /// <summary>
-        /// 转换为输入类型实例。
+        /// 还原类型。
         /// </summary>
-        /// <param name="output">给定的 <typeparamref name="TOutput"/>。</param>
-        /// <returns>返回 <typeparamref name="TInput"/>。</returns>
-        TInput From(TOutput output);
+        /// <param name="to">给定的 <typeparamref name="TTo"/>。</param>
+        /// <returns>返回 <typeparamref name="TFrom"/>。</returns>
+        TFrom From(TTo to);
 
         /// <summary>
-        /// 转换为输出类型实例。
+        /// 转换类型。
         /// </summary>
-        /// <param name="input">给定的 <typeparamref name="TInput"/>。</param>
-        /// <returns>返回 <typeparamref name="TOutput"/>。</returns>
-        TOutput To(TInput input);
+        /// <param name="from">给定的 <typeparamref name="TFrom"/>。</param>
+        /// <returns>返回 <typeparamref name="TTo"/>。</returns>
+        TTo To(TFrom from);
     }
 }

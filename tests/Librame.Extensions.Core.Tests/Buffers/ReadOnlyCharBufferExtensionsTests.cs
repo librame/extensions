@@ -4,30 +4,29 @@ namespace Librame.Extensions.Core.Tests
 {
     public class ReadOnlyCharBufferExtensionsTests
     {
-
         [Fact]
         public void SplitKeyValueStringByIndexOfTest()
         {
             var str = "123:456=789:987";
-            var buffer = (ReadOnlyCharBuffer)str;
+            var buffer = (CharReadOnlyMemoryBuffer)str;
 
             // IndexOf: char separator
-            var pair = buffer.SplitKeyValueStringByIndexOf(':');
+            var pair = buffer.SplitKeyValueByIndexOf(':');
             Assert.Equal("123", pair.Key);
             Assert.Equal("456=789:987", pair.Value);
 
             // LastIndexOf: char separator
-            pair = buffer.SplitKeyValueStringByLastIndexOf(':');
+            pair = buffer.SplitKeyValueByLastIndexOf(':');
             Assert.Equal("123:456=789", pair.Key);
             Assert.Equal("987", pair.Value);
 
             // IndexOf: string separator
-            pair = buffer.SplitKeyValueStringByIndexOf(":456=789:");
+            pair = buffer.SplitKeyValueByIndexOf(":456=789:");
             Assert.Equal("123", pair.Key);
             Assert.Equal("987", pair.Value);
 
             // LastIndexOf: string separator
-            pair = buffer.SplitKeyValueStringByLastIndexOf("=789:987");
+            pair = buffer.SplitKeyValueByLastIndexOf("=789:987");
             Assert.Equal("123:456", pair.Key);
             Assert.Empty(pair.Value);
         }

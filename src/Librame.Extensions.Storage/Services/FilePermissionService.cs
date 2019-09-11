@@ -31,7 +31,7 @@ namespace Librame.Extensions.Storage
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string token = RandomNumberIdentifier.New();
+                string token = RandomNumberAlgorithmIdentifier.New(32);
                 Logger.LogTrace($"Generate {idTraceName}: {token}");
 
                 return token;

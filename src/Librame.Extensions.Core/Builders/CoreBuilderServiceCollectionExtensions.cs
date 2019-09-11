@@ -59,7 +59,6 @@ namespace Microsoft.Extensions.DependencyInjection
             var coreBuilder = createFactory.Invoke(services);
 
             return coreBuilder
-                .AddConverters()
                 .AddLocalizations()
                 .AddMediators()
                 .AddServices();

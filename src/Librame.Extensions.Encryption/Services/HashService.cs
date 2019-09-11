@@ -20,19 +20,19 @@ namespace Librame.Extensions.Encryption
 
     class HashService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IHashService
     {
-        private static readonly Lazy<MD5> _md5
+        private readonly Lazy<MD5> _md5
             = new Lazy<MD5>(() => MD5.Create());
 
-        private static readonly Lazy<SHA1> _sha1
+        private readonly Lazy<SHA1> _sha1
             = new Lazy<SHA1>(() => SHA1.Create());
 
-        private static readonly Lazy<SHA256> _sha256
+        private readonly Lazy<SHA256> _sha256
             = new Lazy<SHA256>(() => SHA256.Create());
 
-        private static readonly Lazy<SHA384> _sha384
+        private readonly Lazy<SHA384> _sha384
             = new Lazy<SHA384>(() => SHA384.Create());
 
-        private static readonly Lazy<SHA512> _sha512
+        private readonly Lazy<SHA512> _sha512
             = new Lazy<SHA512>(() => SHA512.Create());
 
 
@@ -46,9 +46,9 @@ namespace Librame.Extensions.Encryption
         public IRsaService Rsa { get; }
 
 
-        private IByteBuffer ComputeHash(HashAlgorithm algorithm, IByteBuffer buffer, bool isSigned = false)
+        private IByteMemoryBuffer ComputeHash(HashAlgorithm algorithm, IByteMemoryBuffer buffer, bool isSigned = false)
         {
-            buffer.Change(memory =>
+            buffer.ChangeMemory(memory =>
             {
                 var hash = algorithm.ComputeHash(memory.ToArray());
                 Logger.LogDebug($"Compute hash: {algorithm.GetType().Name}");
@@ -66,20 +66,19 @@ namespace Librame.Extensions.Encryption
         }
 
         
-        public IByteBuffer Md5(IByteBuffer buffer, bool isSigned = false)
+        public IByteMemoryBuffer Md5(IByteMemoryBuffer buffer, bool isSigned = false)
             => ComputeHash(_md5.Value, buffer, isSigned);
 
-        public IByteBuffer Sha1(IByteBuffer buffer, bool isSigned = false)
+        public IByteMemoryBuffer Sha1(IByteMemoryBuffer buffer, bool isSigned = false)
             => ComputeHash(_sha1.Value, buffer, isSigned);
 
-        public IByteBuffer Sha256(IByteBuffer buffer, bool isSigned = false)
+        public IByteMemoryBuffer Sha256(IByteMemoryBuffer buffer, bool isSigned = false)
             => ComputeHash(_sha256.Value, buffer, isSigned);
 
-        public IByteBuffer Sha384(IByteBuffer buffer, bool isSigned = false)
+        public IByteMemoryBuffer Sha384(IByteMemoryBuffer buffer, bool isSigned = false)
             => ComputeHash(_sha384.Value, buffer, isSigned);
 
-        public IByteBuffer Sha512(IByteBuffer buffer, bool isSigned = false)
+        public IByteMemoryBuffer Sha512(IByteMemoryBuffer buffer, bool isSigned = false)
             => ComputeHash(_sha512.Value, buffer, isSigned);
-
     }
 }

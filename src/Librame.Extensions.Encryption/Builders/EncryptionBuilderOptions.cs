@@ -19,8 +19,8 @@ namespace Librame.Extensions.Encryption
     /// </summary>
     public class EncryptionBuilderOptions : AbstractExtensionBuilderOptions
     {
-        private static readonly UniqueIdentifier _defaultIdentifier
-            = UniqueIdentifier.Empty;
+        private static readonly UniqueAlgorithmIdentifier _defaultIdentifier
+            = UniqueAlgorithmIdentifier.Empty;
 
         /// <summary>
         /// 全局键名。
@@ -35,9 +35,9 @@ namespace Librame.Extensions.Encryption
             = _defaultIdentifier;
 
         /// <summary>
-        /// 标识符转换器。
+        /// 算法转换器。
         /// </summary>
-        public IIdentifierConverter<byte> IdentifierConverter { get; set; }
+        public IAlgorithmConverter IdentifierConverter { get; set; }
             = _defaultIdentifier.Converter;
 
 

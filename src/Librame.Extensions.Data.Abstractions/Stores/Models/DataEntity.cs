@@ -59,12 +59,7 @@ namespace Librame.Extensions.Data
         /// <param name="other">给定的其他 <see cref="DataEntity"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(DataEntity other)
-        {
-            if (other.IsNull())
-                return false;
-
-            return Schema == other.Schema && Name == other.Name;
-        }
+            => Schema == other?.Schema && Name == other?.Name;
 
         /// <summary>
         /// 重写是否相等。
@@ -72,12 +67,7 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-        {
-            if (obj is DataEntity other)
-                return Equals(other);
-
-            return false;
-        }
+            => (obj is DataEntity other) ? Equals(other) : false;
 
 
         /// <summary>
@@ -86,5 +76,24 @@ namespace Librame.Extensions.Data
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
             => Schema.GetHashCode() ^ Name.GetHashCode();
+
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="DataEntity"/>。</param>
+        /// <param name="b">给定的 <see cref="DataEntity"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator ==(DataEntity a, DataEntity b)
+            => a.Equals(b);
+
+        /// <summary>
+        /// 是否不等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="DataEntity"/>。</param>
+        /// <param name="b">给定的 <see cref="DataEntity"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator !=(DataEntity a, DataEntity b)
+            => !a.Equals(b);
     }
 }

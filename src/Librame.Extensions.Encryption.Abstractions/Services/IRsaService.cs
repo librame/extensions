@@ -49,48 +49,48 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 签名数据。
         /// </summary>
-        /// <param name="buffer">给定要签名的 <see cref="IByteBuffer"/>。</param>
-        /// <returns>返回签名后的 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer SignData(IByteBuffer buffer);
+        /// <param name="buffer">给定要签名的 <see cref="IByteMemoryBuffer"/>。</param>
+        /// <returns>返回签名后的 <see cref="IByteMemoryBuffer"/>。</returns>
+        IByteMemoryBuffer SignData(IByteMemoryBuffer buffer);
 
         /// <summary>
         /// 签名散列。
         /// </summary>
-        /// <param name="buffer">给定要签名的 <see cref="IByteBuffer"/>。</param>
-        /// <returns>返回签名后的 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer SignHash(IByteBuffer buffer);
+        /// <param name="buffer">给定要签名的 <see cref="IByteMemoryBuffer"/>。</param>
+        /// <returns>返回签名后的 <see cref="IByteMemoryBuffer"/>。</returns>
+        IByteMemoryBuffer SignHash(IByteMemoryBuffer buffer);
 
 
         /// <summary>
         /// 验证数据。
         /// </summary>
-        /// <param name="buffer">给定要签名的 <see cref="IByteBuffer"/>。</param>
-        /// <param name="signedBuffer">给定已签名的 <see cref="IReadOnlyBuffer{Byte}"/>。</param>
-        /// <returns>返回签名后的 <see cref="IByteBuffer"/>。</returns>
-        bool VerifyData(IByteBuffer buffer, IReadOnlyBuffer<byte> signedBuffer);
+        /// <param name="buffer">给定要签名的 <see cref="IByteMemoryBuffer"/>。</param>
+        /// <param name="signedBuffer">给定已签名的 <see cref="IReadOnlyMemoryBuffer{Byte}"/>。</param>
+        /// <returns>返回签名后的 <see cref="IByteMemoryBuffer"/>。</returns>
+        bool VerifyData(IByteMemoryBuffer buffer, IReadOnlyMemoryBuffer<byte> signedBuffer);
 
         /// <summary>
         /// 验证散列。
         /// </summary>
-        /// <param name="buffer">给定要签名的 <see cref="IByteBuffer"/>。</param>
-        /// <param name="signedBuffer">给定已签名的 <see cref="IReadOnlyBuffer{Byte}"/>。</param>
-        /// <returns>返回签名后的 <see cref="IByteBuffer"/>。</returns>
-        bool VerifyHash(IByteBuffer buffer, IReadOnlyBuffer<byte> signedBuffer);
+        /// <param name="buffer">给定要签名的 <see cref="IByteMemoryBuffer"/>。</param>
+        /// <param name="signedBuffer">给定已签名的 <see cref="IReadOnlyMemoryBuffer{Byte}"/>。</param>
+        /// <returns>返回签名后的 <see cref="IByteMemoryBuffer"/>。</returns>
+        bool VerifyHash(IByteMemoryBuffer buffer, IReadOnlyMemoryBuffer<byte> signedBuffer);
 
 
         /// <summary>
-        /// 加密 <see cref="IByteBuffer"/>。
+        /// 加密 <see cref="IByteMemoryBuffer"/>。
         /// </summary>
-        /// <param name="buffer">给定待加密的 <see cref="IByteBuffer"/>。</param>
-        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer Encrypt(IByteBuffer buffer);
+        /// <param name="buffer">给定待加密的 <see cref="IByteMemoryBuffer"/>。</param>
+        /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        IByteMemoryBuffer Encrypt(IByteMemoryBuffer buffer);
 
 
         /// <summary>
-        /// 解密 <see cref="IByteBuffer"/>。
+        /// 解密 <see cref="IByteMemoryBuffer"/>。
         /// </summary>
-        /// <param name="buffer">给定的加密 <see cref="IByteBuffer"/>。</param>
-        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer Decrypt(IByteBuffer buffer);
+        /// <param name="buffer">给定的加密 <see cref="IByteMemoryBuffer"/>。</param>
+        /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        IByteMemoryBuffer Decrypt(IByteMemoryBuffer buffer);
     }
 }

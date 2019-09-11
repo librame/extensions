@@ -17,7 +17,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 容量单位描述符。
     /// </summary>
-    public class CapacityUnitDescriptor : IEquatable<CapacityUnitDescriptor>
+    public class CapacityUnitDescriptor
     {
         /// <summary>
         /// 构造一个 <see cref="CapacityUnitDescriptor"/>。
@@ -64,15 +64,5 @@ namespace Librame.Extensions.Storage
         /// 大小。
         /// </summary>
         public long Size { get; protected set; }
-
-
-        /// <summary>
-        /// 比较相等。
-        /// </summary>
-        /// <param name="other">给定的 <see cref="CapacityUnitDescriptor"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public bool Equals(CapacityUnitDescriptor other)
-            => Name == other?.Name;
-
     }
 }

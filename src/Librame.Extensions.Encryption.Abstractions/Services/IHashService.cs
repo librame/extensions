@@ -31,45 +31,45 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 计算 MD5。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteMemoryBuffer"/>。</param>
         /// <param name="isSigned">是否签名（默认不签名）。</param>
-        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer Md5(IByteBuffer buffer, bool isSigned = false);
+        /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        IByteMemoryBuffer Md5(IByteMemoryBuffer buffer, bool isSigned = false);
 
         
         /// <summary>
         /// 计算 SHA1。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteMemoryBuffer"/>。</param>
         /// <param name="isSigned">是否签名（默认不签名）。</param>
-        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer Sha1(IByteBuffer buffer, bool isSigned = false);
+        /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        IByteMemoryBuffer Sha1(IByteMemoryBuffer buffer, bool isSigned = false);
 
         
         /// <summary>
         /// 计算 SHA256。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteMemoryBuffer"/>。</param>
         /// <param name="isSigned">是否签名（默认不签名）。</param>
-        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer Sha256(IByteBuffer buffer, bool isSigned = false);
+        /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        IByteMemoryBuffer Sha256(IByteMemoryBuffer buffer, bool isSigned = false);
 
         
         /// <summary>
         /// 计算 SHA384。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteMemoryBuffer"/>。</param>
         /// <param name="isSigned">是否签名（默认不签名）。</param>
-        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer Sha384(IByteBuffer buffer, bool isSigned = false);
+        /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        IByteMemoryBuffer Sha384(IByteMemoryBuffer buffer, bool isSigned = false);
 
         
         /// <summary>
         /// 计算 SHA512。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="IByteBuffer"/>。</param>
+        /// <param name="buffer">给定的 <see cref="IByteMemoryBuffer"/>。</param>
         /// <param name="isSigned">是否签名（默认不签名）。</param>
-        /// <returns>返回 <see cref="IByteBuffer"/>。</returns>
-        IByteBuffer Sha512(IByteBuffer buffer, bool isSigned = false);
+        /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        IByteMemoryBuffer Sha512(IByteMemoryBuffer buffer, bool isSigned = false);
     }
 }

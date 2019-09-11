@@ -20,24 +20,24 @@ namespace Librame.Extensions.Encryption
 
     class KeyGenerator : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IKeyGenerator
     {
-        private readonly UniqueIdentifier _optionsIdentifier;
+        private readonly UniqueAlgorithmIdentifier _optionsIdentifier;
 
 
         public KeyGenerator(IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
-            _optionsIdentifier = new UniqueIdentifier(Options.Identifier, Options.IdentifierConverter);
+            _optionsIdentifier = new UniqueAlgorithmIdentifier(Options.Identifier, Options.IdentifierConverter);
         }
 
 
-        public IByteBuffer GenerateKey(int length, UniqueIdentifier? identifier = null)
+        public IByteMemoryBuffer GenerateKey(int length, UniqueAlgorithmIdentifier identifier = null)
         {
             ReadOnlyMemory<byte> memory;
 
-            if (identifier.HasValue)
+            if (identifier.IsNotNull())
             {
-                memory = identifier.Value.Memory;
-                Logger.LogDebug($"Use set identifier: {identifier.Value}");
+                memory = identifier.Memory;
+                Logger.LogDebug($"Use set identifier: {identifier}");
             }
             else
             {
@@ -49,7 +49,7 @@ namespace Librame.Extensions.Encryption
         }
 
 
-        private IByteBuffer GenerateKey(byte[] bytes, int length)
+        private IByteMemoryBuffer GenerateKey(byte[] bytes, int length)
         {
             var result = new byte[length];
 
@@ -84,7 +84,7 @@ namespace Librame.Extensions.Encryption
             }
             Logger.LogDebug($"Generate key length: {length}");
 
-            return (ByteBuffer)result;
+            return (ByteMemoryBuffer)result;
         }
 
     }

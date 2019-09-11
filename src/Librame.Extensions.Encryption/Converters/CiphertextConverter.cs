@@ -32,36 +32,36 @@ namespace Librame.Extensions.Encryption
 
 
         /// <summary>
-        /// 记录器。
+        /// 日志。
         /// </summary>
         /// <value>返回 <see cref="ILogger"/>。</value>
         protected ILogger Logger { get; }
 
 
         /// <summary>
-        /// 转换为密文。
+        /// 还原 <see cref="IByteMemoryBuffer"/>。
         /// </summary>
-        /// <param name="output">给定的缓冲区。</param>
-        /// <returns>返回字符串。</returns>
-        public string From(IByteBuffer output)
+        /// <param name="to">给定的密文字符串。</param>
+        /// <returns>返回缓冲区。</returns>
+        public IByteMemoryBuffer From(string to)
         {
-            string str = output.AsBase64String();
-            Logger.LogDebug($"Convert to BASE64 String: {str}");
+            var buffer = to.AsByteBufferFromBase64String();
+            Logger.LogDebug($"From BASE64 String: {to}");
 
-            return str;
+            return buffer;
         }
 
         /// <summary>
-        /// 转换为字节缓冲区。
+        /// 转换 <see cref="IByteMemoryBuffer"/>。
         /// </summary>
-        /// <param name="input">给定的密文字符串。</param>
-        /// <returns>返回缓冲区。</returns>
-        public IByteBuffer To(string input)
+        /// <param name="from">给定的 <see cref="IByteMemoryBuffer"/>。</param>
+        /// <returns>返回字符串。</returns>
+        public string To(IByteMemoryBuffer from)
         {
-            var buffer = input.AsByteBufferFromBase64String();
-            Logger.LogDebug($"From BASE64 String: {input}");
+            string str = from.AsBase64String();
+            Logger.LogDebug($"Convert to BASE64 String: {str}");
 
-            return buffer;
+            return str;
         }
 
     }

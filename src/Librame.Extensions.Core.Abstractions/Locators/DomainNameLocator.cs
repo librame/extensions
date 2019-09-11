@@ -315,20 +315,70 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 比较是否相等。
+        /// 是否相等。
         /// </summary>
         /// <param name="other">给定的 <see cref="DomainNameLocator"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(DomainNameLocator other)
-            => Source == other.Source;
+            => Source == other?.Source;
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(object obj)
+            => (obj is DomainNameLocator other) ? Equals(other) : false;
 
 
         /// <summary>
-        /// 转换为文件名。
+        /// 获取哈希码。
+        /// </summary>
+        /// <returns>返回 32 位整数。</returns>
+        public override int GetHashCode()
+            => Source.GetHashCode();
+
+
+        /// <summary>
+        /// 转换为字符串。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
             => Source;
+
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="DomainNameLocator"/>。</param>
+        /// <param name="b">给定的 <see cref="DomainNameLocator"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator ==(DomainNameLocator a, DomainNameLocator b)
+            => a.Equals(b);
+
+        /// <summary>
+        /// 是否不等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="DomainNameLocator"/>。</param>
+        /// <param name="b">给定的 <see cref="DomainNameLocator"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator !=(DomainNameLocator a, DomainNameLocator b)
+            => !a.Equals(b);
+
+
+        /// <summary>
+        /// 隐式转换为字符串。
+        /// </summary>
+        /// <param name="locator">给定的 <see cref="DomainNameLocator"/>。</param>
+        public static implicit operator string(DomainNameLocator locator)
+            => locator.ToString();
+
+        /// <summary>
+        /// 显式转换为域名定位器。
+        /// </summary>
+        /// <param name="domainName">给定的域名。</param>
+        public static explicit operator DomainNameLocator(string domainName)
+            => new DomainNameLocator(domainName);
 
 
         /// <summary>
@@ -389,21 +439,5 @@ namespace Librame.Extensions.Core
             allLevelSegments = host.Split('.').Reverse();
             return true;
         }
-
-
-        /// <summary>
-        /// 隐式转换为字符串。
-        /// </summary>
-        /// <param name="locator">给定的 <see cref="DomainNameLocator"/>。</param>
-        public static implicit operator string(DomainNameLocator locator)
-            => locator.ToString();
-
-        /// <summary>
-        /// 显式转换为域名定位器。
-        /// </summary>
-        /// <param name="domainName">给定的域名。</param>
-        public static explicit operator DomainNameLocator(string domainName)
-            => new DomainNameLocator(domainName);
-
     }
 }

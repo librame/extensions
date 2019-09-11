@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 实体错误。
     /// </summary>
-    public class EntityError
+    public class EntityError : IEquatable<EntityError>
     {
         /// <summary>
         /// 构造一个 <see cref="EntityError"/> 默认实例。
@@ -64,5 +64,57 @@ namespace Librame.Extensions.Data
                 Description = exception.AsInnerMessage()
             };
         }
+
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="other">给定的 <see cref="EntityError"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool Equals(EntityError other)
+            => Code == other?.Code;
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(object obj)
+            => (obj is EntityError other) ? Equals(other) : false;
+
+
+        /// <summary>
+        /// 获取哈希码。
+        /// </summary>
+        /// <returns>返回 32 位整数。</returns>
+        public override int GetHashCode()
+            => Code.GetHashCode();
+
+
+        /// <summary>
+        /// 转换为文件。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => $"{Code}: {Description}";
+
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="EntityError"/>。</param>
+        /// <param name="b">给定的 <see cref="EntityError"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator ==(EntityError a, EntityError b)
+            => a.Equals(b);
+
+        /// <summary>
+        /// 是否不等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="EntityError"/>。</param>
+        /// <param name="b">给定的 <see cref="EntityError"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator !=(EntityError a, EntityError b)
+            => !a.Equals(b);
     }
 }

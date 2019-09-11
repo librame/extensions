@@ -1,11 +1,16 @@
-﻿using System.Security.Cryptography;
+﻿using System.Linq;
+using System.Security.Cryptography;
 using Xunit;
 
 namespace Librame.Extensions.Tests
 {
     public class AlgorithmExtensionsTests
     {
-        private string _rawString = nameof(AlgorithmExtensionsTests);
+        private readonly string _rawString
+            = nameof(AlgorithmExtensionsTests);
+
+        private readonly RandomNumberGenerator _generator
+            = RandomNumberGenerator.Create();
 
 
         [Fact]
@@ -20,6 +25,41 @@ namespace Librame.Extensions.Tests
                 Assert.True(p.Key.HasSpecial());
             }
         }
+
+
+        #region Base and Hex
+
+        [Fact]
+        public void Base32StringTest()
+        {
+            var bytes = new byte[32];
+            _generator.GetBytes(bytes);
+
+            var base32 = bytes.AsBase32String();
+            Assert.True(bytes.SequenceEqual(base32.FromBase32String()));
+        }
+
+        [Fact]
+        public void Base64StringTest()
+        {
+            var bytes = new byte[32];
+            _generator.GetBytes(bytes);
+
+            var base64 = bytes.AsBase64String();
+            Assert.True(bytes.SequenceEqual(base64.FromBase64String()));
+        }
+
+        [Fact]
+        public void HexStringTest()
+        {
+            var bytes = new byte[32];
+            _generator.GetBytes(bytes);
+
+            var hex = bytes.AsHexString();
+            Assert.True(bytes.SequenceEqual(hex.FromHexString()));
+        }
+
+        #endregion
 
 
         #region Hash Algorithm

@@ -16,15 +16,15 @@ namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class EncryptionBuffer<TConverter, TSource> : ByteBuffer, IEncryptionBuffer<TConverter, TSource>
-        where TConverter : IAlgorithmConverter<TSource>
+    class EncryptionBuffer<TConverter, TSource> : ByteMemoryBuffer, IEncryptionBuffer<TConverter, TSource>
+        where TConverter : IByteMemoryBufferConverter<TSource>
     {
         public EncryptionBuffer(TConverter converter, TSource source)
-            : this(converter, source, converter.To(source))
+            : this(converter, source, converter.From(source))
         {
         }
 
-        internal EncryptionBuffer(TConverter converter, TSource source, IByteBuffer buffer)
+        internal EncryptionBuffer(TConverter converter, TSource source, IByteMemoryBuffer buffer)
             : base(buffer.Memory)
         {
             Converter = converter;
@@ -50,7 +50,7 @@ namespace Librame.Extensions.Encryption
         }
 
 
-        public new IEncryptionBuffer<TConverter, TSource> Copy()
+        public IEncryptionBuffer<TConverter, TSource> Copy()
         {
             var buffer = new EncryptionBuffer<TConverter, TSource>(Converter, Source, this);
 
@@ -59,6 +59,5 @@ namespace Librame.Extensions.Encryption
 
             return buffer;
         }
-
     }
 }

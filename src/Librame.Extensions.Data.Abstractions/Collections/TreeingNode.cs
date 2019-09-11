@@ -152,9 +152,8 @@ namespace System.Collections.Generic
         /// <param name="childId">给定的子节点编号。</param>
         /// <returns>返回布尔值。</returns>
         public bool ContainsChild(TId childId)
-        {
-            return ContainsChild(childId, out _);
-        }
+            => ContainsChild(childId, out _);
+
         /// <summary>
         /// 是否包含指定标识的子节点。
         /// </summary>
@@ -164,7 +163,6 @@ namespace System.Collections.Generic
         public bool ContainsChild(TId childId, out TreeingNode<T, TId> child)
         {
             child = GetChild(childId);
-
             return child.IsNotNull();
         }
 
@@ -177,7 +175,6 @@ namespace System.Collections.Generic
         public TreeingNode<T, TId> GetChild(TId childId)
         {
             if (Children.IsNullOrEmpty()) return null;
-
             return Children.FirstOrDefault(c => Id.Equals(childId));
         }
 
@@ -189,23 +186,9 @@ namespace System.Collections.Generic
         public IList<TreeingNode<T, TId>> GetChildren(TId parentId)
         {
             if (Children.IsNullOrEmpty()) return null;
-
             return Children.Where(p => p.ParentId.Equals(parentId)).ToList();
         }
 
-
-        /// <summary>
-        /// 是否相等。
-        /// </summary>
-        /// <param name="obj">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public override bool Equals(object obj)
-        {
-            if (obj is TreeingNode<T, TId> other)
-                return Equals(other);
-
-            return false;
-        }
 
         /// <summary>
         /// 是否相等。
@@ -214,8 +197,17 @@ namespace System.Collections.Generic
         /// <returns>返回布尔值。</returns>
         public bool Equals(TreeingNode<T, TId> other)
         {
+            other.NotNull(nameof(other));
             return Id.Equals(other.Id) && ParentId.Equals(other.ParentId);
         }
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="obj">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(object obj)
+            => (obj is TreeingNode<T, TId> other) ? Equals(other) : false;
 
 
         /// <summary>
@@ -223,9 +215,7 @@ namespace System.Collections.Generic
         /// </summary>
         /// <returns>返回此实例的哈希代码。</returns>
         public override int GetHashCode()
-        {
-            return Id.GetHashCode() ^ ParentId.GetHashCode();
-        }
+            => Id.GetHashCode() ^ ParentId.GetHashCode();
 
 
         /// <summary>
@@ -233,9 +223,7 @@ namespace System.Collections.Generic
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-        {
-            return ToString(node => node.Item.ToString());
-        }
+            => ToString(node => node.Item.ToString());
 
         /// <summary>
         /// 转换为字符串。
@@ -271,5 +259,23 @@ namespace System.Collections.Generic
             return sb.ToString();
         }
 
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
+        /// <param name="b">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator ==(TreeingNode<T, TId> a, TreeingNode<T, TId> b)
+            => a.Equals(b);
+
+        /// <summary>
+        /// 是否不等。
+        /// </summary>
+        /// <param name="a">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
+        /// <param name="b">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator !=(TreeingNode<T, TId> a, TreeingNode<T, TId> b)
+            => !a.Equals(b);
     }
 }

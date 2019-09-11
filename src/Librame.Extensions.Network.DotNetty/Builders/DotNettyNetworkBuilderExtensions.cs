@@ -23,8 +23,8 @@ namespace Librame.Extensions.Network.DotNetty
     /// </summary>
     public static class DotNettyNetworkBuilderExtensions
     {
-        private static readonly UniqueIdentifier _defaultIdentifier
-            = UniqueIdentifier.New();
+        private static readonly UniqueAlgorithmIdentifier _defaultIdentifier
+            = UniqueAlgorithmIdentifier.New();
 
 
         /// <summary>
