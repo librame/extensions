@@ -50,8 +50,8 @@ namespace Librame.Extensions.Core
         {
             Logger.LogTrace($"The {GetType().GetSimpleFullName()} was disposed.");
 
-            LoggerFactory.Dispose();
-            Logger.LogTrace($"The {LoggerFactory.GetType().GetSimpleFullName()} was disposed.");
+            //LoggerFactory.Dispose();
+            //Logger.LogTrace($"The {LoggerFactory.GetType().GetSimpleFullName()} was disposed.");
         }
 
     }

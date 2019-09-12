@@ -44,13 +44,13 @@
     // Librame.Extensions.Core.Tests.ExpressionStringLocalizerTests
     
     // Locators
-    var uriString = "https://1.2.3.4.developer.microsoft.com/en-us/fabric#/get-started";
-    var uriLocator = uriString.AsUriLocator();
-    Assert.Equal("https", uriLocator.Scheme);
-    Assert.Equal("developer.microsoft.com", uriLocator.Host);
-    Assert.Equal("/en-us/fabric", uriLocator.Path);
+    var urlString = "https://1.2.3.4.developer.microsoft.com/en-us/fabric#/get-started";
+    var urlLocator = uriString.AsUrlLocator();
+    Assert.Equal("https", urlLocator.Scheme);
+    Assert.Equal("developer.microsoft.com", urlLocator.Host);
+    Assert.Equal("/en-us/fabric", urlLocator.Path);
     ......
-    // Librame.Extensions.Core.Tests.UriLocatorTests
+    // Librame.Extensions.Core.Tests.UrlLocatorTests
     
     var domainLocator = uriString.GetHost().AsDomainNameLocator(); // uriLocator.Host
     Assert.Equal("com", domainLocator.Root);
