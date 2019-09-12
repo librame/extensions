@@ -68,8 +68,8 @@ namespace Librame.Extensions.Data
             if (accessor.IsNotNull() && accessor is DbContextAccessor dbContextAccessor)
             {
                 var audits = GetAudits(dbContextAccessor.ChangeTracker, cancellationToken);
-
-                await AddAsync(dbContextAccessor, audits, cancellationToken);
+                if (audits.IsNotNullOrEmpty())
+                    await AddAsync(dbContextAccessor, audits, cancellationToken);
 
                 return audits;
             }

@@ -94,6 +94,5 @@ namespace Librame.Extensions.Data
         /// </summary>
         protected override void DisposeCore()
             => Accessor.Dispose();
-
     }
 }

@@ -37,11 +37,19 @@ namespace Librame.Extensions.Core
         public CultureInfo CultureUIInfo { get; set; }
             = _zhCNCultureInfo;
 
+
         /// <summary>
         /// 字符编码（默认为 UTF8）。
         /// </summary>
         public Encoding Encoding { get; set; }
             = Encoding.UTF8;
+
+
+        /// <summary>
+        /// 是 UTC 时钟。
+        /// </summary>
+        public bool IsUtcClock { get; set; }
+
 
         /// <summary>
         /// 资源映射工厂方法。

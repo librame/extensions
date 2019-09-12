@@ -2,7 +2,7 @@
 using System;
 using Xunit;
 
-namespace Librame.Extensions.Data.Tests
+namespace Librame.Extensions.Core.Tests
 {
     public class ClockServiceTests
     {
@@ -11,10 +11,10 @@ namespace Librame.Extensions.Data.Tests
         {
             var service = TestServiceProvider.Current.GetRequiredService<IClockService>();
 
-            var now = await service.GetNowAsync(default);
+            var now = await service.GetNowAsync();
             Assert.Equal(now.Day, DateTime.Now.Day);
 
-            var utcNow = await service.GetOffsetNowAsync(default);
+            var utcNow = await service.GetOffsetNowAsync();
             Assert.Equal(utcNow.Day, DateTimeOffset.Now.Day);
         }
 

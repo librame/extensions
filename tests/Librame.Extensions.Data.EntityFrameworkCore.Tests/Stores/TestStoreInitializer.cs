@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Core;
     using Models;
 
     public class TestStoreInitializer : StoreInitializerBase<TestDbContextAccessor, TestStoreIdentifier>

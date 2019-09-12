@@ -14,6 +14,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 存储初始化器接口。
     /// </summary>

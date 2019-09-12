@@ -192,12 +192,7 @@ namespace Librame.Extensions.Data
         /// <param name="other">给定的其他 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(TableNameDescriptor other)
-        {
-            if (other.IsNull())
-                return false;
-
-            return ToString() == other.ToString();
-        }
+            => ToString() == other?.ToString();
 
         /// <summary>
         /// 重写是否相等。
@@ -205,12 +200,7 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-        {
-            if (obj is TableNameDescriptor other)
-                return Equals(other);
-
-            return false;
-        }
+            => (obj is TableNameDescriptor other) ? Equals(other) : false;
 
 
         /// <summary>

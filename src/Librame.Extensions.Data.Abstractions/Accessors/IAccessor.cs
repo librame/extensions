@@ -76,11 +76,16 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 迁移。
+        /// </summary>
+        void Migrate();
+
+        /// <summary>
         /// 异步迁移。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        Task MigratorAsync(CancellationToken cancellationToken = default);
+        Task MigrateAsync(CancellationToken cancellationToken = default);
 
 
         /// <summary>

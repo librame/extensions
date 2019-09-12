@@ -16,16 +16,14 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Core
 {
-    using Core;
-
     class ClockService : AbstractService, IClockService
     {
-        private readonly DataBuilderOptions _options;
+        private readonly CoreBuilderOptions _options;
 
 
-        public ClockService(IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+        public ClockService(IOptions<CoreBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             _options = options.Value;

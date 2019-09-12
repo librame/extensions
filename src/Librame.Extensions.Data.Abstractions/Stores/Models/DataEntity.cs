@@ -13,6 +13,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 
 namespace Librame.Extensions.Data
 {
@@ -54,9 +55,9 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 是否相等。
+        /// 唯一索引是否相等。
         /// </summary>
-        /// <param name="other">给定的其他 <see cref="DataEntity"/>。</param>
+        /// <param name="other">给定的 <see cref="DataEntity"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(DataEntity other)
             => Schema == other?.Schema && Name == other?.Name;
@@ -75,25 +76,31 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Schema.GetHashCode() ^ Name.GetHashCode();
+            => ToString().GetHashCode();
 
 
         /// <summary>
-        /// 是否相等。
+        /// 转换为字符串。
         /// </summary>
-        /// <param name="a">给定的 <see cref="DataEntity"/>。</param>
-        /// <param name="b">给定的 <see cref="DataEntity"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool operator ==(DataEntity a, DataEntity b)
-            => a.Equals(b);
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => new TableNameSchema(Name, Schema).ToString();
+
 
         /// <summary>
-        /// 是否不等。
+        /// 获取唯一索引表达式。
         /// </summary>
-        /// <param name="a">给定的 <see cref="DataEntity"/>。</param>
-        /// <param name="b">给定的 <see cref="DataEntity"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool operator !=(DataEntity a, DataEntity b)
-            => !a.Equals(b);
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <param name="schema">给定的架构。</param>
+        /// <param name="name">给定的名称。</param>
+        /// <returns>返回查询表达式。</returns>
+        public static Expression<Func<TEntity, bool>> GetUniqueIndexExpression<TEntity>(string schema, string name)
+            where TEntity : DataEntity
+        {
+            schema.NotNullOrEmpty(nameof(schema));
+            name.NotNullOrEmpty(nameof(name));
+
+            return p => p.Schema == schema && p.Name == name;
+        }
     }
 }

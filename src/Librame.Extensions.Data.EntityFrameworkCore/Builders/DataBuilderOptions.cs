@@ -33,9 +33,10 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 是 UTC 时钟。
+        /// 启用迁移（默认已启用）。
         /// </summary>
-        public bool IsUtcClock { get; set; }
+        public bool MigrationEnabled { get; set; }
+            = true;
 
 
         /// <summary>

@@ -30,7 +30,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 实体表查询。
         /// </summary>
-        IQueryable<TTable> Tables { get; }
+        IQueryable<TTable> Entities { get; }
 
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="keyValues">给定的键值对数组或标识。</param>
         /// <returns>返回一个包含 <typeparamref name="TTable"/> 的异步操作。</returns>
-        Task<TTable> FindTableAsync(CancellationToken cancellationToken, params object[] keyValues);
+        Task<TTable> FindEntityAsync(CancellationToken cancellationToken, params object[] keyValues);
 
         /// <summary>
         /// 异步获取分页实体表集合。
@@ -49,7 +49,7 @@ namespace Librame.Extensions.Data
         /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TTable}"/> 的异步操作。</returns>
-        Task<IPageable<TTable>> GetPagingTablesAsync(int index, int size,
+        Task<IPageable<TTable>> GetPagingEntitiesAsync(int index, int size,
             Func<IQueryable<TTable>, IQueryable<TTable>> queryFactory = null,
             CancellationToken cancellationToken = default);
     }

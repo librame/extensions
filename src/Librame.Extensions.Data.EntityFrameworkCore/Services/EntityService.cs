@@ -73,9 +73,9 @@ namespace Librame.Extensions.Data
             {
                 if (_cache.IsNullOrEmpty())
                 {
-                    var tables = dbContextAccessor.Tables.ToList();
-                    if (tables.IsNotNullOrEmpty())
-                        _cache.AddRange(tables);
+                    var entitis = dbContextAccessor.Entities.ToList();
+                    if (entitis.IsNotNullOrEmpty())
+                        _cache.AddRange(entitis);
                 }
 
                 var diff = dbContextAccessor.Model.GetEntityTypes()
@@ -105,7 +105,7 @@ namespace Librame.Extensions.Data
         protected virtual async Task AddAsync(DbContextAccessor accessor, List<DataEntity> tables,
             CancellationToken cancellationToken = default)
         {
-            await accessor.Tables.AddRangeAsync(tables, cancellationToken);
+            await accessor.Entities.AddRangeAsync(tables, cancellationToken);
             _cache.AddRange(tables);
 
             var mediator = accessor.ServiceFactory.GetRequiredService<IMediator>();
@@ -175,6 +175,5 @@ namespace Librame.Extensions.Data
         /// </summary>
         protected override void DisposeCore()
             => _cache.Clear();
-
     }
 }

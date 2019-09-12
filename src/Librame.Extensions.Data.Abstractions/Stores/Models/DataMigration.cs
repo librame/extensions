@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq.Expressions;
 
 namespace Librame.Extensions.Data
 {
@@ -43,7 +44,7 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 是否相等。
+        /// 唯一索引是否相等。
         /// </summary>
         /// <param name="other">给定的其他 <see cref="DataMigration"/>。</param>
         /// <returns>返回布尔值。</returns>
@@ -64,25 +65,31 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => AttributeId.GetHashCode() ^ ProductVersion.GetHashCode();
+            => ToString().GetHashCode();
 
 
         /// <summary>
-        /// 是否相等。
+        /// 转换为字符串。
         /// </summary>
-        /// <param name="a">给定的 <see cref="DataMigration"/>。</param>
-        /// <param name="b">给定的 <see cref="DataMigration"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool operator ==(DataMigration a, DataMigration b)
-            => a.Equals(b);
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => $"{AttributeId},{ProductVersion}";
+
 
         /// <summary>
-        /// 是否不等。
+        /// 获取唯一索引表达式。
         /// </summary>
-        /// <param name="a">给定的 <see cref="DataMigration"/>。</param>
-        /// <param name="b">给定的 <see cref="DataMigration"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool operator !=(DataMigration a, DataMigration b)
-            => !a.Equals(b);
+        /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+        /// <param name="attributeId">给定的特性标识。</param>
+        /// <param name="productVersion">给定的产品版本。</param>
+        /// <returns>返回查询表达式。</returns>
+        public static Expression<Func<TMigration, bool>> GetUniqueIndexExpression<TMigration>(string attributeId, string productVersion)
+            where TMigration : DataMigration
+        {
+            attributeId.NotNullOrEmpty(nameof(attributeId));
+            productVersion.NotNullOrEmpty(nameof(productVersion));
+
+            return p => p.AttributeId == attributeId && p.ProductVersion == productVersion;
+        }
     }
 }

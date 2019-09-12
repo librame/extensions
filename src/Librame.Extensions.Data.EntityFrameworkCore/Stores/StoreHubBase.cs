@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,8 +54,6 @@ namespace Librame.Extensions.Data
         {
             if (Accessor.BuilderOptions.Stores.InitializationEnabled)
                 Initializer.Initialize(this);
-
-            Accessor.MigratorAsync().Wait();
         }
 
 
@@ -71,8 +68,8 @@ namespace Librame.Extensions.Data
         /// 确保实体表数据集。
         /// </summary>
         /// <returns>返回 <see cref="DbSet{Table}"/>。</returns>
-        protected override DbSet<DataEntity> EnsureTables()
-            => Accessor.Tables;
+        protected override DbSet<DataEntity> EnsureEntities()
+            => Accessor.Entities;
 
         /// <summary>
         /// 确保租户数据集。
@@ -88,16 +85,16 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
-    /// <typeparam name="TTable">指定的实体表类型。</typeparam>
+    /// <typeparam name="TEntity">指定的实体类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-    public class StoreHubBase<TAccessor, TAudit, TTable, TTenant> : AbstractStore<TAccessor>, IStoreHub<TAccessor, TAudit, TTable, TTenant>
+    public class StoreHubBase<TAccessor, TAudit, TEntity, TTenant> : AbstractStore<TAccessor>, IStoreHub<TAccessor, TAudit, TEntity, TTenant>
         where TAccessor : DbContextAccessor
         where TAudit : DataAudit
-        where TTable : DataEntity
+        where TEntity : DataEntity
         where TTenant : DataTenant
     {
         /// <summary>
-        /// 构造一个 <see cref="StoreHubBase{TAccessor, TAudit, TTable, TTenant}"/>。
+        /// 构造一个 <see cref="StoreHubBase{TAccessor, TAudit, TEntity, TTenant}"/>。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         /// <param name="initializer">给定的 <see cref="IStoreInitializer{TAccessor}"/>。</param>
@@ -110,7 +107,7 @@ namespace Librame.Extensions.Data
         }
 
         /// <summary>
-        /// 构造一个 <see cref="StoreHubBase{TAccessor, TAudit, TTable, TTenant}"/>。
+        /// 构造一个 <see cref="StoreHubBase{TAccessor, TAudit, TEntity, TTenant}"/>。
         /// </summary>
         /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
         /// <param name="initializer">给定的 <see cref="IStoreInitializer{TAccessor}"/>。</param>
@@ -148,8 +145,8 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 实体表查询。
         /// </summary>
-        public IQueryable<TTable> Tables
-            => EnsureTables();
+        public IQueryable<TEntity> Entities
+            => EnsureEntities();
 
         /// <summary>
         /// 租户查询。
@@ -166,11 +163,11 @@ namespace Librame.Extensions.Data
             => Accessor.Set<TAudit>();
 
         /// <summary>
-        /// 确保实体表数据集。
+        /// 确保实体数据集。
         /// </summary>
         /// <returns>返回 <see cref="DbSet{TTable}"/>。</returns>
-        protected virtual DbSet<TTable> EnsureTables()
-            => Accessor.Set<TTable>();
+        protected virtual DbSet<TEntity> EnsureEntities()
+            => Accessor.Set<TEntity>();
 
         /// <summary>
         /// 确保租户数据集。
@@ -211,29 +208,29 @@ namespace Librame.Extensions.Data
         #endregion
 
 
-        #region Tables
+        #region Entities
 
         /// <summary>
-        /// 异步查找实体表。
+        /// 异步查找实体。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="keyValues">给定的键值对数组或标识。</param>
-        /// <returns>返回一个包含 <typeparamref name="TTable"/> 的异步操作。</returns>
-        public virtual Task<TTable> FindTableAsync(CancellationToken cancellationToken, params object[] keyValues)
-            => EnsureTables().FindAsync(keyValues, cancellationToken);
+        /// <returns>返回一个包含 <typeparamref name="TEntity"/> 的异步操作。</returns>
+        public virtual Task<TEntity> FindEntityAsync(CancellationToken cancellationToken, params object[] keyValues)
+            => EnsureEntities().FindAsync(keyValues, cancellationToken);
 
         /// <summary>
-        /// 异步获取分页实体表集合。
+        /// 异步获取分页实体集合。
         /// </summary>
         /// <param name="index">给定的页索引。</param>
         /// <param name="size">给定的页大小。</param>
         /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TTable}"/> 的异步操作。</returns>
-        public virtual Task<IPageable<TTable>> GetPagingTablesAsync(int index, int size,
-            Func<IQueryable<TTable>, IQueryable<TTable>> queryFactory = null, CancellationToken cancellationToken = default)
+        public virtual Task<IPageable<TEntity>> GetPagingEntitiesAsync(int index, int size,
+            Func<IQueryable<TEntity>, IQueryable<TEntity>> queryFactory = null, CancellationToken cancellationToken = default)
         {
-            var query = queryFactory?.Invoke(Tables) ?? Tables;
+            var query = queryFactory?.Invoke(Entities) ?? Entities;
             return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
                 index, size, cancellationToken);
         }
@@ -244,21 +241,6 @@ namespace Librame.Extensions.Data
         #region Tenants
 
         /// <summary>
-        /// 建立租户唯一表达式。
-        /// </summary>
-        /// <param name="name">给定的名称。</param>
-        /// <param name="host">给定的主机。</param>
-        /// <returns>返回查询表达式。</returns>
-        protected Expression<Func<TTenant, bool>> BuildTenantUniqueExpression(string name, string host)
-        {
-            name.NotNullOrEmpty(nameof(name));
-            host.NotNullOrEmpty(nameof(host));
-
-            // Name and Host is unique index
-            return p => p.Name == name && p.Host == host;
-        }
-
-        /// <summary>
         /// 异步包含指定租户。
         /// </summary>
         /// <param name="name">给定的名称。</param>
@@ -267,7 +249,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含布尔值的异步操作。</returns>
         public virtual Task<bool> ContainTenantAsync(string name, string host, CancellationToken cancellationToken = default)
         {
-            var predicate = BuildTenantUniqueExpression(name, host);
+            var predicate = DataTenant.GetUniqueIndexExpression<TTenant>(name, host);
             return Tenants.AnyAsync(predicate, cancellationToken);
         }
 
@@ -280,7 +262,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <typeparamref name="TTenant"/> 的异步操作。</returns>
         public virtual Task<TTenant> GetTenantAsync(string name, string host, CancellationToken cancellationToken = default)
         {
-            var predicate = BuildTenantUniqueExpression(name, host);
+            var predicate = DataTenant.GetUniqueIndexExpression<TTenant>(name, host);
             return Tenants.SingleOrDefaultAsync(predicate, cancellationToken);
         }
 

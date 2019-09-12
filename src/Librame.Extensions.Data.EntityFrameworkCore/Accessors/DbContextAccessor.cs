@@ -12,7 +12,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -71,7 +70,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 实体表。
         /// </summary>
-        public DbSet<DataEntity> Tables { get; set; }
+        public DbSet<DataEntity> Entities { get; set; }
 
         /// <summary>
         /// 租户。
@@ -246,11 +245,19 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 迁移。
+        /// </summary>
+        public virtual void Migrate()
+        {
+            Database.Migrate();
+        }
+
+        /// <summary>
         /// 异步迁移。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task MigratorAsync(CancellationToken cancellationToken = default)
+        public virtual Task MigrateAsync(CancellationToken cancellationToken = default)
         {
             //var appliedMigrations = await Database.GetAppliedMigrationsAsync(cancellationToken);
             //var pendingMigrations = await Database.GetPendingMigrationsAsync(cancellationToken);
@@ -333,6 +340,9 @@ namespace Librame.Extensions.Data
                     connection.Open();
                     Logger?.LogInformation($"Open connection string: {connection.ConnectionString}");
                 }
+
+                if (BuilderOptions.MigrationEnabled)
+                    Migrate();
             }
         }
 
