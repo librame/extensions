@@ -25,38 +25,27 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加 Librame。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="dependencySetupAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="createFactory">给定创建核心构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
-            Action<CoreBuilderDependencyOptions> dependencySetupAction = null)
-            => services.AddLibrame(s => new CoreBuilder(s), dependencySetupAction);
-
-        /// <summary>
-        /// 添加 Librame。
-        /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="createFactory">给定创建核心构建器的工厂方法。</param>
-        /// <param name="dependencySetupAction">给定的依赖选项配置动作（可选）。</param>
-        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
-        public static ICoreBuilder AddLibrame(this IServiceCollection services,
-            Func<IServiceCollection, ICoreBuilder> createFactory,
-            Action<CoreBuilderDependencyOptions> dependencySetupAction = null)
+            Action<CoreBuilderDependencyOptions> dependencyAction = null,
+            Func<IServiceCollection, ICoreBuilder> createFactory = null)
         {
-            createFactory.NotNull(nameof(createFactory));
-
             // Add Dependencies
-            var dependencyOptions = dependencySetupAction.ConfigureDependencyOptions();
+            var dependencyOptions = dependencyAction.ConfigureDependencyOptions();
 
             services
                 .AddOptions()
-                .AddLocalization(dependencyOptions.LocalizationSetupAction)
-                .AddLogging(dependencyOptions.LoggingSetupAction)
-                .AddMemoryCache(dependencyOptions.MemoryCacheSetupAction);
+                .AddLocalization(dependencyOptions.LocalizationAction)
+                .AddLogging(dependencyOptions.LoggingAction)
+                .AddMemoryCache(dependencyOptions.MemoryCacheAction);
 
             // Add Builder
             services.OnlyConfigure(dependencyOptions.SetupAction);
 
-            var coreBuilder = createFactory.Invoke(services);
+            var coreBuilder = (createFactory ??
+                (s => new CoreBuilder(s))).Invoke(services);
 
             return coreBuilder
                 .AddLocalizations()
@@ -69,11 +58,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加分布式缓存。
         /// </summary>
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
-        /// <param name="addAction">给定的添加动作。</param>
+        /// <param name="setupAction">给定的配置动作。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
-        public static ICoreBuilder AddDistributedCache(this ICoreBuilder builder, Action<IServiceCollection> addAction)
+        public static ICoreBuilder AddDistributedCache(this ICoreBuilder builder, Action<IServiceCollection> setupAction)
         {
-            addAction?.Invoke(builder.Services);
+            setupAction.NotNull(nameof(setupAction)).Invoke(builder.Services);
             return builder;
         }
 

@@ -22,7 +22,7 @@ namespace Librame.Extensions.Examples
 
             var services = new ServiceCollection();
 
-            services.AddLibrame(dependency => dependency.LoggingSetupAction = logging =>
+            services.AddLibrame(dependency => dependency.LoggingAction = logging =>
             {
                 logging.ClearProviders();
                 logging.SetMinimumLevel(LogLevel.Trace);

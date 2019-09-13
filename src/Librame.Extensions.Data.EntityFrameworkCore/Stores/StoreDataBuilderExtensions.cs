@@ -33,7 +33,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         internal static IDataBuilder AddStores(this IDataBuilder builder)
         {
-            builder.Services.AddSingleton<IStoreIdentifier, StoreIdentifierBase>();
+            builder.Services.AddScoped<IStoreIdentifier, StoreIdentifierBase>();
 
             builder.Services.AddScoped(typeof(IStoreInitializer<>), typeof(StoreInitializerBase<>));
             builder.Services.AddScoped(typeof(IStoreInitializer<,>), typeof(StoreInitializerBase<,>));
@@ -142,7 +142,7 @@ namespace Librame.Extensions.Data
         {
             if (builder.Services.TryReplace<IStoreIdentifier, TIdentifier>())
             {
-                builder.Services.AddSingleton(serviceProvider =>
+                builder.Services.AddScoped(serviceProvider =>
                 {
                     return (TIdentifier)serviceProvider.GetRequiredService<IStoreIdentifier>();
                 });
@@ -166,8 +166,8 @@ namespace Librame.Extensions.Data
             where TService : class, IStoreIdentifier
             where TImplementation : class, TService
         {
-            builder.Services.AddSingleton<TService, TImplementation>();
-            builder.Services.AddSingleton(serviceProvider =>
+            builder.Services.AddScoped<TService, TImplementation>();
+            builder.Services.AddScoped(serviceProvider =>
             {
                 return (TImplementation)serviceProvider.GetRequiredService<TService>();
             });

@@ -328,7 +328,7 @@
 ## Register Extension
 
     var locator = "dotnetty.com.pfx".AsFileLocator("BasePath");
-    services.AddLibrame(dependency => dependency.LoggingSetupAction = logging =>
+    services.AddLibrame(dependency => dependency.LoggingAction = logging =>
     {
         logging.ClearProviders();
         logging.SetMinimumLevel(LogLevel.Trace);
