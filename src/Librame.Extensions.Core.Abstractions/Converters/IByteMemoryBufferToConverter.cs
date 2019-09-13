@@ -10,24 +10,13 @@
 
 #endregion
 
-using System;
-using System.Runtime.Serialization;
-
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 算法标识符接口。
+    /// 字节型可读写的连续内存缓冲区转换器接口。
     /// </summary>
-    public interface IAlgorithmIdentifier : IEquatable<IAlgorithmIdentifier>, ISerializable
+    /// <typeparam name="TTo">指定的转换类型。</typeparam>
+    public interface IByteMemoryBufferToConverter<TTo> : IConverter<IByteMemoryBuffer, TTo>
     {
-        /// <summary>
-        /// 只读的连续内存区域。
-        /// </summary>
-        ReadOnlyMemory<byte> Memory { get; }
-
-        /// <summary>
-        /// 算法转换器。
-        /// </summary>
-        IAlgorithmConverter Converter { get; }
     }
 }

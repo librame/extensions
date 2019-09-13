@@ -198,7 +198,8 @@ namespace Librame.Extensions.Data
             }
             else
             {
-                audit.CreatedTime = Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).Result;
+                audit.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true,
+                    cancellationToken: cancellationToken).Result;
             }
 
             return audit;
@@ -237,7 +238,10 @@ namespace Librame.Extensions.Data
         protected virtual DateTimeOffset ToDateTime(object obj, CancellationToken cancellationToken)
         {
             if (obj.IsNull())
-                return Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).Result;
+            {
+                return Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true,
+                    cancellationToken: cancellationToken).Result;
+            }
 
             if (obj is DateTimeOffset dateTimeOffset)
                 return dateTimeOffset;

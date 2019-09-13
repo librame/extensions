@@ -59,19 +59,22 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 生成标识符。
         /// </summary>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <returns>返回长整数。</returns>
-        public long Generate()
+        public long Generate(IClockService clock)
         {
+            clock.NotNull(nameof(clock));
+
             lock (_locker)
             {
-                var timestamp = GetTimestamp();
+                var timestamp = GetCurrentTimestamp(clock);
                 timestamp.NotLesser(_lastTimestamp, nameof(timestamp));
 
                 if (_lastTimestamp == timestamp)
                 {
                     _sequence = (_sequence + 1) & _sequenceMask;
                     if (_sequence == 0)
-                        timestamp = GetNextTimestamp(_lastTimestamp);
+                        timestamp = GetNextTimestamp(_lastTimestamp, clock);
                 }
                 else
                 {
@@ -85,24 +88,24 @@ namespace Librame.Extensions.Core
                     | (_machineId << (int)_machineIdShift)
                     | _sequence;
 
+                // Length(19): 5557114366106533888
                 return id;
             }
         }
 
-
-        // DateTime.Now.Ticks 会生成长度 19 的负值
-        // DateTime.Now.ToFileTime() 则会生成长度 17 的正值
-        private long GetTimestamp()
-            => DateTime.Now.ToFileTime();
-
-        private long GetNextTimestamp(long lastTimestamp)
+        private long GetCurrentTimestamp(IClockService clock)
         {
-            var timestamp = GetTimestamp();
+            return clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).Result.ToFileTime();
+        }
+
+        private long GetNextTimestamp(long lastTimestamp, IClockService clock)
+        {
+            var timestamp = GetCurrentTimestamp(clock);
 
             if (timestamp == lastTimestamp)
             {
                 Thread.Sleep(1);
-                return GetTimestamp();
+                return GetCurrentTimestamp(clock);
             }
 
             if (timestamp < lastTimestamp)
@@ -110,7 +113,7 @@ namespace Librame.Extensions.Core
                 // 将 100 纳秒转换为毫秒
                 var msec = (lastTimestamp - timestamp) / 10000;
                 Thread.Sleep(Convert.ToInt32(msec) + 1);
-                return GetTimestamp();
+                return GetCurrentTimestamp(clock);
             }
 
             return timestamp;

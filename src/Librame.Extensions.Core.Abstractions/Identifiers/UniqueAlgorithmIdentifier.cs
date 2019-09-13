@@ -11,12 +11,14 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 唯一算法标识符。
     /// </summary>
+    [Serializable]
     public class UniqueAlgorithmIdentifier : AbstractAlgorithmIdentifier
     {
         /// <summary>
@@ -41,6 +43,17 @@ namespace Librame.Extensions.Core
             RawGuid = new Guid(Memory.ToArray());
         }
 
+        /// <summary>
+        /// 构造一个 <see cref="UniqueAlgorithmIdentifier"/>。
+        /// </summary>
+        /// <param name="info">给定的 <see cref="SerializationInfo"/>。</param>
+        /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
+        public UniqueAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            RawGuid = new Guid(Memory.ToArray());
+        }
+
 
         /// <summary>
         /// 原始 GUID。
@@ -60,7 +73,7 @@ namespace Librame.Extensions.Core
         /// 只读空标识符实例（默认使用 <see cref="HexAlgorithmConverter"/> 转换器）。
         /// </summary>
         public static readonly UniqueAlgorithmIdentifier Empty
-            = new UniqueAlgorithmIdentifier(Guid.Empty, HexAlgorithmConverter.Instance);
+            = new UniqueAlgorithmIdentifier(Guid.Empty, HexAlgorithmConverter.Default);
 
 
         /// <summary>
@@ -69,7 +82,7 @@ namespace Librame.Extensions.Core
         /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>（可选；默认使用 <see cref="HexAlgorithmConverter"/> 转换器）。</param>
         /// <returns>返回 <see cref="UniqueAlgorithmIdentifier"/>。</returns>
         public static UniqueAlgorithmIdentifier New(IAlgorithmConverter converter = null)
-            => new UniqueAlgorithmIdentifier(Guid.NewGuid(), converter ?? HexAlgorithmConverter.Instance);
+            => new UniqueAlgorithmIdentifier(Guid.NewGuid(), converter ?? HexAlgorithmConverter.Default);
 
         /// <summary>
         /// 新建数组实例。

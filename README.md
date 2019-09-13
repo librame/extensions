@@ -242,12 +242,7 @@
 ## Register Extension
 
     services.AddLibrame()
-        .AddEncryption(options =>
-        {
-            var identifier = UniqueIdentifier.New();
-            options.Identifier = identifier;
-            options.IdentifierConverter = identifier.Converter;
-        })
+        .AddEncryption()
         .AddDeveloperGlobalSigningCredentials(); // AddSigningCredentials();
 
 ## Test Extension

@@ -10,6 +10,8 @@
 
 #endregion
 
+using System;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions.Core
@@ -17,6 +19,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 随机数算法标识符。
     /// </summary>
+    [Serializable]
     public class RandomNumberAlgorithmIdentifier : AbstractAlgorithmIdentifier
     {
         private static readonly RandomNumberGenerator _generator
@@ -43,6 +46,16 @@ namespace Librame.Extensions.Core
         {
         }
 
+        /// <summary>
+        /// 构造一个 <see cref="RandomNumberAlgorithmIdentifier"/>。
+        /// </summary>
+        /// <param name="info">给定的 <see cref="SerializationInfo"/>。</param>
+        /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
+        public RandomNumberAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
 
         /// <summary>
         /// 隐式转换为字符串形式。
@@ -59,6 +72,6 @@ namespace Librame.Extensions.Core
         /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>（可选；默认使用 <see cref="HexAlgorithmConverter"/> 转换器）。</param>
         /// <returns>返回 <see cref="RandomNumberAlgorithmIdentifier"/>。</returns>
         public static RandomNumberAlgorithmIdentifier New(int length, IAlgorithmConverter converter = null)
-            => new RandomNumberAlgorithmIdentifier(length, converter ?? HexAlgorithmConverter.Instance);
+            => new RandomNumberAlgorithmIdentifier(length, converter ?? HexAlgorithmConverter.Default);
     }
 }

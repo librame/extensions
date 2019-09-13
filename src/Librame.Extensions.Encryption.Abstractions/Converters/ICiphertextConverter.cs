@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 密文转换器接口。
     /// </summary>
-    public interface ICiphertextConverter : IByteMemoryBufferConverter
+    public interface ICiphertextConverter : IByteMemoryBufferToStringConverter
     {
     }
 }

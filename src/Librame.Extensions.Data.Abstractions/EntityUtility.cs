@@ -35,21 +35,22 @@ namespace Librame.Extensions.Data
         /// 默认时间。
         /// </summary>
         public static readonly DateTimeOffset DefaultTime
-            = DateTimeOffset.Now;
+            = DateTimeOffset.UtcNow;
 
 
         /// <summary>
         /// 空标识。
         /// </summary>
         public static readonly string EmptyCombGuid
-            = Guid.Empty.AsCombGuid().ToString();
+            = Guid.Empty.AsCombGuid(DefaultTime).ToString();
 
 
         /// <summary>
         /// 新标识。
         /// </summary>
+        /// <param name="timestamp">给定的时间戳。</param>
         /// <returns>返回字符串。</returns>
-        public static string NewCombGuid()
-            => Guid.NewGuid().AsCombGuid().ToString();
+        public static string NewCombGuid(DateTimeOffset timestamp)
+            => Guid.NewGuid().AsCombGuid(timestamp).ToString();
     }
 }

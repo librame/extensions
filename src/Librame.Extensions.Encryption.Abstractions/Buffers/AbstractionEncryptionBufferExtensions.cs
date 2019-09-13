@@ -91,7 +91,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Md5<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Md5(hash, isSigned);
@@ -121,7 +121,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Sha1<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Sha1(hash, isSigned);
@@ -151,7 +151,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Sha256<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Sha256(hash, isSigned);
@@ -181,7 +181,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Sha384<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Sha384(hash, isSigned);
@@ -211,7 +211,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> Sha512<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             bool isSigned = false)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var hash = buffer.ServiceProvider.GetRequiredService<IHashService>();
             return buffer.Sha512(hash, isSigned);
@@ -246,7 +246,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacMd5<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacMd5(keyedHash, identifier);
@@ -276,7 +276,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacSha1<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacSha1(keyedHash, identifier);
@@ -306,7 +306,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacSha256<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacSha256(keyedHash, identifier);
@@ -336,7 +336,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacSha384<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacSha384(keyedHash, identifier);
@@ -366,7 +366,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> HmacSha512<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var keyedHash = buffer.ServiceProvider.GetRequiredService<IKeyedHashService>();
             return buffer.HmacSha512(keyedHash, identifier);
@@ -401,7 +401,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsAes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.AsAes(symmetric, identifier);
@@ -431,7 +431,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> FromAes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.FromAes(symmetric, identifier);
@@ -462,7 +462,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsDes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.AsDes(symmetric, identifier);
@@ -492,7 +492,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> FromDes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.FromDes(symmetric, identifier);
@@ -523,7 +523,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsTripleDes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.AsTripleDes(symmetric, identifier);
@@ -553,7 +553,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> FromTripleDes<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer,
             UniqueAlgorithmIdentifier identifier = null)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var symmetric = buffer.ServiceProvider.GetRequiredService<ISymmetricService>();
             return buffer.FromTripleDes(symmetric, identifier);
@@ -586,7 +586,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的算法缓冲区。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsRsa<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var rsa = buffer.ServiceProvider.GetRequiredService<IRsaService>();
             return buffer.AsRsa(rsa);
@@ -613,7 +613,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的算法缓冲区。</param>
         /// <returns>返回算法缓冲区。</returns>
         public static IEncryptionBuffer<TConverter, TSource> FromRsa<TConverter, TSource>(this IEncryptionBuffer<TConverter, TSource> buffer)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
         {
             var rsa = buffer.ServiceProvider.GetRequiredService<IRsaService>();
             return buffer.FromRsa(rsa);

@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Core;
+
     public class TestStoreIdentifier : StoreIdentifierBase
     {
-        public TestStoreIdentifier(ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+        public TestStoreIdentifier(IClockService clock, ILoggerFactory loggerFactory)
+            : base(clock, loggerFactory)
         {
         }
 

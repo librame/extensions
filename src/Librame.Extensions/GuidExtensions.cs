@@ -25,25 +25,25 @@ namespace Librame.Extensions
         /// 转换为有顺序的 GUID 集合。
         /// </summary>
         /// <param name="guids">给定的 <see cref="IEnumerable{Guid}"/>。</param>
+        /// <param name="timestamp">给定的时间戳。</param>
         /// <returns>返回 <see cref="IEnumerable{Guid}"/>。</returns>
-        public static IEnumerable<Guid> AsCombGuids(this IEnumerable<Guid> guids)
-            => guids.Select(id => id.AsCombGuid());
+        public static IEnumerable<Guid> AsCombGuids(this IEnumerable<Guid> guids, DateTimeOffset timestamp)
+            => guids.Select(id => id.AsCombGuid(timestamp));
 
         /// <summary>
         /// 转换为有顺序的 GUID。
         /// </summary>
         /// <param name="guid">给定的 <see cref="Guid"/>。</param>
+        /// <param name="timestamp">给定的时间戳。</param>
         /// <returns>返回 <see cref="Guid"/>。</returns>
-        public static Guid AsCombGuid(this Guid guid)
+        public static Guid AsCombGuid(this Guid guid, DateTimeOffset timestamp)
         {
             var buffer = guid.ToByteArray();
-
-            var baseDate = new DateTime(1900, 1, 1);
-            var now = DateTime.Now;
+            var baseDate = new DateTimeOffset(new DateTime(1900, 1, 1), timestamp.Offset);
 
             // Get the days and milliseconds which will be used to build the byte string 
-            var days = new TimeSpan(now.Date.Ticks - baseDate.Ticks);
-            var msecs = new TimeSpan(now.Ticks - (now.Date.Ticks));
+            var days = new TimeSpan(timestamp.Date.Ticks - baseDate.Ticks);
+            var msecs = new TimeSpan(timestamp.Ticks - timestamp.Date.Ticks);
 
             // Convert to a byte array 
             // SQL Server is accurate to 1/300th of a millisecond so we divide by 3.333333 
@@ -79,21 +79,22 @@ namespace Librame.Extensions
         /// 生成有顺序的 GUID 集合。
         /// </summary>
         /// <param name="count">给定要生成的数量。</param>
+        /// <param name="timestamp">给定的时间戳。</param>
         /// <returns>返回有顺序的 <see cref="IEnumerable{Guid}"/>。</returns>
-        public static IEnumerable<Guid> GenerateCombIds(this int count)
-            => count.GenerateCombIds(out _);
+        public static IEnumerable<Guid> GenerateCombIds(this int count, DateTimeOffset timestamp)
+            => count.GenerateCombIds(timestamp, out _);
 
         /// <summary>
         /// 生成有顺序的 GUID 集合。
         /// </summary>
         /// <param name="count">给定要生成的数量。</param>
+        /// <param name="timestamp">给定的时间戳。</param>
         /// <param name="guids">输出原始 <see cref="IEnumerable{Guid}"/>。</param>
         /// <returns>返回有顺序的 <see cref="IEnumerable{Guid}"/>。</returns>
-        public static IEnumerable<Guid> GenerateCombIds(this int count, out IEnumerable<Guid> guids)
+        public static IEnumerable<Guid> GenerateCombIds(this int count, DateTimeOffset timestamp, out IEnumerable<Guid> guids)
         {
             guids = count.GenerateGuids();
-            return guids.AsCombGuids();
+            return guids.AsCombGuids(timestamp);
         }
-
     }
 }

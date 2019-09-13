@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -125,7 +126,8 @@ namespace Librame.Extensions.Data
                 Id = Identifier.GetEntityIdAsync(cancellationToken).Result,
                 EntityName = entityType.ClrType.GetSimpleFullName(),
                 AssemblyName = entityType.ClrType.GetSimpleAssemblyName(),
-                CreatedTime = Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).Result,
+                CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true,
+                    cancellationToken: cancellationToken).Result,
                 CreatedBy = nameof(EntityService)
             };
 

@@ -50,6 +50,12 @@ namespace Librame.Extensions.Core
         /// </summary>
         public bool IsUtcClock { get; set; }
 
+        /// <summary>
+        /// 解决时钟回流的偏移量（默认在当前时钟差基础上新增 1 秒）。
+        /// </summary>
+        public TimeSpan ClockRefluxOffset { get; set; }
+            = TimeSpan.FromSeconds(1);
+
 
         /// <summary>
         /// 资源映射工厂方法。

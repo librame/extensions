@@ -20,17 +20,17 @@ namespace Librame.Extensions.Encryption
 
     class KeyGenerator : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IKeyGenerator
     {
-        private readonly UniqueAlgorithmIdentifier _optionsIdentifier;
+        private readonly IAlgorithmIdentifier _optionsIdentifier;
 
 
         public KeyGenerator(IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
-            _optionsIdentifier = new UniqueAlgorithmIdentifier(Options.Identifier, Options.IdentifierConverter);
+            _optionsIdentifier = Options.Identifier.FromHashString();
         }
 
 
-        public IByteMemoryBuffer GenerateKey(int length, UniqueAlgorithmIdentifier identifier = null)
+        public IByteMemoryBuffer GenerateKey(int length, IAlgorithmIdentifier identifier = null)
         {
             ReadOnlyMemory<byte> memory;
 
@@ -56,7 +56,7 @@ namespace Librame.Extensions.Encryption
             // 计算最大公约数
             var gcf = bytes.Length.ComputeGCD(length);
 
-            if (Options.KeyGenerator.IsRandomKey)
+            if (Options.GenerateRandomKey)
             {
                 // 得到最大索引长度
                 var maxIndexLength = (gcf <= bytes.Length) ? bytes.Length : gcf;

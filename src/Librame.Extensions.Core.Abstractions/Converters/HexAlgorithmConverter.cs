@@ -17,12 +17,15 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 16 进制算法转换器。
     /// </summary>
-    public sealed class HexAlgorithmConverter : AbstractSingleton<HexAlgorithmConverter>, IAlgorithmConverter
+    [Serializable]
+    public class HexAlgorithmConverter : IAlgorithmConverter
     {
-        private HexAlgorithmConverter()
-            : base()
-        {
-        }
+        /// <summary>
+        /// 获取默认只读实例。
+        /// </summary>
+        [NonSerialized]
+        public static readonly HexAlgorithmConverter Default
+            = LazySingleton.GetInstance<HexAlgorithmConverter>();
 
 
         /// <summary>

@@ -17,12 +17,15 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// BASE32 算法转换器。
     /// </summary>
-    public sealed class Base32AlgorithmConverter : AbstractSingleton<Base32AlgorithmConverter>, IAlgorithmConverter
+    [Serializable]
+    public class Base32AlgorithmConverter : IAlgorithmConverter
     {
-        private Base32AlgorithmConverter()
-            : base()
-        {
-        }
+        /// <summary>
+        /// 获取默认只读实例。
+        /// </summary>
+        [NonSerialized]
+        public static readonly Base32AlgorithmConverter Default
+            = LazySingleton.GetInstance<Base32AlgorithmConverter>();
 
 
         /// <summary>

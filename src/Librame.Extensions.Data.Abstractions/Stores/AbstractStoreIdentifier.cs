@@ -17,6 +17,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 抽象存储标识符。
     /// </summary>
@@ -28,11 +30,19 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 构造一个 <see cref="AbstractStoreIdentifier"/>。
         /// </summary>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractStoreIdentifier(ILoggerFactory loggerFactory)
+        public AbstractStoreIdentifier(IClockService clock, ILoggerFactory loggerFactory)
         {
+            Clock = clock.NotNull(nameof(clock));
             _loggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
         }
+
+
+        /// <summary>
+        /// 时钟。
+        /// </summary>
+        public IClockService Clock { get; }
 
 
         /// <summary>
@@ -48,15 +58,14 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="idTraceName">标识跟踪名称。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        protected virtual Task<string> GenerateCombGuidAsync(CancellationToken cancellationToken, string idTraceName)
+        protected virtual async Task<string> GenerateCombGuidAsync(CancellationToken cancellationToken, string idTraceName)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
-            {
-                var id = EntityUtility.NewCombGuid();
-                Logger.LogTrace($"Generate {idTraceName}: {id}");
+            var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true, cancellationToken);
 
-                return id;
-            });
+            var id = EntityUtility.NewCombGuid(timestamp);
+            Logger.LogTrace($"Generate {idTraceName}: {id}");
+
+            return id;
         }
 
         /// <summary>
@@ -65,15 +74,14 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="idTraceName">标识跟踪名称。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        protected virtual Task<string> GenerateCombFileTimeAsync(CancellationToken cancellationToken, string idTraceName)
+        protected virtual async Task<string> GenerateCombFileTimeAsync(CancellationToken cancellationToken, string idTraceName)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
-            {
-                var id = DateTimeOffset.Now.AsCombFileTime();
-                Logger.LogTrace($"Generate {idTraceName}: {id}");
+            var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true, cancellationToken);
 
-                return id;
-            });
+            var id = timestamp.AsCombFileTime();
+            Logger.LogTrace($"Generate {idTraceName}: {id}");
+
+            return id;
         }
 
 

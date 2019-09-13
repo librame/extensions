@@ -12,12 +12,14 @@
 
 using System;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 抽象算法标识符。
     /// </summary>
+    [Serializable]
     public abstract class AbstractAlgorithmIdentifier : IAlgorithmIdentifier
     {
         /// <summary>
@@ -42,6 +44,20 @@ namespace Librame.Extensions.Core
             Memory = converter.From(identifier);
         }
 
+        /// <summary>
+        /// 构造一个 <see cref="AbstractAlgorithmIdentifier"/>。
+        /// </summary>
+        /// <param name="info">给定的 <see cref="SerializationInfo"/>。</param>
+        /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
+        public AbstractAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
+        {
+            var converterType = Type.GetType(info.GetString("ConverterTypeName"));
+            Converter = (IAlgorithmConverter)info.GetValue("Converter", converterType);
+
+            var identifier = info.GetString("Identifier");
+            Memory = Converter.From(identifier);
+        }
+
 
         /// <summary>
         /// 只读的连续内存区域。
@@ -52,6 +68,19 @@ namespace Librame.Extensions.Core
         /// 算法转换器。
         /// </summary>
         public IAlgorithmConverter Converter { get; }
+
+
+        /// <summary>
+        /// 获取对象数据。
+        /// </summary>
+        /// <param name="info">给定的 <see cref="SerializationInfo"/>。</param>
+        /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Identifier", Converter.To(Memory));
+            info.AddValue("Converter", Converter);
+            info.AddValue("ConverterTypeName", Converter.GetType().ToString());
+        }
 
 
         /// <summary>
@@ -90,15 +119,16 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 转换为短字符串。
         /// </summary>
+        /// <param name="timestamp">给定的 <see cref="DateTimeOffset"/>。</param>
         /// <returns>返回字符串。</returns>
-        public virtual string ToShortString()
+        public virtual string ToShortString(DateTimeOffset timestamp)
         {
             var i = 1L;
             foreach (var b in Memory.ToArray())
                 i *= b + 1;
 
-            // 8d7225f69933e15
-            return string.Format("{0:x}", _ = DateTimeOffset.UtcNow.Ticks);
+            // Length(15): 8d737ebe809e70e
+            return string.Format("{0:x}", _ = timestamp.Ticks);
         }
 
 

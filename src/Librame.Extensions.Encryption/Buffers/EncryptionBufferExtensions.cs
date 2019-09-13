@@ -31,7 +31,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="source">给定的来源实例。</param>
         /// <returns>返回 <see cref="IEncryptionBuffer{TConverter, TSource}"/>。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsEncryptionBuffer<TConverter, TSource>(this TConverter converter, TSource source)
-            where TConverter : IByteMemoryBufferConverter<TSource>
+            where TConverter : IByteMemoryBufferToConverter<TSource>
             => new EncryptionBuffer<TConverter, TSource>(converter, source);
 
 

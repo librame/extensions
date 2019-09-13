@@ -11,11 +11,11 @@ namespace Librame.Extensions.Core.Tests
         {
             var service = TestServiceProvider.Current.GetRequiredService<IClockService>();
 
-            var now = await service.GetNowAsync();
-            Assert.Equal(now.Day, DateTime.Now.Day);
+            var now = await service.GetNowAsync(DateTime.UtcNow, true);
+            Assert.Equal(now.Day, DateTime.UtcNow.Day);
 
-            var utcNow = await service.GetOffsetNowAsync();
-            Assert.Equal(utcNow.Day, DateTimeOffset.Now.Day);
+            var utcNow = await service.GetOffsetNowAsync(DateTimeOffset.UtcNow, true);
+            Assert.Equal(utcNow.Day, DateTimeOffset.UtcNow.Day);
         }
 
     }

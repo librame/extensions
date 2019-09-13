@@ -22,7 +22,7 @@ namespace Librame.Extensions.Encryption
     /// <typeparam name="TConverter">指定的转换器类型。</typeparam>
     /// <typeparam name="TSource">指定的来源类型。</typeparam>
     public interface IEncryptionBuffer<TConverter, TSource> : IByteMemoryBuffer
-        where TConverter : IByteMemoryBufferConverter<TSource>
+        where TConverter : IByteMemoryBufferToConverter<TSource>
     {
         /// <summary>
         /// 转换器。

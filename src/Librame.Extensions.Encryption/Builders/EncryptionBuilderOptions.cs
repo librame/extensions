@@ -19,26 +19,10 @@ namespace Librame.Extensions.Encryption
     /// </summary>
     public class EncryptionBuilderOptions : AbstractExtensionBuilderOptions
     {
-        private static readonly UniqueAlgorithmIdentifier _defaultIdentifier
-            = UniqueAlgorithmIdentifier.Empty;
-
         /// <summary>
         /// 全局键名。
         /// </summary>
         public const string GLOBAL_KEY = "Global";
-
-
-        /// <summary>
-        /// 标识符。
-        /// </summary>
-        public string Identifier { get; set; }
-            = _defaultIdentifier;
-
-        /// <summary>
-        /// 算法转换器。
-        /// </summary>
-        public IAlgorithmConverter IdentifierConverter { get; set; }
-            = _defaultIdentifier.Converter;
 
 
         /// <summary>
@@ -47,25 +31,17 @@ namespace Librame.Extensions.Encryption
         public string SigningCredentialsKey { get; set; }
             = GLOBAL_KEY;
 
-
         /// <summary>
-        /// 密钥生成器。
+        /// 生成随机密钥（默认不随机生成）。
         /// </summary>
-        public KeyGeneratorOptions KeyGenerator { get; set; }
-            = new KeyGeneratorOptions();
-    }
-
-
-    /// <summary>
-    /// 密钥生成器选项。
-    /// </summary>
-    public class KeyGeneratorOptions
-    {
-        /// <summary>
-        /// 是否生成随机密钥（默认不随机生成）。
-        /// </summary>
-        public bool IsRandomKey { get; set; }
+        public bool GenerateRandomKey { get; set; }
             = false;
-    }
 
+
+        /// <summary>
+        /// 标识符。
+        /// </summary>
+        public AlgorithmIdentifierOptions Identifier { get; set; }
+            = new AlgorithmIdentifierOptions();
+    }
 }

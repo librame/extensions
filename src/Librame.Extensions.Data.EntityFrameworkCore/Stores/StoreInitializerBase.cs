@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Librame.Extensions.Data
 {
@@ -126,7 +127,7 @@ namespace Librame.Extensions.Data
                 }
 
                 tenant.Id = Identifier.GetTenantIdAsync().Result;
-                tenant.CreatedTime = Clock.GetOffsetNowAsync().Result;
+                tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).Result;
                 tenant.CreatedBy = GetType().GetSimpleName();
 
                 stores.TryCreateAsync(default, tenant).Wait();

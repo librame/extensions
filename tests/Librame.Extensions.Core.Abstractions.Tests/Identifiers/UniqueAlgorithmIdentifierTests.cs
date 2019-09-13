@@ -14,7 +14,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.NotEmpty(str);
 
             var guid = Guid.NewGuid();
-            var identifier = new UniqueAlgorithmIdentifier(guid, HexAlgorithmConverter.Instance);
+            var identifier = new UniqueAlgorithmIdentifier(guid, HexAlgorithmConverter.Default);
             Assert.NotEmpty((string)identifier);
 
             var other = new UniqueAlgorithmIdentifier(identifier, identifier.Converter);
@@ -27,7 +27,18 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal(identifier.GetHashCode(), other.GetHashCode());
             Assert.Equal(identifier.ToString(), other.ToString());
 
-            var combGuid = identifier.RawGuid.AsCombGuid();
+            // Serialization
+            var buffer = identifier.SerializeBinary().Compress();
+            var base64String = buffer.AsBase64String();
+            Assert.NotEmpty(base64String);
+
+            buffer = base64String.FromBase64String().Decompress();
+            var obj = buffer.DeserializeBinary();
+            Assert.True(identifier.Equals(obj));
+
+            // CombGuid
+            var timestamp = DateTimeOffset.UtcNow;
+            var combGuid = identifier.RawGuid.AsCombGuid(timestamp);
             Assert.False(guid == combGuid);
             Assert.True(guid != combGuid);
 
@@ -36,14 +47,14 @@ namespace Librame.Extensions.Core.Tests
 
             var shorts = identifiers.Select(id =>
             {
-                return new KeyValuePair<Guid, string>(id.RawGuid, id.ToShortString());
+                return new KeyValuePair<Guid, string>(id.RawGuid, id.ToShortString(timestamp));
             })
             .ToArray();
             Assert.NotEmpty(shorts);
 
             var combidShorts = identifiers.Select(id =>
             {
-                return new KeyValuePair<Guid, string>(id.RawGuid.AsCombGuid(), id.ToShortString());
+                return new KeyValuePair<Guid, string>(id.RawGuid.AsCombGuid(timestamp), id.ToShortString(timestamp));
             })
             .ToArray();
             Assert.NotEmpty(combidShorts);

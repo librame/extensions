@@ -23,10 +23,6 @@ namespace Librame.Extensions.Network.DotNetty
     /// </summary>
     public static class DotNettyNetworkBuilderExtensions
     {
-        private static readonly UniqueAlgorithmIdentifier _defaultIdentifier
-            = UniqueAlgorithmIdentifier.New();
-
-
         /// <summary>
         /// 添加 DotNetty。
         /// </summary>
@@ -40,14 +36,7 @@ namespace Librame.Extensions.Network.DotNetty
 
             // 如果未添加加密扩展，则自动添加
             if (!builder.HasParentBuilder<IEncryptionBuilder>())
-            {
-                builder.AddEncryption(options =>
-                {
-                    options.Identifier = _defaultIdentifier;
-                    options.IdentifierConverter = _defaultIdentifier.Converter;
-                })
-                .AddDeveloperGlobalSigningCredentials();
-            }
+                builder.AddEncryption().AddDeveloperGlobalSigningCredentials();
 
             return builder
                 .AddWrappers()
