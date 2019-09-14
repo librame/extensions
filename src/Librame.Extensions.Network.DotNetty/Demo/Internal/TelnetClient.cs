@@ -44,8 +44,8 @@ namespace Librame.Extensions.Network.DotNetty
             Action<IChannel> configureProcess, string host = null, int? port = null)
             where TChannelHandler : IChannelHandler
         {
-            var address = IPAddress.Parse(host.RequiredNotNullOrEmpty(_clientOptions.Host));
-            var endPoint = new IPEndPoint(address, port.RequiredNotNull(_clientOptions.Port));
+            var address = IPAddress.Parse(host.NotEmptyOrDefault(_clientOptions.Host));
+            var endPoint = new IPEndPoint(address, port.NotNullOrDefault(_clientOptions.Port));
 
             IEventLoopGroup group = null;
 

@@ -53,310 +53,6 @@ namespace Librame.Extensions
         }
 
 
-        #region RequiredResult
-
-        /// <summary>
-        /// 要求不为 NULL 或空格，否则返回默认值。
-        /// </summary>
-        /// <param name="str">给定的当前字符串。</param>
-        /// <param name="default">给定的默认字符串。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回字符串。</returns>
-        public static string RequiredNotNullOrWhiteSpace(this string str, string @default, bool throwIfDefaultNotSatisfy = true)
-            => str.RequiredResult(@default, ValidationExtensions.IsNotNullOrWhiteSpace, throwIfDefaultNotSatisfy);
-
-        /// <summary>
-        /// 要求不为 NULL 或空格，否则返回默认值。
-        /// </summary>
-        /// <param name="str">给定的当前字符串。</param>
-        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回字符串。</returns>
-        public static string RequiredNotNullOrWhiteSpace(this string str, Func<string> defaultFactory, bool throwIfDefaultNotSatisfy = true)
-            => str.RequiredResult(defaultFactory, ValidationExtensions.IsNotNullOrWhiteSpace, throwIfDefaultNotSatisfy);
-
-
-        /// <summary>
-        /// 要求不为 NULL 或空字符串，否则返回默认值。
-        /// </summary>
-        /// <param name="str">给定的当前字符串。</param>
-        /// <param name="default">给定的默认字符串。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回字符串。</returns>
-        public static string RequiredNotNullOrEmpty(this string str, string @default, bool throwIfDefaultNotSatisfy = true)
-            => str.RequiredResult(@default, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultNotSatisfy);
-
-        /// <summary>
-        /// 要求不为 NULL 或空字符串，否则返回默认值。
-        /// </summary>
-        /// <param name="str">给定的当前字符串。</param>
-        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回字符串。</returns>
-        public static string RequiredNotNullOrEmpty(this string str, Func<string> defaultFactory, bool throwIfDefaultNotSatisfy = true)
-            => str.RequiredResult(defaultFactory, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultNotSatisfy);
-
-
-        /// <summary>
-        /// 要求不为 NULL 或空集合。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="default">在未通过验证或验证异常时，要返回的默认结果。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static IEnumerable<TResult> RequiredNotNullOrEmpty<TResult>(this IEnumerable<TResult> current, IEnumerable<TResult> @default,
-            bool throwIfDefaultNotSatisfy = true)
-            => current.RequiredResult(@default, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultNotSatisfy);
-
-        /// <summary>
-        /// 要求不为 NULL 或空集合。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static IEnumerable<TResult> RequiredNotNullOrEmpty<TResult>(this IEnumerable<TResult> current, Func<IEnumerable<TResult>> defaultFactory,
-            bool throwIfDefaultNotSatisfy = true)
-            => current.RequiredResult(defaultFactory, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultNotSatisfy);
-
-
-        /// <summary>
-        /// 要求不为 NULL 或空集合。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="default">在未通过验证或验证异常时，要返回的默认结果。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotNullOrEmpty<TResult>(this TResult current, TResult @default,
-            bool throwIfDefaultNotSatisfy = true)
-            where TResult : IEnumerable
-            => current.RequiredResult(@default, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultNotSatisfy);
-
-        /// <summary>
-        /// 要求不为 NULL 或空集合。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotNullOrEmpty<TResult>(this TResult current, Func<TResult> defaultFactory,
-            bool throwIfDefaultNotSatisfy = true)
-            where TResult : IEnumerable
-            => current.RequiredResult(defaultFactory, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultNotSatisfy);
-
-
-        /// <summary>
-        /// 要求不为 NULL。
-        /// </summary>
-        /// <typeparam name="TStruct">指定的值类型。</typeparam>
-        /// <param name="nullable">给定的当前可空值。</param>
-        /// <param name="default">给定的默认值（如果可空值为空，则返回此值）。</param>
-        /// <returns>返回存在值或默认值。</returns>
-        public static TStruct RequiredNotNull<TStruct>(this TStruct? nullable, TStruct @default)
-            where TStruct : struct
-            => nullable.HasValue ? nullable.Value : @default;
-
-        /// <summary>
-        /// 要求不为 NULL。
-        /// </summary>
-        /// <typeparam name="TStruct">指定的值类型。</typeparam>
-        /// <param name="nullable">给定的当前可空值。</param>
-        /// <param name="defaultFactory">给定的默认值工厂方法（如果可空值为空，则调用此方法）。</param>
-        /// <returns>返回存在值或默认值。</returns>
-        public static TStruct RequiredNotNull<TStruct>(this TStruct? nullable, Func<TStruct> defaultFactory)
-            where TStruct : struct
-            => nullable.HasValue ? nullable.Value : defaultFactory.Invoke();
-
-
-        /// <summary>
-        /// 要求不为 NULL。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="default">在未通过验证或验证异常时，要返回的默认结果。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotNull<TResult>(this TResult current, TResult @default,
-            bool throwIfDefaultNotSatisfy = true)
-            => current.RequiredResult(@default, ValidationExtensions.IsNotNull, throwIfDefaultNotSatisfy);
-
-        /// <summary>
-        /// 要求不为 NULL。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotNull<TResult>(this TResult current, Func<TResult> defaultFactory,
-            bool throwIfDefaultNotSatisfy = true)
-            => current.RequiredResult(defaultFactory, ValidationExtensions.IsNotNull, throwIfDefaultNotSatisfy);
-
-
-        /// <summary>
-        /// 要求不大于或大于等于，否则返回比较结果。
-        /// </summary>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="compare">给定的比较结果。</param>
-        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
-        /// <returns>返回当前结果或比较结果。</returns>
-        public static TResult RequiredNotGreater<TResult>(this TResult current, TResult compare, bool equals = false)
-            where TResult : IComparable<TResult>
-            => current.RequiredResult(compare, _current => _current.IsLesser(compare, equals), throwIfDefaultNotSatisfy: false);
-
-        /// <summary>
-        /// 要求不大于或大于等于，否则返回默认结果。
-        /// </summary>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="compare">给定的比较结果。</param>
-        /// <param name="default">给定的默认结果。</param>
-        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotGreater<TResult>(this TResult current, TResult compare, TResult @default, bool equals = false, bool throwIfDefaultNotSatisfy = true)
-            where TResult : IComparable<TResult>
-            => current.RequiredResult(@default, _current => _current.IsLesser(compare, equals), throwIfDefaultNotSatisfy);
-
-        /// <summary>
-        /// 要求不大于或大于等于，否则返回默认结果。
-        /// </summary>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="compare">给定的比较结果。</param>
-        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
-        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotGreater<TResult>(this TResult current, TResult compare, Func<TResult> defaultFactory, bool equals = false, bool throwIfDefaultNotSatisfy = true)
-            where TResult : IComparable<TResult>
-            => current.RequiredResult(defaultFactory, _current => _current.IsLesser(compare, equals), throwIfDefaultNotSatisfy);
-
-
-        /// <summary>
-        /// 要求不小于或小于等于，否则返回比较结果。
-        /// </summary>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="compare">给定的比较结果。</param>
-        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
-        /// <returns>返回当前结果或比较结果。</returns>
-        public static TResult RequiredNotLesser<TResult>(this TResult current, TResult compare, bool equals = false)
-            where TResult : IComparable<TResult>
-            => current.RequiredResult(compare, _current => _current.IsGreater(compare, equals), throwIfDefaultNotSatisfy: false);
-
-        /// <summary>
-        /// 要求不小于或小于等于，否则返回默认结果。
-        /// </summary>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="compare">给定的比较结果。</param>
-        /// <param name="default">给定的默认结果。</param>
-        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotLesser<TResult>(this TResult current, TResult compare, TResult @default, bool equals = false, bool throwIfDefaultNotSatisfy = true)
-            where TResult : IComparable<TResult>
-            => current.RequiredResult(@default, _current => _current.IsGreater(compare, equals), throwIfDefaultNotSatisfy);
-
-        /// <summary>
-        /// 要求不小于或小于等于，否则返回默认结果。
-        /// </summary>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="compare">给定的比较结果。</param>
-        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
-        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotLesser<TResult>(this TResult current, TResult compare, Func<TResult> defaultFactory, bool equals = false, bool throwIfDefaultNotSatisfy = true)
-            where TResult : IComparable<TResult>
-            => current.RequiredResult(defaultFactory, _current => _current.IsGreater(compare, equals), throwIfDefaultNotSatisfy);
-
-
-        /// <summary>
-        /// 要求不超出或等于范围对比值，否则返回默认结果。
-        /// </summary>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="compareMinimum">给定的最小比较值。</param>
-        /// <param name="compareMaximum">给定的最大比较值。</param>
-        /// <param name="default">给定的默认结果。</param>
-        /// <param name="equalMinimum">是否比较等于最小值（可选；默认不比较）。</param>
-        /// <param name="equalMaximum">是否比较等于最大值（可选；默认不比较）。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotOutOfRange<TResult>(this TResult current, TResult compareMinimum, TResult compareMaximum,
-            TResult @default, bool equalMinimum = false, bool equalMaximum = false, bool throwIfDefaultNotSatisfy = true)
-            where TResult : IComparable<TResult>
-            => current.RequiredResult(@default, _current => _current.IsNotOutOfRange(compareMinimum, compareMaximum, equalMinimum, equalMaximum), throwIfDefaultNotSatisfy);
-
-        /// <summary>
-        /// 要求不超出或等于范围对比值，否则返回默认结果。
-        /// </summary>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="compareMinimum">给定的最小比较值。</param>
-        /// <param name="compareMaximum">给定的最大比较值。</param>
-        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
-        /// <param name="equalMinimum">是否比较等于最小值（可选；默认不比较）。</param>
-        /// <param name="equalMaximum">是否比较等于最大值（可选；默认不比较）。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredNotOutOfRange<TResult>(this TResult current, TResult compareMinimum, TResult compareMaximum,
-            Func<TResult> defaultFactory, bool equalMinimum = false, bool equalMaximum = false, bool throwIfDefaultNotSatisfy = true)
-            where TResult : IComparable<TResult>
-            => current.RequiredResult(defaultFactory, _current => _current.IsNotOutOfRange(compareMinimum, compareMaximum, equalMinimum, equalMaximum), throwIfDefaultNotSatisfy);
-
-
-        /// <summary>
-        /// 要求结果。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="default">在未通过验证或验证异常时，要返回的默认结果。</param>
-        /// <param name="requirementFactory">是否满足必要条件的工厂方法。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredResult<TResult>(this TResult current, TResult @default,
-            Func<TResult, bool> requirementFactory, bool throwIfDefaultNotSatisfy = true)
-            => current.RequiredResult(() => @default, requirementFactory, throwIfDefaultNotSatisfy);
-
-        /// <summary>
-        /// 要求结果。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="current">给定的当前结果。</param>
-        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
-        /// <param name="requirementFactory">是否满足必要条件的工厂方法（可选；默认以不为空为必要条件）。</param>
-        /// <param name="throwIfDefaultNotSatisfy">如果默认结果不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
-        /// <returns>返回当前结果或默认结果。</returns>
-        public static TResult RequiredResult<TResult>(this TResult current, Func<TResult> defaultFactory,
-            Func<TResult, bool> requirementFactory, bool throwIfDefaultNotSatisfy = true)
-        {
-            defaultFactory.NotNull(nameof(defaultFactory));
-            requirementFactory.NotNull(nameof(requirementFactory));
-
-            TResult result;
-
-            try
-            {
-                if (requirementFactory.Invoke(current))
-                    return current;
-
-                result = defaultFactory.Invoke();
-            }
-            catch
-            {
-                result = defaultFactory.Invoke();
-            }
-
-            if (throwIfDefaultNotSatisfy && !requirementFactory.Invoke(result))
-                throw new ArgumentException("The default result don't satisfy the necessary conditions.", nameof(defaultFactory));
-
-            return result;
-        }
-
-        #endregion
-
-
         #region EnsureCreate
 
         /// <summary>
@@ -612,6 +308,312 @@ namespace Librame.Extensions
                     }
                 }
             }
+        }
+
+        #endregion
+
+
+        #region OrDefault
+
+        /// <summary>
+        /// 得到不为 NULL 或默认值。
+        /// </summary>
+        /// <typeparam name="TStruct">指定的值类型。</typeparam>
+        /// <param name="nullable">给定的当前可空值。</param>
+        /// <param name="default">给定的默认值（如果可空值为空，则返回此值）。</param>
+        /// <returns>返回存在值或默认值。</returns>
+        public static TStruct NotNullOrDefault<TStruct>(this TStruct? nullable, TStruct @default)
+            where TStruct : struct
+            => nullable.NotNullOrDefault(() => @default);
+
+        /// <summary>
+        /// 得到不为 NULL 或默认值。
+        /// </summary>
+        /// <typeparam name="TStruct">指定的值类型。</typeparam>
+        /// <param name="nullable">给定的当前可空值。</param>
+        /// <param name="defaultFactory">给定的默认值工厂方法（如果可空值为空，则调用此方法）。</param>
+        /// <returns>返回当前或默认值。</returns>
+        public static TStruct NotNullOrDefault<TStruct>(this TStruct? nullable, Func<TStruct> defaultFactory)
+            where TStruct : struct
+            => nullable.HasValue ? nullable.Value : defaultFactory.Invoke();
+
+
+        /// <summary>
+        /// 得到不为 NULL、空格或默认字符串。
+        /// </summary>
+        /// <param name="str">给定的当前字符串。</param>
+        /// <param name="default">在未通过验证或验证异常时，要返回的默认字符串。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认字符串不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认字符串。</returns>
+        public static string NotWhiteSpaceOrDefault(this string str, string @default, bool throwIfDefaultInvalid = true)
+            => str.OrDefault(@default, ValidationExtensions.IsNotNullOrWhiteSpace, throwIfDefaultInvalid);
+
+        /// <summary>
+        /// 得到不为 NULL、空格或默认字符串。
+        /// </summary>
+        /// <param name="str">给定的当前字符串。</param>
+        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认字符串不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认字符串。</returns>
+        public static string NotWhiteSpaceOrDefault(this string str, Func<string> defaultFactory, bool throwIfDefaultInvalid = true)
+            => str.OrDefault(defaultFactory, ValidationExtensions.IsNotNullOrWhiteSpace, throwIfDefaultInvalid);
+
+
+        /// <summary>
+        /// 得到不为 NULL、空或默认字符串。
+        /// </summary>
+        /// <param name="str">给定的当前字符串。</param>
+        /// <param name="default">在未通过验证或验证异常时，要返回的默认字符串。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认字符串不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认字符串。</returns>
+        public static string NotEmptyOrDefault(this string str, string @default, bool throwIfDefaultInvalid = true)
+            => str.OrDefault(@default, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+
+        /// <summary>
+        /// 得到不为 NULL、空或默认字符串。
+        /// </summary>
+        /// <param name="str">给定的当前字符串。</param>
+        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认字符串工厂方法。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认字符串不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认字符串。</returns>
+        public static string NotEmptyOrDefault(this string str, Func<string> defaultFactory, bool throwIfDefaultInvalid = true)
+            => str.OrDefault(defaultFactory, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+
+
+        /// <summary>
+        /// 得到不为 NULL、空或默认集合实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前集合实例。</param>
+        /// <param name="default">在未通过验证或验证异常时，要返回的默认结果。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认集合实例不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认集合实例。</returns>
+        public static IEnumerable<T> NotEmptyOrDefault<T>(this IEnumerable<T> current, IEnumerable<T> @default, bool throwIfDefaultInvalid = true)
+            => current.OrDefault(@default, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+
+        /// <summary>
+        /// 得到不为 NULL、空或默认集合实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前集合实例。</param>
+        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认结果工厂方法。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认集合实例不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认集合实例。</returns>
+        public static IEnumerable<T> NotEmptyOrDefault<T>(this IEnumerable<T> current, Func<IEnumerable<T>> defaultFactory, bool throwIfDefaultInvalid = true)
+            => current.OrDefault(defaultFactory, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+
+
+        /// <summary>
+        /// 得到不为 NULL、空或默认集合实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前集合实例。</param>
+        /// <param name="default">在未通过验证或验证异常时，要返回的默认集合实例。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认集合实例不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认集合实例。</returns>
+        public static T NotEmptyOrDefault<T>(this T current, T @default, bool throwIfDefaultInvalid = true)
+            where T : IEnumerable
+            => current.OrDefault(@default, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+
+        /// <summary>
+        /// 得到不为 NULL、空或默认集合实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前集合实例。</param>
+        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认集合实例工厂方法。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认集合实例不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认集合实例。</returns>
+        public static T NotEmptyOrDefault<T>(this T current, Func<T> defaultFactory, bool throwIfDefaultInvalid = true)
+            where T : IEnumerable
+            => current.OrDefault(defaultFactory, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+
+
+        /// <summary>
+        /// 得到不为 NULL 或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="default">在未通过验证或验证异常时，要返回的默认实例。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotNullOrDefault<T>(this T current, T @default, bool throwIfDefaultInvalid = true)
+            => current.OrDefault(@default, ValidationExtensions.IsNotNull, throwIfDefaultInvalid);
+
+        /// <summary>
+        /// 得到不为 NULL 或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认实例工厂方法。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足验证条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotNullOrDefault<T>(this T current, Func<T> defaultFactory, bool throwIfDefaultInvalid = true)
+            => current.OrDefault(defaultFactory, ValidationExtensions.IsNotNull, throwIfDefaultInvalid);
+
+
+        /// <summary>
+        /// 得到不大于的当前或默认实例（不验证比较实例也不抛出异常）。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="compare">给定的比较实例。</param>
+        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotGreaterOrDefault<T>(this T current, T compare, bool equals = false)
+            where T : IComparable<T>
+            => current.OrDefault(compare, _current => _current.IsLesser(compare, equals), throwIfDefaultInvalid: false);
+
+        /// <summary>
+        /// 得到不大于的当前或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前结果。</param>
+        /// <param name="compare">给定的比较结果。</param>
+        /// <param name="default">在未通过验证或验证异常时，要返回的默认结果。</param>
+        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足验证条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotGreaterOrDefault<T>(this T current, T compare, T @default, bool equals = false, bool throwIfDefaultInvalid = true)
+            where T : IComparable<T>
+            => current.OrDefault(@default, _current => _current.IsLesser(compare, equals), throwIfDefaultInvalid);
+
+        /// <summary>
+        /// 得到不大于的当前或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="compare">给定的比较实例。</param>
+        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认实例工厂方法。</param>
+        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足验证条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotGreaterOrDefault<T>(this T current, T compare, Func<T> defaultFactory, bool equals = false, bool throwIfDefaultInvalid = true)
+            where T : IComparable<T>
+            => current.OrDefault(defaultFactory, _current => _current.IsLesser(compare, equals), throwIfDefaultInvalid);
+
+
+        /// <summary>
+        /// 得到不小于的当前或默认实例（不验证比较实例也不抛出异常）。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="compare">给定的比较实例。</param>
+        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotLesserOrDefault<T>(this T current, T compare, bool equals = false)
+            where T : IComparable<T>
+            => current.OrDefault(compare, _current => _current.IsGreater(compare, equals), throwIfDefaultInvalid: false);
+
+        /// <summary>
+        /// 得到不小于的当前或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="compare">给定的比较实例。</param>
+        /// <param name="default">在未通过验证或验证异常时，要返回的默认实例。</param>
+        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足验证条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotLesserOrDefault<T>(this T current, T compare, T @default, bool equals = false, bool throwIfDefaultInvalid = true)
+            where T : IComparable<T>
+            => current.OrDefault(@default, _current => _current.IsGreater(compare, equals), throwIfDefaultInvalid);
+
+        /// <summary>
+        /// 得到不小于的当前或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="compare">给定的比较实例。</param>
+        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认实例工厂方法。</param>
+        /// <param name="equals">是否比较等于（可选；默认不比较）。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足验证条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotLesserOrDefault<T>(this T current, T compare, Func<T> defaultFactory, bool equals = false, bool throwIfDefaultInvalid = true)
+            where T : IComparable<T>
+            => current.OrDefault(defaultFactory, _current => _current.IsGreater(compare, equals), throwIfDefaultInvalid);
+
+
+        /// <summary>
+        /// 得到不超出范围的当前或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="compareMinimum">给定的最小比较值。</param>
+        /// <param name="compareMaximum">给定的最大比较值。</param>
+        /// <param name="default">在未通过验证或验证异常时，要返回的默认实例。</param>
+        /// <param name="equalMinimum">是否比较等于最小值（可选；默认不比较）。</param>
+        /// <param name="equalMaximum">是否比较等于最大值（可选；默认不比较）。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足验证条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotOutOfRangeOrDefault<T>(this T current, T compareMinimum, T compareMaximum,
+            T @default, bool equalMinimum = false, bool equalMaximum = false, bool throwIfDefaultInvalid = true)
+            where T : IComparable<T>
+            => current.OrDefault(@default, _current => _current.IsNotOutOfRange(compareMinimum, compareMaximum, equalMinimum, equalMaximum), throwIfDefaultInvalid);
+
+        /// <summary>
+        /// 得到不超出范围的当前或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="compareMinimum">给定的最小比较值。</param>
+        /// <param name="compareMaximum">给定的最大比较值。</param>
+        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认实例工厂方法。</param>
+        /// <param name="equalMinimum">是否比较等于最小值（可选；默认不比较）。</param>
+        /// <param name="equalMaximum">是否比较等于最大值（可选；默认不比较）。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足验证条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T NotOutOfRangeOrDefault<T>(this T current, T compareMinimum, T compareMaximum,
+            Func<T> defaultFactory, bool equalMinimum = false, bool equalMaximum = false, bool throwIfDefaultInvalid = true)
+            where T : IComparable<T>
+            => current.OrDefault(defaultFactory, _current => _current.IsNotOutOfRange(compareMinimum, compareMaximum, equalMinimum, equalMaximum), throwIfDefaultInvalid);
+
+
+        /// <summary>
+        /// 得到当前或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="default">在未通过验证或验证异常时，要返回的默认实例。</param>
+        /// <param name="validFactory">验证当前（或默认）实例是否有效的工厂方法。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足验证条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T OrDefault<T>(this T current, T @default,
+            Func<T, bool> validFactory, bool throwIfDefaultInvalid = true)
+            => current.OrDefault(() => @default, validFactory, throwIfDefaultInvalid);
+
+        /// <summary>
+        /// 得到当前或默认实例。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="current">给定的当前实例。</param>
+        /// <param name="defaultFactory">在未通过验证或验证异常时，要返回的默认实例工厂方法。</param>
+        /// <param name="validFactory">验证当前（或默认）实例是否有效的工厂方法。</param>
+        /// <param name="throwIfDefaultInvalid">如果默认实例不满足验证条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
+        /// <returns>返回当前或默认实例。</returns>
+        public static T OrDefault<T>(this T current, Func<T> defaultFactory,
+            Func<T, bool> validFactory, bool throwIfDefaultInvalid = true)
+        {
+            defaultFactory.NotNull(nameof(defaultFactory));
+            validFactory.NotNull(nameof(validFactory));
+
+            T @default;
+
+            try
+            {
+                if (validFactory.Invoke(current))
+                    return current;
+
+                @default = defaultFactory.Invoke();
+            }
+            catch
+            {
+                @default = defaultFactory.Invoke();
+            }
+
+            if (throwIfDefaultInvalid && !validFactory.Invoke(@default))
+                throw new ArgumentException("The default instance don't satisfy the necessary conditions.", nameof(defaultFactory));
+
+            return @default;
         }
 
         #endregion

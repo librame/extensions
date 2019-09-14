@@ -200,7 +200,7 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 是否不超出或等于范围对比值。
+        /// 是否不超出范围对比值。
         /// </summary>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="value">给定的值。</param>
@@ -214,7 +214,7 @@ namespace Librame.Extensions
             => !value.IsOutOfRange(compareMinimum, compareMaximum, equalMinimum, equalMaximum);
 
         /// <summary>
-        /// 是否超出或等于范围对比值。
+        /// 是否超出范围对比值。
         /// </summary>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="value">给定的值。</param>

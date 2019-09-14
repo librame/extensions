@@ -24,17 +24,38 @@ namespace Librame.Extensions.Network.DotNetty
     public static class DotNettyNetworkBuilderExtensions
     {
         /// <summary>
-        /// 添加 DotNetty。
+        /// 添加 DotNetty 扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
-        /// <param name="setupAction">给定的选项配置动作（可选）。</param>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="builderAction">给定的选项配置动作。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
-            Action<DotNettyOptions> setupAction = null)
+            Action<DotNettyOptions> builderAction)
         {
-            builder.Services.OnlyConfigure(setupAction);
+            builderAction.NotNull(nameof(builderAction));
 
-            // 如果未添加加密扩展，则自动添加
+            return builder.AddDotNetty(dependency =>
+            {
+                dependency.BuilderOptionsAction = builderAction;
+            });
+        }
+
+        /// <summary>
+        /// 添加 DotNetty 扩展。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
+        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
+        public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
+            Action<DotNettyDependencyOptions> dependencyAction = null)
+        {
+            // Add Dependencies
+            var dependency = dependencyAction.ConfigureDependencyOptions();
+
+            builder.Services.OnlyConfigure(dependency.BuilderOptionsAction,
+                dependency.BuilderOptionsName);
+
+            // 如果未添加加密扩展，则自动添加并默认配置
             if (!builder.HasParentBuilder<IEncryptionBuilder>())
                 builder.AddEncryption().AddDeveloperGlobalSigningCredentials();
 

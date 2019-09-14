@@ -22,8 +22,13 @@ namespace Librame.Extensions.Core
         where TBuilderOptions : IExtensionBuilderOptions
     {
         /// <summary>
+        /// 构建器选项名称。
+        /// </summary>
+        public string BuilderOptionsName { get; set; }
+
+        /// <summary>
         /// <typeparamref name="TBuilderOptions"/> 配置动作。
         /// </summary>
-        public Action<TBuilderOptions> SetupAction { get; set; }
+        public Action<TBuilderOptions> BuilderOptionsAction { get; set; }
     }
 }

@@ -25,22 +25,19 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// <see cref="LocalizationOptions"/> 配置动作。
         /// </summary>
-        public Action<LocalizationOptions> LocalizationAction { get; set; }
-            = options =>
-            {
-                options.ResourcesPath = "Resources";
-            };
+        public Action<LocalizationOptions> LocalizationOptionsAction { get; set; }
+            = options => options.ResourcesPath = "Resources";
 
         /// <summary>
         /// <see cref="ILoggingBuilder"/> 配置动作。
         /// </summary>
-        public Action<ILoggingBuilder> LoggingAction { get; set; }
+        public Action<ILoggingBuilder> LoggingBuilderAction { get; set; }
             = _ => { };
 
         /// <summary>
         /// <see cref="MemoryCacheOptions"/> 配置动作。
         /// </summary>
-        public Action<MemoryCacheOptions> MemoryCacheAction { get; set; }
+        public Action<MemoryCacheOptions> MemoryCacheOptionsAction { get; set; }
             = _ => { };
     }
 }

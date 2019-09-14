@@ -169,7 +169,7 @@ namespace Librame.Extensions.Data
         /// <param name="table">给定的 <see cref="DataEntity"/>。</param>
         /// <param name="entityType">给定的实体类型。</param>
         protected virtual void SetDefaultTableSchema(DataEntity table, IEntityType entityType)
-            => table.Schema = Options.Tables.DefaultSchema.RequiredNotNullOrEmpty("dbo");
+            => table.Schema = Options.Tables.DefaultSchema.NotEmptyOrDefault("dbo");
 
 
         /// <summary>

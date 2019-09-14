@@ -154,10 +154,10 @@ namespace Librame.Extensions.Drawing
                         using (var data = img.Encode(skFormat, Options.Quality))
                         {
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
-                            var middleName = s.Suffix.RequiredNotNullOrEmpty(() => DateTime.Now.Ticks.ToString());
+                            var middleName = s.Suffix.NotEmptyOrDefault(() => DateTime.Now.Ticks.ToString());
 
                             // 设定缩放保存路径
-                            var scaleSavePath = savePathTemplate.RequiredNotNullOrEmpty(imagePath);
+                            var scaleSavePath = savePathTemplate.NotEmptyOrDefault(imagePath);
                             scaleSavePath = scaleSavePath.ChangeFileName((baseName, extension) =>
                             {
                                 // 添加后缀名

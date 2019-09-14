@@ -21,7 +21,7 @@ namespace Librame.Extensions.Network.DotNetty
 
                 var services = new ServiceCollection();
 
-                services.AddLibrame(dependency => dependency.LoggingAction = logging =>
+                services.AddLibrame(logging =>
                 {
                     logging.ClearProviders();
                     logging.SetMinimumLevel(LogLevel.Trace);

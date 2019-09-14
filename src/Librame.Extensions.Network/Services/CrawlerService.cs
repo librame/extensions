@@ -64,7 +64,7 @@ namespace Librame.Extensions.Network
 
             var links = new List<string>();
 
-            pattern = pattern.RequiredNotNullOrEmpty(() =>
+            pattern = pattern.NotEmptyOrDefault(() =>
             {
                 return @"(?<url>((http(s)?|ftp|file|ws):)?//([\w-]+\.)+[\w-]+(/[\w- ./?%&=]+)?)|(?<path>(/*[\w- ./?%&=]+\.[\w- .]+)?)";
             });

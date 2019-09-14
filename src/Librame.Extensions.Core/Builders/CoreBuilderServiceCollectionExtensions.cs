@@ -12,6 +12,7 @@
 
 using Librame.Extensions;
 using Librame.Extensions.Core;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -25,28 +26,69 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加 Librame。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="loggingAction">给定的日志构建器配置动作。</param>
+        /// <param name="builderFactory">给定创建核心构建器的工厂方法（可选）。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddLibrame(this IServiceCollection services,
+            Action<ILoggingBuilder> loggingAction,
+            Func<IServiceCollection, ICoreBuilder> builderFactory = null)
+        {
+            loggingAction.NotNull(nameof(loggingAction));
+
+            return services.AddLibrame(dependency =>
+            {
+                dependency.LoggingBuilderAction = loggingAction;
+            },
+            builderFactory);
+        }
+
+        /// <summary>
+        /// 添加 Librame。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="builderAction">给定的选项配置动作。</param>
+        /// <param name="builderFactory">给定创建核心构建器的工厂方法（可选）。</param>
+        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        public static ICoreBuilder AddLibrame(this IServiceCollection services,
+            Action<CoreBuilderOptions> builderAction,
+            Func<IServiceCollection, ICoreBuilder> builderFactory = null)
+        {
+            builderAction.NotNull(nameof(builderAction));
+
+            return services.AddLibrame(dependency =>
+            {
+                dependency.BuilderOptionsAction = builderAction;
+            },
+            builderFactory);
+        }
+
+        /// <summary>
+        /// 添加 Librame。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
-        /// <param name="createFactory">给定创建核心构建器的工厂方法（可选）。</param>
+        /// <param name="builderFactory">给定创建核心构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
             Action<CoreBuilderDependencyOptions> dependencyAction = null,
-            Func<IServiceCollection, ICoreBuilder> createFactory = null)
+            Func<IServiceCollection, ICoreBuilder> builderFactory = null)
         {
             // Add Dependencies
-            var dependencyOptions = dependencyAction.ConfigureDependencyOptions();
+            var dependency = dependencyAction.ConfigureDependencyOptions();
 
             services
                 .AddOptions()
-                .AddLocalization(dependencyOptions.LocalizationAction)
-                .AddLogging(dependencyOptions.LoggingAction)
-                .AddMemoryCache(dependencyOptions.MemoryCacheAction);
+                .AddLocalization(dependency.LocalizationOptionsAction)
+                .AddLogging(dependency.LoggingBuilderAction)
+                .AddMemoryCache(dependency.MemoryCacheOptionsAction);
 
             // Add Builder
-            services.OnlyConfigure(dependencyOptions.SetupAction);
+            services.OnlyConfigure(dependency.BuilderOptionsAction,
+                dependency.BuilderOptionsName);
 
-            var coreBuilder = (createFactory ??
-                (s => new CoreBuilder(s))).Invoke(services);
-
+            var coreBuilder = builderFactory.NotNullOrDefault(()
+                => s => new CoreBuilder(s)).Invoke(services);
+            
             return coreBuilder
                 .AddLocalizations()
                 .AddMediators()

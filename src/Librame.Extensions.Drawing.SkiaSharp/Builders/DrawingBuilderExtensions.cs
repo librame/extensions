@@ -26,18 +26,42 @@ namespace Librame.Extensions.Drawing
         /// 添加图画扩展。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="setupAction">给定的选项配置动作（可选）。</param>
-        /// <param name="createFactory">给定创建图画构建器的工厂方法（可选）。</param>
+        /// <param name="builderAction">给定的选项配置动作。</param>
+        /// <param name="builderFactory">给定创建图画构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
         public static IDrawingBuilder AddDrawing(this IExtensionBuilder builder,
-            Action<DrawingBuilderOptions> setupAction = null,
-            Func<IExtensionBuilder, IDrawingBuilder> createFactory = null)
+            Action<DrawingBuilderOptions> builderAction,
+            Func<IExtensionBuilder, IDrawingBuilder> builderFactory = null)
         {
-            // Add Builder
-            builder.Services.OnlyConfigure(setupAction);
+            builderAction.NotNull(nameof(builderAction));
 
-            var drawingBuilder = (createFactory ??
-                (b => new DrawingBuilder(b))).Invoke(builder);
+            return builder.AddDrawing(dependency =>
+            {
+                dependency.BuilderOptionsAction = builderAction;
+            },
+            builderFactory);
+        }
+
+        /// <summary>
+        /// 添加图画扩展。
+        /// </summary>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="builderFactory">给定创建图画构建器的工厂方法（可选）。</param>
+        /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
+        public static IDrawingBuilder AddDrawing(this IExtensionBuilder builder,
+            Action<DrawingBuilderDependencyOptions> dependencyAction = null,
+            Func<IExtensionBuilder, IDrawingBuilder> builderFactory = null)
+        {
+            // Add Dependencies
+            var dependency = dependencyAction.ConfigureDependencyOptions();
+
+            // Add Builder
+            builder.Services.OnlyConfigure(dependency.BuilderOptionsAction,
+                dependency.BuilderOptionsName);
+
+            var drawingBuilder = builderFactory.NotNullOrDefault(()
+                => b => new DrawingBuilder(b)).Invoke(builder);
 
             return drawingBuilder
                 .AddServices();
