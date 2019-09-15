@@ -27,24 +27,24 @@ namespace Librame.Extensions.Network.DotNetty
         public static INetworkBuilder AddDemo(this INetworkBuilder builder)
         {
             builder.Services.AddScoped<IDiscardClient, DiscardClient>();
-            builder.Services.AddSingleton<IDiscardServer, DiscardServer>();
+            builder.Services.AddScoped<IDiscardServer, DiscardServer>();
 
             builder.Services.AddScoped<IEchoClient, EchoClient>();
-            builder.Services.AddSingleton<IEchoServer, EchoServer>();
+            builder.Services.AddScoped<IEchoServer, EchoServer>();
 
             builder.Services.AddScoped<IFactorialClient, FactorialClient>();
-            builder.Services.AddSingleton<IFactorialServer, FactorialServer>();
+            builder.Services.AddScoped<IFactorialServer, FactorialServer>();
 
-            builder.Services.AddSingleton<IHttpServer, HttpServer>();
+            builder.Services.AddScoped<IHttpServer, HttpServer>();
 
             builder.Services.AddScoped<ISecureChatClient, SecureChatClient>();
-            builder.Services.AddSingleton<ISecureChatServer, SecureChatServer>();
+            builder.Services.AddScoped<ISecureChatServer, SecureChatServer>();
 
             builder.Services.AddScoped<ITelnetClient, TelnetClient>();
-            builder.Services.AddSingleton<ITelnetServer, TelnetServer>();
+            builder.Services.AddScoped<ITelnetServer, TelnetServer>();
 
             builder.Services.AddScoped<IWebSocketClient, WebSocketClient>();
-            builder.Services.AddSingleton<IWebSocketServer, WebSocketServer>();
+            builder.Services.AddScoped<IWebSocketServer, WebSocketServer>();
 
             return builder;
         }

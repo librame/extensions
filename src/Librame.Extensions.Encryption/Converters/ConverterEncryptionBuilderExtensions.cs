@@ -18,8 +18,8 @@ namespace Librame.Extensions.Encryption
     {
         public static IEncryptionBuilder AddConverters(this IEncryptionBuilder builder)
         {
-            builder.Services.AddSingleton<ICiphertextConverter, CiphertextConverter>();
-            builder.Services.AddSingleton<IPlaintextConverter, PlaintextConverter>();
+            builder.Services.AddScoped<ICiphertextConverter, CiphertextConverter>();
+            builder.Services.AddScoped<IPlaintextConverter, PlaintextConverter>();
 
             return builder;
         }

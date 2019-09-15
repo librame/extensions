@@ -66,10 +66,10 @@ namespace Librame.Extensions.Network.DotNetty
 
         private static INetworkBuilder AddWrappers(this INetworkBuilder builder)
         {
-            builder.Services.AddSingleton<IBootstrapWrapperFactory, BootstrapWrapperFactory>();
-            builder.Services.AddSingleton<IBootstrapWrapper, BootstrapWrapper>();
-            builder.Services.AddSingleton<IServerBootstrapWrapper, ServerBootstrapWrapper>();
-            builder.Services.AddSingleton(typeof(IBootstrapWrapper<,>), typeof(BootstrapWrapper<,>));
+            builder.Services.AddScoped<IBootstrapWrapperFactory, BootstrapWrapperFactory>();
+            builder.Services.AddScoped<IBootstrapWrapper, BootstrapWrapper>();
+            builder.Services.AddScoped<IServerBootstrapWrapper, ServerBootstrapWrapper>();
+            builder.Services.AddScoped(typeof(IBootstrapWrapper<,>), typeof(BootstrapWrapper<,>));
 
             return builder;
         }

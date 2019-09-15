@@ -20,8 +20,8 @@ namespace Librame.Extensions.Core
         {
             builder.Services.AddTransient<ServiceFactoryDelegate>(serviceProvider => serviceProvider.GetService);
 
-            builder.Services.AddSingleton(typeof(IServicesManager<>), typeof(ServicesManager<>));
-            builder.Services.AddSingleton(typeof(IServicesManager<,>), typeof(ServicesManager<,>));
+            builder.Services.AddScoped(typeof(IServicesManager<>), typeof(ServicesManager<>));
+            builder.Services.AddScoped(typeof(IServicesManager<,>), typeof(ServicesManager<,>));
 
             builder.Services.AddScoped<IClockService, ClockService>();
             builder.Services.AddScoped<IHumanizationService, HumanizationService>();

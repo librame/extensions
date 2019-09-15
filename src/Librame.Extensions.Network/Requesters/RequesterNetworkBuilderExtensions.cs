@@ -18,8 +18,8 @@ namespace Librame.Extensions.Network
     {
         public static INetworkBuilder AddRequesters(this INetworkBuilder builder)
         {
-            builder.Services.AddSingleton<IUriRequester, HttpClientRequester>();
-            builder.Services.AddSingleton<IUriRequester, HttpWebRequester>();
+            builder.Services.AddScoped<IUriRequester, HttpClientRequester>();
+            builder.Services.AddScoped<IUriRequester, HttpWebRequester>();
 
             return builder;
         }
