@@ -300,7 +300,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="locator">给定的 <see cref="UrlLocator"/>。</param>
         public static implicit operator string(UrlLocator locator)
-            => locator.ToString();
+            => locator?.ToString();
 
         /// <summary>
         /// 显式转换为 URI 定位器。

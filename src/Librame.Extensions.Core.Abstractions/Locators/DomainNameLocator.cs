@@ -371,7 +371,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="locator">给定的 <see cref="DomainNameLocator"/>。</param>
         public static implicit operator string(DomainNameLocator locator)
-            => locator.ToString();
+            => locator?.ToString();
 
         /// <summary>
         /// 显式转换为域名定位器。

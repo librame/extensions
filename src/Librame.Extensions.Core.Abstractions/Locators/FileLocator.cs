@@ -204,7 +204,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="locator">给定的 <see cref="FileLocator"/>。</param>
         public static implicit operator string(FileLocator locator)
-            => locator.ToString();
+            => locator?.ToString();
 
         /// <summary>
         /// 显式转换为文件定位器。
