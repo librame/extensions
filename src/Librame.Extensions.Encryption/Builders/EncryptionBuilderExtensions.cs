@@ -31,7 +31,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddEncryption(this IExtensionBuilder builder,
             Action<EncryptionBuilderOptions> builderAction,
-            Func<IExtensionBuilder, IEncryptionBuilder> builderFactory = null)
+            Func<IExtensionBuilder, EncryptionBuilderDependencyOptions, IEncryptionBuilder> builderFactory = null)
         {
             builderAction.NotNull(nameof(builderAction));
 
@@ -51,7 +51,7 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddEncryption(this IExtensionBuilder builder,
             Action<EncryptionBuilderDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, IEncryptionBuilder> builderFactory = null)
+            Func<IExtensionBuilder, EncryptionBuilderDependencyOptions, IEncryptionBuilder> builderFactory = null)
             => builder.AddEncryption<EncryptionBuilderDependencyOptions>(dependencyAction, builderFactory);
 
         /// <summary>
@@ -64,18 +64,17 @@ namespace Librame.Extensions.Encryption
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddEncryption<TDependencyOptions>(this IExtensionBuilder builder,
             Action<TDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, IEncryptionBuilder> builderFactory = null)
+            Func<IExtensionBuilder, TDependencyOptions, IEncryptionBuilder> builderFactory = null)
             where TDependencyOptions : EncryptionBuilderDependencyOptions, new()
         {
             // Add Dependencies
             var dependency = dependencyAction.ConfigureDependencyOptions();
 
             // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction,
-                dependency.OptionsName);
+            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
 
             var encryptionBuilder = builderFactory.NotNullOrDefault(()
-                => b => new EncryptionBuilder(b)).Invoke(builder);
+                => (b, d) => new EncryptionBuilder(b, d)).Invoke(builder, dependency);
 
             return encryptionBuilder
                 .AddBuffers()

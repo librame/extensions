@@ -31,7 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
             Action<ILoggingBuilder> loggingAction,
-            Func<IServiceCollection, ICoreBuilder> builderFactory = null)
+            Func<IServiceCollection, CoreBuilderDependencyOptions, ICoreBuilder> builderFactory = null)
         {
             loggingAction.NotNull(nameof(loggingAction));
 
@@ -51,7 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
             Action<CoreBuilderOptions> builderAction,
-            Func<IServiceCollection, ICoreBuilder> builderFactory = null)
+            Func<IServiceCollection, CoreBuilderDependencyOptions, ICoreBuilder> builderFactory = null)
         {
             builderAction.NotNull(nameof(builderAction));
 
@@ -71,7 +71,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame(this IServiceCollection services,
             Action<CoreBuilderDependencyOptions> dependencyAction = null,
-            Func<IServiceCollection, ICoreBuilder> builderFactory = null)
+            Func<IServiceCollection, CoreBuilderDependencyOptions, ICoreBuilder> builderFactory = null)
             => services.AddLibrame<CoreBuilderDependencyOptions>(dependencyAction, builderFactory);
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddLibrame<TDependencyOptions>(this IServiceCollection services,
             Action<TDependencyOptions> dependencyAction = null,
-            Func<IServiceCollection, ICoreBuilder> builderFactory = null)
+            Func<IServiceCollection, TDependencyOptions, ICoreBuilder> builderFactory = null)
             where TDependencyOptions : CoreBuilderDependencyOptions, new()
         {
             // Add Dependencies
@@ -101,7 +101,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
 
             var coreBuilder = builderFactory.NotNullOrDefault(()
-                => s => new CoreBuilder(s)).Invoke(services);
+                => (s, d) => new CoreBuilder(s, d)).Invoke(services, dependency);
 
             return coreBuilder
                 .AddLocalizers()

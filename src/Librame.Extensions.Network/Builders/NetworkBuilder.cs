@@ -18,11 +18,20 @@ namespace Librame.Extensions.Network
 
     class NetworkBuilder : AbstractExtensionBuilder, INetworkBuilder
     {
-        public NetworkBuilder(IExtensionBuilder builder)
-            : base(builder)
+        public NetworkBuilder(IExtensionBuilder builder, NetworkBuilderDependencyOptions dependencyOptions)
+            : base(builder, dependencyOptions)
         {
             Services.AddSingleton<INetworkBuilder>(this);
         }
 
+
+        public IExtensionBuilderDependencyOptions DotNettyDependencyOptions { get; private set; }
+
+
+        public INetworkBuilder AddDotNettyDependencyOptions(IExtensionBuilderDependencyOptions dependencyOptions)
+        {
+            DotNettyDependencyOptions = dependencyOptions.NotNull(nameof(dependencyOptions));
+            return this;
+        }
     }
 }

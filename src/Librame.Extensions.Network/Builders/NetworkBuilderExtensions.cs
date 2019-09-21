@@ -31,7 +31,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddNetwork(this IExtensionBuilder builder,
             Action<NetworkBuilderOptions> builderAction,
-            Func<IExtensionBuilder, INetworkBuilder> builderFactory = null)
+            Func<IExtensionBuilder, NetworkBuilderDependencyOptions, INetworkBuilder> builderFactory = null)
         {
             builderAction.NotNull(nameof(builderAction));
 
@@ -51,7 +51,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddNetwork(this IExtensionBuilder builder,
             Action<NetworkBuilderDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, INetworkBuilder> builderFactory = null)
+            Func<IExtensionBuilder, NetworkBuilderDependencyOptions, INetworkBuilder> builderFactory = null)
             => builder.AddNetwork<NetworkBuilderDependencyOptions>(dependencyAction, builderFactory);
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Librame.Extensions.Network
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddNetwork<TDependencyOptions>(this IExtensionBuilder builder,
             Action<TDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, INetworkBuilder> builderFactory = null)
+            Func<IExtensionBuilder, TDependencyOptions, INetworkBuilder> builderFactory = null)
             where TDependencyOptions : NetworkBuilderDependencyOptions, new()
         {
             // Add Dependencies
@@ -73,11 +73,10 @@ namespace Librame.Extensions.Network
             builder.Services.AddHttpClient();
 
             // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction,
-                dependency.OptionsName);
+            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
 
             var networkBuilder = builderFactory.NotNullOrDefault(()
-                => b => new NetworkBuilder(b)).Invoke(builder);
+                => (b, d) => new NetworkBuilder(b, d)).Invoke(builder, dependency);
 
             return networkBuilder
                 .AddRequesters()

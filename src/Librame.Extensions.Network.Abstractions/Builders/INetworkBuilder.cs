@@ -19,5 +19,20 @@ namespace Librame.Extensions.Network
     /// </summary>
     public interface INetworkBuilder : IExtensionBuilder
     {
+        /// <summary>
+        /// DotNetty 依赖选项。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="IExtensionBuilderDependencyOptions"/>。
+        /// </value>
+        IExtensionBuilderDependencyOptions DotNettyDependencyOptions { get; }
+
+
+        /// <summary>
+        /// 添加 DotNetty 依赖选项。
+        /// </summary>
+        /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
+        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
+        INetworkBuilder AddDotNettyDependencyOptions(IExtensionBuilderDependencyOptions dependencyOptions);
     }
 }

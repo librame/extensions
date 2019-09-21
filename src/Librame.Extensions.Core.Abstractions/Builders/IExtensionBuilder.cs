@@ -27,6 +27,7 @@ namespace Librame.Extensions.Core
         /// </value>
         IExtensionBuilder ParentBuilder { get; }
 
+
         /// <summary>
         /// 服务集合。
         /// </summary>
@@ -34,5 +35,13 @@ namespace Librame.Extensions.Core
         /// 返回 <see cref="IServiceCollection"/>。
         /// </value>
         IServiceCollection Services { get; }
+
+        /// <summary>
+        /// 依赖选项。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="IExtensionBuilderDependencyOptions"/>。
+        /// </value>
+        IExtensionBuilderDependencyOptions DependencyOptions { get; }
     }
 }

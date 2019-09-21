@@ -16,8 +16,8 @@ namespace Librame.Extensions.Core
 {
     class CoreBuilder : AbstractExtensionBuilder, ICoreBuilder
     {
-        public CoreBuilder(IServiceCollection services)
-            : base(services)
+        public CoreBuilder(IServiceCollection services, CoreBuilderDependencyOptions dependencyOptions)
+            : base(services, dependencyOptions)
         {
             Services.AddSingleton<ICoreBuilder>(this);
             Services.AddSingleton(sp => (IExtensionBuilder)sp.GetRequiredService<ICoreBuilder>());

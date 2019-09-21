@@ -24,10 +24,12 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
         /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="rawBuilder">给定的原始 <typeparamref name="TBuilder"/>。</param>
-        protected AbstractExtensionBuilderWrapper(IServiceCollection services, TBuilder rawBuilder)
-            : base(services)
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
+        protected AbstractExtensionBuilderWrapper(TBuilder rawBuilder,
+            IServiceCollection services, IExtensionBuilderDependencyOptions dependencyOptions)
+            : base(services, dependencyOptions)
         {
             RawBuilder = rawBuilder.NotNull(nameof(rawBuilder));
         }
@@ -35,10 +37,12 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="rawBuilder">给定的原始 <typeparamref name="TBuilder"/>。</param>
-        protected AbstractExtensionBuilderWrapper(IExtensionBuilder builder, TBuilder rawBuilder)
-            : base(builder)
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
+        protected AbstractExtensionBuilderWrapper(TBuilder rawBuilder,
+            IExtensionBuilder builder, IExtensionBuilderDependencyOptions dependencyOptions)
+            : base(builder, dependencyOptions)
         {
             RawBuilder = rawBuilder.NotNull(nameof(rawBuilder));
         }

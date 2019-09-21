@@ -23,20 +23,26 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        protected AbstractExtensionBuilder(IServiceCollection services)
+        /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
+        protected AbstractExtensionBuilder(IServiceCollection services, IExtensionBuilderDependencyOptions dependencyOptions)
         {
-            Services = services.NotNull(nameof(services));
             ParentBuilder = null;
+
+            Services = services.NotNull(nameof(services));
+            DependencyOptions = dependencyOptions.NotNull(nameof(dependencyOptions));
         }
 
         /// <summary>
         /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        protected AbstractExtensionBuilder(IExtensionBuilder builder)
+        /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
+        protected AbstractExtensionBuilder(IExtensionBuilder builder, IExtensionBuilderDependencyOptions dependencyOptions)
         {
-            Services = builder.NotNull(nameof(builder)).Services;
-            ParentBuilder = builder;
+            ParentBuilder = builder.NotNull(nameof(builder));
+
+            Services = builder.Services;
+            DependencyOptions = dependencyOptions.NotNull(nameof(dependencyOptions));
         }
 
 
@@ -48,6 +54,7 @@ namespace Librame.Extensions.Core
         /// </value>
         public IExtensionBuilder ParentBuilder { get; }
 
+
         /// <summary>
         /// 服务集合。
         /// </summary>
@@ -55,5 +62,13 @@ namespace Librame.Extensions.Core
         /// 返回 <see cref="IServiceCollection"/>。
         /// </value>
         public IServiceCollection Services { get; }
+
+        /// <summary>
+        /// 依赖选项。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="IExtensionBuilderDependencyOptions"/>。
+        /// </value>
+        public IExtensionBuilderDependencyOptions DependencyOptions { get; }
     }
 }

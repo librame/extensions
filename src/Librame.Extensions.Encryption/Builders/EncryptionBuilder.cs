@@ -18,8 +18,8 @@ namespace Librame.Extensions.Encryption
 
     class EncryptionBuilder : AbstractExtensionBuilder, IEncryptionBuilder
     {
-        public EncryptionBuilder(IExtensionBuilder builder)
-            : base(builder)
+        public EncryptionBuilder(IExtensionBuilder builder, EncryptionBuilderDependencyOptions dependencyOptions)
+            : base(builder, dependencyOptions)
         {
             Services.AddSingleton<IEncryptionBuilder>(this);
         }

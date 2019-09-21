@@ -31,7 +31,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddData(this IExtensionBuilder builder,
             Action<DataBuilderOptions> builderAction,
-            Func<IExtensionBuilder, IDataBuilder> builderFactory = null)
+            Func<IExtensionBuilder, DataBuilderDependencyOptions, IDataBuilder> builderFactory = null)
         {
             builderAction.NotNull(nameof(builderAction));
 
@@ -51,7 +51,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddData(this IExtensionBuilder builder,
             Action<DataBuilderDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, IDataBuilder> builderFactory = null)
+            Func<IExtensionBuilder, DataBuilderDependencyOptions, IDataBuilder> builderFactory = null)
             => builder.AddData<DataBuilderDependencyOptions>(dependencyAction, builderFactory);
 
         /// <summary>
@@ -64,18 +64,17 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddData<TDependencyOptions>(this IExtensionBuilder builder,
             Action<TDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, IDataBuilder> builderFactory = null)
+            Func<IExtensionBuilder, TDependencyOptions, IDataBuilder> builderFactory = null)
             where TDependencyOptions : DataBuilderDependencyOptions, new()
         {
             // Add Dependencies
             var dependency = dependencyAction.ConfigureDependencyOptions();
 
             // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction,
-                dependency.OptionsName);
+            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
 
             var dataBuilder = builderFactory.NotNullOrDefault(()
-                => b => new DataBuilder(b)).Invoke(builder);
+                => (b, d) => new DataBuilder(b, d)).Invoke(builder, dependency);
 
             return dataBuilder
                 .AddMediators()

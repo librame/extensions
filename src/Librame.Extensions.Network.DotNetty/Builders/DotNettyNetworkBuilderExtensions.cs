@@ -64,14 +64,14 @@ namespace Librame.Extensions.Network.DotNetty
             // Add Dependencies
             var dependency = dependencyAction.ConfigureDependencyOptions();
 
-            builder.Services.OnlyConfigure(dependency.OptionsAction,
-                dependency.OptionsName);
+            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
 
             // 如果未添加加密扩展，则自动添加并默认配置
             if (!builder.HasParentBuilder<IEncryptionBuilder>())
                 builder.AddEncryption().AddDeveloperGlobalSigningCredentials();
 
             return builder
+                .AddDotNettyDependencyOptions(dependency)
                 .AddWrappers()
                 .AddDemo();
         }

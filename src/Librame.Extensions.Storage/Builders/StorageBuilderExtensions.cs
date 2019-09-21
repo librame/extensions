@@ -31,7 +31,7 @@ namespace Librame.Extensions.Storage
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
         public static IStorageBuilder AddStorage(this IExtensionBuilder builder,
             Action<StorageBuilderOptions> builderAction,
-            Func<IExtensionBuilder, IStorageBuilder> builderFactory = null)
+            Func<IExtensionBuilder, StorageBuilderDependencyOptions, IStorageBuilder> builderFactory = null)
         {
             builderAction.NotNull(nameof(builderAction));
 
@@ -51,7 +51,7 @@ namespace Librame.Extensions.Storage
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
         public static IStorageBuilder AddStorage(this IExtensionBuilder builder,
             Action<StorageBuilderDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, IStorageBuilder> builderFactory = null)
+            Func<IExtensionBuilder, StorageBuilderDependencyOptions, IStorageBuilder> builderFactory = null)
             => builder.AddStorage<StorageBuilderDependencyOptions>(dependencyAction, builderFactory);
 
         /// <summary>
@@ -64,18 +64,17 @@ namespace Librame.Extensions.Storage
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
         public static IStorageBuilder AddStorage<TDependencyOptions>(this IExtensionBuilder builder,
             Action<TDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, IStorageBuilder> builderFactory = null)
+            Func<IExtensionBuilder, TDependencyOptions, IStorageBuilder> builderFactory = null)
             where TDependencyOptions : StorageBuilderDependencyOptions, new()
         {
             // Add Dependencies
             var dependency = dependencyAction.ConfigureDependencyOptions();
 
             // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction,
-                dependency.OptionsName);
+            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
 
             var storageBuilder = builderFactory.NotNullOrDefault(()
-                => b => new StorageBuilder(b)).Invoke(builder);
+                => (b, d) => new StorageBuilder(b, d)).Invoke(builder, dependency);
 
             return storageBuilder
                 .AddServices();

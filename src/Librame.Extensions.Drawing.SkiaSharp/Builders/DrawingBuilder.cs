@@ -18,8 +18,8 @@ namespace Librame.Extensions.Drawing
 
     class DrawingBuilder : AbstractExtensionBuilder, IDrawingBuilder
     {
-        public DrawingBuilder(IExtensionBuilder builder)
-            : base(builder)
+        public DrawingBuilder(IExtensionBuilder builder, DrawingBuilderDependencyOptions dependencyOptions)
+            : base(builder, dependencyOptions)
         {
             Services.AddSingleton<IDrawingBuilder>(this);
         }

@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.1.889.201</Version>
+    <Version>6.1.889.202</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based .NET Standard on common static extension package.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based .NET Standard on common static extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.1.889.201</AssemblyVersion>
-    <FileVersion>6.1.1909.2101</FileVersion>
+    <AssemblyVersion>6.1.889.202</AssemblyVersion>
+    <FileVersion>6.1.1909.2102</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

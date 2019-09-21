@@ -31,7 +31,7 @@ namespace Librame.Extensions.Drawing
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
         public static IDrawingBuilder AddDrawing(this IExtensionBuilder builder,
             Action<DrawingBuilderOptions> builderAction,
-            Func<IExtensionBuilder, IDrawingBuilder> builderFactory = null)
+            Func<IExtensionBuilder, DrawingBuilderDependencyOptions, IDrawingBuilder> builderFactory = null)
         {
             builderAction.NotNull(nameof(builderAction));
 
@@ -51,7 +51,7 @@ namespace Librame.Extensions.Drawing
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
         public static IDrawingBuilder AddDrawing(this IExtensionBuilder builder,
             Action<DrawingBuilderDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, IDrawingBuilder> builderFactory = null)
+            Func<IExtensionBuilder, DrawingBuilderDependencyOptions, IDrawingBuilder> builderFactory = null)
             => builder.AddDrawing<DrawingBuilderDependencyOptions>(dependencyAction, builderFactory);
 
         /// <summary>
@@ -64,18 +64,17 @@ namespace Librame.Extensions.Drawing
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
         public static IDrawingBuilder AddDrawing<TDependencyOptions>(this IExtensionBuilder builder,
             Action<TDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, IDrawingBuilder> builderFactory = null)
+            Func<IExtensionBuilder, TDependencyOptions, IDrawingBuilder> builderFactory = null)
             where TDependencyOptions : DrawingBuilderDependencyOptions, new()
         {
             // Add Dependencies
             var dependency = dependencyAction.ConfigureDependencyOptions();
 
             // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction,
-                dependency.OptionsName);
+            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
 
             var drawingBuilder = builderFactory.NotNullOrDefault(()
-                => b => new DrawingBuilder(b)).Invoke(builder);
+                => (b, d) => new DrawingBuilder(b, d)).Invoke(builder, dependency);
 
             return drawingBuilder
                 .AddServices();
