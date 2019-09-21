@@ -10,10 +10,9 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Core
+namespace System
 {
     /// <summary>
     /// 抽象一段连续的内存静态扩展。

@@ -3,6 +3,8 @@ using Xunit;
 
 namespace Librame.Extensions.Encryption.Tests
 {
+    using Core;
+
     public class KeyedHashServiceTests
     {
         [Fact]

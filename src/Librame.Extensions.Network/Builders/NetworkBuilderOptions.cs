@@ -10,6 +10,7 @@
 
 #endregion
 
+using Polly;
 using System;
 using System.Net;
 
@@ -102,22 +103,28 @@ namespace Librame.Extensions.Network
     public class RequesterOptions
     {
         /// <summary>
-        /// 连接次数。
+        /// 连接次数（默认 10 次）。
         /// </summary>
         public int ConnectionLimit { get; set; }
             = 10;
 
         /// <summary>
-        /// 重试次数。
+        /// 重试次数（默认 3 次）。
         /// </summary>
         public int RetryCount { get; set; }
             = 3;
 
         /// <summary>
-        /// 超时（毫秒）。
+        /// 重试暂停间隔的工厂方法（默认等待 1 秒后重试）。
         /// </summary>
-        public int Timeout { get; set; }
-            = 10000;
+        public Func<int, Context, TimeSpan> SleepDurationFactory { get; set; }
+            = (retryCount, context) => TimeSpan.FromSeconds(1);
+
+        /// <summary>
+        /// 超时（默认 7 秒）。
+        /// </summary>
+        public TimeSpan Timeout { get; set; }
+            = TimeSpan.FromSeconds(7);
 
         /// <summary>
         /// 浏览器代理。
@@ -158,7 +165,7 @@ namespace Librame.Extensions.Network
     public class SmsOptions
     {
         /// <summary>
-        /// 启用编解码。
+        /// 启用编解码（默认禁用）。
         /// </summary>
         public bool EnableCodec { get; set; }
             = false;

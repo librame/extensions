@@ -58,6 +58,13 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
+        /// 线程数（默认为当前 CPU 框框数）。
+        /// </summary>
+        public int ThreadsCount { get; set; }
+            = Environment.ProcessorCount;
+
+
+        /// <summary>
         /// 资源映射工厂方法。
         /// </summary>
         public Func<ResourceMappingDescriptor, string> ResourceMappingFactory { get; set; }

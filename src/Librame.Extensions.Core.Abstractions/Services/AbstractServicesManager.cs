@@ -20,13 +20,13 @@ namespace Librame.Extensions.Core
     /// 抽象服务集合管理器。
     /// </summary>
     /// <typeparam name="TService">指定的服务类型。</typeparam>
-    /// <typeparam name="TDefaulter">指定的默认服务类型。</typeparam>
-    public abstract class AbstractServicesManager<TService, TDefaulter> : AbstractServicesManager<TService>, IServicesManager<TService, TDefaulter>
+    /// <typeparam name="TDefault">指定的默认服务类型。</typeparam>
+    public abstract class AbstractServicesManager<TService, TDefault> : AbstractServicesManager<TService>, IServicesManager<TService, TDefault>
         where TService : IService
-        where TDefaulter : TService
+        where TDefault : TService
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractServicesManager{TService, TDefaulter}"/>。
+        /// 构造一个 <see cref="AbstractServicesManager{TService, TDefault}"/>。
         /// </summary>
         /// <param name="services">给定的服务集合。</param>
         protected AbstractServicesManager(IEnumerable<TService> services)
@@ -38,15 +38,8 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 默认服务。
         /// </summary>
-        public override TService Defaulter
-        {
-            get
-            {
-                var defaulterType = typeof(TDefaulter);
-
-                return Services.Single(p => p.GetType() == defaulterType);
-            }
-        }
+        public override TService Default
+            => Services.Single(p => p.GetType() == typeof(TDefault));
     }
 
 
@@ -75,7 +68,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 默认服务。
         /// </summary>
-        public virtual TService Defaulter => Services.First();
+        public virtual TService Default => Services.First();
 
 
         /// <summary>
@@ -87,6 +80,5 @@ namespace Librame.Extensions.Core
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
-
     }
 }

@@ -53,7 +53,7 @@ namespace Librame.Extensions.Network.DotNetty
                         bootstrap.Option(ChannelOption.SoBroadcast, true);
                     })
                     .AddQuoteOfTheMomentHandler(channelHandler)
-                    .BindAsync(IPEndPoint.MinPort);
+                    .BindAsync(IPEndPoint.MinPort).ConfigureAwait(true);
 
                 configureProcess.Invoke(channel);
             }

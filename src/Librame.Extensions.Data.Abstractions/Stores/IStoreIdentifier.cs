@@ -15,11 +15,19 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 存储标识符接口。
     /// </summary>
     public interface IStoreIdentifier
     {
+        /// <summary>
+        /// 时钟。
+        /// </summary>
+        IClockService Clock { get; }
+
+
         /// <summary>
         /// 异步获取审计标识。
         /// </summary>

@@ -58,14 +58,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 隐式转换为字符串形式。
-        /// </summary>
-        /// <param name="identifier">给定的 <see cref="RandomNumberAlgorithmIdentifier"/>。</param>
-        public static implicit operator string(RandomNumberAlgorithmIdentifier identifier)
-            => identifier?.ToString();
-
-
-        /// <summary>
         /// 新建实例。
         /// </summary>
         /// <param name="length">给定要生成的字节数组长度。</param>

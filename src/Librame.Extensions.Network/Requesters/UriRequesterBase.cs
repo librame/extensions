@@ -52,7 +52,9 @@ namespace Librame.Extensions.Network
         public virtual async Task<byte[]> GetResponseBytesAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
-            var stream = await GetResponseStreamAsync(uri, postData, enableCodec, parameters, cancellationToken);
+            var stream = await GetResponseStreamAsync(uri, postData, enableCodec, parameters, cancellationToken)
+                .ConfigureAwait(true);
+
             if (stream.IsNotNull())
             {
                 var bytes = new byte[stream.Length];
@@ -80,7 +82,9 @@ namespace Librame.Extensions.Network
         public virtual async Task<string> GetResponseStringAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
-            var buffer = await GetResponseBytesAsync(uri, postData, enableCodec, parameters, cancellationToken);
+            var buffer = await GetResponseBytesAsync(uri, postData, enableCodec, parameters, cancellationToken)
+                .ConfigureAwait(true);
+
             if (buffer.IsNotNullOrEmpty())
                 return buffer.AsEncodingString(Encoding);
 

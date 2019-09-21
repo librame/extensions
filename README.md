@@ -38,39 +38,39 @@
     Assert.Contains("Ping Pong Ping", response.Message);
     // Librame.Extensions.Core.Tests.RequestPostProcessorBehaviorTests
     
-    // Localization
+    // Localizers
     var localizer = serviceProvider.GetRequiredService<IExpressionStringLocalizer<TestResource>>();
     Assert.True(localizer[r => r.Name].ResourceNotFound);
     // Librame.Extensions.Core.Tests.ExpressionStringLocalizerTests
     
-    // Locators
+    // Combiners
     var urlString = "https://1.2.3.4.developer.microsoft.com/en-us/fabric#/get-started";
-    var urlLocator = uriString.AsUrlLocator();
-    Assert.Equal("https", urlLocator.Scheme);
-    Assert.Equal("developer.microsoft.com", urlLocator.Host);
-    Assert.Equal("/en-us/fabric", urlLocator.Path);
+    var uriCombiner = uriString.AsUriCombiner();
+    Assert.Equal("https", uriCombiner.Scheme);
+    Assert.Equal("developer.microsoft.com", uriCombiner.Host);
+    Assert.Equal("/en-us/fabric", uriCombiner.Path);
     ......
-    // Librame.Extensions.Core.Tests.UrlLocatorTests
+    // Librame.Extensions.Core.Tests.UriCombinerTests
     
-    var domainLocator = uriString.GetHost().AsDomainNameLocator(); // uriLocator.Host
-    Assert.Equal("com", domainLocator.Root);
-    Assert.Equal("microsoft.com", domainLocator.TopLevel);
-    Assert.Equal("developer.microsoft.com", domainLocator.SecondLevel);
+    var domainCombiner = uriString.GetHost().AsDomainNameCombiner(); // uriCombiner.Host
+    Assert.Equal("com", domainCombiner.Root);
+    Assert.Equal("microsoft.com", domainCombiner.TopLevel);
+    Assert.Equal("developer.microsoft.com", domainCombiner.SecondLevel);
     ......
-    // Librame.Extensions.Core.Tests.DomainNameLocatorTests
+    // Librame.Extensions.Core.Tests.DomainNameCombinerTests
     
     var path = @"c:\test\file.ext";
-    var fileLocator = path.AsFileLocator();
-    Assert.Equal(@"c:\test", fileLocator.BasePath);
-    Assert.Equal("file.ext", fileLocator.FileNameString);
+    var filePathCombiner = path.AsFilePathCombiner();
+    Assert.Equal(@"c:\test", filePathCombiner.BasePath);
+    Assert.Equal("file.ext", filePathCombiner.FileNameString);
     ......
-    // Librame.Extensions.Core.Tests.FileLocatorTests
+    // Librame.Extensions.Core.Tests.FilePathCombinerTests
     
-    var fileNameLocator = path.AsFileNameLocator();
-    Assert.Equal("file", fileNameLocator.BaseName);
-    Assert.Equal(".ext", fileNameLocator.Extension);
+    var fileNameCombiner = path.AsFileNameCombiner();
+    Assert.Equal("file", fileNameCombiner.BaseName);
+    Assert.Equal(".ext", fileNameCombiner.Extension);
     ......
-    // Librame.Extensions.Core.Tests.FileNameLocatorTests
+    // Librame.Extensions.Core.Tests.FileNameCombinerTests
     
     // ServicesManager
     // public interface ILetterService : IService {}
@@ -80,11 +80,11 @@
     
     var letters = serviceProvider.GetRequiredService<IServiceManager<ILetterService>>();
     Assert.NotEmpty(letters.Services) // IEnumerable<ILetterService>
-    Assert.NotNull(letters.Defaulter) // default letters.Services.First()
+    Assert.NotNull(letters.Default) // default letters.Services.First()
     
     letters = serviceProvider.GetRequiredService<IServiceManager<ILetterService, CService>>();
     Assert.NotEmpty(letters.Services) // IEnumerable<ILetterService>
-    Assert.NotNull(letters.Defaulter) // default CService
+    Assert.NotNull(letters.Default) // default CService
 
 ### Librame.Extensions.Data.EntityFrameworkCore
 
@@ -198,9 +198,9 @@
     services.AddLibrame()
         .AddDrawing(options =>
         {
-            options.Captcha.Font.FileLocator.ChangeBasePath("FontFilePath");
-            options.Watermark.Font.FileLocator.ChangeBasePath("FontFilePath");
-            options.Watermark.ImageFileLocator.ChangeBasePath("WatermarkFilePath");
+            options.Captcha.Font.FilePath.ChangeBasePath("FontFilePath");
+            options.Watermark.Font.FilePath.ChangeBasePath("FontFilePath");
+            options.Watermark.ImagePath.ChangeBasePath("WatermarkFilePath");
         });
 
 ## Test Extension
@@ -210,14 +210,14 @@
     var buffer = await captchaService.DrawBytesAsync("1234");
     Assert.NotNull(buffer);
     
-    var saveFile = "captcha.png".AsFileLocator("SavePath");
+    var saveFile = "captcha.png".AsFilePathCombiner("SavePath");
     var result = await captchaService.DrawFileAsync("1234", saveFile);
     Assert.True(result);
     // Librame.Extensions.Drawing.Tests.CaptchaServiceTests
     
     // Scale
     var scaleService = serviceProvider.GetRequiredService<IScaleService>();
-    var imageFile = "test.jpg".AsFileLocator("ImagePath");
+    var imageFile = "test.jpg".AsFilePathCombiner("ImagePath");
     var result = scaleService.DrawFile(imageFile);
     Assert.True(result);
     
@@ -227,8 +227,8 @@
     
     // Watermark
     var watermarkService = serviceProvider.GetRequiredService<IWatermarkService>();
-    var imageFile = "test.jpg".AsFileLocator("ImagePath");
-    var saveFile = imageFile.NewFileName("test-watermark.png") as FileLocator;
+    var imageFile = "test.jpg".AsFilePathCombiner("ImagePath");
+    var saveFile = imageFile.NewFileName("test-watermark.png");
     var result = await watermarkService.DrawFileAsync(imageFile, saveFile);
     Assert.True(result);
     // Librame.Extensions.Drawing.Tests.WatermarkServiceTests
@@ -327,8 +327,8 @@
 
 ## Register Extension
 
-    var locator = "dotnetty.com.pfx".AsFileLocator("BasePath");
-    services.AddLibrame(dependency => dependency.LoggingAction = logging =>
+    var combiner = "dotnetty.com.pfx".AsFilePathCombiner("BasePath");
+    services.AddLibrame(logging =>
     {
         logging.ClearProviders();
         logging.SetMinimumLevel(LogLevel.Trace);
@@ -336,7 +336,7 @@
         logging.AddConsole(logger => logger.IncludeScopes = false);
         logging.AddFilter((str, level) => true);
     })
-    .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
+    .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(combiner.ToString(), "password"))
     .AddNetwork().AddDotNetty();
     
     // Use DotNetty LoggerFactory
@@ -427,10 +427,10 @@
     var filePath = @"d:\test.txt";
     var fileTransfer = serviceProvider.GetRequiredService<IFileTransferService>();
     
-    var locator = await fileTransfer.DownloadFileAsync(url, filePath);
-    Assert.True(locator.Exists());
+    var combiner = await fileTransfer.DownloadFileAsync(url, filePath);
+    Assert.True(combiner.Exists());
     
-    locator = fileTransfer.UploadFileAsync(url, filePath);
+    combiner = fileTransfer.UploadFileAsync(url, filePath);
     // Librame.Extensions.Storage.Tests.FileTransferServiceTests
     
     // FilePermissionService

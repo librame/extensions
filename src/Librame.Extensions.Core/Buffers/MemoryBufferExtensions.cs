@@ -10,10 +10,8 @@
 
 #endregion
 
-namespace Librame.Extensions
+namespace Librame.Extensions.Core
 {
-    using Core;
-
     /// <summary>
     /// 可读写的连续内存缓冲区静态扩展。
     /// </summary>

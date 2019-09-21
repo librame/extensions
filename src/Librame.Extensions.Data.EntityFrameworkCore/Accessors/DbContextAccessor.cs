@@ -31,9 +31,6 @@ namespace Librame.Extensions.Data
     /// </summary>
     public class DbContextAccessor : DbContext, IAccessor
     {
-        private static byte[] _locker = new byte[0];
-
-
         /// <summary>
         /// 构造一个 <see cref="DbContextAccessor"/>。
         /// </summary>
@@ -206,13 +203,14 @@ namespace Librame.Extensions.Data
 
             // 注册实体表
             if (BuilderOptions.TableEnabled)
-                await RegistTableAsync(cancellationToken);
+                await RegistTableAsync(cancellationToken).ConfigureAwait(false);
 
             // 审计实体
             if (BuilderOptions.AuditEnabled)
-                await RegistAuditAsync(cancellationToken);
+                await RegistAuditAsync(cancellationToken).ConfigureAwait(false);
 
-            var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)
+                .ConfigureAwait(true);
 
             // 读写分离：尝试切换为默认数据库
             if (BuilderOptions.TenantEnabled)
@@ -229,7 +227,7 @@ namespace Librame.Extensions.Data
         protected virtual async Task RegistTableAsync(CancellationToken cancellationToken = default)
         {
             var tableService = this.GetService<IEntityService>();
-            await tableService.RegistAsync(this, cancellationToken);
+            await tableService.RegistAsync(this, cancellationToken).ConfigureAwait(true);
         }
 
         /// <summary>
@@ -240,7 +238,7 @@ namespace Librame.Extensions.Data
         protected virtual async Task RegistAuditAsync(CancellationToken cancellationToken = default)
         {
             var auditService = this.GetService<IAuditService>();
-            await auditService.RegistAsync(this, cancellationToken);
+            await auditService.RegistAsync(this, cancellationToken).ConfigureAwait(true);
         }
 
 
@@ -304,10 +302,8 @@ namespace Librame.Extensions.Data
 
             try
             {
-                lock (_locker)
-                {
-                    ChangeDbConnection();
-                }
+                var locker = this.GetService<IMemoryLocker>();
+                locker.WaitAction(ChangeDbConnection);
                 return true;
             }
             catch (Exception ex)

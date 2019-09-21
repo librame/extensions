@@ -19,13 +19,13 @@ namespace Librame.Extensions.Core
 {
     class ServiceFactoryMediator : IMediator
     {
-        private static readonly ConcurrentDictionary<Type, IRequestHandlerWrapper> _requestHandlers
+        private static ConcurrentDictionary<Type, IRequestHandlerWrapper> _requestHandlers
             = new ConcurrentDictionary<Type, IRequestHandlerWrapper>();
 
-        private static readonly ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers
+        private static ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers
             = new ConcurrentDictionary<Type, INotificationHandlerWrapper>();
 
-        private readonly ServiceFactoryDelegate _serviceFactory = null;
+        private ServiceFactoryDelegate _serviceFactory = null;
 
 
         public ServiceFactoryMediator(ServiceFactoryDelegate serviceFactory)

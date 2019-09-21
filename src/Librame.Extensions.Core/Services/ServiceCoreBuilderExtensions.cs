@@ -26,7 +26,7 @@ namespace Librame.Extensions.Core
             builder.Services.AddScoped<IClockService, ClockService>();
             builder.Services.AddScoped<IHumanizationService, HumanizationService>();
             builder.Services.AddScoped<IInjectionService, InjectionService>();
-            builder.Services.AddScoped<IPlatformService, PlatformService>();
+            builder.Services.AddScoped<IEnvironmentService, EnvironmentService>();
 
             return builder;
         }

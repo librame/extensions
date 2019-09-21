@@ -163,10 +163,10 @@ namespace Librame.Extensions.Storage
                 while (currentCount > 0)
                 {
                     // 每次从文件流中读取指定缓冲区的字节数，当读完后退出循环
-                    currentCount = await readStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                    currentCount = await readStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(true);
 
                     // 将读取到的缓冲区字节数写入请求流
-                    await writeStream.WriteAsync(buffer, 0, currentCount, cancellationToken);
+                    await writeStream.WriteAsync(buffer, 0, currentCount, cancellationToken).ConfigureAwait(false);
 
                     if (ProgressAction.IsNotNull())
                     {
@@ -222,10 +222,10 @@ namespace Librame.Extensions.Storage
                 while (currentCount > 0)
                 {
                     // 每次从文件流中读取指定缓冲区的字节数，当读完后退出循环
-                    currentCount = await readStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+                    currentCount = await readStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(true);
 
                     // 将读取到的缓冲区字节数写入请求流
-                    await writeStream.WriteAsync(buffer, 0, currentCount, cancellationToken);
+                    await writeStream.WriteAsync(buffer, 0, currentCount, cancellationToken).ConfigureAwait(false);
 
                     if (ProgressAction.IsNotNull())
                     {

@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data
 
             return builder.AddData(dependency =>
             {
-                dependency.BuilderOptionsAction = builderAction;
+                dependency.OptionsAction = builderAction;
             },
             builderFactory);
         }
@@ -52,13 +52,27 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddData(this IExtensionBuilder builder,
             Action<DataBuilderDependencyOptions> dependencyAction = null,
             Func<IExtensionBuilder, IDataBuilder> builderFactory = null)
+            => builder.AddData<DataBuilderDependencyOptions>(dependencyAction, builderFactory);
+
+        /// <summary>
+        /// 添加数据扩展。
+        /// </summary>
+        /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
+        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        public static IDataBuilder AddData<TDependencyOptions>(this IExtensionBuilder builder,
+            Action<TDependencyOptions> dependencyAction = null,
+            Func<IExtensionBuilder, IDataBuilder> builderFactory = null)
+            where TDependencyOptions : DataBuilderDependencyOptions, new()
         {
             // Add Dependencies
             var dependency = dependencyAction.ConfigureDependencyOptions();
 
             // Add Builder
-            builder.Services.OnlyConfigure(dependency.BuilderOptionsAction,
-                dependency.BuilderOptionsName);
+            builder.Services.OnlyConfigure(dependency.OptionsAction,
+                dependency.OptionsName);
 
             var dataBuilder = builderFactory.NotNullOrDefault(()
                 => b => new DataBuilder(b)).Invoke(builder);

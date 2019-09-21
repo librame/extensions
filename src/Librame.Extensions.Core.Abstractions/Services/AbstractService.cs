@@ -53,6 +53,5 @@ namespace Librame.Extensions.Core
             //LoggerFactory.Dispose();
             //Logger.LogTrace($"The {LoggerFactory.GetType().GetSimpleFullName()} was disposed.");
         }
-
     }
 }

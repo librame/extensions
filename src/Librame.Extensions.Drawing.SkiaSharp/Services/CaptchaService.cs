@@ -32,7 +32,7 @@ namespace Librame.Extensions.Drawing
         }
 
 
-        public FileLocator FontFileLocator => Options.Captcha.Font.FileLocator;
+        public FilePathCombiner FontFilePathCombiner => Options.Captcha.Font.FilePath;
 
 
         public Task<bool> DrawFileAsync(string captcha, string savePath, CancellationToken cancellationToken = default)
@@ -199,7 +199,7 @@ namespace Librame.Extensions.Drawing
             paint.IsAntialias = true;
             paint.Color = SKColor.Parse(colorHexString);
             // paint.StrokeCap = SKStrokeCap.Round;
-            paint.Typeface = SKTypeface.FromFile(FontFileLocator.ToString());
+            paint.Typeface = SKTypeface.FromFile(FontFilePathCombiner.ToString());
             paint.TextSize = Options.Watermark.Font.Size;
 
             return paint;

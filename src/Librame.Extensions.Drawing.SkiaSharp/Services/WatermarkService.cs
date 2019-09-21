@@ -31,9 +31,9 @@ namespace Librame.Extensions.Drawing
         }
 
         
-        public FileLocator ImageFileLocator => Options.Watermark.ImageFileLocator;
+        public FilePathCombiner ImageFilePathCombiner => Options.Watermark.ImagePath;
 
-        public FileLocator FontFileLocator => Options.Watermark.Font.FileLocator;
+        public FilePathCombiner FontFilePathCombiner => Options.Watermark.Font.FilePath;
 
 
         public Task<bool> DrawFileAsync(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
@@ -189,7 +189,7 @@ namespace Librame.Extensions.Drawing
 
                 case WatermarkMode.Image:
                     {
-                        using (var watermark = SKBitmap.Decode(ImageFileLocator.ToString()))
+                        using (var watermark = SKBitmap.Decode(ImageFilePathCombiner.ToString()))
                         {
                             // 绘制图像水印
                             canvas.DrawBitmap(watermark, startX, startY);
@@ -209,7 +209,7 @@ namespace Librame.Extensions.Drawing
             paint.IsAntialias = true;
             paint.Color = SKColor.Parse(colorHexString);
             // paint.StrokeCap = SKStrokeCap.Round;
-            paint.Typeface = SKTypeface.FromFile(FontFileLocator.ToString());
+            paint.Typeface = SKTypeface.FromFile(FontFilePathCombiner.ToString());
             paint.TextSize = Options.Watermark.Font.Size;
 
             return paint;

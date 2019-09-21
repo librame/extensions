@@ -19,7 +19,7 @@ namespace Librame.Extensions.Drawing.Tests
         public void DrawScaleTest()
         {
             // 5K 2.21MB
-            var imageFile = "eso1004a.jpg".AsFileLocator(TestServiceProvider.ResourcesPath);
+            var imageFile = "eso1004a.jpg".AsFilePathCombiner(TestServiceProvider.ResourcesPath);
             var succeed = _drawing.DrawFile(imageFile);
             Assert.True(succeed);
         }
@@ -31,9 +31,9 @@ namespace Librame.Extensions.Drawing.Tests
             var directory = TestServiceProvider.ResourcesPath.CombinePath(@"pictures");
 
             // Clear
-            await _drawing.DeleteScalesByDirectoryAsync(directory);
+            await _drawing.DeleteScalesByDirectoryAsync(directory).ConfigureAwait(true);
 
-            var count = await _drawing.DrawFilesByDirectoryAsync(directory);
+            var count = await _drawing.DrawFilesByDirectoryAsync(directory).ConfigureAwait(true);
             Assert.True(count > 0);
         }
 

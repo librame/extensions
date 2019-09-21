@@ -100,7 +100,7 @@ namespace Librame.Extensions.Data
         /// <param name="b">给定的 <see cref="TableNameSchema"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator ==(TableNameSchema a, TableNameSchema b)
-            => a.Equals(b);
+            => (a?.Equals(b)).Value;
 
         /// <summary>
         /// 比较不等。
@@ -109,7 +109,7 @@ namespace Librame.Extensions.Data
         /// <param name="b">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator !=(TableNameSchema a, TableNameSchema b)
-            => !a.Equals(b);
+            => !(a?.Equals(b)).Value;
 
 
         /// <summary>

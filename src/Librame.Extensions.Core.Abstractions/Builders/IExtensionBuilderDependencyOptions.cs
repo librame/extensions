@@ -15,7 +15,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 扩展构建器依赖选项接口。
     /// </summary>
-    public interface IExtensionBuilderDependencyOptions
+    public interface IExtensionBuilderDependencyOptions : IExtensionBuilderOptions
     {
     }
 }

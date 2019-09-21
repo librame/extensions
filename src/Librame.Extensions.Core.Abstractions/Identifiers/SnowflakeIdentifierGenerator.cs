@@ -38,8 +38,6 @@ namespace Librame.Extensions.Core
         private static long _sequenceMask = -1L ^ -1L << (int)_sequenceBits;
         private static long _lastTimestamp = -1L;
 
-        private static byte[] _locker = new byte[0];
-
 
         /// <summary>
         /// 构造一个 <see cref="SnowflakeIdentifierGenerator"/>。
@@ -65,7 +63,7 @@ namespace Librame.Extensions.Core
         {
             clock.NotNull(nameof(clock));
 
-            lock (_locker)
+            return clock.Locker.WaitFactory(() =>
             {
                 var timestamp = GetCurrentTimestamp(clock);
                 timestamp.NotLesser(_lastTimestamp, nameof(timestamp));
@@ -90,7 +88,7 @@ namespace Librame.Extensions.Core
 
                 // Length(19): 5557114366106533888
                 return id;
-            }
+            });
         }
 
         private long GetCurrentTimestamp(IClockService clock)

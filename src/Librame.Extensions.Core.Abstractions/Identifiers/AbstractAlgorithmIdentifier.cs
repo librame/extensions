@@ -139,7 +139,7 @@ namespace Librame.Extensions.Core
         /// <param name="b">给定的 <see cref="AbstractAlgorithmIdentifier"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator ==(AbstractAlgorithmIdentifier a, AbstractAlgorithmIdentifier b)
-            => a.Equals(b);
+            => (a?.Equals(b)).Value;
 
         /// <summary>
         /// 是否不等。
@@ -148,6 +148,14 @@ namespace Librame.Extensions.Core
         /// <param name="b">给定的 <see cref="AbstractAlgorithmIdentifier"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator !=(AbstractAlgorithmIdentifier a, AbstractAlgorithmIdentifier b)
-            => !a.Equals(b);
+            => !(a?.Equals(b)).Value;
+
+
+        /// <summary>
+        /// 隐式转换为字符串形式。
+        /// </summary>
+        /// <param name="identifier">给定的 <see cref="AbstractAlgorithmIdentifier"/>。</param>
+        public static implicit operator string(AbstractAlgorithmIdentifier identifier)
+            => identifier?.ToString();
     }
 }

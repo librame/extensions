@@ -34,7 +34,6 @@ namespace Librame.Extensions.Core
             Task<TResponse> HandlerCoreAsync()
             {
                 var handler = serviceFactory.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
-
                 return handler.HandleAsync((TRequest)request, cancellationToken);
             }
         }

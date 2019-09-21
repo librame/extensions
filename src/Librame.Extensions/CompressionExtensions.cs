@@ -11,6 +11,8 @@
 #endregion
 
 using System;
+using System.IO;
+using System.IO.Compression;
 using System.Runtime.InteropServices;
 
 namespace Librame.Extensions
@@ -105,20 +107,20 @@ namespace Librame.Extensions
         /// <returns>返回字节数组。</returns>
         public static byte[] Compress(this byte[] buffer)
         {
-            var outBuffer = new byte[buffer.Length * 6];
+            var outputBuffer = new byte[buffer.Length * 6];
             var size = RtlGetCompressionWorkSpaceSize(COMPRESSION_FORMAT_LZNT1 | COMPRESSION_ENGINE_MAXIMUM, out uint dwSize, out _);
             if (size != 0) return null;
 
             var hWork = LocalAlloc(0, new IntPtr(dwSize));
 
-            size = RtlCompressBuffer(COMPRESSION_FORMAT_LZNT1 | COMPRESSION_ENGINE_MAXIMUM, buffer, buffer.Length, outBuffer,
-                outBuffer.Length, 0, out int dstSize, hWork);
+            size = RtlCompressBuffer(COMPRESSION_FORMAT_LZNT1 | COMPRESSION_ENGINE_MAXIMUM, buffer, buffer.Length, outputBuffer,
+                outputBuffer.Length, 0, out int dstSize, hWork);
             if (size != 0) return null;
 
             LocalFree(hWork);
 
-            Array.Resize(ref outBuffer, dstSize);
-            return outBuffer;
+            Array.Resize(ref outputBuffer, dstSize);
+            return outputBuffer;
         }
 
         /// <summary>
@@ -128,16 +130,159 @@ namespace Librame.Extensions
         /// <returns>返回字节数组。</returns>
         public static byte[] Decompress(this byte[] buffer)
         {
-            var outBuffer = new byte[buffer.Length * 6];
+            var outputBuffer = new byte[buffer.Length * 6];
             var size = RtlGetCompressionWorkSpaceSize(COMPRESSION_FORMAT_LZNT1, out _, out _);
             if (size != 0) return null;
 
-            size = RtlDecompressBuffer(COMPRESSION_FORMAT_LZNT1, outBuffer, outBuffer.Length, buffer, buffer.Length, out uint dwRet);
+            size = RtlDecompressBuffer(COMPRESSION_FORMAT_LZNT1, outputBuffer, outputBuffer.Length, buffer, buffer.Length, out uint dwRet);
             if (size != 0) return null;
 
-            Array.Resize(ref outBuffer, (int)dwRet);
-            return outBuffer;
+            Array.Resize(ref outputBuffer, (int)dwRet);
+            return outputBuffer;
         }
+
+
+        #region GZip
+
+        /// <summary>
+        /// GZip 压缩文件。
+        /// </summary>
+        /// <param name="fileInfo">给定的 <see cref="FileInfo"/>。</param>
+        /// <param name="zipFileExtension">给定的压缩文件扩展名（可选；默认为“.gz”）。</param>
+        /// <returns>返回原始或压缩的 <see cref="FileInfo"/>。</returns>
+        public static FileInfo GZipCompress(this FileInfo fileInfo, string zipFileExtension = ".gz")
+        {
+            fileInfo.NotNull(nameof(fileInfo));
+
+            if ((File.GetAttributes(fileInfo.FullName) & FileAttributes.Hidden)
+                != FileAttributes.Hidden & !fileInfo.Extension.Equals(zipFileExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                var zipFilePath = fileInfo.FullName + zipFileExtension;
+
+                using (var readStream = fileInfo.OpenRead())
+                using (var writeStream = File.Create(zipFilePath))
+                {
+                    readStream.GZipCompress(writeStream);
+                }
+
+                return new FileInfo(zipFilePath);
+            }
+
+            return fileInfo;
+        }
+
+        /// <summary>
+        /// GZip 解压缩文件。
+        /// </summary>
+        /// <exception cref="ArgumentException">
+        /// Unsupported unzip file.
+        /// </exception>
+        /// <param name="fileInfo">给定的 <see cref="FileInfo"/>。</param>
+        /// <param name="zipFileExtension">给定的压缩文件扩展名（可选；默认为“.gz”）。</param>
+        /// <returns>返回解压缩的 <see cref="FileInfo"/>。</returns>
+        public static FileInfo GZipDecompress(this FileInfo fileInfo, string zipFileExtension = ".gz")
+        {
+            fileInfo.NotNull(nameof(fileInfo));
+
+            if (!fileInfo.Extension.Equals(zipFileExtension, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("Unsupported unzip file.");
+
+            var unzipFilePath = fileInfo.FullName.TrimEnd(zipFileExtension);
+
+            using (var readStream = fileInfo.OpenRead())
+            using (var writeStream = File.Create(unzipFilePath))
+            {
+                readStream.GZipDecompress(writeStream);
+            }
+
+            return new FileInfo(unzipFilePath);
+        }
+
+
+        /// <summary>
+        /// GZip 压缩字节数组。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GZipCompress(this byte[] buffer)
+        {
+            using (var outputStream = new MemoryStream())
+            {
+                buffer.GZipCompress(outputStream);
+                return outputStream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// GZip 解压缩字节数组。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] GZipDecompress(this byte[] buffer)
+        {
+            using (var outputStream = new MemoryStream())
+            {
+                buffer.GZipDecompress(outputStream);
+                return outputStream.ToArray();
+            }
+        }
+
+
+        /// <summary>
+        /// GZip 压缩字节数组。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="outputStream">给定的输出流。</param>
+        public static void GZipCompress(this byte[] buffer, Stream outputStream)
+        {
+            using (var inputStream = new MemoryStream(buffer))
+            {
+                inputStream.GZipCompress(outputStream);
+            }
+        }
+
+        /// <summary>
+        /// GZip 解压缩字节数组。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="outputStream">给定的输出流。</param>
+        /// <returns>返回字节数组。</returns>
+        public static void GZipDecompress(this byte[] buffer, Stream outputStream)
+        {
+            using (var inputStream = new MemoryStream(buffer))
+            {
+                inputStream.GZipDecompress(outputStream);
+            }
+        }
+
+
+        /// <summary>
+        /// GZip 压缩输入流。
+        /// </summary>
+        /// <param name="inputStream">给定的输入流。</param>
+        /// <param name="outputStream">给定的输出流。</param>
+        public static void GZipCompress(this Stream inputStream, Stream outputStream)
+        {
+            using (var zipStream = new GZipStream(outputStream, CompressionMode.Compress, true))
+            {
+                inputStream.CopyTo(zipStream);
+            }
+        }
+
+        /// <summary>
+        /// GZip 解压缩输入流。
+        /// </summary>
+        /// <param name="inputStream">给定的输入流。</param>
+        /// <param name="outputStream">给定的输出流。</param>
+        public static void GZipDecompress(this Stream inputStream, Stream outputStream)
+        {
+            using (var zipStream = new GZipStream(inputStream, CompressionMode.Decompress, true))
+            {
+                zipStream.CopyTo(outputStream);
+            }
+        }
+
+        #endregion
 
     }
 }

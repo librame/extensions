@@ -55,33 +55,49 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 异步生成有顺序的标识。
         /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="idTraceName">标识跟踪名称。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        protected virtual async Task<string> GenerateCombGuidAsync(CancellationToken cancellationToken, string idTraceName)
+        protected virtual async Task<string> GenerateCombGuidAsync(string idTraceName,
+            CancellationToken cancellationToken = default)
         {
-            var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true, cancellationToken);
+            var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow,
+                isUtc: true, cancellationToken).ConfigureAwait(true);
 
-            var id = EntityUtility.NewCombGuid(timestamp);
-            Logger.LogTrace($"Generate {idTraceName}: {id}");
+            return Clock.Locker.WaitFactory(() =>
+            {
+                return cancellationToken.RunFactoryOrCancellation(() =>
+                {
+                    var id = EntityUtility.NewCombGuid(timestamp);
+                    Logger.LogTrace($"Generate {idTraceName}: {id}");
 
-            return id;
+                    return id;
+                });
+            });
         }
 
         /// <summary>
         /// 异步生成有顺序的标识。
         /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="idTraceName">标识跟踪名称。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        protected virtual async Task<string> GenerateCombFileTimeAsync(CancellationToken cancellationToken, string idTraceName)
+        protected virtual async Task<string> GenerateCombFileTimeAsync(string idTraceName,
+            CancellationToken cancellationToken = default)
         {
-            var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true, cancellationToken);
+            var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow,
+                isUtc: true, cancellationToken).ConfigureAwait(true);
 
-            var id = timestamp.AsCombFileTime();
-            Logger.LogTrace($"Generate {idTraceName}: {id}");
+            return Clock.Locker.WaitFactory(() =>
+            {
+                return cancellationToken.RunFactoryOrCancellation(() =>
+                {
+                    var id = timestamp.AsCombFileTime();
+                    Logger.LogTrace($"Generate {idTraceName}: {id}");
 
-            return id;
+                    return id;
+                });
+            });
         }
 
 
@@ -91,7 +107,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetAuditIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombFileTimeAsync(cancellationToken, "AuditId");
+            => GenerateCombFileTimeAsync("AuditId", cancellationToken);
 
         /// <summary>
         /// 异步获取审计属性标识。
@@ -99,7 +115,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetAuditPropertyIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombFileTimeAsync(cancellationToken, "AuditPropertyId");
+            => GenerateCombFileTimeAsync("AuditPropertyId", cancellationToken);
 
 
         /// <summary>
@@ -108,7 +124,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetEntityIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombGuidAsync(cancellationToken, "EntityId");
+            => GenerateCombGuidAsync("EntityId", cancellationToken);
 
 
         /// <summary>
@@ -117,7 +133,7 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetMigrationIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombGuidAsync(cancellationToken, "MigrationId");
+            => GenerateCombGuidAsync("MigrationId", cancellationToken);
 
 
         /// <summary>
@@ -126,6 +142,6 @@ namespace Librame.Extensions.Data
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetTenantIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombGuidAsync(cancellationToken, "TenantId");
+            => GenerateCombGuidAsync("TenantId", cancellationToken);
     }
 }

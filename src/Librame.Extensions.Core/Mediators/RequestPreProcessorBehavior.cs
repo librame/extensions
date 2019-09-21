@@ -36,7 +36,7 @@ namespace Librame.Extensions.Core
             foreach (var pre in _preProcessors)
                 await pre.ProcessAsync(request, cancellationToken).ConfigureAwait(false);
 
-            return await next.Invoke().ConfigureAwait(false);
+            return await next.Invoke().ConfigureAwait(true);
         }
 
     }

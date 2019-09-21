@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     /// </summary>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
     public class ExtensionBuilderServiceBase<TBuilderOptions> : AbstractService
-        where TBuilderOptions: class, IExtensionBuilderOptions, new()
+        where TBuilderOptions : class, IExtensionBuilderOptions, new()
     {
         /// <summary>
         /// 构造一个 <see cref="ExtensionBuilderServiceBase{TBuilderOptions}"/>。

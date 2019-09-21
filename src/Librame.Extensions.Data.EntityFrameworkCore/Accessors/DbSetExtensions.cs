@@ -36,7 +36,7 @@ namespace Librame.Extensions.Data
         {
             try
             {
-                await dbSet.AddRangeAsync(entities, cancellationToken);
+                await dbSet.AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
 
                 return EntityResult.Success;
             }

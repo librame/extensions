@@ -69,7 +69,7 @@ namespace Librame.Extensions.Data
             {
                 var audits = GetAudits(dbContextAccessor.ChangeTracker, cancellationToken);
                 if (audits.IsNotNullOrEmpty())
-                    await AddAsync(dbContextAccessor, audits, cancellationToken);
+                    await AddAsync(dbContextAccessor, audits, cancellationToken).ConfigureAwait(false);
 
                 return audits;
             }
@@ -87,10 +87,10 @@ namespace Librame.Extensions.Data
         protected virtual async Task AddAsync(DbContextAccessor accessor, List<DataAudit> audits,
             CancellationToken cancellationToken = default)
         {
-            await accessor.Audits.AddRangeAsync(audits, cancellationToken);
+            await accessor.Audits.AddRangeAsync(audits, cancellationToken).ConfigureAwait(false);
 
             var mediator = accessor.ServiceFactory.GetRequiredService<IMediator>();
-            await mediator.Publish(new AuditNotification { Audits = audits });
+            await mediator.Publish(new AuditNotification { Audits = audits }).ConfigureAwait(false);
         }
 
 

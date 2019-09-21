@@ -14,9 +14,9 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Core
 {
-    class ServicesManager<TService, TDefaulter> : AbstractServicesManager<TService, TDefaulter>
+    class ServicesManager<TService, TDefault> : AbstractServicesManager<TService, TDefault>
         where TService : IService
-        where TDefaulter : TService
+        where TDefault : TService
     {
         public ServicesManager(IEnumerable<TService> services)
             : base(services)

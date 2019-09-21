@@ -12,11 +12,11 @@ namespace Librame.Extensions.Core.Tests
             var service = TestServiceProvider.Current.GetRequiredService<IHumanizationService>();
 
             var now = DateTime.Now.AddMinutes(-2);
-            var nowString = await service.HumanizeAsync(now);
+            var nowString = await service.HumanizeAsync(now).ConfigureAwait(true);
             Assert.NotEqual(now.ToString(), nowString);
 
             var utcNow = DateTimeOffset.Now.AddDays(-3);
-            var utcNowString = await service.HumanizeAsync(utcNow);
+            var utcNowString = await service.HumanizeAsync(utcNow).ConfigureAwait(true);
             Assert.NotEqual(utcNow.ToString(), utcNowString);
         }
 

@@ -37,7 +37,7 @@ namespace Librame.Extensions.Network
 
             return builder.AddNetwork(dependency =>
             {
-                dependency.BuilderOptionsAction = builderAction;
+                dependency.OptionsAction = builderAction;
             },
             builderFactory);
         }
@@ -52,6 +52,20 @@ namespace Librame.Extensions.Network
         public static INetworkBuilder AddNetwork(this IExtensionBuilder builder,
             Action<NetworkBuilderDependencyOptions> dependencyAction = null,
             Func<IExtensionBuilder, INetworkBuilder> builderFactory = null)
+            => builder.AddNetwork<NetworkBuilderDependencyOptions>(dependencyAction, builderFactory);
+
+        /// <summary>
+        /// 添加网络扩展。
+        /// </summary>
+        /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="builderFactory">给定创建网络构建器的工厂方法（可选）。</param>
+        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
+        public static INetworkBuilder AddNetwork<TDependencyOptions>(this IExtensionBuilder builder,
+            Action<TDependencyOptions> dependencyAction = null,
+            Func<IExtensionBuilder, INetworkBuilder> builderFactory = null)
+            where TDependencyOptions : NetworkBuilderDependencyOptions, new()
         {
             // Add Dependencies
             var dependency = dependencyAction.ConfigureDependencyOptions();
@@ -59,8 +73,8 @@ namespace Librame.Extensions.Network
             builder.Services.AddHttpClient();
 
             // Add Builder
-            builder.Services.OnlyConfigure(dependency.BuilderOptionsAction,
-                dependency.BuilderOptionsName);
+            builder.Services.OnlyConfigure(dependency.OptionsAction,
+                dependency.OptionsName);
 
             var networkBuilder = builderFactory.NotNullOrDefault(()
                 => b => new NetworkBuilder(b)).Invoke(builder);

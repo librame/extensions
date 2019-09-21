@@ -37,6 +37,9 @@ namespace Librame.Extensions.Network.DotNetty
 
             builder.Services.AddScoped<IHttpServer, HttpServer>();
 
+            builder.Services.AddScoped<IQuoteOfTheMomentClient, QuoteOfTheMomentClient>();
+            builder.Services.AddScoped<IQuoteOfTheMomentServer, QuoteOfTheMomentServer>();
+
             builder.Services.AddScoped<ISecureChatClient, SecureChatClient>();
             builder.Services.AddScoped<ISecureChatServer, SecureChatServer>();
 

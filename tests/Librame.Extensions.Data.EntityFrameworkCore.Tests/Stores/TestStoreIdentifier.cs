@@ -15,9 +15,7 @@ namespace Librame.Extensions.Data.Tests
 
 
         public Task<string> GetArticleIdAsync(CancellationToken cancellationToken = default)
-        {
-            return GenerateCombGuidAsync(cancellationToken, "ArticleId");
-        }
+            => GenerateCombGuidAsync("ArticleId", cancellationToken);
 
     }
 }

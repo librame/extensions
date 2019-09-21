@@ -71,7 +71,7 @@ namespace Librame.Extensions.Network.DotNetty
                             .Handler(new LoggingHandler(DotNettyLogLevel.INFO));
                     })
                     .AddSecureChatHandler(tlsCertificate, channelHandler)
-                    .BindAsync(endPoint);
+                    .BindAsync(endPoint).ConfigureAwait(true);
 
                 configureProcess.Invoke(channel);
             }

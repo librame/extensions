@@ -141,6 +141,5 @@ namespace Librame.Extensions.Core
         /// <returns>返回对象。</returns>
         public static object GetService(this ServiceFactoryDelegate serviceFactory, Type serviceType)
             => serviceFactory.NotNull(nameof(serviceFactory)).Invoke(serviceType);
-
     }
 }

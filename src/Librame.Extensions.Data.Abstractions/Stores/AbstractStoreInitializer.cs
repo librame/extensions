@@ -23,9 +23,6 @@ namespace Librame.Extensions.Data
     public abstract class AbstractStoreInitializer<TAccessor> : AbstractStoreInitializer, IStoreInitializer<TAccessor>
         where TAccessor : IAccessor
     {
-        private static byte[] _locker = new byte[0];
-
-
         /// <summary>
         /// 构造一个 <see cref="AbstractStoreInitializer{TAccessor}"/>。
         /// </summary>
@@ -45,7 +42,7 @@ namespace Librame.Extensions.Data
         /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
         public virtual void Initialize(IStoreHub<TAccessor> stores)
         {
-            lock (_locker)
+            Clock.Locker.WaitAction(() =>
             {
                 if (IsInitialized)
                     return;
@@ -61,7 +58,7 @@ namespace Librame.Extensions.Data
                 stores.Accessor.SaveChanges();
 
                 IsInitialized = true;
-            }
+            });
         }
 
         /// <summary>
@@ -83,7 +80,7 @@ namespace Librame.Extensions.Data
             where TTable : DataEntity
             where TTenant : DataTenant
         {
-            lock (_locker)
+            Clock.Locker.WaitAction(() =>
             {
                 if (IsInitialized)
                     return;
@@ -99,7 +96,7 @@ namespace Librame.Extensions.Data
                 stores.Accessor.SaveChanges();
 
                 IsInitialized = true;
-            }
+            });
         }
 
         /// <summary>

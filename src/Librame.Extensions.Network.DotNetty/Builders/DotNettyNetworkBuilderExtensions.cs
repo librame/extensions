@@ -36,7 +36,7 @@ namespace Librame.Extensions.Network.DotNetty
 
             return builder.AddDotNetty(dependency =>
             {
-                dependency.BuilderOptionsAction = builderAction;
+                dependency.OptionsAction = builderAction;
             });
         }
 
@@ -48,12 +48,24 @@ namespace Librame.Extensions.Network.DotNetty
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
         public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
             Action<DotNettyDependencyOptions> dependencyAction = null)
+            => builder.AddDotNetty<DotNettyDependencyOptions>(dependencyAction);
+
+        /// <summary>
+        /// 添加 DotNetty 扩展。
+        /// </summary>
+        /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
+        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
+        public static INetworkBuilder AddDotNetty<TDependencyOptions>(this INetworkBuilder builder,
+            Action<TDependencyOptions> dependencyAction = null)
+            where TDependencyOptions : DotNettyDependencyOptions, new()
         {
             // Add Dependencies
             var dependency = dependencyAction.ConfigureDependencyOptions();
 
-            builder.Services.OnlyConfigure(dependency.BuilderOptionsAction,
-                dependency.BuilderOptionsName);
+            builder.Services.OnlyConfigure(dependency.OptionsAction,
+                dependency.OptionsName);
 
             // 如果未添加加密扩展，则自动添加并默认配置
             if (!builder.HasParentBuilder<IEncryptionBuilder>())

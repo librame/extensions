@@ -88,7 +88,7 @@ namespace Librame.Extensions.Data
                     diff = diff.Except(_cache).ToList();
 
                 if (diff.IsNotNullOrEmpty())
-                    await AddAsync(dbContextAccessor, diff, cancellationToken);
+                    await AddAsync(dbContextAccessor, diff, cancellationToken).ConfigureAwait(false);
 
                 return diff;
             }
@@ -106,11 +106,11 @@ namespace Librame.Extensions.Data
         protected virtual async Task AddAsync(DbContextAccessor accessor, List<DataEntity> tables,
             CancellationToken cancellationToken = default)
         {
-            await accessor.Entities.AddRangeAsync(tables, cancellationToken);
+            await accessor.Entities.AddRangeAsync(tables, cancellationToken).ConfigureAwait(false);
             _cache.AddRange(tables);
 
             var mediator = accessor.ServiceFactory.GetRequiredService<IMediator>();
-            await mediator.Publish(new EntityNotification { Entities = tables });
+            await mediator.Publish(new EntityNotification { Entities = tables }).ConfigureAwait(false);
         }
 
         /// <summary>

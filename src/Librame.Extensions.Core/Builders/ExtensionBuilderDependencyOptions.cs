@@ -18,17 +18,12 @@ namespace Librame.Extensions.Core
     /// 扩展构建器依赖选项。
     /// </summary>
     /// <typeparam name="TBuilderOptions">指定的构建器选项类型。</typeparam>
-    public class ExtensionBuilderDependencyOptions<TBuilderOptions> : IExtensionBuilderDependencyOptions
+    public class ExtensionBuilderDependencyOptions<TBuilderOptions> : AbstractExtensionBuilderOptions, IExtensionBuilderDependencyOptions
         where TBuilderOptions : IExtensionBuilderOptions
     {
         /// <summary>
-        /// 构建器选项名称。
-        /// </summary>
-        public string BuilderOptionsName { get; set; }
-
-        /// <summary>
         /// <typeparamref name="TBuilderOptions"/> 配置动作。
         /// </summary>
-        public Action<TBuilderOptions> BuilderOptionsAction { get; set; }
+        public Action<TBuilderOptions> OptionsAction { get; set; }
     }
 }

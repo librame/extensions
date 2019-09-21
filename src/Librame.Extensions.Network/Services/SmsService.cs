@@ -24,7 +24,7 @@ namespace Librame.Extensions.Network
 
 
         public SmsService(IServicesManager<IUriRequester, HttpClientRequester> requesters)
-            : base(requesters.Defaulter.CastTo<IUriRequester, NetworkServiceBase>(nameof(requesters)))
+            : base(requesters.Default.CastTo<IUriRequester, NetworkServiceBase>(nameof(requesters)))
         {
             _requesters = requesters;
         }
@@ -32,7 +32,7 @@ namespace Librame.Extensions.Network
 
         public async Task<string> SendAsync(string mobile, string text)
         {
-            var list = await SendAsync(new ShortMessageDescriptor(mobile, text));
+            var list = await SendAsync(new ShortMessageDescriptor(mobile, text)).ConfigureAwait(true);
             return list.First();
         }
 
@@ -49,8 +49,8 @@ namespace Librame.Extensions.Network
             {
                 var gatewayUrl = Options.Sms.GetewayUrlFactory.Invoke(Options.Sms.PlatformInfo, descr);
 
-                var result = await _requesters.Defaulter.GetResponseStringAsync(gatewayUrl, postData: null,
-                    Options.Sms.EnableCodec, parameters);
+                var result = await _requesters.Default.GetResponseStringAsync(gatewayUrl, postData: null,
+                    Options.Sms.EnableCodec, parameters).ConfigureAwait(true);
 
                 list.Add(result);
             }

@@ -30,7 +30,7 @@ namespace Librame.Extensions.Network
 
 
         public CrawlerService(IMemoryCache memoryCache, IServicesManager<IUriRequester, HttpClientRequester> requesters)
-            : base(requesters.Defaulter.CastTo<IUriRequester, NetworkServiceBase>(nameof(requesters)))
+            : base(requesters.Default.CastTo<IUriRequester, NetworkServiceBase>(nameof(requesters)))
         {
             _memoryCache = memoryCache.NotNull(nameof(memoryCache));
             _requesters = requesters;
@@ -46,7 +46,7 @@ namespace Librame.Extensions.Network
 
         public async Task<IList<string>> GetImageLinksAsync(string url, string pattern = null)
         {
-            var hyperLinks = await GetHyperLinksAsync(url, pattern);
+            var hyperLinks = await GetHyperLinksAsync(url, pattern).ConfigureAwait(true);
             Logger.LogDebug($"Get hyper links: {string.Join(",", hyperLinks)}");
 
             if (hyperLinks.IsNullOrEmpty()) return hyperLinks;
@@ -60,7 +60,7 @@ namespace Librame.Extensions.Network
 
         public async Task<IList<string>> GetHyperLinksAsync(string url, string pattern = null)
         {
-            var response = await GetContentAsync(url);
+            var response = await GetContentAsync(url).ConfigureAwait(true);
 
             var links = new List<string>();
 
@@ -141,7 +141,7 @@ namespace Librame.Extensions.Network
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromSeconds(Options.Crawler.CacheExpirationSeconds));
 
-                return _requesters.Defaulter.GetResponseStringAsync(url, postData,
+                return _requesters.Default.GetResponseStringAsync(url, postData,
                     cancellationToken: cancellationToken);
             });
         }

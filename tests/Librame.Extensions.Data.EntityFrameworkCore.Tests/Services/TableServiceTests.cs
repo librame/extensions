@@ -9,7 +9,7 @@ namespace Librame.Extensions.Data.Tests
         public async void AllTest()
         {
             var service = TestServiceProvider.Current.GetRequiredService<IEntityService>();
-            var tables = await service.RegistAsync(null);
+            var tables = await service.RegistAsync(null).ConfigureAwait(true);
             Assert.Null(tables);
         }
     }

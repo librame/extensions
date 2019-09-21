@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>6.1.883.201</Version>
+    <Version>6.1.889.201</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Core.Abstractions on Network extension package.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Core.Abstractions on Network extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>6.1.883.201</AssemblyVersion>
-    <FileVersion>6.1.1909.1501</FileVersion>
+    <AssemblyVersion>6.1.889.201</AssemblyVersion>
+    <FileVersion>6.1.1909.2101</FileVersion>
     <RootNamespace>Librame.Extensions.Network</RootNamespace>
   </PropertyGroup>
 

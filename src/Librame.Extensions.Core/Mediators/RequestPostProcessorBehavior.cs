@@ -33,7 +33,7 @@ namespace Librame.Extensions.Core
         {
             next.NotNull(nameof(next));
 
-            var response = await next.Invoke().ConfigureAwait(false);
+            var response = await next.Invoke().ConfigureAwait(true);
 
             foreach (var post in _postProcessors)
                 await post.Process(request, response, cancellationToken).ConfigureAwait(false);

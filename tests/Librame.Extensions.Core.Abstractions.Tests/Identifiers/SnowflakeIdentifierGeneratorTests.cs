@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,8 +8,27 @@ namespace Librame.Extensions.Core.Tests
 {
     public class SnowflakeIdentifierGeneratorTests
     {
-        public class TestClockService : AbstractDisposable, IClockService
+        public class NoneLoggerFactory : ILoggerFactory
         {
+            public void AddProvider(ILoggerProvider provider)
+                => throw new NotImplementedException();
+
+            public ILogger CreateLogger(string categoryName)
+                => null;
+
+            public void Dispose()
+            {
+            }
+        }
+
+        public class TestClockService : AbstractConcurrentService, IClockService
+        {
+            public TestClockService(IMemoryLocker locker, ILoggerFactory loggerFactory)
+                : base(locker, loggerFactory)
+            {
+            }
+
+
             public Task<DateTime> GetNowAsync(DateTime timestamp, bool? isUtc = null,
                 CancellationToken cancellationToken = default)
             {
@@ -30,7 +50,7 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void AllTest()
         {
-            var clock = new TestClockService();
+            var clock = new TestClockService(new MemoryLockerTests.TestMemoryLocker(), new NoneLoggerFactory());
             var generator = SnowflakeIdentifierGenerator.Default;
 
             var current = generator.Generate(clock);

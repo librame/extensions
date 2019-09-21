@@ -12,10 +12,8 @@
 
 using System.Text;
 
-namespace Librame.Extensions
+namespace Librame.Extensions.Core
 {
-    using Core;
-
     /// <summary>
     /// 字节型可读写的连续内存缓冲区静态扩展。
     /// </summary>

@@ -62,14 +62,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 隐式转换为字符串形式。
-        /// </summary>
-        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>。</param>
-        public static implicit operator string(UniqueAlgorithmIdentifier identifier)
-            => identifier?.ToString();
-
-
-        /// <summary>
         /// 只读空标识符实例（默认使用 <see cref="HexAlgorithmConverter"/> 转换器）。
         /// </summary>
         public static readonly UniqueAlgorithmIdentifier Empty

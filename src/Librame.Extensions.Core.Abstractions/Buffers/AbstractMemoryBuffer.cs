@@ -125,7 +125,7 @@ namespace Librame.Extensions.Core
         /// <param name="b">给定的 <see cref="AbstractMemoryBuffer{T}"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator ==(AbstractMemoryBuffer<T> a, AbstractMemoryBuffer<T> b)
-            => a.Equals(b);
+            => (a?.Equals(b)).Value;
 
         /// <summary>
         /// 是否不等。
@@ -134,6 +134,14 @@ namespace Librame.Extensions.Core
         /// <param name="b">给定的 <see cref="AbstractMemoryBuffer{T}"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator !=(AbstractMemoryBuffer<T> a, AbstractMemoryBuffer<T> b)
-            => !a.Equals(b);
+            => !(a?.Equals(b)).Value;
+
+
+        /// <summary>
+        /// 隐式转换为字符串形式。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="AbstractMemoryBuffer{T}"/>。</param>
+        public static implicit operator string(AbstractMemoryBuffer<T> buffer)
+            => buffer?.ToString();
     }
 }

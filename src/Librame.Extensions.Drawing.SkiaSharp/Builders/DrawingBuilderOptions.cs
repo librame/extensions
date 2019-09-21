@@ -141,10 +141,10 @@ namespace Librame.Extensions.Drawing
             = "librame";
 
         /// <summary>
-        /// 水印图片文件定位器。
+        /// 水印图片文件组合器。
         /// </summary>
-        public FileLocator ImageFileLocator { get; set; }
-            = (FileLocator)"watermark.png";
+        public FilePathCombiner ImagePath { get; set; }
+            = (FilePathCombiner)"watermark.png";
 
         /// <summary>
         /// 水印位置（负值表示反向）。
@@ -210,10 +210,10 @@ namespace Librame.Extensions.Drawing
     public class FontOptions
     {
         /// <summary>
-        /// 字体文件定位器。
+        /// 字体文件组合器。
         /// </summary>
-        public FileLocator FileLocator { get; set; }
-            = (FileLocator)"font.ttf";
+        public FilePathCombiner FilePath { get; set; }
+            = (FilePathCombiner)"font.ttf";
 
         /// <summary>
         /// 大小。

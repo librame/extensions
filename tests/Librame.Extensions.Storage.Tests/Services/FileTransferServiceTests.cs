@@ -22,12 +22,12 @@ namespace Librame.Extensions.Storage.Tests
             var url = "https://mat1.gtimg.com/pingjs/ext2020/qqindex2018/dist/img/qq_logo_2x.png";
             var filePath = @"d:\qq_logo.png";
 
-            var locator = await _fileTransfer.DownloadFileAsync(url, filePath);
-            Assert.NotNull(locator);
-            Assert.True(locator.Exists());
+            var combiner = await _fileTransfer.DownloadFileAsync(url, filePath).ConfigureAwait(true);
+            Assert.NotNull(combiner);
+            Assert.True(combiner.Exists());
 
-            locator.Delete();
-            Assert.False(locator.Exists());
+            combiner.Delete();
+            Assert.False(combiner.Exists());
         }
 
         [Fact]

@@ -56,7 +56,7 @@ namespace Librame.Extensions.Network
                 var opts = Options.Requester;
 
                 request = WebRequest.CreateHttp(uri.ToString());
-                request.Timeout = opts.Timeout;
+                request.Timeout = (int)opts.Timeout.TotalMilliseconds;
                 request.UserAgent = opts.UserAgent;
 
                 if (parameters.Accept.IsNotNullOrEmpty())
@@ -80,11 +80,15 @@ namespace Librame.Extensions.Network
                 }
 
                 return Policy
-                    .Handle<IOException>()
-                    .OrResult<Stream>(r => r.IsNull())
-                    .Retry(opts.RetryCount, (exception, retryCount, context) =>
+                    .Handle<IOException>(exception =>
                     {
-                        Logger.LogDebug($"Start the {retryCount} retry");
+                        Logger.LogError(exception, exception.AsInnerMessage());
+                        return true;
+                    })
+                    .OrResult<Stream>(r => r.IsNull())
+                    .WaitAndRetry(opts.RetryCount, opts.SleepDurationFactory, (exception, sleepDuration, retryCount, context) =>
+                    {
+                        Logger.LogDebug($"Retry {retryCount} times from {sleepDuration.TotalMilliseconds} milliseconds later");
                     })
                     .Execute(GetResponseStream);
             });

@@ -18,10 +18,10 @@ namespace Librame.Extensions.Core
     /// 服务集合管理器接口。
     /// </summary>
     /// <typeparam name="TService">指定的服务类型。</typeparam>
-    /// <typeparam name="TDefaulter">指定的默认服务类型。</typeparam>
-    public interface IServicesManager<out TService, TDefaulter> : IServicesManager<TService>
+    /// <typeparam name="TDefault">指定的默认服务类型。</typeparam>
+    public interface IServicesManager<out TService, TDefault> : IServicesManager<TService>
         where TService : IService
-        where TDefaulter : TService
+        where TDefault : TService
     {
     }
 
@@ -41,6 +41,6 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 默认服务。
         /// </summary>
-        TService Defaulter { get; }
+        TService Default { get; }
     }
 }

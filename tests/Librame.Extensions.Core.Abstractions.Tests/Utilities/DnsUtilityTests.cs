@@ -7,7 +7,7 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public async void AllTest()
         {
-            var tuple = await DnsUtility.GetLocalIPAddressTupleAsync();
+            var tuple = await DnsUtility.GetLocalIPAddressTupleAsync().ConfigureAwait(true);
             var ipv4 = tuple.IPv4?.ToString();
             var ipv6 = tuple.IPv6?.ToString();
 

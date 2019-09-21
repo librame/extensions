@@ -14,9 +14,9 @@ namespace Librame.Extensions.Drawing.Tests
                 services.AddLibrame()
                     .AddDrawing(options =>
                     {
-                        options.Captcha.Font.FileLocator.ChangeBasePath(ResourcesPath);
-                        options.Watermark.Font.FileLocator.ChangeBasePath(ResourcesPath);
-                        options.Watermark.ImageFileLocator.ChangeBasePath(ResourcesPath);
+                        options.Captcha.Font.FilePath.ChangeBasePath(ResourcesPath);
+                        options.Watermark.Font.FilePath.ChangeBasePath(ResourcesPath);
+                        options.Watermark.ImagePath.ChangeBasePath(ResourcesPath);
                     });
 
                 return services.BuildServiceProvider();

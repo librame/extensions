@@ -12,52 +12,57 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
 {
-    class HumanizationService : AbstractService, IHumanizationService
+    class HumanizationService : AbstractConcurrentService, IHumanizationService
     {
         private readonly IExpressionStringLocalizer<HumanizationResource> _localizer;
 
 
         public HumanizationService(IExpressionStringLocalizer<HumanizationResource> localizer,
-            ILoggerFactory loggerFactory)
-            : base(loggerFactory)
+            IMemoryLocker locker, ILoggerFactory loggerFactory)
+            : base(locker, loggerFactory)
         {
             _localizer = localizer.NotNull(nameof(localizer));
         }
 
 
-        public Task<string> HumanizeAsync(DateTime dateTime)
+        public Task<string> HumanizeAsync(DateTime dateTime, CancellationToken cancellationToken = default)
         {
-            return Task.Run(() =>
+            return Locker.WaitFactory(() =>
             {
-                var now = DateTime.Now;
-
-                if (now <= dateTime)
+                return cancellationToken.RunFactoryOrCancellationAsync(() =>
                 {
-                    Logger.LogWarning($"The {dateTime} is greater than {now}");
-                    return now.ToString();
-                }
+                    var now = DateTime.Now;
+                    if (now <= dateTime)
+                    {
+                        Logger.LogWarning($"The {dateTime} is greater than {now}");
+                        return now.ToString();
+                    }
 
-                return HumanizeCore(now - dateTime);
+                    return HumanizeCore(now - dateTime);
+                });
             });
         }
 
-        public Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset)
+        public Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset, CancellationToken cancellationToken = default)
         {
-            return Task.Run(() =>
+            return Locker.WaitFactory(() =>
             {
-                var now = DateTimeOffset.Now;
-
-                if (now <= dateTimeOffset)
+                return cancellationToken.RunFactoryOrCancellationAsync(() =>
                 {
-                    Logger.LogWarning($"The {dateTimeOffset} is greater than {now}");
-                    return now.ToString();
-                }
+                    var now = DateTimeOffset.Now;
+                    if (now <= dateTimeOffset)
+                    {
+                        Logger.LogWarning($"The {dateTimeOffset} is greater than {now}");
+                        return now.ToString();
+                    }
 
-                return HumanizeCore(now - dateTimeOffset);
+                    return HumanizeCore(now - dateTimeOffset);
+                });
             });
         }
 

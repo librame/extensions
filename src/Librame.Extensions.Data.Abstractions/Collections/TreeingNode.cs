@@ -267,7 +267,7 @@ namespace System.Collections.Generic
         /// <param name="b">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator ==(TreeingNode<T, TId> a, TreeingNode<T, TId> b)
-            => a.Equals(b);
+            => (a?.Equals(b)).Value;
 
         /// <summary>
         /// 是否不等。
@@ -276,6 +276,6 @@ namespace System.Collections.Generic
         /// <param name="b">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator !=(TreeingNode<T, TId> a, TreeingNode<T, TId> b)
-            => !a.Equals(b);
+            => !(a?.Equals(b)).Value;
     }
 }

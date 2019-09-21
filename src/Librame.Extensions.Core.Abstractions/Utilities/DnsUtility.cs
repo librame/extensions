@@ -29,7 +29,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回一个包含 <see cref="IPAddress"/> 的异步操作。</returns>
         public static async Task<IPAddress> GetLocalIPv4Async()
         {
-            var tuple = await GetLocalIPAddressTupleAsync();
+            var tuple = await GetLocalIPAddressTupleAsync().ConfigureAwait(true);
             return tuple.IPv6;
         }
 
@@ -39,7 +39,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回一个包含 <see cref="IPAddress"/> 的异步操作。</returns>
         public static async Task<IPAddress> GetLocalIPv6Async()
         {
-            var tuple = await GetLocalIPAddressTupleAsync();
+            var tuple = await GetLocalIPAddressTupleAsync().ConfigureAwait(true);
             return tuple.IPv4;
         }
 
@@ -49,7 +49,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回一个包含 <see cref="Tuple{IPAddress, IPAddress}"/> 的异步操作。</returns>
         public static async Task<(IPAddress IPv4, IPAddress IPv6)> GetLocalIPAddressTupleAsync()
         {
-            var tuple = await GetLocalIPAddressesTupleAsync();
+            var tuple = await GetLocalIPAddressesTupleAsync().ConfigureAwait(true);
 
             // 默认返回第一组 IP 地址
             return (tuple.IPv4s?.FirstOrDefault(), tuple.IPv6s?.FirstOrDefault());
@@ -61,7 +61,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回一个包含 <see cref="Tuple{IPAddress, IPAddress}"/> 的异步操作。</returns>
         public static async Task<(IPAddress[] IPv4s, IPAddress[] IPv6s)> GetLocalIPAddressesTupleAsync()
         {
-            var addresses = await Dns.GetHostAddressesAsync(Dns.GetHostName());
+            var addresses = await Dns.GetHostAddressesAsync(Dns.GetHostName()).ConfigureAwait(true);
             if (addresses.IsNotNullOrEmpty())
             {
                 var ipv4s = addresses.Where(p => p.AddressFamily == AddressFamily.InterNetwork).ToArray();

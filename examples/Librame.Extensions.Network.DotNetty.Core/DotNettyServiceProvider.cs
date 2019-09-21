@@ -17,7 +17,7 @@ namespace Librame.Extensions.Network.DotNetty
         {
             Current = Current.EnsureSingleton(() =>
             {
-                var locator = "dotnetty.com.pfx".AsFileLocator(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
+                var combiner = "dotnetty.com.pfx".AsFilePathCombiner(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
 
                 var services = new ServiceCollection();
 
@@ -29,7 +29,7 @@ namespace Librame.Extensions.Network.DotNetty
                     logging.AddConsole(logger => logger.IncludeScopes = false);
                     logging.AddFilter((str, level) => true);
                 })
-                .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(locator.ToString(), "password"))
+                .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(combiner.ToString(), "password"))
                 .AddNetwork().AddDotNetty();
 
                 // Use DotNetty LoggerFactory

@@ -106,7 +106,7 @@ namespace Librame.Extensions.Data
         /// <param name="b">给定的 <see cref="EntityError"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator ==(EntityError a, EntityError b)
-            => a.Equals(b);
+            => (a?.Equals(b)).Value;
 
         /// <summary>
         /// 是否不等。
@@ -115,6 +115,6 @@ namespace Librame.Extensions.Data
         /// <param name="b">给定的 <see cref="EntityError"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator !=(EntityError a, EntityError b)
-            => !a.Equals(b);
+            => !(a?.Equals(b)).Value;
     }
 }

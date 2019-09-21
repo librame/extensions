@@ -37,8 +37,6 @@ namespace Librame.Extensions.Examples
 
             RunEncryption(serviceProvider);
 
-            RunThreadPool();
-
             // Close NLog
             NLog.LogManager.Shutdown();
         }
@@ -58,25 +56,6 @@ namespace Librame.Extensions.Examples
             var plaintextBuffer = content.AsPlaintextBuffer(serviceProvider);
 
             Console.WriteLine($"Content MD5: {hash.Md5(plaintextBuffer).AsBase64String()}");
-        }
-
-        private static void RunThreadPool()
-        {
-            using (var pool = new JobThreadPool())
-            {
-                for (int i = 0; i < 10; i++)
-                {
-                    var job = new JobDescriptor(i);
-                    
-                    job.Execution = (t, args) => Console.WriteLine($"add {args[0]}_{t.ManagedThreadId}.");
-                    job.FinishCallback = (t, args) => Console.WriteLine($"{args[0]}_{t.ManagedThreadId}_finished.");
-                    job.ErrorCallback = (t, args, ex) => Console.WriteLine(ex.AsInnerMessage());
-
-                    pool.Add(job);
-                }
-
-                pool.Execute();
-            }
         }
 
     }
