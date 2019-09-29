@@ -39,76 +39,58 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 初始化。
         /// </summary>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
-        public virtual void Initialize(IStoreHub<TAccessor> stores)
-        {
-            Clock.Locker.WaitAction(() =>
-            {
-                if (IsInitialized)
-                    return;
-
-                stores.NotNull(nameof(stores));
-
-                // 提前切换为写入数据库，以便支持数据重复验证
-                stores.Accessor.ToggleTenant(tenant => tenant.WritingConnectionString);
-
-                InitializeCore(stores);
-
-                // 已重写，保存时会自行尝试还原为读取数据库
-                stores.Accessor.SaveChanges();
-
-                IsInitialized = true;
-            });
-        }
-
-        /// <summary>
-        /// 初始化核心。
-        /// </summary>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
-        protected abstract void InitializeCore(IStoreHub<TAccessor> stores);
-
-
-        /// <summary>
-        /// 初始化。
-        /// </summary>
         /// <typeparam name="TAudit">指定的审计类型。</typeparam>
-        /// <typeparam name="TTable">指定的实体表类型。</typeparam>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
         /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor, TAudit, TTable, TTenant}"/>。</param>
-        public virtual void Initialize<TAudit, TTable, TTenant>(IStoreHub<TAccessor, TAudit, TTable, TTenant> stores)
+        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor, TAudit, TEntity, TMigration, TTenant}"/>。</param>
+        public virtual void Initialize<TAudit, TEntity, TMigration, TTenant>(IStoreHub<TAccessor, TAudit, TEntity, TMigration, TTenant> stores)
             where TAudit : DataAudit
-            where TTable : DataEntity
+            where TEntity : DataEntity
+            where TMigration : DataMigration
             where TTenant : DataTenant
         {
-            Clock.Locker.WaitAction(() =>
+            if (IsInitialized)
+                return;
+
+            stores.NotNull(nameof(stores));
+
+            // 提前切换为写入数据库，以便支持数据重复验证
+            if (stores.Accessor.SwitchTenant(tenant => tenant.WritingConnectionString))
             {
-                if (IsInitialized)
-                    return;
+                Clock.Locker.WaitAction(() =>
+                {
+                    InitializeCore(stores);
+                });
 
-                stores.NotNull(nameof(stores));
-
-                // 提前切换为写入数据库，以便支持数据重复验证
-                stores.Accessor.ToggleTenant(tenant => tenant.WritingConnectionString);
-
-                InitializeCore(stores);
-
-                // 已重写，保存时会自行尝试还原为读取数据库
-                stores.Accessor.SaveChanges();
+                if (IsCreated)
+                {
+                    // 已重写，保存时会自行尝试还原为读取数据库
+                    stores.Accessor.SaveChanges();
+                    IsCreated = false;
+                }
+                else
+                {
+                    // 未创建则手动切换为默认数据库
+                    stores.Accessor.SwitchTenant(tenant => tenant.DefaultConnectionString);
+                }
 
                 IsInitialized = true;
-            });
+            }
         }
 
         /// <summary>
         /// 初始化核心。
         /// </summary>
         /// <typeparam name="TAudit">指定的审计类型。</typeparam>
-        /// <typeparam name="TTable">指定的实体表类型。</typeparam>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
         /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor, TAudit, TTable, TTenant}"/>。</param>
-        protected abstract void InitializeCore<TAudit, TTable, TTenant>(IStoreHub<TAccessor, TAudit, TTable, TTenant> stores)
+        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor, TAudit, TEntity, TMigration, TTenant}"/>。</param>
+        protected abstract void InitializeCore<TAudit, TEntity, TMigration, TTenant>(IStoreHub<TAccessor, TAudit, TEntity, TMigration, TTenant> stores)
             where TAudit : DataAudit
-            where TTable : DataEntity
+            where TEntity : DataEntity
+            where TMigration : DataMigration
             where TTenant : DataTenant;
     }
 
@@ -148,6 +130,11 @@ namespace Librame.Extensions.Data
         /// </summary>
         public ILoggerFactory LoggerFactory { get; }
 
+
+        /// <summary>
+        /// 是否已创建。
+        /// </summary>
+        public bool IsCreated { get; protected set; }
 
         /// <summary>
         /// 是否已完成初始化。

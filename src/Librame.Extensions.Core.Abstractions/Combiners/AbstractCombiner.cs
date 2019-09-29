@@ -10,13 +10,15 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 抽象组合器。
     /// </summary>
     /// <typeparam name="TSource">指定的源类型。</typeparam>
-    public abstract class AbstractCombiner<TSource> : ICombiner
+    public abstract class AbstractCombiner<TSource> : ICombiner, IEquatable<TSource>
         where TSource : class
     {
         /// <summary>
@@ -38,5 +40,13 @@ namespace Librame.Extensions.Core
         /// 源实例。
         /// </summary>
         public virtual TSource Source { get; }
+
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="other">给定的 <typeparamref name="TSource"/>。</param>
+        /// <returns>返回的布尔值。</returns>
+        public abstract bool Equals(TSource other);
     }
 }

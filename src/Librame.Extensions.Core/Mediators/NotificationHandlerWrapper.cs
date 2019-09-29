@@ -32,7 +32,7 @@ namespace Librame.Extensions.Core
             async Task PublishAsync()
             {
                 foreach (var factory in factories)
-                    await factory.Invoke().ConfigureAwait(false);
+                    await factory.Invoke().ConfigureAndWaitAsync();
             }
         }
 

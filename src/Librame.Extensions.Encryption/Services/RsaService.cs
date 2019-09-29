@@ -18,13 +18,13 @@ namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class RsaService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IRsaService
+    class RsaService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IRsaService
     {
         private readonly Lazy<RSA> _rsa;
 
 
         public RsaService(ISigningCredentialsService signingCredentials)
-            : base(signingCredentials.CastTo<ISigningCredentialsService, ExtensionBuilderServiceBase<EncryptionBuilderOptions>>(nameof(signingCredentials)))
+            : base(signingCredentials.CastTo<ISigningCredentialsService, AbstractExtensionBuilderService<EncryptionBuilderOptions>>(nameof(signingCredentials)))
         {
             SigningCredentials = signingCredentials;
 

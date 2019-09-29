@@ -10,9 +10,9 @@
 
 #endregion
 
-using Librame.Extensions;
+using System.Security.Cryptography;
 
-namespace System.Security.Cryptography
+namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 抽象随机数生成器静态扩展。

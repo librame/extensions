@@ -10,6 +10,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 
 namespace Librame.Extensions.Core
@@ -34,12 +35,12 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="FileNameCombiner"/>。
         /// </summary>
         /// <param name="baseName">给定的基础名。</param>
-        /// <param name="extension">给定的扩展名。</param>
-        protected internal FileNameCombiner(string baseName, string extension)
-            : base(baseName + extension)
+        /// <param name="extension">给定的扩展名（可空）。</param>
+        public FileNameCombiner(string baseName, string extension)
+            : base(CombineString(baseName, extension))
         {
-            Extension = extension; // 存在有些没扩展名的文件名
-            BaseName = baseName.NotNullOrEmpty(nameof(baseName));
+            Extension = extension;
+            BaseName = baseName;
         }
 
 
@@ -58,7 +59,7 @@ namespace Librame.Extensions.Core
         /// 重写源实例。
         /// </summary>
         public override string Source
-            => BaseName + Extension;
+            => CombineString(BaseName, Extension);
 
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
         public FileNameCombiner ChangeBaseName(string newBaseName)
         {
-            BaseName = newBaseName.NotNullOrEmpty(nameof(newBaseName));
+            BaseName = newBaseName.NotEmpty(nameof(newBaseName));
             return this;
         }
 
@@ -79,7 +80,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
         public FileNameCombiner ChangeExtension(string newExtension)
         {
-            Extension = newExtension.NotNullOrEmpty(nameof(newExtension));
+            Extension = newExtension.NotEmpty(nameof(newExtension));
             return this;
         }
 
@@ -102,15 +103,24 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 是否相等。
+        /// 是否为指定的扩展名（忽略大小写）。
         /// </summary>
-        /// <param name="other">给定的 <see cref="FileNameCombiner"/>。</param>
+        /// <param name="extension">给定的扩展名。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(FileNameCombiner other)
-            => Source == other?.Source;
+        public bool IsExtension(string extension)
+            => Extension.Equals(extension, StringComparison.OrdinalIgnoreCase);
+
 
         /// <summary>
-        /// 是否相等。
+        /// 是否相等（忽略大小写）。
+        /// </summary>
+        /// <param name="other">给定的域名。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(string other)
+            => Source.Equals(other, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 是否相等（忽略大小写）。
         /// </summary>
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
@@ -135,7 +145,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 是否相等。
+        /// 是否相等（忽略大小写）。
         /// </summary>
         /// <param name="a">给定的 <see cref="FileNameCombiner"/>。</param>
         /// <param name="b">给定的 <see cref="FileNameCombiner"/>。</param>
@@ -144,7 +154,7 @@ namespace Librame.Extensions.Core
             => (a?.Equals(b)).Value;
 
         /// <summary>
-        /// 是否不等。
+        /// 是否不等（忽略大小写）。
         /// </summary>
         /// <param name="a">给定的 <see cref="FileNameCombiner"/>。</param>
         /// <param name="b">给定的 <see cref="FileNameCombiner"/>。</param>
@@ -154,17 +164,30 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 隐式转换。
+        /// 隐式转换为字符串。
         /// </summary>
         /// <param name="combiner">给定的 <see cref="FileNameCombiner"/>。</param>
         public static implicit operator string(FileNameCombiner combiner)
             => combiner?.ToString();
 
         /// <summary>
-        /// 显式转换。
+        /// 隐式转换文件名组合器。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
-        public static explicit operator FileNameCombiner(string fileName)
+        public static implicit operator FileNameCombiner(string fileName)
             => new FileNameCombiner(fileName);
+
+
+        /// <summary>
+        /// 组合字符串。
+        /// </summary>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="baseName"/> is null or empty.
+        /// </exception>
+        /// <param name="baseName">给定的基础名。</param>
+        /// <param name="extension">给定的扩展名（可选）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string CombineString(string baseName, string extension = null)
+            => baseName.NotEmpty(nameof(baseName)) + extension; // 存在不包含扩展名的文件名
     }
 }

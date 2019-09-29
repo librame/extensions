@@ -22,7 +22,7 @@ namespace Librame.Extensions.Storage.Tests
             var url = "https://mat1.gtimg.com/pingjs/ext2020/qqindex2018/dist/img/qq_logo_2x.png";
             var filePath = @"d:\qq_logo.png";
 
-            var combiner = await _fileTransfer.DownloadFileAsync(url, filePath).ConfigureAwait(true);
+            var combiner = await _fileTransfer.DownloadFileAsync(url, filePath).ConfigureAndResultAsync();
             Assert.NotNull(combiner);
             Assert.True(combiner.Exists());
 

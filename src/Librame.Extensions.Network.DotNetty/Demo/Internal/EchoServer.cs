@@ -69,7 +69,7 @@ namespace Librame.Extensions.Network.DotNetty
                             .Handler(new LoggingHandler("SRV-LSTN"));
                     })
                     .AddEchoHandler(tlsCertificate, channelHandler)
-                    .BindAsync(endPoint).ConfigureAwait(true);
+                    .BindAsync(endPoint).ConfigureAndResultAsync();
 
                 configureProcess?.Invoke(channel);
             }

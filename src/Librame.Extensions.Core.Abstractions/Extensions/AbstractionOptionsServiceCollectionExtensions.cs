@@ -10,7 +10,6 @@
 
 #endregion
 
-using Librame.Extensions;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -24,57 +23,6 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class AbstractionOptionsServiceCollectionExtensions
     {
-
-        #region OnlyConfigure
-
-        /// <summary>
-        /// 仅配置选项实例（未集成 <see cref="OptionsServiceCollectionExtensions.AddOptions(IServiceCollection)"/>）。
-        /// </summary>
-        /// <typeparam name="TOptions">指定的选项类型。</typeparam>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{TOptions}"/>。</param>
-        /// <param name="name">给定的名称。</param>
-        /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
-        public static IServiceCollection OnlyConfigure<TOptions>(this IServiceCollection services,
-            Action<TOptions> configureOptions = null, string name = null)
-            where TOptions : class
-        {
-            if (configureOptions.IsNotNull())
-            {
-                var options = new ConfigureNamedOptions<TOptions>(name ?? Options.Options.DefaultName,
-                    configureOptions);
-
-                services.AddSingleton<IConfigureOptions<TOptions>>(options);
-            }
-
-            return services;
-        }
-
-        /// <summary>
-        /// 仅配置后置选项实例（未集成 <see cref="OptionsServiceCollectionExtensions.AddOptions(IServiceCollection)"/>）。
-        /// </summary>
-        /// <typeparam name="TOptions">指定的选项类型。</typeparam>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="configureOptions">给定的 <see cref="Action{TOptions}"/>。</param>
-        /// <param name="name">给定的名称。</param>
-        /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
-        public static IServiceCollection OnlyPostConfigure<TOptions>(this IServiceCollection services,
-            Action<TOptions> configureOptions = null, string name = null)
-            where TOptions : class
-        {
-            if (configureOptions.IsNotNull())
-            {
-                var options = new PostConfigureOptions<TOptions>(name ?? Options.Options.DefaultName,
-                    configureOptions);
-
-                services.AddSingleton<IPostConfigureOptions<TOptions>>(options);
-            }
-
-            return services;
-        }
-
-        #endregion
-
 
         #region TryGetConfigureOptions
 

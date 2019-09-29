@@ -57,7 +57,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return services.AddLibrame(dependency =>
             {
-                dependency.OptionsAction = builderAction;
+                dependency.Builder.Action = builderAction;
             },
             builderFactory);
         }
@@ -87,22 +87,23 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceCollection, TDependencyOptions, ICoreBuilder> builderFactory = null)
             where TDependencyOptions : CoreBuilderDependencyOptions, new()
         {
-            // Add Dependencies
-            var dependency = dependencyAction.ConfigureDependencyOptions();
+            // Configure DependencyOptions
+            var dependency = dependencyAction.ConfigureDependency();
+            services.AddAllOptionsConfigurators(dependency);
 
+            // Add Dependencies
             services
                 .AddOptions()
-                .AddLocalization(dependency.LocalizationAction)
                 .AddLogging(dependency.LoggingAction)
-                .AddMemoryCache(dependency.MemoryCacheAction)
-                .AddDistributedMemoryCache(dependency.MemoryDistributedCacheAction);
+                .AddLocalization(dependency.Localization.Action)
+                .AddMemoryCache(dependency.MemoryCache.Action)
+                .AddDistributedMemoryCache(dependency.MemoryDistributedCache.Action);
 
-            // Add Builder
-            services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
-
+            // Create Builder
             var coreBuilder = builderFactory.NotNullOrDefault(()
                 => (s, d) => new CoreBuilder(s, d)).Invoke(services, dependency);
 
+            // Configure Builder
             return coreBuilder
                 .AddLocalizers()
                 .AddMediators()

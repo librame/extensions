@@ -39,8 +39,8 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="DomainNameCombiner"/>。
         /// </summary>
         /// <param name="allLevelSegments">给定的所有级别片段列表。</param>
-        protected internal DomainNameCombiner(List<string> allLevelSegments)
-            : base(string.Join(".", (allLevelSegments.NotNullOrEmpty(nameof(allLevelSegments)) as IList<string>).Reverse()))
+        public DomainNameCombiner(List<string> allLevelSegments)
+            : base(CombineString(allLevelSegments))
         {
             _allLevelSegments = allLevelSegments;
         }
@@ -118,26 +118,26 @@ namespace Librame.Extensions.Core
         /// 顶级/一级域名（如：top.com/top.org...）。
         /// </summary>
         public string TopLevel
-            => TopLevelSegment.IsNotNullOrEmpty() ? $"{TopLevelSegment}.{Root}" : Root;
+            => TopLevelSegment.IsNotEmpty() ? $"{TopLevelSegment}.{Root}" : Root;
 
         /// <summary>
         /// 二级域名（如：second.top.com/second.top.org...）。
         /// </summary>
         public string SecondLevel
-            => SecondLevelSegment.IsNotNullOrEmpty() ? $"{SecondLevelSegment}.{TopLevel}" : TopLevel;
+            => SecondLevelSegment.IsNotEmpty() ? $"{SecondLevelSegment}.{TopLevel}" : TopLevel;
 
         /// <summary>
         /// 三级域名（如：third.second.top.com/third.second.top.org...）。
         /// </summary>
         public string ThirdLevel
-            => ThirdLevelSegment.IsNotNullOrEmpty() ? $"{ThirdLevelSegment}.{SecondLevel}" : SecondLevel;
+            => ThirdLevelSegment.IsNotEmpty() ? $"{ThirdLevelSegment}.{SecondLevel}" : SecondLevel;
 
 
         /// <summary>
         /// 重写源实例。
         /// </summary>
         public override string Source
-            => string.Join(".", _allLevelSegments.Reverse<string>());
+            => CombineString(_allLevelSegments);
 
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner ChangeRoot(string newRoot)
         {
-            Root = newRoot.NotNullOrEmpty(nameof(newRoot));
+            Root = newRoot.NotEmpty(nameof(newRoot));
             return this;
         }
 
@@ -179,7 +179,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner ChangeTopLevelSegment(string newTopLevelSegment)
         {
-            TopLevelSegment = newTopLevelSegment.NotNullOrEmpty(nameof(newTopLevelSegment));
+            TopLevelSegment = newTopLevelSegment.NotEmpty(nameof(newTopLevelSegment));
             return this;
         }
 
@@ -190,7 +190,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner ChangeSecondLevelSegment(string newSecondLevelSegment)
         {
-            SecondLevelSegment = newSecondLevelSegment.NotNullOrEmpty(nameof(newSecondLevelSegment));
+            SecondLevelSegment = newSecondLevelSegment.NotEmpty(nameof(newSecondLevelSegment));
             return this;
         }
 
@@ -201,7 +201,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner ChangeThirdLevelSegment(string newThirdLevelSegment)
         {
-            ThirdLevelSegment = newThirdLevelSegment.NotNullOrEmpty(nameof(newThirdLevelSegment));
+            ThirdLevelSegment = newThirdLevelSegment.NotEmpty(nameof(newThirdLevelSegment));
             return this;
         }
 
@@ -212,7 +212,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner ChangeOtherLevelSegments(params string[] newOtherLevelSegments)
         {
-            OtherLevelSegments = newOtherLevelSegments.NotNullOrEmpty(nameof(newOtherLevelSegments));
+            OtherLevelSegments = newOtherLevelSegments.NotEmpty(nameof(newOtherLevelSegments));
             return this;
         }
 
@@ -243,7 +243,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner NewRoot(string newRoot)
         {
-            newRoot.NotNullOrEmpty(nameof(newRoot));
+            newRoot.NotEmpty(nameof(newRoot));
 
             var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
             copyCombiner.Root = newRoot;
@@ -258,7 +258,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner NewTopLevelSegment(string newTopLevelSegment)
         {
-            newTopLevelSegment.NotNullOrEmpty(nameof(newTopLevelSegment));
+            newTopLevelSegment.NotEmpty(nameof(newTopLevelSegment));
 
             var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
             copyCombiner.TopLevelSegment = newTopLevelSegment;
@@ -273,7 +273,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner NewSecondLevelSegment(string newSecondLevelSegment)
         {
-            newSecondLevelSegment.NotNullOrEmpty(nameof(newSecondLevelSegment));
+            newSecondLevelSegment.NotEmpty(nameof(newSecondLevelSegment));
 
             var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
             copyCombiner.SecondLevelSegment = newSecondLevelSegment;
@@ -288,7 +288,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner NewThirdLevelSegment(string newThirdLevelSegment)
         {
-            newThirdLevelSegment.NotNullOrEmpty(nameof(newThirdLevelSegment));
+            newThirdLevelSegment.NotEmpty(nameof(newThirdLevelSegment));
 
             var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
             copyCombiner.ThirdLevelSegment = newThirdLevelSegment;
@@ -303,7 +303,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner NewOtherLevelSegments(params string[] newOtherLevelSegments)
         {
-            newOtherLevelSegments.NotNullOrEmpty(nameof(newOtherLevelSegments));
+            newOtherLevelSegments.NotEmpty(nameof(newOtherLevelSegments));
 
             var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
             copyCombiner.OtherLevelSegments = newOtherLevelSegments;
@@ -315,15 +315,48 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 是否相等。
+        /// 是指定的根域名（忽略大小写）。
         /// </summary>
-        /// <param name="other">给定的 <see cref="DomainNameCombiner"/>。</param>
+        /// <param name="root">给定的根域名（如：com/org...）。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(DomainNameCombiner other)
-            => Source == other?.Source;
+        public bool IsRoot(string root)
+            => Root.Equals(root, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
-        /// 是否相等。
+        /// 是指定的顶级/一级域名（忽略大小写）。
+        /// </summary>
+        /// <param name="topLevel">给定的顶级/一级域名（如：top.com/top.org...）。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool IsTopLevel(string topLevel)
+            => TopLevel.Equals(topLevel, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 是指定的二级域名（忽略大小写）。
+        /// </summary>
+        /// <param name="secondLevel">给定的二级域名（如：second.top.com/second.top.org...）。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool IsSecondLevel(string secondLevel)
+            => SecondLevel.Equals(secondLevel, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 是指定的三级域名（忽略大小写）。
+        /// </summary>
+        /// <param name="thirdLevel">给定的三级域名（如：third.second.top.com/third.second.top.org...）。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool IsThirdLevel(string thirdLevel)
+            => ThirdLevel.Equals(thirdLevel, StringComparison.OrdinalIgnoreCase);
+
+
+        /// <summary>
+        /// 是否相等（忽略大小写）。
+        /// </summary>
+        /// <param name="other">给定的域名。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(string other)
+            => Source.Equals(other, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 是否相等（忽略大小写）。
         /// </summary>
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
@@ -348,7 +381,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 是否相等。
+        /// 是否相等（忽略大小写）。
         /// </summary>
         /// <param name="a">给定的 <see cref="DomainNameCombiner"/>。</param>
         /// <param name="b">给定的 <see cref="DomainNameCombiner"/>。</param>
@@ -357,7 +390,7 @@ namespace Librame.Extensions.Core
             => (a?.Equals(b)).Value;
 
         /// <summary>
-        /// 是否不等。
+        /// 是否不等（忽略大小写）。
         /// </summary>
         /// <param name="a">给定的 <see cref="DomainNameCombiner"/>。</param>
         /// <param name="b">给定的 <see cref="DomainNameCombiner"/>。</param>
@@ -374,11 +407,23 @@ namespace Librame.Extensions.Core
             => combiner?.ToString();
 
         /// <summary>
-        /// 显式转换为域名组合器。
+        /// 隐式转换为域名组合器。
         /// </summary>
         /// <param name="domainName">给定的域名。</param>
-        public static explicit operator DomainNameCombiner(string domainName)
+        public static implicit operator DomainNameCombiner(string domainName)
             => new DomainNameCombiner(domainName);
+
+
+        /// <summary>
+        /// 组合字符串。
+        /// </summary>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="segments"/> is null or empty.
+        /// </exception>
+        /// <param name="segments">给定的部分集合。</param>
+        /// <returns>返回字符串。</returns>
+        public static string CombineString(IEnumerable<string> segments)
+            => string.Join(".", segments.NotEmpty(nameof(segments)).Reverse());
 
 
         /// <summary>
@@ -412,7 +457,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回布尔值。</returns>
         public static bool TryParseAllLevelSegmentsFromHost(string host, out IEnumerable<string> allLevelSegments)
         {
-            if (host.IsNullOrEmpty())
+            if (host.IsEmpty())
             {
                 allLevelSegments = null;
                 return false;

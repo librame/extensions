@@ -17,7 +17,7 @@ namespace Librame.Extensions.Drawing
     /// <summary>
     /// 图画构建器依赖选项。
     /// </summary>
-    public class DrawingBuilderDependencyOptions : ExtensionBuilderDependencyOptions<DrawingBuilderOptions>
+    public class DrawingBuilderDependencyOptions : ExtensionBuilderDependencyOptions<DrawingBuilderDependencyOptions, DrawingBuilderOptions>
     {
     }
 }

@@ -21,7 +21,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 网络构建器选项。
     /// </summary>
-    public class NetworkBuilderOptions : AbstractExtensionBuilderOptions
+    public class NetworkBuilderOptions : IExtensionBuilderOptions
     {
         /// <summary>
         /// 字节编解码。

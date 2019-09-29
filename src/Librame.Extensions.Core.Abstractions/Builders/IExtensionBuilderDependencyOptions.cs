@@ -15,7 +15,11 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 扩展构建器依赖选项接口。
     /// </summary>
-    public interface IExtensionBuilderDependencyOptions : IExtensionBuilderOptions
+    public interface IExtensionBuilderDependencyOptions : IOptionsConfigurator
     {
+        /// <summary>
+        /// 基础目录。
+        /// </summary>
+        string BaseDirectory { get; set; }
     }
 }

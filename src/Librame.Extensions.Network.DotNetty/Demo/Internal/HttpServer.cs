@@ -69,7 +69,7 @@ namespace Librame.Extensions.Network.DotNetty
                             .Option(ChannelOption.SoBacklog, 8192);
                     })
                     .AddHttpHandler(tlsCertificate, channelHandler)
-                    .BindAsync(endPoint).ConfigureAwait(true);
+                    .BindAsync(endPoint).ConfigureAndResultAsync();
 
                 Logger.LogInformation($"Httpd started. Listening on {channel.LocalAddress}");
 

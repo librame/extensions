@@ -30,7 +30,7 @@ namespace Librame.Extensions
             bool containsDate = true)
         {
             return dateTime.AsCombFileTime(containsDate)
-                + extension.NotNullOrEmpty(nameof(extension));
+                + extension.NotEmpty(nameof(extension));
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Librame.Extensions
             bool containsDate = true)
         {
             return dateTimeOffset.AsCombFileTime(containsDate)
-                + extension.NotNullOrEmpty(nameof(extension));
+                + extension.NotEmpty(nameof(extension));
         }
 
 

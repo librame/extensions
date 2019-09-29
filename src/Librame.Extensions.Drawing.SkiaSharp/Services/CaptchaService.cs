@@ -24,7 +24,7 @@ namespace Librame.Extensions.Drawing
 {
     using Core;
 
-    class CaptchaService : ExtensionBuilderServiceBase<DrawingBuilderOptions>, ICaptchaService
+    class CaptchaService : AbstractExtensionBuilderService<DrawingBuilderOptions>, ICaptchaService
     {
         public CaptchaService(IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)

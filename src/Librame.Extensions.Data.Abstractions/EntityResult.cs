@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
@@ -56,6 +57,7 @@ namespace Librame.Extensions.Data
         public static EntityResult Success { get; }
             = new EntityResult { Succeeded = true };
 
+
         /// <summary>
         /// 创建操作失败的实体结果。
         /// </summary>
@@ -65,7 +67,7 @@ namespace Librame.Extensions.Data
         {
             var result = new EntityResult { Succeeded = false };
 
-            if (errors.IsNotNullOrEmpty())
+            if (errors.IsNotEmpty())
                 result._errors.AddRange(errors);
 
             return result;
@@ -78,5 +80,45 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="EntityResult"/>。</returns>
         public static EntityResult Failed(Exception exception)
             => Failed(EntityError.ToError(exception));
+
+
+        /// <summary>
+        /// 异步尝试运行工厂方法。
+        /// </summary>
+        /// <param name="taskFactory">给定的异步操作工厂方法。</param>
+        /// <returns>返回一个包含 <see cref="EntityResult"/> 的异步操作。</returns>
+        public static async Task<EntityResult> TryRunFactoryAsync(Func<Task> taskFactory)
+        {
+            taskFactory.NotNull(nameof(taskFactory));
+
+            try
+            {
+                await taskFactory.Invoke().ConfigureAndWaitAsync();
+                return Success;
+            }
+            catch (Exception ex)
+            {
+                return Failed(ex);
+            }
+        }
+
+        /// <summary>
+        /// 尝试运行动作方法。
+        /// </summary>
+        /// <param name="action">给定的动作方法。</param>
+        /// <returns>返回 <see cref="EntityResult"/>。</returns>
+        public static EntityResult TryRunAction(Action action)
+        {
+            try
+            {
+                action?.Invoke();
+                return Success;
+            }
+            catch (Exception ex)
+            {
+                return Failed(ex);
+            }
+        }
+
     }
 }

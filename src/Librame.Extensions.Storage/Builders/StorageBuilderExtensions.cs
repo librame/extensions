@@ -37,7 +37,7 @@ namespace Librame.Extensions.Storage
 
             return builder.AddStorage(dependency =>
             {
-                dependency.OptionsAction = builderAction;
+                dependency.Builder.Action = builderAction;
             },
             builderFactory);
         }
@@ -67,15 +67,15 @@ namespace Librame.Extensions.Storage
             Func<IExtensionBuilder, TDependencyOptions, IStorageBuilder> builderFactory = null)
             where TDependencyOptions : StorageBuilderDependencyOptions, new()
         {
-            // Add Dependencies
-            var dependency = dependencyAction.ConfigureDependencyOptions();
+            // Configure DependencyOptions
+            var dependency = dependencyAction.ConfigureDependency();
+            builder.Services.AddAllOptionsConfigurators(dependency);
 
-            // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
-
+            // Create Builder
             var storageBuilder = builderFactory.NotNullOrDefault(()
                 => (b, d) => new StorageBuilder(b, d)).Invoke(builder, dependency);
 
+            // Configure Builder
             return storageBuilder
                 .AddServices();
         }

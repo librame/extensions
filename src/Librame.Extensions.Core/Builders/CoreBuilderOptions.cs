@@ -19,7 +19,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 核心构建器选项。
     /// </summary>
-    public class CoreBuilderOptions : AbstractExtensionBuilderOptions, IEncoding
+    public class CoreBuilderOptions : IExtensionBuilderOptions, IEncoding
     {
         private static readonly CultureInfo _zhCNCultureInfo
             = new CultureInfo("zh-CN");
@@ -70,7 +70,7 @@ namespace Librame.Extensions.Core
         public Func<ResourceMappingDescriptor, string> ResourceMappingFactory { get; set; }
             = descr =>
             {
-                if (descr.RelativePath.IsNullOrEmpty())
+                if (descr.RelativePath.IsEmpty())
                     return $"{descr.BaseNamespace}.{descr.TypeInfo.Name}";
 
                 // _resourcesRelativePath 已格式化为点分隔符（如：Resources.）

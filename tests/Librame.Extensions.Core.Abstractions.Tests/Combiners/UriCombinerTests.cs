@@ -13,7 +13,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal("https", combiner.Scheme);
             Assert.Equal("developer.microsoft.com", combiner.Host);
             Assert.Equal("/en-us/fabric", combiner.Path);
-            Assert.True(combiner.Query.IsNullOrEmpty());
+            Assert.True(combiner.Query.IsEmpty());
             Assert.Equal("#/get-started", combiner.Anchor);
 
             Assert.Equal("http", combiner.ChangeScheme("http").Scheme);

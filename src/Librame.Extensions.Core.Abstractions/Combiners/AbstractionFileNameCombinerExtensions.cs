@@ -76,7 +76,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回字符串集合。</returns>
         public static IEnumerable<string> ToStrings(this IEnumerable<FileNameCombiner> combiners)
         {
-            combiners.NotNullOrEmpty(nameof(combiners));
+            combiners.NotEmpty(nameof(combiners));
             return combiners.Select(combiner => combiner?.ToString());
         }
 

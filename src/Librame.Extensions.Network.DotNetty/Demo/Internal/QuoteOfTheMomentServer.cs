@@ -55,7 +55,7 @@ namespace Librame.Extensions.Network.DotNetty
                             .Handler(new LoggingHandler("SRV-LSTN"));
                     })
                     .AddQuoteOfTheMomentHandler(channelHandler)
-                    .BindAsync(_serverOptions.Port).ConfigureAwait(true);
+                    .BindAsync(_serverOptions.Port).ConfigureAndResultAsync();
 
                 configureProcess.Invoke(channel);
             }
@@ -65,7 +65,7 @@ namespace Librame.Extensions.Network.DotNetty
             }
             finally
             {
-                await group.ShutdownGracefullyAsync(_serverOptions.QuietPeriod, _serverOptions.TimeOut).ConfigureAwait(false);
+                await group.ShutdownGracefullyAsync(_serverOptions.QuietPeriod, _serverOptions.TimeOut).ConfigureAndWaitAsync();
             }
         }
 

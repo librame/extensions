@@ -61,8 +61,8 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回字符串或抛出异常。</returns>
-        public static string NotNullOrWhiteSpace(this string str, string paramName)
-            => str.IsNotNullOrWhiteSpace() ? str : throw new ArgumentNullException(paramName);
+        public static string NotWhiteSpace(this string str, string paramName)
+            => str.IsNotWhiteSpace() ? str : throw new ArgumentNullException(paramName);
 
 
         /// <summary>
@@ -74,8 +74,8 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回字符串或抛出异常。</returns>
-        public static string NotNullOrEmpty(this string str, string paramName)
-            => str.IsNotNullOrEmpty() ? str : throw new ArgumentNullException(paramName);
+        public static string NotEmpty(this string str, string paramName)
+            => str.IsNotEmpty() ? str : throw new ArgumentNullException(paramName);
 
         /// <summary>
         /// 得到不为 NULL 或空集合的集合。
@@ -87,9 +87,9 @@ namespace Librame.Extensions
         /// <param name="sources">给定的 <see cref="IEnumerable"/>。</param>
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回集合或抛出异常。</returns>
-        public static TSources NotNullOrEmpty<TSources>(this TSources sources, string paramName)
+        public static TSources NotEmpty<TSources>(this TSources sources, string paramName)
             where TSources : IEnumerable
-            => sources.IsNotNullOrEmpty() ? sources : throw new ArgumentNullException(paramName);
+            => sources.IsNotEmpty() ? sources : throw new ArgumentNullException(paramName);
 
         /// <summary>
         /// 得到不为 NULL 或空集合的集合。
@@ -101,8 +101,8 @@ namespace Librame.Extensions
         /// <param name="sources">给定的 <see cref="IEnumerable{TSource}"/>。</param>
         /// <param name="paramName">给定的参数名。</param>
         /// <returns>返回集合或抛出异常。</returns>
-        public static IEnumerable<TSource> NotNullOrEmpty<TSource>(this IEnumerable<TSource> sources, string paramName)
-            => sources.IsNotNullOrEmpty() ? sources : throw new ArgumentNullException(paramName);
+        public static IEnumerable<TSource> NotEmpty<TSource>(this IEnumerable<TSource> sources, string paramName)
+            => sources.IsNotEmpty() ? sources : throw new ArgumentNullException(paramName);
 
         #endregion
 

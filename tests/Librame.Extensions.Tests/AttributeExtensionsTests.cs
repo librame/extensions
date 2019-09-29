@@ -27,7 +27,7 @@ namespace Librame.Extensions.Tests
         {
             var method = typeof(AttributeExtensionsTests).GetMethod(nameof(GetCustomAttributesTest));
             var tests = method.GetCustomAttributes<TestAttribute>();
-            Assert.False(tests.IsNullOrEmpty());
+            Assert.False(tests.IsEmpty());
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace Librame.Extensions.Tests
         {
             var method = typeof(AttributeExtensionsTests).GetMethod(nameof(TryGetCustomAttributesTest));
             Assert.False(method.TryGetCustomAttributes(out IEnumerable<TestAttribute> tests));
-            Assert.True(tests.IsNullOrEmpty());
+            Assert.True(tests.IsEmpty());
         }
     }
 

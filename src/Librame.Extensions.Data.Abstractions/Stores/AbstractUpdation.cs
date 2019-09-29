@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Librame.Extensions.Data
 {
@@ -19,6 +20,7 @@ namespace Librame.Extensions.Data
     /// 抽象更新。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
+    [NotMapped]
     public abstract class AbstractUpdation<TId> : AbstractUpdation<TId, string, DateTimeOffset>
         where TId : IEquatable<TId>
     {
@@ -38,6 +40,7 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TUpdatedBy">指定的更新者。</typeparam>
     /// <typeparam name="TUpdatedTime">指定的更新时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
+    [NotMapped]
     public abstract class AbstractUpdation<TId, TUpdatedBy, TUpdatedTime> : AbstractCreation<TId, TUpdatedBy, TUpdatedTime>, IUpdation<TUpdatedBy, TUpdatedTime>
         where TId : IEquatable<TId>
         where TUpdatedBy : IEquatable<TUpdatedBy>

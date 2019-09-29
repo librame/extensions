@@ -17,7 +17,7 @@ namespace Librame.Extensions.Network.DotNetty
     /// <summary>
     /// DotNetty 依赖选项。
     /// </summary>
-    public class DotNettyDependencyOptions : ExtensionBuilderDependencyOptions<DotNettyOptions>
+    public class DotNettyDependencyOptions : ExtensionBuilderDependencyOptions<DotNettyDependencyOptions, DotNettyOptions>
     {
     }
 }

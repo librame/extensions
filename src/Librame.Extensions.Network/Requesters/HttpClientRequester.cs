@@ -56,11 +56,10 @@ namespace Librame.Extensions.Network
         public override async Task<byte[]> GetResponseBytesAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
-            var message = await GetResponseMessage(uri, postData, enableCodec, parameters, cancellationToken)
-                .ConfigureAwait(true);
+            var message = await GetResponseMessage(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAndResultAsync();
 
-            var buffer = await message.Content.ReadAsByteArrayAsync().ConfigureAwait(true);
-            if (buffer.IsNotNullOrEmpty())
+            var buffer = await message.Content.ReadAsByteArrayAsync().ConfigureAndResultAsync();
+            if (buffer.IsNotEmpty())
                 return ByteCodec.Decode(buffer, enableCodec);
 
             return buffer;
@@ -78,10 +77,9 @@ namespace Librame.Extensions.Network
         public override async Task<string> GetResponseStringAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
-            var buffer = await GetResponseBytesAsync(uri, postData, enableCodec, parameters, cancellationToken)
-                .ConfigureAwait(true);
+            var buffer = await GetResponseBytesAsync(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAndResultAsync();
 
-            if (buffer.IsNotNullOrEmpty())
+            if (buffer.IsNotEmpty())
                 return buffer.AsEncodingString(Encoding);
 
             return null;
@@ -99,10 +97,8 @@ namespace Librame.Extensions.Network
         public override async Task<Stream> GetResponseStreamAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
-            var message = await GetResponseMessage(uri, postData, enableCodec, parameters, cancellationToken)
-                .ConfigureAwait(true);
-
-            return await message.Content.ReadAsStreamAsync().ConfigureAwait(true);
+            var message = await GetResponseMessage(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAndResultAsync();
+            return await message.Content.ReadAsStreamAsync().ConfigureAndResultAsync();
         }
 
 
@@ -124,13 +120,13 @@ namespace Librame.Extensions.Network
             client.Timeout = opts.Timeout;
             client.DefaultRequestHeaders.Add("User-Agent", opts.UserAgent);
 
-            if (parameters.Accept.IsNotNullOrEmpty())
+            if (parameters.Accept.IsNotEmpty())
                 client.DefaultRequestHeaders.Add("Accept", parameters.Accept);
 
-            if (parameters.ContentType.IsNotNullOrEmpty())
+            if (parameters.ContentType.IsNotEmpty())
                 client.DefaultRequestHeaders.Add("Content-Type", parameters.ContentType);
 
-            if (parameters.Headers.IsNotNullOrEmpty())
+            if (parameters.Headers.IsNotEmpty())
             {
                 parameters.Headers.ForEach(pair =>
                 {
@@ -159,19 +155,19 @@ namespace Librame.Extensions.Network
             {
                 HttpResponseMessage responseMessage;
 
-                if (postData.IsNotNullOrEmpty())
+                if (postData.IsNotEmpty())
                 {
                     var buffer = ByteCodec.EncodeStringAsBytes(postData, enableCodec);
                     var content = new ByteArrayContent(buffer);
 
-                    responseMessage = await client.PostAsync(uri, content, cancellationToken).ConfigureAwait(true);
+                    responseMessage = await client.PostAsync(uri, content, cancellationToken).ConfigureAndResultAsync();
 
                     Logger.LogDebug($"Send data: {postData}");
                     Logger.LogDebug($"Enable codec: {enableCodec}");
                 }
                 else
                 {
-                    responseMessage = await client.GetAsync(uri, cancellationToken).ConfigureAwait(true);
+                    responseMessage = await client.GetAsync(uri, cancellationToken).ConfigureAndResultAsync();
                 }
 
                 return responseMessage;

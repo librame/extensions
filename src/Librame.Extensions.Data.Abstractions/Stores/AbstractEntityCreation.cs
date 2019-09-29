@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Librame.Extensions.Data
 {
@@ -19,6 +20,7 @@ namespace Librame.Extensions.Data
     /// 抽象实体创建。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
+    [NotMapped]
     public abstract class AbstractEntityCreation<TId> : AbstractEntityCreation<TId, string, DateTimeOffset>
         where TId : IEquatable<TId>
     {
@@ -38,6 +40,7 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     /// <typeparam name="TCreatedTime">指定的创建时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
+    [NotMapped]
     public abstract class AbstractEntityCreation<TId, TCreatedBy, TCreatedTime> : AbstractEntityCreation<TId, float, DataStatus, TCreatedBy, TCreatedTime>
         where TId : IEquatable<TId>
         where TCreatedBy : IEquatable<TCreatedBy>
@@ -62,6 +65,7 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     /// <typeparam name="TCreatedTime">指定的创建时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
+    [NotMapped]
     public abstract class AbstractEntityCreation<TId, TRank, TStatus, TCreatedBy, TCreatedTime> : AbstractCreation<TId, TCreatedBy, TCreatedTime>, IRank<TRank>, IStatus<TStatus>
         where TId : IEquatable<TId>
         where TRank : struct

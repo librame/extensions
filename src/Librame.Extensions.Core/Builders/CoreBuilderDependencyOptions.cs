@@ -20,30 +20,31 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 核心构建器依赖选项。
     /// </summary>
-    public class CoreBuilderDependencyOptions : ExtensionBuilderDependencyOptions<CoreBuilderOptions>
+    public class CoreBuilderDependencyOptions : ExtensionBuilderDependencyOptions<CoreBuilderDependencyOptions, CoreBuilderOptions>
     {
         /// <summary>
-        /// <see cref="LocalizationOptions"/> 配置动作。
+        /// 本地化选项配置器（手动服务注册时注入配置动作）。
         /// </summary>
-        public Action<LocalizationOptions> LocalizationAction { get; set; }
-            = options => options.ResourcesPath = "Resources";
+        public OptionsActionConfigurator<LocalizationOptions> Localization { get; }
+            = new OptionsActionConfigurator<LocalizationOptions>(options => options.ResourcesPath = "Resources", autoConfigureAction: false);
+
+        /// <summary>
+        /// 内存缓存选项配置器（手动服务注册时注入配置动作）。
+        /// </summary>
+        public OptionsActionConfigurator<MemoryCacheOptions> MemoryCache { get; }
+            = new OptionsActionConfigurator<MemoryCacheOptions>(autoConfigureAction: false);
+
+        /// <summary>
+        /// 内存分布式缓存选项配置器（手动服务注册时注入配置动作）。
+        /// </summary>
+        public OptionsActionConfigurator<MemoryDistributedCacheOptions> MemoryDistributedCache { get; }
+            = new OptionsActionConfigurator<MemoryDistributedCacheOptions>(autoConfigureAction: false);
+
 
         /// <summary>
         /// <see cref="ILoggingBuilder"/> 配置动作。
         /// </summary>
         public Action<ILoggingBuilder> LoggingAction { get; set; }
-            = _ => { };
-
-        /// <summary>
-        /// <see cref="MemoryCacheOptions"/> 配置动作。
-        /// </summary>
-        public Action<MemoryCacheOptions> MemoryCacheAction { get; set; }
-            = _ => { };
-
-        /// <summary>
-        /// <see cref="MemoryDistributedCacheOptions"/> 配置动作。
-        /// </summary>
-        public Action<MemoryDistributedCacheOptions> MemoryDistributedCacheAction { get; set; }
             = _ => { };
     }
 }

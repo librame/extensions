@@ -25,6 +25,5 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="TableNameSchema"/>。</returns>
         public static TableNameSchema AsSchema(this TableNameDescriptor descriptor, string schema = null)
             => new TableNameSchema(descriptor, schema);
-
     }
 }

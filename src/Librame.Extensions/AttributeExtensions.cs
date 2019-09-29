@@ -47,7 +47,7 @@ namespace Librame.Extensions
             where TAttribute : Attribute
         {
             var attributes = provider.GetCustomAttributes(typeof(TAttribute), inherit);
-            return !attributes.IsNullOrEmpty() ? (TAttribute)attributes[0] : null;
+            return !attributes.IsEmpty() ? (TAttribute)attributes[0] : null;
         }
         /// <summary>
         /// 得到特性集合。
@@ -60,7 +60,7 @@ namespace Librame.Extensions
             where TAttribute : Attribute
         {
             var attributes = provider.GetCustomAttributes(typeof(TAttribute), inherit);
-            return !attributes.IsNullOrEmpty() ? attributes.Select(attrib => (TAttribute)attrib) : null;
+            return !attributes.IsEmpty() ? attributes.Select(attrib => (TAttribute)attrib) : null;
         }
 
         /// <summary>

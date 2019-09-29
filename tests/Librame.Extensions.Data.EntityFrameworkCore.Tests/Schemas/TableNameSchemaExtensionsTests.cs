@@ -4,7 +4,6 @@ namespace Librame.Extensions.Data.Tests
 {
     public class TableNameSchemaExtensionsTests
     {
-        [TableNameSchema]
         public class TestEntity
         {
         }

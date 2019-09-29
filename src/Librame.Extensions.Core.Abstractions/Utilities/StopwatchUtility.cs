@@ -28,7 +28,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="IEnumerable{TimeSpan}"/>。</returns>
         public static IEnumerable<TimeSpan> Run(params Action[] actions)
         {
-            actions.NotNullOrEmpty(nameof(actions));
+            actions.NotEmpty(nameof(actions));
 
             var stopwatch = Stopwatch.StartNew();
             foreach (var action in actions)

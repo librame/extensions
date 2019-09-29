@@ -19,7 +19,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 存储构建器选项。
     /// </summary>
-    public class StorageBuilderOptions : AbstractExtensionBuilderOptions
+    public class StorageBuilderOptions : IExtensionBuilderOptions
     {
         /// <summary>
         /// 缓冲区大小（默认使用 512）。

@@ -221,7 +221,7 @@ namespace Librame.Extensions
         public static int InvokeTypes(this IEnumerable<Assembly> assemblies,
             Action<Type> action, Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
         {
-            assemblies.NotNullOrEmpty(nameof(assemblies));
+            assemblies.NotEmpty(nameof(assemblies));
             action.NotNull(nameof(action));
 
             var allTypes = assemblies.SelectMany(a => a.ExportedTypes);

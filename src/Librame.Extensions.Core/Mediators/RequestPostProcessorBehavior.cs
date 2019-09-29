@@ -24,7 +24,7 @@ namespace Librame.Extensions.Core
 
         public RequestPostProcessorBehavior(IEnumerable<IRequestPostProcessor<TRequest, TResponse>> postProcessors)
         {
-            _postProcessors = postProcessors.NotNullOrEmpty(nameof(postProcessors));
+            _postProcessors = postProcessors.NotEmpty(nameof(postProcessors));
         }
 
 
@@ -33,10 +33,10 @@ namespace Librame.Extensions.Core
         {
             next.NotNull(nameof(next));
 
-            var response = await next.Invoke().ConfigureAwait(true);
+            var response = await next.Invoke().ConfigureAndResultAsync();
 
             foreach (var post in _postProcessors)
-                await post.Process(request, response, cancellationToken).ConfigureAwait(false);
+                await post.Process(request, response, cancellationToken).ConfigureAndWaitAsync();
 
             return response;
         }

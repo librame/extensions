@@ -45,7 +45,7 @@ namespace Librame.Extensions.Tests
             var paths = new string[] { @"c:\temp\filename.jpg", @"c:\temp\filename.png", @"c:\temp\filename.gif", @"c:\temp\filename.mp3" };
 
             var results = paths.ExtractHasExtension(new string[] { ".jpg", ".mp3" });
-            Assert.False(results.IsNullOrEmpty());
+            Assert.False(results.IsEmpty());
         }
 
         [Fact]

@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据构建器依赖选项。
     /// </summary>
-    public class DataBuilderDependencyOptions : ExtensionBuilderDependencyOptions<DataBuilderOptions>
+    public class DataBuilderDependencyOptions : ExtensionBuilderDependencyOptions<DataBuilderDependencyOptions, DataBuilderOptions>
     {
     }
 }

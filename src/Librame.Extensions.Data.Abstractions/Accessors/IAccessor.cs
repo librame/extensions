@@ -41,7 +41,7 @@ namespace Librame.Extensions.Data
         /// <param name="sql">给定的 SQL 语句。</param>
         /// <param name="parameters">给定的参数集合。</param>
         /// <returns>返回受影响的行数。</returns>
-        int ExecuteSqlCommand(string sql, params object[] parameters);
+        int ExecuteSqlRaw(string sql, params object[] parameters);
 
         /// <summary>
         /// 异步执行 SQL 命令。
@@ -50,7 +50,7 @@ namespace Librame.Extensions.Data
         /// <param name="parameters">给定的参数集合。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
-        Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
+        Task<int> ExecuteSqlRawAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
 
 
         /// <summary>
@@ -92,8 +92,15 @@ namespace Librame.Extensions.Data
         /// 切换租户。
         /// </summary>
         /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        bool ToggleTenant(Func<ITenant, string> changeConnectionStringFactory, CancellationToken cancellationToken = default);
+        bool SwitchTenant(Func<ITenant, string> changeConnectionStringFactory);
+
+        /// <summary>
+        /// 异步切换租户。
+        /// </summary>
+        /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含是否已切换的布尔值的异步操作。</returns>
+        Task<bool> SwitchTenantAsync(Func<ITenant, string> changeConnectionStringFactory, CancellationToken cancellationToken = default);
     }
 }

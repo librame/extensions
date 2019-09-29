@@ -19,41 +19,41 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
-        public void IsNullOrWhiteSpaceTest()
+        public void IsWhiteSpaceTest()
         {
             string str = null;
-            Assert.True(str.IsNullOrWhiteSpace());
+            Assert.True(str.IsWhiteSpace());
 
             str = " ";
-            Assert.True(str.IsNullOrWhiteSpace());
+            Assert.True(str.IsWhiteSpace());
 
-            Assert.True("123".IsNotNullOrWhiteSpace());
+            Assert.True("123".IsNotWhiteSpace());
         }
 
         [Fact]
-        public void IsNullOrEmptyTest()
+        public void IsEmptyTest()
         {
             string str = null;
-            Assert.True(str.IsNullOrEmpty());
+            Assert.True(str.IsEmpty());
 
             str = string.Empty;
-            Assert.True(str.IsNullOrEmpty());
+            Assert.True(str.IsEmpty());
 
-            Assert.True("123".IsNotNullOrEmpty());
+            Assert.True("123".IsNotEmpty());
 
             // IEnumerable
             IEnumerable enumerable = new int[0];
-            Assert.True(enumerable.IsNullOrEmpty());
+            Assert.True(enumerable.IsEmpty());
 
             enumerable = new int[1] { 1 };
-            Assert.True(enumerable.IsNotNullOrEmpty());
+            Assert.True(enumerable.IsNotEmpty());
 
             // IEnumerable<string>
             IEnumerable<string> items = null;
-            Assert.True(items.IsNullOrEmpty());
+            Assert.True(items.IsEmpty());
 
             items = Enumerable.Range(1, 10).Select(s => s.ToString());
-            Assert.True(items.IsNotNullOrEmpty());
+            Assert.True(items.IsNotEmpty());
         }
 
         [Fact]

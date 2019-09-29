@@ -28,7 +28,7 @@ namespace Librame.Extensions.Core
         public ResourceMappingDescriptor(TypeInfo typeInfo, string baseNamespace, string relativePath)
         {
             TypeInfo = typeInfo.NotNull(nameof(typeInfo));
-            BaseNamespace = baseNamespace.NotNullOrEmpty(nameof(baseNamespace));
+            BaseNamespace = baseNamespace.NotEmpty(nameof(baseNamespace));
             RelativePath = relativePath;
         }
 

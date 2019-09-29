@@ -42,19 +42,15 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 初始化。
         /// </summary>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
-        void Initialize(IStoreHub<TAccessor> stores);
-
-        /// <summary>
-        /// 初始化。
-        /// </summary>
         /// <typeparam name="TAudit">指定的审计类型。</typeparam>
-        /// <typeparam name="TTable">指定的实体表类型。</typeparam>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
         /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor, TAudit, TTable, TTenant}"/>。</param>
-        void Initialize<TAudit, TTable, TTenant>(IStoreHub<TAccessor, TAudit, TTable, TTenant> stores)
+        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor, TAudit, TTable, TMigration, TTenant}"/>。</param>
+        void Initialize<TAudit, TEntity, TMigration, TTenant>(IStoreHub<TAccessor, TAudit, TEntity, TMigration, TTenant> stores)
             where TAudit : DataAudit
-            where TTable : DataEntity
+            where TEntity : DataEntity
+            where TMigration : DataMigration
             where TTenant : DataTenant;
     }
 

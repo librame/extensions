@@ -12,13 +12,13 @@ namespace Librame.Extensions.Data.Tests
         public void ResourceTest()
         {
             var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
-            var localizer = TestServiceProvider.Current.GetRequiredService<IExpressionStringLocalizer<AbstractEntityResource>>();
+            var localizer = TestServiceProvider.Current.GetRequiredService<IExpressionLocalizer<AbstractEntityResource>>();
 
             foreach (var name in cultureNames)
                 RunTest(localizer, name);
         }
 
-        private void RunTest(IExpressionStringLocalizer<AbstractEntityResource> localizer, string cultureName)
+        private void RunTest(IExpressionLocalizer<AbstractEntityResource> localizer, string cultureName)
         {
             CultureInfo.CurrentCulture
                 = CultureInfo.CurrentUICulture

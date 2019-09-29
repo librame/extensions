@@ -48,10 +48,10 @@ namespace Librame.Extensions.Core
         {
             combiner.NotNull(nameof(combiner));
 
-            if (combiner.TopLevelSegment.IsNullOrEmpty())
+            if (combiner.TopLevelSegment.IsEmpty())
                 return (null, combiner.Root);
 
-            if (combiner.SecondLevelSegment.IsNullOrEmpty())
+            if (combiner.SecondLevelSegment.IsEmpty())
                 return (null, combiner.TopLevel);
 
             var child = combiner.Source.TrimEnd($".{combiner.TopLevel}");

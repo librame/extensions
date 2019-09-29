@@ -28,34 +28,34 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
-        public void NotNullOrEmptyTest()
+        public void NotEmptyTest()
         {
             // String
             var str = string.Empty;
             Assert.Throws<ArgumentNullException>(() =>
             {
-                return str.NotNullOrEmpty(nameof(str));
+                return str.NotEmpty(nameof(str));
             });
 
             // IEnumerable
             IEnumerable<string> items = null;
             Assert.Throws<ArgumentNullException>(() =>
             {
-                return items.NotNullOrEmpty(nameof(items));
+                return items.NotEmpty(nameof(items));
             });
 
             // IList
             IList<string> list = null;
             Assert.Throws<ArgumentNullException>(() =>
             {
-                return list.NotNullOrEmpty(nameof(list));
+                return list.NotEmpty(nameof(list));
             });
 
             // Array
             string[] array = null;
             Assert.Throws<ArgumentNullException>(() =>
             {
-                return array.NotNullOrEmpty(nameof(array));
+                return array.NotEmpty(nameof(array));
             });
         }
 

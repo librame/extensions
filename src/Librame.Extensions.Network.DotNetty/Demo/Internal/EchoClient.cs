@@ -61,7 +61,7 @@ namespace Librame.Extensions.Network.DotNetty
                 var channel = await WrapperFactory
                     .CreateTcp(false, out group)
                     .AddEchoHandler(tlsCertificate, channelHandler)
-                    .ConnectAsync(endPoint, _clientOptions.RetryCount).ConfigureAwait(true);
+                    .ConnectAsync(endPoint, _clientOptions.RetryCount).ConfigureAndResultAsync();
 
                 Logger.LogInformation($"Connect ip end point: {endPoint}");
 

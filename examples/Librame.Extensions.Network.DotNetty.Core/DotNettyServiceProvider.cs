@@ -33,8 +33,8 @@ namespace Librame.Extensions.Network.DotNetty
                 .AddNetwork().AddDotNetty();
 
                 // Use DotNetty LoggerFactory
-                InternalLoggerFactory.DefaultFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));
-                //services.TryReplace(InternalLoggerFactory.DefaultFactory);
+                //InternalLoggerFactory.DefaultFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));
+                services.TryReplace(InternalLoggerFactory.DefaultFactory);
 
                 return services.BuildServiceProvider();
             });

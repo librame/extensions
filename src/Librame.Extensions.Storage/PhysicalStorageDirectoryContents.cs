@@ -47,7 +47,7 @@ namespace Librame.Extensions.Storage
         /// <param name="filters">指定排除哪些文件或目录。</param>
         public PhysicalStorageDirectoryContents(string directory, ExclusionFilters filters)
         {
-            _directory = directory.NotNullOrEmpty(nameof(directory));
+            _directory = directory.NotEmpty(nameof(directory));
             _filters = filters;
 
             Exists = Directory.Exists(_directory);
@@ -59,7 +59,7 @@ namespace Librame.Extensions.Storage
         /// <param name="contents">给定的 <see cref="IDirectoryContents"/>。</param>
         public PhysicalStorageDirectoryContents(IDirectoryContents contents)
         {
-            contents.NotNullOrEmpty(nameof(contents));
+            contents.NotEmpty(nameof(contents));
 
             _entries = contents.Select<IFileInfo, IStorageFileInfo>(info =>
             {
@@ -91,7 +91,7 @@ namespace Librame.Extensions.Storage
         /// <returns>返回 <see cref="IEnumerable{IStorageFileInfo}"/>。</returns>
         public IEnumerator<IStorageFileInfo> GetEnumerator()
         {
-            if (_directory.IsNotNullOrEmpty())
+            if (_directory.IsNotEmpty())
                 EnsureInitialized(); // 目录模式
 
             return _entries.GetEnumerator();

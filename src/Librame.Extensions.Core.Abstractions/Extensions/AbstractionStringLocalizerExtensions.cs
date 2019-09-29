@@ -10,13 +10,11 @@
 
 #endregion
 
-using Librame.Extensions;
-using Librame.Extensions.Core;
+using Microsoft.Extensions.Localization;
 using System;
-using System.Globalization;
 using System.Linq.Expressions;
 
-namespace Microsoft.Extensions.Localization
+namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 抽象字符串组合器静态扩展。
@@ -57,66 +55,6 @@ namespace Microsoft.Extensions.Localization
         {
             var name = propertyExpression.AsPropertyName();
             return localizer[name, arguments];
-        }
-
-        #endregion
-
-
-        #region WithCulture
-
-        /// <summary>
-        /// 创建一个指定文化名称的字符串组合器副本。
-        /// </summary>
-        /// <param name="localizer">给定的 <see cref="IStringLocalizer"/>。</param>
-        /// <param name="cultureName">给定的文化名称。</param>
-        /// <returns>返回 <see cref="IStringLocalizer"/>。</returns>
-        public static IStringLocalizer WithCulture(this IStringLocalizer localizer, string cultureName)
-            => localizer.WithCulture(CultureInfo.CreateSpecificCulture(cultureName));
-
-        /// <summary>
-        /// 创建一个指定文化名称的字符串组合器副本。
-        /// </summary>
-        /// <typeparam name="TResource">指定的资源类型。</typeparam>
-        /// <param name="localizer">给定的 <see cref="IStringLocalizer{TResource}"/>。</param>
-        /// <param name="cultureName">给定的文化名称。</param>
-        /// <returns>返回 <see cref="IStringLocalizer{TResource}"/>。</returns>
-        public static IStringLocalizer<TResource> WithCulture<TResource>(this IStringLocalizer<TResource> localizer, string cultureName)
-            => localizer.WithCulture<TResource>(CultureInfo.CreateSpecificCulture(cultureName));
-
-        /// <summary>
-        /// 创建一个指定文化名称的字符串组合器副本。
-        /// </summary>
-        /// <typeparam name="TResource">指定的资源类型。</typeparam>
-        /// <param name="localizer">给定的 <see cref="IStringLocalizer{TResource}"/>。</param>
-        /// <param name="culture">给定的 <see cref="CultureInfo"/>。</param>
-        /// <returns>返回 <see cref="IStringLocalizer{TResource}"/>。</returns>
-        public static IStringLocalizer<TResource> WithCulture<TResource>(this IStringLocalizer<TResource> localizer, CultureInfo culture)
-        {
-            localizer.WithCulture(culture);
-            return localizer;
-        }
-
-        /// <summary>
-        /// 创建一个指定文化名称的字符串组合器副本。
-        /// </summary>
-        /// <typeparam name="TResource">指定的资源类型。</typeparam>
-        /// <param name="localizer">给定的 <see cref="IExpressionStringLocalizer{TResource}"/>。</param>
-        /// <param name="cultureName">给定的文化名称。</param>
-        /// <returns>返回 <see cref="IExpressionStringLocalizer{TResource}"/>。</returns>
-        public static IExpressionStringLocalizer<TResource> WithCulture<TResource>(this IExpressionStringLocalizer<TResource> localizer, string cultureName)
-            => localizer.WithCulture<TResource>(CultureInfo.CreateSpecificCulture(cultureName));
-
-        /// <summary>
-        /// 创建一个指定文化名称的字符串组合器副本。
-        /// </summary>
-        /// <typeparam name="TResource">指定的资源类型。</typeparam>
-        /// <param name="localizer">给定的 <see cref="IExpressionStringLocalizer{TResource}"/>。</param>
-        /// <param name="culture">给定的 <see cref="CultureInfo"/>。</param>
-        /// <returns>返回 <see cref="IExpressionStringLocalizer{TResource}"/>。</returns>
-        public static IExpressionStringLocalizer<TResource> WithCulture<TResource>(this IExpressionStringLocalizer<TResource> localizer, CultureInfo culture)
-        {
-            localizer.WithCulture(culture);
-            return localizer;
         }
 
         #endregion

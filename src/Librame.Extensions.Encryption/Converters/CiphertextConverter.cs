@@ -43,7 +43,7 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="to">给定的密文字符串。</param>
         /// <returns>返回缓冲区。</returns>
-        public IByteMemoryBuffer From(string to)
+        public IByteMemoryBuffer ConvertFrom(string to)
         {
             var buffer = to.AsByteBufferFromBase64String();
             Logger.LogDebug($"From BASE64 String: {to}");
@@ -56,7 +56,7 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="from">给定的 <see cref="IByteMemoryBuffer"/>。</param>
         /// <returns>返回字符串。</returns>
-        public string To(IByteMemoryBuffer from)
+        public string ConvertTo(IByteMemoryBuffer from)
         {
             string str = from.AsBase64String();
             Logger.LogDebug($"Convert to BASE64 String: {str}");

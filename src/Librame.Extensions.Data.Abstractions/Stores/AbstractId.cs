@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Librame.Extensions.Data
 {
@@ -19,6 +20,7 @@ namespace Librame.Extensions.Data
     /// 抽象标识。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
+    [NotMapped]
     public abstract class AbstractId<TId> : IId<TId>
         where TId : IEquatable<TId>
     {

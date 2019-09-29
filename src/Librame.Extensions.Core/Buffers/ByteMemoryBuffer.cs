@@ -39,32 +39,32 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 隐式转换为 <see cref="Memory{Byte}"/>。
-        /// </summary>
-        /// <param name="buffer">给定的 <see cref="ByteMemoryBuffer"/>。</param>
-        public static implicit operator Memory<byte>(ByteMemoryBuffer buffer)
-            => buffer.NotNull(nameof(buffer)).Memory;
-
-        /// <summary>
         /// 隐式转换为字节数组。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="ByteMemoryBuffer"/>。</param>
         public static implicit operator byte[](ByteMemoryBuffer buffer)
             => buffer.NotNull(nameof(buffer)).Memory.ToArray();
 
+        /// <summary>
+        /// 隐式转换为字节内存缓冲区。
+        /// </summary>
+        /// <param name="array">给定的字节数组。</param>
+        public static implicit operator ByteMemoryBuffer(byte[] array)
+            => new ByteMemoryBuffer(array);
+
 
         /// <summary>
-        /// 显式转换为 <see cref="ByteMemoryBuffer"/>。
+        /// 显式转换为字节内存。
         /// </summary>
-        /// <param name="bytes">给定的 <see cref="Memory{Byte}"/>。</param>
-        public static explicit operator ByteMemoryBuffer(Memory<byte> bytes)
-            => new ByteMemoryBuffer(bytes);
+        /// <param name="buffer">给定的 <see cref="ByteMemoryBuffer"/>。</param>
+        public static explicit operator Memory<byte>(ByteMemoryBuffer buffer)
+            => buffer.NotNull(nameof(buffer)).Memory;
 
         /// <summary>
-        /// 显式转换为 <see cref="ByteMemoryBuffer"/>。
+        /// 显式转换为字节内存缓冲区。
         /// </summary>
-        /// <param name="bytes">给定的字节数组。</param>
-        public static explicit operator ByteMemoryBuffer(byte[] bytes)
-            => new ByteMemoryBuffer(bytes);
+        /// <param name="memory">给定的 <see cref="Memory{Byte}"/>。</param>
+        public static explicit operator ByteMemoryBuffer(Memory<byte> memory)
+            => new ByteMemoryBuffer(memory);
     }
 }

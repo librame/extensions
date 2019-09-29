@@ -20,8 +20,9 @@ namespace Librame.Extensions.Data
     {
         public static IDataBuilder AddMediators(this IDataBuilder builder)
         {
-            builder.Services.AddTransient<INotificationHandler<AuditNotification>, AuditNotificationHandler>();
-            builder.Services.AddTransient<INotificationHandler<EntityNotification>, EntityNotificationHandler>();
+            builder.Services.AddTransient<INotificationHandler<DataAuditNotification>, DataAuditNotificationHandler>();
+            builder.Services.AddTransient<INotificationHandler<DataEntityNotification>, DataEntityNotificationHandler>();
+            builder.Services.AddTransient<INotificationHandler<DataMigrationNotification>, DataMigrationNotificationHandler>();
 
             return builder;
         }

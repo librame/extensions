@@ -12,8 +12,8 @@ namespace Librame.Extensions.Encryption.Tests
             
             var converter = TestServiceProvider.Current.GetRequiredService<ICiphertextConverter>();
 
-            var buffer = converter.From(rawCiphertextString);
-            var ciphertextString = converter.To(buffer);
+            var buffer = converter.ConvertFrom(rawCiphertextString);
+            var ciphertextString = converter.ConvertTo(buffer);
 
             Assert.Equal(rawCiphertextString, ciphertextString);
         }

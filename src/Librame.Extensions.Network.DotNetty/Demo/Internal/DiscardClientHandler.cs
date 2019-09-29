@@ -61,13 +61,13 @@ namespace Librame.Extensions.Network.DotNetty
                 var buffer = Unpooled.WrappedBuffer(_array);
                 // Flush the outbound buffer to the socket.
                 // Once flushed, generate the same amount of traffic again.
-                await _context.WriteAndFlushAsync(buffer).ConfigureAwait(false);
+                await _context.WriteAndFlushAsync(buffer).ConfigureAndWaitAsync();
 
                 //GenerateTraffic();
             }
             catch
             {
-                await _context.CloseAsync().ConfigureAwait(false);
+                await _context.CloseAsync().ConfigureAndWaitAsync();
             }
         }
 

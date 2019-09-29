@@ -41,7 +41,7 @@ namespace Librame.Extensions.Core
         public AbstractAlgorithmIdentifier(string identifier, IAlgorithmConverter converter)
         {
             Converter = converter.NotNull(nameof(converter));
-            Memory = converter.From(identifier);
+            Memory = converter.ConvertFrom(identifier);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Librame.Extensions.Core
             Converter = (IAlgorithmConverter)info.GetValue("Converter", converterType);
 
             var identifier = info.GetString("Identifier");
-            Memory = Converter.From(identifier);
+            Memory = Converter.ConvertFrom(identifier);
         }
 
 
@@ -77,7 +77,7 @@ namespace Librame.Extensions.Core
         /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Identifier", Converter.To(Memory));
+            info.AddValue("Identifier", Converter.ConvertTo(Memory));
             info.AddValue("Converter", Converter);
             info.AddValue("ConverterTypeName", Converter.GetType().ToString());
         }
@@ -113,7 +113,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => Converter.To(Memory);
+            => Converter.ConvertTo(Memory);
 
 
         /// <summary>

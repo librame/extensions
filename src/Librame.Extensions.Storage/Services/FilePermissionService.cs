@@ -19,7 +19,7 @@ namespace Librame.Extensions.Storage
 {
     using Core;
 
-    class FilePermissionService : ExtensionBuilderServiceBase<StorageBuilderOptions>, IFilePermissionService
+    class FilePermissionService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFilePermissionService
     {
         public FilePermissionService(IOptions<StorageBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)

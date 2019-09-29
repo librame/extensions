@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 
 namespace Librame.Extensions.Data
@@ -23,24 +24,28 @@ namespace Librame.Extensions.Data
     public class DataMigration : AbstractCreation<string>, IEquatable<DataMigration>
     {
         /// <summary>
-        /// 特性标识。
+        /// 访问器类型名。
         /// </summary>
-        public virtual string AttributeId { get; set; }
+        [Display(Name = nameof(AccessorName), ResourceType = typeof(DataMigrationResource))]
+        public virtual string AccessorName { get; set; }
 
         /// <summary>
-        /// 产品版本。
+        /// 模型快照类型名。
         /// </summary>
-        public virtual string ProductVersion { get; set; }
-
-        /// <summary>
-        /// 模型主体。
-        /// </summary>
-        public virtual byte[] ModelBody { get; set; }
+        [Display(Name = nameof(ModelSnapshotName), ResourceType = typeof(DataMigrationResource))]
+        public virtual string ModelSnapshotName { get; set; }
 
         /// <summary>
         /// 模型散列。
         /// </summary>
+        [Display(Name = nameof(ModelHash), ResourceType = typeof(DataMigrationResource))]
         public virtual string ModelHash { get; set; }
+
+        /// <summary>
+        /// 模型主体。
+        /// </summary>
+        [Display(Name = nameof(ModelBody), ResourceType = typeof(DataMigrationResource))]
+        public virtual byte[] ModelBody { get; set; }
 
 
         /// <summary>
@@ -49,7 +54,7 @@ namespace Librame.Extensions.Data
         /// <param name="other">给定的其他 <see cref="DataMigration"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(DataMigration other)
-            => AttributeId == other?.AttributeId && ProductVersion == other?.ProductVersion;
+            => ModelHash == other?.ModelHash;
 
         /// <summary>
         /// 重写是否相等。
@@ -73,23 +78,21 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => $"{AttributeId},{ProductVersion}";
+            => ModelHash;
 
 
         /// <summary>
         /// 获取唯一索引表达式。
         /// </summary>
         /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
-        /// <param name="attributeId">给定的特性标识。</param>
-        /// <param name="productVersion">给定的产品版本。</param>
+        /// <param name="modelHash">给定的模型哈希。</param>
         /// <returns>返回查询表达式。</returns>
-        public static Expression<Func<TMigration, bool>> GetUniqueIndexExpression<TMigration>(string attributeId, string productVersion)
+        public static Expression<Func<TMigration, bool>> GetUniqueIndexExpression<TMigration>(string modelHash)
             where TMigration : DataMigration
         {
-            attributeId.NotNullOrEmpty(nameof(attributeId));
-            productVersion.NotNullOrEmpty(nameof(productVersion));
+            modelHash.NotEmpty(nameof(modelHash));
 
-            return p => p.AttributeId == attributeId && p.ProductVersion == productVersion;
+            return p => p.ModelHash == modelHash;
         }
     }
 }

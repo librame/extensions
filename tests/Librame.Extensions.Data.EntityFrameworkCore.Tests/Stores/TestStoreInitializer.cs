@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data.Tests
         }
 
 
-        protected override void InitializeCore(IStoreHub<TestDbContextAccessor> stores)
+        protected override void InitializeCore<TAudit, TEntity, TMigration, TTenant>(IStoreHub<TestDbContextAccessor, TAudit, TEntity, TMigration, TTenant> stores)
         {
             base.InitializeCore(stores);
 
@@ -45,6 +45,7 @@ namespace Librame.Extensions.Data.Tests
                 };
 
                 accessor.Categories.AddRange(_categories);
+                IsCreated = true;
             }
             else
             {
@@ -60,11 +61,9 @@ namespace Librame.Extensions.Data.Tests
 
                 for (int i = 0; i < 100; i++)
                 {
-                    var articleId = Identifier.GetArticleIdAsync().Result;
-
                     articles.Add(new Article
                     {
-                        Id = articleId,
+                        Id = Identifier.GetArticleIdAsync().ConfigureAndResult(),
                         Title = "Article " + i.ToString(),
                         Descr = "Descr " + i.ToString(),
                         Category = (i < 50) ? _categories.First() : _categories.Last()
@@ -72,6 +71,7 @@ namespace Librame.Extensions.Data.Tests
                 }
 
                 stores.Articles.AddRange(articles);
+                IsCreated = true;
             }
         }
 

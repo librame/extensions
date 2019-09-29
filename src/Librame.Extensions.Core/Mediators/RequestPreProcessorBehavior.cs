@@ -24,7 +24,7 @@ namespace Librame.Extensions.Core
 
         public RequestPreProcessorBehavior(IEnumerable<IRequestPreProcessor<TRequest>> preProcessors)
         {
-            _preProcessors = preProcessors.NotNullOrEmpty(nameof(preProcessors));
+            _preProcessors = preProcessors.NotEmpty(nameof(preProcessors));
         }
 
 
@@ -34,9 +34,9 @@ namespace Librame.Extensions.Core
             next.NotNull(nameof(next));
 
             foreach (var pre in _preProcessors)
-                await pre.ProcessAsync(request, cancellationToken).ConfigureAwait(false);
+                await pre.ProcessAsync(request, cancellationToken).ConfigureAndWaitAsync();
 
-            return await next.Invoke().ConfigureAwait(true);
+            return await next.Invoke().ConfigureAndResultAsync();
         }
 
     }

@@ -106,22 +106,22 @@ namespace Librame.Extensions.Core
             string newHost = null, string newPath = null, string newQuery = null,
             Action<ConcurrentDictionary<string, string>> queriesAction = null, string newAnchor = null)
         {
-            if (newScheme.IsNotNullOrEmpty())
+            if (newScheme.IsNotEmpty())
                 combiner.ChangeScheme(newScheme);
 
-            if (newHost.IsNotNullOrEmpty())
+            if (newHost.IsNotEmpty())
                 combiner.ChangeHost(newHost);
 
-            if (newPath.IsNotNullOrEmpty())
+            if (newPath.IsNotEmpty())
                 combiner.ChangePath(newPath);
 
-            if (newQuery.IsNotNullOrEmpty())
+            if (newQuery.IsNotEmpty())
                 combiner.ChangeQuery(newQuery);
 
             if (queriesAction.IsNotNull())
                 combiner.ChangeQueries(queriesAction);
 
-            if (newAnchor.IsNotNullOrEmpty())
+            if (newAnchor.IsNotEmpty())
                 combiner.ChangeAnchor(newAnchor);
 
             return combiner;

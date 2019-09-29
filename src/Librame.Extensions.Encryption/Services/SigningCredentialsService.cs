@@ -20,7 +20,7 @@ namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class SigningCredentialsService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, ISigningCredentialsService
+    class SigningCredentialsService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISigningCredentialsService
     {
         private readonly ConcurrentDictionary<string, SigningCredentials> _credentials;
 

@@ -39,32 +39,32 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 隐式转换为 <see cref="ReadOnlyMemory{Byte}"/>。
-        /// </summary>
-        /// <param name="buffer">给定的 <see cref="ByteReadOnlyMemoryBuffer"/>。</param>
-        public static implicit operator ReadOnlyMemory<byte>(ByteReadOnlyMemoryBuffer buffer)
-            => buffer.NotNull(nameof(buffer)).Memory;
-
-        /// <summary>
         /// 隐式转换为字节数组。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="ByteReadOnlyMemoryBuffer"/>。</param>
         public static implicit operator byte[](ByteReadOnlyMemoryBuffer buffer)
             => buffer.NotNull(nameof(buffer)).Memory.ToArray();
 
+        /// <summary>
+        /// 隐式转换为字节只读内存缓冲区。
+        /// </summary>
+        /// <param name="array">给定的字节数组。</param>
+        public static implicit operator ByteReadOnlyMemoryBuffer(byte[] array)
+            => new ByteReadOnlyMemoryBuffer(array);
+
 
         /// <summary>
-        /// 显式转换为 <see cref="ByteReadOnlyMemoryBuffer"/>。
+        /// 显式转换为字节只读内存。
         /// </summary>
-        /// <param name="bytes">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
-        public static explicit operator ByteReadOnlyMemoryBuffer(ReadOnlyMemory<byte> bytes)
-            => new ByteReadOnlyMemoryBuffer(bytes);
+        /// <param name="buffer">给定的 <see cref="ByteReadOnlyMemoryBuffer"/>。</param>
+        public static explicit operator ReadOnlyMemory<byte>(ByteReadOnlyMemoryBuffer buffer)
+            => buffer.NotNull(nameof(buffer)).Memory;
 
         /// <summary>
-        /// 显式转换为 <see cref="ByteReadOnlyMemoryBuffer"/>。
+        /// 显式转换为字节只读内存缓冲区。
         /// </summary>
-        /// <param name="bytes">给定的字节数组。</param>
-        public static explicit operator ByteReadOnlyMemoryBuffer(byte[] bytes)
-            => new ByteReadOnlyMemoryBuffer(bytes);
+        /// <param name="memory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
+        public static explicit operator ByteReadOnlyMemoryBuffer(ReadOnlyMemory<byte> memory)
+            => new ByteReadOnlyMemoryBuffer(memory);
     }
 }

@@ -17,7 +17,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 存储构建器依赖选项。
     /// </summary>
-    public class StorageBuilderDependencyOptions : ExtensionBuilderDependencyOptions<StorageBuilderOptions>
+    public class StorageBuilderDependencyOptions : ExtensionBuilderDependencyOptions<StorageBuilderDependencyOptions, StorageBuilderOptions>
     {
     }
 }

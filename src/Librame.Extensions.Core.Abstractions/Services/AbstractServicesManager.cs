@@ -56,7 +56,7 @@ namespace Librame.Extensions.Core
         /// <param name="services">给定的服务集合。</param>
         protected AbstractServicesManager(IEnumerable<TService> services)
         {
-            Services = services.NotNullOrEmpty(nameof(services));
+            Services = services.NotEmpty(nameof(services));
         }
 
 

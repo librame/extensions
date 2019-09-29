@@ -32,7 +32,7 @@ namespace Librame.Extensions.Core
         {
             var combiner = new FilePathCombiner(fileName);
 
-            if (!basePath.IsNullOrEmpty())
+            if (!basePath.IsEmpty())
                 combiner.ChangeBasePath(basePath);
 
             return combiner;
@@ -48,7 +48,7 @@ namespace Librame.Extensions.Core
         {
             var combiner = (FilePathCombiner)filePath;
 
-            if (!basePath.IsNullOrEmpty())
+            if (!basePath.IsEmpty())
                 combiner.ChangeBasePath(basePath);
 
             return combiner;
@@ -88,7 +88,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiners">给定的 <see cref="FilePathCombiner"/> 集合。</param>
         /// <returns>返回字符串集合。</returns>
         public static IEnumerable<string> ToStrings(this IEnumerable<FilePathCombiner> combiners)
-            => combiners.NotNullOrEmpty(nameof(combiners))
+            => combiners.NotEmpty(nameof(combiners))
             .Select(combiner => combiner?.ToString());
 
 
@@ -100,7 +100,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="FilePathCombiner"/> 集合。</returns>
         public static IEnumerable<FilePathCombiner> ChangeBasePath(this IEnumerable<FilePathCombiner> combiners, string newBasePath)
         {
-            combiners.NotNullOrEmpty(nameof(combiners));
+            combiners.NotEmpty(nameof(combiners));
 
             foreach (var combiner in combiners)
                 combiner?.ChangeBasePath(newBasePath);

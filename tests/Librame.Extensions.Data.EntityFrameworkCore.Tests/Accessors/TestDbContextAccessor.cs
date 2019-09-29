@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data.Tests
 
             modelBuilder.Entity<Article>(b =>
             {
-                b.ToTable(descr => descr.ChangeDateSuffix(now => now.ToString("yy"))); // descr.ChangeDateSuffix(now => now.ToString("yy")) // descr.ChangeSuffix("20")
+                b.ToTable(descr => descr.ChangeSuffix("19")); // descr.ChangeDateSuffix(now => now.ToString("yy")) // descr.ChangeSuffix("20")
 
                 b.HasKey(x => x.Id);
 

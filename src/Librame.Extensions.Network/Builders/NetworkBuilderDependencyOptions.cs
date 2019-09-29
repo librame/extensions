@@ -17,7 +17,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 网络构建器依赖选项。
     /// </summary>
-    public class NetworkBuilderDependencyOptions : ExtensionBuilderDependencyOptions<NetworkBuilderOptions>
+    public class NetworkBuilderDependencyOptions : ExtensionBuilderDependencyOptions<NetworkBuilderDependencyOptions, NetworkBuilderOptions>
     {
     }
 }

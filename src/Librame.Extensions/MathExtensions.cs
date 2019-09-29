@@ -41,6 +41,5 @@ namespace Librame.Extensions
         /// <returns>返回整数。</returns>
         public static int ComputeLCM(this int a, int b)
             => a * b / ComputeGCD(a, b);
-
     }
 }

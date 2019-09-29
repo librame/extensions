@@ -39,13 +39,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 隐式转换为 <see cref="Memory{Char}"/>。
-        /// </summary>
-        /// <param name="buffer">给定的 <see cref="CharMemoryBuffer"/>。</param>
-        public static implicit operator Memory<char>(CharMemoryBuffer buffer)
-            => buffer.NotNull(nameof(buffer)).Memory;
-
-        /// <summary>
         /// 隐式转换为字符数组。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="CharMemoryBuffer"/>。</param>
@@ -53,32 +46,40 @@ namespace Librame.Extensions.Core
             => buffer.NotNull(nameof(buffer)).Memory.ToArray();
 
         /// <summary>
-        /// 隐式转换为字符串。
+        /// 隐式转换为字符内存缓冲区。
+        /// </summary>
+        /// <param name="array">给定的字符数组。</param>
+        public static implicit operator CharMemoryBuffer(char[] array)
+            => new CharMemoryBuffer(array);
+
+
+        /// <summary>
+        /// 显式转换为字符内存。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="CharMemoryBuffer"/>。</param>
-        public static implicit operator string(CharMemoryBuffer buffer)
+        public static explicit operator Memory<char>(CharMemoryBuffer buffer)
+            => buffer.NotNull(nameof(buffer)).Memory;
+
+        /// <summary>
+        /// 显式转换为字符内存缓冲区。
+        /// </summary>
+        /// <param name="memory">给定的 <see cref="Memory{Byte}"/>。</param>
+        public static explicit operator CharMemoryBuffer(Memory<char> memory)
+            => new CharMemoryBuffer(memory);
+
+
+        /// <summary>
+        /// 显式转换为字符串。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="CharMemoryBuffer"/>。</param>
+        public static explicit operator string(CharMemoryBuffer buffer)
             => new string(buffer.NotNull(nameof(buffer)).Memory.ToArray());
 
-
         /// <summary>
-        /// 显式转换为 <see cref="CharMemoryBuffer"/>。
-        /// </summary>
-        /// <param name="chars">给定的 <see cref="Memory{Byte}"/>。</param>
-        public static explicit operator CharMemoryBuffer(Memory<char> chars)
-            => new CharMemoryBuffer(chars);
-
-        /// <summary>
-        /// 显式转换为 <see cref="CharMemoryBuffer"/>。
-        /// </summary>
-        /// <param name="chars">给定的字符数组。</param>
-        public static explicit operator CharMemoryBuffer(char[] chars)
-            => new CharMemoryBuffer(chars);
-
-        /// <summary>
-        /// 显式转换为 <see cref="CharMemoryBuffer"/>。
+        /// 显式转换为字符内存缓冲区。
         /// </summary>
         /// <param name="str">给定的字符数组。</param>
         public static explicit operator CharMemoryBuffer(string str)
-            => new CharMemoryBuffer(str.NotNullOrEmpty(nameof(str)).ToCharArray());
+            => new CharMemoryBuffer(str.NotEmpty(nameof(str)).ToCharArray());
     }
 }

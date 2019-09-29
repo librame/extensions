@@ -10,9 +10,10 @@
 
 #endregion
 
-using Librame.Extensions.Data;
+using System;
+using System.Collections.Generic;
 
-namespace System.Collections.Generic
+namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 抽象可树形化静态扩展。

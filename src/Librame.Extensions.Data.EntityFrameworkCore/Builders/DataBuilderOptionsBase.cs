@@ -28,8 +28,7 @@ namespace Librame.Extensions.Data
     /// 数据构建器选项基类。
     /// </summary>
     /// <typeparam name="TTableNameSchemaOptions">指定的表名架构选项类型。</typeparam>
-    public class DataBuilderOptionsBase<TTableNameSchemaOptions>
-        : DataBuilderOptionsBase<StoreOptions, TTableNameSchemaOptions>
+    public class DataBuilderOptionsBase<TTableNameSchemaOptions> : DataBuilderOptionsBase<StoreOptions, TTableNameSchemaOptions>
         where TTableNameSchemaOptions : TableNameSchemaOptions, new()
     {
     }
@@ -40,8 +39,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
     /// <typeparam name="TTableNameSchemaOptions">指定的表名架构选项类型。</typeparam>
-    public class DataBuilderOptionsBase<TStoreOptions, TTableNameSchemaOptions>
-        : AbstractExtensionBuilderOptions
+    public class DataBuilderOptionsBase<TStoreOptions, TTableNameSchemaOptions> : IExtensionBuilderOptions
         where TStoreOptions : StoreOptions, new()
         where TTableNameSchemaOptions : TableNameSchemaOptions, new()
     {
@@ -134,9 +132,9 @@ namespace Librame.Extensions.Data
             = descr => descr.AsSchema();
 
         /// <summary>
-        /// 模型工厂方法。
+        /// 迁移工厂方法。
         /// </summary>
-        public Func<TableNameDescriptor, TableNameSchema> ModelFactory { get; set; }
+        public Func<TableNameDescriptor, TableNameSchema> MigrationFactory { get; set; }
             = descr => descr.AsSchema();
 
         /// <summary>

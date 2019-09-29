@@ -18,7 +18,7 @@ namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class HashService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IHashService
+    class HashService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IHashService
     {
         private readonly Lazy<MD5> _md5
             = new Lazy<MD5>(() => MD5.Create());
@@ -37,7 +37,7 @@ namespace Librame.Extensions.Encryption
 
 
         public HashService(IRsaService rsa)
-            : base(rsa.CastTo<IRsaService, ExtensionBuilderServiceBase<EncryptionBuilderOptions>>(nameof(rsa)))
+            : base(rsa.CastTo<IRsaService, AbstractExtensionBuilderService<EncryptionBuilderOptions>>(nameof(rsa)))
         {
             Rsa = rsa;
         }

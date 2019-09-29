@@ -27,7 +27,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 文件服务。
     /// </summary>
-    public class FileService : ExtensionBuilderServiceBase<StorageBuilderOptions>, IFileService
+    public class FileService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFileService
     {
         private readonly IMemoryCache _memoryCache;
 
@@ -54,7 +54,7 @@ namespace Librame.Extensions.Storage
 
         private IStorageFileProvider GetFileProvider(Func<IEnumerable<IStorageFileProvider>, IStorageFileProvider> providerFactory = null)
         {
-            if (Options.FileProviders.IsNullOrEmpty())
+            if (Options.FileProviders.IsEmpty())
             {
                 Logger.LogTrace($"{nameof(StorageBuilderOptions)}.{nameof(StorageBuilderOptions.FileProviders)} is null or empty.");
                 return null;
@@ -163,10 +163,10 @@ namespace Librame.Extensions.Storage
                 while (currentCount > 0)
                 {
                     // 每次从文件流中读取指定缓冲区的字节数，当读完后退出循环
-                    currentCount = await readStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(true);
+                    currentCount = await readStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAndResultAsync();
 
                     // 将读取到的缓冲区字节数写入请求流
-                    await writeStream.WriteAsync(buffer, 0, currentCount, cancellationToken).ConfigureAwait(false);
+                    await writeStream.WriteAsync(buffer, 0, currentCount, cancellationToken).ConfigureAndWaitAsync();
 
                     if (ProgressAction.IsNotNull())
                     {
@@ -190,7 +190,7 @@ namespace Librame.Extensions.Storage
         public Task WriteStringAsync(IStorageFileInfo fileInfo, string content)
         {
             fileInfo.NotNull(nameof(fileInfo));
-            content.NotNullOrEmpty(nameof(content));
+            content.NotEmpty(nameof(content));
 
             using (var readStream = fileInfo.CreateReadStream())
             using (var sw = new StreamWriter(readStream))
@@ -222,10 +222,10 @@ namespace Librame.Extensions.Storage
                 while (currentCount > 0)
                 {
                     // 每次从文件流中读取指定缓冲区的字节数，当读完后退出循环
-                    currentCount = await readStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(true);
+                    currentCount = await readStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAndResultAsync();
 
                     // 将读取到的缓冲区字节数写入请求流
-                    await writeStream.WriteAsync(buffer, 0, currentCount, cancellationToken).ConfigureAwait(false);
+                    await writeStream.WriteAsync(buffer, 0, currentCount, cancellationToken).ConfigureAndWaitAsync();
 
                     if (ProgressAction.IsNotNull())
                     {

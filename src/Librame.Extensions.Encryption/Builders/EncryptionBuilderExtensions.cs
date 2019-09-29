@@ -37,7 +37,7 @@ namespace Librame.Extensions.Encryption
 
             return builder.AddEncryption(dependency =>
             {
-                dependency.OptionsAction = builderAction;
+                dependency.Builder.Action = builderAction;
             },
             builderFactory);
         }
@@ -67,15 +67,15 @@ namespace Librame.Extensions.Encryption
             Func<IExtensionBuilder, TDependencyOptions, IEncryptionBuilder> builderFactory = null)
             where TDependencyOptions : EncryptionBuilderDependencyOptions, new()
         {
-            // Add Dependencies
-            var dependency = dependencyAction.ConfigureDependencyOptions();
+            // Configure DependencyOptions
+            var dependency = dependencyAction.ConfigureDependency();
+            builder.Services.AddAllOptionsConfigurators(dependency);
 
-            // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
-
+            // Create Builder
             var encryptionBuilder = builderFactory.NotNullOrDefault(()
                 => (b, d) => new EncryptionBuilder(b, d)).Invoke(builder, dependency);
 
+            // Configure Builder
             return encryptionBuilder
                 .AddBuffers()
                 .AddConverters()

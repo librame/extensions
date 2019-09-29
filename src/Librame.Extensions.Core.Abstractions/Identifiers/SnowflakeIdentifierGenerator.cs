@@ -93,7 +93,7 @@ namespace Librame.Extensions.Core
 
         private long GetCurrentTimestamp(IClockService clock)
         {
-            return clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).Result.ToFileTime();
+            return clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).ConfigureAndResult().ToFileTime();
         }
 
         private long GetNextTimestamp(long lastTimestamp, IClockService clock)

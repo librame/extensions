@@ -38,7 +38,7 @@ namespace Librame.Extensions.Data
         public TableNameSchema(string name, string schema = null)
             : base(schema)
         {
-            Name = name.NotNullOrEmpty(nameof(name));
+            Name = name.NotEmpty(nameof(name));
         }
 
 
@@ -115,8 +115,8 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 隐式转换为字符串形式。
         /// </summary>
-        /// <param name="table">给定的 <see cref="TableNameSchema"/>。</param>
-        public static implicit operator string(TableNameSchema table)
-            => table?.ToString();
+        /// <param name="schema">给定的 <see cref="TableNameSchema"/>。</param>
+        public static implicit operator string(TableNameSchema schema)
+            => schema?.ToString();
     }
 }

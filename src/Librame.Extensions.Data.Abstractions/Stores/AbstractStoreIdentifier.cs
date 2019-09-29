@@ -62,7 +62,7 @@ namespace Librame.Extensions.Data
             CancellationToken cancellationToken = default)
         {
             var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow,
-                isUtc: true, cancellationToken).ConfigureAwait(true);
+                isUtc: true, cancellationToken).ConfigureAndResultAsync();
 
             return Clock.Locker.WaitFactory(() =>
             {
@@ -86,7 +86,7 @@ namespace Librame.Extensions.Data
             CancellationToken cancellationToken = default)
         {
             var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow,
-                isUtc: true, cancellationToken).ConfigureAwait(true);
+                isUtc: true, cancellationToken).ConfigureAndResultAsync();
 
             return Clock.Locker.WaitFactory(() =>
             {

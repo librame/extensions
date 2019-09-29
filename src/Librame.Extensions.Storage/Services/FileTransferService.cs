@@ -23,13 +23,13 @@ namespace Librame.Extensions.Storage
 {
     using Core;
 
-    class FileTransferService : ExtensionBuilderServiceBase<StorageBuilderOptions>, IFileTransferService
+    class FileTransferService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFileTransferService
     {
         private readonly IFilePermissionService _permissionService;
 
 
         public FileTransferService(IFilePermissionService permission, IOptions<CoreBuilderOptions> coreOptions)
-            : base(permission.CastTo<IFilePermissionService, ExtensionBuilderServiceBase<StorageBuilderOptions>>(nameof(permission)))
+            : base(permission.CastTo<IFilePermissionService, AbstractExtensionBuilderService<StorageBuilderOptions>>(nameof(permission)))
         {
             _permissionService = permission;
 
@@ -57,7 +57,7 @@ namespace Librame.Extensions.Storage
         public async Task<FilePathCombiner> DownloadFileAsync(string downloadUrl, string savePath,
             CancellationToken cancellationToken = default)
         {
-            var hwr = await CreateRequestAsync(downloadUrl, "GET", cancellationToken).ConfigureAwait(true);
+            var hwr = await CreateRequestAsync(downloadUrl, "GET", cancellationToken).ConfigureAndResultAsync();
 
             var buffer = new byte[Options.BufferSize];
             var range = 0L;
@@ -122,7 +122,7 @@ namespace Librame.Extensions.Storage
         {
             string response = null;
 
-            var hwr = await CreateRequestAsync(uploadUrl, cancellationToken: cancellationToken).ConfigureAwait(true);
+            var hwr = await CreateRequestAsync(uploadUrl, cancellationToken: cancellationToken).ConfigureAndResultAsync();
 
             using (var s = hwr.GetRequestStream())
             {
@@ -172,19 +172,19 @@ namespace Librame.Extensions.Storage
 
             if (UseAccessToken)
             {
-                var accessToken = await _permissionService.GeAccessTokenAsync(cancellationToken).ConfigureAwait(true);
+                var accessToken = await _permissionService.GeAccessTokenAsync(cancellationToken).ConfigureAndResultAsync();
                 hwr.Headers.Add("access_token", accessToken);
             }
 
             if (UseAuthorizationCode)
             {
-                var authorizationCode = await _permissionService.GetAuthorizationCodeAsync(cancellationToken).ConfigureAwait(true);
+                var authorizationCode = await _permissionService.GetAuthorizationCodeAsync(cancellationToken).ConfigureAndResultAsync();
                 hwr.Headers.Add(HttpRequestHeader.Authorization, authorizationCode);
             }
 
             if (UseCookieValue)
             {
-                var cookieValue = await _permissionService.GetCookieValueAsync(cancellationToken).ConfigureAwait(true);
+                var cookieValue = await _permissionService.GetCookieValueAsync(cancellationToken).ConfigureAndResultAsync();
                 hwr.Headers.Add(HttpRequestHeader.Cookie, cookieValue);
             }
 

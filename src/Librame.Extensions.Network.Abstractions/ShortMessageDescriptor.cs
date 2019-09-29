@@ -24,8 +24,8 @@ namespace Librame.Extensions.Network
         /// <param name="text">给定的文本。</param>
         public ShortMessageDescriptor(string mobile, string text)
         {
-            Mobile = mobile.NotNullOrEmpty(nameof(mobile));
-            Text = text.NotNullOrEmpty(nameof(text));
+            Mobile = mobile.NotEmpty(nameof(mobile));
+            Text = text.NotEmpty(nameof(text));
         }
 
 

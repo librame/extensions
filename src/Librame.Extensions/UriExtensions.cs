@@ -31,7 +31,7 @@ namespace Librame.Extensions
         /// <returns>返回布尔值。</returns>
         public static bool IsAbsoluteVirtualPath(this string path)
         {
-            path.NotNullOrEmpty(nameof(path));
+            path.NotEmpty(nameof(path));
             return path.StartsWith("~/") || path.StartsWith("/");
         }
 

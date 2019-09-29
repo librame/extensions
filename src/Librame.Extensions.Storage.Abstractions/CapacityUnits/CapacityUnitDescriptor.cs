@@ -45,8 +45,8 @@ namespace Librame.Extensions.Storage
         
         private CapacityUnitDescriptor(string name, string abbr)
         {
-            Name = name.NotNullOrEmpty(nameof(name));
-            Abbr = abbr.NotNullOrEmpty(nameof(abbr));
+            Name = name.NotEmpty(nameof(name));
+            Abbr = abbr.NotEmpty(nameof(abbr));
         }
 
         

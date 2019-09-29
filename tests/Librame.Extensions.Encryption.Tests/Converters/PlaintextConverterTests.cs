@@ -12,8 +12,8 @@ namespace Librame.Extensions.Encryption.Tests
             
             var converter = TestServiceProvider.Current.GetRequiredService<IPlaintextConverter>();
 
-            var buffer = converter.From(rawPlaintextString);
-            var plaintextString = converter.To(buffer);
+            var buffer = converter.ConvertFrom(rawPlaintextString);
+            var plaintextString = converter.ConvertTo(buffer);
 
             Assert.Equal(rawPlaintextString, plaintextString);
         }

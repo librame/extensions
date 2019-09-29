@@ -124,7 +124,7 @@ namespace Librame.Extensions
         /// <returns>返回字符串。</returns>
         public static string AsBase32String(this byte[] bytes)
         {
-            bytes.NotNullOrEmpty(nameof(bytes));
+            bytes.NotEmpty(nameof(bytes));
 
             var sb = new StringBuilder();
             for (var offset = 0; offset < bytes.Length;)
@@ -185,11 +185,11 @@ namespace Librame.Extensions
         /// <returns>返回字节数组。</returns>
         public static byte[] FromBase32String(this string base32String)
         {
-            base32String.NotNullOrEmpty(nameof(base32String));
+            base32String.NotEmpty(nameof(base32String));
 
             base32String = base32String.TrimEnd('=');
             if (base32String.Length == 0)
-                return new byte[0];
+                return Array.Empty<byte>();
 
             if (base32String.HasLower())
                 base32String = base32String.ToUpperInvariant();
@@ -264,7 +264,7 @@ namespace Librame.Extensions
         /// <returns>返回字节数组。</returns>
         public static byte[] FromHexString(this string hexString)
         {
-            hexString.NotNullOrEmpty(nameof(hexString));
+            hexString.NotEmpty(nameof(hexString));
 
             if (!hexString.Length.IsMultiples(2))
                 throw new ArgumentException("Hex length must be in multiples of 2.");
@@ -291,7 +291,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回字符串。</returns>
         public static string Md5Base64String(this string str)
-            => str.FromEncodingString().Md5().AsBase64String();
+            => str.FromEncodingString().Md5Base64String();
 
         /// <summary>
         /// 计算 SHA1。
@@ -299,7 +299,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha1Base64String(this string str)
-            => str.FromEncodingString().Sha1().AsBase64String();
+            => str.FromEncodingString().Sha1Base64String();
 
         /// <summary>
         /// 计算 SHA256。
@@ -307,7 +307,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha256Base64String(this string str)
-            => str.FromEncodingString().Sha256().AsBase64String();
+            => str.FromEncodingString().Sha256Base64String();
 
         /// <summary>
         /// 计算 SHA384。
@@ -315,7 +315,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha384Base64String(this string str)
-            => str.FromEncodingString().Sha384().AsBase64String();
+            => str.FromEncodingString().Sha384Base64String();
 
         /// <summary>
         /// 计算 SHA512。
@@ -323,7 +323,48 @@ namespace Librame.Extensions
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha512Base64String(this string str)
-            => str.FromEncodingString().Sha512().AsBase64String();
+            => str.FromEncodingString().Sha512Base64String();
+
+
+        /// <summary>
+        /// 计算 MD5。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Md5Base64String(this byte[] buffer)
+            => buffer.Md5().AsBase64String();
+
+        /// <summary>
+        /// 计算 SHA1。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Sha1Base64String(this byte[] buffer)
+            => buffer.Sha1().AsBase64String();
+
+        /// <summary>
+        /// 计算 SHA256。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Sha256Base64String(this byte[] buffer)
+            => buffer.Sha256().AsBase64String();
+
+        /// <summary>
+        /// 计算 SHA384。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Sha384Base64String(this byte[] buffer)
+            => buffer.Sha384().AsBase64String();
+
+        /// <summary>
+        /// 计算 SHA512。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Sha512Base64String(this byte[] buffer)
+            => buffer.Sha512().AsBase64String();
 
 
         /// <summary>
@@ -377,12 +418,12 @@ namespace Librame.Extensions
             => buffer.Hash(HashAlgorithmName.SHA512, rsa, padding);
 
 
-        private static ConcurrentDictionary<HashAlgorithmName, HashAlgorithm> _algorithms
+        private static ConcurrentDictionary<HashAlgorithmName, HashAlgorithm> _hashAlgorithms
             = new ConcurrentDictionary<HashAlgorithmName, HashAlgorithm>();
 
         private static byte[] Hash(this byte[] buffer, HashAlgorithmName algorithmName, RSA rsa = null, RSASignaturePadding padding = null)
         {
-            var algorithm = _algorithms.GetOrAdd(algorithmName, name => HashAlgorithm.Create(name.Name));
+            var algorithm = _hashAlgorithms.GetOrAdd(algorithmName, name => HashAlgorithm.Create(name.Name));
             var hash = algorithm.ComputeHash(buffer);
 
             if (rsa.IsNotNull())
@@ -403,7 +444,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字符串。</returns>
         public static string HmacMd5Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacMd5(key).AsBase64String();
+            => str.FromEncodingString().HmacMd5Base64String(key);
 
         /// <summary>
         /// 计算 HMACSHA1。
@@ -412,7 +453,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字符串。</returns>
         public static string HmacSha1Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacSha1(key).AsBase64String();
+            => str.FromEncodingString().HmacSha1Base64String(key);
 
         /// <summary>
         /// 计算 HMACSHA256。
@@ -421,7 +462,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字符串。</returns>
         public static string HmacSha256Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacSha256(key).AsBase64String();
+            => str.FromEncodingString().HmacSha256Base64String(key);
 
         /// <summary>
         /// 计算 HMACSHA384。
@@ -430,7 +471,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字符串。</returns>
         public static string HmacSha384Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacSha384(key).AsBase64String();
+            => str.FromEncodingString().HmacSha384Base64String(key);
 
         /// <summary>
         /// 计算 HMACSHA512。
@@ -439,7 +480,53 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字符串。</returns>
         public static string HmacSha512Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacSha512(key).AsBase64String();
+            => str.FromEncodingString().HmacSha512Base64String(key);
+
+
+        /// <summary>
+        /// 计算 HMACMD5。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥。</param>
+        /// <returns>返回字符串。</returns>
+        public static string HmacMd5Base64String(this byte[] buffer, byte[] key)
+            => buffer.HmacMd5(key).AsBase64String();
+
+        /// <summary>
+        /// 计算 HMACSHA1。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥。</param>
+        /// <returns>返回字符串。</returns>
+        public static string HmacSha1Base64String(this byte[] buffer, byte[] key)
+            => buffer.HmacSha1(key).AsBase64String();
+
+        /// <summary>
+        /// 计算 HMACSHA256。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥。</param>
+        /// <returns>返回字符串。</returns>
+        public static string HmacSha256Base64String(this byte[] buffer, byte[] key)
+            => buffer.HmacSha256(key).AsBase64String();
+
+        /// <summary>
+        /// 计算 HMACSHA384。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥。</param>
+        /// <returns>返回字符串。</returns>
+        public static string HmacSha384Base64String(this byte[] buffer, byte[] key)
+            => buffer.HmacSha384(key).AsBase64String();
+
+        /// <summary>
+        /// 计算 HMACSHA512。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥。</param>
+        /// <returns>返回字符串。</returns>
+        public static string HmacSha512Base64String(this byte[] buffer, byte[] key)
+            => buffer.HmacSha512(key).AsBase64String();
 
 
         /// <summary>
@@ -449,7 +536,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacMd5(this byte[] buffer, byte[] key)
-            => new HMACMD5(key).ComputeHash(buffer);
+            => buffer.HmacHash(nameof(HMACMD5), key);
 
         /// <summary>
         /// 计算 HMACSHA1。
@@ -458,7 +545,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha1(this byte[] buffer, byte[] key)
-            => new HMACSHA1(key).ComputeHash(buffer);
+            => buffer.HmacHash(nameof(HMACSHA1), key);
 
         /// <summary>
         /// 计算 HMACSHA256。
@@ -467,7 +554,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha256(this byte[] buffer, byte[] key)
-            => new HMACSHA256(key).ComputeHash(buffer);
+            => buffer.HmacHash(nameof(HMACSHA256), key);
 
         /// <summary>
         /// 计算 HMACSHA384。
@@ -476,7 +563,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha384(this byte[] buffer, byte[] key)
-            => new HMACSHA384(key).ComputeHash(buffer);
+            => buffer.HmacHash(nameof(HMACSHA384), key);
 
         /// <summary>
         /// 计算 HMACSHA512。
@@ -485,7 +572,23 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha512(this byte[] buffer, byte[] key)
-            => new HMACSHA512(key).ComputeHash(buffer);
+            => buffer.HmacHash(nameof(HMACSHA512), key);
+
+
+        private static ConcurrentDictionary<string, HMAC> _hmacAlgorithms
+            = new ConcurrentDictionary<string, HMAC>();
+
+        private static byte[] HmacHash(this byte[] buffer, string algorithmName, byte[] key)
+        {
+            var algorithm = _hmacAlgorithms.GetOrAdd($"N={algorithmName},K={key.AsBase64String()}", name =>
+            {
+                var algo = HMAC.Create(name);
+                algo.Key = key;
+                return algo;
+            });
+
+            return algorithm.ComputeHash(buffer);
+        }
 
         #endregion
 
@@ -556,7 +659,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] AsAes(this byte[] buffer, byte[] key)
-            => buffer.AsSymmetric(Aes.Create(), key);
+            => buffer.SymAlgorithm(key, nameof(Aes), isEncrypt: true);
 
         /// <summary>
         /// 还原 AES。
@@ -565,7 +668,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromAes(this byte[] buffer, byte[] key)
-            => buffer.FromSymmetric(Aes.Create(), key);
+            => buffer.SymAlgorithm(key, nameof(Aes), isEncrypt: false);
 
 
         /// <summary>
@@ -575,7 +678,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] AsDes(this byte[] buffer, byte[] key)
-            => buffer.AsSymmetric(DES.Create(), key);
+            => buffer.SymAlgorithm(key, nameof(DES), isEncrypt: true);
 
         /// <summary>
         /// 还原 DES。
@@ -584,7 +687,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromDes(this byte[] buffer, byte[] key)
-            => buffer.FromSymmetric(DES.Create(), key);
+            => buffer.SymAlgorithm(key, nameof(DES), isEncrypt: false);
 
 
         /// <summary>
@@ -594,7 +697,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] AsTripleDes(this byte[] buffer, byte[] key)
-            => buffer.AsSymmetric(TripleDES.Create(), key);
+            => buffer.SymAlgorithm(key, nameof(TripleDES), isEncrypt: true);
 
         /// <summary>
         /// 还原 TripleDES。
@@ -603,33 +706,38 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromTripleDes(this byte[] buffer, byte[] key)
-            => buffer.FromSymmetric(TripleDES.Create(), key);
+            => buffer.SymAlgorithm(key, nameof(TripleDES), isEncrypt: false);
 
 
-        private static byte[] AsSymmetric(this byte[] buffer, SymmetricAlgorithm algorithm, byte[] key)
+        private static ConcurrentDictionary<string, SymmetricAlgorithm> _symAlgorithms
+            = new ConcurrentDictionary<string, SymmetricAlgorithm>();
+
+        private static byte[] SymAlgorithm(this byte[] buffer, byte[] key, string algorithmName, bool isEncrypt)
         {
-            algorithm.Key = key;
-            algorithm.Mode = CipherMode.ECB;
-            algorithm.Padding = PaddingMode.PKCS7;
+            var algorithm = _symAlgorithms.GetOrAdd($"N={algorithmName},K={key.AsBase64String()}", name =>
+            {
+                var algo = SymmetricAlgorithm.Create(name);
+                algo.Key = key;
+                algo.Mode = CipherMode.ECB;
+                algo.Padding = PaddingMode.PKCS7;
 
-            var encryptor = algorithm.CreateEncryptor();
-            return encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
-        }
+                return algo;
+            });
 
-        private static byte[] FromSymmetric(this byte[] buffer, SymmetricAlgorithm algorithm, byte[] key)
-        {
-            algorithm.Key = key;
-            algorithm.Mode = CipherMode.ECB;
-            algorithm.Padding = PaddingMode.PKCS7;
+            if (isEncrypt)
+            {
+                var encryptor = algorithm.CreateEncryptor();
+                return encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
+            }
 
-            var encryptor = algorithm.CreateDecryptor();
-            return encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
+            var decryptor = algorithm.CreateDecryptor();
+            return decryptor.TransformFinalBlock(buffer, 0, buffer.Length);
         }
 
         #endregion
 
 
-        #region Asymmetric Algorithm : RSA
+        #region RSA
 
         /// <summary>
         /// 转换为 RSA。
@@ -660,12 +768,7 @@ namespace Librame.Extensions
         /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] AsRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
-        {
-            var rsa = RSA.Create();
-            rsa.ImportParameters(parameters);
-
-            return rsa.Encrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
-        }
+            => buffer.RsaAlgorithm(parameters, padding, isEncrypt: true);
 
         /// <summary>
         /// 还原 RSA。
@@ -675,11 +778,45 @@ namespace Librame.Extensions
         /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
-        {
-            var rsa = RSA.Create();
-            rsa.ImportParameters(parameters);
+            => buffer.RsaAlgorithm(parameters, padding, isEncrypt: false);
 
-            return rsa.Decrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
+
+        private static ConcurrentDictionary<string, RSA> _rsaAlgorithms
+            = new ConcurrentDictionary<string, RSA>();
+
+        private static byte[] RsaAlgorithm(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding, bool isEncrypt)
+        {
+            var algorithm = _rsaAlgorithms.GetOrAdd($"{ToRSAParametersString(parameters)}", name =>
+            {
+                var algo = RSA.Create();
+                algo.ImportParameters(parameters);
+
+                return algo;
+            });
+
+            if (isEncrypt)
+                return algorithm.Encrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
+
+            return algorithm.Decrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
+        }
+
+        private static string ToRSAParametersString(RSAParameters parameters)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append($"{nameof(RSAParameters.D)}={BytesToString(parameters.D)},");
+            sb.Append($"{nameof(RSAParameters.DP)}={BytesToString(parameters.DP)},");
+            sb.Append($"{nameof(RSAParameters.DQ)}={BytesToString(parameters.DQ)},");
+            sb.Append($"{nameof(RSAParameters.Exponent)}={BytesToString(parameters.Exponent)},");
+            sb.Append($"{nameof(RSAParameters.InverseQ)}={BytesToString(parameters.InverseQ)},");
+            sb.Append($"{nameof(RSAParameters.Modulus)}={BytesToString(parameters.Modulus)},");
+            sb.Append($"{nameof(RSAParameters.P)}={BytesToString(parameters.P)},");
+            sb.Append($"{nameof(RSAParameters.Q)}={BytesToString(parameters.Q)}");
+
+            return sb.ToString();
+
+            string BytesToString(byte[] buffer)
+                => buffer.IsNotEmpty() ? buffer.AsBase64String() : string.Empty;
         }
 
         #endregion

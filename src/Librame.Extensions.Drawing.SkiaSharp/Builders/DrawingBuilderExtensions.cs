@@ -37,7 +37,7 @@ namespace Librame.Extensions.Drawing
 
             return builder.AddDrawing(dependency =>
             {
-                dependency.OptionsAction = builderAction;
+                dependency.Builder.Action = builderAction;
             },
             builderFactory);
         }
@@ -67,15 +67,15 @@ namespace Librame.Extensions.Drawing
             Func<IExtensionBuilder, TDependencyOptions, IDrawingBuilder> builderFactory = null)
             where TDependencyOptions : DrawingBuilderDependencyOptions, new()
         {
-            // Add Dependencies
-            var dependency = dependencyAction.ConfigureDependencyOptions();
+            // Configure DependencyOptions
+            var dependency = dependencyAction.ConfigureDependency();
+            builder.Services.AddAllOptionsConfigurators(dependency);
 
-            // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
-
+            // Create Builder
             var drawingBuilder = builderFactory.NotNullOrDefault(()
                 => (b, d) => new DrawingBuilder(b, d)).Invoke(builder, dependency);
 
+            // Configure Builder
             return drawingBuilder
                 .AddServices();
         }

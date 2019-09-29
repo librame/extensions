@@ -18,7 +18,7 @@ namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class KeyedHashService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IKeyedHashService
+    class KeyedHashService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyedHashService
     {
         private readonly Lazy<HMACMD5> _hmacMd5;
         private readonly Lazy<HMACSHA1> _hmacSha1;
@@ -28,7 +28,7 @@ namespace Librame.Extensions.Encryption
 
 
         public KeyedHashService(IKeyGenerator keyGenerator)
-            : base(keyGenerator.CastTo<IKeyGenerator, ExtensionBuilderServiceBase<EncryptionBuilderOptions>>(nameof(keyGenerator)))
+            : base(keyGenerator.CastTo<IKeyGenerator, AbstractExtensionBuilderService<EncryptionBuilderOptions>>(nameof(keyGenerator)))
         {
             KeyGenerator = keyGenerator;
 

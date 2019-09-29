@@ -36,7 +36,7 @@ namespace Librame.Extensions.Encryption
             if (converter.IsNull())
                 converter = buffer.ServiceProvider.GetRequiredService<ICiphertextConverter>();
 
-            return converter.To(buffer);
+            return converter.ConvertTo(buffer);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IEncryptionBuffer{ICiphertextAlgorithmConverter, String}"/>。</param>
         /// <returns>返回字符串。</returns>
         public static string AsCiphertextString(this IEncryptionBuffer<ICiphertextConverter, string> buffer)
-            => buffer.Converter.To(buffer);
+            => buffer.Converter.ConvertTo(buffer);
 
         /// <summary>
         /// 还原密文字符串。
@@ -54,7 +54,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="buffer">给定的 <see cref="IEncryptionBuffer{ICiphertextAlgorithmConverter, String}"/>。</param>
         /// <returns>返回缓冲区。</returns>
         public static IByteMemoryBuffer FromCiphertextString(this string str, IEncryptionBuffer<ICiphertextConverter, string> buffer)
-            => buffer.Converter.From(str);
+            => buffer.Converter.ConvertFrom(str);
 
         #endregion
 
@@ -73,7 +73,7 @@ namespace Librame.Extensions.Encryption
             if (converter.IsNull())
                 converter = buffer.ServiceProvider.GetRequiredService<IPlaintextConverter>();
 
-            return converter.To(buffer);
+            return converter.ConvertTo(buffer);
         }
 
         #endregion

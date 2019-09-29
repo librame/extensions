@@ -147,7 +147,7 @@ namespace Microsoft.EntityFrameworkCore
         {
             table.NotNull(nameof(table));
 
-            if (table.Schema.IsNotNullOrEmpty())
+            if (table.Schema.IsNotEmpty())
                 return builder.ToTable(table.NameOrDescriptorString);
 
             return builder.ToTable(table.NameOrDescriptorString, table.Schema);

@@ -12,8 +12,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Librame.Extensions
 {
@@ -22,6 +24,41 @@ namespace Librame.Extensions
     /// </summary>
     public static class PathExtensions
     {
+        private static readonly string _directorySeparator
+            = Path.DirectorySeparatorChar.ToString(CultureInfo.CurrentCulture);
+
+        private static readonly string _directoryEscapeSeparator
+            = _directorySeparator == @"\" ? @"\\" : "/";
+
+        //private static readonly string AltDirectorySeparator
+        //= Path.AltDirectorySeparatorChar.ToString();
+
+        private static readonly string _parentDirectorySeparatorKey
+            = $"..{_directorySeparator}";
+
+        private static readonly Regex _regexDevelopmentRelativePath
+            = new Regex(@$"{_directoryEscapeSeparator}(bin|obj){_directoryEscapeSeparator}(Debug|Release)");
+
+
+        /// <summary>
+        /// 没有开发相对路径的目录。
+        /// </summary>
+        /// <param name="currentDirectory">给定的当前目录。</param>
+        /// <returns>返回目录字符串。</returns>
+        public static string WithoutDevelopmentRelativePath(this string currentDirectory)
+        {
+            currentDirectory.NotEmpty(nameof(currentDirectory));
+
+            if (_regexDevelopmentRelativePath.IsMatch(currentDirectory))
+            {
+                var match = _regexDevelopmentRelativePath.Match(currentDirectory);
+                return currentDirectory.Substring(0, match.Index);
+            }
+
+            return currentDirectory;
+        }
+
+
         /// <summary>
         /// 子目录。
         /// </summary>
@@ -39,6 +76,8 @@ namespace Librame.Extensions
         /// <returns>返回 <see cref="DirectoryInfo"/>。</returns>
         public static DirectoryInfo Subdirectory(this DirectoryInfo directory, string folderName)
         {
+            directory.NotNull(nameof(directory));
+
             var subpath = directory.FullName.CombinePath(folderName);
             return new DirectoryInfo(subpath);
         }
@@ -60,10 +99,10 @@ namespace Librame.Extensions
             if (string.IsNullOrEmpty(fileName))
                 return path;
 
-            var index = fileName.LastIndexOf(extension);
+            var index = fileName.LastIndexOf(extension, StringComparison.OrdinalIgnoreCase);
             var baseName = fileName.Substring(0, index);
 
-            index = path.LastIndexOf(fileName);
+            index = path.LastIndexOf(fileName, StringComparison.OrdinalIgnoreCase);
             var dir = path.Substring(0, index);
 
             fileName = newFileNameFactory.Invoke(baseName, extension);
@@ -74,10 +113,6 @@ namespace Librame.Extensions
 
         #region Combine
 
-        private static readonly string DirectorySeparator = Path.DirectorySeparatorChar.ToString();
-        //private static readonly string AltDirectorySeparator = Path.AltDirectorySeparatorChar.ToString();
-        private static readonly string ParentDirectorySeparatorKey = $"..{DirectorySeparator}";
-
 
         /// <summary>
         /// 合并路径。
@@ -87,19 +122,19 @@ namespace Librame.Extensions
         /// <returns>返回路径字符串。</returns>
         public static string CombinePath(this string basePath, string relativePath)
         {
-            basePath.NotNullOrEmpty(nameof(basePath));
-            relativePath.NotNullOrEmpty(nameof(relativePath));
+            basePath.NotEmpty(nameof(basePath));
+            relativePath.NotEmpty(nameof(relativePath));
 
             // RelativePath: filename.ext
-            if (!relativePath.Contains(DirectorySeparator))
+            if (!relativePath.Contains(_directorySeparator, StringComparison.OrdinalIgnoreCase))
                 return Path.Combine(basePath, relativePath);
 
             // RelativePath: \filename.ext
-            if (relativePath.StartsWith(DirectorySeparator))
-                return Path.Combine(basePath, relativePath.TrimStart(DirectorySeparator));
+            if (relativePath.StartsWith(_directorySeparator, StringComparison.OrdinalIgnoreCase))
+                return Path.Combine(basePath, relativePath.TrimStart(_directorySeparator));
 
             // RelativePath: ..\filename.ext
-            if (relativePath.StartsWith(ParentDirectorySeparatorKey))
+            if (relativePath.StartsWith(_parentDirectorySeparatorKey, StringComparison.OrdinalIgnoreCase))
             {
                 var baseInfo = new DirectoryInfo(basePath);
                 var parent = BackParentPath(baseInfo, relativePath);
@@ -111,11 +146,11 @@ namespace Librame.Extensions
 
         private static (DirectoryInfo Info, string RelativePath) BackParentPath(DirectoryInfo info, string relativePath)
         {
-            if (!relativePath.StartsWith(ParentDirectorySeparatorKey))
+            if (!relativePath.StartsWith(_parentDirectorySeparatorKey, StringComparison.OrdinalIgnoreCase))
                 return (info, relativePath);
 
             // 链式返回（按层递进查找）
-            return BackParentPath(info.Parent, relativePath.TrimStart(ParentDirectorySeparatorKey, false));
+            return BackParentPath(info.Parent, relativePath.TrimStart(_parentDirectorySeparatorKey, false));
         }
 
         #endregion
@@ -130,7 +165,7 @@ namespace Librame.Extensions
         /// <param name="extensions">给定的扩展名集合。</param>
         /// <returns>返回提取的路径集合。</returns>
         public static IEnumerable<string> ExtractHasExtension(this IEnumerable<string> paths, IEnumerable<string> extensions)
-            => paths.ExtractHasExtension(extensions, (path, ext) => path.EndsWith(ext));
+            => paths.ExtractHasExtension(extensions, (path, ext) => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
 
         /// <summary>
         /// 提取具备某扩展名的元素集合。
@@ -162,7 +197,7 @@ namespace Librame.Extensions
         /// <param name="extension">输出具有的扩展名。</param>
         /// <returns>返回布尔值。</returns>
         public static bool TryHasExtension(this string path, IEnumerable<string> extensions, out string extension)
-            => path.TryHasExtension(extensions, (p, ext) => p.EndsWith(ext), out extension);
+            => path.TryHasExtension(extensions, (p, ext) => p.EndsWith(ext, StringComparison.OrdinalIgnoreCase), out extension);
 
 
         /// <summary>
@@ -189,8 +224,9 @@ namespace Librame.Extensions
         public static bool TryHasExtension<T>(this T item, IEnumerable<string> extensions,
             Func<T, string, bool> hasExtensionFactory, out string extension)
         {
-            extension = string.Empty;
+            extensions.NotNull(nameof(extensions));
 
+            extension = string.Empty;
             foreach (var ext in extensions)
             {
                 if (hasExtensionFactory.Invoke(item, ext))

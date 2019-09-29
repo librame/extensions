@@ -28,7 +28,7 @@ namespace Microsoft.Extensions.Localization
         /// <param name="rootNamespace">给定的程序集根命名空间。</param>
         public AbstractionRootNamespaceAttribute(string rootNamespace)
         {
-            RootNamespace = rootNamespace.NotNullOrEmpty(nameof(rootNamespace));
+            RootNamespace = rootNamespace.NotEmpty(nameof(rootNamespace));
         }
 
         /// <summary>

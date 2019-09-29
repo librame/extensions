@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data
         public static void ConfigureStoreHubBase(this ModelBuilder modelBuilder,
             DataBuilderOptions options)
         {
-            if (options.Tables.DefaultSchema.IsNotNullOrEmpty())
+            if (options.Tables.DefaultSchema.IsNotEmpty())
                 modelBuilder.HasDefaultSchema(options.Tables.DefaultSchema);
 
             var mapRelationship = options.Stores?.MapRelationship ?? true;
@@ -101,25 +101,25 @@ namespace Librame.Extensions.Data
                 }
             });
 
-            //// 模型
-            //modelBuilder.Entity<DataMigration>(b =>
-            //{
-            //    b.ToTable(options.Tables.ModelFactory);
+            // 迁移
+            modelBuilder.Entity<DataMigration>(b =>
+            {
+                b.ToTable(options.Tables.MigrationFactory);
 
-            //    b.HasKey(k => k.Id);
+                b.HasKey(k => k.Id);
 
-            //    b.HasIndex(i => new { i.AttributeId, i.ProductVersion }).HasName().IsUnique();
+                b.HasIndex(i => i.ModelHash).HasName().IsUnique();
 
-            //    b.Property(p => p.Id).HasMaxLength(256);
-            //    b.Property(p => p.AttributeId).HasMaxLength(256).IsRequired();
-            //    b.Property(p => p.ProductVersion).HasMaxLength(256).IsRequired();
+                b.Property(p => p.Id).HasMaxLength(256);
+                b.Property(p => p.ModelHash).HasMaxLength(256).IsRequired();
 
-            //    if (maxLength > 0)
-            //    {
-            //        b.Property(p => p.ModelHash).HasMaxLength(maxLength);
-            //        b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
-            //    }
-            //});
+                if (maxLength > 0)
+                {
+                    b.Property(p => p.AccessorName).HasMaxLength(maxLength);
+                    b.Property(p => p.ModelSnapshotName).HasMaxLength(maxLength);
+                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
+                }
+            });
 
             // 租户
             modelBuilder.Entity<DataTenant>(b =>

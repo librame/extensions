@@ -52,13 +52,13 @@ namespace Librame.Extensions.Data
                             //var databaseValue = dbEntityEntry.Property(property.Name).CurrentValue;
 
                             // 如果要更新的属性名不为空且等于当前属性，或要更新的属性名为空，则并发更新此属性
-                            if ((updatePropertyName.IsNotNullOrEmpty() && property.Name == updatePropertyName)
-                                || updatePropertyName.IsNullOrEmpty())
+                            if ((updatePropertyName.IsNotEmpty() && property.Name == updatePropertyName)
+                                || updatePropertyName.IsEmpty())
                             {
                                 // Update original values to
                                 entry.Property(property.Name).OriginalValue = dbEntityEntry.Property(property.Name).CurrentValue;
 
-                                if (updatePropertyName.IsNotNullOrEmpty())
+                                if (updatePropertyName.IsNotEmpty())
                                     break; // 如果只更新当前属性，则跳出属性遍历
                             }
                         }

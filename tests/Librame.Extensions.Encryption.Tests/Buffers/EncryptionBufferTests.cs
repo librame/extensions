@@ -12,10 +12,10 @@ namespace Librame.Extensions.Encryption.Tests
             // Create IPlaintextAlgorithmBuffer
             var plaintextBuffer = rawPlaintextString.AsPlaintextBuffer(TestServiceProvider.Current);
 
-            var plaintextString = plaintextBuffer.Converter.To(plaintextBuffer);
+            var plaintextString = plaintextBuffer.Converter.ConvertTo(plaintextBuffer);
             Assert.Equal(rawPlaintextString, plaintextString);
 
-            var plaintextBuffer1 = plaintextBuffer.Converter.From(plaintextString);
+            var plaintextBuffer1 = plaintextBuffer.Converter.ConvertFrom(plaintextString);
             Assert.True(plaintextBuffer.Equals(plaintextBuffer1));
         }
 

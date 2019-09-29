@@ -23,7 +23,7 @@ namespace Librame.Extensions.Drawing
 {
     using Core;
 
-    class WatermarkService : ExtensionBuilderServiceBase<DrawingBuilderOptions>, IWatermarkService
+    class WatermarkService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IWatermarkService
     {
         public WatermarkService(IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)

@@ -37,7 +37,7 @@ namespace Librame.Extensions.Network
 
             return builder.AddNetwork(dependency =>
             {
-                dependency.OptionsAction = builderAction;
+                dependency.Builder.Action = builderAction;
             },
             builderFactory);
         }
@@ -67,17 +67,15 @@ namespace Librame.Extensions.Network
             Func<IExtensionBuilder, TDependencyOptions, INetworkBuilder> builderFactory = null)
             where TDependencyOptions : NetworkBuilderDependencyOptions, new()
         {
-            // Add Dependencies
-            var dependency = dependencyAction.ConfigureDependencyOptions();
+            // Configure DependencyOptions
+            var dependency = dependencyAction.ConfigureDependency();
+            builder.Services.AddAllOptionsConfigurators(dependency);
 
-            builder.Services.AddHttpClient();
-
-            // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
-
+            // Create Builder
             var networkBuilder = builderFactory.NotNullOrDefault(()
                 => (b, d) => new NetworkBuilder(b, d)).Invoke(builder, dependency);
 
+            // Configure Builder
             return networkBuilder
                 .AddRequesters()
                 .AddServices();

@@ -22,7 +22,7 @@ namespace Librame.Extensions.Storage
     {
         static CapacityUnitManager()
         {
-            if (Infos.IsNullOrEmpty())
+            if (Infos.IsEmpty())
             {
                 var baseFormatString = CapacityUnitFormat.Byte.AsEnumName();
 

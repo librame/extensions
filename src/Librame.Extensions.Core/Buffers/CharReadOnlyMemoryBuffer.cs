@@ -39,13 +39,6 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 隐式转换为 <see cref="ReadOnlyMemory{Char}"/>。
-        /// </summary>
-        /// <param name="buffer">给定的 <see cref="CharReadOnlyMemoryBuffer"/>。</param>
-        public static implicit operator ReadOnlyMemory<char>(CharReadOnlyMemoryBuffer buffer)
-            => buffer.NotNull(nameof(buffer)).Memory;
-
-        /// <summary>
         /// 隐式转换为字符数组。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="CharReadOnlyMemoryBuffer"/>。</param>
@@ -53,32 +46,40 @@ namespace Librame.Extensions.Core
             => buffer.NotNull(nameof(buffer)).Memory.ToArray();
 
         /// <summary>
-        /// 隐式转换为字符串。
+        /// 隐式转换为字符只读内存缓冲区。
+        /// </summary>
+        /// <param name="array">给定的字符数组。</param>
+        public static implicit operator CharReadOnlyMemoryBuffer(char[] array)
+            => new CharReadOnlyMemoryBuffer(array);
+
+
+        /// <summary>
+        /// 显式转换为字符内存。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="CharReadOnlyMemoryBuffer"/>。</param>
-        public static implicit operator string(CharReadOnlyMemoryBuffer buffer)
+        public static explicit operator ReadOnlyMemory<char>(CharReadOnlyMemoryBuffer buffer)
+            => buffer.NotNull(nameof(buffer)).Memory;
+
+        /// <summary>
+        /// 显式转换为字符只读内存缓冲区。
+        /// </summary>
+        /// <param name="memory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
+        public static explicit operator CharReadOnlyMemoryBuffer(ReadOnlyMemory<char> memory)
+            => new CharReadOnlyMemoryBuffer(memory);
+
+
+        /// <summary>
+        /// 显式转换为字符串。
+        /// </summary>
+        /// <param name="buffer">给定的 <see cref="CharReadOnlyMemoryBuffer"/>。</param>
+        public static explicit operator string(CharReadOnlyMemoryBuffer buffer)
             => new string(buffer.NotNull(nameof(buffer)).Memory.ToArray());
 
-
         /// <summary>
-        /// 显式转换为 <see cref="CharReadOnlyMemoryBuffer"/>。
-        /// </summary>
-        /// <param name="chars">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
-        public static explicit operator CharReadOnlyMemoryBuffer(ReadOnlyMemory<char> chars)
-            => new CharReadOnlyMemoryBuffer(chars);
-
-        /// <summary>
-        /// 显式转换为 <see cref="CharReadOnlyMemoryBuffer"/>。
-        /// </summary>
-        /// <param name="chars">给定的字符数组。</param>
-        public static explicit operator CharReadOnlyMemoryBuffer(char[] chars)
-            => new CharReadOnlyMemoryBuffer(chars);
-
-        /// <summary>
-        /// 显式转换为 <see cref="CharReadOnlyMemoryBuffer"/>。
+        /// 显式转换为字符只读内存缓冲区。
         /// </summary>
         /// <param name="str">给定的字符数组。</param>
         public static explicit operator CharReadOnlyMemoryBuffer(string str)
-            => new CharReadOnlyMemoryBuffer(str.NotNullOrEmpty(nameof(str)).ToCharArray());
+            => new CharReadOnlyMemoryBuffer(str.NotEmpty(nameof(str)).ToCharArray());
     }
 }

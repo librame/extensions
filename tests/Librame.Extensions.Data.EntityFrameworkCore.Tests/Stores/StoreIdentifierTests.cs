@@ -10,13 +10,13 @@ namespace Librame.Extensions.Data.Tests
         {
             var service = TestServiceProvider.Current.GetRequiredService<IStoreIdentifier>();
 
-            var auditId = await service.GetAuditIdAsync().ConfigureAwait(true);
+            var auditId = await service.GetAuditIdAsync().ConfigureAndResultAsync();
             Assert.NotEmpty(auditId);
 
-            var auditPropertyId = await service.GetAuditPropertyIdAsync().ConfigureAwait(true);
+            var auditPropertyId = await service.GetAuditPropertyIdAsync().ConfigureAndResultAsync();
             Assert.NotEmpty(auditPropertyId);
 
-            var tenantId = await service.GetTenantIdAsync().ConfigureAwait(true);
+            var tenantId = await service.GetTenantIdAsync().ConfigureAndResultAsync();
             Assert.NotEmpty(tenantId);
         }
     }

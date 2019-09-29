@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -37,7 +38,7 @@ namespace Librame.Extensions.Data
 
             return builder.AddData(dependency =>
             {
-                dependency.OptionsAction = builderAction;
+                dependency.Builder.Action = builderAction;
             },
             builderFactory);
         }
@@ -67,16 +68,20 @@ namespace Librame.Extensions.Data
             Func<IExtensionBuilder, TDependencyOptions, IDataBuilder> builderFactory = null)
             where TDependencyOptions : DataBuilderDependencyOptions, new()
         {
-            // Add Dependencies
-            var dependency = dependencyAction.ConfigureDependencyOptions();
+            // Configure DependencyOptions
+            var dependency = dependencyAction.ConfigureDependency();
+            builder.Services.AddAllOptionsConfigurators(dependency);
 
-            // Add Builder
-            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
+            // AddEntityFrameworkDesignTimeServices
+            builder.Services.AddEntityFrameworkDesignTimeServices();
 
+            // Create Builder
             var dataBuilder = builderFactory.NotNullOrDefault(()
                 => (b, d) => new DataBuilder(b, d)).Invoke(builder, dependency);
 
+            // Configure Builder
             return dataBuilder
+                .AddAspects()
                 .AddMediators()
                 .AddServices()
                 .AddStores();

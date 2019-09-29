@@ -46,10 +46,10 @@ namespace Librame.Extensions.Network
 
         public async Task<IList<string>> GetImageLinksAsync(string url, string pattern = null)
         {
-            var hyperLinks = await GetHyperLinksAsync(url, pattern).ConfigureAwait(true);
+            var hyperLinks = await GetHyperLinksAsync(url, pattern).ConfigureAndResultAsync();
             Logger.LogDebug($"Get hyper links: {string.Join(",", hyperLinks)}");
 
-            if (hyperLinks.IsNullOrEmpty()) return hyperLinks;
+            if (hyperLinks.IsEmpty()) return hyperLinks;
 
             var imageLinks = hyperLinks.ExtractHasExtension(ImageExtensions).ToList();
             Logger.LogDebug($"Extract images: {string.Join(",", ImageExtensions)}");
@@ -60,7 +60,7 @@ namespace Librame.Extensions.Network
 
         public async Task<IList<string>> GetHyperLinksAsync(string url, string pattern = null)
         {
-            var response = await GetContentAsync(url).ConfigureAwait(true);
+            var response = await GetContentAsync(url).ConfigureAndResultAsync();
 
             var links = new List<string>();
 
@@ -83,7 +83,7 @@ namespace Librame.Extensions.Network
                 var urlGroup = groups["url"];
                 var pathGroup = groups["path"];
 
-                if (!urlGroup.Value.IsNullOrEmpty())
+                if (!urlGroup.Value.IsEmpty())
                 {
                     // URL 链接
                     var link = urlGroup.Value;
@@ -104,10 +104,10 @@ namespace Librame.Extensions.Network
                     }
 
                     var linkUrl = new Uri(link);
-                    if (!linkUrl.PathAndQuery.IsNullOrEmpty() && linkUrl.PathAndQuery != "/")
+                    if (!linkUrl.PathAndQuery.IsEmpty() && linkUrl.PathAndQuery != "/")
                         links.Add(link);
                 }
-                else if (!pathGroup.Value.IsNullOrEmpty())
+                else if (!pathGroup.Value.IsEmpty())
                 {
                     // 虚拟路径
                     var link = pathGroup.Value;

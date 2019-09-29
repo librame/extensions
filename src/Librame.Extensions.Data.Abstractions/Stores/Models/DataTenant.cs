@@ -39,39 +39,39 @@ namespace Librame.Extensions.Data
         public DataTenant(string name, string host)
             : base()
         {
-            Name = name.NotNullOrEmpty(nameof(name));
-            Host = host.NotNullOrEmpty(nameof(host));
+            Name = name.NotEmpty(nameof(name));
+            Host = host.NotEmpty(nameof(host));
         }
 
 
         /// <summary>
         /// 名称。
         /// </summary>
-        [Display(Name = nameof(Name), ResourceType = typeof(TenantResource))]
+        [Display(Name = nameof(Name), ResourceType = typeof(DataTenantResource))]
         public virtual string Name { get; set; }
 
         /// <summary>
         /// 主机。
         /// </summary>
-        [Display(Name = nameof(Host), ResourceType = typeof(TenantResource))]
+        [Display(Name = nameof(Host), ResourceType = typeof(DataTenantResource))]
         public virtual string Host { get; set; }
 
         /// <summary>
         /// 默认连接字符串。
         /// </summary>
-        [Display(Name = nameof(DefaultConnectionString), ResourceType = typeof(TenantResource))]
+        [Display(Name = nameof(DefaultConnectionString), ResourceType = typeof(DataTenantResource))]
         public virtual string DefaultConnectionString { get; set; }
 
         /// <summary>
         /// 写入连接字符串。
         /// </summary>
-        [Display(Name = nameof(WritingConnectionString), ResourceType = typeof(TenantResource))]
+        [Display(Name = nameof(WritingConnectionString), ResourceType = typeof(DataTenantResource))]
         public virtual string WritingConnectionString { get; set; }
 
         /// <summary>
         /// 写入连接分离（默认不启用）。
         /// </summary>
-        [Display(Name = nameof(WritingSeparation), ResourceType = typeof(TenantResource))]
+        [Display(Name = nameof(WritingSeparation), ResourceType = typeof(DataTenantResource))]
         public virtual bool WritingSeparation { get; set; }
 
 
@@ -105,7 +105,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => $"{Name},{Host}";
+            => $"N={Name},H={Host}";
 
 
         /// <summary>
@@ -118,8 +118,8 @@ namespace Librame.Extensions.Data
         public static Expression<Func<TTenant, bool>> GetUniqueIndexExpression<TTenant>(string name, string host)
             where TTenant : DataTenant
         {
-            name.NotNullOrEmpty(nameof(name));
-            host.NotNullOrEmpty(nameof(host));
+            name.NotEmpty(nameof(name));
+            host.NotEmpty(nameof(host));
 
             return p => p.Name == name && p.Host == host;
         }

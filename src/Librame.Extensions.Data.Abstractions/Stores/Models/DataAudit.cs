@@ -26,19 +26,19 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 表名。
         /// </summary>
-        [Display(Name = nameof(TableName), ResourceType = typeof(AuditResource))]
+        [Display(Name = nameof(TableName), ResourceType = typeof(DataAuditResource))]
         public virtual string TableName { get; set; }
 
         /// <summary>
         /// 实体标识。
         /// </summary>
-        [Display(Name = nameof(EntityId), ResourceType = typeof(AuditResource))]
+        [Display(Name = nameof(EntityId), ResourceType = typeof(DataAuditResource))]
         public virtual string EntityId { get; set; }
 
         /// <summary>
         /// 实体类型名。
         /// </summary>
-        [Display(Name = nameof(EntityTypeName), ResourceType = typeof(AuditResource))]
+        [Display(Name = nameof(EntityTypeName), ResourceType = typeof(DataAuditResource))]
         public virtual string EntityTypeName { get; set; }
 
         /// <summary>
@@ -50,14 +50,14 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 状态名称。
         /// </summary>
-        [Display(Name = nameof(StateName), ResourceType = typeof(AuditResource))]
+        [Display(Name = nameof(StateName), ResourceType = typeof(DataAuditResource))]
         public virtual string StateName { get; set; }
 
 
         /// <summary>
         /// 实体属性集合。
         /// </summary>
-        [Display(Name = nameof(Properties), ResourceType = typeof(AuditResource))]
+        [Display(Name = nameof(Properties), ResourceType = typeof(DataAuditResource))]
         public virtual IList<DataAuditProperty> Properties { get; set; }
             = new List<DataAuditProperty>();
     }

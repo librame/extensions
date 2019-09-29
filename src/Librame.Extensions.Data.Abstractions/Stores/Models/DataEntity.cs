@@ -26,31 +26,31 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 架构。
         /// </summary>
-        [Display(Name = nameof(Schema), ResourceType = typeof(EntityResource))]
+        [Display(Name = nameof(Schema), ResourceType = typeof(DataEntityResource))]
         public virtual string Schema { get; set; }
 
         /// <summary>
         /// 名称。
         /// </summary>
-        [Display(Name = nameof(Name), ResourceType = typeof(EntityResource))]
+        [Display(Name = nameof(Name), ResourceType = typeof(DataEntityResource))]
         public virtual string Name { get; set; }
 
         /// <summary>
         /// 描述。
         /// </summary>
-        [Display(Name = nameof(Name), ResourceType = typeof(EntityResource))]
+        [Display(Name = nameof(Name), ResourceType = typeof(DataEntityResource))]
         public virtual string Description { get; set; }
 
         /// <summary>
         /// 实体类型名。
         /// </summary>
-        [Display(Name = nameof(EntityName), ResourceType = typeof(EntityResource))]
+        [Display(Name = nameof(EntityName), ResourceType = typeof(DataEntityResource))]
         public virtual string EntityName { get; set; }
 
         /// <summary>
         /// 程序集名。
         /// </summary>
-        [Display(Name = nameof(EntityName), ResourceType = typeof(EntityResource))]
+        [Display(Name = nameof(EntityName), ResourceType = typeof(DataEntityResource))]
         public virtual string AssemblyName { get; set; }
 
 
@@ -97,8 +97,8 @@ namespace Librame.Extensions.Data
         public static Expression<Func<TEntity, bool>> GetUniqueIndexExpression<TEntity>(string schema, string name)
             where TEntity : DataEntity
         {
-            schema.NotNullOrEmpty(nameof(schema));
-            name.NotNullOrEmpty(nameof(name));
+            schema.NotEmpty(nameof(schema));
+            name.NotEmpty(nameof(name));
 
             return p => p.Schema == schema && p.Name == name;
         }

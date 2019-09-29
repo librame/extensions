@@ -36,7 +36,7 @@ namespace Librame.Extensions.Network.DotNetty
 
             return builder.AddDotNetty(dependency =>
             {
-                dependency.OptionsAction = builderAction;
+                dependency.Builder.Action = builderAction;
             });
         }
 
@@ -61,15 +61,15 @@ namespace Librame.Extensions.Network.DotNetty
             Action<TDependencyOptions> dependencyAction = null)
             where TDependencyOptions : DotNettyDependencyOptions, new()
         {
-            // Add Dependencies
-            var dependency = dependencyAction.ConfigureDependencyOptions();
+            // Configure DependencyOptions
+            var dependency = dependencyAction.ConfigureDependency();
+            builder.Services.AddAllOptionsConfigurators(dependency);
 
-            builder.Services.OnlyConfigure(dependency.OptionsAction, dependency.OptionsName);
-
-            // 如果未添加加密扩展，则自动添加并默认配置
+            // Add EncryptionBuilder
             if (!builder.HasParentBuilder<IEncryptionBuilder>())
                 builder.AddEncryption().AddDeveloperGlobalSigningCredentials();
 
+            // Configure Builder
             return builder
                 .AddDotNettyDependencyOptions(dependency)
                 .AddWrappers()

@@ -43,7 +43,7 @@ namespace Librame.Extensions.Core.Tests
             {
                 Message = "Ping"
             })
-            .ConfigureAwait(false);
+            .ConfigureAndWaitAsync();
 
             Assert.Contains("Ping Pong", builder.ToString());
         }

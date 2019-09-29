@@ -19,10 +19,10 @@ namespace Librame.Extensions.Core
 {
     class HumanizationService : AbstractConcurrentService, IHumanizationService
     {
-        private readonly IExpressionStringLocalizer<HumanizationResource> _localizer;
+        private readonly IExpressionLocalizer<HumanizationResource> _localizer;
 
 
-        public HumanizationService(IExpressionStringLocalizer<HumanizationResource> localizer,
+        public HumanizationService(IExpressionLocalizer<HumanizationResource> localizer,
             IMemoryLocker locker, ILoggerFactory loggerFactory)
             : base(locker, loggerFactory)
         {

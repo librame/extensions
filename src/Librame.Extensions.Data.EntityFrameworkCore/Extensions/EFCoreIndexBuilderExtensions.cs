@@ -18,7 +18,7 @@ using System.Text;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// EntityFrameworkCore 索引构建器静态扩展。
+    /// 索引构建器静态扩展。
     /// </summary>
     public static class EFCoreIndexBuilderExtensions
     {

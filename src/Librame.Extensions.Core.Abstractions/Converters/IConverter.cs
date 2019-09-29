@@ -24,13 +24,13 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="to">给定的 <typeparamref name="TTo"/>。</param>
         /// <returns>返回 <typeparamref name="TFrom"/>。</returns>
-        TFrom From(TTo to);
+        TFrom ConvertFrom(TTo to);
 
         /// <summary>
         /// 转换类型。
         /// </summary>
         /// <param name="from">给定的 <typeparamref name="TFrom"/>。</param>
         /// <returns>返回 <typeparamref name="TTo"/>。</returns>
-        TTo To(TFrom from);
+        TTo ConvertTo(TFrom from);
     }
 }

@@ -86,32 +86,26 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 初始化核心。
         /// </summary>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
-        protected override void InitializeCore(IStoreHub<TAccessor> stores)
-            => InitializeTenants(stores);
-
-        /// <summary>
-        /// 初始化核心。
-        /// </summary>
         /// <typeparam name="TAudit">指定的审计类型。</typeparam>
-        /// <typeparam name="TTable">指定的实体表类型。</typeparam>
+        /// <typeparam name="TEntity">指定的实体表类型。</typeparam>
+        /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
         /// <typeparam name="TTenant">指定的租户类型。</typeparam>
         /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
-        protected override void InitializeCore<TAudit, TTable, TTenant>(IStoreHub<TAccessor, TAudit, TTable, TTenant> stores)
+        protected override void InitializeCore<TAudit, TEntity, TMigration, TTenant>(IStoreHub<TAccessor, TAudit, TEntity, TMigration, TTenant> stores)
             => InitializeTenants(stores);
 
 
         /// <summary>
         /// 初始化租户集合。
         /// </summary>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TAccessor}"/>。</param>
-        protected virtual void InitializeTenants<TTenant>(ITenantStore<TAccessor, TTenant> stores)
+        /// <param name="stores">给定的 <see cref="IDataTenantStore{TAccessor, TTenant}"/>。</param>
+        protected virtual void InitializeTenants<TTenant>(IDataTenantStore<TAccessor, TTenant> stores)
             where TTenant : DataTenant
         {
             // 初始化默认租户
             var defaultTenant = stores.Accessor.BuilderOptions.DefaultTenant;
             if (defaultTenant.IsNotNull()
-                && !stores.ContainTenantAsync(defaultTenant.Name, defaultTenant.Host).Result)
+                && !stores.ContainTenantAsync(defaultTenant.Name, defaultTenant.Host).ConfigureAndResult())
             {
                 TTenant tenant;
 
@@ -126,12 +120,14 @@ namespace Librame.Extensions.Data
                     defaultTenant.EnsurePopulate(tenant);
                 }
 
-                tenant.Id = Identifier.GetTenantIdAsync().Result;
-                tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).Result;
+                tenant.Id = Identifier.GetTenantIdAsync().ConfigureAndResult();
+                tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).ConfigureAndResult();
                 tenant.CreatedBy = GetType().GetSimpleName();
 
-                stores.TryCreateAsync(default, tenant).Wait();
+                stores.TryCreate(tenant);
                 Logger.LogTrace($"Add default tenant (name={tenant.Name}, host={tenant.Host}) to database.");
+
+                IsCreated = true;
             }
         }
 

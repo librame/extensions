@@ -27,7 +27,8 @@ namespace Librame.Extensions
     /// </summary>
     public static class DefaultExtensions
     {
-        private static byte[] _locker = new byte[0];
+        private static readonly object _locker
+            = new object();
 
 
         /// <summary>
@@ -138,10 +139,12 @@ namespace Librame.Extensions
         /// <returns>返回实例对象。</returns>
         public static object EnsureCreateObject(this Type type, params object[] parameters)
         {
-            var paramTypes = new Type[0];
+            type.NotNull(nameof(type));
+
+            var paramTypes = Array.Empty<Type>();
             string key = type.FullName;
 
-            if (parameters.IsNotNullOrEmpty())
+            if (parameters.IsNotEmpty())
             {
                 paramTypes = parameters.Select(p => p.GetType()).ToArray();
                 key = string.Concat(key, "_", string.Concat(paramTypes.Select(t => t.Name)));
@@ -313,7 +316,7 @@ namespace Librame.Extensions
         #endregion
 
 
-        #region OrDefault
+        #region NotNullOrDefault
 
         /// <summary>
         /// 得到不为 NULL 或默认值。
@@ -346,7 +349,7 @@ namespace Librame.Extensions
         /// <param name="throwIfDefaultInvalid">如果默认字符串不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
         /// <returns>返回当前或默认字符串。</returns>
         public static string NotWhiteSpaceOrDefault(this string str, string @default, bool throwIfDefaultInvalid = true)
-            => str.OrDefault(@default, ValidationExtensions.IsNotNullOrWhiteSpace, throwIfDefaultInvalid);
+            => str.OrDefault(@default, ValidationExtensions.IsNotWhiteSpace, throwIfDefaultInvalid);
 
         /// <summary>
         /// 得到不为 NULL、空格或默认字符串。
@@ -356,7 +359,7 @@ namespace Librame.Extensions
         /// <param name="throwIfDefaultInvalid">如果默认字符串不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
         /// <returns>返回当前或默认字符串。</returns>
         public static string NotWhiteSpaceOrDefault(this string str, Func<string> defaultFactory, bool throwIfDefaultInvalid = true)
-            => str.OrDefault(defaultFactory, ValidationExtensions.IsNotNullOrWhiteSpace, throwIfDefaultInvalid);
+            => str.OrDefault(defaultFactory, ValidationExtensions.IsNotWhiteSpace, throwIfDefaultInvalid);
 
 
         /// <summary>
@@ -367,7 +370,7 @@ namespace Librame.Extensions
         /// <param name="throwIfDefaultInvalid">如果默认字符串不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
         /// <returns>返回当前或默认字符串。</returns>
         public static string NotEmptyOrDefault(this string str, string @default, bool throwIfDefaultInvalid = true)
-            => str.OrDefault(@default, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+            => str.OrDefault(@default, ValidationExtensions.IsNotEmpty, throwIfDefaultInvalid);
 
         /// <summary>
         /// 得到不为 NULL、空或默认字符串。
@@ -377,7 +380,7 @@ namespace Librame.Extensions
         /// <param name="throwIfDefaultInvalid">如果默认字符串不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
         /// <returns>返回当前或默认字符串。</returns>
         public static string NotEmptyOrDefault(this string str, Func<string> defaultFactory, bool throwIfDefaultInvalid = true)
-            => str.OrDefault(defaultFactory, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+            => str.OrDefault(defaultFactory, ValidationExtensions.IsNotEmpty, throwIfDefaultInvalid);
 
 
         /// <summary>
@@ -389,7 +392,7 @@ namespace Librame.Extensions
         /// <param name="throwIfDefaultInvalid">如果默认集合实例不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
         /// <returns>返回当前或默认集合实例。</returns>
         public static IEnumerable<T> NotEmptyOrDefault<T>(this IEnumerable<T> current, IEnumerable<T> @default, bool throwIfDefaultInvalid = true)
-            => current.OrDefault(@default, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+            => current.OrDefault(@default, ValidationExtensions.IsNotEmpty, throwIfDefaultInvalid);
 
         /// <summary>
         /// 得到不为 NULL、空或默认集合实例。
@@ -400,7 +403,7 @@ namespace Librame.Extensions
         /// <param name="throwIfDefaultInvalid">如果默认集合实例不满足必要条件时，是否抛出异常（可选；如果为 TRUE，表示在不满足时抛出异常；反之则不验证也不抛出异常）。</param>
         /// <returns>返回当前或默认集合实例。</returns>
         public static IEnumerable<T> NotEmptyOrDefault<T>(this IEnumerable<T> current, Func<IEnumerable<T>> defaultFactory, bool throwIfDefaultInvalid = true)
-            => current.OrDefault(defaultFactory, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+            => current.OrDefault(defaultFactory, ValidationExtensions.IsNotEmpty, throwIfDefaultInvalid);
 
 
         /// <summary>
@@ -413,7 +416,7 @@ namespace Librame.Extensions
         /// <returns>返回当前或默认集合实例。</returns>
         public static T NotEmptyOrDefault<T>(this T current, T @default, bool throwIfDefaultInvalid = true)
             where T : IEnumerable
-            => current.OrDefault(@default, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+            => current.OrDefault(@default, ValidationExtensions.IsNotEmpty, throwIfDefaultInvalid);
 
         /// <summary>
         /// 得到不为 NULL、空或默认集合实例。
@@ -425,7 +428,7 @@ namespace Librame.Extensions
         /// <returns>返回当前或默认集合实例。</returns>
         public static T NotEmptyOrDefault<T>(this T current, Func<T> defaultFactory, bool throwIfDefaultInvalid = true)
             where T : IEnumerable
-            => current.OrDefault(defaultFactory, ValidationExtensions.IsNotNullOrEmpty, throwIfDefaultInvalid);
+            => current.OrDefault(defaultFactory, ValidationExtensions.IsNotEmpty, throwIfDefaultInvalid);
 
 
         /// <summary>

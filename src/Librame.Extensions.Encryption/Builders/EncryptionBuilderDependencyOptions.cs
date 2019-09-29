@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 加密构建器依赖选项。
     /// </summary>
-    public class EncryptionBuilderDependencyOptions : ExtensionBuilderDependencyOptions<EncryptionBuilderOptions>
+    public class EncryptionBuilderDependencyOptions : ExtensionBuilderDependencyOptions<EncryptionBuilderDependencyOptions, EncryptionBuilderOptions>
     {
     }
 }

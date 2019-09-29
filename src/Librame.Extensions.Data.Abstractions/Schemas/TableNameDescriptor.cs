@@ -117,7 +117,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public TableNameDescriptor ChangeConnector(string newConnector)
         {
-            Connector = newConnector.NotNullOrEmpty(nameof(newConnector));
+            Connector = newConnector.NotEmpty(nameof(newConnector));
             return this;
         }
 
@@ -129,7 +129,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public TableNameDescriptor ChangePrefix(string newPrefix)
         {
-            Prefix = newPrefix.NotNullOrEmpty(nameof(newPrefix));
+            Prefix = newPrefix.NotEmpty(nameof(newPrefix));
             return this;
         }
 
@@ -163,7 +163,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public TableNameDescriptor ChangeSuffix(string newSuffix)
         {
-            Suffix = newSuffix.NotNullOrEmpty(nameof(newSuffix));
+            Suffix = newSuffix.NotEmpty(nameof(newSuffix));
             return this;
         }
 
@@ -219,7 +219,7 @@ namespace Librame.Extensions.Data
         {
             var sb = new StringBuilder();
 
-            if (Prefix.IsNotNullOrEmpty())
+            if (Prefix.IsNotEmpty())
             {
                 sb.Append(Prefix);
                 sb.Append(Connector);
@@ -227,7 +227,7 @@ namespace Librame.Extensions.Data
 
             sb.Append(BodyName);
 
-            if (Suffix.IsNotNullOrEmpty())
+            if (Suffix.IsNotEmpty())
             {
                 sb.Append(Connector);
                 sb.Append(Suffix);

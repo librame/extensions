@@ -10,13 +10,13 @@
 
 #endregion
 
-using Librame.Extensions;
-using Librame.Extensions.Data;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace System.Linq
+namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 抽象可分页静态扩展。
@@ -75,7 +75,7 @@ namespace System.Linq
         /// <param name="size">给定的页大小。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
-        public static Task<IPageable<TEntity>> AsAscendingPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
+        public static ValueTask<IPageable<TEntity>> AsAscendingPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
             int index, int size, CancellationToken cancellationToken = default)
             where TEntity : class, IRank
             => query.AsPagingByIndexAsync(ordered => ordered.OrderBy(k => k.Rank), index, size, cancellationToken);
@@ -89,7 +89,7 @@ namespace System.Linq
         /// <param name="size">给定的页大小。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
-        public static Task<IPageable<TEntity>> AsDescendingPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
+        public static ValueTask<IPageable<TEntity>> AsDescendingPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
             int index, int size, CancellationToken cancellationToken = default)
             where TEntity : class, IRank
             => query.AsPagingByIndexAsync(ordered => ordered.OrderByDescending(k => k.Rank), index, size, cancellationToken);
@@ -104,7 +104,7 @@ namespace System.Linq
         /// <param name="size">给定的页大小。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
-        public static Task<IPageable<TEntity>> AsPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
+        public static ValueTask<IPageable<TEntity>> AsPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
             int index, int size, CancellationToken cancellationToken = default)
             where TEntity : class
@@ -119,7 +119,7 @@ namespace System.Linq
         /// <param name="computeAction">给定的分页计算动作。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
-        public static Task<IPageable<TEntity>> AsAscendingPagingAsync<TEntity>(this IQueryable<TEntity> query,
+        public static ValueTask<IPageable<TEntity>> AsAscendingPagingAsync<TEntity>(this IQueryable<TEntity> query,
             Action<PagingDescriptor> computeAction, CancellationToken cancellationToken = default)
             where TEntity : class, IRank
             => query.AsPagingAsync(ordered => ordered.OrderBy(k => k.Rank), computeAction, cancellationToken);
@@ -132,7 +132,7 @@ namespace System.Linq
         /// <param name="computeAction">给定的分页计算动作。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
-        public static Task<IPageable<TEntity>> AsDescendingPagingAsync<TEntity>(this IQueryable<TEntity> query,
+        public static ValueTask<IPageable<TEntity>> AsDescendingPagingAsync<TEntity>(this IQueryable<TEntity> query,
             Action<PagingDescriptor> computeAction, CancellationToken cancellationToken = default)
             where TEntity : class, IRank
             => query.AsPagingAsync(ordered => ordered.OrderByDescending(k => k.Rank), computeAction, cancellationToken);
@@ -146,12 +146,12 @@ namespace System.Linq
         /// <param name="computeAction">给定的分页计算动作。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
-        public static Task<IPageable<TEntity>> AsPagingAsync<TEntity>(this IQueryable<TEntity> query,
+        public static ValueTask<IPageable<TEntity>> AsPagingAsync<TEntity>(this IQueryable<TEntity> query,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
             Action<PagingDescriptor> computeAction, CancellationToken cancellationToken = default)
             where TEntity : class
             => orderedFactory.NotNull(nameof(orderedFactory))
-            .Invoke(query).AsPagingAsync(computeAction, cancellationToken);
+                .Invoke(query).AsPagingAsync(computeAction, cancellationToken);
 
 
         /// <summary>
@@ -250,19 +250,19 @@ namespace System.Linq
         /// <param name="computeAction">给定的分页计算动作。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
-        public static Task<IPageable<TEntity>> AsPagingAsync<TEntity>(this IOrderedQueryable<TEntity> orderedQuery,
+        public static ValueTask<IPageable<TEntity>> AsPagingAsync<TEntity>(this IOrderedQueryable<TEntity> orderedQuery,
             Action<PagingDescriptor> computeAction, CancellationToken cancellationToken = default)
             where TEntity : class
         {
             orderedQuery.NotNull(nameof(orderedQuery));
             computeAction.NotNull(nameof(computeAction));
 
-            return Task.Run(() =>
+            return new ValueTask<IPageable<TEntity>>(Task.Run(() =>
             {
                 IPageable<TEntity> paging = orderedQuery.AsPagingCore(computeAction);
                 return paging;
             },
-            cancellationToken);
+            cancellationToken));
         }
 
 

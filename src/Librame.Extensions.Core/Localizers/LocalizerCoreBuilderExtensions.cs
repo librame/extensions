@@ -20,9 +20,12 @@ namespace Librame.Extensions.Core
     {
         public static ICoreBuilder AddLocalizers(this ICoreBuilder builder)
         {
-            builder.Services.TryAddTransient(typeof(IExpressionStringLocalizer<>), typeof(ExpressionStringLocalizer<>));
-            builder.Services.TryReplace<IStringLocalizerFactory, ExpressionStringLocalizerFactory>();
-
+            builder.Services.TryAddTransient(typeof(IExpressionLocalizer<>), typeof(ExpressionLocalizer<>));
+            builder.Services.AddTransient(typeof(IDictionaryExpressionLocalizer<>), typeof(DictionaryExpressionLocalizer<>));
+            
+            builder.Services.TryReplace<IStringLocalizerFactory, CoreResourceManagerStringLocalizerFactory>();
+            builder.Services.TryAddSingleton<IDictionaryStringLocalizerFactory, CoreResourceDictionaryStringLocalizerFactory>();
+            
             return builder;
         }
 

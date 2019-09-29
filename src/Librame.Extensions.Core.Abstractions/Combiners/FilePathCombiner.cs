@@ -10,6 +10,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 
 namespace Librame.Extensions.Core
@@ -34,9 +35,9 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="FilePathCombiner"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
-        /// <param name="basePath">给定的基础路径。</param>
-        protected FilePathCombiner(string fileName, string basePath)
-            : base(basePath.CombinePath(fileName))
+        /// <param name="basePath">给定的基础路径（可空）。</param>
+        public FilePathCombiner(string fileName, string basePath)
+            : base(CombineString(fileName, basePath))
         {
             FileName = CreateFileNameCombiner(fileName);
             BasePath = basePath;
@@ -46,9 +47,9 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="FilePathCombiner"/>。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
-        /// <param name="basePath">给定的基础路径。</param>
-        protected FilePathCombiner(FileNameCombiner fileName, string basePath)
-            : base(basePath.CombinePath(fileName.ToString()))
+        /// <param name="basePath">给定的基础路径（可空）。</param>
+        public FilePathCombiner(FileNameCombiner fileName, string basePath)
+            : base(CombineString(fileName, basePath))
         {
             FileName = fileName;
             BasePath = basePath;
@@ -65,18 +66,12 @@ namespace Librame.Extensions.Core
         /// </summary>
         public FileNameCombiner FileName { get; private set; }
 
-        /// <summary>
-        /// 文件名字符串。
-        /// </summary>
-        public string FileNameString
-            => FileName.ToString();
-
 
         /// <summary>
         /// 重写源实例。
         /// </summary>
         public override string Source
-            => BasePath.CombinePath(FileName.ToString());
+            => BasePath.CombinePath(FileName);
 
 
         /// <summary>
@@ -86,7 +81,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回当前 <see cref="FilePathCombiner"/>。</returns>
         public FilePathCombiner ChangeBasePath(string newBasePath)
         {
-            BasePath = newBasePath.NotNullOrEmpty(nameof(newBasePath));
+            BasePath = newBasePath.NotEmpty(nameof(newBasePath));
             return this;
         }
 
@@ -148,15 +143,32 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 是否相等。
+        /// 是指定的文件名（忽略大小写）。
         /// </summary>
-        /// <param name="other">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="fileName">给定的文件名。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(FilePathCombiner other)
-            => Source == other?.Source;
+        public bool IsFileName(string fileName)
+            => IsFileName(CreateFileNameCombiner(fileName));
 
         /// <summary>
-        /// 是否相等。
+        /// 是指定的文件名（忽略大小写）。
+        /// </summary>
+        /// <param name="fileName">给定的 <see cref="FileNameCombiner"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool IsFileName(FileNameCombiner fileName)
+            => FileName == fileName;
+
+
+        /// <summary>
+        /// 是否相等（忽略大小写）。
+        /// </summary>
+        /// <param name="other">给定的域名。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(string other)
+            => Source.Equals(other, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 是否相等（忽略大小写）。
         /// </summary>
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
@@ -181,7 +193,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 是否相等。
+        /// 是否相等（忽略大小写）。
         /// </summary>
         /// <param name="a">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="b">给定的 <see cref="FilePathCombiner"/>。</param>
@@ -190,7 +202,7 @@ namespace Librame.Extensions.Core
             => (a?.Equals(b)).Value;
 
         /// <summary>
-        /// 是否不等。
+        /// 是否不等（忽略大小写）。
         /// </summary>
         /// <param name="a">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="b">给定的 <see cref="FilePathCombiner"/>。</param>
@@ -207,10 +219,26 @@ namespace Librame.Extensions.Core
             => combiner?.ToString();
 
         /// <summary>
-        /// 显式转换为文件组合器。
+        /// 隐式转换为文件路径组合器。
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
-        public static explicit operator FilePathCombiner(string fileName)
+        public static implicit operator FilePathCombiner(string fileName)
             => new FilePathCombiner(fileName);
+
+
+        /// <summary>
+        /// 组合字符串。
+        /// </summary>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="fileName"/> is null or empty.
+        /// </exception>
+        /// <param name="fileName">给定的文件名。</param>
+        /// <param name="basePath">给定的基础路径（可选）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string CombineString(string fileName, string basePath = null)
+        {
+            fileName.NotEmpty(nameof(fileName));
+            return basePath.IsNotEmpty() ? basePath.CombinePath(fileName) : fileName;
+        }
     }
 }

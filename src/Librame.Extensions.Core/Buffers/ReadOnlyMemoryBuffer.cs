@@ -40,32 +40,32 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 隐式转换为 <see cref="ReadOnlyMemory{T}"/>。
+        /// 隐式转换为只读内存。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="ReadOnlyMemoryBuffer{T}"/>。</param>
         public static implicit operator ReadOnlyMemory<T>(ReadOnlyMemoryBuffer<T> buffer)
             => buffer.Memory;
 
         /// <summary>
-        /// 隐式转换为数组。
+        /// 隐式转换为只读内存缓冲区。
+        /// </summary>
+        /// <param name="memory">给定的 <see cref="ReadOnlyMemory{T}"/>。</param>
+        public static implicit operator ReadOnlyMemoryBuffer<T>(ReadOnlyMemory<T> memory)
+            => new ReadOnlyMemoryBuffer<T>(memory);
+
+
+        /// <summary>
+        /// 显式转换为数组。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="ReadOnlyMemoryBuffer{T}"/>。</param>
-        public static implicit operator T[](ReadOnlyMemoryBuffer<T> buffer)
+        public static explicit operator T[](ReadOnlyMemoryBuffer<T> buffer)
             => buffer.Memory.ToArray();
 
-
         /// <summary>
-        /// 显式转换为 <see cref="ReadOnlyMemoryBuffer{T}"/>。
+        /// 显式转换为只读内存缓冲区。
         /// </summary>
-        /// <param name="bytes">给定的 <see cref="ReadOnlyMemory{T}"/>。</param>
-        public static explicit operator ReadOnlyMemoryBuffer<T>(ReadOnlyMemory<T> bytes)
-            => new ReadOnlyMemoryBuffer<T>(bytes);
-
-        /// <summary>
-        /// 显式转换为 <see cref="ReadOnlyMemoryBuffer{T}"/>。
-        /// </summary>
-        /// <param name="bytes">给定的数组。</param>
-        public static explicit operator ReadOnlyMemoryBuffer<T>(T[] bytes)
-            => new ReadOnlyMemoryBuffer<T>(bytes);
+        /// <param name="array">给定的数组。</param>
+        public static explicit operator ReadOnlyMemoryBuffer<T>(T[] array)
+            => new ReadOnlyMemoryBuffer<T>(array);
     }
 }

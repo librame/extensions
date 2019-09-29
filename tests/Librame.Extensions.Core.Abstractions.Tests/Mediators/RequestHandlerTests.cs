@@ -30,7 +30,7 @@ namespace Librame.Extensions.Core.Tests
         {
             IRequestHandler<Ping, Pong> handler = new PingHandler();
 
-            var response = await handler.HandleAsync(new Ping() { Message = "Ping" }).ConfigureAwait(true);
+            var response = await handler.HandleAsync(new Ping() { Message = "Ping" }).ConfigureAndResultAsync();
 
             Assert.Contains("Ping Pong", response.Message);
         }

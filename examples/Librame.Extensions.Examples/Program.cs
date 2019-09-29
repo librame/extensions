@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 
 namespace Librame.Extensions.Examples
@@ -22,13 +23,18 @@ namespace Librame.Extensions.Examples
 
             var services = new ServiceCollection();
 
-            services.AddLibrame(logging =>
+            services.AddLibrame(dependency =>
             {
-                logging.ClearProviders();
-                logging.SetMinimumLevel(LogLevel.Trace);
+                dependency.Configuration = config;
 
-                logging.AddConsole(logger => logger.IncludeScopes = false);
-                logging.AddFilter((str, level) => true);
+                dependency.LoggingAction = logging =>
+                {
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(LogLevel.Trace);
+
+                    logging.AddConsole(logger => logger.IncludeScopes = false);
+                    logging.AddFilter((str, level) => true);
+                };
             })
             .AddEncryption()
             .AddDeveloperGlobalSigningCredentials();
@@ -43,15 +49,17 @@ namespace Librame.Extensions.Examples
 
         private static void RunEncryption(IServiceProvider serviceProvider)
         {
+            var options = serviceProvider.GetRequiredService<IOptions<ExampleOptions>>().Value;
+            Console.WriteLine(options.Message);
             Console.WriteLine("Please input some content:");
 
             var content = Console.ReadLine();
-            if (content.IsNullOrWhiteSpace())
+            if (content.IsWhiteSpace())
             {
                 Console.WriteLine("Content is null, empty or white space.");
                 RunEncryption(serviceProvider);
             }
-
+            
             var hash = serviceProvider.GetRequiredService<IHashService>();
             var plaintextBuffer = content.AsPlaintextBuffer(serviceProvider);
 

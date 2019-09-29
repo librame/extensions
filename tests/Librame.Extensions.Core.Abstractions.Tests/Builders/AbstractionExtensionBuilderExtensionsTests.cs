@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using Xunit;
 
 namespace Librame.Extensions.Core.Tests
@@ -21,9 +22,19 @@ namespace Librame.Extensions.Core.Tests
         }
     }
 
-    public class TestBuilderDependencyOptions : IExtensionBuilderDependencyOptions
+    public class TestBuilderDependencyOptions : AbstractOptionsConfigurator, IExtensionBuilderDependencyOptions
     {
+        public TestBuilderDependencyOptions()
+            : base()
+        {
+        }
+
         public string OptionsName { get; set; }
+
+        public override Type OptionsType { get; }
+
+        public string BaseDirectory { get; set; }
+            = Environment.CurrentDirectory;
     }
 
     public static class TestBuilderExtensions

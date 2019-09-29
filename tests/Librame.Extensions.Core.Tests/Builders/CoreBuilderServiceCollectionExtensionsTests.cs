@@ -6,7 +6,7 @@ namespace Librame.Extensions.Core.Tests
     public class CoreBuilderServiceCollectionExtensionsTests
     {
         [Fact]
-        public void AddLibrameTest()
+        public void AllTest()
         {
             var builder = TestServiceProvider.Current.GetRequiredService<ICoreBuilder>();
             Assert.NotNull(builder);

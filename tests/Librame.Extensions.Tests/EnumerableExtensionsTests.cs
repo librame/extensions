@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Librame.Extensions.Tests
@@ -10,8 +11,20 @@ namespace Librame.Extensions.Tests
         public void YieldEnumerableTest()
         {
             var enumerable = 10.YieldEnumerable();
-            Assert.NotEmpty(enumerable);
+
+            foreach (var item in enumerable)
+                Assert.Equal(10, item);
         }
+
+        [Fact]
+        public async Task YieldAsyncEnumerableTest()
+        {
+            var enumerable = Task.FromResult(10).YieldAsyncEnumerable();
+            
+            await foreach (var item in enumerable)
+                Assert.Equal(10, item);
+        }
+
 
         [Fact]
         public void AsReadOnlyListTest()
@@ -25,6 +38,22 @@ namespace Librame.Extensions.Tests
             Assert.True(list is IReadOnlyList<int>);
         }
 
+
+        [Fact]
+        public async Task ForEachAsyncTest()
+        {
+            var list = new List<int>
+            {
+                1,2,3,4,5,6,7,8,9
+            };
+            var asyncList = list.Select(i => Task.FromResult(i)).AsAsyncEnumerable();
+            
+            var sum = 0;
+            await asyncList.ForEachAsync((n, i) => sum += n, (n, i) => i == 5); // 索引等于5则跳出
+            Assert.Equal(21, sum); // 1+...7
+        }
+
+
         [Fact]
         public void ForEachTest()
         {
@@ -37,6 +66,7 @@ namespace Librame.Extensions.Tests
             list.ForEach((n, i) => sum += n, (n, i) => i == 5); // 索引等于5则跳出
             Assert.Equal(21, sum); // 1+...7
         }
+
 
         [Fact]
         public void TrimTest()

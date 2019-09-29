@@ -23,10 +23,10 @@ namespace Librame.Extensions.Drawing
 {
     using Core;
 
-    class ScaleService : ExtensionBuilderServiceBase<DrawingBuilderOptions>, IScaleService
+    class ScaleService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IScaleService
     {
         public ScaleService(IWatermarkService watermark)
-            : base(watermark.CastTo<IWatermarkService, ExtensionBuilderServiceBase<DrawingBuilderOptions>>(nameof(watermark)))
+            : base(watermark.CastTo<IWatermarkService, AbstractExtensionBuilderService<DrawingBuilderOptions>>(nameof(watermark)))
         {
             Watermark = watermark;
         }

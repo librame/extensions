@@ -292,3 +292,4 @@ __pycache__/
 /*.pfx
 /resources
 /*.ps1
+/tests/Librame.Extensions.Data.EntityFrameworkCore.Tests/Librame.Extensions.Data.EntityFrameworkCore.ModelSnapshot.dll

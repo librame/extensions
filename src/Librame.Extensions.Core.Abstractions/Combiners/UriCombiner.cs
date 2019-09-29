@@ -48,7 +48,7 @@ namespace Librame.Extensions.Core
         /// <param name="path">给定以 / 开始的路径（可选）。</param>
         /// <param name="query">给定以 ? 开始的查询（可选）。</param>
         /// <param name="anchor">给定以 # 开始的锚点（可选）。</param>
-        protected UriCombiner(string scheme, string host,
+        public UriCombiner(string scheme, string host,
             string path = null, string query = null, string anchor = null)
             : base(CombineUri(scheme, host, path, query, anchor))
         {
@@ -90,21 +90,10 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <value>返回 <see cref="DomainNameCombiner"/>。</value>
         public DomainNameCombiner DomainName
-        {
-            get
-            {
-                if (DomainNameCombiner.TryParseAllLevelSegmentsFromHost(Host,
-                    out IEnumerable<string> allLevelSegments))
-                {
-                    return allLevelSegments.ToList().AsDomainNameCombiner();
-                }
-
-                return null;
-            }
-        }
+            => CreateDomainNameCombiner(Host);
 
         /// <summary>
-        /// 查询参数集合。
+        /// 查询参数集合（不为 NULL）。
         /// </summary>
         public ConcurrentDictionary<string, string> Queries
             => FromQuery(Query);
@@ -114,9 +103,7 @@ namespace Librame.Extensions.Core
         /// 重写源实例。
         /// </summary>
         public override Uri Source
-        {
-            get { return CombineUri(Scheme, Host, Path, Query, Anchor); }
-        }
+            => CombineUri(Scheme, Host, Path, Query, Anchor);
 
 
         /// <summary>
@@ -126,7 +113,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         public UriCombiner ChangeScheme(string newScheme)
         {
-            Scheme = newScheme.NotNullOrEmpty(nameof(newScheme));
+            Scheme = newScheme.NotEmpty(nameof(newScheme));
             return this;
         }
 
@@ -137,7 +124,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         public UriCombiner ChangeHost(string newHost)
         {
-            Host = newHost.NotNullOrEmpty(nameof(newHost));
+            Host = newHost.NotEmpty(nameof(newHost));
             return this;
         }
 
@@ -241,18 +228,52 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         public UriCombiner NewAnchor(string newAnchor)
             => new UriCombiner(Scheme, Host, Path, Query, newAnchor);
-
+        
 
         /// <summary>
-        /// 是否相等。
+        /// 创建域名组合器。
         /// </summary>
-        /// <param name="other">给定的 <see cref="UriCombiner"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public bool Equals(UriCombiner other)
-            => Source.ToString() == other?.Source.ToString();
+        /// <param name="host">给定的主机。</param>
+        /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
+        private DomainNameCombiner CreateDomainNameCombiner(string host)
+        {
+            if (DomainNameCombiner.TryParseAllLevelSegmentsFromHost(host,
+                out IEnumerable<string> allLevelSegments))
+            {
+                return allLevelSegments.ToList().AsDomainNameCombiner();
+            }
+
+            return null;
+        }
+
 
         /// <summary>
-        /// 是否相等。
+        /// 是指定主机（忽略大小写）。
+        /// </summary>
+        /// <param name="host">给定的主机。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool IsHost(string host)
+            => Host.Equals(host, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 是指定域名（忽略大小写）。
+        /// </summary>
+        /// <param name="domainName">给定的 <see cref="DomainNameCombiner"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool IsDomainName(DomainNameCombiner domainName)
+            => DomainName == domainName;
+
+
+        /// <summary>
+        /// 是否相等（忽略大小写）。
+        /// </summary>
+        /// <param name="other">给定的域名。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(Uri other)
+            => Source.ToString().Equals(other?.ToString(), StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 是否相等（忽略大小写）。
         /// </summary>
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
@@ -277,7 +298,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 是否相等。
+        /// 是否相等（忽略大小写）。
         /// </summary>
         /// <param name="a">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="b">给定的 <see cref="UriCombiner"/>。</param>
@@ -286,7 +307,7 @@ namespace Librame.Extensions.Core
             => (a?.Equals(b)).Value;
 
         /// <summary>
-        /// 是否不等。
+        /// 是否不等（忽略大小写）。
         /// </summary>
         /// <param name="a">给定的 <see cref="DomainNameCombiner"/>。</param>
         /// <param name="b">给定的 <see cref="DomainNameCombiner"/>。</param>
@@ -303,16 +324,25 @@ namespace Librame.Extensions.Core
             => combiner?.ToString();
 
         /// <summary>
-        /// 显式转换为 URI 组合器。
+        /// 隐式转换为 URI 组合器。
         /// </summary>
         /// <param name="uriString">给定的绝对 URI 字符串。</param>
-        public static explicit operator UriCombiner(string uriString)
+        public static implicit operator UriCombiner(string uriString)
         {
             if (uriString.IsAbsoluteUri(out Uri result))
                 return new UriCombiner(result);
 
             throw new ArgumentException($"Invalid absolute uri string: {uriString}.");
         }
+
+
+        /// <summary>
+        /// 显式转换为 URI。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
+        public static implicit operator Uri(UriCombiner combiner)
+            => combiner?.Source;
+
         /// <summary>
         /// 显式转换为 URI 组合器。
         /// </summary>
@@ -336,8 +366,8 @@ namespace Librame.Extensions.Core
         public static Uri CombineUri(string scheme, string host,
             string path = default, string query = default, string anchor = null)
         {
-            scheme.NotNullOrEmpty(nameof(scheme));
-            host.NotNullOrEmpty(nameof(host));
+            scheme.NotEmpty(nameof(scheme));
+            host.NotEmpty(nameof(host));
 
             return new Uri($"{scheme}{Uri.SchemeDelimiter}{host}{path}{query}{anchor}");
         }
@@ -352,16 +382,16 @@ namespace Librame.Extensions.Core
         {
             var queries = new ConcurrentDictionary<string, string>();
 
-            if (queryString.IsNotNullOrEmpty())
+            if (queryString.IsNotEmpty())
             {
                 queryString.TrimStart('?').Split('&').ForEach(segment =>
                 {
-                    if (segment.IsNotNullOrEmpty())
+                    if (segment.IsNotEmpty())
                     {
                         var pair = segment.SplitPair(); // "="
                         var valueString = pair.Value;
 
-                        if (valueString.IsNotNullOrEmpty())
+                        if (valueString.IsNotEmpty())
                             valueString = Uri.UnescapeDataString(valueString);
 
                         queries.AddOrUpdate(pair.Key, valueString, (key, value) => valueString);
@@ -387,7 +417,7 @@ namespace Librame.Extensions.Core
                 sb.Append(pair.Key);
                 sb.Append("=");
 
-                if (pair.Value.IsNotNullOrEmpty())
+                if (pair.Value.IsNotEmpty())
                     sb.Append(Uri.EscapeDataString(pair.Value));
 
                 if (i < count - 1)

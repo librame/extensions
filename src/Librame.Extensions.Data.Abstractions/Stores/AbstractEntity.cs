@@ -12,6 +12,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Librame.Extensions.Data
 {
@@ -19,6 +20,7 @@ namespace Librame.Extensions.Data
     /// 抽象实体。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
+    [NotMapped]
     public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>, IRank, IStatus
         where TId : IEquatable<TId>
     {
@@ -39,6 +41,7 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
+    [NotMapped]
     public abstract class AbstractEntity<TId, TRank, TStatus> : AbstractId<TId>, IRank<TRank>, IStatus<TStatus>
         where TId : IEquatable<TId>
         where TRank : struct

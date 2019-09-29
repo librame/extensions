@@ -25,7 +25,7 @@ namespace Librame.Extensions.Tests
         public void AsEnumFieldsTest()
         {
             var fields = typeof(TestEnum).AsEnumFields();
-            Assert.False(fields.IsNullOrEmpty());
+            Assert.False(fields.IsEmpty());
         }
 
         [Fact]
@@ -35,17 +35,17 @@ namespace Librame.Extensions.Tests
             Assert.Equal("一", description.Description);
 
             var results = typeof(TestEnum).AsEnumResults(f => f.GetCustomAttribute<DescriptionAttribute>());
-            Assert.False(results.IsNullOrEmpty());
+            Assert.False(results.IsEmpty());
         }
 
         [Fact]
         public void AsEnumDictionaryTest()
         {
             var dict = typeof(TestEnum).AsEnumDictionary();
-            Assert.False(dict.IsNullOrEmpty());
+            Assert.False(dict.IsEmpty());
 
             var dict2 = typeof(TestEnum).AsEnumDictionary(f => f.GetCustomAttribute<DescriptionAttribute>());
-            Assert.False(dict2.IsNullOrEmpty());
+            Assert.False(dict2.IsEmpty());
         }
     }
 

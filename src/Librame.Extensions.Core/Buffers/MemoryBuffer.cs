@@ -40,32 +40,32 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 隐式转换为 <see cref="Memory{T}"/>。
+        /// 隐式转换为内存。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="MemoryBuffer{T}"/>。</param>
         public static implicit operator Memory<T>(MemoryBuffer<T> buffer)
             => buffer.Memory;
 
         /// <summary>
-        /// 隐式转换为数组。
+        /// 隐式转换为内存缓冲区。
+        /// </summary>
+        /// <param name="memory">给定的 <see cref="Memory{T}"/>。</param>
+        public static implicit operator MemoryBuffer<T>(Memory<T> memory)
+            => new MemoryBuffer<T>(memory);
+
+
+        /// <summary>
+        /// 显式转换为数组。
         /// </summary>
         /// <param name="buffer">给定的 <see cref="MemoryBuffer{T}"/>。</param>
-        public static implicit operator T[](MemoryBuffer<T> buffer)
+        public static explicit operator T[](MemoryBuffer<T> buffer)
             => buffer.Memory.ToArray();
 
-
         /// <summary>
-        /// 显式转换为 <see cref="MemoryBuffer{T}"/>。
+        /// 显式转换为内存缓冲区。
         /// </summary>
-        /// <param name="bytes">给定的 <see cref="Memory{T}"/>。</param>
-        public static explicit operator MemoryBuffer<T>(Memory<T> bytes)
-            => new MemoryBuffer<T>(bytes);
-
-        /// <summary>
-        /// 显式转换为 <see cref="MemoryBuffer{T}"/>。
-        /// </summary>
-        /// <param name="bytes">给定的数组。</param>
-        public static explicit operator MemoryBuffer<T>(T[] bytes)
-            => new MemoryBuffer<T>(bytes);
+        /// <param name="array">给定的数组。</param>
+        public static explicit operator MemoryBuffer<T>(T[] array)
+            => new MemoryBuffer<T>(array);
     }
 }

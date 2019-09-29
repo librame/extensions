@@ -18,7 +18,7 @@ namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class KeyGenerator : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, IKeyGenerator
+    class KeyGenerator : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyGenerator
     {
         private readonly IAlgorithmIdentifier _optionsIdentifier;
 

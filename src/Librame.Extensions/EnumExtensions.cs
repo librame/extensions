@@ -119,7 +119,7 @@ namespace Librame.Extensions
             converter.NotNull(nameof(converter));
 
             var fields = enumType.AsEnumFields();
-            if (fields.IsNullOrEmpty()) return Enumerable.Empty<TResult>();
+            if (fields.IsEmpty()) return Enumerable.Empty<TResult>();
 
             return fields.Select(field => converter.Invoke(field));
         }
@@ -162,7 +162,7 @@ namespace Librame.Extensions
             var dict = new Dictionary<string, TResult>();
 
             var fields = enumType.AsEnumFields();
-            if (fields.IsNullOrEmpty()) return dict;
+            if (fields.IsEmpty()) return dict;
 
             foreach (var field in fields)
                 dict.Add(field.Name, converter.Invoke(field));

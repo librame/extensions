@@ -18,7 +18,7 @@ namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class SymmetricService : ExtensionBuilderServiceBase<EncryptionBuilderOptions>, ISymmetricService
+    class SymmetricService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISymmetricService
     {
         private readonly Lazy<Aes> _aes;
         private readonly Lazy<DES> _des;
@@ -26,7 +26,7 @@ namespace Librame.Extensions.Encryption
 
 
         public SymmetricService(IKeyGenerator keyGenerator)
-            : base(keyGenerator.CastTo<IKeyGenerator, ExtensionBuilderServiceBase<EncryptionBuilderOptions>>(nameof(keyGenerator)))
+            : base(keyGenerator.CastTo<IKeyGenerator, AbstractExtensionBuilderService<EncryptionBuilderOptions>>(nameof(keyGenerator)))
         {
             KeyGenerator = keyGenerator;
 

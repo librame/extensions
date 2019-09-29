@@ -25,7 +25,7 @@ namespace Librame.Extensions.Drawing.Tests
         public async void DrawCaptchaBytesTest()
         {
             var captcha = _captchas[new Random().Next(0, _captchas.Length)];
-            var buffer = await _drawing.DrawBytesAsync(captcha).ConfigureAwait(true);
+            var buffer = await _drawing.DrawBytesAsync(captcha).ConfigureAndResultAsync();
             Assert.NotNull(buffer);
         }
 
@@ -34,7 +34,7 @@ namespace Librame.Extensions.Drawing.Tests
         {
             var captcha = _captchas[new Random().Next(0, _captchas.Length)];
             var saveFile = "captcha.png".AsFilePathCombiner(TestServiceProvider.ResourcesPath);
-            var result = await _drawing.DrawFileAsync(captcha, saveFile).ConfigureAwait(true);
+            var result = await _drawing.DrawFileAsync(captcha, saveFile).ConfigureAndResultAsync();
             Assert.True(result);
         }
 

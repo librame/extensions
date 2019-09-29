@@ -49,6 +49,15 @@ namespace Librame.Extensions
             return Task.Run(action, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步运行动作方法。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="action">给定的动作方法。</param>
+        /// <returns>返回一个异步操作。</returns>
+        public static ValueTask RunActionOrCancellationValueAsync(this CancellationToken cancellationToken, Action action)
+            => new ValueTask(cancellationToken.RunActionOrCancellationAsync(action));
+
 
         /// <summary>
         /// 运行工厂方法。
@@ -81,5 +90,14 @@ namespace Librame.Extensions
             return Task.Run(factory, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步运行工厂方法。
+        /// </summary>
+        /// <typeparam name="TResult">指定的结果类型。</typeparam>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="factory">给定的工厂方法。</param>
+        /// <returns>返回一个包含 <typeparamref name="TResult"/> 的异步操作。</returns>
+        public static ValueTask<TResult> RunFactoryOrCancellationValueAsync<TResult>(this CancellationToken cancellationToken, Func<TResult> factory)
+            => new ValueTask<TResult>(cancellationToken.RunFactoryOrCancellationAsync(factory));
     }
 }

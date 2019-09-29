@@ -10,13 +10,13 @@
 
 #endregion
 
-using Librame.Extensions;
-using Librame.Extensions.Data;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace System.Collections.Generic
+namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 抽象树形节点静态扩展。
@@ -38,7 +38,7 @@ namespace System.Collections.Generic
         {
             var nonstratifiedNodes = new List<TreeingNode<T, TId>>();
 
-            if (nodes.IsNullOrEmpty())
+            if (nodes.IsEmpty())
                 return nonstratifiedNodes;
 
             foreach (var node in nodes)
@@ -47,7 +47,7 @@ namespace System.Collections.Generic
 
                 // 链式查询
                 var lookupNodes = ExportNonstratifiedNodes(node.Children);
-                if (lookupNodes.IsNotNullOrEmpty())
+                if (lookupNodes.IsNotEmpty())
                 {
                     orderedFactory?.Invoke(lookupNodes);
                     nonstratifiedNodes.AddRange(lookupNodes);
@@ -83,7 +83,7 @@ namespace System.Collections.Generic
             where T : IParentId<TId>
             where TId : IEquatable<TId>
         {
-            if (items.IsNullOrEmpty())
+            if (items.IsEmpty())
                 return new List<TreeingNode<T, TId>>();
 
             // 提取根父标识
@@ -101,7 +101,7 @@ namespace System.Collections.Generic
 
             // 提取父元素集合
             var parents = items.Where(p => p.ParentId.Equals(parentId));
-            if (parents.IsNullOrEmpty())
+            if (parents.IsEmpty())
                 return nodes;
 
             foreach (var p in parents)

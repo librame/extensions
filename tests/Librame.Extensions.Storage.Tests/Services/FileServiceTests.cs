@@ -28,7 +28,7 @@ namespace Librame.Extensions.Storage.Tests
             var text = $"Now: {now.ToString()}";
             File.WriteAllText(file, text);
 
-            var contents = await _service.GetDirectoryContentsAsync(subdir.Name).ConfigureAwait(true);
+            var contents = await _service.GetDirectoryContentsAsync(subdir.Name).ConfigureAndResultAsync();
             Assert.NotEmpty(contents);
 
             var fileInfo = contents.First();
@@ -39,7 +39,7 @@ namespace Librame.Extensions.Storage.Tests
             // file to copyFile
             using (var writeStream = new FileStream(copyFile, FileMode.Create))
             {
-                await _service.ReadAsync(fileInfo, writeStream).ConfigureAwait(false);
+                await _service.ReadAsync(fileInfo, writeStream).ConfigureAndWaitAsync();
             }
             Assert.Equal(text, File.ReadAllText(copyFile));
 
@@ -48,7 +48,7 @@ namespace Librame.Extensions.Storage.Tests
             // copyFile to file
             using (var readStream = new FileStream(copyFile, FileMode.Open))
             {
-                await _service.WriteAsync(fileInfo, readStream).ConfigureAwait(false);
+                await _service.WriteAsync(fileInfo, readStream).ConfigureAndWaitAsync();
             }
             Assert.Equal(text, File.ReadAllText(fileInfo.PhysicalPath));
 

@@ -39,7 +39,7 @@ namespace Librame.Extensions.Data
             builder.Services.AddScoped(typeof(IStoreInitializer<,>), typeof(StoreInitializerBase<,>));
 
             builder.Services.AddScoped(typeof(IStoreHub<>), typeof(StoreHubBase<>));
-            builder.Services.AddScoped(typeof(IStoreHub<,,,>), typeof(StoreHubBase<,,,>));
+            builder.Services.AddScoped(typeof(IStoreHub<,,,,>), typeof(StoreHubBase<,,,,>));
 
             return builder;
         }
@@ -70,7 +70,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 增加存储中心。
         /// </summary>
-        /// <typeparam name="TService">指定继承自 <see cref="IStoreHub{TAccessor}"/> 或 <see cref="IStoreHub{TAccessor, TAudit, TTable, TTenant}"/> 的存储中心服务类型。</typeparam>
+        /// <typeparam name="TService">指定继承自 <see cref="IStoreHub{TAccessor}"/> 或 <see cref="IStoreHub{TAccessor, TAudit, TEntity, TMigration, TTenant}"/> 的存储中心服务类型。</typeparam>
         /// <typeparam name="TImplementation">指定 <typeparamref name="TService"/> 的实现类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
@@ -184,7 +184,7 @@ namespace Librame.Extensions.Data
                     && p.GenericTypeArguments.Any(a => a.IsAssignableToBaseType(_accessorMarkType)))
                 .ToArray();
 
-            if (withAccessorTypes.IsNullOrEmpty())
+            if (withAccessorTypes.IsEmpty())
                 throw new ArgumentNullException($"The {findType} does not implement {markType.GetSimpleFullName()}<TAccessor>");
 
             return withAccessorTypes;

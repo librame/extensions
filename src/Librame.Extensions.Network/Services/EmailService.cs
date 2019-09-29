@@ -98,7 +98,7 @@ namespace Librame.Extensions.Network
                     configureClient?.Invoke(client);
 
                     // SendAsync
-                    await client.SendMailAsync(message).ConfigureAwait(false);
+                    await client.SendMailAsync(message).ConfigureAndWaitAsync();
                     Logger.LogDebug($"Send mail.");
                 }
             }

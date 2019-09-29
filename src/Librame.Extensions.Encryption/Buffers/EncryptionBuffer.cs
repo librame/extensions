@@ -20,7 +20,7 @@ namespace Librame.Extensions.Encryption
         where TConverter : IByteMemoryBufferToConverter<TSource>
     {
         public EncryptionBuffer(TConverter converter, TSource source)
-            : this(converter, source, converter.From(source))
+            : this(converter, source, converter.ConvertFrom(source))
         {
         }
 

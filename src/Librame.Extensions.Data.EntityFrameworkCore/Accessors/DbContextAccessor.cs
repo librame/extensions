@@ -45,7 +45,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 初始化。
         /// </summary>
-        protected virtual void Initialize()
+        protected void Initialize()
         {
             if (BuilderOptions.IsCreateDatabase)
                 EnsureDatabaseCreated(Database.GetDbConnection());
@@ -55,22 +55,27 @@ namespace Librame.Extensions.Data
         #region Entities
 
         /// <summary>
-        /// 审计。
+        /// 审计数据集。
         /// </summary>
         public DbSet<DataAudit> Audits { get; set; }
 
         /// <summary>
-        /// 审计属性。
+        /// 审计属性数据集。
         /// </summary>
         public DbSet<DataAuditProperty> AuditProperties { get; set; }
 
         /// <summary>
-        /// 实体表。
+        /// 实体数据集。
         /// </summary>
         public DbSet<DataEntity> Entities { get; set; }
 
         /// <summary>
-        /// 租户。
+        /// 迁移数据集。
+        /// </summary>
+        public DbSet<DataMigration> Migrations { get; set; }
+
+        /// <summary>
+        /// 租户数据集。
         /// </summary>
         public DbSet<DataTenant> Tenants { get; set; }
 
@@ -96,13 +101,13 @@ namespace Librame.Extensions.Data
             => this.GetService<IOptions<DataBuilderOptions>>().Value;
 
         /// <summary>
-        /// 记录器工厂。
+        /// 日志工厂。
         /// </summary>
         public ILoggerFactory LoggerFactory
             => this.GetService<ILoggerFactory>();
 
         /// <summary>
-        /// 记录器。
+        /// 日志。
         /// </summary>
         protected ILogger Logger
             => LoggerFactory.CreateLogger(GetType());
@@ -127,6 +132,26 @@ namespace Librame.Extensions.Data
             return false;
         }
 
+        /// <summary>
+        /// 确保已创建数据库。
+        /// </summary>
+        /// <param name="dbConnection">给定的 <see cref="DbConnection"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回一个包含是否已创建的布尔值的异步操作。</returns>
+        protected virtual async Task<bool> EnsureDatabaseCreatedAsync(DbConnection dbConnection, CancellationToken cancellationToken)
+        {
+            bool result;
+            if (result = await Database.EnsureCreatedAsync(cancellationToken).ConfigureAndResultAsync())
+            {
+                if (dbConnection.IsNotNull())
+                    Logger.LogInformation($"Database created: {dbConnection.ConnectionString}.");
+
+                BuilderOptions.DatabaseCreatedAction?.Invoke(this);
+            }
+
+            return result;
+        }
+
 
         /// <summary>
         /// 开始模型创建。
@@ -145,8 +170,8 @@ namespace Librame.Extensions.Data
         /// <param name="sql">给定的 SQL 语句。</param>
         /// <param name="parameters">给定的参数集合。</param>
         /// <returns>返回受影响的行数。</returns>
-        public virtual int ExecuteSqlCommand(string sql, params object[] parameters)
-            => Database.ExecuteSqlCommand(sql, parameters);
+        public virtual int ExecuteSqlRaw(string sql, params object[] parameters)
+            => Database.ExecuteSqlRaw(sql, parameters);
 
         /// <summary>
         /// 异步执行 SQL 命令。
@@ -155,9 +180,9 @@ namespace Librame.Extensions.Data
         /// <param name="parameters">给定的参数集合。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
-        public virtual Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<object> parameters,
+        public virtual Task<int> ExecuteSqlRawAsync(string sql, IEnumerable<object> parameters,
             CancellationToken cancellationToken = default)
-            => Database.ExecuteSqlCommandAsync(sql, parameters, cancellationToken);
+            => Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
 
 
         /// <summary>
@@ -169,21 +194,21 @@ namespace Librame.Extensions.Data
         {
             // 读写分离：尝试切换为写入数据库
             if (BuilderOptions.TenantEnabled)
-                ToggleTenant(tenant => tenant.WritingConnectionString);
+                SwitchTenant(tenant => tenant.WritingConnectionString);
 
-            // 注册实体表
-            if (BuilderOptions.TableEnabled)
-                RegistTableAsync().Wait();
+            var aspects = ServiceFactory.GetRequiredService<IServicesManager<ISaveChangesAccessorAspect>>();
+            // 前置处理保存变化
+            aspects.ForEach(aspect => aspect.Preprocess(this));
 
-            // 审计实体
-            if (BuilderOptions.AuditEnabled)
-                RegistAuditAsync().Wait();
-
+            // 保存变化
             var count = base.SaveChanges(acceptAllChangesOnSuccess);
+
+            // 后置处理保存变化
+            aspects.ForEach(aspect => aspect.Postprocess(this));
 
             // 读写分离：尝试切换为默认数据库
             if (BuilderOptions.TenantEnabled)
-                ToggleTenant(tenant => tenant.DefaultConnectionString);
+                SwitchTenant(tenant => tenant.DefaultConnectionString);
 
             return count;
         }
@@ -199,46 +224,23 @@ namespace Librame.Extensions.Data
         {
             // 读写分离：尝试切换为写入数据库
             if (BuilderOptions.TenantEnabled)
-                ToggleTenant(tenant => tenant.WritingConnectionString, cancellationToken);
+                await SwitchTenantAsync(tenant => tenant.WritingConnectionString, cancellationToken).ConfigureAndResultAsync();
 
-            // 注册实体表
-            if (BuilderOptions.TableEnabled)
-                await RegistTableAsync(cancellationToken).ConfigureAwait(false);
+            var aspects = ServiceFactory.GetRequiredService<IServicesManager<ISaveChangesAccessorAspect>>();
+            // 前置处理保存变化
+            aspects.ForEach(async aspect => await aspect.PreprocessAsync(this, cancellationToken).ConfigureAndWaitAsync());
 
-            // 审计实体
-            if (BuilderOptions.AuditEnabled)
-                await RegistAuditAsync(cancellationToken).ConfigureAwait(false);
+            // 保存变化
+            var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken).ConfigureAndResultAsync();
 
-            var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)
-                .ConfigureAwait(true);
+            // 后置处理保存变化
+            aspects.ForEach(async aspect => await aspect.PostprocessAsync(this, cancellationToken).ConfigureAndWaitAsync());
 
             // 读写分离：尝试切换为默认数据库
             if (BuilderOptions.TenantEnabled)
-                ToggleTenant(tenant => tenant.DefaultConnectionString, cancellationToken);
+                await SwitchTenantAsync(tenant => tenant.DefaultConnectionString, cancellationToken).ConfigureAndResultAsync();
 
             return count;
-        }
-
-        /// <summary>
-        /// 异步注册实体表。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        protected virtual async Task RegistTableAsync(CancellationToken cancellationToken = default)
-        {
-            var tableService = this.GetService<IEntityService>();
-            await tableService.RegistAsync(this, cancellationToken).ConfigureAwait(true);
-        }
-
-        /// <summary>
-        /// 异步注册审计。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        protected virtual async Task RegistAuditAsync(CancellationToken cancellationToken = default)
-        {
-            var auditService = this.GetService<IAuditService>();
-            await auditService.RegistAsync(this, cancellationToken).ConfigureAwait(true);
         }
 
 
@@ -247,7 +249,8 @@ namespace Librame.Extensions.Data
         /// </summary>
         public virtual void Migrate()
         {
-            Database.Migrate();
+            var migrationService = this.GetService<IDataMigrationService>();
+            migrationService.Migrate(this);
         }
 
         /// <summary>
@@ -257,15 +260,8 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="Task"/>。</returns>
         public virtual Task MigrateAsync(CancellationToken cancellationToken = default)
         {
-            //var appliedMigrations = await Database.GetAppliedMigrationsAsync(cancellationToken);
-            //var pendingMigrations = await Database.GetPendingMigrationsAsync(cancellationToken);
-
-            //var dependencies = ServiceProvider.GetRequiredService<HistoryRepositoryDependencies>();
-            //var diff = dependencies.ModelDiffer.GetDifferences(null, Model);
-            //var differ = ServiceFactory.GetRequiredService<IMigrationsModelDiffer>();
-            //var diff = differ.GetDifferences(null, Model);
-
-            return Database.MigrateAsync(cancellationToken);
+            var migrationService = this.GetService<IDataMigrationService>();
+            return migrationService.MigrateAsync(this, cancellationToken);
         }
 
 
@@ -273,16 +269,14 @@ namespace Librame.Extensions.Data
         /// 切换租户。
         /// </summary>
         /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        public virtual bool ToggleTenant(Func<ITenant, string> changeConnectionStringFactory,
-            CancellationToken cancellationToken = default)
+        public virtual bool SwitchTenant(Func<ITenant, string> changeConnectionStringFactory)
         {
             if (changeConnectionStringFactory.IsNull())
                 return false;
 
-            var tenantService = this.GetService<ITenantService>();
-            var currentTenant = tenantService.GetCurrentTenantAsync(this, cancellationToken).Result;
+            var tenantService = this.GetService<IDataTenantService>();
+            var currentTenant = tenantService.GetCurrentTenant(this);
             if (currentTenant.IsNull())
                 return false;
 
@@ -300,19 +294,15 @@ namespace Librame.Extensions.Data
                 return false;
             }
 
-            try
-            {
-                var locker = this.GetService<IMemoryLocker>();
-                locker.WaitAction(ChangeDbConnection);
-                return true;
-            }
-            catch (Exception ex)
+            var locker = this.GetService<IMemoryLocker>();
+            return locker.WaitFactory(ChangeDbConnection, catchExceptionFactory: ex =>
             {
                 Logger.LogError(ex, ex.AsInnerMessage());
                 return false;
-            }
+            });
 
-            void ChangeDbConnection()
+            // 改变数据库连接
+            bool ChangeDbConnection()
             {
                 if (connection.State != ConnectionState.Closed)
                 {
@@ -339,6 +329,80 @@ namespace Librame.Extensions.Data
 
                 if (BuilderOptions.MigrationEnabled)
                     Migrate();
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// 异步切换租户。
+        /// </summary>
+        /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含是否已切换的布尔值的异步操作。</returns>
+        public virtual async Task<bool> SwitchTenantAsync(Func<ITenant, string> changeConnectionStringFactory,
+            CancellationToken cancellationToken = default)
+        {
+            if (changeConnectionStringFactory.IsNull())
+                return false;
+
+            var tenantService = this.GetService<IDataTenantService>();
+            var currentTenant = await tenantService.GetCurrentTenantAsync(this, cancellationToken).ConfigureAndResultAsync();
+            if (currentTenant.IsNull())
+                return false;
+
+            if (!currentTenant.WritingSeparation)
+            {
+                Logger.LogTrace($"The tenant({currentTenant.Name}:{currentTenant.Host}) write separation is disable.");
+                return false;
+            }
+
+            var changeConnectionString = changeConnectionStringFactory.Invoke(currentTenant);
+            var connection = Database.GetDbConnection();
+            if (connection.ConnectionString.Equals(changeConnectionString, StringComparison.OrdinalIgnoreCase))
+            {
+                Logger.LogTrace($"The tenant({currentTenant.Name}:{currentTenant.Host}) same as the current connection string.");
+                return false;
+            }
+
+            var locker = this.GetService<IMemoryLocker>();
+            return await locker.WaitFactoryAsync(ChangeDbConnectionAsync, catchExceptionFactory: ex =>
+            {
+                Logger.LogError(ex, ex.AsInnerMessage());
+                return false;
+            })
+            .ConfigureAndResultAsync();
+
+            // 异步改变数据库连接
+            async Task<bool> ChangeDbConnectionAsync()
+            {
+                if (connection.State != ConnectionState.Closed)
+                {
+                    await connection.CloseAsync().ConfigureAndWaitAsync();
+                    Logger.LogTrace($"Close connection string: {connection.ConnectionString}");
+                }
+
+                // MYSql: System.InvalidOperationException
+                //  HResult = 0x80131509
+                //  Message = Cannot change connection string on a connection that has already been opened.
+                //  Source = MySqlConnector
+                // connection.ChangeDatabase(connectionString);
+                connection.ConnectionString = changeConnectionString;
+                Logger?.LogInformation($"The tenant({currentTenant.Name}:{currentTenant.Host}) change connection string: {changeConnectionString}");
+
+                if (BuilderOptions.IsCreateDatabase)
+                    await EnsureDatabaseCreatedAsync(connection, cancellationToken).ConfigureAndResultAsync();
+
+                if (connection.State != ConnectionState.Open)
+                {
+                    await connection.OpenAsync(cancellationToken).ConfigureAndWaitAsync();
+                    Logger?.LogInformation($"Open connection string: {connection.ConnectionString}");
+                }
+
+                if (BuilderOptions.MigrationEnabled)
+                    await MigrateAsync(cancellationToken).ConfigureAndWaitAsync();
+
+                return true;
             }
         }
 

@@ -51,7 +51,7 @@ namespace Librame.Extensions.Network.DotNetty
                     var webSocketHandler = handler.CastTo<IChannelHandler,
                         WebSocketClientHandler>(nameof(handler));
 
-                    await webSocketHandler.HandshakeCompletion.ConfigureAwait(false);
+                    await webSocketHandler.HandshakeCompletion.ConfigureAndWaitAsync();
 
                     Logger.LogInformation("WebSocket handshake completed.\n");
                     Logger.LogInformation($"\t[{_clientOptions.ExitCommand}]:Quit \n\t [ping]:Send ping frame\n\t Enter any text and Enter: Send text frame");
@@ -68,7 +68,7 @@ namespace Librame.Extensions.Network.DotNetty
 
                 return new WebSocketClientHandler(this, handshaker);
             },
-            _configureProcess, host, port).ConfigureAwait(false);
+            _configureProcess, host, port).ConfigureAndWaitAsync();
         }
 
         public async Task StartAsync<TChannelHandler>(Func<Uri, TChannelHandler> channelHandlerFactory,
@@ -85,7 +85,7 @@ namespace Librame.Extensions.Network.DotNetty
                 Port = port.Value
             };
 
-            if (!_clientOptions.Path.IsNullOrEmpty())
+            if (!_clientOptions.Path.IsEmpty())
                 builder.Path = _clientOptions.Path;
 
             IEventLoopGroup group = null;
@@ -106,7 +106,7 @@ namespace Librame.Extensions.Network.DotNetty
                 var channel = await WrapperFactory
                     .CreateTcp(_clientOptions.UseLibuv, out group)
                     .AddWebSocketHandler(tlsCertificate, webSocketHandler)
-                    .ConnectAsync(endPoint, _clientOptions.RetryCount).ConfigureAwait(true);
+                    .ConnectAsync(endPoint, _clientOptions.RetryCount).ConfigureAndResultAsync();
 
                 Logger.LogInformation($"Connect ip end point: {endPoint}");
 
@@ -119,7 +119,7 @@ namespace Librame.Extensions.Network.DotNetty
             finally
             {
                 await group.ShutdownGracefullyAsync(_clientOptions.QuietPeriod,
-                    _clientOptions.TimeOut).ConfigureAwait(false);
+                    _clientOptions.TimeOut).ConfigureAndWaitAsync();
             }
         }
 

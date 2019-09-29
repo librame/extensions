@@ -25,13 +25,13 @@ namespace Librame.Extensions.Data.Tests
 
         public TestStoreHub UseWriteDbConnection()
         {
-            Accessor.ToggleTenant(t => t.WritingConnectionString);
+            Accessor.SwitchTenant(t => t.WritingConnectionString);
             return this;
         }
 
         public TestStoreHub UseDefaultDbConnection()
         {
-            Accessor.ToggleTenant(t => t.DefaultConnectionString);
+            Accessor.SwitchTenant(t => t.DefaultConnectionString);
             return this;
         }
 

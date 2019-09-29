@@ -59,13 +59,13 @@ namespace Librame.Extensions.Network
                 request.Timeout = (int)opts.Timeout.TotalMilliseconds;
                 request.UserAgent = opts.UserAgent;
 
-                if (parameters.Accept.IsNotNullOrEmpty())
+                if (parameters.Accept.IsNotEmpty())
                     request.Accept = parameters.Accept;
 
-                if (parameters.ContentType.IsNotNullOrEmpty())
+                if (parameters.ContentType.IsNotEmpty())
                     request.ContentType = parameters.ContentType;
 
-                if (parameters.Headers.IsNotNullOrEmpty())
+                if (parameters.Headers.IsNotEmpty())
                 {
                     parameters.Headers.ForEach(pair =>
                     {
@@ -73,7 +73,7 @@ namespace Librame.Extensions.Network
                     });
                 }
 
-                if (postData.IsNotNullOrEmpty())
+                if (postData.IsNotEmpty())
                 {
                     request.ContentType = $"application/x-www-form-urlencoded; charset={Encoding.AsName()}";
                     request.Method = "POST";
@@ -95,7 +95,7 @@ namespace Librame.Extensions.Network
 
             Stream GetResponseStream()
             {
-                if (postData.IsNotNullOrEmpty())
+                if (postData.IsNotEmpty())
                 {
                     var buffer = ByteCodec.EncodeStringAsBytes(postData, enableCodec);
                     request.ContentLength = buffer.Length;

@@ -43,7 +43,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回架构。</returns>
         public override string ToString()
         {
-            if (Schema.IsNotNullOrEmpty())
+            if (Schema.IsNotEmpty())
                 return $"{Schema}{_defaultConnector}";
 
             return Schema;

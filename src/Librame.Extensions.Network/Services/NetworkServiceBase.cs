@@ -21,7 +21,7 @@ namespace Librame.Extensions.Network
     /// <summary>
     /// 网络服务基类。
     /// </summary>
-    public class NetworkServiceBase : ExtensionBuilderServiceBase<NetworkBuilderOptions>, INetworkService
+    public class NetworkServiceBase : AbstractExtensionBuilderService<NetworkBuilderOptions>, INetworkService
     {
         /// <summary>
         /// 构造一个 <see cref="NetworkServiceBase"/>。

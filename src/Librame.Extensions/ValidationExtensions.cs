@@ -53,7 +53,7 @@ namespace Librame.Extensions
         /// </remarks>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsNullOrWhiteSpace(this string str)
+        public static bool IsWhiteSpace(this string str)
             => string.IsNullOrWhiteSpace(str);
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Librame.Extensions
         /// </remarks>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsNotNullOrWhiteSpace(this string str)
+        public static bool IsNotWhiteSpace(this string str)
             => !string.IsNullOrWhiteSpace(str);
 
 
@@ -76,7 +76,7 @@ namespace Librame.Extensions
         /// </remarks>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsNullOrEmpty(this string str)
+        public static bool IsEmpty(this string str)
             => string.IsNullOrEmpty(str);
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Librame.Extensions
         /// </remarks>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsNotNullOrEmpty(this string str)
+        public static bool IsNotEmpty(this string str)
             => !string.IsNullOrEmpty(str);
 
 
@@ -97,7 +97,7 @@ namespace Librame.Extensions
         /// <typeparam name="TSources">指定的源集合类型。</typeparam>
         /// <param name="sources">给定的 <see cref="IEnumerable"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsNullOrEmpty<TSources>(this TSources sources)
+        public static bool IsEmpty<TSources>(this TSources sources)
             where TSources : IEnumerable
         {
             if (sources.IsNull())
@@ -120,9 +120,9 @@ namespace Librame.Extensions
         /// <typeparam name="TSources">指定的源集合类型。</typeparam>
         /// <param name="sources">给定的 <see cref="IEnumerable"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsNotNullOrEmpty<TSources>(this TSources sources)
+        public static bool IsNotEmpty<TSources>(this TSources sources)
             where TSources : IEnumerable
-            => !sources.IsNullOrEmpty();
+            => !sources.IsEmpty();
 
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Librame.Extensions
         /// <typeparam name="TSource">指定的源类型。</typeparam>
         /// <param name="sources">给定的 <see cref="IEnumerable{TSource}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> sources)
+        public static bool IsEmpty<TSource>(this IEnumerable<TSource> sources)
         {
             if (sources.IsNull())
                 return true;
@@ -151,8 +151,8 @@ namespace Librame.Extensions
         /// <typeparam name="TSource">指定的源类型。</typeparam>
         /// <param name="sources">给定的 <see cref="IEnumerable{TSource}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsNotNullOrEmpty<TSource>(this IEnumerable<TSource> sources)
-            => !sources.IsNullOrEmpty();
+        public static bool IsNotEmpty<TSource>(this IEnumerable<TSource> sources)
+            => !sources.IsEmpty();
 
         #endregion
 

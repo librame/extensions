@@ -119,7 +119,7 @@ namespace System.Collections.Generic
             }
             set
             {
-                if (value.IsNullOrEmpty())
+                if (value.IsEmpty())
                     value = new List<TreeingNode<T, TId>>();
 
                 _children = value;
@@ -174,7 +174,7 @@ namespace System.Collections.Generic
         /// <returns>返回当前子节点。</returns>
         public TreeingNode<T, TId> GetChild(TId childId)
         {
-            if (Children.IsNullOrEmpty()) return null;
+            if (Children.IsEmpty()) return null;
             return Children.FirstOrDefault(c => Id.Equals(childId));
         }
 
@@ -185,7 +185,7 @@ namespace System.Collections.Generic
         /// <returns>返回树形节点列表。</returns>
         public IList<TreeingNode<T, TId>> GetChildren(TId parentId)
         {
-            if (Children.IsNullOrEmpty()) return null;
+            if (Children.IsEmpty()) return null;
             return Children.Where(p => p.ParentId.Equals(parentId)).ToList();
         }
 
@@ -232,7 +232,7 @@ namespace System.Collections.Generic
         /// <returns>返回字符串。</returns>
         public string ToString(Func<TreeingNode<T, TId>, string> toStringFactory)
         {
-            if (Children.IsNullOrEmpty())
+            if (Children.IsEmpty())
                 return string.Empty;
 
             toStringFactory.NotNull(nameof(toStringFactory));

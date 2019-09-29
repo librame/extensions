@@ -156,7 +156,7 @@ namespace Librame.Extensions
         /// <returns>返回字符串。</returns>
         public static string AsSingularize(this string plural)
         {
-            plural.NotNullOrEmpty(nameof(plural));
+            plural.NotEmpty(nameof(plural));
 
             Regex plural1 = new Regex("(?<keep>[^aeiou])ies$");
             Regex plural2 = new Regex("(?<keep>[aeiou]y)s$");
@@ -186,7 +186,7 @@ namespace Librame.Extensions
         /// <returns>返回字符串。</returns>
         public static string AsPluralize(this string singular)
         {
-            singular.NotNullOrEmpty(nameof(singular));
+            singular.NotEmpty(nameof(singular));
 
             Regex plural1 = new Regex("(?<keep>[^aeiou])y$");
             Regex plural2 = new Regex("(?<keep>[aeiou]y)$");
@@ -225,7 +225,7 @@ namespace Librame.Extensions
         /// <returns>返回键值对。</returns>
         public static KeyValuePair<string, string> SplitPair(this string pair, string separator = "=")
         {
-            pair.NotNullOrEmpty(nameof(pair));
+            pair.NotEmpty(nameof(pair));
             //separator.NotEmpty(nameof(separator));
 
             var separatorIndex = pair.IndexOf(separator);
@@ -289,7 +289,7 @@ namespace Librame.Extensions
         /// <returns>返回清除后的字符串。</returns>
         public static string TrimStart(this string str, string trim, bool loops = true)
         {
-            if (trim.IsNotNullOrEmpty() && str.StartsWith(trim, StringComparison.OrdinalIgnoreCase))
+            if (trim.IsNotEmpty() && str.StartsWith(trim, StringComparison.OrdinalIgnoreCase))
             {
                 str = str.Substring(trim.Length);
                 if (loops)
@@ -308,7 +308,7 @@ namespace Librame.Extensions
         /// <returns>返回清除后的字符串。</returns>
         public static string TrimEnd(this string str, string trim, bool loops = true)
         {
-            if (trim.IsNotNullOrEmpty() && str.EndsWith(trim, StringComparison.OrdinalIgnoreCase))
+            if (trim.IsNotEmpty() && str.EndsWith(trim, StringComparison.OrdinalIgnoreCase))
             {
                 str = str.Substring(0, str.Length - trim.Length);
                 if (loops)

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions
 {
@@ -31,6 +32,29 @@ namespace Librame.Extensions
         public static IEnumerable<T> YieldEnumerable<T>(this T instance)
         {
             yield return instance;
+        }
+
+        /// <summary>
+        /// 迭代为可枚举集合。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="task">给定的异步操作。</param>
+        /// <returns>返回 <see cref="IAsyncEnumerable{T}"/>。</returns>
+        public static async IAsyncEnumerable<T> YieldAsyncEnumerable<T>(this Task<T> task)
+        {
+            yield return await task;
+        }
+
+        /// <summary>
+        /// 转换为异步可枚举集合。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="enumerable">给定的可枚举异步操作。</param>
+        /// <returns>返回 <see cref="IAsyncEnumerable{T}"/>。</returns>
+        public static async IAsyncEnumerable<T> AsAsyncEnumerable<T>(this IEnumerable<Task<T>> enumerable)
+        {
+            foreach (var task in enumerable)
+                yield return await task;
         }
 
 
@@ -70,7 +94,78 @@ namespace Librame.Extensions
         }
 
 
+        /// <summary>
+        /// 计算可枚举集合的哈希码。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
+        /// <returns>返回整数。</returns>
+        public static int ComputeHashCode<T>(this IEnumerable<T> enumerable)
+        {
+            if (enumerable.IsEmpty()) return -1;
+            return enumerable.Aggregate(0, (x, y) => x.GetHashCode() ^ y.GetHashCode());
+        }
+
+
         #region ForEach
+
+        /// <summary>
+        /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// action is null.
+        /// </exception>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="items">给定的元素集合。</param>
+        /// <param name="action">给定的遍历动作。</param>
+        /// <param name="breakFactory">给定跳出遍历的动作（可选）。</param>
+        /// <returns>返回一个异步操作。</returns>
+        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> items, Action<T> action,
+            Func<T, bool> breakFactory = null)
+        {
+            if (items.IsNull()) return;
+
+            action.NotNull(nameof(action));
+
+            await foreach (var item in items)
+            {
+                action.Invoke(item);
+
+                if (breakFactory?.Invoke(item) == true)
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// action is null.
+        /// </exception>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="items">给定的元素集合。</param>
+        /// <param name="action">给定的遍历动作。</param>
+        /// <param name="breakFactory">给定跳出遍历的动作（可选）。</param>
+        /// <returns>返回一个异步操作。</returns>
+        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> items, Action<T, int> action,
+            Func<T, int, bool> breakFactory = null)
+        {
+            if (items.IsNull()) return;
+
+            action.NotNull(nameof(action));
+
+            int i = 0;
+            await foreach (var item in items)
+            {
+                action.Invoke(item, i);
+
+                if (breakFactory?.Invoke(item, i) == true)
+                    break;
+
+                i++;
+            }
+        }
+
 
         /// <summary>
         /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
@@ -85,8 +180,7 @@ namespace Librame.Extensions
         public static void ForEach<T>(this IEnumerable<T> items, Action<T> action,
             Func<T, bool> breakFactory = null)
         {
-            if (items.IsNullOrEmpty())
-                return;
+            if (items.IsNull()) return;
 
             action.NotNull(nameof(action));
 
@@ -112,13 +206,11 @@ namespace Librame.Extensions
         public static void ForEach<T>(this IEnumerable<T> items, Action<T, int> action,
             Func<T, int, bool> breakFactory = null)
         {
-            if (items.IsNullOrEmpty())
-                return;
+            if (items.IsNull()) return;
 
             action.NotNull(nameof(action));
 
             int i = 0;
-
             foreach (var item in items)
             {
                 action.Invoke(item, i);
@@ -212,7 +304,7 @@ namespace Librame.Extensions
 
         private static IEnumerable<T> TrimLast<T>(this IEnumerable<T> enumerable, Func<T, bool> predicateFactory, bool isLoop = true)
         {
-            if (enumerable.IsNullOrEmpty())
+            if (enumerable.IsEmpty())
                 return enumerable;
 
             if (predicateFactory.Invoke(enumerable.Last()))

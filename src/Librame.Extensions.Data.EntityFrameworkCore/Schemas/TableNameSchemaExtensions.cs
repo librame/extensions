@@ -54,7 +54,7 @@ namespace Librame.Extensions.Data
             descriptor.NotNull(nameof(descriptor));
             options.NotNull(nameof(options));
 
-            if (options.DefaultConnector.IsNotNullOrEmpty())
+            if (options.DefaultConnector.IsNotEmpty())
                 descriptor.ChangeConnector(options.DefaultConnector);
 
             return descriptor;
