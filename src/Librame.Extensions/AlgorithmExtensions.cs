@@ -115,7 +115,7 @@ namespace Librame.Extensions
 
         #region Base and Hex
 
-        private static readonly string _base32Chars = UPPER + "234567";
+        private const string BASE32_CHARS = UPPER + "234567";
 
         /// <summary>
         /// 转换 BASE32 字符串。
@@ -132,14 +132,14 @@ namespace Librame.Extensions
                 var numCharsToOutput = GetNextGroup(bytes, ref offset,
                     out byte a, out byte b, out byte c, out byte d, out byte e, out byte f, out byte g, out byte h);
 
-                sb.Append((numCharsToOutput >= 1) ? _base32Chars[a] : '=');
-                sb.Append((numCharsToOutput >= 2) ? _base32Chars[b] : '=');
-                sb.Append((numCharsToOutput >= 3) ? _base32Chars[c] : '=');
-                sb.Append((numCharsToOutput >= 4) ? _base32Chars[d] : '=');
-                sb.Append((numCharsToOutput >= 5) ? _base32Chars[e] : '=');
-                sb.Append((numCharsToOutput >= 6) ? _base32Chars[f] : '=');
-                sb.Append((numCharsToOutput >= 7) ? _base32Chars[g] : '=');
-                sb.Append((numCharsToOutput >= 8) ? _base32Chars[h] : '=');
+                sb.Append((numCharsToOutput >= 1) ? BASE32_CHARS[a] : '=');
+                sb.Append((numCharsToOutput >= 2) ? BASE32_CHARS[b] : '=');
+                sb.Append((numCharsToOutput >= 3) ? BASE32_CHARS[c] : '=');
+                sb.Append((numCharsToOutput >= 4) ? BASE32_CHARS[d] : '=');
+                sb.Append((numCharsToOutput >= 5) ? BASE32_CHARS[e] : '=');
+                sb.Append((numCharsToOutput >= 6) ? BASE32_CHARS[f] : '=');
+                sb.Append((numCharsToOutput >= 7) ? BASE32_CHARS[g] : '=');
+                sb.Append((numCharsToOutput >= 8) ? BASE32_CHARS[h] : '=');
             }
 
             return sb.ToString();
@@ -202,7 +202,8 @@ namespace Librame.Extensions
 
             while (outputIndex < bytes.Length)
             {
-                var byteIndex = _base32Chars.IndexOf(base32String[inputIndex]);
+                var byteIndex = BASE32_CHARS.IndexOf(base32String[inputIndex],
+                    StringComparison.OrdinalIgnoreCase);
                 if (byteIndex < 0)
                     throw new FormatException();
 
@@ -255,7 +256,8 @@ namespace Librame.Extensions
         /// <param name="bytes">给定的字节数组。</param>
         /// <returns>返回字符串。</returns>
         public static string AsHexString(this byte[] bytes)
-            => BitConverter.ToString(bytes).Replace("-", string.Empty);
+            => BitConverter.ToString(bytes).Replace("-", string.Empty,
+                StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// 还原 16 进制字符串。
@@ -536,7 +538,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacMd5(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACMD5), key);
+            => buffer.HmacHash(nameof(HMACMD5), key, () => new HMACMD5());
 
         /// <summary>
         /// 计算 HMACSHA1。
@@ -545,7 +547,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha1(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACSHA1), key);
+            => buffer.HmacHash(nameof(HMACSHA1), key, () => new HMACSHA1());
 
         /// <summary>
         /// 计算 HMACSHA256。
@@ -554,7 +556,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha256(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACSHA256), key);
+            => buffer.HmacHash(nameof(HMACSHA256), key, () => new HMACSHA256());
 
         /// <summary>
         /// 计算 HMACSHA384。
@@ -563,7 +565,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha384(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACSHA384), key);
+            => buffer.HmacHash(nameof(HMACSHA384), key, () => new HMACSHA384());
 
         /// <summary>
         /// 计算 HMACSHA512。
@@ -572,17 +574,17 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha512(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACSHA512), key);
+            => buffer.HmacHash(nameof(HMACSHA512), key, () => new HMACSHA512());
 
 
         private static ConcurrentDictionary<string, HMAC> _hmacAlgorithms
             = new ConcurrentDictionary<string, HMAC>();
 
-        private static byte[] HmacHash(this byte[] buffer, string algorithmName, byte[] key)
+        private static byte[] HmacHash(this byte[] buffer, string algorithmName, byte[] key, Func<HMAC> factory)
         {
             var algorithm = _hmacAlgorithms.GetOrAdd($"N={algorithmName},K={key.AsBase64String()}", name =>
             {
-                var algo = HMAC.Create(name);
+                var algo = factory.NotNull(nameof(factory)).Invoke();
                 algo.Key = key;
                 return algo;
             });
@@ -659,7 +661,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] AsAes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(Aes), isEncrypt: true);
+            => buffer.SymAlgorithm(key, nameof(Aes), isEncrypt: true, () => Aes.Create());
 
         /// <summary>
         /// 还原 AES。
@@ -668,7 +670,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromAes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(Aes), isEncrypt: false);
+            => buffer.SymAlgorithm(key, nameof(Aes), isEncrypt: false, () => Aes.Create());
 
 
         /// <summary>
@@ -678,7 +680,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] AsDes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(DES), isEncrypt: true);
+            => buffer.SymAlgorithm(key, nameof(DES), isEncrypt: true, () => DES.Create());
 
         /// <summary>
         /// 还原 DES。
@@ -687,7 +689,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromDes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(DES), isEncrypt: false);
+            => buffer.SymAlgorithm(key, nameof(DES), isEncrypt: false, () => DES.Create());
 
 
         /// <summary>
@@ -697,7 +699,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] AsTripleDes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(TripleDES), isEncrypt: true);
+            => buffer.SymAlgorithm(key, nameof(TripleDES), isEncrypt: true, () => TripleDES.Create());
 
         /// <summary>
         /// 还原 TripleDES。
@@ -706,17 +708,17 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromTripleDes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(TripleDES), isEncrypt: false);
+            => buffer.SymAlgorithm(key, nameof(TripleDES), isEncrypt: false, () => TripleDES.Create());
 
 
         private static ConcurrentDictionary<string, SymmetricAlgorithm> _symAlgorithms
             = new ConcurrentDictionary<string, SymmetricAlgorithm>();
 
-        private static byte[] SymAlgorithm(this byte[] buffer, byte[] key, string algorithmName, bool isEncrypt)
+        private static byte[] SymAlgorithm(this byte[] buffer, byte[] key, string algorithmName, bool isEncrypt, Func<SymmetricAlgorithm> factory)
         {
             var algorithm = _symAlgorithms.GetOrAdd($"N={algorithmName},K={key.AsBase64String()}", name =>
             {
-                var algo = SymmetricAlgorithm.Create(name);
+                var algo = factory.NotNull(nameof(factory)).Invoke();
                 algo.Key = key;
                 algo.Mode = CipherMode.ECB;
                 algo.Padding = PaddingMode.PKCS7;

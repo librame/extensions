@@ -26,13 +26,16 @@ namespace Librame.Extensions.Drawing
 
     class CaptchaService : AbstractExtensionBuilderService<DrawingBuilderOptions>, ICaptchaService
     {
-        public CaptchaService(IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
+        public CaptchaService(DrawingBuilderDependencyOptions dependencyOptions,
+            IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
+            FontFilePathCombiner = Options.Captcha.Font.FilePath;
+            FontFilePathCombiner.ChangeBasePathIfEmpty(dependencyOptions.BaseDirectory);
         }
 
 
-        public FilePathCombiner FontFilePathCombiner => Options.Captcha.Font.FilePath;
+        public FilePathCombiner FontFilePathCombiner { get; }
 
 
         public Task<bool> DrawFileAsync(string captcha, string savePath, CancellationToken cancellationToken = default)

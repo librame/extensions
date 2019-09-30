@@ -45,7 +45,7 @@ namespace Librame.Extensions.Data.Tests
                 };
 
                 accessor.Categories.AddRange(_categories);
-                IsCreated = true;
+                RequiredSaveChanges = true;
             }
             else
             {
@@ -71,7 +71,7 @@ namespace Librame.Extensions.Data.Tests
                 }
 
                 stores.Articles.AddRange(articles);
-                IsCreated = true;
+                RequiredSaveChanges = true;
             }
         }
 

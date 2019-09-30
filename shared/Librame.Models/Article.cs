@@ -5,7 +5,6 @@ namespace Librame.Models
     using Extensions.Data;
 
     [Description("文章")]
-    //[TableNameSchema(IsSharding = true)]
     [ShardingTable]
     public class Article : AbstractEntity<string>
     {

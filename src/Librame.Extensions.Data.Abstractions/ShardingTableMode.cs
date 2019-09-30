@@ -10,23 +10,24 @@
 
 #endregion
 
+using System.ComponentModel;
+
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
-    /// 保存变化访问器截面接口（通常用于前置保存变化操作）。
+    /// 分表模式。
     /// </summary>
-    public interface ISaveChangesAccessorAspect : IAccessorAspect
+    [Description("数据模式")]
+    public enum ShardingTableMode
     {
         /// <summary>
-        /// 时钟服务。
+        /// 创建分表（表示当检测到表名差异时，默认创建分表）。
         /// </summary>
-        IClockService Clock { get; }
+        Create,
 
         /// <summary>
-        /// 标识符。
+        /// 更新分表（表示当检测到表名差异时，默认重命名分表，即不分表）。
         /// </summary>
-        IStoreIdentifier Identifier { get; }
+        Rename
     }
 }

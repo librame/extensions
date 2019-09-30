@@ -110,7 +110,8 @@
         })
         .AddStoreHubWithAccessor<TestStoreHub>()
         .AddInitializerWithAccessor<TestStoreInitializer>()
-        .AddIdentifier<TestStoreIdentifier>();
+        .AddIdentifier<TestStoreIdentifier>()
+        .AddDbDesignTime<SqlServerDesignTimeServices>();
 
 ## Test Extension
 
@@ -182,7 +183,7 @@
         Assert.Empty(articles);
 
         articles = stores.UseWriteDbConnection().GetArticles();
-        Assert.NotEmpty(articles);
+        Assert.True(articles.Total >= 0); // If enable sharding table, the articles of this table may be empty
     }
     ......
     // Librame.Extensions.Data.Tests.DbContextAccessorTests
@@ -196,11 +197,9 @@
 ## Register Extension
 
     services.AddLibrame()
-        .AddDrawing(options =>
+        .AddDrawing(dependency =>
         {
-            options.Captcha.Font.FilePath.ChangeBasePath("FontFilePath");
-            options.Watermark.Font.FilePath.ChangeBasePath("FontFilePath");
-            options.Watermark.ImagePath.ChangeBasePath("WatermarkFilePath");
+            dependency.BaseDirectory = ResourcesPath;
         });
 
 ## Test Extension
@@ -340,8 +339,8 @@
     .AddNetwork().AddDotNetty();
     
     // Use DotNetty LoggerFactory
-    InternalLoggerFactory.DefaultFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));
-    //services.TryReplace(InternalLoggerFactory.DefaultFactory);
+    //InternalLoggerFactory.DefaultFactory.AddProvider(new ConsoleLoggerProvider((s, level) => true, false));
+    services.TryReplace(InternalLoggerFactory.DefaultFactory);
 
 ## Test Extension
 

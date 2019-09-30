@@ -12,11 +12,9 @@ namespace Librame.Extensions.Drawing.Tests
                 var services = new ServiceCollection();
 
                 services.AddLibrame()
-                    .AddDrawing(options =>
+                    .AddDrawing(dependency =>
                     {
-                        options.Captcha.Font.FilePath.ChangeBasePath(ResourcesPath);
-                        options.Watermark.Font.FilePath.ChangeBasePath(ResourcesPath);
-                        options.Watermark.ImagePath.ChangeBasePath(ResourcesPath);
+                        dependency.BaseDirectory = ResourcesPath;
                     });
 
                 return services.BuildServiceProvider();

@@ -75,6 +75,19 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
+        /// 如果当前基础路径为空，则改变基础路径。
+        /// </summary>
+        /// <param name="defaultBasePath">给定的默认基础路径。</param>
+        /// <returns>返回当前 <see cref="FilePathCombiner"/>。</returns>
+        public FilePathCombiner ChangeBasePathIfEmpty(string defaultBasePath)
+        {
+            if (BasePath.IsEmpty())
+                BasePath = defaultBasePath.NotEmpty(nameof(defaultBasePath));
+
+            return this;
+        }
+
+        /// <summary>
         /// 改变基础路径。
         /// </summary>
         /// <param name="newBasePath">给定的新基础路径。</param>

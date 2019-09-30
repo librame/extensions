@@ -44,7 +44,7 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 启用服务。
+        /// 启用截面。
         /// </summary>
         public override bool Enabled
             => Options.AuditEnabled;
@@ -60,6 +60,7 @@ namespace Librame.Extensions.Data
             if (audits.IsNotEmpty())
             {
                 dbContextAccessor.Audits.AddRange(audits);
+                //RequiredSaveChanges = true; // SaveChangesAccessorAspectBase 每次都会提交保存更改
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 mediator.Publish(new DataAuditNotification { Audits = audits }).ConfigureAndWait();
@@ -79,6 +80,7 @@ namespace Librame.Extensions.Data
             if (audits.IsNotEmpty())
             {
                 await dbContextAccessor.Audits.AddRangeAsync(audits, cancellationToken).ConfigureAndWaitAsync();
+                //RequiredSaveChanges = true; // SaveChangesAccessorAspectBase 每次都会提交保存更改
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 await mediator.Publish(new DataAuditNotification { Audits = audits }).ConfigureAndWaitAsync();

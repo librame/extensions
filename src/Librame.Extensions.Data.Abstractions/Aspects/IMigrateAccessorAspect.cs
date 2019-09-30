@@ -15,18 +15,18 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 迁移访问器截面接口。
+    /// 迁移访问器截面接口（通常用于后置保存变化操作）。
     /// </summary>
     public interface IMigrateAccessorAspect : IAccessorAspect
     {
         /// <summary>
         /// 时钟服务。
         /// </summary>
-        public IClockService Clock { get; }
+        IClockService Clock { get; }
 
         /// <summary>
         /// 标识符。
         /// </summary>
-        public IStoreIdentifier Identifier { get; }
+        IStoreIdentifier Identifier { get; }
     }
 }

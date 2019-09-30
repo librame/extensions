@@ -18,7 +18,7 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// 迁移访问器截面基类。
+    /// 迁移访问器截面基类（通常用于后置保存变化操作）。
     /// </summary>
     public class MigrateAccessorAspectBase : AccessorAspectBase, IMigrateAccessorAspect
     {

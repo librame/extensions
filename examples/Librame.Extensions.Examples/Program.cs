@@ -16,16 +16,16 @@ namespace Librame.Extensions.Examples
             // Add NLog Configuration
             NLog.LogManager.LoadConfiguration("../../../configs/nlog.config");
 
-            var config = new ConfigurationBuilder()
+            var root = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory.CombinePath(@"..\..\..\"))
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build();
 
             var services = new ServiceCollection();
 
-            services.AddLibrame(dependency =>
+            services.AddLibrame<ExampleCoreBuilderDependencyOptions>(dependency =>
             {
-                dependency.Configuration = config;
+                dependency.Configuration = root.GetSection(dependency.Name);
 
                 dependency.LoggingAction = logging =>
                 {

@@ -23,6 +23,7 @@ using Microsoft.EntityFrameworkCore.Update.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -38,18 +39,29 @@ namespace Librame.Extensions.Data
     /// </summary>
     public class DataMigrationService : AbstractExtensionBuilderService<DataBuilderOptions>, IDataMigrationService
     {
-        private static DataMigration _cache = null;
+        private static ConcurrentDictionary<string, List<string>> _migrationCommands
+            = new ConcurrentDictionary<string, List<string>>();
+
+        private static DataMigration _lastMigration = null;
 
 
         /// <summary>
         /// 构造一个 <see cref="DataMigrationService"/>。
         /// </summary>
+        /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public DataMigrationService(IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+        public DataMigrationService(IMemoryLocker locker, IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
+            Locker = locker.NotNull(nameof(locker));
         }
+
+
+        /// <summary>
+        /// 内存锁定器。
+        /// </summary>
+        protected IMemoryLocker Locker { get; }
 
 
         /// <summary>
@@ -79,10 +91,8 @@ namespace Librame.Extensions.Data
         {
             if (dbContextAccessor.Migrations.Exists())
             {
-                var query = dbContextAccessor.Migrations.AsQueryable();
-
-                if (_cache.IsNull())
-                    _cache = query.FirstOrDefault(p => p.CreatedTime == query.Max(s => s.CreatedTime));
+                if (_lastMigration.IsNull())
+                    UpdateLastMigration(dbContextAccessor);
 
                 // 对比差异
                 var differences = GetDifferences(dbContextAccessor);
@@ -93,14 +103,19 @@ namespace Librame.Extensions.Data
                     aspects.ForEach(aspect => aspect.Preprocess(dbContextAccessor));
 
                     // 差异迁移
-                    DifferenceMigration(dbContextAccessor, differences);
+                    MigrateDifference(dbContextAccessor, differences);
 
                     // 后置处理数据迁移
                     aspects.ForEach(aspect => aspect.Postprocess(dbContextAccessor));
 
-                    dbContextAccessor.SaveChanges();
+                    // 如果需要保存更改
+                    if (aspects.Any(aspect => aspect.RequiredSaveChanges))
+                    {
+                        dbContextAccessor.SaveChanges();
+                        aspects.ForEach(aspect => aspect.RequiredSaveChanges = false);
 
-                    _cache = query.FirstOrDefault(p => p.CreatedTime == query.Max(s => s.CreatedTime));
+                        UpdateLastMigration(dbContextAccessor);
+                    }
                 }
             }
             else
@@ -115,8 +130,27 @@ namespace Librame.Extensions.Data
                 // 后置处理数据迁移
                 aspects.ForEach(aspect => aspect.Postprocess(dbContextAccessor));
 
-                dbContextAccessor.SaveChanges();
+                // 如果需要保存更改
+                if (aspects.Any(aspect => aspect.RequiredSaveChanges))
+                {
+                    dbContextAccessor.SaveChanges();
+                    aspects.ForEach(aspect => aspect.RequiredSaveChanges = false);
+                }
             }
+        }
+
+        /// <summary>
+        /// 更新最后一次迁移。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor"/>。</param>
+        protected virtual void UpdateLastMigration(DbContextAccessor dbContextAccessor)
+        {
+            var query = dbContextAccessor.Migrations.AsQueryable();
+            var migration = query.FirstOrDefault(p => p.CreatedTime == query.Max(s => s.CreatedTime));
+
+            // 防止默认数据库为空
+            if (migration.IsNotNull())
+                _lastMigration = migration;
         }
 
 
@@ -147,13 +181,8 @@ namespace Librame.Extensions.Data
         {
             if (await dbContextAccessor.Migrations.ExistsAsync(cancellationToken).ConfigureAndResultAsync())
             {
-                var query = dbContextAccessor.Migrations.AsQueryable();
-
-                if (_cache.IsNull())
-                {
-                    _cache = await query.FirstOrDefaultAsync(p => p.CreatedTime == query.Max(s => s.CreatedTime),
-                        cancellationToken).ConfigureAndResultAsync();
-                }
+                if (_lastMigration.IsNull())
+                    await UpdateLastMigrationAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync();
 
                 // 对比差异
                 var differences = GetDifferences(dbContextAccessor);
@@ -164,15 +193,19 @@ namespace Librame.Extensions.Data
                     aspects.ForEach(async aspect => await aspect.PreprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync());
 
                     // 差异迁移
-                    DifferenceMigration(dbContextAccessor, differences);
+                    MigrateDifference(dbContextAccessor, differences);
 
                     // 后置处理数据迁移
                     aspects.ForEach(async aspect => await aspect.PostprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync());
 
-                    await dbContextAccessor.SaveChangesAsync(cancellationToken).ConfigureAndResultAsync();
+                    // 如果需要保存更改
+                    if (aspects.Any(aspect => aspect.RequiredSaveChanges))
+                    {
+                        await dbContextAccessor.SaveChangesAsync(cancellationToken).ConfigureAndResultAsync();
+                        aspects.ForEach(aspect => aspect.RequiredSaveChanges = false);
 
-                    _cache = await query.FirstOrDefaultAsync(p => p.CreatedTime == query.Max(s => s.CreatedTime),
-                        cancellationToken).ConfigureAndResultAsync();
+                        await UpdateLastMigrationAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync();
+                    }
                 }
             }
             else
@@ -187,17 +220,39 @@ namespace Librame.Extensions.Data
                 // 后置处理数据迁移
                 aspects.ForEach(async aspect => await aspect.PostprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync());
 
-                await dbContextAccessor.SaveChangesAsync(cancellationToken).ConfigureAndResultAsync();
+                // 如果需要保存更改
+                if (aspects.Any(aspect => aspect.RequiredSaveChanges))
+                {
+                    await dbContextAccessor.SaveChangesAsync(cancellationToken).ConfigureAndResultAsync();
+                    aspects.ForEach(aspect => aspect.RequiredSaveChanges = false);
+                }
             }
+        }
+
+        /// <summary>
+        /// 异步更新最后一次迁移。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        protected virtual async Task UpdateLastMigrationAsync(DbContextAccessor dbContextAccessor,
+            CancellationToken cancellationToken = default)
+        {
+            var query = dbContextAccessor.Migrations.AsQueryable();
+            var migration = await query.FirstOrDefaultAsync(p => p.CreatedTime == query.Max(s => s.CreatedTime),
+                cancellationToken).ConfigureAndResultAsync();
+
+            // 防止默认数据库为空
+            if (migration.IsNotNull())
+                _lastMigration = migration;
         }
 
 
         /// <summary>
-        /// 差异迁移。
+        /// 迁移差异。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor"/>。</param>
-        /// <param name="differences">给定的迁移操作集合。</param>
-        protected virtual void DifferenceMigration(DbContextAccessor dbContextAccessor, IReadOnlyList<MigrationOperation> differences)
+        /// <param name="operationDifferences">给定的迁移操作差异集合。</param>
+        protected virtual void MigrateDifference(DbContextAccessor dbContextAccessor, IReadOnlyList<MigrationOperation> operationDifferences)
         {
             //var rawSqlCommandBuilder = dbContextAccessor.ServiceProvider.GetRequiredService<IRawSqlCommandBuilder>();
             var migrationsSqlGenerator = dbContextAccessor.ServiceProvider.GetRequiredService<IMigrationsSqlGenerator>();
@@ -206,13 +261,54 @@ namespace Librame.Extensions.Data
             //var historyRepository = dbContextAccessor.ServiceProvider.GetRequiredService<IHistoryRepository>();
             //var insertCommand = rawSqlCommandBuilder.Build(historyRepository.GetInsertScript(new HistoryRow(migration.GetId(), ProductInfo.GetVersion())));
 
-            var commands = migrationsSqlGenerator
-                .Generate(differences, dbContextAccessor.Model)
-                //.Concat(new[] { new MigrationCommand(insertCommand, _currentContext.Context, _commandLogger) })
-                .ToList();
+            var readOnlyCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
+            //.Concat(new[] { new MigrationCommand(insertCommand, _currentContext.Context, _commandLogger) })
+            var executeCommands = new List<MigrationCommand>(readOnlyCommands);
 
-            migrationCommandExecutor.ExecuteNonQuery(commands, connection);
+            for (var i = 0; i < readOnlyCommands.Count; i++)
+            {
+                var command = readOnlyCommands[i];
+                var commandKey = GetMigrationCommandKey(command);
+
+                if (_migrationCommands.TryGetValue(commandKey, out List<string> connectionStrings)
+                    && connectionStrings.Contains(dbContextAccessor.CurrentConnectionString))
+                {
+                    // 每个数据连接只执行一次相同命令
+                    executeCommands.Remove(command);
+                }
+            }
+
+            if (executeCommands.Count > 0)
+            {
+                migrationCommandExecutor.ExecuteNonQuery(executeCommands, connection);
+
+                executeCommands.ForEach(command =>
+                {
+                    var commandKey = GetMigrationCommandKey(command);
+
+                    _migrationCommands.AddOrUpdate(commandKey, key =>
+                    {
+                        return new List<string>
+                        {
+                            dbContextAccessor.CurrentConnectionString
+                        };
+                    },
+                    (key, value) =>
+                    {
+                        value.Add(dbContextAccessor.CurrentConnectionString);
+                        return value;
+                    });
+                });
+            }
         }
+
+        /// <summary>
+        /// 获取迁移命令键名。
+        /// </summary>
+        /// <param name="command">给定的 <see cref="MigrationCommand"/>。</param>
+        /// <returns>返回字符串。</returns>
+        protected virtual string GetMigrationCommandKey(MigrationCommand command)
+            => command.CommandText.Sha256Base64String();
 
         /// <summary>
         /// 获取差异迁移操作。
@@ -221,17 +317,20 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IReadOnlyList{MigrationOperation}"/>。</returns>
         protected virtual IReadOnlyList<MigrationOperation> GetDifferences(DbContextAccessor dbContextAccessor)
         {
-            var lastModel = ResolveModel();
-            var typeMappingSource = dbContextAccessor.ServiceProvider.GetRequiredService<IRelationalTypeMappingSource>();
-            var migrationsAnnotations = dbContextAccessor.ServiceProvider.GetRequiredService<IMigrationsAnnotationProvider>();
-            var changeDetector = dbContextAccessor.ServiceProvider.GetRequiredService<IChangeDetector>();
-            var updateAdapterFactory = dbContextAccessor.ServiceProvider.GetRequiredService<IUpdateAdapterFactory>();
-            var commandBatchPreparerDependencies = dbContextAccessor.ServiceProvider.GetRequiredService<CommandBatchPreparerDependencies>();
+            return Locker.WaitFactory(() =>
+            {
+                var lastModel = ResolveModel();
+                var typeMappingSource = dbContextAccessor.ServiceProvider.GetRequiredService<IRelationalTypeMappingSource>();
+                var migrationsAnnotations = dbContextAccessor.ServiceProvider.GetRequiredService<IMigrationsAnnotationProvider>();
+                var changeDetector = dbContextAccessor.ServiceProvider.GetRequiredService<IChangeDetector>();
+                var updateAdapterFactory = dbContextAccessor.ServiceProvider.GetRequiredService<IUpdateAdapterFactory>();
+                var commandBatchPreparerDependencies = dbContextAccessor.ServiceProvider.GetRequiredService<CommandBatchPreparerDependencies>();
 
-            var modelDiffer = new ResetMigrationsModelDiffer(typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory,
-                commandBatchPreparerDependencies);
+                var modelDiffer = new ResetMigrationsModelDiffer(typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory,
+                    commandBatchPreparerDependencies);
 
-            return modelDiffer.GetDifferences(lastModel, dbContextAccessor.Model);
+                return modelDiffer.GetDifferences(lastModel, dbContextAccessor.Model);
+            });
         }
 
         /// <summary>
@@ -240,12 +339,12 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IModel"/>。</returns>
         protected IModel ResolveModel()
         {
-            var assembly = Assembly.Load(_cache.ModelBody.Decompress());
-            var snapshotType = assembly.GetType(_cache.ModelSnapshotName, throwOnError: true, ignoreCase: false);
+            var assembly = Assembly.Load(_lastMigration.ModelBody.Decompress());
+            var snapshotType = assembly.GetType(_lastMigration.ModelSnapshotName, throwOnError: true, ignoreCase: false);
 
             //var dbContextAttribute = snapshotType.GetCustomAttribute<DbContextAttribute>();
             var snapshot = snapshotType.EnsureCreate<ModelSnapshot>();
-            return snapshot.Model;
+            return snapshot?.Model;
         }
 
     }

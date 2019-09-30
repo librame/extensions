@@ -85,8 +85,8 @@ namespace Librame.Extensions.Network.DotNetty
                 Port = port.Value
             };
 
-            if (!_clientOptions.Path.IsEmpty())
-                builder.Path = _clientOptions.Path;
+            if (!_clientOptions.VirtualPath.IsEmpty())
+                builder.Path = _clientOptions.VirtualPath;
 
             IEventLoopGroup group = null;
 

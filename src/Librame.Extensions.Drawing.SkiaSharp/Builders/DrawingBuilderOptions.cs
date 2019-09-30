@@ -143,8 +143,8 @@ namespace Librame.Extensions.Drawing
         /// <summary>
         /// 水印图片文件组合器。
         /// </summary>
-        public FilePathCombiner ImagePath { get; set; }
-            = (FilePathCombiner)"watermark.png";
+        public string ImagePath { get; set; }
+            = "watermark.png";
 
         /// <summary>
         /// 水印位置（负值表示反向）。
@@ -212,8 +212,8 @@ namespace Librame.Extensions.Drawing
         /// <summary>
         /// 字体文件组合器。
         /// </summary>
-        public FilePathCombiner FilePath { get; set; }
-            = (FilePathCombiner)"font.ttf";
+        public string FilePath { get; set; }
+            = "font.ttf";
 
         /// <summary>
         /// 大小。

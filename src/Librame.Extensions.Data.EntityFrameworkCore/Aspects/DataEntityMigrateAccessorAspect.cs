@@ -55,7 +55,7 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 启用服务。
+        /// 启用截面。
         /// </summary>
         public override bool Enabled
             => Options.EntityEnabled;
@@ -72,6 +72,7 @@ namespace Librame.Extensions.Data
             {
                 dbContextAccessor.Entities.AddRange(diff);
                 _cache.AddRange(diff);
+                RequiredSaveChanges = true;
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 mediator.Publish(new DataEntityNotification { Entities = diff }).ConfigureAndWait();
@@ -92,6 +93,7 @@ namespace Librame.Extensions.Data
             {
                 await dbContextAccessor.Entities.AddRangeAsync(diff, cancellationToken).ConfigureAndWaitAsync();
                 _cache.AddRange(diff);
+                RequiredSaveChanges = true;
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 await mediator.Publish(new DataEntityNotification { Entities = diff }).ConfigureAndWaitAsync();

@@ -13,7 +13,7 @@ namespace Librame.Extensions.Data.Tests
             {
                 var services = new ServiceCollection();
 
-                services.AddEntityFrameworkSqlServer();
+                //services.AddEntityFrameworkSqlServer();
 
                 services.AddLibrame()
                     .AddData(options =>
@@ -29,9 +29,8 @@ namespace Librame.Extensions.Data.Tests
                     })
                     .AddStoreHubWithAccessor<TestStoreHub>()
                     .AddInitializerWithAccessor<TestStoreInitializer>()
-                    .AddIdentifier<TestStoreIdentifier>();
-
-                new SqlServerDesignTimeServices().ConfigureDesignTimeServices(services);
+                    .AddIdentifier<TestStoreIdentifier>()
+                    .AddDbDesignTime<SqlServerDesignTimeServices>();
 
                 return services.BuildServiceProvider();
             });

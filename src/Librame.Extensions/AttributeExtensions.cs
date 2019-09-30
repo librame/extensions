@@ -31,7 +31,7 @@ namespace Librame.Extensions
         /// <returns>返回是否已定义此特性的布尔值。</returns>
         public static bool IsDefined<TAttribute>(this ICustomAttributeProvider provider, bool inherit = false)
             where TAttribute : Attribute
-            => provider.IsDefined(typeof(TAttribute), inherit);
+            => provider.NotNull(nameof(provider)).IsDefined(typeof(TAttribute), inherit);
 
 
         #region GetCustomAttributes
@@ -46,7 +46,7 @@ namespace Librame.Extensions
         public static TAttribute GetCustomAttribute<TAttribute>(this ICustomAttributeProvider provider, bool inherit = false)
             where TAttribute : Attribute
         {
-            var attributes = provider.GetCustomAttributes(typeof(TAttribute), inherit);
+            var attributes = provider.NotNull(nameof(provider)).GetCustomAttributes(typeof(TAttribute), inherit);
             return !attributes.IsEmpty() ? (TAttribute)attributes[0] : null;
         }
         /// <summary>
@@ -59,7 +59,7 @@ namespace Librame.Extensions
         public static IEnumerable<TAttribute> GetCustomAttributes<TAttribute>(this ICustomAttributeProvider provider, bool inherit = false)
             where TAttribute : Attribute
         {
-            var attributes = provider.GetCustomAttributes(typeof(TAttribute), inherit);
+            var attributes = provider.NotNull(nameof(provider)).GetCustomAttributes(typeof(TAttribute), inherit);
             return !attributes.IsEmpty() ? attributes.Select(attrib => (TAttribute)attrib) : null;
         }
 

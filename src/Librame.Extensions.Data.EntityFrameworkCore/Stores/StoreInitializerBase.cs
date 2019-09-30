@@ -102,32 +102,36 @@ namespace Librame.Extensions.Data
         protected virtual void InitializeTenants<TTenant>(IDataTenantStore<TAccessor, TTenant> stores)
             where TTenant : DataTenant
         {
-            // 初始化默认租户
-            var defaultTenant = stores.Accessor.BuilderOptions.DefaultTenant;
-            if (defaultTenant.IsNotNull()
-                && !stores.ContainTenantAsync(defaultTenant.Name, defaultTenant.Host).ConfigureAndResult())
+            // 如果当前为默认数据连接，则直接退出
+            if (!stores.Accessor.CurrentConnectionString.Equals(stores.Accessor.CurrentTenant.WritingConnectionString,
+                StringComparison.OrdinalIgnoreCase))
+                return;
+
+            // 如果当前租户未有效存储，则初始化保存
+            if (!stores.ContainTenantAsync(stores.Accessor.CurrentTenant.Name,
+                stores.Accessor.CurrentTenant.Host).ConfigureAndResult())
             {
                 TTenant tenant;
 
                 // 添加默认租户到数据库
-                if (defaultTenant is TTenant _tenant)
+                if (stores.Accessor.CurrentTenant is TTenant _tenant)
                 {
                     tenant = _tenant;
                 }
                 else
                 {
                     tenant = typeof(TTenant).EnsureCreate<TTenant>();
-                    defaultTenant.EnsurePopulate(tenant);
+                    stores.Accessor.CurrentTenant.EnsurePopulate(tenant);
                 }
 
                 tenant.Id = Identifier.GetTenantIdAsync().ConfigureAndResult();
-                tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).ConfigureAndResult();
+                tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult();
                 tenant.CreatedBy = GetType().GetSimpleName();
 
                 stores.TryCreate(tenant);
                 Logger.LogTrace($"Add default tenant (name={tenant.Name}, host={tenant.Host}) to database.");
 
-                IsCreated = true;
+                RequiredSaveChanges = true;
             }
         }
 

@@ -87,5 +87,21 @@ namespace Librame.Extensions.Data
                 .AddStores();
         }
 
+
+        /// <summary>
+        /// 添加数据库设计时。
+        /// </summary>
+        /// <typeparam name="TDesignTime">指定的设计时类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
+        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        public static IDataBuilder AddDbDesignTime<TDesignTime>(this IDataBuilder builder)
+            where TDesignTime : class, IDesignTimeServices
+        {
+            var designTime = typeof(TDesignTime).EnsureCreate<TDesignTime>();
+            designTime.ConfigureDesignTimeServices(builder.Services);
+
+            return builder;
+        }
+
     }
 }

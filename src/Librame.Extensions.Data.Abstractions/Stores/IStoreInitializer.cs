@@ -80,5 +80,10 @@ namespace Librame.Extensions.Data
         /// 是否已完成初始化。
         /// </summary>
         bool IsInitialized { get; }
+
+        /// <summary>
+        /// 需要保存变化。
+        /// </summary>
+        bool RequiredSaveChanges { get; }
     }
 }

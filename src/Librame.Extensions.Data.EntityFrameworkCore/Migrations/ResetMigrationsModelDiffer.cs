@@ -357,44 +357,21 @@ namespace Librame.Extensions.Data
         {
             TrackData(source, target);
 
-            var schemaOperations = Enumerable.Empty<MigrationOperation>();
-
-            if (source != null && target != null)
-            {
-                var step1 = DiffAnnotations(source, target);
-                var step2 = Diff(GetSchemas(source), GetSchemas(target), diffContext);
-                var step3 = Diff(diffContext.GetSourceTables(), diffContext.GetTargetTables(), diffContext);
-                var step4 = Diff(source.GetSequences(), target.GetSequences(), diffContext);
-                var step5 = Diff(
+            var schemaOperations = source != null && target != null
+                ? DiffAnnotations(source, target)
+                    .Concat(Diff(GetSchemas(source), GetSchemas(target), diffContext))
+                    .Concat(Diff(diffContext.GetSourceTables(), diffContext.GetTargetTables(), diffContext))
+                    .Concat(Diff(source.GetSequences(), target.GetSequences(), diffContext))
+                    .Concat(
+                        Diff(
                             diffContext.GetSourceTables().SelectMany(s => s.GetForeignKeys()),
                             diffContext.GetTargetTables().SelectMany(t => t.GetForeignKeys()),
-                            diffContext);
-
-                schemaOperations = step1.Concat(step2).Concat(step3).Concat(step4).Concat(step5);
-            }
-            else
-            {
-                if (target != null)
-                    schemaOperations = Add(target, diffContext);
-                else if (source != null)
-                    schemaOperations = Remove(source, diffContext);
-            }
-
-            //schemaOperations = source != null && target != null
-            //    ? DiffAnnotations(source, target)
-            //        .Concat(Diff(GetSchemas(source), GetSchemas(target), diffContext))
-            //        .Concat(Diff(diffContext.GetSourceTables(), diffContext.GetTargetTables(), diffContext))
-            //        .Concat(Diff(source.GetSequences(), target.GetSequences(), diffContext))
-            //        .Concat(
-            //            Diff(
-            //                diffContext.GetSourceTables().SelectMany(s => s.GetForeignKeys()),
-            //                diffContext.GetTargetTables().SelectMany(t => t.GetForeignKeys()),
-            //                diffContext))
-            //    : target != null
-            //        ? Add(target, diffContext)
-            //        : source != null
-            //            ? Remove(source, diffContext)
-            //            : Enumerable.Empty<MigrationOperation>();
+                            diffContext))
+                : target != null
+                    ? Add(target, diffContext)
+                    : source != null
+                        ? Remove(source, diffContext)
+                        : Enumerable.Empty<MigrationOperation>();
 
             return schemaOperations.Concat(GetDataOperations(diffContext));
         }
@@ -2317,10 +2294,16 @@ namespace Librame.Extensions.Data
                     var tempSourceTables = new List<TableMapping>(_sourceTables);
 
                     // _sourceEntitiesMap > type.ClrType is null
-                    var targetEntityTypes = _targetEntitiesMap.Keys.Where(type => type.ClrType.IsDefined<ShardingTableAttribute>());
+                    var targetEntityTypes = _targetEntitiesMap.Keys.Where(type =>
+                    {
+                        return type.ClrType.TryGetCustomAttribute(out ShardingTableAttribute attribute)
+                            && attribute.Mode == ShardingTableMode.Create;
+                    });
+                    
                     foreach (var targetEntityType in targetEntityTypes)
                     {
-                        var sourceEntityType = _sourceEntitiesMap.Keys.FirstOrDefault(key => key.Name == targetEntityType.Name);
+                        var sourceEntityType = _sourceEntitiesMap.Keys
+                            .FirstOrDefault(key => key.Name == targetEntityType.Name);
                         if (sourceEntityType == null)
                             continue;
 

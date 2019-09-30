@@ -21,5 +21,20 @@ namespace Librame.Extensions.Data
         AllowMultiple = false, Inherited = false)]
     public class ShardingTableAttribute : Attribute
     {
+        /// <summary>
+        /// 构造一个 <see cref="ShardingTableAttribute"/>。
+        /// </summary>
+        /// <param name="mode">给它的 <see cref="ShardingTableMode"/>（可选；默认模式为创建新表）。</param>
+        public ShardingTableAttribute(ShardingTableMode mode = ShardingTableMode.Create)
+            : base()
+        {
+            Mode = mode;
+        }
+
+
+        /// <summary>
+        /// 分表模式。
+        /// </summary>
+        public ShardingTableMode Mode { get; set; }
     }
 }

@@ -41,6 +41,12 @@ namespace Librame.Extensions.Data
         public virtual bool Enabled { get; }
 
 
+        /// <summary>
+        /// 需要保存变化。
+        /// </summary>
+        public bool RequiredSaveChanges { get; set; }
+
+
         #region Preprocess
 
         /// <summary>

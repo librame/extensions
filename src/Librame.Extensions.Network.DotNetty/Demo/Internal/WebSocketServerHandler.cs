@@ -170,7 +170,7 @@ namespace Librame.Extensions.Network.DotNetty
             var result = request.Headers.TryGet(HttpHeaderNames.Host, out ICharSequence value);
             Debug.Assert(result, "Host header does not exist.");
 
-            var location = value.ToString() + _server.Options.WebSocketClient.Path;
+            var location = value.ToString() + _server.Options.WebSocketClient.VirtualPath;
 
             if (_server.Options.WebSocketServer.IsSsl)
                 return "wss://" + location;

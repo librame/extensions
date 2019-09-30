@@ -135,9 +135,9 @@ namespace Librame.Extensions.Network.DotNetty
     public class WebSocketClientOptions : ClientOptions
     {
         /// <summary>
-        /// 路径。
+        /// 虚拟路径。
         /// </summary>
-        public string Path { get; set; }
+        public string VirtualPath { get; set; }
             = "/websocket";
     }
 

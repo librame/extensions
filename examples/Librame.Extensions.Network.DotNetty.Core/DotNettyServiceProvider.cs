@@ -1,7 +1,6 @@
 ﻿using DotNetty.Common.Internal.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using System;
 using System.Security.Cryptography.X509Certificates;
 
@@ -17,7 +16,7 @@ namespace Librame.Extensions.Network.DotNetty
         {
             Current = Current.EnsureSingleton(() =>
             {
-                var combiner = "dotnetty.com.pfx".AsFilePathCombiner(AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"));
+                var combiner = "dotnetty.com.pfx".AsFilePathCombiner(ResourcesPath);
 
                 var services = new ServiceCollection();
 
@@ -42,6 +41,11 @@ namespace Librame.Extensions.Network.DotNetty
 
 
         public static IServiceProvider Current { get; }
+
+        public static string ResourcesPath
+        {
+            get { return AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"); }
+        }
 
     }
 }

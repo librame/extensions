@@ -50,33 +50,26 @@ namespace Librame.Extensions.Data
             where TMigration : DataMigration
             where TTenant : DataTenant
         {
+            stores.NotNull(nameof(stores));
+
             if (IsInitialized)
                 return;
 
-            stores.NotNull(nameof(stores));
+            // 确保已切换到写入数据连接
+            stores.Accessor.SwitchTenant(tenant => tenant.WritingConnectionString);
 
-            // 提前切换为写入数据库，以便支持数据重复验证
-            if (stores.Accessor.SwitchTenant(tenant => tenant.WritingConnectionString))
+            Clock.Locker.WaitAction(() => InitializeCore(stores));
+
+            if (RequiredSaveChanges)
             {
-                Clock.Locker.WaitAction(() =>
-                {
-                    InitializeCore(stores);
-                });
+                stores.Accessor.SaveChanges();
 
-                if (IsCreated)
-                {
-                    // 已重写，保存时会自行尝试还原为读取数据库
-                    stores.Accessor.SaveChanges();
-                    IsCreated = false;
-                }
-                else
-                {
-                    // 未创建则手动切换为默认数据库
-                    stores.Accessor.SwitchTenant(tenant => tenant.DefaultConnectionString);
-                }
-
+                RequiredSaveChanges = false;
                 IsInitialized = true;
             }
+
+            // 确保已切换到默认数据连接
+            stores.Accessor.SwitchTenant(tenant => tenant.DefaultConnectionString);
         }
 
         /// <summary>
@@ -132,14 +125,14 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 是否已创建。
-        /// </summary>
-        public bool IsCreated { get; protected set; }
-
-        /// <summary>
         /// 是否已完成初始化。
         /// </summary>
         public bool IsInitialized { get; protected set; }
+
+        /// <summary>
+        /// 需要保存变化。
+        /// </summary>
+        public bool RequiredSaveChanges { get; protected set; }
 
 
         /// <summary>

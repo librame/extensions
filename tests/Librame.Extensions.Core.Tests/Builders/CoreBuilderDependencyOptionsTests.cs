@@ -13,15 +13,16 @@ namespace Librame.Extensions.Core.Tests
         {
             var message = "Test value from in memory collection";
 
+            var root = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string>
+                {
+                    { "CoreBuilderDependency:Test:Message", message }
+                })
+                .Build();
+
             var services = new ServiceCollection();
             services.AddLibrame<TestCoreBuilderDependencyOptions>(dependency =>
             {
-                var root = new ConfigurationBuilder()
-                    .AddInMemoryCollection(new Dictionary<string, string>
-                    {
-                        { "CoreBuilderDependency:Test:Message", message }
-                    })
-                    .Build();
                 dependency.Configuration = root.GetSection(dependency.Name);
             });
 

@@ -25,15 +25,21 @@ namespace Librame.Extensions.Drawing
 
     class WatermarkService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IWatermarkService
     {
-        public WatermarkService(IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
+        public WatermarkService(DrawingBuilderDependencyOptions dependencyOptions,
+            IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
+            ImageFilePathCombiner = Options.Watermark.ImagePath;
+            ImageFilePathCombiner.ChangeBasePathIfEmpty(dependencyOptions.BaseDirectory);
+
+            FontFilePathCombiner = Options.Watermark.Font.FilePath;
+            FontFilePathCombiner.ChangeBasePathIfEmpty(dependencyOptions.BaseDirectory);
         }
 
         
-        public FilePathCombiner ImageFilePathCombiner => Options.Watermark.ImagePath;
+        public FilePathCombiner ImageFilePathCombiner { get; }
 
-        public FilePathCombiner FontFilePathCombiner => Options.Watermark.Font.FilePath;
+        public FilePathCombiner FontFilePathCombiner { get; }
 
 
         public Task<bool> DrawFileAsync(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)

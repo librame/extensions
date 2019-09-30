@@ -45,7 +45,7 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 启用服务。
+        /// 启用截面。
         /// </summary>
         public override bool Enabled
             => Options.MigrationEnabled;
@@ -63,6 +63,7 @@ namespace Librame.Extensions.Data
             if (!dbContextAccessor.Migrations.Exists(uniqueExpression))
             {
                 dbContextAccessor.Migrations.Add(migration);
+                RequiredSaveChanges = true;
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 mediator.Publish(new DataMigrationNotification { Migration = migration }).ConfigureAndWait();
@@ -84,6 +85,7 @@ namespace Librame.Extensions.Data
             if (!await dbContextAccessor.Migrations.ExistsAsync(uniqueExpression, cancellationToken).ConfigureAndResultAsync())
             {
                 await dbContextAccessor.Migrations.AddAsync(migration, cancellationToken).ConfigureAndResultAsync();
+                RequiredSaveChanges = true;
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 await mediator.Publish(new DataMigrationNotification { Migration = migration }).ConfigureAndWaitAsync();
@@ -143,9 +145,7 @@ namespace Librame.Extensions.Data
             if (Options.ExportModelSnapshotFilePath.IsNotEmpty())
             {
                 FilePathCombiner filePath = Options.ExportModelSnapshotFilePath;
-
-                if (filePath.BasePath.IsEmpty())
-                    filePath.ChangeBasePath(dependencyOptions.BaseDirectory);
+                filePath.ChangeBasePathIfEmpty(dependencyOptions.BaseDirectory);
 
                 // 导出包含模型快照的程序集文件
                 ModelSnapshotCompiler.CompileInFile(filePath, references, modelSnapshotCode);

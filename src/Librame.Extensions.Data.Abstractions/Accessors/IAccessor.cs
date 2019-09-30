@@ -36,6 +36,18 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 当前租户。
+        /// </summary>
+        /// <value>返回 <see cref="ITenant"/>。</value>
+        ITenant CurrentTenant { get; }
+
+        /// <summary>
+        /// 当前数据连接字符串。
+        /// </summary>
+        string CurrentConnectionString { get; }
+
+
+        /// <summary>
         /// 执行 SQL 命令。
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>

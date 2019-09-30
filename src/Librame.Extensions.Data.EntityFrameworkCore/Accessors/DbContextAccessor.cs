@@ -31,6 +31,10 @@ namespace Librame.Extensions.Data
     /// </summary>
     public class DbContextAccessor : DbContext, IAccessor
     {
+        private static ITenant _currentTenant = null;
+        private static string _currentConnectionString = null;
+
+
         /// <summary>
         /// 构造一个 <see cref="DbContextAccessor"/>。
         /// </summary>
@@ -45,10 +49,10 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 初始化。
         /// </summary>
-        protected void Initialize()
+        protected virtual void Initialize()
         {
             if (BuilderOptions.IsCreateDatabase)
-                EnsureDatabaseCreated(Database.GetDbConnection());
+                EnsureDatabaseCreated();
         }
 
 
@@ -114,41 +118,66 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 当前租户。
+        /// </summary>
+        /// <value>返回 <see cref="ITenant"/>。</value>
+        public ITenant CurrentTenant
+        {
+            get => _currentTenant.NotNullOrDefault(() => BuilderOptions.DefaultTenant);
+            protected set => _currentTenant = value.NotNull(nameof(value));
+        }
+
+        /// <summary>
+        /// 当前数据库连接字符串。
+        /// </summary>
+        public string CurrentConnectionString
+        {
+            get => _currentConnectionString.NotEmptyOrDefault(() => Database.GetDbConnection().ConnectionString);
+            protected set => _currentConnectionString = value.NotEmpty(nameof(value));
+        }
+
+
+        /// <summary>
         /// 确保已创建数据库。
         /// </summary>
-        /// <param name="dbConnection">给定的 <see cref="DbConnection"/>。</param>
+        /// <param name="dbConnection">给定的 <see cref="DbConnection"/>（可选）。</param>
         /// <returns>返回是否已创建的布尔值。</returns>
-        protected virtual bool EnsureDatabaseCreated(DbConnection dbConnection)
+        protected virtual bool EnsureDatabaseCreated(DbConnection dbConnection = null)
         {
-            if (Database.EnsureCreated())
+            bool result;
+            if (result = Database.EnsureCreated())
             {
-                if (dbConnection.IsNotNull())
-                    Logger.LogInformation($"Database created: {dbConnection.ConnectionString}.");
-                
-                BuilderOptions.DatabaseCreatedAction?.Invoke(this);
-                return true;
-            }
+                if (dbConnection.IsNull())
+                    dbConnection = Database.GetDbConnection();
 
-            return false;
+                CurrentConnectionString = dbConnection.ConnectionString;
+                Logger.LogInformation($"Database created: {dbConnection.ConnectionString}.");
+
+                BuilderOptions.DatabaseCreatedAction?.Invoke(this);
+            }
+            return result;
         }
 
         /// <summary>
         /// 确保已创建数据库。
         /// </summary>
-        /// <param name="dbConnection">给定的 <see cref="DbConnection"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="dbConnection">给定的 <see cref="DbConnection"/>（可选）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否已创建的布尔值的异步操作。</returns>
-        protected virtual async Task<bool> EnsureDatabaseCreatedAsync(DbConnection dbConnection, CancellationToken cancellationToken)
+        protected virtual async Task<bool> EnsureDatabaseCreatedAsync(DbConnection dbConnection = null,
+            CancellationToken cancellationToken = default)
         {
             bool result;
             if (result = await Database.EnsureCreatedAsync(cancellationToken).ConfigureAndResultAsync())
             {
-                if (dbConnection.IsNotNull())
-                    Logger.LogInformation($"Database created: {dbConnection.ConnectionString}.");
+                if (dbConnection.IsNull())
+                    dbConnection = Database.GetDbConnection();
+
+                CurrentConnectionString = dbConnection.ConnectionString;
+                Logger.LogInformation($"Database created: {dbConnection.ConnectionString}.");
 
                 BuilderOptions.DatabaseCreatedAction?.Invoke(this);
             }
-
             return result;
         }
 
@@ -276,21 +305,20 @@ namespace Librame.Extensions.Data
                 return false;
 
             var tenantService = this.GetService<IDataTenantService>();
-            var currentTenant = tenantService.GetCurrentTenant(this);
-            if (currentTenant.IsNull())
+            var switchTenant = tenantService.GetSwitchTenant(this);
+            if (switchTenant.IsNull())
                 return false;
 
-            if (!currentTenant.WritingSeparation)
+            if (!switchTenant.WritingSeparation)
             {
-                Logger.LogTrace($"The tenant({currentTenant.Name}:{currentTenant.Host}) write separation is disable.");
+                Logger.LogTrace($"The tenant({switchTenant.Name}:{switchTenant.Host}) write separation is disable.");
                 return false;
             }
 
-            var changeConnectionString = changeConnectionStringFactory.Invoke(currentTenant);
-            var connection = Database.GetDbConnection();
-            if (connection.ConnectionString.Equals(changeConnectionString, StringComparison.OrdinalIgnoreCase))
+            var changeConnectionString = changeConnectionStringFactory.Invoke(switchTenant);
+            if (CurrentConnectionString.Equals(changeConnectionString, StringComparison.OrdinalIgnoreCase))
             {
-                Logger.LogTrace($"The tenant({currentTenant.Name}:{currentTenant.Host}) same as the current connection string.");
+                Logger.LogTrace($"The tenant({switchTenant.Name}:{switchTenant.Host}) same as the current connection string.");
                 return false;
             }
 
@@ -304,6 +332,7 @@ namespace Librame.Extensions.Data
             // 改变数据库连接
             bool ChangeDbConnection()
             {
+                var connection = Database.GetDbConnection();
                 if (connection.State != ConnectionState.Closed)
                 {
                     connection.Close();
@@ -316,13 +345,18 @@ namespace Librame.Extensions.Data
                 //  Source = MySqlConnector
                 // connection.ChangeDatabase(connectionString);
                 connection.ConnectionString = changeConnectionString;
-                Logger?.LogInformation($"The tenant({currentTenant.Name}:{currentTenant.Host}) change connection string: {changeConnectionString}");
+                Logger?.LogInformation($"The tenant({switchTenant.Name}:{switchTenant.Host}) change connection string: {changeConnectionString}");
 
+                CurrentTenant = switchTenant;
+                CurrentConnectionString = changeConnectionString;
+
+                // 先尝试创建数据库
                 if (BuilderOptions.IsCreateDatabase)
                     EnsureDatabaseCreated(connection);
 
                 if (connection.State != ConnectionState.Open)
                 {
+                    // 如果数据库不存在，打开时会抛出异常
                     connection.Open();
                     Logger?.LogInformation($"Open connection string: {connection.ConnectionString}");
                 }
@@ -347,21 +381,20 @@ namespace Librame.Extensions.Data
                 return false;
 
             var tenantService = this.GetService<IDataTenantService>();
-            var currentTenant = await tenantService.GetCurrentTenantAsync(this, cancellationToken).ConfigureAndResultAsync();
-            if (currentTenant.IsNull())
+            var switchTenant = await tenantService.GetSwitchTenantAsync(this, cancellationToken).ConfigureAndResultAsync();
+            if (switchTenant.IsNull())
                 return false;
 
-            if (!currentTenant.WritingSeparation)
+            if (!switchTenant.WritingSeparation)
             {
-                Logger.LogTrace($"The tenant({currentTenant.Name}:{currentTenant.Host}) write separation is disable.");
+                Logger.LogTrace($"The tenant({switchTenant.Name}:{switchTenant.Host}) write separation is disable.");
                 return false;
             }
 
-            var changeConnectionString = changeConnectionStringFactory.Invoke(currentTenant);
-            var connection = Database.GetDbConnection();
-            if (connection.ConnectionString.Equals(changeConnectionString, StringComparison.OrdinalIgnoreCase))
+            var changeConnectionString = changeConnectionStringFactory.Invoke(switchTenant);
+            if (CurrentConnectionString.Equals(changeConnectionString, StringComparison.OrdinalIgnoreCase))
             {
-                Logger.LogTrace($"The tenant({currentTenant.Name}:{currentTenant.Host}) same as the current connection string.");
+                Logger.LogTrace($"The tenant({switchTenant.Name}:{switchTenant.Host}) same as the current connection string.");
                 return false;
             }
 
@@ -376,6 +409,7 @@ namespace Librame.Extensions.Data
             // 异步改变数据库连接
             async Task<bool> ChangeDbConnectionAsync()
             {
+                var connection = Database.GetDbConnection();
                 if (connection.State != ConnectionState.Closed)
                 {
                     await connection.CloseAsync().ConfigureAndWaitAsync();
@@ -388,13 +422,18 @@ namespace Librame.Extensions.Data
                 //  Source = MySqlConnector
                 // connection.ChangeDatabase(connectionString);
                 connection.ConnectionString = changeConnectionString;
-                Logger?.LogInformation($"The tenant({currentTenant.Name}:{currentTenant.Host}) change connection string: {changeConnectionString}");
+                Logger?.LogInformation($"The tenant({switchTenant.Name}:{switchTenant.Host}) change connection string: {changeConnectionString}");
 
+                CurrentTenant = switchTenant;
+                CurrentConnectionString = changeConnectionString;
+
+                // 先尝试创建数据库
                 if (BuilderOptions.IsCreateDatabase)
                     await EnsureDatabaseCreatedAsync(connection, cancellationToken).ConfigureAndResultAsync();
 
                 if (connection.State != ConnectionState.Open)
                 {
+                    // 如果数据库不存在，打开时会抛出异常
                     await connection.OpenAsync(cancellationToken).ConfigureAndWaitAsync();
                     Logger?.LogInformation($"Open connection string: {connection.ConnectionString}");
                 }

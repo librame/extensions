@@ -71,6 +71,10 @@ namespace Librame.Extensions.Network
             var dependency = dependencyAction.ConfigureDependency();
             builder.Services.AddAllOptionsConfigurators(dependency);
 
+            // Add Dependencies
+            builder.Services
+                .AddHttpClient();
+
             // Create Builder
             var networkBuilder = builderFactory.NotNullOrDefault(()
                 => (b, d) => new NetworkBuilder(b, d)).Invoke(builder, dependency);

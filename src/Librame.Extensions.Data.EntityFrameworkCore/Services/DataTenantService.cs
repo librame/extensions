@@ -43,27 +43,28 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 获取当前租户。
+        /// 获取切换的租户。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         /// <returns>返回 <see cref="ITenant"/>。</returns>
-        public virtual ITenant GetCurrentTenant(IAccessor accessor)
+        public virtual ITenant GetSwitchTenant(IAccessor accessor)
         {
             accessor.NotNull(nameof(accessor));
 
             if (Enabled && accessor is DbContextAccessor dbContextAccessor)
-                return GetCurrentTenantCore(dbContextAccessor);
+                return GetSwitchTenantCore(dbContextAccessor);
 
             return null;
         }
 
         /// <summary>
-        /// 获取当前租户核心。
+        /// 获取切换的租户核心。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor"/>。</param>
         /// <returns>返回 <see cref="ITenant"/>。</returns>
-        protected virtual ITenant GetCurrentTenantCore(DbContextAccessor dbContextAccessor)
+        protected virtual ITenant GetSwitchTenantCore(DbContextAccessor dbContextAccessor)
         {
+            // 默认不切换
             var defaultTenant = Options.DefaultTenant;
             Logger.LogInformation($"Get Default Tenant: Name={defaultTenant?.Name}, Host={defaultTenant?.Host}");
 
@@ -72,32 +73,33 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 异步获取当前租户。
+        /// 异步获取切换的租户。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="ITenant"/> 的异步操作。</returns>
-        public virtual Task<ITenant> GetCurrentTenantAsync(IAccessor accessor, CancellationToken cancellationToken = default)
+        public virtual Task<ITenant> GetSwitchTenantAsync(IAccessor accessor, CancellationToken cancellationToken = default)
         {
             accessor.NotNull(nameof(accessor));
 
             if (Enabled && accessor is DbContextAccessor dbContextAccessor)
-                return GetCurrentTenantCoreAsync(dbContextAccessor, cancellationToken);
+                return GetSwitchTenantCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.FromResult((ITenant)null);
         }
 
         /// <summary>
-        /// 异步获取当前租户核心。
+        /// 异步获取切换的租户核心。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task{ITenant}"/>。</returns>
-        protected virtual Task<ITenant> GetCurrentTenantCoreAsync(DbContextAccessor dbContextAccessor,
+        protected virtual Task<ITenant> GetSwitchTenantCoreAsync(DbContextAccessor dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
+                // 默认不切换
                 var defaultTenant = Options.DefaultTenant;
                 Logger.LogInformation($"Get Default Tenant: Name={defaultTenant?.Name}, Host={defaultTenant?.Host}");
 
