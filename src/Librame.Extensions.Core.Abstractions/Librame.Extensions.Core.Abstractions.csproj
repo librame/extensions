@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.0.898.201</Version>
+    <Version>7.0.898.211</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based .NET Standard and Microsoft.Extensions packages on common framework.</Description>
@@ -19,7 +19,7 @@
     <PackageReleaseNotes>Based .NET Standard and Microsoft.Extensions packages on common framework.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.0.898.201</AssemblyVersion>
+    <AssemblyVersion>7.0.898.211</AssemblyVersion>
     <FileVersion>7.0.1909.3001</FileVersion>
     <RootNamespace>Librame.Extensions.Core</RootNamespace>
   </PropertyGroup>
