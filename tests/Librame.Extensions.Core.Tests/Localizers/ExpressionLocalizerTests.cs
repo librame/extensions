@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class ExpressionStringLocalizerTests
+    public class ExpressionLocalizerTests
     {
         [Fact]
         public void AllTest()

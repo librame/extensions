@@ -80,7 +80,10 @@ namespace Librame.Extensions.Core
         /// <param name="resourceBaseType">给定的资源基础类型。</param>
         /// <returns>返回字符串。</returns>
         public static string GenerateKey(Type resourceBaseType)
-            => GenerateKey(resourceBaseType.FullName, resourceBaseType.Assembly.Location);
+        {
+            resourceBaseType.NotNull(nameof(resourceBaseType));
+            return GenerateKey(resourceBaseType.FullName, resourceBaseType.Assembly.Location);
+        }
 
         /// <summary>
         /// 生成键名。
