@@ -23,19 +23,19 @@ namespace Librame.Extensions.Core
     public class CoreBuilderDependencyOptions : ExtensionBuilderDependencyOptions<CoreBuilderDependencyOptions, CoreBuilderOptions>
     {
         /// <summary>
-        /// 本地化选项配置器（手动服务注册时注入配置动作）。
+        /// 本地化选项配置器（服务注册时手动注入配置动作）。
         /// </summary>
         public OptionsActionConfigurator<LocalizationOptions> Localization { get; }
             = new OptionsActionConfigurator<LocalizationOptions>(options => options.ResourcesPath = "Resources", autoConfigureAction: false);
 
         /// <summary>
-        /// 内存缓存选项配置器（手动服务注册时注入配置动作）。
+        /// 内存缓存选项配置器（服务注册时手动注入配置动作）。
         /// </summary>
         public OptionsActionConfigurator<MemoryCacheOptions> MemoryCache { get; }
             = new OptionsActionConfigurator<MemoryCacheOptions>(autoConfigureAction: false);
 
         /// <summary>
-        /// 内存分布式缓存选项配置器（手动服务注册时注入配置动作）。
+        /// 内存分布式缓存选项配置器（服务注册时手动注入配置动作）。
         /// </summary>
         public OptionsActionConfigurator<MemoryDistributedCacheOptions> MemoryDistributedCache { get; }
             = new OptionsActionConfigurator<MemoryDistributedCacheOptions>(autoConfigureAction: false);
