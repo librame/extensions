@@ -10,6 +10,7 @@
 
 #endregion
 
+using Librame.Extensions;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>返回布尔值。</returns>
         public static bool TryReplaceConfigureOptions(this IServiceCollection services, object configureOptionsInstance)
         {
+            configureOptionsInstance.NotNull(nameof(configureOptionsInstance));
+
             var serviceTypes = FindIConfigureOptions(configureOptionsInstance.GetType());
 
             foreach (var serviceType in serviceTypes)
