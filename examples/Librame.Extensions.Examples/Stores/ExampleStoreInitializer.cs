@@ -8,7 +8,7 @@ namespace Librame.Extensions.Examples
     using Data;
     using Models;
 
-    public class ExampleStoreInitializer : StoreInitializer
+    public class ExampleStoreInitializer : StoreInitializer<ExampleStoreIdentifier>
     {
         private IList<Category> _categories;
 
@@ -69,7 +69,7 @@ namespace Librame.Extensions.Examples
 
                 for (int i = 0; i < 100; i++)
                 {
-                    var articleId = (Identifier as ExampleStoreIdentifier)?.GetArticleIdAsync().ConfigureAndResult();
+                    var articleId = Identifier.GetArticleIdAsync().ConfigureAndResult();
 
                     articles.Add(new Article
                     {

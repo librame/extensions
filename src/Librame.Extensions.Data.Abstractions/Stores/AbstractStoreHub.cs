@@ -30,8 +30,9 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 初始化器。
+        /// 存储初始化器。
         /// </summary>
+        /// <value>返回 <see cref="IStoreInitializer"/>。</value>
         public IStoreInitializer Initializer { get; }
     }
 }

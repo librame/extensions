@@ -255,9 +255,9 @@ namespace Librame.Extensions.Data
         protected virtual void MigrateDifference(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor, IReadOnlyList<MigrationOperation> operationDifferences)
         {
             //var rawSqlCommandBuilder = dbContextAccessor.ServiceProvider.GetRequiredService<IRawSqlCommandBuilder>();
-            var migrationsSqlGenerator = dbContextAccessor.ServiceProvider.GetRequiredService<IMigrationsSqlGenerator>();
-            var migrationCommandExecutor = dbContextAccessor.ServiceProvider.GetRequiredService<IMigrationCommandExecutor>();
-            var connection = dbContextAccessor.ServiceProvider.GetRequiredService<IRelationalConnection>();
+            var migrationsSqlGenerator = dbContextAccessor.InternalServiceProvider.GetRequiredService<IMigrationsSqlGenerator>();
+            var migrationCommandExecutor = dbContextAccessor.InternalServiceProvider.GetRequiredService<IMigrationCommandExecutor>();
+            var connection = dbContextAccessor.InternalServiceProvider.GetRequiredService<IRelationalConnection>();
             //var historyRepository = dbContextAccessor.ServiceProvider.GetRequiredService<IHistoryRepository>();
             //var insertCommand = rawSqlCommandBuilder.Build(historyRepository.GetInsertScript(new HistoryRow(migration.GetId(), ProductInfo.GetVersion())));
 
@@ -320,11 +320,11 @@ namespace Librame.Extensions.Data
             return Locker.WaitFactory(() =>
             {
                 var lastModel = ResolveModel();
-                var typeMappingSource = dbContextAccessor.ServiceProvider.GetRequiredService<IRelationalTypeMappingSource>();
-                var migrationsAnnotations = dbContextAccessor.ServiceProvider.GetRequiredService<IMigrationsAnnotationProvider>();
-                var changeDetector = dbContextAccessor.ServiceProvider.GetRequiredService<IChangeDetector>();
-                var updateAdapterFactory = dbContextAccessor.ServiceProvider.GetRequiredService<IUpdateAdapterFactory>();
-                var commandBatchPreparerDependencies = dbContextAccessor.ServiceProvider.GetRequiredService<CommandBatchPreparerDependencies>();
+                var typeMappingSource = dbContextAccessor.InternalServiceProvider.GetRequiredService<IRelationalTypeMappingSource>();
+                var migrationsAnnotations = dbContextAccessor.InternalServiceProvider.GetRequiredService<IMigrationsAnnotationProvider>();
+                var changeDetector = dbContextAccessor.InternalServiceProvider.GetRequiredService<IChangeDetector>();
+                var updateAdapterFactory = dbContextAccessor.InternalServiceProvider.GetRequiredService<IUpdateAdapterFactory>();
+                var commandBatchPreparerDependencies = dbContextAccessor.InternalServiceProvider.GetRequiredService<CommandBatchPreparerDependencies>();
 
                 var modelDiffer = new ResetMigrationsModelDiffer(typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory,
                     commandBatchPreparerDependencies);

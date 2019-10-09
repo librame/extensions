@@ -165,7 +165,6 @@ namespace Librame.Extensions.Data
                 modelSnapshotTypeName.Name, model);
 
             var references = GetAssemblyReferences(dbContextAccessorType);
-
             if (Options.ExportModelSnapshotFilePath.IsNotEmpty())
             {
                 FilePathCombiner filePath = Options.ExportModelSnapshotFilePath;
@@ -186,6 +185,17 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IReadOnlyList{AssemblyReference}"/>。</returns>
         protected virtual IReadOnlyList<AssemblyReference> GetAssemblyReferences(Type dbContextAccessorType)
         {
+            //var baseReferences = new List<AssemblyReference>
+            //{
+            //    AssemblyReference.ByName("Microsoft.EntityFrameworkCore"),
+            //    AssemblyReference.ByName("Microsoft.EntityFrameworkCore.Relational"),
+            //    AssemblyReference.ByName("Librame.Extensions.Data.Abstractions"),
+            //    AssemblyReference.ByName("Librame.Extensions.Data.EntityFrameworkCore"),
+            //    // Add DesignTimeServices AssemblyReference,
+            //    // Add DbContextAccessor AssemblyReference,
+            //    AssemblyReference.ByName("netstandard")
+            //};
+
             var references = new List<AssemblyReference>(Options.MigrationAssemblyReferences);
 
             // Add DbContextAccessor AssemblyReference
@@ -195,33 +205,8 @@ namespace Librame.Extensions.Data
 
             references.Sort();
 
-            //// Add NetStardand AssemblyReference
-            //if (Options.NetStardandAssemblyReference.IsNotEmpty())
-            //{
-            //    AssemblyReference netStandardReference;
-
-            //    if (File.Exists(Options.NetStardandAssemblyReference))
-            //        netStandardReference = AssemblyReference.ByPath(Options.NetStardandAssemblyReference);
-            //    else
-            //        netStandardReference = AssemblyReference.ByName(Options.NetStardandAssemblyReference);
-
-            //    references.Add(netStandardReference);
-            //}
-
             return references.AsReadOnlyList();
         }
-
-
-        ///// <summary>
-        ///// 模型快照程序集引用集合。
-        ///// </summary>
-        //public static IList<AssemblyReference> ModelSnapshotAssemblyReferences = new List<AssemblyReference>
-        //{
-        //    AssemblyReference.ByName("Microsoft.EntityFrameworkCore"),
-        //    AssemblyReference.ByName("Microsoft.EntityFrameworkCore.Relational"),
-        //    AssemblyReference.ByName("Librame.Extensions.Data.Abstractions"),
-        //    AssemblyReference.ByName("Librame.Extensions.Data.EntityFrameworkCore")
-        //};
 
     }
 }

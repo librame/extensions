@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -63,9 +62,6 @@ namespace Librame.Extensions.Data
             });
 
             //builder.Services.AddDbContextDesignTimeServices();
-
-            //// Add StoreHub
-            //builder.AddStoreHubByAccessor<TImplementation>();
 
             return builder;
         }

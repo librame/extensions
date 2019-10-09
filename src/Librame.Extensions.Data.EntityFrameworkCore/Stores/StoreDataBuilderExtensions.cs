@@ -80,43 +80,5 @@ namespace Librame.Extensions.Data
             return builder;
         }
 
-        ///// <summary>
-        ///// 添加存储中心。
-        ///// </summary>
-        ///// <typeparam name="TAccessor">指定的存储器类型。</typeparam>
-        ///// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
-        ///// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        //internal static IDataBuilder AddStoreHubByAccessor<TAccessor>(this IDataBuilder builder)
-        //    where TAccessor : DbContext, IAccessor
-        //{
-        //    var accessorType = typeof(TAccessor);
-        //    var typeArguments = GetAccessorGenericTypes(accessorType);
-
-        //    typeArguments = accessorType.YieldEnumerable().Concat(typeArguments).ToArray();
-        //    var storeHubType = typeof(StoreHub<>).MakeGenericType(typeArguments);
-
-        //    builder.Services.AddScoped(typeof(IStoreHub<>).MakeGenericType(typeArguments), storeHubType);
-
-        //    if (!builder.Services.TryReplace(typeof(IStoreHub), storeHubType, throwIfNotFound: false))
-        //        builder.Services.AddScoped(typeof(IStoreHub), storeHubType);
-
-        //    return builder;
-        //}
-
-        //private static Type[] GetAccessorGenericTypes(Type accessorType)
-        //{
-        //    if (!accessorType.IsGenericType
-        //        || accessorType.GenericTypeArguments.Length != 7
-        //        || accessorType.GetInterface(nameof(IDbContextAccessorFlag)).IsNull())
-        //    {
-        //        if (accessorType.BaseType.IsNull())
-        //            throw new ArgumentException($"Invalid '{accessorType}' inherits. Reference {typeof(DbContextAccessor<,,,,,,>)}");
-
-        //        return GetAccessorGenericTypes(accessorType.BaseType);
-        //    }
-
-        //    return accessorType.GenericTypeArguments;
-        //}
-
     }
 }

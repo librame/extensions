@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.DependencyModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +18,8 @@ using System.Reflection;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 程序集引用。
     /// </summary>
@@ -193,7 +194,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="AssemblyReference"/>。</returns>
         public static AssemblyReference ByAssembly(Assembly assembly, bool copyLocal = false)
         {
-            var metadata = (MetadataReference)MetadataReference.CreateFromFile(assembly.Location);
+            MetadataReference metadata = MetadataReference.CreateFromFile(assembly.Location);
             return new AssemblyReference(metadata.YieldEnumerable(), copyLocal, assembly.Location);
         }
 
@@ -207,22 +208,14 @@ namespace Librame.Extensions.Data
         {
             assemblyName.NotEmpty(nameof(assemblyName));
 
-            string assemblyLocation = null;
+            var assembly = AssemblyUtility.CurrentDomainAssemblies
+                .FirstOrDefault(assembly => assemblyName.Equals(assembly.GetSimpleName(), StringComparison.OrdinalIgnoreCase));
 
-            var metadatas = DependencyContext.Default.CompileLibraries
-                .Where(lib => assemblyName == lib.Name)
-                .Select(lib =>
-                {
-                    var assembly = Assembly.LoadFrom($"{assemblyName}.dll");
-                    assemblyLocation = assembly.Location;
-                    return (MetadataReference)MetadataReference.CreateFromFile(assembly.Location);
-                })
-                .ToArray();
-
-            if (metadatas.IsEmpty())
+            if (assembly.IsNull())
                 throw new InvalidOperationException($"Assembly '{assemblyName}' not found.");
-            
-            return new AssemblyReference(metadatas, copyLocal, assemblyLocation);
+
+            MetadataReference reference = MetadataReference.CreateFromFile(assembly.Location);
+            return new AssemblyReference(reference.YieldEnumerable(), copyLocal, assembly.Location);
         }
 
         /// <summary>

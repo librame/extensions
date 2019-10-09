@@ -73,14 +73,14 @@ namespace Librame.Extensions.Data
         public DbContextAccessor(DbContextOptions options)
             : base(options)
         {
-            Initialize();
+            InitializeCreateDatabase();
         }
 
 
         /// <summary>
-        /// 初始化。
+        /// 初始化创建数据库。
         /// </summary>
-        protected virtual void Initialize()
+        protected virtual void InitializeCreateDatabase()
         {
             if (BuilderOptions.IsCreateDatabase)
                 EnsureDatabaseCreated();
@@ -115,12 +115,12 @@ namespace Librame.Extensions.Data
         public DbSet<TTenant> Tenants { get; set; }
 
         #endregion
-		
-		
+
+
         /// <summary>
-        /// 服务提供程序。
+        /// 内部服务提供程序。
         /// </summary>
-        public IServiceProvider ServiceProvider
+        public IServiceProvider InternalServiceProvider
             => this.GetInfrastructure();
 
         /// <summary>

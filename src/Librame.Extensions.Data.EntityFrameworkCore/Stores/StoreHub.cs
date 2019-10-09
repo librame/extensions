@@ -23,8 +23,45 @@ namespace Librame.Extensions.Data
     /// 存储中心。
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-    public class StoreHub<TAccessor> : StoreHub<TAccessor, DataAudit<string>, DataAuditProperty<int, string>, DataEntity<string>, DataMigration<string>, DataTenant<string>, string, int>
-        , IStoreHub<TAccessor>
+    /// <typeparam name="TInitializer">指定的初始化类型。</typeparam>
+    public class StoreHub<TAccessor, TInitializer> : StoreHub<TAccessor>
+        where TAccessor : IDbContextAccessor<DataAudit<string>, DataAuditProperty<int, string>, DataEntity<string>, DataMigration<string>, DataTenant<string>>
+        where TInitializer : IStoreInitializer
+    {
+        /// <summary>
+        /// 构造一个存储中心。
+        /// </summary>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="initializer">给定的 <see cref="IStoreInitializer"/>。</param>
+        protected StoreHub(IStoreInitializer initializer, IAccessor accessor)
+            : base(initializer, accessor)
+        {
+        }
+
+        /// <summary>
+        /// 构造一个存储中心。
+        /// </summary>
+        /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
+        /// <param name="initializer">给定的 <typeparamref name="TAccessor"/>。</param>
+        protected StoreHub(TInitializer initializer, TAccessor accessor)
+            : base(initializer, accessor)
+        {
+        }
+
+
+        /// <summary>
+        /// 存储初始化器。
+        /// </summary>
+        /// <value>返回 <typeparamref name="TInitializer"/>。</value>
+        public new TInitializer Initializer { get; }
+    }
+
+
+    /// <summary>
+    /// 存储中心。
+    /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
+    public class StoreHub<TAccessor> : StoreHub<TAccessor, DataAudit<string>, DataAuditProperty<int, string>, DataEntity<string>, DataMigration<string>, DataTenant<string>, string, int>, IStoreHub<TAccessor>
         where TAccessor : IDbContextAccessor<DataAudit<string>, DataAuditProperty<int, string>, DataEntity<string>, DataMigration<string>, DataTenant<string>>
     {
         /// <summary>
@@ -77,12 +114,12 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="initializer">给定的 <see cref="IStoreInitializer"/>。</param>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public StoreHub(IStoreInitializer initializer, IAccessor accessor)
+        protected StoreHub(IStoreInitializer initializer, IAccessor accessor)
             : base(initializer, accessor)
         {
             Accessor = accessor.CastTo<IAccessor, TAccessor>(nameof(accessor));
 
-            InitializeStoreHub();
+            InitializeInitializer();
         }
 
         /// <summary>
@@ -90,19 +127,19 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="initializer">给定的 <see cref="IStoreInitializer"/>。</param>
         /// <param name="accessor">给定的 <typeparamref name="TAccessor"/>。</param>
-        public StoreHub(IStoreInitializer initializer, TAccessor accessor)
+        protected StoreHub(IStoreInitializer initializer, TAccessor accessor)
             : base(initializer, accessor)
         {
             Accessor = accessor;
 
-            InitializeStoreHub();
+            InitializeInitializer();
         }
 
 
         /// <summary>
-        /// 初始化存储中心。
+        /// 初始化初始化器。
         /// </summary>
-        protected virtual void InitializeStoreHub()
+        protected virtual void InitializeInitializer()
         {
             if (Accessor.BuilderOptions.Stores.InitializationEnabled
                 && Initializer is StoreInitializer storeInitializer)
@@ -113,7 +150,7 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 数据访问器。
+        /// 数据库上下文访问器。
         /// </summary>
         /// <value>返回 <typeparamref name="TAccessor"/>。</value>
         public new TAccessor Accessor { get; }

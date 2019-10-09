@@ -46,9 +46,9 @@ namespace Librame.Extensions.Data
         where TIncremId : IEquatable<TIncremId>
     {
         /// <summary>
-        /// 数据访问器。
+        /// 数据库上下文访问器。
         /// </summary>
-        /// <value>返回 <see cref="IAccessor"/>。</value>
+        /// <value>返回 <typeparamref name="TAccessor"/>。</value>
         new TAccessor Accessor { get; }
     }
 
@@ -59,8 +59,9 @@ namespace Librame.Extensions.Data
     public interface IStoreHub : IStore
     {
         /// <summary>
-        /// 初始化器。
+        /// 存储初始化器。
         /// </summary>
+        /// <value>返回 <see cref="IStoreInitializer"/>。</value>
         IStoreInitializer Initializer { get; }
     }
 }

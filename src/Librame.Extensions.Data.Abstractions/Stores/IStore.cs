@@ -22,20 +22,22 @@ namespace Librame.Extensions.Data
     public interface IStore : IDisposable
     {
         /// <summary>
-        /// 数据访问器。
+        /// 访问器。
         /// </summary>
         /// <value>返回 <see cref="IAccessor"/>。</value>
         IAccessor Accessor { get; }
 
 
         /// <summary>
-        /// 服务提供程序。
+        /// 内部服务提供程序。
         /// </summary>
-        IServiceProvider ServiceProvider { get; }
+        /// <value>返回 <see cref="IServiceProvider"/>。</value>
+        IServiceProvider InternalServiceProvider { get; }
 
         /// <summary>
         /// 服务工厂。
         /// </summary>
+        /// <value>返回 <see cref="ServiceFactoryDelegate"/>。</value>
         ServiceFactoryDelegate ServiceFactory { get; }
     }
 }

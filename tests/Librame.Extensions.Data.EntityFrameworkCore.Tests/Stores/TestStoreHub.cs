@@ -5,7 +5,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
 
-    public class TestStoreHub : StoreHub<TestDbContextAccessor>
+    public class TestStoreHub : StoreHub<TestDbContextAccessor, TestStoreInitializer>
     {
         public TestStoreHub(IStoreInitializer initializer, IAccessor accessor)
             : base(initializer, accessor)

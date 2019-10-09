@@ -32,21 +32,23 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 数据访问器。
+        /// 访问器。
         /// </summary>
         /// <value>返回 <see cref="IAccessor"/>。</value>
         public IAccessor Accessor { get; }
 
 
         /// <summary>
-        /// 服务提供程序。
+        /// 内部服务提供程序。
         /// </summary>
-        public IServiceProvider ServiceProvider
-            => Accessor.ServiceProvider;
+        /// <value>返回 <see cref="IServiceProvider"/>。</value>
+        public IServiceProvider InternalServiceProvider
+            => Accessor.InternalServiceProvider;
 
         /// <summary>
         /// 服务工厂。
         /// </summary>
+        /// <value>返回 <see cref="ServiceFactoryDelegate"/>。</value>
         public ServiceFactoryDelegate ServiceFactory
             => Accessor.ServiceFactory;
 
@@ -55,6 +57,7 @@ namespace Librame.Extensions.Data
         /// 释放存储。
         /// </summary>
         protected override void DisposeCore()
-            => Accessor.Dispose();
+        {
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
 
-    public class TestStoreInitializer : StoreInitializer
+    public class TestStoreInitializer : StoreInitializer<TestStoreIdentifier>
     {
         private IList<Category> _categories;
 
@@ -68,7 +68,7 @@ namespace Librame.Extensions.Data.Tests
 
                 for (int i = 0; i < 100; i++)
                 {
-                    var articleId = (Identifier as TestStoreIdentifier)?.GetArticleIdAsync().ConfigureAndResult();
+                    var articleId = Identifier.GetArticleIdAsync().ConfigureAndResult();
 
                     articles.Add(new Article
                     {

@@ -69,7 +69,7 @@ namespace Librame.Extensions.Data
                 AssemblyReference.ByName("Librame.Extensions.Data.EntityFrameworkCore"),
                 AssemblyReference.ByName("Microsoft.EntityFrameworkCore"),
                 AssemblyReference.ByName("Microsoft.EntityFrameworkCore.Relational"),
-                AssemblyReference.ByPath(@"C:\Program Files\dotnet\packs\NETStandard.Library.Ref\2.1.0\ref\netstandard2.1\netstandard.dll")
+                AssemblyReference.ByName("netstandard")
             };
 
         /// <summary>

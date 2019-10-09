@@ -53,7 +53,7 @@ namespace Librame.Extensions.Examples
             })
             .AddDbDesignTime<SqliteDesignTimeServices>()
             .AddIdentifier<ExampleStoreIdentifier>()
-            .AddInitializer<ExampleStoreInitializer>()
+            //.AddInitializer<ExampleStoreInitializer>()
             .AddStoreHub<ExampleStoreHub>()
             .AddEncryption()
             .AddDeveloperGlobalSigningCredentials();
@@ -74,6 +74,12 @@ namespace Librame.Extensions.Examples
         {
             var options = provider.GetRequiredService<IOptions<ExampleOptions>>().Value;
             Console.WriteLine(options.Message);
+
+            var dataOptions = provider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
+            dataOptions.MigrationAssemblyReferences.ForEach((refer, i) =>
+            {
+                Console.WriteLine($"AssemblyReference {i + 1}: {refer.Location}");
+            });
 
             Console.WriteLine("Press any key to continue");
             Console.ReadKey();

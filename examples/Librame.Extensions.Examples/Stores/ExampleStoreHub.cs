@@ -6,7 +6,7 @@ namespace Librame.Extensions.Examples
     using Data;
     using Models;
 
-    public class ExampleStoreHub : StoreHub<ExampleDbContextAccessor>
+    public class ExampleStoreHub : StoreHub<ExampleDbContextAccessor, ExampleStoreInitializer>
     {
         public ExampleStoreHub(IStoreInitializer initializer, IAccessor accessor)
             : base(initializer, accessor)

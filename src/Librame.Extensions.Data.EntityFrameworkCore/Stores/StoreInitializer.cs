@@ -20,6 +20,44 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 存储初始化器。
     /// </summary>
+    /// <typeparam name="TIdentifier">指定的标识符类型。</typeparam>
+    public class StoreInitializer<TIdentifier> : StoreInitializer
+        where TIdentifier : IStoreIdentifier
+    {
+        /// <summary>
+        /// 构造一个存储初始化器。
+        /// </summary>
+        /// <param name="identifier">给定的 <see cref="IStoreIdentifier"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        protected StoreInitializer(IStoreIdentifier identifier, ILoggerFactory loggerFactory)
+            : base(identifier, loggerFactory)
+        {
+            Identifier = identifier.CastTo<IStoreIdentifier, TIdentifier>(nameof(identifier));
+        }
+
+        /// <summary>
+        /// 构造一个存储初始化器。
+        /// </summary>
+        /// <param name="identifier">给定的 <typeparamref name="TIdentifier"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        protected StoreInitializer(TIdentifier identifier, ILoggerFactory loggerFactory)
+            : base(identifier, loggerFactory)
+        {
+            Identifier = identifier;
+        }
+
+
+        /// <summary>
+        /// 标识符。
+        /// </summary>
+        /// <value>返回 <typeparamref name="TIdentifier"/>。</value>
+        public new TIdentifier Identifier { get; }
+    }
+
+
+    /// <summary>
+    /// 存储初始化器。
+    /// </summary>
     public class StoreInitializer : AbstractStoreInitializer
     {
         /// <summary>

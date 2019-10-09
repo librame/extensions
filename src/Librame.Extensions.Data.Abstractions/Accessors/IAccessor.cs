@@ -25,9 +25,9 @@ namespace Librame.Extensions.Data
     public interface IAccessor : IDisposable
     {
         /// <summary>
-        /// 服务提供程序。
+        /// 内部服务提供程序。
         /// </summary>
-        IServiceProvider ServiceProvider { get; }
+        IServiceProvider InternalServiceProvider { get; }
 
         /// <summary>
         /// 服务工厂。

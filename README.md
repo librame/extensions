@@ -108,18 +108,18 @@
             optionsBuilder.UseSqlServer(options.DefaultTenant.DefaultConnectionString,
                 sql => sql.MigrationsAssembly("AssemblyName"));
         })
-        .AddStoreHubWithAccessor<TestStoreHub>()
-        .AddInitializerWithAccessor<TestStoreInitializer>()
+        .AddDbDesignTime<SqlServerDesignTimeServices>()
         .AddIdentifier<TestStoreIdentifier>()
-        .AddDbDesignTime<SqlServerDesignTimeServices>();
+        //.AddInitializer<TestStoreInitializer>()
+        .AddStoreHub<TestStoreHub>();
 
 ## Test Extension
 
     // StoreHub
-    public class TestStoreHub : StoreHubBase<TestDbContextAccessor>
+    public class TestStoreHub : StoreHub<TestDbContextAccessor>
     {
-        public TestStore(IAccessor accessor, IStoreInitializer<TestDbContextAccessor> initializer)
-            : base(accessor, initializer)
+        public TestStore(IStoreInitializer initializer, IAccessor accessor)
+            : base(initializer, accessor)
         {
         }
         
@@ -137,13 +137,13 @@
 
         public TestStoreHub UseWriteDbConnection()
         {
-            Accessor.TryChangeDbConnection(t => t.WritingConnectionString);
+            Accessor.SwitchTenant(t => t.WritingConnectionString);
             return this;
         }
 
         public TestStoreHub UseDefaultDbConnection()
         {
-            Accessor.TryChangeDbConnection(t => t.DefaultConnectionString);
+            Accessor.SwitchTenant(t => t.DefaultConnectionString);
             return this;
         }
     }

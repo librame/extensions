@@ -47,11 +47,6 @@ namespace Librame.Extensions.Core
         /// 释放服务。
         /// </summary>
         protected override void DisposeCore()
-        {
-            Logger.LogTrace($"The {GetType().GetSimpleFullName()} was disposed.");
-
-            //LoggerFactory.Dispose();
-            //Logger.LogTrace($"The {LoggerFactory.GetType().GetSimpleFullName()} was disposed.");
-        }
+            => Logger.LogTrace($"The {GetType().GetSimpleFullName()} was disposed.");
     }
 }
