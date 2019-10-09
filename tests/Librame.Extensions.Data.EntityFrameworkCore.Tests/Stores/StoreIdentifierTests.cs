@@ -13,8 +13,11 @@ namespace Librame.Extensions.Data.Tests
             var auditId = await service.GetAuditIdAsync().ConfigureAndResultAsync();
             Assert.NotEmpty(auditId);
 
-            var auditPropertyId = await service.GetAuditPropertyIdAsync().ConfigureAndResultAsync();
-            Assert.NotEmpty(auditPropertyId);
+            var entityId = await service.GetEntityIdAsync().ConfigureAndResultAsync();
+            Assert.NotEmpty(entityId);
+
+            var migrationId = await service.GetMigrationIdAsync().ConfigureAndResultAsync();
+            Assert.NotEmpty(migrationId);
 
             var tenantId = await service.GetTenantIdAsync().ConfigureAndResultAsync();
             Assert.NotEmpty(tenantId);

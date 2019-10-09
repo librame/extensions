@@ -6,7 +6,7 @@ namespace Librame.Extensions.Data.Tests
 {
     using Core;
 
-    public class TestStoreIdentifier : StoreIdentifierBase
+    public class TestStoreIdentifier : StoreIdentifier
     {
         public TestStoreIdentifier(IClockService clock, ILoggerFactory loggerFactory)
             : base(clock, loggerFactory)
@@ -16,6 +16,5 @@ namespace Librame.Extensions.Data.Tests
 
         public Task<string> GetArticleIdAsync(CancellationToken cancellationToken = default)
             => GenerateCombGuidAsync("ArticleId", cancellationToken);
-
     }
 }

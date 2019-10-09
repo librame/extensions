@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Librame.Extensions
@@ -21,6 +22,71 @@ namespace Librame.Extensions
     /// </summary>
     public static class StringExtensions
     {
+        /// <summary>
+        /// 向当前字符串末尾附加不存在的字符（如果末尾已存在则不附加并直接返回当前字符串）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="str"/> or <paramref name="append"/> is null.
+        /// </exception>
+        /// <param name="str">给定的当前字符串。</param>
+        /// <param name="append">给定的附加字符。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AppendEndsWithout(this string str, char append)
+        {
+            str.NotEmpty(nameof(str));
+            return str.EndsWith(append) ? str : $"{str}{append}";
+        }
+
+        /// <summary>
+        /// 向当前字符串末尾附加不存在的字符串（如果末尾已存在则不附加并直接返回当前字符串）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="str"/> or <paramref name="append"/> is null.
+        /// </exception>
+        /// <param name="str">给定的当前字符串。</param>
+        /// <param name="append">给定的附加字符串。</param>
+        /// <param name="comparisonType">给定的 <see cref="StringComparison"/>（可选；默认忽略大小写）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AppendEndsWithout(this string str, string append,
+            StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
+        {
+            str.NotEmpty(nameof(str));
+            return str.EndsWith(append, comparisonType) ? str : $"{str}{append}";
+        }
+
+
+        /// <summary>
+        /// 向当前字符串起始插入不存在的字符（如果起始已存在则不插入并直接返回当前字符串）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="str"/> or <paramref name="insert"/> is null.
+        /// </exception>
+        /// <param name="str">给定的当前字符串。</param>
+        /// <param name="insert">给定的插入字符。</param>
+        /// <returns>返回字符串。</returns>
+        public static string InsertStartsWithout(this string str, char insert)
+        {
+            str.NotEmpty(nameof(str));
+            return str.StartsWith(insert) ? str : $"{insert}{str}";
+        }
+
+        /// <summary>
+        /// 向当前字符串起始插入不存在的字符串（如果起始已存在则不插入并直接返回当前字符串）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="str"/> or <paramref name="insert"/> is null.
+        /// </exception>
+        /// <param name="str">给定的当前字符串。</param>
+        /// <param name="insert">给定的插入字符串。</param>
+        /// <param name="comparisonType">给定的 <see cref="StringComparison"/>（可选；默认忽略大小写）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string InsertStartsWithout(this string str, string insert,
+            StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
+        {
+            str.NotEmpty(nameof(str));
+            return str.StartsWith(insert, comparisonType) ? str : $"{insert}{str}";
+        }
+
 
         #region FormatString
 
@@ -41,7 +107,7 @@ namespace Librame.Extensions
         public static string FormatString(this int number, int length)
         {
             return number.FormatString(length,
-                (format, value) => string.Format(format, value));
+                (format, value) => string.Format(CultureInfo.CurrentCulture, format, value));
         }
 
 
@@ -62,7 +128,7 @@ namespace Librame.Extensions
         public static string FormatString(this long number, int length)
         {
             return number.FormatString(length,
-                (format, value) => string.Format(format, value));
+                (format, value) => string.Format(CultureInfo.CurrentCulture, format, value));
         }
 
 
@@ -106,7 +172,7 @@ namespace Librame.Extensions
             foreach (var w in words)
             {
                 // 首字母大写，其余字母均小写
-                str += char.ToUpper(w[0]) + w.Substring(1).ToLower();
+                str += char.ToUpper(w[0], CultureInfo.CurrentCulture) + w.Substring(1).ToLower(CultureInfo.CurrentCulture);
             }
 
             return str;
@@ -126,7 +192,7 @@ namespace Librame.Extensions
             words.NotNull(nameof(words));
 
             // 首单词小写
-            string str = words[0].ToLower();
+            string str = words[0].ToLower(CultureInfo.CurrentCulture);
             if (words.Length > 1)
             {
                 for (var i = 1; i < words.Length; i++)
@@ -134,7 +200,7 @@ namespace Librame.Extensions
                     var w = words[i];
 
                     // 首字母大写，其余字母均小写
-                    str += char.ToUpper(w[0]) + w.Substring(1).ToLower();
+                    str += char.ToUpper(w[0], CultureInfo.CurrentCulture) + w.Substring(1).ToLower(CultureInfo.CurrentCulture);
                 }
             }
 
@@ -228,7 +294,7 @@ namespace Librame.Extensions
             pair.NotEmpty(nameof(pair));
             //separator.NotEmpty(nameof(separator));
 
-            var separatorIndex = pair.IndexOf(separator);
+            var separatorIndex = pair.IndexOf(separator, StringComparison.OrdinalIgnoreCase);
             var name = pair.Substring(0, separatorIndex);
             var value = pair.Substring(separatorIndex + separator.Length);
 
@@ -289,7 +355,7 @@ namespace Librame.Extensions
         /// <returns>返回清除后的字符串。</returns>
         public static string TrimStart(this string str, string trim, bool loops = true)
         {
-            if (trim.IsNotEmpty() && str.StartsWith(trim, StringComparison.OrdinalIgnoreCase))
+            if (str.IsNotEmpty() && trim.IsNotEmpty() && str.StartsWith(trim, StringComparison.OrdinalIgnoreCase))
             {
                 str = str.Substring(trim.Length);
                 if (loops)
@@ -308,7 +374,7 @@ namespace Librame.Extensions
         /// <returns>返回清除后的字符串。</returns>
         public static string TrimEnd(this string str, string trim, bool loops = true)
         {
-            if (trim.IsNotEmpty() && str.EndsWith(trim, StringComparison.OrdinalIgnoreCase))
+            if (str.IsNotEmpty() && trim.IsNotEmpty() && str.EndsWith(trim, StringComparison.OrdinalIgnoreCase))
             {
                 str = str.Substring(0, str.Length - trim.Length);
                 if (loops)

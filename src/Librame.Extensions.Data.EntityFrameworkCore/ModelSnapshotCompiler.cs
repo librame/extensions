@@ -72,10 +72,10 @@ namespace Librame.Extensions.Data
             {
                 if (reference.CopyLocal)
                 {
-                    if (string.IsNullOrEmpty(reference.FilePath))
+                    if (string.IsNullOrEmpty(reference.Location))
                         throw new InvalidOperationException("Could not find path for reference " + reference);
 
-                    File.Copy(reference.FilePath, Path.Combine(filePath.BasePath, Path.GetFileName(reference.FilePath)), overwrite: true);
+                    File.Copy(reference.Location, Path.Combine(filePath.BasePath, Path.GetFileName(reference.Location)), overwrite: true);
                 }
                 metadatas.AddRange(reference.Metadatas);
             }

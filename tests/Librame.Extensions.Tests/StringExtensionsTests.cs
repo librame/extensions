@@ -4,6 +4,47 @@ namespace Librame.Extensions.Tests
 {
     public class StringExtensionsTests
     {
+        [Fact]
+        public void AppendEndsWithoutTest()
+        {
+            var str = nameof(StringExtensionsTests);
+
+            var testChar = '#';
+
+            var append = str.AppendEndsWithout(testChar);
+            Assert.Equal($"{str}{testChar}", append); // appended
+
+            append = append.AppendEndsWithout(testChar);
+            Assert.Equal($"{str}{testChar}", append); // no append
+
+            var testString = nameof(StringExtensions);
+
+            append = str.AppendEndsWithout(testString);
+            Assert.Equal($"{str}{testString}", append); // appended
+
+            append = append.AppendEndsWithout(testString);
+            Assert.Equal($"{str}{testString}", append); // no append
+        }
+
+        [Fact]
+        public void InsertStartsWithoutTest()
+        {
+            var str = nameof(StringExtensionsTests);
+
+            var testChar = '#';
+
+            var insert = str.InsertStartsWithout(testChar);
+            Assert.Equal($"{testChar}{str}", insert); // inserted
+
+            insert = insert.InsertStartsWithout(testChar);
+            Assert.Equal($"{testChar}{str}", insert); // no insert
+
+            var testString = nameof(StringExtensions);
+
+            insert = str.InsertStartsWithout(testString);
+            Assert.Equal($"{str}", insert); // no insert, str contains testString
+        }
+
 
         #region FormatString
 

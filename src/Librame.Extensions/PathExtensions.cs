@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Librame.Extensions
@@ -22,40 +23,70 @@ namespace Librame.Extensions
     /// <summary>
     /// 路径静态扩展。
     /// </summary>
+    /// <remarks>
+    /// 一、路径分隔符：
+    /// 1. Windows 系统支持使用正斜杠'/' (由 <see cref="Path.AltDirectorySeparatorChar"/> 字段返回) 
+    /// 或反斜杠'\' (<see cref="Path.DirectorySeparatorChar"/> 由字段返回) 作为路径分隔符。
+    /// 2. Unix 系统只支持正斜杠'/'。
+    /// 二、路径常量参考：
+    /// Path.AltDirectorySeparatorChar: '/'。
+    /// Path.DirectorySeparatorChar: '/'。
+    /// Path.PathSeparator: ':'。
+    /// Path.VolumeSeparatorChar: '/'。
+    /// Path.GetInvalidPathChars: U+007C),U+0000,...。
+    /// https://docs.microsoft.com/zh-cn/dotnet/api/system.io.path.directoryseparatorchar?view=netframework-4.8。
+    /// </remarks>
     public static class PathExtensions
     {
-        private static readonly string _directorySeparator
-            = Path.DirectorySeparatorChar.ToString(CultureInfo.CurrentCulture);
+        /// <summary>
+        /// 正向目录分隔字符（/）。
+        /// </summary>
+        private static readonly char _altDirectorySeparatorChar
+            = Path.AltDirectorySeparatorChar;
 
-        private static readonly string _directoryEscapeSeparator
-            = _directorySeparator == @"\" ? @"\\" : "/";
-
-        //private static readonly string AltDirectorySeparator
-        //= Path.AltDirectorySeparatorChar.ToString();
-
-        private static readonly string _parentDirectorySeparatorKey
-            = $"..{_directorySeparator}";
-
-        private static readonly Regex _regexDevelopmentRelativePath
-            = new Regex(@$"{_directoryEscapeSeparator}(bin|obj){_directoryEscapeSeparator}(Debug|Release)");
+        /// <summary>
+        /// 反向目录分隔字符（\）。
+        /// </summary>
+        private static readonly char _directorySeparatorChar
+            = Path.DirectorySeparatorChar;
 
 
         /// <summary>
-        /// 没有开发相对路径的目录。
+        /// 没有开发相对路径的路径。
         /// </summary>
-        /// <param name="currentDirectory">给定的当前目录。</param>
+        /// <param name="currentPath">给定的当前目录。</param>
+        /// <param name="hasOSBitRelativePath">存在操作系统位数相对路径（可选；默认不存在）。</param>
         /// <returns>返回目录字符串。</returns>
-        public static string WithoutDevelopmentRelativePath(this string currentDirectory)
+        public static string WithoutDevelopmentRelativePath(this string currentPath,
+            bool hasOSBitRelativePath = false)
         {
-            currentDirectory.NotEmpty(nameof(currentDirectory));
+            currentPath.NotEmpty(nameof(currentPath));
 
-            if (_regexDevelopmentRelativePath.IsMatch(currentDirectory))
+            var regex = new Regex(GetPattern());
+            if (regex.IsMatch(currentPath))
             {
-                var match = _regexDevelopmentRelativePath.Match(currentDirectory);
-                return currentDirectory.Substring(0, match.Index);
+                var match = regex.Match(currentPath);
+                return currentPath.Substring(0, match.Index);
             }
 
-            return currentDirectory;
+            return currentPath;
+
+            string GetPattern()
+            {
+                var separator = currentPath.Contains(_directorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+                    ? Regex.Escape(_directorySeparatorChar.ToString(CultureInfo.CurrentCulture))
+                    : _altDirectorySeparatorChar.ToString(CultureInfo.CurrentCulture);
+
+                var sb = new StringBuilder();
+                sb.Append($"{separator}(bin|obj)");
+
+                if (hasOSBitRelativePath)
+                    sb.Append($"{separator}(x86|x64)");
+
+                sb.Append($"{separator}(Debug|Release)");
+
+                return sb.ToString();
+            }
         }
 
 
@@ -86,32 +117,30 @@ namespace Librame.Extensions
         /// <summary>
         /// 改变指定路径的文件名。
         /// </summary>
-        /// <param name="path">给定的路径。</param>
-        /// <param name="newFileNameFactory">给定的新文件名方法。</param>
+        /// <param name="filePath">给定的文件路径。</param>
+        /// <param name="newFileNameFactory">给定的新文件名方法；输入参数依次为文件基础名、文件扩展名（不存在则为 <see cref="string.Empty"/>）。</param>
         /// <returns>返回路径。</returns>
-        public static string ChangeFileName(this string path, Func<string, string, string> newFileNameFactory)
+        public static string ChangeFileName(this string filePath, Func<string, string, string> newFileNameFactory)
         {
             newFileNameFactory.NotNull(nameof(newFileNameFactory));
 
-            var fileName = Path.GetFileName(path);
-            var extension = Path.GetExtension(path);
-
+            var fileName = Path.GetFileName(filePath);
             if (string.IsNullOrEmpty(fileName))
-                return path;
+                throw new ArgumentException($"Invalid file path '{filePath}'.");
 
-            var index = fileName.LastIndexOf(extension, StringComparison.OrdinalIgnoreCase);
-            var baseName = fileName.Substring(0, index);
+            var basePath = Path.GetDirectoryName(filePath);
+            var extension = Path.GetExtension(filePath);
 
-            index = path.LastIndexOf(fileName, StringComparison.OrdinalIgnoreCase);
-            var dir = path.Substring(0, index);
+            // 文件扩展名可能为空
+            if (extension.IsEmpty())
+                return basePath.CombinePath(newFileNameFactory.Invoke(fileName, string.Empty));
 
-            fileName = newFileNameFactory.Invoke(baseName, extension);
-
-            return Path.Combine(dir, fileName);
+            var baseName = fileName.TrimEnd(extension, loops: false);
+            return basePath.CombinePath(newFileNameFactory.Invoke(baseName, extension));
         }
 
 
-        #region Combine
+        #region CombinePath
 
 
         /// <summary>
@@ -125,32 +154,108 @@ namespace Librame.Extensions
             basePath.NotEmpty(nameof(basePath));
             relativePath.NotEmpty(nameof(relativePath));
 
-            // RelativePath: filename.ext
-            if (!relativePath.Contains(_directorySeparator, StringComparison.OrdinalIgnoreCase))
-                return Path.Combine(basePath, relativePath);
+            var altSeparatorIndex = basePath.IndexOf(_altDirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+            var separatorIndex = basePath.IndexOf(_directorySeparatorChar, StringComparison.OrdinalIgnoreCase);
 
-            // RelativePath: \filename.ext
-            if (relativePath.StartsWith(_directorySeparator, StringComparison.OrdinalIgnoreCase))
-                return Path.Combine(basePath, relativePath.TrimStart(_directorySeparator));
-
-            // RelativePath: ..\filename.ext
-            if (relativePath.StartsWith(_parentDirectorySeparatorKey, StringComparison.OrdinalIgnoreCase))
+            // 正反向分隔符不能同时存在（或不存在）于基础路径中（也不能位于开头字符）
+            if ((altSeparatorIndex < 1 && separatorIndex < 1)
+                || (altSeparatorIndex > 0 && separatorIndex > 0))
             {
-                var baseInfo = new DirectoryInfo(basePath);
-                var parent = BackParentPath(baseInfo, relativePath);
-                return Path.Combine(parent.Info.FullName, parent.RelativePath);
+                throw new ArgumentException($"Invalid base path '{basePath}'.");
             }
 
-            return $"{basePath}{relativePath}";
+            var basePathSeparator = altSeparatorIndex > 0 ? _altDirectorySeparatorChar : _directorySeparatorChar;
+
+            // RelativePath: filename.ext
+            if (!relativePath.Contains(_altDirectorySeparatorChar, StringComparison.CurrentCultureIgnoreCase)
+                && !relativePath.Contains(_directorySeparatorChar, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath}";
+            }
+
+            // RelativePath: ../ or ..\
+            if (basePath.TryCombineParentPath(relativePath, basePathSeparator, out string resultPath))
+                return resultPath;
+
+            // RelativePath: ./ or .\, / or \
+            if (basePath.TryCombineSiblingPath(relativePath, basePathSeparator, out resultPath))
+                return resultPath;
+
+            return $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath}";
         }
 
-        private static (DirectoryInfo Info, string RelativePath) BackParentPath(DirectoryInfo info, string relativePath)
+        private static bool TryCombineParentPath(this string basePath, string relativePath, char basePathSeparator, out string resultPath)
         {
-            if (!relativePath.StartsWith(_parentDirectorySeparatorKey, StringComparison.OrdinalIgnoreCase))
-                return (info, relativePath);
+            var parentMark = "..";
 
-            // 链式返回（按层递进查找）
-            return BackParentPath(info.Parent, relativePath.TrimStart(_parentDirectorySeparatorKey, false));
+            // RelativePath: ../
+            var altSeparatorMark = $"{parentMark}{_altDirectorySeparatorChar}";
+            if (relativePath.StartsWith(altSeparatorMark, StringComparison.OrdinalIgnoreCase))
+            {
+                var parent = BackToParentPath(new DirectoryInfo(basePath), relativePath, altSeparatorMark);
+                resultPath = $"{parent.Info.FullName.AppendEndsWithout(basePathSeparator)}{parent.RelativePath}";
+                return true;
+            }
+
+            // RelativePath: ..\
+            var separatorMark = $"{parentMark}{_directorySeparatorChar}";
+            if (relativePath.StartsWith(separatorMark, StringComparison.OrdinalIgnoreCase))
+            {
+                var parent = BackToParentPath(new DirectoryInfo(basePath), relativePath, separatorMark);
+                resultPath = $"{parent.Info.FullName.AppendEndsWithout(basePathSeparator)}{parent.RelativePath}";
+                return true;
+            }
+
+            resultPath = null;
+            return false;
+
+            // BackToParentPath
+            (DirectoryInfo Info, string RelativePath) BackToParentPath(DirectoryInfo info, string relativePath, string currentSeparatorMark)
+            {
+                if (!relativePath.StartsWith(currentSeparatorMark, StringComparison.OrdinalIgnoreCase))
+                    return (info, relativePath);
+
+                // 链式返回（按层递进查找）
+                return BackToParentPath(info.Parent, relativePath.TrimStart(currentSeparatorMark, loops: false), currentSeparatorMark);
+            }
+        }
+
+        private static bool TryCombineSiblingPath(this string basePath, string relativePath, char basePathSeparator, out string resultPath)
+        {
+            var siblingMark = ".";
+
+            // RelativePath: ./
+            var altSeparatorMark = $"{siblingMark}{_altDirectorySeparatorChar}";
+            if (relativePath.StartsWith(altSeparatorMark, StringComparison.OrdinalIgnoreCase))
+            {
+                resultPath = $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath.TrimStart(altSeparatorMark)}";
+                return true;
+            }
+
+            // RelativePath: .\
+            var separatorMark = $"{siblingMark}{_directorySeparatorChar}";
+            if (relativePath.StartsWith(separatorMark, StringComparison.OrdinalIgnoreCase))
+            {
+                resultPath = $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath.TrimStart(separatorMark)}";
+                return true;
+            }
+
+            // RelativePath: /
+            if (relativePath.StartsWith(_altDirectorySeparatorChar))
+            {
+                resultPath = $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath.TrimStart(_altDirectorySeparatorChar)}";
+                return true;
+            }
+
+            // RelativePath: \
+            if (relativePath.StartsWith(_directorySeparatorChar))
+            {
+                resultPath = $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath.TrimStart(_directorySeparatorChar)}";
+                return true;
+            }
+
+            resultPath = null;
+            return false;
         }
 
         #endregion

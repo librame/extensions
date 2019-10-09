@@ -13,15 +13,16 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 
 namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 数据实体。
     /// </summary>
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     [Description("数据实体")]
-    public class DataEntity : AbstractCreation<string>, IEquatable<DataEntity>
+    public class DataEntity<TGenId> : AbstractCreation<TGenId>, IEquatable<DataEntity<TGenId>>
+        where TGenId : IEquatable<TGenId>
     {
         /// <summary>
         /// 架构。
@@ -57,9 +58,9 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 唯一索引是否相等。
         /// </summary>
-        /// <param name="other">给定的 <see cref="DataEntity"/>。</param>
+        /// <param name="other">给定的 <see cref="DataEntity{TGenId}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(DataEntity other)
+        public bool Equals(DataEntity<TGenId> other)
             => Schema == other?.Schema && Name == other?.Name;
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is DataEntity other) ? Equals(other) : false;
+            => (obj is DataEntity<TGenId> other) ? Equals(other) : false;
 
 
         /// <summary>
@@ -76,7 +77,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => ToString().GetHashCode();
+            => ToString().GetHashCode(StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>
@@ -85,22 +86,5 @@ namespace Librame.Extensions.Data
         /// <returns>返回字符串。</returns>
         public override string ToString()
             => new TableNameSchema(Name, Schema).ToString();
-
-
-        /// <summary>
-        /// 获取唯一索引表达式。
-        /// </summary>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="schema">给定的架构。</param>
-        /// <param name="name">给定的名称。</param>
-        /// <returns>返回查询表达式。</returns>
-        public static Expression<Func<TEntity, bool>> GetUniqueIndexExpression<TEntity>(string schema, string name)
-            where TEntity : DataEntity
-        {
-            schema.NotEmpty(nameof(schema));
-            name.NotEmpty(nameof(name));
-
-            return p => p.Schema == schema && p.Name == name;
-        }
     }
 }

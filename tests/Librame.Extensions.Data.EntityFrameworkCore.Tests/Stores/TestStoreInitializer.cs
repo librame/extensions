@@ -1,31 +1,34 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Librame.Extensions.Data.Tests
 {
-    using Core;
     using Models;
 
-    public class TestStoreInitializer : StoreInitializerBase<TestDbContextAccessor, TestStoreIdentifier>
+    public class TestStoreInitializer : StoreInitializer
     {
         private IList<Category> _categories;
 
 
-        public TestStoreInitializer(IClockService clock,
-            IStoreIdentifier identifier, ILoggerFactory loggerFactory)
-            : base(clock, identifier, loggerFactory)
+        public TestStoreInitializer(IStoreIdentifier identifier, ILoggerFactory loggerFactory)
+            : base(identifier, loggerFactory)
         {
         }
 
 
-        protected override void InitializeCore<TAudit, TEntity, TMigration, TTenant>(IStoreHub<TestDbContextAccessor, TAudit, TEntity, TMigration, TTenant> stores)
+        protected override void InitializeCore<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+            (StoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> stores)
         {
             base.InitializeCore(stores);
 
-            InitializeCategories(stores.Accessor);
+            if (stores.Accessor is TestDbContextAccessor dbContextAccessor)
+            {
+                InitializeCategories(dbContextAccessor);
 
-            InitializeArticles(stores.Accessor);
+                InitializeArticles(dbContextAccessor);
+            }
         }
 
         private void InitializeCategories(TestDbContextAccessor accessor)
@@ -36,11 +39,15 @@ namespace Librame.Extensions.Data.Tests
                 {
                     new Category
                     {
-                        Name = "First Category"
+                        Name = $"First {nameof(Category)}",
+                        CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
+                        CreatedBy = GetType().GetSimpleName()
                     },
                     new Category
                     {
-                        Name = "Last Category"
+                        Name = $"Last {nameof(Category)}",
+                        CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
+                        CreatedBy = GetType().GetSimpleName()
                     }
                 };
 
@@ -61,12 +68,16 @@ namespace Librame.Extensions.Data.Tests
 
                 for (int i = 0; i < 100; i++)
                 {
+                    var articleId = (Identifier as TestStoreIdentifier)?.GetArticleIdAsync().ConfigureAndResult();
+
                     articles.Add(new Article
                     {
-                        Id = Identifier.GetArticleIdAsync().ConfigureAndResult(),
-                        Title = "Article " + i.ToString(),
-                        Descr = "Descr " + i.ToString(),
-                        Category = (i < 50) ? _categories.First() : _categories.Last()
+                        Id = articleId,
+                        Title = $"{nameof(Article)} {i.FormatString(3)}",
+                        Descr = $"{nameof(Article.Descr)} {i.FormatString(3)}",
+                        Category = (i < 50) ? _categories.First() : _categories.Last(),
+                        CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
+                        CreatedBy = GetType().GetSimpleName()
                     });
                 }
 

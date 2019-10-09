@@ -38,8 +38,7 @@ namespace Librame.Extensions.Data.Tests
             modelBuilder.Entity<Article>(b =>
             {
                 // 使用年份进行分表（注：需要在 Article 做 [ShardingTable] 标识）
-                b.ToTable(descr => descr.ChangeDateSuffix(now => now.ToString("yy")));
-                // descr.ChangeDateSuffix(now => now.ToString("yy")) // descr.ChangeSuffix("20")
+                b.ToTable(descr => descr.ChangeDateOffsetSuffixByYear());
 
                 b.HasKey(x => x.Id);
 

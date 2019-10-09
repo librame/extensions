@@ -1,0 +1,455 @@
+2019-10-08 15:38:49.4462 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 15:38:49.6018 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 15:38:49.6018 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 15:38:49.6018 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 15:38:49.6112 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 15:38:49.6112 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 15:38:49.6301 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 15:38:49.6301 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 15:38:49.6457 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 15:38:49.6457 Debug Auto loading done
+2019-10-08 15:38:49.6457 Info Message Template Auto Format enabled
+2019-10-08 15:38:49.6721 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 15:38:49.7263 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 15:38:49.7263 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 15:38:49.7263 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 15:38:49.7263 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 15:38:49.7397 Info Adding target FileTarget(Name=file)
+2019-10-08 15:38:49.7397 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 15:38:49.7397 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 15:38:49.7397 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 15:38:49.7397 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 15:38:49.7397 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 15:38:49.7397 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 15:38:49.7397 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 15:38:49.7537 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 15:38:49.7537 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 15:38:49.7792 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 15:38:49.7792 Debug --- NLog configuration dump ---
+2019-10-08 15:38:49.7792 Debug Targets:
+2019-10-08 15:38:49.7792 Debug File Target[file]
+2019-10-08 15:38:49.7792 Debug Console Target[console]
+2019-10-08 15:38:49.7792 Debug Rules:
+2019-10-08 15:38:49.7830 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 15:38:49.7830 Debug --- End of NLog configuration dump ---
+2019-10-08 15:38:49.7830 Info Found 35 configuration items
+2019-10-08 15:42:35.2207 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 15:42:35.3571 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 15:42:35.3571 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 15:42:35.3651 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 15:42:35.3651 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 15:42:35.3651 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 15:42:35.4119 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 15:42:35.4119 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 15:42:35.4280 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 15:42:35.4280 Debug Auto loading done
+2019-10-08 15:42:35.4280 Info Message Template Auto Format enabled
+2019-10-08 15:42:35.4481 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 15:42:35.5038 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 15:42:35.5038 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 15:42:35.5038 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 15:42:35.5038 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 15:42:35.5173 Info Adding target FileTarget(Name=file)
+2019-10-08 15:42:35.5173 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 15:42:35.5173 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 15:42:35.5173 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 15:42:35.5173 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 15:42:35.5173 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 15:42:35.5173 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 15:42:35.5173 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 15:42:35.5173 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 15:42:35.5332 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 15:42:35.5533 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 15:42:35.5533 Debug --- NLog configuration dump ---
+2019-10-08 15:42:35.5533 Debug Targets:
+2019-10-08 15:42:35.5533 Debug File Target[file]
+2019-10-08 15:42:35.5533 Debug Console Target[console]
+2019-10-08 15:42:35.5533 Debug Rules:
+2019-10-08 15:42:35.5533 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 15:42:35.5533 Debug --- End of NLog configuration dump ---
+2019-10-08 15:42:35.5533 Info Found 35 configuration items
+2019-10-08 15:50:40.3718 Info Shutdown() called. Logger closing...
+2019-10-08 15:50:40.3718 Info Closing old configuration.
+2019-10-08 15:50:40.4057 Debug Closing logging configuration...
+2019-10-08 15:50:40.4066 Debug Closing target 'File Target[file]'.
+2019-10-08 15:50:40.4066 Debug Closed target 'File Target[file]'.
+2019-10-08 15:50:40.4066 Debug Closing target 'Console Target[console]'.
+2019-10-08 15:50:40.4066 Debug Closed target 'Console Target[console]'.
+2019-10-08 15:50:40.4066 Debug Finished closing logging configuration.
+2019-10-08 15:50:40.4066 Debug Stopping file watching for path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config'
+2019-10-08 15:50:40.4066 Info Logger has been closed down.
+2019-10-08 15:50:40.4066 Info AppDomain Shutting down. Logger closing...
+2019-10-08 15:50:40.4066 Info Logger has been shut down.
+2019-10-08 16:35:32.8451 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 16:35:32.9601 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 16:35:32.9601 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 16:35:32.9601 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 16:35:32.9601 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 16:35:32.9601 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 16:35:32.9816 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 16:35:32.9816 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 16:35:32.9936 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 16:35:32.9936 Debug Auto loading done
+2019-10-08 16:35:32.9936 Info Message Template Auto Format enabled
+2019-10-08 16:35:33.0100 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 16:35:33.0638 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 16:35:33.0638 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 16:35:33.0638 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 16:35:33.0638 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 16:35:33.0638 Info Adding target FileTarget(Name=file)
+2019-10-08 16:35:33.0638 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 16:35:33.0638 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 16:35:33.0638 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 16:35:33.0784 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 16:35:33.0784 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 16:35:33.0784 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 16:35:33.0784 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 16:35:33.0784 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 16:35:33.0784 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 16:35:33.1127 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 16:35:33.1127 Debug --- NLog configuration dump ---
+2019-10-08 16:35:33.1127 Debug Targets:
+2019-10-08 16:35:33.1127 Debug File Target[file]
+2019-10-08 16:35:33.1127 Debug Console Target[console]
+2019-10-08 16:35:33.1127 Debug Rules:
+2019-10-08 16:35:33.1127 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 16:35:33.1127 Debug --- End of NLog configuration dump ---
+2019-10-08 16:35:33.1127 Info Found 35 configuration items
+2019-10-08 16:36:08.4892 Info Shutdown() called. Logger closing...
+2019-10-08 16:36:08.4892 Info Closing old configuration.
+2019-10-08 16:36:08.4892 Debug Closing logging configuration...
+2019-10-08 16:36:08.4892 Debug Closing target 'File Target[file]'.
+2019-10-08 16:36:08.5003 Debug Closed target 'File Target[file]'.
+2019-10-08 16:36:08.5003 Debug Closing target 'Console Target[console]'.
+2019-10-08 16:36:08.5003 Debug Closed target 'Console Target[console]'.
+2019-10-08 16:36:08.5003 Debug Finished closing logging configuration.
+2019-10-08 16:36:08.5003 Debug Stopping file watching for path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config'
+2019-10-08 16:36:08.5003 Info Logger has been closed down.
+2019-10-08 16:36:08.5003 Info AppDomain Shutting down. Logger closing...
+2019-10-08 16:36:08.5003 Info Logger has been shut down.
+2019-10-08 16:39:08.1193 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 16:39:08.2467 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 16:39:08.2467 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 16:39:08.2517 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 16:39:08.2517 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 16:39:08.2517 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 16:39:08.2691 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 16:39:08.2691 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 16:39:08.2821 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 16:39:08.2821 Debug Auto loading done
+2019-10-08 16:39:08.2821 Info Message Template Auto Format enabled
+2019-10-08 16:39:08.3019 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 16:39:08.3460 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 16:39:08.3460 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 16:39:08.3460 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 16:39:08.3460 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 16:39:08.3460 Info Adding target FileTarget(Name=file)
+2019-10-08 16:39:08.3609 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 16:39:08.3609 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 16:39:08.3609 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 16:39:08.3609 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 16:39:08.3609 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 16:39:08.3609 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 16:39:08.3609 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 16:39:08.3609 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 16:39:08.3774 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 16:39:08.3973 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 16:39:08.3973 Debug --- NLog configuration dump ---
+2019-10-08 16:39:08.3973 Debug Targets:
+2019-10-08 16:39:08.3973 Debug File Target[file]
+2019-10-08 16:39:08.3973 Debug Console Target[console]
+2019-10-08 16:39:08.3973 Debug Rules:
+2019-10-08 16:39:08.3973 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 16:39:08.3973 Debug --- End of NLog configuration dump ---
+2019-10-08 16:39:08.3973 Info Found 35 configuration items
+2019-10-08 16:40:01.8565 Info AppDomain Shutting down. Logger closing...
+2019-10-08 16:40:01.8602 Debug Stopping file watching for path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config'
+2019-10-08 16:40:01.8979 Debug Closing logging configuration...
+2019-10-08 16:40:01.8979 Debug Closing target 'File Target[file]'.
+2019-10-08 16:40:01.8979 Debug Closed target 'File Target[file]'.
+2019-10-08 16:40:01.8979 Debug Closing target 'Console Target[console]'.
+2019-10-08 16:40:01.8979 Debug Closed target 'Console Target[console]'.
+2019-10-08 16:40:01.8979 Debug Finished closing logging configuration.
+2019-10-08 16:40:01.8979 Info Logger has been shut down.
+2019-10-08 17:22:53.5507 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 17:22:53.7163 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 17:22:53.7163 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 17:22:53.7226 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 17:22:53.7226 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 17:22:53.7226 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 17:22:53.7436 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 17:22:53.7436 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 17:22:53.7600 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 17:22:53.7600 Debug Auto loading done
+2019-10-08 17:22:53.7600 Info Message Template Auto Format enabled
+2019-10-08 17:22:53.7787 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 17:22:53.8343 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 17:22:53.8343 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 17:22:53.8343 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 17:22:53.8343 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 17:22:53.8497 Info Adding target FileTarget(Name=file)
+2019-10-08 17:22:53.8497 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 17:22:53.8497 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 17:22:53.8497 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 17:22:53.8497 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 17:22:53.8497 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 17:22:53.8497 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 17:22:53.8497 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 17:22:53.8617 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 17:22:53.8617 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 17:22:53.8887 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 17:22:53.8887 Debug --- NLog configuration dump ---
+2019-10-08 17:22:53.8887 Debug Targets:
+2019-10-08 17:22:53.8911 Debug File Target[file]
+2019-10-08 17:22:53.8911 Debug Console Target[console]
+2019-10-08 17:22:53.8911 Debug Rules:
+2019-10-08 17:22:53.8911 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 17:22:53.8911 Debug --- End of NLog configuration dump ---
+2019-10-08 17:22:53.8911 Info Found 35 configuration items
+2019-10-08 17:26:17.3475 Info Shutdown() called. Logger closing...
+2019-10-08 17:26:17.3475 Info Closing old configuration.
+2019-10-08 17:26:17.3813 Debug Closing logging configuration...
+2019-10-08 17:26:17.3813 Debug Closing target 'File Target[file]'.
+2019-10-08 17:26:17.3813 Debug Closed target 'File Target[file]'.
+2019-10-08 17:26:17.3813 Debug Closing target 'Console Target[console]'.
+2019-10-08 17:26:17.3813 Debug Closed target 'Console Target[console]'.
+2019-10-08 17:26:17.3813 Debug Finished closing logging configuration.
+2019-10-08 17:26:17.3813 Debug Stopping file watching for path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config'
+2019-10-08 17:26:17.3813 Info Logger has been closed down.
+2019-10-08 17:26:17.3813 Info AppDomain Shutting down. Logger closing...
+2019-10-08 17:26:17.3813 Info Logger has been shut down.
+2019-10-08 18:30:34.3044 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 18:30:34.4812 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 18:30:34.4812 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 18:30:34.4876 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 18:30:34.4876 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 18:30:34.4876 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 18:30:34.5097 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 18:30:34.5097 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 18:30:34.5418 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 18:30:34.5418 Debug Auto loading done
+2019-10-08 18:30:34.5418 Info Message Template Auto Format enabled
+2019-10-08 18:30:34.5678 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:30:34.6367 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 18:30:34.6367 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 18:30:34.6367 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 18:30:34.6367 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:30:34.6528 Info Adding target FileTarget(Name=file)
+2019-10-08 18:30:34.6528 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 18:30:34.6528 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:30:34.6528 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 18:30:34.6528 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 18:30:34.6528 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:30:34.6528 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 18:30:34.6528 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 18:30:34.6674 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 18:30:34.6674 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 18:30:34.7198 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 18:30:34.7198 Debug --- NLog configuration dump ---
+2019-10-08 18:30:34.7198 Debug Targets:
+2019-10-08 18:30:34.7198 Debug File Target[file]
+2019-10-08 18:30:34.7198 Debug Console Target[console]
+2019-10-08 18:30:34.7198 Debug Rules:
+2019-10-08 18:30:34.7198 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 18:30:34.7198 Debug --- End of NLog configuration dump ---
+2019-10-08 18:30:34.7198 Info Found 35 configuration items
+2019-10-08 18:33:43.8112 Info Shutdown() called. Logger closing...
+2019-10-08 18:33:43.8112 Info Closing old configuration.
+2019-10-08 18:33:43.8430 Debug Closing logging configuration...
+2019-10-08 18:33:43.8430 Debug Closing target 'File Target[file]'.
+2019-10-08 18:33:43.8473 Debug Closed target 'File Target[file]'.
+2019-10-08 18:33:43.8473 Debug Closing target 'Console Target[console]'.
+2019-10-08 18:33:43.8473 Debug Closed target 'Console Target[console]'.
+2019-10-08 18:33:43.8473 Debug Finished closing logging configuration.
+2019-10-08 18:33:43.8473 Debug Stopping file watching for path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config'
+2019-10-08 18:33:43.8473 Info Logger has been closed down.
+2019-10-08 18:33:43.8473 Info AppDomain Shutting down. Logger closing...
+2019-10-08 18:33:43.8473 Info Logger has been shut down.
+2019-10-08 18:38:57.2856 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 18:38:57.3939 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 18:38:57.3939 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 18:38:57.3939 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 18:38:57.3939 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 18:38:57.3939 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 18:38:57.4298 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 18:38:57.4298 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 18:38:57.4450 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 18:38:57.4450 Debug Auto loading done
+2019-10-08 18:38:57.4450 Info Message Template Auto Format enabled
+2019-10-08 18:38:57.4637 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:38:57.5100 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 18:38:57.5100 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 18:38:57.5100 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 18:38:57.5100 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:38:57.5224 Info Adding target FileTarget(Name=file)
+2019-10-08 18:38:57.5224 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 18:38:57.5224 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:38:57.5224 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 18:38:57.5224 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 18:38:57.5224 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:38:57.5224 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 18:38:57.5224 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 18:38:57.5353 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 18:38:57.5353 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 18:38:57.5603 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 18:38:57.5603 Debug --- NLog configuration dump ---
+2019-10-08 18:38:57.5603 Debug Targets:
+2019-10-08 18:38:57.5603 Debug File Target[file]
+2019-10-08 18:38:57.5603 Debug Console Target[console]
+2019-10-08 18:38:57.5627 Debug Rules:
+2019-10-08 18:38:57.5627 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 18:38:57.5627 Debug --- End of NLog configuration dump ---
+2019-10-08 18:38:57.5627 Info Found 35 configuration items
+2019-10-08 18:39:33.2827 Info Shutdown() called. Logger closing...
+2019-10-08 18:39:33.2827 Info Closing old configuration.
+2019-10-08 18:39:33.2827 Debug Closing logging configuration...
+2019-10-08 18:39:33.2827 Debug Closing target 'File Target[file]'.
+2019-10-08 18:39:33.2827 Debug Closed target 'File Target[file]'.
+2019-10-08 18:39:33.2827 Debug Closing target 'Console Target[console]'.
+2019-10-08 18:39:33.2827 Debug Closed target 'Console Target[console]'.
+2019-10-08 18:39:33.2827 Debug Finished closing logging configuration.
+2019-10-08 18:39:33.2827 Debug Stopping file watching for path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config'
+2019-10-08 18:39:33.2827 Info Logger has been closed down.
+2019-10-08 18:39:33.2979 Info AppDomain Shutting down. Logger closing...
+2019-10-08 18:39:33.2979 Info Logger has been shut down.
+2019-10-08 18:43:30.6591 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 18:43:30.8245 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 18:43:30.8245 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 18:43:30.8297 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 18:43:30.8297 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 18:43:30.8297 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 18:43:30.8487 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 18:43:30.8487 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 18:43:30.8660 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 18:43:30.8660 Debug Auto loading done
+2019-10-08 18:43:30.8660 Info Message Template Auto Format enabled
+2019-10-08 18:43:30.8901 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:43:30.9406 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 18:43:30.9406 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 18:43:30.9406 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 18:43:30.9406 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:43:30.9585 Info Adding target FileTarget(Name=file)
+2019-10-08 18:43:30.9585 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 18:43:30.9585 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:43:30.9585 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 18:43:30.9585 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 18:43:30.9585 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:43:30.9585 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 18:43:30.9585 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 18:43:30.9723 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 18:43:30.9723 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 18:43:30.9986 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 18:43:30.9986 Debug --- NLog configuration dump ---
+2019-10-08 18:43:30.9986 Debug Targets:
+2019-10-08 18:43:31.0018 Debug File Target[file]
+2019-10-08 18:43:31.0018 Debug Console Target[console]
+2019-10-08 18:43:31.0018 Debug Rules:
+2019-10-08 18:43:31.0018 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 18:43:31.0018 Debug --- End of NLog configuration dump ---
+2019-10-08 18:43:31.0018 Info Found 35 configuration items
+2019-10-08 18:44:11.7711 Info Shutdown() called. Logger closing...
+2019-10-08 18:44:11.7711 Info Closing old configuration.
+2019-10-08 18:44:11.8041 Debug Closing logging configuration...
+2019-10-08 18:44:11.8041 Debug Closing target 'File Target[file]'.
+2019-10-08 18:44:11.8041 Debug Closed target 'File Target[file]'.
+2019-10-08 18:44:11.8041 Debug Closing target 'Console Target[console]'.
+2019-10-08 18:44:11.8041 Debug Closed target 'Console Target[console]'.
+2019-10-08 18:44:11.8041 Debug Finished closing logging configuration.
+2019-10-08 18:44:11.8041 Debug Stopping file watching for path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config'
+2019-10-08 18:44:11.8041 Info Logger has been closed down.
+2019-10-08 18:44:11.8041 Info AppDomain Shutting down. Logger closing...
+2019-10-08 18:44:11.8136 Info Logger has been shut down.
+2019-10-08 18:48:30.7328 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 18:48:30.8599 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 18:48:30.8599 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 18:48:30.8599 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 18:48:30.8599 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 18:48:30.8599 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 18:48:30.8850 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 18:48:30.8850 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 18:48:30.9064 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 18:48:30.9087 Debug Auto loading done
+2019-10-08 18:48:30.9087 Info Message Template Auto Format enabled
+2019-10-08 18:48:30.9285 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:48:30.9803 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 18:48:30.9803 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 18:48:30.9803 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 18:48:30.9803 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:48:30.9950 Info Adding target FileTarget(Name=file)
+2019-10-08 18:48:30.9950 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 18:48:30.9950 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:48:30.9950 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 18:48:30.9950 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 18:48:30.9950 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 18:48:30.9950 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 18:48:30.9950 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 18:48:31.0082 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 18:48:31.0082 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 18:48:31.0363 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 18:48:31.0363 Debug --- NLog configuration dump ---
+2019-10-08 18:48:31.0363 Debug Targets:
+2019-10-08 18:48:31.0363 Debug File Target[file]
+2019-10-08 18:48:31.0363 Debug Console Target[console]
+2019-10-08 18:48:31.0363 Debug Rules:
+2019-10-08 18:48:31.0363 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 18:48:31.0363 Debug --- End of NLog configuration dump ---
+2019-10-08 18:48:31.0508 Info Found 35 configuration items
+2019-10-08 18:49:11.0659 Info Shutdown() called. Logger closing...
+2019-10-08 18:49:11.0659 Info Closing old configuration.
+2019-10-08 18:49:11.0978 Debug Closing logging configuration...
+2019-10-08 18:49:11.0978 Debug Closing target 'File Target[file]'.
+2019-10-08 18:49:11.0978 Debug Closed target 'File Target[file]'.
+2019-10-08 18:49:11.0978 Debug Closing target 'Console Target[console]'.
+2019-10-08 18:49:11.0978 Debug Closed target 'Console Target[console]'.
+2019-10-08 18:49:11.0978 Debug Finished closing logging configuration.
+2019-10-08 18:49:11.0978 Debug Stopping file watching for path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config'
+2019-10-08 18:49:11.0978 Info Logger has been closed down.
+2019-10-08 18:49:11.0978 Info AppDomain Shutting down. Logger closing...
+2019-10-08 18:49:11.0978 Info Logger has been shut down.
+2019-10-08 22:30:29.2782 Debug ScanAssembly('NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 22:30:29.4239 Debug Found assembly location directory: 'D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0' (NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c)
+2019-10-08 22:30:29.4239 Debug Search for auto loading files in location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 22:30:29.4239 Debug Start auto loading, location: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0
+2019-10-08 22:30:29.4239 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 22:30:29.4239 Info Loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll
+2019-10-08 22:30:29.4539 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.6.0.1196. Product version: 1.6.0.
+2019-10-08 22:30:29.4539 Debug ScanAssembly('NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c')
+2019-10-08 22:30:29.4747 Info Auto loading assembly file: D:\Repositories\Librame\examples\Librame.Extensions.Examples\bin\Debug\netcoreapp3.0\NLog.Extensions.Logging.dll succeeded!
+2019-10-08 22:30:29.4747 Debug Auto loading done
+2019-10-08 22:30:29.4747 Info Message Template Auto Format enabled
+2019-10-08 22:30:29.5029 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 22:30:29.5626 Debug Setting 'FileTarget.name' to 'file'
+2019-10-08 22:30:29.5639 Debug Setting 'FileTarget.fileName' to '..\..\..\logs\nlog-all-${shortdate}.log'
+2019-10-08 22:30:29.5639 Debug Setting 'FileTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 22:30:29.5639 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 22:30:29.5803 Info Adding target FileTarget(Name=file)
+2019-10-08 22:30:29.5803 Debug Registered target file: NLog.Targets.FileTarget
+2019-10-08 22:30:29.5803 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 22:30:29.5803 Debug Setting 'ConsoleTarget.name' to 'console'
+2019-10-08 22:30:29.5803 Debug Setting 'ConsoleTarget.layout' to '${date}|${level:uppercase=true}|${message} ${exception}|${logger}|${all-event-properties}'
+2019-10-08 22:30:29.5803 Debug Setting 'UppercaseLayoutRendererWrapper.uppercase' to 'true'
+2019-10-08 22:30:29.5803 Info Adding target ConsoleTarget(Name=console)
+2019-10-08 22:30:29.5803 Debug Registered target console: NLog.Targets.ConsoleTarget
+2019-10-08 22:30:29.5803 Debug Unused target checking is started... Rule Count: 1, Target Count: 2
+2019-10-08 22:30:29.5971 Debug Unused target checking is completed. Total Rule Count: 1, Total Target Count: 2, Unused Target Count: 0
+2019-10-08 22:30:29.6216 Debug Watching path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config' for changes.
+2019-10-08 22:30:29.6216 Debug --- NLog configuration dump ---
+2019-10-08 22:30:29.6216 Debug Targets:
+2019-10-08 22:30:29.6216 Debug File Target[file]
+2019-10-08 22:30:29.6216 Debug Console Target[console]
+2019-10-08 22:30:29.6216 Debug Rules:
+2019-10-08 22:30:29.6264 Debug logNamePattern: (:All) levels: [ Trace Debug Info Warn Error Fatal ] appendTo: [ file console ]
+2019-10-08 22:30:29.6264 Debug --- End of NLog configuration dump ---
+2019-10-08 22:30:29.6264 Info Found 35 configuration items
+2019-10-08 22:34:15.5424 Info Shutdown() called. Logger closing...
+2019-10-08 22:34:15.5424 Info Closing old configuration.
+2019-10-08 22:34:15.5874 Debug Closing logging configuration...
+2019-10-08 22:34:15.5874 Debug Closing target 'File Target[file]'.
+2019-10-08 22:34:15.5874 Debug Closed target 'File Target[file]'.
+2019-10-08 22:34:15.5874 Debug Closing target 'Console Target[console]'.
+2019-10-08 22:34:15.5874 Debug Closed target 'Console Target[console]'.
+2019-10-08 22:34:15.5874 Debug Finished closing logging configuration.
+2019-10-08 22:34:15.5874 Debug Stopping file watching for path 'D:\Repositories\Librame\examples\Librame.Extensions.Examples' filter 'nlog.config'
+2019-10-08 22:34:15.5874 Info Logger has been closed down.
+2019-10-08 22:34:15.5962 Info AppDomain Shutting down. Logger closing...
+2019-10-08 22:34:15.5962 Info Logger has been shut down.

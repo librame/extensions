@@ -18,7 +18,7 @@ using System.Text;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 索引构建器静态扩展。
+    /// <see cref="IndexBuilder"/> 静态扩展。
     /// </summary>
     public static class EFCoreIndexBuilderExtensions
     {
@@ -30,6 +30,8 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IndexBuilder"/>。</returns>
         public static IndexBuilder HasName(this IndexBuilder indexBuilder, Func<string, string> nameFactory = null)
         {
+            indexBuilder.NotNull(nameof(indexBuilder));
+
             var sb = new StringBuilder();
 
             // Prefix: EntityBodyName
@@ -42,8 +44,7 @@ namespace Librame.Extensions.Data
             sb.Append("Index");
 
             var name = sb.ToString();
-
-            return indexBuilder.HasName(nameFactory.IsNotNull() ? nameFactory.Invoke(name) : name);
+            return indexBuilder.HasName(nameFactory?.Invoke(name) ?? name);
         }
 
     }

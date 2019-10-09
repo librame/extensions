@@ -43,6 +43,5 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <typeparamref name="TDbContextAccessor"/>。</returns>
         public virtual TDbContextAccessor CreateDbContext(string[] args)
             => _serviceProvider.GetRequiredService<TDbContextAccessor>();
-
     }
 }

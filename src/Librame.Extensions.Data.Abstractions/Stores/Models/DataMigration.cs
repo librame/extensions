@@ -13,15 +13,16 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 
 namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 数据迁移。
     /// </summary>
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     [Description("数据迁移")]
-    public class DataMigration : AbstractCreation<string>, IEquatable<DataMigration>
+    public class DataMigration<TGenId> : AbstractCreation<TGenId>, IEquatable<DataMigration<TGenId>>
+        where TGenId : IEquatable<TGenId>
     {
         /// <summary>
         /// 访问器类型名。
@@ -51,9 +52,9 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 唯一索引是否相等。
         /// </summary>
-        /// <param name="other">给定的其他 <see cref="DataMigration"/>。</param>
+        /// <param name="other">给定的其他 <see cref="DataMigration{TGenId}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(DataMigration other)
+        public bool Equals(DataMigration<TGenId> other)
             => ModelHash == other?.ModelHash;
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is DataMigration other) ? Equals(other) : false;
+            => (obj is DataMigration<TGenId> other) ? Equals(other) : false;
 
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => ToString().GetHashCode();
+            => ToString().GetHashCode(StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>
@@ -79,20 +80,5 @@ namespace Librame.Extensions.Data
         /// <returns>返回字符串。</returns>
         public override string ToString()
             => ModelHash;
-
-
-        /// <summary>
-        /// 获取唯一索引表达式。
-        /// </summary>
-        /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
-        /// <param name="modelHash">给定的模型哈希。</param>
-        /// <returns>返回查询表达式。</returns>
-        public static Expression<Func<TMigration, bool>> GetUniqueIndexExpression<TMigration>(string modelHash)
-            where TMigration : DataMigration
-        {
-            modelHash.NotEmpty(nameof(modelHash));
-
-            return p => p.ModelHash == modelHash;
-        }
     }
 }

@@ -12,7 +12,6 @@ namespace Librame.Extensions.Data.Tests
             Current = Current.EnsureSingleton(() =>
             {
                 var services = new ServiceCollection();
-
                 //services.AddEntityFrameworkSqlServer();
 
                 services.AddLibrame()
@@ -27,10 +26,10 @@ namespace Librame.Extensions.Data.Tests
                         optionsBuilder.UseSqlServer(options.DefaultTenant.DefaultConnectionString,
                             sql => sql.MigrationsAssembly(typeof(TestServiceProvider).GetSimpleAssemblyName()));
                     })
-                    .AddStoreHubWithAccessor<TestStoreHub>()
-                    .AddInitializerWithAccessor<TestStoreInitializer>()
+                    .AddDbDesignTime<SqlServerDesignTimeServices>()
                     .AddIdentifier<TestStoreIdentifier>()
-                    .AddDbDesignTime<SqlServerDesignTimeServices>();
+                    .AddInitializer<TestStoreInitializer>()
+                    .AddStoreHub<TestStoreHub>();
 
                 return services.BuildServiceProvider();
             });

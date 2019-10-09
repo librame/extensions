@@ -29,7 +29,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         public AbstractEntityCreation()
         {
-            CreatedTime = EntityUtility.DefaultTime;
+            CreatedTime = DataDefaults.UtcNowOffset;
         }
     }
 
@@ -51,8 +51,8 @@ namespace Librame.Extensions.Data
         /// </summary>
         public AbstractEntityCreation()
         {
-            Rank = EntityUtility.DefaultRank;
-            Status = EntityUtility.DefaultStatus;
+            Rank = DataDefaults.Rank;
+            Status = DataDefaults.Status;
         }
     }
 

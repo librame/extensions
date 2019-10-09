@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Librame.Extensions.Data
 {
@@ -20,12 +21,26 @@ namespace Librame.Extensions.Data
     public static class AccessorModelBuilderExtensions
     {
         /// <summary>
-        /// 配置存储中心基类。
+        /// 配置数据存储中心。
         /// </summary>
+        /// <typeparam name="TAudit">指定的审计类型。</typeparam>
+        /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+        /// <typeparam name="TTenant">指定的租户类型。</typeparam>
+        /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+        /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
-        public static void ConfigureStoreHubBase(this ModelBuilder modelBuilder,
-            DataBuilderOptions options)
+        public static void ConfigureDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+            (this ModelBuilder modelBuilder, DataBuilderOptions options)
+            where TAudit : DataAudit<TGenId>
+            where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
+            where TEntity : DataEntity<TGenId>
+            where TMigration : DataMigration<TGenId>
+            where TTenant : DataTenant<TGenId>
+            where TGenId : IEquatable<TGenId>
+            where TIncremId : IEquatable<TIncremId>
         {
             if (options.Tables.DefaultSchema.IsNotEmpty())
                 modelBuilder.HasDefaultSchema(options.Tables.DefaultSchema);
@@ -34,7 +49,7 @@ namespace Librame.Extensions.Data
             var maxLength = options.Stores?.MaxLengthForProperties ?? 0;
 
             // 审计
-            modelBuilder.Entity<DataAudit>(b =>
+            modelBuilder.Entity<TAudit>(b =>
             {
                 b.ToTable(options.Tables.AuditFactory);
 
@@ -52,24 +67,20 @@ namespace Librame.Extensions.Data
                     b.Property(p => p.StateName).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
                 }
-
-                if (mapRelationship)
-                {
-                    b.HasMany(p => p.Properties).WithOne(p => p.Audit)
-                        .IsRequired().OnDelete(DeleteBehavior.Cascade);
-                }
             });
 
             // 审计属性
-            modelBuilder.Entity<DataAuditProperty>(b =>
+            modelBuilder.Entity<TAuditProperty>(b =>
             {
-                b.ToTable(options.Tables.AuditPropertyFactory);
+                // 按年份季度分表
+                b.ToTable(descr => descr.ChangeDateOffsetSuffixByYearQuarter(),
+                    options.Tables.AuditPropertyFactory);
 
                 b.HasKey(k => k.Id);
 
                 b.HasIndex(i => new { i.AuditId }).HasName();
 
-                b.Property(p => p.Id).HasMaxLength(256);
+                b.Property(p => p.Id).HasMaxLength(256).ValueGeneratedOnAdd();
                 b.Property(p => p.AuditId).HasMaxLength(256).IsRequired();
 
                 if (maxLength > 0)
@@ -80,7 +91,7 @@ namespace Librame.Extensions.Data
             });
 
             // 实体
-            modelBuilder.Entity<DataEntity>(b =>
+            modelBuilder.Entity<TEntity>(b =>
             {
                 b.ToTable(options.Tables.EntityFactory);
 
@@ -102,7 +113,7 @@ namespace Librame.Extensions.Data
             });
 
             // 迁移
-            modelBuilder.Entity<DataMigration>(b =>
+            modelBuilder.Entity<TMigration>(b =>
             {
                 b.ToTable(options.Tables.MigrationFactory);
 
@@ -122,7 +133,7 @@ namespace Librame.Extensions.Data
             });
 
             // 租户
-            modelBuilder.Entity<DataTenant>(b =>
+            modelBuilder.Entity<TTenant>(b =>
             {
                 b.ToTable(options.Tables.TenantFactory);
 

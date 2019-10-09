@@ -11,8 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
 
 namespace Librame.Extensions.Data
 {
@@ -21,174 +19,104 @@ namespace Librame.Extensions.Data
     /// </summary>
     public static class StoreDataBuilderExtensions
     {
-        private static readonly Type _accessorMarkType = typeof(IAccessor);
-        private static readonly Type _initializerMarkType = typeof(IStoreInitializer);
-        private static readonly Type _storeHubMarkType = typeof(IStoreHub);
-
-
         /// <summary>
-        /// 增加存储集合。
+        /// 添加存储集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         internal static IDataBuilder AddStores(this IDataBuilder builder)
         {
-            builder.Services.AddScoped<IStoreIdentifier, StoreIdentifierBase>();
+            builder.Services.AddScoped(typeof(IStoreHub<>), typeof(StoreHub<>));
 
-            builder.Services.AddScoped(typeof(IStoreInitializer<>), typeof(StoreInitializerBase<>));
-            builder.Services.AddScoped(typeof(IStoreInitializer<,>), typeof(StoreInitializerBase<,>));
-
-            builder.Services.AddScoped(typeof(IStoreHub<>), typeof(StoreHubBase<>));
-            builder.Services.AddScoped(typeof(IStoreHub<,,,,>), typeof(StoreHubBase<,,,,>));
+            builder.Services.AddScoped<IStoreIdentifier, StoreIdentifier>();
+            builder.Services.AddScoped<IStoreInitializer, StoreInitializer>();
 
             return builder;
         }
 
 
         /// <summary>
-        /// 增加存储中心。
+        /// 添加标识符。
         /// </summary>
-        /// <typeparam name="TStoreHub">指定继承自 <see cref="IStoreHub{TAccessor}"/> 的存储中心类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddStoreHubWithAccessor<TStoreHub>(this IDataBuilder builder)
-            where TStoreHub : class, IStoreHub
-        {
-            var storeHubType = typeof(TStoreHub);
-
-            var serviceTypes = FindInterfaceWithAccessorTypes(storeHubType, _storeHubMarkType);
-            serviceTypes.ForEach(type => builder.Services.AddScoped(type, storeHubType));
-
-            builder.Services.AddScoped(serviceProvider =>
-            {
-                return (TStoreHub)serviceProvider.GetRequiredService(serviceTypes.Last());
-            });
-
-            return builder;
-        }
-
-        /// <summary>
-        /// 增加存储中心。
-        /// </summary>
-        /// <typeparam name="TService">指定继承自 <see cref="IStoreHub{TAccessor}"/> 或 <see cref="IStoreHub{TAccessor, TAudit, TEntity, TMigration, TTenant}"/> 的存储中心服务类型。</typeparam>
-        /// <typeparam name="TImplementation">指定 <typeparamref name="TService"/> 的实现类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddStoreHub<TService, TImplementation>(this IDataBuilder builder)
-            where TService : class, IStoreHub
-            where TImplementation : class, TService
-        {
-            builder.Services.AddScoped<TService, TImplementation>();
-            builder.Services.AddScoped(serviceProvider =>
-            {
-                return (TImplementation)serviceProvider.GetRequiredService<TService>();
-            });
-
-            return builder;
-        }
-
-
-        /// <summary>
-        /// 增加初始化器。
-        /// </summary>
-        /// <typeparam name="TInitializer">指定继承自 <see cref="IStoreInitializer{TAccessor}"/> 的初始化器类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddInitializerWithAccessor<TInitializer>(this IDataBuilder builder)
-            where TInitializer : class, IStoreInitializer
-        {
-            var initializerType = typeof(TInitializer);
-
-            var serviceTypes = FindInterfaceWithAccessorTypes(initializerType, _initializerMarkType);
-            serviceTypes.ForEach(type => builder.Services.AddScoped(type, initializerType));
-
-            builder.Services.AddScoped(serviceProvider =>
-            {
-                return (TInitializer)serviceProvider.GetRequiredService(serviceTypes.Last());
-            });
-
-            return builder;
-        }
-
-        /// <summary>
-        /// 增加初始化器。
-        /// </summary>
-        /// <typeparam name="TService">指定继承自 <see cref="IStoreInitializer{TAccessor}"/> 或 <see cref="IStoreInitializer{TAccessor, TIdentifier}"/> 的访问器服务类型。</typeparam>
-        /// <typeparam name="TImplementation">指定 <typeparamref name="TService"/> 的实现类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddInitializer<TService, TImplementation>(this IDataBuilder builder)
-            where TService : class, IStoreInitializer
-            where TImplementation : class, TService
-        {
-            builder.Services.AddScoped<TService, TImplementation>();
-            builder.Services.AddScoped(serviceProvider =>
-            {
-                return (TImplementation)serviceProvider.GetRequiredService<TService>();
-            });
-
-            return builder;
-        }
-
-
-        /// <summary>
-        /// 增加标识符。
-        /// </summary>
-        /// <typeparam name="TIdentifier">指定继承自 <see cref="IStoreIdentifier"/> 的标识符类型。</typeparam>
+        /// <typeparam name="TIdentifier">指定的标识符类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddIdentifier<TIdentifier>(this IDataBuilder builder)
             where TIdentifier : class, IStoreIdentifier
         {
-            if (builder.Services.TryReplace<IStoreIdentifier, TIdentifier>())
-            {
-                builder.Services.AddScoped(serviceProvider =>
-                {
-                    return (TIdentifier)serviceProvider.GetRequiredService<IStoreIdentifier>();
-                });
-            }
-            else
-            {
-                builder.AddIdentifier<IStoreIdentifier, TIdentifier>();
-            }
+            builder.Services.TryReplace<IStoreIdentifier, TIdentifier>();
+            builder.Services.AddScoped(provider => (TIdentifier)provider.GetRequiredService<IStoreIdentifier>());
 
             return builder;
         }
 
         /// <summary>
-        /// 增加标识符。
+        /// 添加初始化器。
         /// </summary>
-        /// <typeparam name="TService">指定继承自 <see cref="IStoreIdentifier"/> 的标识符服务类型。</typeparam>
-        /// <typeparam name="TImplementation">指定 <typeparamref name="TService"/> 的实现类型。</typeparam>
+        /// <typeparam name="TInitializer">指定的初始化器类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddIdentifier<TService, TImplementation>(this IDataBuilder builder)
-            where TService : class, IStoreIdentifier
-            where TImplementation : class, TService
+        public static IDataBuilder AddInitializer<TInitializer>(this IDataBuilder builder)
+            where TInitializer : class, IStoreInitializer
         {
-            builder.Services.AddScoped<TService, TImplementation>();
-            builder.Services.AddScoped(serviceProvider =>
-            {
-                return (TImplementation)serviceProvider.GetRequiredService<TService>();
-            });
+            builder.Services.TryReplace<IStoreInitializer, TInitializer>();
+            builder.Services.AddScoped(provider => (TInitializer)provider.GetRequiredService<IStoreInitializer>());
 
             return builder;
         }
 
-
-        private static Type[] FindInterfaceWithAccessorTypes(Type findType, Type markType)
+        /// <summary>
+        /// 添加存储中心。
+        /// </summary>
+        /// <typeparam name="TStoreHub">指定的存储中心类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
+        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        public static IDataBuilder AddStoreHub<TStoreHub>(this IDataBuilder builder)
+            where TStoreHub : class, IStoreHub
         {
-            var withAccessorTypes = findType.GetInterfaces()
-                .Where(p => p.IsAssignableToBaseType(markType)
-                    && p.GenericTypeArguments.Length > 0
-                    && p.GenericTypeArguments.Any(a => a.IsAssignableToBaseType(_accessorMarkType)))
-                .ToArray();
+            builder.Services.AddScoped<IStoreHub, TStoreHub>();
+            builder.Services.AddScoped(provider => (TStoreHub)provider.GetRequiredService<IStoreHub>());
 
-            if (withAccessorTypes.IsEmpty())
-                throw new ArgumentNullException($"The {findType} does not implement {markType.GetSimpleFullName()}<TAccessor>");
-
-            return withAccessorTypes;
+            return builder;
         }
+
+        ///// <summary>
+        ///// 添加存储中心。
+        ///// </summary>
+        ///// <typeparam name="TAccessor">指定的存储器类型。</typeparam>
+        ///// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
+        ///// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        //internal static IDataBuilder AddStoreHubByAccessor<TAccessor>(this IDataBuilder builder)
+        //    where TAccessor : DbContext, IAccessor
+        //{
+        //    var accessorType = typeof(TAccessor);
+        //    var typeArguments = GetAccessorGenericTypes(accessorType);
+
+        //    typeArguments = accessorType.YieldEnumerable().Concat(typeArguments).ToArray();
+        //    var storeHubType = typeof(StoreHub<>).MakeGenericType(typeArguments);
+
+        //    builder.Services.AddScoped(typeof(IStoreHub<>).MakeGenericType(typeArguments), storeHubType);
+
+        //    if (!builder.Services.TryReplace(typeof(IStoreHub), storeHubType, throwIfNotFound: false))
+        //        builder.Services.AddScoped(typeof(IStoreHub), storeHubType);
+
+        //    return builder;
+        //}
+
+        //private static Type[] GetAccessorGenericTypes(Type accessorType)
+        //{
+        //    if (!accessorType.IsGenericType
+        //        || accessorType.GenericTypeArguments.Length != 7
+        //        || accessorType.GetInterface(nameof(IDbContextAccessorFlag)).IsNull())
+        //    {
+        //        if (accessorType.BaseType.IsNull())
+        //            throw new ArgumentException($"Invalid '{accessorType}' inherits. Reference {typeof(DbContextAccessor<,,,,,,>)}");
+
+        //        return GetAccessorGenericTypes(accessorType.BaseType);
+        //    }
+
+        //    return accessorType.GenericTypeArguments;
+        //}
 
     }
 }

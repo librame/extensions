@@ -18,10 +18,13 @@ namespace Librame.Extensions.Data
     {
         public static IDataBuilder AddAspects(this IDataBuilder builder)
         {
-            builder.Services.AddScoped<ISaveChangesAccessorAspect, DataAuditSaveChangesAccessorAspect>();
+            builder.Services.AddScoped(typeof(ISaveChangesDbContextAccessorAspect<,,,,,,>),
+                typeof(DataAuditSaveChangesDbContextAccessorAspect<,,,,,,>));
 
-            builder.Services.AddScoped<IMigrateAccessorAspect, DataEntityMigrateAccessorAspect>();
-            builder.Services.AddScoped<IMigrateAccessorAspect, DataMigrationMigrateAccessorAspect>();
+            builder.Services.AddScoped(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
+                typeof(DataEntityMigrateDbContextAccessorAspect<,,,,,,>));
+            builder.Services.AddScoped(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
+                typeof(DataMigrationMigrateDbContextAccessorAspect<,,,,,,>));
 
             return builder;
         }

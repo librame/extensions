@@ -18,8 +18,8 @@ namespace Librame.Extensions.Data
     {
         public static IDataBuilder AddServices(this IDataBuilder builder)
         {
-            builder.Services.AddScoped<IDataMigrationService, DataMigrationService>();
-            builder.Services.AddScoped<IDataTenantService, DataTenantService>();
+            builder.Services.AddScoped(typeof(IMigrationService<,,,,,,>), typeof(MigrationService<,,,,,,>));
+            builder.Services.AddScoped(typeof(ITenantService<,,,,,,>), typeof(TenantService<,,,,,,>));
 
             return builder;
         }

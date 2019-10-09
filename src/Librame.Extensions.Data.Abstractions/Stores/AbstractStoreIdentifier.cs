@@ -28,7 +28,7 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractStoreIdentifier"/>。
+        /// 构造一个抽象存储标识符。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
@@ -68,7 +68,7 @@ namespace Librame.Extensions.Data
             {
                 return cancellationToken.RunFactoryOrCancellation(() =>
                 {
-                    var id = EntityUtility.NewCombGuid(timestamp);
+                    var id = DataDefaults.NewCombGuid(timestamp);
                     Logger.LogTrace($"Generate {idTraceName}: {id}");
 
                     return id;
@@ -110,22 +110,12 @@ namespace Librame.Extensions.Data
             => GenerateCombFileTimeAsync("AuditId", cancellationToken);
 
         /// <summary>
-        /// 异步获取审计属性标识。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含字符串的异步操作。</returns>
-        public virtual Task<string> GetAuditPropertyIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombFileTimeAsync("AuditPropertyId", cancellationToken);
-
-
-        /// <summary>
         /// 异步获取实体标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetEntityIdAsync(CancellationToken cancellationToken = default)
             => GenerateCombGuidAsync("EntityId", cancellationToken);
-
 
         /// <summary>
         /// 异步获取迁移标识。
@@ -134,7 +124,6 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含字符串的异步操作。</returns>
         public virtual Task<string> GetMigrationIdAsync(CancellationToken cancellationToken = default)
             => GenerateCombGuidAsync("MigrationId", cancellationToken);
-
 
         /// <summary>
         /// 异步获取租户标识。

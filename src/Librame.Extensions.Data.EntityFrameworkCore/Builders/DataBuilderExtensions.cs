@@ -97,8 +97,16 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddDbDesignTime<TDesignTime>(this IDataBuilder builder)
             where TDesignTime : class, IDesignTimeServices
         {
-            var designTime = typeof(TDesignTime).EnsureCreate<TDesignTime>();
+            var designTimeType = typeof(TDesignTime);
+            var designTime = designTimeType.EnsureCreate<TDesignTime>();
             designTime.ConfigureDesignTimeServices(builder.Services);
+
+            builder.Services.Configure<DataBuilderOptions>(options =>
+            {
+                var reference = AssemblyReference.ByAssembly(designTimeType.Assembly);
+                if (!options.MigrationAssemblyReferences.Contains(reference))
+                    options.MigrationAssemblyReferences.Add(reference);
+            });
 
             return builder;
         }

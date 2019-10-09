@@ -11,7 +11,9 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
 
@@ -23,7 +25,7 @@ namespace Librame.Extensions.Data
     public static class AccessorDataBuilderExtensions
     {
         /// <summary>
-        /// 添加数据库访问器（即上下文）集合。
+        /// 添加服务类型为 <see cref="IAccessor"/> 的数据库上下文访问器。
         /// </summary>
         /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
@@ -35,9 +37,9 @@ namespace Librame.Extensions.Data
             => builder.AddAccessor<IAccessor, TAccessor>(setupAction);
 
         /// <summary>
-        /// 添加数据库访问器（即上下文）集合。
+        /// 添加数据库上下文访问器。
         /// </summary>
-        /// <typeparam name="TService">指定的访问器服务类型。</typeparam>
+        /// <typeparam name="TService">指定派生自 <see cref="IAccessor"/> 的服务类型。</typeparam>
         /// <typeparam name="TImplementation">指定的访问器实现类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="setupAction">给定的 <see cref="Action{DataBuilderOptions, DbContextOptionsBuilder}"/>。</param>
@@ -55,10 +57,15 @@ namespace Librame.Extensions.Data
                 setupAction.Invoke(options, optionsBuilder);
             });
 
-            builder.Services.AddScoped(serviceProvider =>
+            builder.Services.TryAddScoped(serviceProvider =>
             {
                 return (TImplementation)serviceProvider.GetRequiredService<TService>();
             });
+
+            //builder.Services.AddDbContextDesignTimeServices();
+
+            //// Add StoreHub
+            //builder.AddStoreHubByAccessor<TImplementation>();
 
             return builder;
         }

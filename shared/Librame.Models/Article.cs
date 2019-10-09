@@ -6,7 +6,7 @@ namespace Librame.Models
 
     [Description("文章")]
     [ShardingTable]
-    public class Article : AbstractEntity<string>
+    public class Article : AbstractEntityCreation<string>
     {
         public string Title { get; set; }
 
@@ -15,5 +15,11 @@ namespace Librame.Models
         public int CategoryId { get; set; }
 
         public Category Category { get; set; }
+
+
+        public override string ToString()
+        {
+            return $"{nameof(Title)}={Title},{nameof(Id)}={Id},{nameof(CreatedBy)}={CreatedBy},{nameof(CreatedTime)}={CreatedTime}";
+        }
     }
 }

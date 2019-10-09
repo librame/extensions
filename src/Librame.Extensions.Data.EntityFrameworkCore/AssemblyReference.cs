@@ -22,14 +22,14 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 程序集引用。
     /// </summary>
-    public class AssemblyReference : IEquatable<AssemblyReference>, IEqualityComparer<AssemblyReference>
+    public class AssemblyReference : IEquatable<AssemblyReference>, IEqualityComparer<AssemblyReference>, IComparable<AssemblyReference>, IComparable
     {
         private AssemblyReference(IEnumerable<MetadataReference> metadatas,
-            bool copyLocal = false, string path = null)
+            bool copyLocal = false, string location = null)
         {
             Metadatas = metadatas.NotEmpty(nameof(metadatas));
             CopyLocal = copyLocal;
-            FilePath = path;
+            Location = location;
         }
 
 
@@ -44,9 +44,9 @@ namespace Librame.Extensions.Data
         public bool CopyLocal { get; }
 
         /// <summary>
-        /// 文件路径。
+        /// 已加载文件的完整路径或 UNC 位置。
         /// </summary>
-        public string FilePath { get; }
+        public string Location { get; }
 
 
         /// <summary>
@@ -80,6 +80,21 @@ namespace Librame.Extensions.Data
         public bool Equals(AssemblyReference x, AssemblyReference y)
             => x?.Equals(y) == true;
 
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <returns>返回的布尔值。</returns>
+        public override bool Equals(object obj)
+            => (obj is AssemblyReference other) ? Equals(other) : false;
+
+
+        /// <summary>
+        /// 获取哈希码。
+        /// </summary>
+        /// <returns>返回整数。</returns>
+        public override int GetHashCode()
+            => GetHashCode(this);
 
         /// <summary>
         /// 获取哈希码。
@@ -88,11 +103,86 @@ namespace Librame.Extensions.Data
         /// <returns>返回整数。</returns>
         public int GetHashCode(AssemblyReference obj)
         {
-            if (obj.IsNull())
-                return -1;
-
+            if (obj.IsNull()) return -1;
             return obj.Metadatas.ComputeHashCode();
         }
+
+
+        /// <summary>
+        /// 比较大小。
+        /// </summary>
+        /// <param name="other">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <returns>返回整数。</returns>
+        public int CompareTo(AssemblyReference other)
+            => string.Compare(Location, other?.Location, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// 比较大小。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <returns>返回整数。</returns>
+        public int CompareTo(object obj)
+            => obj is AssemblyReference other ? CompareTo(other) : -1;
+
+
+        /// <summary>
+        /// 比较相等。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <param name="right">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator ==(AssemblyReference left, AssemblyReference right)
+        {
+            if (ReferenceEquals(left, null))
+                return ReferenceEquals(right, null);
+
+            return left.Equals(right);
+        }
+
+        /// <summary>
+        /// 比较不等。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <param name="right">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator !=(AssemblyReference left, AssemblyReference right)
+            => !(left == right);
+
+        /// <summary>
+        /// 比较小于。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <param name="right">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator <(AssemblyReference left, AssemblyReference right)
+            => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+
+        /// <summary>
+        /// 比较小于等于。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <param name="right">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator <=(AssemblyReference left, AssemblyReference right)
+            => ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+
+        /// <summary>
+        /// 比较大于。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <param name="right">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator >(AssemblyReference left, AssemblyReference right)
+            => !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+
+        /// <summary>
+        /// 比较大于等于。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <param name="right">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator >=(AssemblyReference left, AssemblyReference right)
+            => ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
 
 
         /// <summary>
@@ -104,7 +194,7 @@ namespace Librame.Extensions.Data
         public static AssemblyReference ByAssembly(Assembly assembly, bool copyLocal = false)
         {
             var metadata = (MetadataReference)MetadataReference.CreateFromFile(assembly.Location);
-            return new AssemblyReference(metadata.YieldEnumerable(), copyLocal);
+            return new AssemblyReference(metadata.YieldEnumerable(), copyLocal, assembly.Location);
         }
 
         /// <summary>
@@ -117,11 +207,14 @@ namespace Librame.Extensions.Data
         {
             assemblyName.NotEmpty(nameof(assemblyName));
 
+            string assemblyLocation = null;
+
             var metadatas = DependencyContext.Default.CompileLibraries
                 .Where(lib => assemblyName == lib.Name)
                 .Select(lib =>
                 {
                     var assembly = Assembly.LoadFrom($"{assemblyName}.dll");
+                    assemblyLocation = assembly.Location;
                     return (MetadataReference)MetadataReference.CreateFromFile(assembly.Location);
                 })
                 .ToArray();
@@ -129,7 +222,7 @@ namespace Librame.Extensions.Data
             if (metadatas.IsEmpty())
                 throw new InvalidOperationException($"Assembly '{assemblyName}' not found.");
             
-            return new AssemblyReference(metadatas, copyLocal);
+            return new AssemblyReference(metadatas, copyLocal, assemblyLocation);
         }
 
         /// <summary>
@@ -140,7 +233,7 @@ namespace Librame.Extensions.Data
         public static AssemblyReference ByPath(string assemblyPath)
         {
             var metadatas = MetadataReference.CreateFromFile(assemblyPath).YieldEnumerable();
-            return new AssemblyReference(metadatas, path: assemblyPath);
+            return new AssemblyReference(metadatas, location: assemblyPath);
         }
     }
 }

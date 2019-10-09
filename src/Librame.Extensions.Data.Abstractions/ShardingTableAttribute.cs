@@ -17,8 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 分表特性。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class,
-        AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class ShardingTableAttribute : Attribute
     {
         /// <summary>

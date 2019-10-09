@@ -10,6 +10,7 @@
 
 #endregion
 
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,15 +19,20 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据审计属性。
     /// </summary>
-    [NotAudited]
+    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+    /// <typeparam name="TAuditId">指定的审计标识类型。</typeparam>
     [Description("数据审计属性")]
-    public class DataAuditProperty : AbstractId<string>
+    [NotAudited]
+    [ShardingTable]
+    public class DataAuditProperty<TIncremId, TAuditId> : AbstractId<TIncremId>
+        where TIncremId : IEquatable<TIncremId>
+        where TAuditId : IEquatable<TAuditId>
     {
         /// <summary>
         /// 审计标识。
         /// </summary>
         [Display(Name = nameof(AuditId), ResourceType = typeof(DataAuditPropertyResource))]
-        public virtual string AuditId { get; set; }
+        public virtual TAuditId AuditId { get; set; }
 
         /// <summary>
         /// 属性名称。
@@ -51,11 +57,5 @@ namespace Librame.Extensions.Data
         /// </summary>
         [Display(Name = nameof(NewValue), ResourceType = typeof(DataAuditPropertyResource))]
         public virtual string NewValue { get; set; }
-
-
-        /// <summary>
-        /// 数据审计。
-        /// </summary>
-        public virtual DataAudit Audit { get; set; }
     }
 }

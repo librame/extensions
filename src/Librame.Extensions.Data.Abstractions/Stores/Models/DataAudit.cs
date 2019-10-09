@@ -10,7 +10,7 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,9 +19,11 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据审计。
     /// </summary>
-    [NotAudited]
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     [Description("数据审计")]
-    public class DataAudit : AbstractCreation<string>
+    [NotAudited]
+    public class DataAudit<TGenId> : AbstractCreation<TGenId>
+        where TGenId : IEquatable<TGenId>
     {
         /// <summary>
         /// 表名。
@@ -52,13 +54,5 @@ namespace Librame.Extensions.Data
         /// </summary>
         [Display(Name = nameof(StateName), ResourceType = typeof(DataAuditResource))]
         public virtual string StateName { get; set; }
-
-
-        /// <summary>
-        /// 实体属性集合。
-        /// </summary>
-        [Display(Name = nameof(Properties), ResourceType = typeof(DataAuditResource))]
-        public virtual IList<DataAuditProperty> Properties { get; set; }
-            = new List<DataAuditProperty>();
     }
 }

@@ -21,7 +21,7 @@ namespace System.Collections.Generic
     /// <typeparam name="T">指定的分页类型。</typeparam>
     public class Paging<T> : IPageable<T>
     {
-        private readonly IList<T> _rows;
+        private readonly ICollection<T> _rows;
 
 
         /// <summary>
@@ -29,9 +29,10 @@ namespace System.Collections.Generic
         /// </summary>
         /// <param name="rows">给定的行集合。</param>
         /// <param name="descriptor">给定的描述符。</param>
-        public Paging(IList<T> rows, PagingDescriptor descriptor)
+        public Paging(ICollection<T> rows, PagingDescriptor descriptor)
         {
             rows.NotNull(nameof(rows));
+            descriptor.NotNull(nameof(descriptor));
 
             // 如果未进行分页
             if (rows.Count > descriptor.Size)
@@ -91,6 +92,5 @@ namespace System.Collections.Generic
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
-
     }
 }

@@ -27,16 +27,47 @@ namespace Librame.Extensions.Data
     using Core;
 
     /// <summary>
-    /// <see cref="DbContext"/> 访问器。
+    /// 数据库上下文访问器。
     /// </summary>
-    public class DbContextAccessor : DbContext, IAccessor
+    public class DbContextAccessor : DbContextAccessor<DataAudit<string>, DataAuditProperty<int, string>, DataEntity<string>, DataMigration<string>, DataTenant<string>, string, int>, IDbContextAccessor
+    {
+        /// <summary>
+        /// 构造一个数据库上下文访问器。
+        /// </summary>
+        /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
+        public DbContextAccessor(DbContextOptions options)
+            : base(options)
+        {
+        }
+    }
+
+
+    /// <summary>
+    /// 数据库上下文访问器。
+    /// </summary>
+    /// <typeparam name="TAudit">指定的审计类型。</typeparam>
+    /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
+    /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+    /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+    /// <typeparam name="TTenant">指定的租户类型。</typeparam>
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+    public class DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> : DbContext, IDbContextAccessorFlag
+        , IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
+        where TAudit : DataAudit<TGenId>
+        where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
+        where TEntity : DataEntity<TGenId>
+        where TMigration : DataMigration<TGenId>
+        where TTenant : DataTenant<TGenId>
+        where TGenId : IEquatable<TGenId>
+        where TIncremId : IEquatable<TIncremId>
     {
         private static ITenant _currentTenant = null;
         private static string _currentConnectionString = null;
 
 
         /// <summary>
-        /// 构造一个 <see cref="DbContextAccessor"/>。
+        /// 构造一个数据库上下文访问器。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
         public DbContextAccessor(DbContextOptions options)
@@ -61,27 +92,27 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 审计数据集。
         /// </summary>
-        public DbSet<DataAudit> Audits { get; set; }
+        public DbSet<TAudit> Audits { get; set; }
 
         /// <summary>
         /// 审计属性数据集。
         /// </summary>
-        public DbSet<DataAuditProperty> AuditProperties { get; set; }
+        public DbSet<TAuditProperty> AuditProperties { get; set; }
 
         /// <summary>
         /// 实体数据集。
         /// </summary>
-        public DbSet<DataEntity> Entities { get; set; }
+        public DbSet<TEntity> Entities { get; set; }
 
         /// <summary>
         /// 迁移数据集。
         /// </summary>
-        public DbSet<DataMigration> Migrations { get; set; }
+        public DbSet<TMigration> Migrations { get; set; }
 
         /// <summary>
         /// 租户数据集。
         /// </summary>
-        public DbSet<DataTenant> Tenants { get; set; }
+        public DbSet<TTenant> Tenants { get; set; }
 
         #endregion
 		
@@ -189,7 +220,7 @@ namespace Librame.Extensions.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ConfigureStoreHubBase(BuilderOptions);
+            modelBuilder.ConfigureDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>(BuilderOptions);
         }
 
 
@@ -225,7 +256,7 @@ namespace Librame.Extensions.Data
             if (BuilderOptions.TenantEnabled)
                 SwitchTenant(tenant => tenant.WritingConnectionString);
 
-            var aspects = ServiceFactory.GetRequiredService<IServicesManager<ISaveChangesAccessorAspect>>();
+            var aspects = ServiceFactory.GetRequiredService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
             // 前置处理保存变化
             aspects.ForEach(aspect => aspect.Preprocess(this));
 
@@ -255,7 +286,7 @@ namespace Librame.Extensions.Data
             if (BuilderOptions.TenantEnabled)
                 await SwitchTenantAsync(tenant => tenant.WritingConnectionString, cancellationToken).ConfigureAndResultAsync();
 
-            var aspects = ServiceFactory.GetRequiredService<IServicesManager<ISaveChangesAccessorAspect>>();
+            var aspects = ServiceFactory.GetRequiredService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
             // 前置处理保存变化
             aspects.ForEach(async aspect => await aspect.PreprocessAsync(this, cancellationToken).ConfigureAndWaitAsync());
 
@@ -278,7 +309,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         public virtual void Migrate()
         {
-            var migrationService = this.GetService<IDataMigrationService>();
+            var migrationService = this.GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             migrationService.Migrate(this);
         }
 
@@ -289,7 +320,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="Task"/>。</returns>
         public virtual Task MigrateAsync(CancellationToken cancellationToken = default)
         {
-            var migrationService = this.GetService<IDataMigrationService>();
+            var migrationService = this.GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             return migrationService.MigrateAsync(this, cancellationToken);
         }
 
@@ -304,7 +335,7 @@ namespace Librame.Extensions.Data
             if (changeConnectionStringFactory.IsNull())
                 return false;
 
-            var tenantService = this.GetService<IDataTenantService>();
+            var tenantService = this.GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             var switchTenant = tenantService.GetSwitchTenant(this);
             if (switchTenant.IsNull())
                 return false;
@@ -380,7 +411,7 @@ namespace Librame.Extensions.Data
             if (changeConnectionStringFactory.IsNull())
                 return false;
 
-            var tenantService = this.GetService<IDataTenantService>();
+            var tenantService = this.GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             var switchTenant = await tenantService.GetSwitchTenantAsync(this, cancellationToken).ConfigureAndResultAsync();
             if (switchTenant.IsNull())
                 return false;

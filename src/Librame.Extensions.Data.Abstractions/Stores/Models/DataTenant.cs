@@ -13,18 +13,19 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq.Expressions;
 
 namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 数据租户。
     /// </summary>
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     [Description("数据租户")]
-    public class DataTenant : AbstractEntityUpdation<string>, ITenant, IRank, IEquatable<DataTenant>
+    public class DataTenant<TGenId> : AbstractEntityUpdation<TGenId>, ITenant, IRank<float>, IEquatable<DataTenant<TGenId>>
+        where TGenId : IEquatable<TGenId>
     {
         /// <summary>
-        /// 构造一个 <see cref="DataTenant"/>。
+        /// 构造一个数据租户。
         /// </summary>
         public DataTenant()
             : base()
@@ -32,7 +33,7 @@ namespace Librame.Extensions.Data
         }
 
         /// <summary>
-        /// 构造一个 <see cref="DataTenant"/>。
+        /// 构造一个数据租户。
         /// </summary>
         /// <param name="name">给定的名称。</param>
         /// <param name="host">给定的主机。</param>
@@ -78,10 +79,10 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 唯一索引是否相等。
         /// </summary>
-        /// <param name="other">给定的其他 <see cref="DataTenant"/>。</param>
+        /// <param name="other">给定的其他 <see cref="DataTenant{TGenId}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(DataTenant other)
-            => Name == other.Name && Host == other.Host;
+        public bool Equals(DataTenant<TGenId> other)
+            => Name == other?.Name && Host == other?.Host;
 
         /// <summary>
         /// 重写是否相等。
@@ -89,7 +90,7 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is DataEntity other) ? Equals(other) : false;
+            => (obj is DataEntity<TGenId> other) ? Equals(other) : false;
 
 
         /// <summary>
@@ -97,7 +98,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => ToString().GetHashCode();
+            => ToString().GetHashCode(StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>
@@ -105,23 +106,6 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => $"N={Name},H={Host}";
-
-
-        /// <summary>
-        /// 获取唯一索引表达式。
-        /// </summary>
-        /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-        /// <param name="name">给定的名称。</param>
-        /// <param name="host">给定的主机。</param>
-        /// <returns>返回查询表达式。</returns>
-        public static Expression<Func<TTenant, bool>> GetUniqueIndexExpression<TTenant>(string name, string host)
-            where TTenant : DataTenant
-        {
-            name.NotEmpty(nameof(name));
-            host.NotEmpty(nameof(host));
-
-            return p => p.Name == name && p.Host == host;
-        }
+            => $"{nameof(Name)}={Name},{nameof(Host)}={Host}";
     }
 }

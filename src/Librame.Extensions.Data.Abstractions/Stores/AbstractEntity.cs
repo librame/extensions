@@ -21,7 +21,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>, IRank, IStatus
+    public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>, IRank<float>, IStatus<DataStatus>
         where TId : IEquatable<TId>
     {
         /// <summary>
@@ -29,8 +29,8 @@ namespace Librame.Extensions.Data
         /// </summary>
         public AbstractEntity()
         {
-            Rank = EntityUtility.DefaultRank;
-            Status = EntityUtility.DefaultStatus;
+            Rank = DataDefaults.Rank;
+            Status = DataDefaults.Status;
         }
     }
 

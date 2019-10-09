@@ -29,7 +29,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         public AbstractUpdation()
         {
-            UpdatedTime = CreatedTime = EntityUtility.DefaultTime;
+            UpdatedTime = CreatedTime = DataDefaults.UtcNowOffset;
         }
     }
 

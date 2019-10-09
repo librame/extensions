@@ -7,9 +7,17 @@ namespace Librame.Extensions.Tests
     public class PathExtensionsTests
     {
         [Fact]
+        public void WithoutDevelopmentRelativePathTest()
+        {
+            var basePath = Directory.GetCurrentDirectory().WithoutDevelopmentRelativePath();
+            Assert.EndsWith(@"\tests\Librame.Extensions.Tests", basePath);
+        }
+
+
+        [Fact]
         public void SubdirectoryTest()
         {
-            var directoryName = "C:\\Users";
+            var directoryName = @"C:\Users";
             var directory = new DirectoryInfo(directoryName);
 
             Assert.Equal(directoryName.Subdirectory("Administrator").FullName,
@@ -34,8 +42,14 @@ namespace Librame.Extensions.Tests
             var basePath = @"c:\temp";
 
             Assert.Equal(result, basePath.CombinePath("filename.ext"));
-            Assert.Equal(result, basePath.CombinePath("\\filename.ext"));
-            Assert.Equal(result, $"{basePath}\\1\\2".CombinePath("..\\..\\filename.ext"));
+
+            Assert.Equal(result, basePath.CombinePath(@"\filename.ext"));
+            Assert.Equal(result, basePath.CombinePath(@".\filename.ext"));
+            Assert.Equal(result, @$"{basePath}\1\2".CombinePath(@"..\..\filename.ext"));
+
+            Assert.Equal(result, basePath.CombinePath("/filename.ext"));
+            Assert.Equal(result, basePath.CombinePath("./filename.ext"));
+            Assert.Equal(result, @$"{basePath}\1\2".CombinePath("../../filename.ext"));
         }
 
 

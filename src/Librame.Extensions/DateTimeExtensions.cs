@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 
 namespace Librame.Extensions
 {
@@ -60,13 +61,13 @@ namespace Librame.Extensions
             if (containsDate)
             {
                 // 长度 22
-                return CombineFileTime(dateTime.ToString("yyyyMMddHHmmssfff"),
-                    dateTime.ToFileTime().ToString());
+                return CombineFileTime(dateTime.ToString("yyyyMMddHHmmssfff", CultureInfo.CurrentCulture),
+                    dateTime.ToFileTime().ToString(CultureInfo.CurrentCulture));
             }
 
             // 长度 14
-            return CombineFileTime(dateTime.ToString("HHmmssfff"),
-                dateTime.ToFileTime().ToString());
+            return CombineFileTime(dateTime.ToString("HHmmssfff", CultureInfo.CurrentCulture),
+                dateTime.ToFileTime().ToString(CultureInfo.CurrentCulture));
         }
 
         /// <summary>
@@ -81,13 +82,13 @@ namespace Librame.Extensions
             if (containsDate)
             {
                 // 长度 22
-                return CombineFileTime(dateTimeOffset.ToString("yyyyMMddHHmmssfff"),
-                    dateTimeOffset.ToFileTime().ToString());
+                return CombineFileTime(dateTimeOffset.ToString("yyyyMMddHHmmssfff", CultureInfo.CurrentCulture),
+                    dateTimeOffset.ToFileTime().ToString(CultureInfo.CurrentCulture));
             }
 
             // 长度 14
-            return CombineFileTime(dateTimeOffset.ToString("HHmmssfff"),
-                dateTimeOffset.ToFileTime().ToString());
+            return CombineFileTime(dateTimeOffset.ToString("HHmmssfff", CultureInfo.CurrentCulture),
+                dateTimeOffset.ToFileTime().ToString(CultureInfo.CurrentCulture));
         }
 
         private static string CombineFileTime(string dateTime, string fileTime)

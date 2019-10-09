@@ -12,6 +12,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 
 namespace Librame.Extensions.Data
 {
@@ -33,7 +34,7 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 数据审计（默认已启用）。
+        /// 启用审计（默认已启用）。
         /// </summary>
         public bool AuditEnabled { get; set; }
             = true;
@@ -46,23 +47,30 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 数据实体（默认已启用）。
+        /// 启用实体注册（默认已启用）。
         /// </summary>
         public bool EntityEnabled { get; set; }
             = true;
 
 
         /// <summary>
-        /// 数据迁移（默认已启用）。
+        /// 启用迁移（默认已启用）。
         /// </summary>
         public bool MigrationEnabled { get; set; }
             = true;
 
         /// <summary>
-        /// NET Standard 程序集引用（支持文件路径或程序集名称）。
+        /// 迁移程序集引用列表。
         /// </summary>
-        public string NetStardandAssemblyReference { get; set; }
-            = @"C:\Program Files\dotnet\packs\NETStandard.Library.Ref\2.1.0\ref\netstandard2.1\netstandard.dll";
+        public List<AssemblyReference> MigrationAssemblyReferences { get; }
+            = new List<AssemblyReference>
+            {
+                AssemblyReference.ByName("Librame.Extensions.Data.Abstractions"),
+                AssemblyReference.ByName("Librame.Extensions.Data.EntityFrameworkCore"),
+                AssemblyReference.ByName("Microsoft.EntityFrameworkCore"),
+                AssemblyReference.ByName("Microsoft.EntityFrameworkCore.Relational"),
+                AssemblyReference.ByPath(@"C:\Program Files\dotnet\packs\NETStandard.Library.Ref\2.1.0\ref\netstandard2.1\netstandard.dll")
+            };
 
         /// <summary>
         /// 导出模型快照文件路径（不能位于 BIN 目录，否则会抛出被另一进程占用的异常）。
@@ -81,7 +89,7 @@ namespace Librame.Extensions.Data
         /// 默认租户。
         /// </summary>
         public ITenant DefaultTenant { get; set; }
-            = new DataTenant
+            = new DataTenant<string>
             {
                 Name = "DefaultTenant",
                 Host = "localhost",
