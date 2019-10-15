@@ -289,12 +289,9 @@ __pycache__/
 
 # Custom
 .sonarqube/
-/*.pfx
 /resources
+/*.pfx
 /*.ps1
-/tests/Librame.Extensions.Data.EntityFrameworkCore.Tests/Librame.Extensions.Data.EntityFrameworkCore.ModelSnapshot.dll
-/examples/Librame.Extensions.Examples/logs
-/tests/Librame.Extensions.Data.EntityFrameworkCore.Tests/*.dll
-/examples/Librame.Extensions.Examples/*.db
-/examples/Librame.Extensions.Examples/*.db
-/examples/Librame.Extensions.Examples/logs
+/*.db
+/*.dll
+logs/
