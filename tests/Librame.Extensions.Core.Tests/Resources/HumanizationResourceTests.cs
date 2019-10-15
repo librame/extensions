@@ -18,9 +18,7 @@ namespace Librame.Extensions.Core.Tests
 
         private void RunTest(IExpressionLocalizer<HumanizationResource> localizer, string cultureName)
         {
-            CultureInfo.CurrentCulture
-                = CultureInfo.CurrentUICulture
-                = new CultureInfo(cultureName);
+            CultureUtility.Register(new CultureInfo(cultureName));
 
             var minutesAgo = localizer[r => r.HumanizedMinutesAgo];
             Assert.False(minutesAgo.ResourceNotFound);

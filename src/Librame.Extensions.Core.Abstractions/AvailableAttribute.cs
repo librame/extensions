@@ -17,8 +17,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 可用的特性。
     /// </summary>
-    [AttributeUsage(AttributeTargets.All,
-        AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
     public class AvailableAttribute : Attribute
     {
         /// <summary>

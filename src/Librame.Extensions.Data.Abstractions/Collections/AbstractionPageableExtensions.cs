@@ -75,7 +75,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         public static ValueTask<IPageable<TEntity>> AsPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
             int index, int size, CancellationToken cancellationToken = default)
-            where TEntity : class, IRank<float>
+            where TEntity : class, ISortable<float>
             => query.AsPagingByIndexAsync<TEntity, float>(index, size, cancellationToken);
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         public static ValueTask<IPageable<TEntity>> AsPagingByIndexAsync<TEntity, TRank>(this IQueryable<TEntity> query,
             int index, int size, CancellationToken cancellationToken = default)
-            where TEntity : class, IRank<TRank>
+            where TEntity : class, ISortable<TRank>
             where TRank : struct
             => query.AsPagingByIndexAsync(ordered => ordered.OrderBy(k => k.Rank), index, size, cancellationToken);
 
@@ -106,7 +106,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         public static ValueTask<IPageable<TEntity>> AsDescendingPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
             int index, int size, CancellationToken cancellationToken = default)
-            where TEntity : class, IRank<float>
+            where TEntity : class, ISortable<float>
             => query.AsDescendingPagingByIndexAsync<TEntity, float>(index, size, cancellationToken);
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         public static ValueTask<IPageable<TEntity>> AsDescendingPagingByIndexAsync<TEntity, TRank>(this IQueryable<TEntity> query,
             int index, int size, CancellationToken cancellationToken = default)
-            where TEntity : class, IRank<TRank>
+            where TEntity : class, ISortable<TRank>
             where TRank : struct
             => query.AsPagingByIndexAsync(ordered => ordered.OrderByDescending(k => k.Rank), index, size, cancellationToken);
 
@@ -156,7 +156,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
         public static IPageable<TEntity> AsPagingByIndex<TEntity>(this IQueryable<TEntity> query,
             int index, int size)
-            where TEntity : class, IRank<float>
+            where TEntity : class, ISortable<float>
             => query.AsPagingByIndex<TEntity, float>(index, size);
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
         public static IPageable<TEntity> AsPagingByIndex<TEntity, TRank>(this IQueryable<TEntity> query,
             int index, int size)
-            where TEntity : class, IRank<TRank>
+            where TEntity : class, ISortable<TRank>
             where TRank : struct
             => query.AsPagingByIndex(q => q.OrderBy(k => k.Rank), index, size);
 
@@ -185,7 +185,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
         public static IPageable<TEntity> AsDescendingPagingByIndex<TEntity>(this IQueryable<TEntity> query,
             int index, int size)
-            where TEntity : class, IRank<float>
+            where TEntity : class, ISortable<float>
             => query.AsDescendingPagingByIndex<TEntity, float>(index, size);
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
         public static IPageable<TEntity> AsDescendingPagingByIndex<TEntity, TRank>(this IQueryable<TEntity> query,
             int index, int size)
-            where TEntity : class, IRank<TRank>
+            where TEntity : class, ISortable<TRank>
             where TRank : struct
             => query.AsPagingByIndex(q => q.OrderByDescending(k => k.Rank), index, size);
 
@@ -235,7 +235,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         public static ValueTask<IPageable<TEntity>> AsPagingBySkipAsync<TEntity>(this IQueryable<TEntity> query,
             int skip, int take, CancellationToken cancellationToken = default)
-            where TEntity : class, IRank<float>
+            where TEntity : class, ISortable<float>
             => query.AsPagingBySkipAsync<TEntity, float>(skip, take, cancellationToken);
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         public static ValueTask<IPageable<TEntity>> AsPagingBySkipAsync<TEntity, TRank>(this IQueryable<TEntity> query,
             int skip, int take, CancellationToken cancellationToken = default)
-            where TEntity : class, IRank<TRank>
+            where TEntity : class, ISortable<TRank>
             where TRank : struct
             => query.AsPagingBySkipAsync(ordered => ordered.OrderBy(k => k.Rank), skip, take, cancellationToken);
 
@@ -266,7 +266,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         public static ValueTask<IPageable<TEntity>> AsDescendingPagingBySkipAsync<TEntity>(this IQueryable<TEntity> query,
             int skip, int take, CancellationToken cancellationToken = default)
-            where TEntity : class, IRank<float>
+            where TEntity : class, ISortable<float>
             => query.AsDescendingPagingBySkipAsync<TEntity, float>(skip, take, cancellationToken);
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         public static ValueTask<IPageable<TEntity>> AsDescendingPagingBySkipAsync<TEntity, TRank>(this IQueryable<TEntity> query,
             int skip, int take, CancellationToken cancellationToken = default)
-            where TEntity : class, IRank<TRank>
+            where TEntity : class, ISortable<TRank>
             where TRank : struct
             => query.AsPagingBySkipAsync(ordered => ordered.OrderByDescending(k => k.Rank), skip, take, cancellationToken);
 
@@ -316,7 +316,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
         public static IPageable<TEntity> AsPagingBySkip<TEntity>(this IQueryable<TEntity> query,
             int skip, int take)
-            where TEntity : class, IRank<float>
+            where TEntity : class, ISortable<float>
             => query.AsPagingBySkip<TEntity, float>(skip, take);
 
         /// <summary>
@@ -330,7 +330,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
         public static IPageable<TEntity> AsPagingBySkip<TEntity, TRank>(this IQueryable<TEntity> query,
             int skip, int take)
-            where TEntity : class, IRank<TRank>
+            where TEntity : class, ISortable<TRank>
             where TRank : struct
             => query.AsPagingBySkip(q => q.OrderBy(k => k.Rank), skip, take);
 
@@ -345,7 +345,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
         public static IPageable<TEntity> AsDescendingPagingBySkip<TEntity>(this IQueryable<TEntity> query,
             int skip, int take)
-            where TEntity : class, IRank<float>
+            where TEntity : class, ISortable<float>
             => query.AsDescendingPagingBySkip<TEntity, float>(skip, take);
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IPageable{TEntity}"/>。</returns>
         public static IPageable<TEntity> AsDescendingPagingBySkip<TEntity, TRank>(this IQueryable<TEntity> query,
             int skip, int take)
-            where TEntity : class, IRank<TRank>
+            where TEntity : class, ISortable<TRank>
             where TRank : struct
             => query.AsPagingBySkip(q => q.OrderByDescending(k => k.Rank), skip, take);
 

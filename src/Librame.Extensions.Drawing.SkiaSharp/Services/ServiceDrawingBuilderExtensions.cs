@@ -10,17 +10,17 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Drawing
 {
     static class ServiceDrawingBuilderExtensions
     {
-        public static IDrawingBuilder AddServices(this IDrawingBuilder builder)
+        internal static IDrawingBuilder AddServices(this IDrawingBuilder builder)
         {
-            builder.Services.AddScoped<ICaptchaService, CaptchaService>();
-            builder.Services.AddScoped<IScaleService, ScaleService>();
-            builder.Services.AddScoped<IWatermarkService, WatermarkService>();
+            builder.Services.TryAddScoped<ICaptchaService, CaptchaService>();
+            builder.Services.TryAddScoped<IScaleService, ScaleService>();
+            builder.Services.TryAddScoped<IWatermarkService, WatermarkService>();
 
             return builder;
         }

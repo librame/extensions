@@ -55,10 +55,8 @@ namespace Librame.Extensions
         /// 没有开发相对路径的路径。
         /// </summary>
         /// <param name="currentPath">给定的当前目录。</param>
-        /// <param name="hasOSBitRelativePath">存在操作系统位数相对路径（可选；默认不存在）。</param>
         /// <returns>返回目录字符串。</returns>
-        public static string WithoutDevelopmentRelativePath(this string currentPath,
-            bool hasOSBitRelativePath = false)
+        public static string WithoutDevelopmentRelativePath(this string currentPath)
         {
             currentPath.NotEmpty(nameof(currentPath));
 
@@ -74,16 +72,13 @@ namespace Librame.Extensions
             string GetPattern()
             {
                 var separator = currentPath.Contains(_directorySeparatorChar, StringComparison.OrdinalIgnoreCase)
-                    ? Regex.Escape(_directorySeparatorChar.ToString(CultureInfo.CurrentCulture))
-                    : _altDirectorySeparatorChar.ToString(CultureInfo.CurrentCulture);
+                    ? Regex.Escape(_directorySeparatorChar.ToString(CultureInfo.InvariantCulture))
+                    : _altDirectorySeparatorChar.ToString(CultureInfo.InvariantCulture);
 
                 var sb = new StringBuilder();
-                sb.Append($"{separator}(bin|obj)");
-
-                if (hasOSBitRelativePath)
-                    sb.Append($"{separator}(x86|x64)");
-
-                sb.Append($"{separator}(Debug|Release)");
+                sb.Append($"({separator}bin|{separator}obj)");
+                sb.Append($"({separator}x86|{separator}x64)?");
+                sb.Append($"({separator}Debug|{separator}Release)");
 
                 return sb.ToString();
             }

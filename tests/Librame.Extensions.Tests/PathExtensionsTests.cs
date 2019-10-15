@@ -11,6 +11,9 @@ namespace Librame.Extensions.Tests
         {
             var basePath = Directory.GetCurrentDirectory().WithoutDevelopmentRelativePath();
             Assert.EndsWith(@"\tests\Librame.Extensions.Tests", basePath);
+
+            basePath = basePath.CombinePath(@"bin\x64\Release").WithoutDevelopmentRelativePath();
+            Assert.EndsWith(@"\tests\Librame.Extensions.Tests", basePath);
         }
 
 

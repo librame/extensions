@@ -53,7 +53,7 @@ namespace Librame.Extensions.Examples
             })
             .AddDbDesignTime<SqliteDesignTimeServices>()
             .AddIdentifier<ExampleStoreIdentifier>()
-            //.AddInitializer<ExampleStoreInitializer>()
+            .AddInitializer<ExampleStoreInitializer>()
             .AddStoreHub<ExampleStoreHub>()
             .AddEncryption()
             .AddDeveloperGlobalSigningCredentials();

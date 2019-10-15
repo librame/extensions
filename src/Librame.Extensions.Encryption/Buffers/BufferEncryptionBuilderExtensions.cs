@@ -10,15 +10,15 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Encryption
 {
     static class BufferEncryptionBuilderExtensions
     {
-        public static IEncryptionBuilder AddBuffers(this IEncryptionBuilder builder)
+        internal static IEncryptionBuilder AddBuffers(this IEncryptionBuilder builder)
         {
-            builder.Services.AddScoped(typeof(IEncryptionBuffer<,>), typeof(EncryptionBuffer<,>));
+            builder.Services.TryAddScoped(typeof(IEncryptionBuffer<,>), typeof(EncryptionBuffer<,>));
 
             return builder;
         }

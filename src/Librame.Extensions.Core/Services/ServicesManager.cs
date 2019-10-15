@@ -15,25 +15,22 @@ using System.Collections.Generic;
 namespace Librame.Extensions.Core
 {
     class ServicesManager<TService, TDefault> : AbstractServicesManager<TService, TDefault>
-        where TService : IService
+        where TService : ISortableService
         where TDefault : TService
     {
         public ServicesManager(IEnumerable<TService> services)
             : base(services)
         {
         }
-
     }
 
 
     class ServicesManager<TService> : AbstractServicesManager<TService>
-        where TService : IService
+        where TService : ISortableService
     {
         public ServicesManager(IEnumerable<TService> services)
             : base(services)
         {
         }
-
     }
-
 }

@@ -48,6 +48,65 @@ namespace Librame.Extensions
 
 
         /// <summary>
+        /// 序列元素属性值集合相等比较。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="sources">给定的源类型实例集合。</param>
+        /// <param name="compares">给定的比较类型实例集合。</param>
+        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为公共属性标记）。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool SequencePropertyValuesEquals<T>(this IEnumerable<T> sources, IEnumerable<T> compares,
+            BindingFlags bindingFlags = BindingFlags.Public)
+        {
+            sources.NotEmpty(nameof(sources));
+            compares.NotEmpty(nameof(compares));
+
+            var sequenceCount = sources.Count();
+            if (sequenceCount != compares.Count())
+                return false;
+
+            var propertyInfos = typeof(T).GetProperties(bindingFlags);
+            for (var i = 0; i < sequenceCount; i++)
+            {
+                var source = sources.ElementAt(i);
+                var compare = compares.ElementAt(i);
+
+                foreach (var info in propertyInfos)
+                {
+                    if (!info.GetValue(source).Equals(info.GetValue(compare)))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 属性值集合相等比较。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="source">给定的源类型实例。</param>
+        /// <param name="compare">给定的比较类型实例。</param>
+        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为公共属性标记）。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool PropertyValuesEquals<T>(this T source, T compare, BindingFlags bindingFlags = BindingFlags.Public)
+            where T : class
+        {
+            source.NotNull(nameof(source));
+            compare.NotNull(nameof(compare));
+
+            var propertyInfos = typeof(T).GetProperties(bindingFlags);
+            foreach (var info in propertyInfos)
+            {
+                if (!info.GetValue(source).Equals(info.GetValue(compare)))
+                    return false;
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
         /// 获取所有字段集合（包括公开、非公开、实例、静态等）。
         /// </summary>
         /// <param name="type">给定的类型。</param>

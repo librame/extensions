@@ -107,7 +107,7 @@ namespace Librame.Extensions
         public static string FormatString(this int number, int length)
         {
             return number.FormatString(length,
-                (format, value) => string.Format(CultureInfo.CurrentCulture, format, value));
+                (format, value) => string.Format(CultureInfo.InvariantCulture, format, value));
         }
 
 
@@ -128,7 +128,7 @@ namespace Librame.Extensions
         public static string FormatString(this long number, int length)
         {
             return number.FormatString(length,
-                (format, value) => string.Format(CultureInfo.CurrentCulture, format, value));
+                (format, value) => string.Format(CultureInfo.InvariantCulture, format, value));
         }
 
 
@@ -172,7 +172,7 @@ namespace Librame.Extensions
             foreach (var w in words)
             {
                 // 首字母大写，其余字母均小写
-                str += char.ToUpper(w[0], CultureInfo.CurrentCulture) + w.Substring(1).ToLower(CultureInfo.CurrentCulture);
+                str += char.ToUpper(w[0], CultureInfo.InvariantCulture) + w.Substring(1).ToLower(CultureInfo.InvariantCulture);
             }
 
             return str;
@@ -192,7 +192,7 @@ namespace Librame.Extensions
             words.NotNull(nameof(words));
 
             // 首单词小写
-            string str = words[0].ToLower(CultureInfo.CurrentCulture);
+            string str = words[0].ToLower(CultureInfo.InvariantCulture);
             if (words.Length > 1)
             {
                 for (var i = 1; i < words.Length; i++)
@@ -200,7 +200,7 @@ namespace Librame.Extensions
                     var w = words[i];
 
                     // 首字母大写，其余字母均小写
-                    str += char.ToUpper(w[0], CultureInfo.CurrentCulture) + w.Substring(1).ToLower(CultureInfo.CurrentCulture);
+                    str += char.ToUpper(w[0], CultureInfo.InvariantCulture) + w.Substring(1).ToLower(CultureInfo.InvariantCulture);
                 }
             }
 

@@ -18,8 +18,7 @@ namespace Microsoft.Extensions.Localization
     /// <summary>
     /// 因原 RootNamespaceAttribute 不在 Microsoft.Extensions.Localization.Abstraction 包，所以定义个抽象副本。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Assembly,
-        AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
     public class AbstractionRootNamespaceAttribute : Attribute
     {
         /// <summary>

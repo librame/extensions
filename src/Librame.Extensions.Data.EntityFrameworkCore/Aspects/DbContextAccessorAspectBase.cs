@@ -43,13 +43,43 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 构造一个数据库上下文访问器截面基类。
         /// </summary>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="identifier">给定的 <see cref="IStoreIdentifier"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected DbContextAccessorAspectBase(IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+        /// <param name="priority">给定的服务优先级（数值越小越优先）。</param>
+        protected DbContextAccessorAspectBase(IClockService clock, IStoreIdentifier identifier,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory, float priority)
             : base(options, loggerFactory)
         {
+            Clock = clock.NotNull(nameof(clock));
+            Identifier = identifier.NotNull(nameof(identifier));
+
+            Priority = priority;
         }
 
+
+        /// <summary>
+        /// 时钟服务。
+        /// </summary>
+        public IClockService Clock { get; }
+
+        /// <summary>
+        /// 标识符。
+        /// </summary>
+        public IStoreIdentifier Identifier { get; }
+
+        /// <summary>
+        /// 锁定器。
+        /// </summary>
+        public IMemoryLocker Locker
+            => Clock.Locker;
+
+
+        /// <summary>
+        /// 服务优先级（数值越小越优先）。
+        /// </summary>
+        public float Priority { get; set; }
 
         /// <summary>
         /// 启用截面。

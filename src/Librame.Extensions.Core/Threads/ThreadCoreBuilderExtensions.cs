@@ -10,15 +10,15 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Core
 {
     static class ThreadCoreBuilderExtensions
     {
-        public static ICoreBuilder AddThreads(this ICoreBuilder builder)
+        internal static ICoreBuilder AddThreads(this ICoreBuilder builder)
         {
-            builder.Services.AddScoped<IMemoryLocker, MemoryLocker>();
+            builder.Services.TryAddScoped<IMemoryLocker, MemoryLocker>();
 
             return builder;
         }

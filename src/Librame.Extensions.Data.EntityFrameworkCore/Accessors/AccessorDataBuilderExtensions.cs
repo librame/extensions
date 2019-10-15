@@ -10,13 +10,14 @@
 
 #endregion
 
+using Librame.Extensions;
+using Librame.Extensions.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
 
-namespace Librame.Extensions.Data
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     /// 访问器数据构建器静态扩展。

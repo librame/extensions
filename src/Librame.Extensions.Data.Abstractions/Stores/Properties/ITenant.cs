@@ -10,12 +10,14 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 租户接口。
     /// </summary>
-    public interface ITenant
+    public interface ITenant : IEquatable<ITenant>
     {
         /// <summary>
         /// 名称。

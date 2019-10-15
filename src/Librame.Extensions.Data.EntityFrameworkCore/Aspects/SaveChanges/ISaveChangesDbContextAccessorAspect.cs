@@ -14,10 +14,8 @@ using System;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
-    /// 保存变化数据库上下文访问器截面接口（通常用于前置保存变化操作）。
+    /// 保存变化数据库上下文访问器截面接口（通常用于无写入请求限制的前置保存变化操作）。
     /// </summary>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
@@ -36,14 +34,5 @@ namespace Librame.Extensions.Data
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
-        /// <summary>
-        /// 时钟服务。
-        /// </summary>
-        IClockService Clock { get; }
-
-        /// <summary>
-        /// 标识符。
-        /// </summary>
-        IStoreIdentifier Identifier { get; }
     }
 }

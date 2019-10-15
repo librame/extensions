@@ -165,4 +165,10 @@
   <data name="UpdatedTime" xml:space="preserve">
     <value>更新时间</value>
   </data>
+  <data name="CreatedTimeTicks" xml:space="preserve">
+    <value>创建时间周期数</value>
+  </data>
+  <data name="UpdatedTimeTicks" xml:space="preserve">
+    <value>更新时间周期数</value>
+  </data>
 </root>

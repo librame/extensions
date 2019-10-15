@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Librame.Extensions.Data.EntityFrameworkCore.ModelSnapshot.dll" />
+    <None Remove="Librame.Extensions.Data.EntityFrameworkCore.Tests.ModelSnapshot.dll" />
   </ItemGroup>
 
 </Project>

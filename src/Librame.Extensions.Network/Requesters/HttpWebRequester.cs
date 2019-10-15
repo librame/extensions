@@ -30,7 +30,7 @@ namespace Librame.Extensions.Network
         /// </summary>
         /// <param name="byteCodec">给定的 <see cref="IByteCodecService"/>。</param>
         public HttpWebRequester(IByteCodecService byteCodec)
-            : base(byteCodec)
+            : base(byteCodec, priority: 2)
         {
         }
 

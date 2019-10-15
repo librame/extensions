@@ -20,9 +20,7 @@ namespace Librame.Extensions.Data.Tests
         
         private void RunTest(IExpressionLocalizer<DataMigrationResource> localizer, string cultureName)
         {
-            CultureInfo.CurrentCulture
-                = CultureInfo.CurrentUICulture
-                = new CultureInfo(cultureName);
+            CultureUtility.Register(new CultureInfo(cultureName));
 
             var accessorName = localizer[r => r.AccessorName];
             Assert.False(accessorName.ResourceNotFound);

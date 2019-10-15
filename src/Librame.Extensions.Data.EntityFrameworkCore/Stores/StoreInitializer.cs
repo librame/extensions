@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 
 namespace Librame.Extensions.Data
 {
@@ -100,7 +101,7 @@ namespace Librame.Extensions.Data
                 return;
 
             // 确保已切换到写入数据连接
-            stores.Accessor.SwitchTenant(tenant => tenant.WritingConnectionString);
+            stores.Accessor.ChangeDbConnection(tenant => tenant.WritingConnectionString);
 
             Clock.Locker.WaitAction(() => InitializeCore(stores));
 
@@ -113,7 +114,7 @@ namespace Librame.Extensions.Data
             }
 
             // 确保已切换到默认数据连接
-            stores.Accessor.SwitchTenant(tenant => tenant.DefaultConnectionString);
+            stores.Accessor.ChangeDbConnection(tenant => tenant.DefaultConnectionString);
         }
 
         /// <summary>
@@ -164,9 +165,8 @@ namespace Librame.Extensions.Data
             where TGenId : IEquatable<TGenId>
             where TIncremId : IEquatable<TIncremId>
         {
-            // 如果当前为默认数据连接，则直接退出
-            if (!stores.Accessor.CurrentConnectionString.Equals(stores.Accessor.CurrentTenant.WritingConnectionString,
-                StringComparison.OrdinalIgnoreCase))
+            // 注册租户需作写入请求限制
+            if (!stores.Accessor.IsWritingRequest())
                 return;
 
             // 如果当前租户未有效存储，则初始化保存
@@ -187,8 +187,9 @@ namespace Librame.Extensions.Data
                 }
 
                 tenant.Id = GetTenantId<TGenId>();
-                tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult();
-                tenant.CreatedBy = GetType().GetSimpleName();
+                tenant.UpdatedTime = tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult();
+                tenant.UpdatedTimeTicks = tenant.CreatedTimeTicks = tenant.UpdatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+                tenant.UpdatedBy = tenant.CreatedBy = GetType().GetSimpleName();
 
                 stores.TryCreate(tenant);
                 RequiredSaveChanges = true;

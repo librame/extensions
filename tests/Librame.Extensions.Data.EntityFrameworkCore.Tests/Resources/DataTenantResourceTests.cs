@@ -20,9 +20,7 @@ namespace Librame.Extensions.Data.Tests
         
         private void RunTest(IExpressionLocalizer<DataTenantResource> localizer, string cultureName)
         {
-            CultureInfo.CurrentCulture
-                = CultureInfo.CurrentUICulture
-                = new CultureInfo(cultureName);
+            CultureUtility.Register(new CultureInfo(cultureName));
 
             var name = localizer[r => r.Name];
             Assert.False(name.ResourceNotFound);

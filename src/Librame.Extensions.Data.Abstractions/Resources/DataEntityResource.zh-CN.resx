@@ -126,6 +126,9 @@
   <data name="EntityName" xml:space="preserve">
     <value>实体名称</value>
   </data>
+  <data name="IsSharding" xml:space="preserve">
+    <value>分表</value>
+  </data>
   <data name="Name" xml:space="preserve">
     <value>名称</value>
   </data>

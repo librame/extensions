@@ -103,7 +103,7 @@ namespace Librame.Extensions.Core
                 catch (MissingMethodException ex)
                 {
                     throw new TypeLoadException(
-                        string.Format(CultureInfo.CurrentCulture,
+                        string.Format(CultureInfo.InvariantCulture,
                             "The type '{0}' must have a private constructor to be used in the Singleton pattern.",
                             type.FullName), ex);
                 }

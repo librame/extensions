@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Linq;
 using System.Reflection;
 
@@ -39,7 +40,7 @@ namespace Librame.Extensions.Core
             params Assembly[] assemblies)
         {
             var objectType = typeof(object);
-
+            
             assemblies.InvokeTypes(type =>
             {
                 if (type.TryGetCustomAttribute(out AutoRegistrationServiceAttribute serviceAttribute))
@@ -62,15 +63,15 @@ namespace Librame.Extensions.Core
                     switch (serviceAttribute.Lifetime)
                     {
                         case ServiceLifetime.Singleton:
-                            builder.Services.AddSingleton(serviceType, type);
+                            builder.Services.TryAddSingleton(serviceType, type);
                             break;
 
                         case ServiceLifetime.Scoped:
-                            builder.Services.AddScoped(serviceType, type);
+                            builder.Services.TryAddScoped(serviceType, type);
                             break;
 
                         case ServiceLifetime.Transient:
-                            builder.Services.AddTransient(serviceType, type);
+                            builder.Services.TryAddTransient(serviceType, type);
                             break;
 
                         default:

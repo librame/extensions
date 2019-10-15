@@ -13,6 +13,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace Librame.Extensions.Data
 {
@@ -21,7 +22,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractUpdation<TId> : AbstractUpdation<TId, string, DateTimeOffset>
+    public abstract class AbstractUpdation<TId> : AbstractUpdation<TId, string, DateTimeOffset>, IUpdatedTimeTicks
         where TId : IEquatable<TId>
     {
         /// <summary>
@@ -30,7 +31,21 @@ namespace Librame.Extensions.Data
         public AbstractUpdation()
         {
             UpdatedTime = CreatedTime = DataDefaults.UtcNowOffset;
+            UpdatedTimeTicks = CreatedTimeTicks = CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
         }
+
+
+        /// <summary>
+        /// 创建时间周期数。
+        /// </summary>
+        [Display(Name = nameof(CreatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
+        public virtual string CreatedTimeTicks { get; set; }
+
+        /// <summary>
+        /// 更新时间周期数。
+        /// </summary>
+        [Display(Name = nameof(UpdatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
+        public virtual string UpdatedTimeTicks { get; set; }
     }
 
 

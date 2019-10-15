@@ -11,20 +11,25 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Collections.Generic;
 
 namespace Librame.Extensions.Data
 {
     static class AspectDataBuilderExtensions
     {
-        public static IDataBuilder AddAspects(this IDataBuilder builder)
+        internal static IDataBuilder AddAspects(this IDataBuilder builder)
         {
-            builder.Services.AddScoped(typeof(ISaveChangesDbContextAccessorAspect<,,,,,,>),
-                typeof(DataAuditSaveChangesDbContextAccessorAspect<,,,,,,>));
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Scoped(typeof(ISaveChangesDbContextAccessorAspect<,,,,,,>),
+                typeof(DataAuditSaveChangesDbContextAccessorAspect<,,,,,,>)));
 
-            builder.Services.AddScoped(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
-                typeof(DataEntityMigrateDbContextAccessorAspect<,,,,,,>));
-            builder.Services.AddScoped(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
-                typeof(DataMigrationMigrateDbContextAccessorAspect<,,,,,,>));
+            builder.Services.TryAddEnumerable(new List<ServiceDescriptor>
+            {
+                ServiceDescriptor.Scoped(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
+                    typeof(DataEntityMigrateDbContextAccessorAspect<,,,,,,>)),
+                ServiceDescriptor.Scoped(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
+                    typeof(DataMigrationMigrateDbContextAccessorAspect<,,,,,,>))
+            });
 
             return builder;
         }

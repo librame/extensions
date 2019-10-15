@@ -33,7 +33,7 @@ namespace Librame.Extensions.Data
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                Logger.LogInformation($"{notification.Entities.Count} Entities have been registed.");
+                Logger.LogInformation($"{notification.Adds.Count} Entities have been registed.");
 
                 return Task.CompletedTask;
             });

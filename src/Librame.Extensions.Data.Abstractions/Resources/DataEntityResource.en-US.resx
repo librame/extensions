@@ -126,6 +126,9 @@
   <data name="EntityName" xml:space="preserve">
     <value>Entity name</value>
   </data>
+  <data name="IsSharding" xml:space="preserve">
+    <value>Is sharding</value>
+  </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>

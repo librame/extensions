@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Data
 {
@@ -26,10 +27,10 @@ namespace Librame.Extensions.Data
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         internal static IDataBuilder AddStores(this IDataBuilder builder)
         {
-            builder.Services.AddScoped(typeof(IStoreHub<>), typeof(StoreHub<>));
+            builder.Services.TryAddScoped(typeof(IStoreHub<>), typeof(StoreHub<>));
 
-            builder.Services.AddScoped<IStoreIdentifier, StoreIdentifier>();
-            builder.Services.AddScoped<IStoreInitializer, StoreInitializer>();
+            builder.Services.TryAddScoped<IStoreIdentifier, StoreIdentifier>();
+            builder.Services.TryAddScoped<IStoreInitializer, StoreInitializer>();
 
             return builder;
         }
@@ -45,7 +46,7 @@ namespace Librame.Extensions.Data
             where TIdentifier : class, IStoreIdentifier
         {
             builder.Services.TryReplace<IStoreIdentifier, TIdentifier>();
-            builder.Services.AddScoped(provider => (TIdentifier)provider.GetRequiredService<IStoreIdentifier>());
+            builder.Services.TryAddScoped(provider => (TIdentifier)provider.GetRequiredService<IStoreIdentifier>());
 
             return builder;
         }
@@ -60,7 +61,7 @@ namespace Librame.Extensions.Data
             where TInitializer : class, IStoreInitializer
         {
             builder.Services.TryReplace<IStoreInitializer, TInitializer>();
-            builder.Services.AddScoped(provider => (TInitializer)provider.GetRequiredService<IStoreInitializer>());
+            builder.Services.TryAddScoped(provider => (TInitializer)provider.GetRequiredService<IStoreInitializer>());
 
             return builder;
         }
@@ -74,8 +75,8 @@ namespace Librame.Extensions.Data
         public static IDataBuilder AddStoreHub<TStoreHub>(this IDataBuilder builder)
             where TStoreHub : class, IStoreHub
         {
-            builder.Services.AddScoped<IStoreHub, TStoreHub>();
-            builder.Services.AddScoped(provider => (TStoreHub)provider.GetRequiredService<IStoreHub>());
+            builder.Services.TryAddScoped<IStoreHub, TStoreHub>();
+            builder.Services.TryAddScoped(provider => (TStoreHub)provider.GetRequiredService<IStoreHub>());
 
             return builder;
         }

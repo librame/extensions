@@ -34,6 +34,11 @@ namespace Librame.Extensions.Data
         /// </summary>
         ServiceFactoryDelegate ServiceFactory { get; }
 
+        /// <summary>
+        /// 内存锁定器。
+        /// </summary>
+        IMemoryLocker Locker { get; }
+
 
         /// <summary>
         /// 当前租户。
@@ -45,6 +50,21 @@ namespace Librame.Extensions.Data
         /// 当前数据连接字符串。
         /// </summary>
         string CurrentConnectionString { get; }
+
+
+        /// <summary>
+        /// 是否为当前数据连接字符串。
+        /// </summary>
+        /// <param name="connectionString">给定的连接字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        bool IsCurrentConnectionString(string connectionString);
+
+
+        /// <summary>
+        /// 是写入请求。
+        /// </summary>
+        /// <returns>返回布尔值。</returns>
+        bool IsWritingRequest();
 
 
         /// <summary>
@@ -101,18 +121,19 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 切换租户。
+        /// 改变数据库链接。
         /// </summary>
         /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
         /// <returns>返回是否切换的布尔值。</returns>
-        bool SwitchTenant(Func<ITenant, string> changeConnectionStringFactory);
+        bool ChangeDbConnection(Func<ITenant, string> changeConnectionStringFactory);
 
         /// <summary>
-        /// 异步切换租户。
+        /// 异步改变数据库链接。
         /// </summary>
         /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否已切换的布尔值的异步操作。</returns>
-        Task<bool> SwitchTenantAsync(Func<ITenant, string> changeConnectionStringFactory, CancellationToken cancellationToken = default);
+        Task<bool> ChangeDbConnectionAsync(Func<ITenant, string> changeConnectionStringFactory,
+            CancellationToken cancellationToken = default);
     }
 }

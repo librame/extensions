@@ -11,7 +11,7 @@ namespace Librame.Extensions.Core.Tests
         {
             var mediator = TestServiceProvider.Current.GetRequiredService<IMediator>();
             var response = await mediator.Send(new Ping { Message = "Ping" }).ConfigureAndResultAsync();
-            Assert.Contains("Ping Pong Ping", response.Message);
+            Assert.Contains("Ping Ping Pong", response.Message);
         }
 
     }

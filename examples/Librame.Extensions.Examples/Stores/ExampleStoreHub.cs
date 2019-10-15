@@ -26,13 +26,13 @@ namespace Librame.Extensions.Examples
 
         public ExampleStoreHub UseWriteDbConnection()
         {
-            Accessor.SwitchTenant(t => t.WritingConnectionString);
+            Accessor.ChangeDbConnection(t => t.WritingConnectionString);
             return this;
         }
 
         public ExampleStoreHub UseDefaultDbConnection()
         {
-            Accessor.SwitchTenant(t => t.DefaultConnectionString);
+            Accessor.ChangeDbConnection(t => t.DefaultConnectionString);
             return this;
         }
 

@@ -32,7 +32,7 @@ namespace Librame.Extensions.Network
         /// <param name="factory">给定的 <see cref="IHttpClientFactory"/>。</param>
         /// <param name="byteCodec">给定的 <see cref="IByteCodecService"/>。</param>
         public HttpClientRequester(IHttpClientFactory factory, IByteCodecService byteCodec)
-            : base(byteCodec)
+            : base(byteCodec, priority: 1)
         {
             Factory = factory.NotNull(nameof(factory));
         }

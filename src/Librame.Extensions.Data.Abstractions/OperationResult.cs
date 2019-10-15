@@ -49,7 +49,7 @@ namespace Librame.Extensions.Data
         public override string ToString()
             => Succeeded
             ? "Succeeded"
-            : string.Format(CultureInfo.CurrentCulture, "{0} : {1}", "Failed", string.Join(",", Errors.Select(x => x.Code).ToList()));
+            : string.Format(CultureInfo.InvariantCulture, "{0} : {1}", "Failed", string.Join(",", Errors.Select(x => x.Code).ToList()));
 
 
         /// <summary>

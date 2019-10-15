@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using Xunit;
 
 namespace Librame.Extensions.Data.Tests
@@ -23,6 +24,9 @@ namespace Librame.Extensions.Data.Tests
 
                 articles = stores.UseWriteDbConnection().GetArticles();
                 Assert.True(articles.Total >= 0); // 如果已分表，则此表内容可能为空
+
+                //var testEntities = stores.Accessor.TestEntities.ToList();
+                //Assert.Empty(testEntities);
             }
         }
 

@@ -10,17 +10,17 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Data
 {
     static class MediatorDataBuilderExtensions
     {
-        public static IDataBuilder AddMediators(this IDataBuilder builder)
+        internal static IDataBuilder AddMediators(this IDataBuilder builder)
         {
-            builder.Services.AddTransient(typeof(AuditNotificationHandler<,>));
-            builder.Services.AddTransient(typeof(EntityNotificationHandler<,>));
-            builder.Services.AddTransient(typeof(MigrationNotificationHandler<,>));
+            builder.Services.TryAddTransient(typeof(AuditNotificationHandler<,>));
+            builder.Services.TryAddTransient(typeof(EntityNotificationHandler<,>));
+            builder.Services.TryAddTransient(typeof(MigrationNotificationHandler<,>));
 
             return builder;
         }

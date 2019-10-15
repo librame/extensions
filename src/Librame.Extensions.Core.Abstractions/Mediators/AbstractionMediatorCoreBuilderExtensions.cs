@@ -128,8 +128,7 @@ namespace Librame.Extensions.Core
         private static void AddConcretionsThatCouldBeClosed(this IServiceCollection services,
             Type @interface, List<Type> concretions)
         {
-            foreach (var type in concretions
-                .Where(x => x.IsOpenGenericType() && x.CouldCloseTo(@interface)))
+            foreach (var type in concretions.Where(x => x.IsOpenGenericType() && x.CouldCloseTo(@interface)))
             {
                 try
                 {

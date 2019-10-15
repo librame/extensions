@@ -88,7 +88,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 获取文化信息。
         /// </summary>
-        public CultureInfo Culture => CultureInfo.CurrentCulture;
+        public CultureInfo Culture => CultureInfo.InvariantCulture;
 
         /// <summary>
         /// 获取 UI 文化信息。

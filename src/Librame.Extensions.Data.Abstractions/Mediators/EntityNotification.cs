@@ -27,8 +27,18 @@ namespace Librame.Extensions.Data
         where TGenId : IEquatable<TGenId>
     {
         /// <summary>
-        /// 实体集合。
+        /// 添加实体集合。
         /// </summary>
-        public List<TEntity> Entities { get; set; }
+        public List<TEntity> Adds { get; set; }
+
+        /// <summary>
+        /// 更新实体集合。
+        /// </summary>
+        public List<TEntity> Updates { get; set; }
+
+        /// <summary>
+        /// 删除实体集合。
+        /// </summary>
+        public List<TEntity> Removes { get; set; }
     }
 }

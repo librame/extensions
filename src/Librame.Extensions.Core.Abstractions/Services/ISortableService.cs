@@ -10,18 +10,16 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Core
 {
-    static class KeyGeneratorEncryptionBuilderExtensions
+    /// <summary>
+    /// 可排序服务接口。
+    /// </summary>
+    public interface ISortableService : IService
     {
-        internal static IEncryptionBuilder AddKeyGenerators(this IEncryptionBuilder builder)
-        {
-            builder.Services.TryAddScoped<IKeyGenerator, KeyGenerator>();
-
-            return builder;
-        }
-
+        /// <summary>
+        /// 服务优先级（数值越小越优先）。
+        /// </summary>
+        float Priority { get; set; }
     }
 }

@@ -5,22 +5,22 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.1.907.211</Version>
+    <Version>7.1.913.211</Version>
     <Authors>Librame Pang</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Data.Abstractions on EntityFrameworkCore extension implementation.</Description>
     <Copyright>Copyright © 2012-2019</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/librame/Librame</PackageProjectUrl>
-    <PackageIconUrl>https://www.gravatar.com/avatar/fb757161b3495689c02ece689cb0267f?s=64</PackageIconUrl>
+    <PackageIcon>Librame.png</PackageIcon>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Librame,Extensions,Data,EntityFrameworkCore,Multi-Tenancy,Reading and writing separation</PackageTags>
     <PackageReleaseNotes>Based Librame.Extensions.Data.Abstractions on EntityFrameworkCore extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.1.907.211</AssemblyVersion>
-    <FileVersion>7.0.1910.91</FileVersion>
+    <AssemblyVersion>7.1.913.211</AssemblyVersion>
+    <FileVersion>7.0.1910.151</FileVersion>
     <RootNamespace>Librame.Extensions.Data</RootNamespace>
   </PropertyGroup>
 
@@ -48,6 +48,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Librame.Extensions.Data.Abstractions\Librame.Extensions.Data.Abstractions.csproj" />
     <ProjectReference Include="..\Librame.Extensions.Core\Librame.Extensions.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\Librame.png" Pack="true" Visible="false" PackagePath="\" />
   </ItemGroup>
 
 </Project>

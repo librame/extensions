@@ -26,12 +26,19 @@ namespace Librame.Extensions.Network
         /// 构造一个 <see cref="UriRequesterBase"/>。
         /// </summary>
         /// <param name="byteCodec">给定的 <see cref="IByteCodecService"/>。</param>
-        protected UriRequesterBase(IByteCodecService byteCodec)
+        /// <param name="priority">给定的服务优先级（数值越小越优先）。</param>
+        protected UriRequesterBase(IByteCodecService byteCodec, float priority)
             : base(byteCodec.CastTo<IByteCodecService, NetworkServiceBase>(nameof(byteCodec)))
         {
             ByteCodec = byteCodec;
+            Priority = priority;
         }
 
+
+        /// <summary>
+        /// 服务优先级（数值越小越优先）。
+        /// </summary>
+        public float Priority { get; set; }
 
         /// <summary>
         /// 字节编解码器。

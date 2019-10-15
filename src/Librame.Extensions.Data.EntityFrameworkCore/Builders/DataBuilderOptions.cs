@@ -16,6 +16,8 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Data
 {
+    using Core;
+
     /// <summary>
     /// 数据构建器选项。
     /// </summary>
@@ -28,9 +30,23 @@ namespace Librame.Extensions.Data
             = true;
 
         /// <summary>
-        /// 已创建数据库动作。
+        /// 已创建数据库动作（默认调用 <see cref="PostChangedDbConnectionAction"/>）。
         /// </summary>
-        public Action<IAccessor> DatabaseCreatedAction { get; set; }
+        public Action<DbContextAccessorBase> DatabaseCreatedAction { get; set; }
+            = accessor =>
+            {
+                accessor.Locker.WaitAction(() => accessor.BuilderOptions.PostChangedDbConnectionAction?.Invoke(accessor));
+            };
+
+        /// <summary>
+        /// 后置改变数据库连接动作。
+        /// </summary>
+        public Action<DbContextAccessorBase> PostChangedDbConnectionAction { get; set; }
+            = accessor =>
+            {
+                if (accessor.BuilderOptions.MigrationEnabled)
+                    accessor.Migrate();
+            };
 
 
         /// <summary>
@@ -69,14 +85,16 @@ namespace Librame.Extensions.Data
                 AssemblyReference.ByName("Librame.Extensions.Data.EntityFrameworkCore"),
                 AssemblyReference.ByName("Microsoft.EntityFrameworkCore"),
                 AssemblyReference.ByName("Microsoft.EntityFrameworkCore.Relational"),
-                AssemblyReference.ByName("netstandard")
+                AssemblyReference.ByName("netstandard"),
+                AssemblyReference.ByName("System.Runtime"),
+                AssemblyReference.ByName("System.Private.CoreLib")
             };
 
         /// <summary>
-        /// 导出模型快照文件路径（不能位于 BIN 目录，否则会抛出被另一进程占用的异常）。
+        /// 导出迁移程序集。
         /// </summary>
-        public string ExportModelSnapshotFilePath { get; set; }
-            = @"Librame.Extensions.Data.EntityFrameworkCore.ModelSnapshot.dll";
+        public bool ExportMigrationAssembly { get; set; }
+            = true;
 
 
         /// <summary>

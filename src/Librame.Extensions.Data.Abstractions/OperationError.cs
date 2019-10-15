@@ -66,7 +66,7 @@ namespace Librame.Extensions.Data
 
             return new OperationError
             {
-                Code = exception.HResult.ToString(CultureInfo.CurrentCulture),
+                Code = exception.HResult.ToString(CultureInfo.InvariantCulture),
                 Description = exception.AsInnerMessage(),
                 Exception = exception
             };

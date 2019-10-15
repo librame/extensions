@@ -30,6 +30,11 @@ namespace Librame.Extensions.Data
         public string Name { get; set; }
 
         /// <summary>
+        /// 是否分表。
+        /// </summary>
+        public string IsSharding { get; set; }
+
+        /// <summary>
         /// 描述。
         /// </summary>
         public string Description { get; set; }

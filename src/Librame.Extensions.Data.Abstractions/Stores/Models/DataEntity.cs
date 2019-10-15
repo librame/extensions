@@ -37,6 +37,12 @@ namespace Librame.Extensions.Data
         public virtual string Name { get; set; }
 
         /// <summary>
+        /// 是否分表。
+        /// </summary>
+        [Display(Name = nameof(IsSharding), ResourceType = typeof(DataEntityResource))]
+        public virtual bool IsSharding { get; set; }
+
+        /// <summary>
         /// 描述。
         /// </summary>
         [Display(Name = nameof(Name), ResourceType = typeof(DataEntityResource))]
@@ -51,7 +57,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 程序集名。
         /// </summary>
-        [Display(Name = nameof(EntityName), ResourceType = typeof(DataEntityResource))]
+        [Display(Name = nameof(AssemblyName), ResourceType = typeof(DataEntityResource))]
         public virtual string AssemblyName { get; set; }
 
 

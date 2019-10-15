@@ -26,7 +26,7 @@ namespace Librame.Extensions.Core.Tests
         {
             request.Message = request.Message + " Ping";
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
     }
     public class PingPongPostProcessor : IRequestPostProcessor<Ping, Pong>
@@ -35,7 +35,7 @@ namespace Librame.Extensions.Core.Tests
         {
             response.Message = response.Message + " " + request.Message;
 
-            return Task.FromResult(0);
+            return Task.CompletedTask;
         }
     }
 }

@@ -10,16 +10,16 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Encryption
 {
     static class ConverterEncryptionBuilderExtensions
     {
-        public static IEncryptionBuilder AddConverters(this IEncryptionBuilder builder)
+        internal static IEncryptionBuilder AddConverters(this IEncryptionBuilder builder)
         {
-            builder.Services.AddScoped<ICiphertextConverter, CiphertextConverter>();
-            builder.Services.AddScoped<IPlaintextConverter, PlaintextConverter>();
+            builder.Services.TryAddScoped<ICiphertextConverter, CiphertextConverter>();
+            builder.Services.TryAddScoped<IPlaintextConverter, PlaintextConverter>();
 
             return builder;
         }

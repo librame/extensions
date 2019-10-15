@@ -58,6 +58,7 @@ namespace Librame.Extensions.Data
             = new ConcurrentDictionary<string, List<string>>();
 
         private static TMigration _lastMigration = null;
+        private static IModel _defaultModel = null;
 
 
         /// <summary>
@@ -104,70 +105,53 @@ namespace Librame.Extensions.Data
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         protected virtual void MigrateCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            if (dbContextAccessor.Migrations.Exists())
+            var lastModel = ResolveLastModel(dbContextAccessor);
+            if (lastModel.IsNotNull())
             {
-                if (_lastMigration.IsNull())
-                    UpdateLastMigration(dbContextAccessor);
-
                 // 对比差异
-                var differences = GetDifferences(dbContextAccessor);
+                var differences = GetDifferences(dbContextAccessor.InternalServiceProvider, lastModel, dbContextAccessor.Model);
                 if (differences.IsNotEmpty())
                 {
-                    var aspects = dbContextAccessor.ServiceFactory.GetRequiredService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
-                    // 前置处理数据迁移
-                    aspects.ForEach(aspect => aspect.Preprocess(dbContextAccessor));
-
                     // 差异迁移
-                    MigrateDifference(dbContextAccessor, differences);
-
-                    // 后置处理数据迁移
-                    aspects.ForEach(aspect => aspect.Postprocess(dbContextAccessor));
-
-                    // 如果需要保存更改
-                    if (aspects.Any(aspect => aspect.RequiredSaveChanges))
-                    {
-                        dbContextAccessor.SaveChanges();
-                        aspects.ForEach(aspect => aspect.RequiredSaveChanges = false);
-
-                        UpdateLastMigration(dbContextAccessor);
-                    }
+                    MigrateCoreAspect(dbContextAccessor, () => MigrateDifference(dbContextAccessor, differences));
                 }
             }
             else
             {
-                var aspects = dbContextAccessor.ServiceFactory.GetRequiredService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
-                // 前置处理数据迁移
-                aspects.ForEach(aspect => aspect.Preprocess(dbContextAccessor));
-
                 // 初次进行系统整体性迁移
-                dbContextAccessor.Database.Migrate();
-
-                // 后置处理数据迁移
-                aspects.ForEach(aspect => aspect.Postprocess(dbContextAccessor));
-
-                // 如果需要保存更改
-                if (aspects.Any(aspect => aspect.RequiredSaveChanges))
-                {
-                    dbContextAccessor.SaveChanges();
-                    aspects.ForEach(aspect => aspect.RequiredSaveChanges = false);
-                }
+                MigrateCoreAspect(dbContextAccessor, dbContextAccessor.Database.Migrate);
             }
         }
 
         /// <summary>
-        /// 更新最后一次迁移。
+        /// 迁移核心截面。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        protected virtual void UpdateLastMigration(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+        /// <param name="migrateAction">给定的迁移动作。</param>
+        protected virtual void MigrateCoreAspect(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+            Action migrateAction)
         {
-            var entityType = dbContextAccessor.Model.FindEntityType(typeof(TMigration));
-            var tableName = new TableNameSchema(entityType.GetTableName(), entityType.GetSchema());
+            var aspects = dbContextAccessor.ServiceFactory.GetRequiredService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
+            // 前置处理数据迁移
+            aspects.ForEach(aspect => aspect.Preprocess(dbContextAccessor));
 
-            var migration = dbContextAccessor.Migrations.FirstOrDefaultByMax(s => s.CreatedTime, tableName);
+            // 迁移动作
+            migrateAction?.Invoke();
 
-            // 防止默认数据库为空
-            if (migration.IsNotNull())
-                _lastMigration = migration;
+            // 后置处理数据迁移
+            aspects.ForEach(aspect => aspect.Postprocess(dbContextAccessor));
+
+            // 如果需要保存更改
+            if (aspects.Any(aspect => aspect.RequireSaving))
+            {
+                dbContextAccessor.SaveChanges();
+                aspects.ForEach(aspect => aspect.RequireSaving = false);
+
+                if (dbContextAccessor.BuilderOptions.ExportMigrationAssembly)
+                    ModelSnapshotCompiler.CompileInFile(dbContextAccessor, dbContextAccessor.Model, Options);
+
+                HasLastMigration(dbContextAccessor);
+            }
         }
 
 
@@ -196,56 +180,69 @@ namespace Librame.Extensions.Data
         protected virtual async Task MigrateCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            if (await dbContextAccessor.Migrations.ExistsAsync(cancellationToken).ConfigureAndResultAsync())
+            var lastModel = ResolveLastModel(dbContextAccessor);
+            if (lastModel.IsNotNull())
             {
-                if (_lastMigration.IsNull())
-                    UpdateLastMigration(dbContextAccessor);
-
                 // 对比差异
-                var differences = GetDifferences(dbContextAccessor);
+                var differences = GetDifferences(dbContextAccessor.InternalServiceProvider, lastModel, dbContextAccessor.Model);
                 if (differences.IsNotEmpty())
                 {
-                    var aspects = dbContextAccessor.ServiceFactory.GetRequiredService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
-                    // 前置处理数据迁移
-                    aspects.ForEach(async aspect => await aspect.PreprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync());
-
-                    // 差异迁移
-                    MigrateDifference(dbContextAccessor, differences);
-
-                    // 后置处理数据迁移
-                    aspects.ForEach(async aspect => await aspect.PostprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync());
-
-                    // 如果需要保存更改
-                    if (aspects.Any(aspect => aspect.RequiredSaveChanges))
+                    await MigrateCoreAspectAsync(dbContextAccessor, () =>
                     {
-                        await dbContextAccessor.SaveChangesAsync(cancellationToken).ConfigureAndResultAsync();
-                        aspects.ForEach(aspect => aspect.RequiredSaveChanges = false);
-
-                        UpdateLastMigration(dbContextAccessor);
-                    }
+                        // 迁移差异
+                        Locker.WaitAction(() => MigrateDifference(dbContextAccessor, differences));
+                    },
+                    cancellationToken).ConfigureAndWaitAsync();
                 }
             }
             else
             {
-                var aspects = dbContextAccessor.ServiceFactory.GetRequiredService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
-                // 前置处理数据迁移
-                aspects.ForEach(async aspect => await aspect.PreprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync());
-
-                // 初次进行系统整体性迁移
-                await dbContextAccessor.Database.MigrateAsync().ConfigureAndWaitAsync();
-
-                // 后置处理数据迁移
-                aspects.ForEach(async aspect => await aspect.PostprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync());
-
-                // 如果需要保存更改
-                if (aspects.Any(aspect => aspect.RequiredSaveChanges))
+                await MigrateCoreAspectAsync(dbContextAccessor, async () =>
                 {
-                    await dbContextAccessor.SaveChangesAsync(cancellationToken).ConfigureAndResultAsync();
-                    aspects.ForEach(aspect => aspect.RequiredSaveChanges = false);
-                }
+                    // 初次进行系统整体性迁移
+                    await dbContextAccessor.Database.MigrateAsync().ConfigureAndWaitAsync();
+                },
+                cancellationToken).ConfigureAndWaitAsync();
             }
         }
 
+        /// <summary>
+        /// 异步迁移核心截面。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="migrateAction">给定的迁移动作。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        protected virtual async Task MigrateCoreAspectAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+            Action migrateAction, CancellationToken cancellationToken = default)
+        {
+            migrateAction.NotNull(nameof(migrateAction));
+
+            var aspects = dbContextAccessor.ServiceFactory.GetRequiredService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
+            // 前置处理数据迁移
+            aspects.ForEach(async aspect => await aspect.PreprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync());
+
+            // 迁移动作
+            migrateAction?.Invoke();
+
+            // 后置处理数据迁移
+            aspects.ForEach(async aspect => await aspect.PostprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync());
+
+            // 如果需要保存更改
+            if (aspects.Any(aspect => aspect.RequireSaving))
+            {
+                await dbContextAccessor.SaveChangesAsync(cancellationToken).ConfigureAndResultAsync();
+                aspects.ForEach(aspect => aspect.RequireSaving = false);
+
+                if (dbContextAccessor.BuilderOptions.ExportMigrationAssembly)
+                    ModelSnapshotCompiler.CompileInFile(dbContextAccessor, dbContextAccessor.Model, Options);
+
+                HasLastMigration(dbContextAccessor);
+            }
+        }
+
+
+        #region MigrateDifference
 
         /// <summary>
         /// 迁移差异。
@@ -285,7 +282,6 @@ namespace Librame.Extensions.Data
                 executeCommands.ForEach(command =>
                 {
                     var commandKey = GetMigrationCommandKey(command);
-
                     _migrationCommands.AddOrUpdate(commandKey, key =>
                     {
                         return new List<string>
@@ -299,6 +295,9 @@ namespace Librame.Extensions.Data
                         return value;
                     });
                 });
+
+                if (!dbContextAccessor.IsWritingRequest() && _defaultModel.IsNotNull())
+                    _defaultModel = null; // 如果默认请求已迁移表结构，则清空默认模型
             }
         }
 
@@ -313,39 +312,84 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 获取差异迁移操作。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="internalServiceProvider">给定的 <see cref="IServiceProvider"/>。</param>
+        /// <param name="lastModel">给定的上一次 <see cref="IModel"/>。</param>
+        /// <param name="currentModel">给定的当前 <see cref="IModel"/>。</param>
         /// <returns>返回 <see cref="IReadOnlyList{MigrationOperation}"/>。</returns>
-        protected virtual IReadOnlyList<MigrationOperation> GetDifferences(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+        protected virtual IReadOnlyList<MigrationOperation> GetDifferences(IServiceProvider internalServiceProvider, IModel lastModel, IModel currentModel)
         {
-            return Locker.WaitFactory(() =>
-            {
-                var lastModel = ResolveModel();
-                var typeMappingSource = dbContextAccessor.InternalServiceProvider.GetRequiredService<IRelationalTypeMappingSource>();
-                var migrationsAnnotations = dbContextAccessor.InternalServiceProvider.GetRequiredService<IMigrationsAnnotationProvider>();
-                var changeDetector = dbContextAccessor.InternalServiceProvider.GetRequiredService<IChangeDetector>();
-                var updateAdapterFactory = dbContextAccessor.InternalServiceProvider.GetRequiredService<IUpdateAdapterFactory>();
-                var commandBatchPreparerDependencies = dbContextAccessor.InternalServiceProvider.GetRequiredService<CommandBatchPreparerDependencies>();
+            var typeMappingSource = internalServiceProvider.GetRequiredService<IRelationalTypeMappingSource>();
+            var migrationsAnnotations = internalServiceProvider.GetRequiredService<IMigrationsAnnotationProvider>();
+            var changeDetector = internalServiceProvider.GetRequiredService<IChangeDetector>();
+            var updateAdapterFactory = internalServiceProvider.GetRequiredService<IUpdateAdapterFactory>();
+            var commandBatchPreparerDependencies = internalServiceProvider.GetRequiredService<CommandBatchPreparerDependencies>();
 
-                var modelDiffer = new ResetMigrationsModelDiffer(typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory,
-                    commandBatchPreparerDependencies);
+            var modelDiffer = new ResetMigrationsModelDiffer(typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory,
+                commandBatchPreparerDependencies);
 
-                return modelDiffer.GetDifferences(lastModel, dbContextAccessor.Model);
-            });
+            return modelDiffer.GetDifferences(lastModel, currentModel);
         }
 
         /// <summary>
-        /// 解析模型。
+        /// 解析上一次模型。
         /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <returns>返回 <see cref="IModel"/>。</returns>
-        protected IModel ResolveModel()
+        protected IModel ResolveLastModel(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            var assembly = Assembly.Load(_lastMigration.ModelBody.Decompress());
-            var snapshotType = assembly.GetType(_lastMigration.ModelSnapshotName, throwOnError: true, ignoreCase: false);
+            if (!dbContextAccessor.IsWritingRequest() && _defaultModel.IsNotNull())
+                return _defaultModel; // 如果当前为默认请求且默认模型不为空，则直接返回用于迁移表结构
 
-            //var dbContextAttribute = snapshotType.GetCustomAttribute<DbContextAttribute>();
-            var snapshot = snapshotType.EnsureCreate<ModelSnapshot>();
-            return snapshot?.Model;
+            Type snapshotType = null;
+
+            // 读取数据不作写入请求限制
+            if (HasLastMigration(dbContextAccessor))
+            {
+                // 从实体解析
+                var buffer = ModelSnapshotCompiler.RestoreAssembly(_lastMigration.ModelBody);
+                var modelAssembly = Assembly.Load(buffer);
+                snapshotType = modelAssembly.GetType(_lastMigration.ModelSnapshotName, throwOnError: true, ignoreCase: false);
+            }
+            else
+            {
+                // 从程序集文件
+                var dependencyOptions = dbContextAccessor.ServiceFactory.GetRequiredService<DataBuilderDependencyOptions>();
+                var assemblyPath = ModelSnapshotCompiler.GetAssemblyPath(dbContextAccessor.GetType(), dependencyOptions.BaseDirectory);
+                if (assemblyPath.Exists())
+                {
+                    var modelAssembly = Assembly.LoadFile(assemblyPath);
+                    var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.GetType());
+                    snapshotType = modelAssembly.GetType(modelSnapshotTypeName, throwOnError: true, ignoreCase: false);
+                }
+            }
+
+            if (snapshotType.IsNotNull())
+            {
+                var model = snapshotType.EnsureCreate<ModelSnapshot>().Model;
+
+                if (dbContextAccessor.IsWritingRequest() && _defaultModel.IsNull())
+                    _defaultModel = model; // 缓存当前模型用于默认库迁移表结构
+
+                return model;
+            }
+
+            return null;
         }
+
+        /// <summary>
+        /// 是否有上次迁移数据。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        protected virtual bool HasLastMigration(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+        {
+            if (_lastMigration.IsNull())
+                _lastMigration = dbContextAccessor.Migrations.FirstOrDefaultByMax(s => s.CreatedTimeTicks);
+
+            return _lastMigration.IsNotNull();
+        }
+
+        #endregion
 
     }
 }

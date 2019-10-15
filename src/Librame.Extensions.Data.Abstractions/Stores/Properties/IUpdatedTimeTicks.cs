@@ -13,15 +13,16 @@
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 排序接口。
+    /// 更新时间周期数接口。
     /// </summary>
-    /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
-    public interface IRank<TRank>
-        where TRank : struct
+    /// <remarks>
+    /// 主要用于解决日期与时间类型在不同数据库中 LINQ 查询的兼容性问题。
+    /// </remarks>
+    public interface IUpdatedTimeTicks : ICreatedTimeTicks
     {
         /// <summary>
-        /// 排序。
+        /// 更新时间周期数。
         /// </summary>
-        TRank Rank { get; set; }
+        string UpdatedTimeTicks { get; set; }
     }
 }

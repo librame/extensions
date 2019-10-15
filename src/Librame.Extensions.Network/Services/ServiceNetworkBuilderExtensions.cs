@@ -10,18 +10,18 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Network
 {
     static class ServiceNetworkBuilderExtensions
     {
-        public static INetworkBuilder AddServices(this INetworkBuilder builder)
+        internal static INetworkBuilder AddServices(this INetworkBuilder builder)
         {
-            builder.Services.AddScoped<IByteCodecService, ByteCodecService>();
-            builder.Services.AddScoped<ICrawlerService, CrawlerService>();
-            builder.Services.AddScoped<IEmailService, EmailService>();
-            builder.Services.AddScoped<ISmsService, SmsService>();
+            builder.Services.TryAddScoped<IByteCodecService, ByteCodecService>();
+            builder.Services.TryAddScoped<ICrawlerService, CrawlerService>();
+            builder.Services.TryAddScoped<IEmailService, EmailService>();
+            builder.Services.TryAddScoped<ISmsService, SmsService>();
 
             return builder;
         }

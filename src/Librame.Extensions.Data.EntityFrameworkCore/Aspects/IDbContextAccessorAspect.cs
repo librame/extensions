@@ -28,7 +28,7 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    public interface IDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> : IService
+    public interface IDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> : ISortableService
         where TAudit : DataAudit<TGenId>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId>
@@ -37,6 +37,22 @@ namespace Librame.Extensions.Data
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
+        /// <summary>
+        /// 时钟服务。
+        /// </summary>
+        IClockService Clock { get; }
+
+        /// <summary>
+        /// 标识符。
+        /// </summary>
+        IStoreIdentifier Identifier { get; }
+
+        /// <summary>
+        /// 锁定器。
+        /// </summary>
+        IMemoryLocker Locker { get; }
+
+
         /// <summary>
         /// 启用截面。
         /// </summary>

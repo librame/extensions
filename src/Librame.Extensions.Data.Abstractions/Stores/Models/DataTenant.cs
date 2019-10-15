@@ -21,7 +21,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     [Description("数据租户")]
-    public class DataTenant<TGenId> : AbstractEntityUpdation<TGenId>, ITenant, IRank<float>, IEquatable<DataTenant<TGenId>>
+    public class DataTenant<TGenId> : AbstractEntityUpdation<TGenId>, ITenant, ISortable<float>
         where TGenId : IEquatable<TGenId>
     {
         /// <summary>
@@ -77,11 +77,11 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 唯一索引是否相等。
+        /// 相等比较。
         /// </summary>
-        /// <param name="other">给定的其他 <see cref="DataTenant{TGenId}"/>。</param>
+        /// <param name="other">给定的 <see cref="ITenant"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(DataTenant<TGenId> other)
+        public bool Equals(ITenant other)
             => Name == other?.Name && Host == other?.Host;
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is DataEntity<TGenId> other) ? Equals(other) : false;
+            => (obj is ITenant other) ? Equals(other) : false;
 
 
         /// <summary>

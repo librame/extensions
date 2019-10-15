@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     /// <typeparam name="TService">指定的服务类型。</typeparam>
     /// <typeparam name="TDefault">指定的默认服务类型。</typeparam>
     public interface IServicesManager<out TService, TDefault> : IServicesManager<TService>
-        where TService : IService
+        where TService : ISortableService
         where TDefault : TService
     {
     }
@@ -31,16 +31,18 @@ namespace Librame.Extensions.Core
     /// </summary>
     /// <typeparam name="TService">指定的服务类型。</typeparam>
     public interface IServicesManager<out TService> : IEnumerable<TService>
-        where TService : IService
+        where TService : ISortableService
     {
         /// <summary>
         /// 服务集合。
         /// </summary>
-        IEnumerable<TService> Services { get; }
+        /// <value>返回 <typeparamref name="TService"/> of <see cref="IEnumerable{T}"/>。</value>
+        IReadOnlyList<TService> Services { get; }
 
         /// <summary>
         /// 默认服务。
         /// </summary>
-        TService Default { get; }
+        /// <value>返回 <typeparamref name="TService"/>。</value>
+        TService DefaultService { get; }
     }
 }

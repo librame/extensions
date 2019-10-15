@@ -10,17 +10,17 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Storage
 {
     static class ServiceStorageBuilderExtensions
     {
-        public static IStorageBuilder AddServices(this IStorageBuilder builder)
+        internal static IStorageBuilder AddServices(this IStorageBuilder builder)
         {
-            builder.Services.AddScoped<IFileService, FileService>();
-            builder.Services.AddScoped<IFileTransferService, FileTransferService>();
-            builder.Services.AddScoped<IFilePermissionService, FilePermissionService>();
+            builder.Services.TryAddScoped<IFileService, FileService>();
+            builder.Services.TryAddScoped<IFileTransferService, FileTransferService>();
+            builder.Services.TryAddScoped<IFilePermissionService, FilePermissionService>();
 
             return builder;
         }

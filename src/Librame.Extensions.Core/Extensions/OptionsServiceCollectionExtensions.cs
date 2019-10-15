@@ -12,6 +12,7 @@
 
 using Librame.Extensions;
 using Librame.Extensions.Core;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
             TDependencyOptions options)
             where TDependencyOptions : class, IExtensionBuilderDependencyOptions
         {
-            services.AddSingleton(options);
+            services.TryAddSingleton(options);
 
             // 获取所有包含选项配置器的属性信息集合
             var configuratorProperties = typeof(TDependencyOptions).GetProperties().Where(p =>

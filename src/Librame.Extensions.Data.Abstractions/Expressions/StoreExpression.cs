@@ -38,21 +38,21 @@ namespace Librame.Extensions.Data
             return p => p.Schema == schema && p.Name == name;
         }
 
-        /// <summary>
-        /// 获取数据迁移唯一索引表达式。
-        /// </summary>
-        /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
-        /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-        /// <param name="modelHash">给定的模型哈希。</param>
-        /// <returns>返回查询表达式。</returns>
-        public static Expression<Func<TMigration, bool>> GetMigrationUniqueIndexExpression<TMigration, TGenId>(string modelHash)
-            where TMigration : DataMigration<TGenId>
-            where TGenId : IEquatable<TGenId>
-        {
-            modelHash.NotEmpty(nameof(modelHash));
+        ///// <summary>
+        ///// 获取数据迁移唯一索引表达式。
+        ///// </summary>
+        ///// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+        ///// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+        ///// <param name="modelHash">给定的模型哈希。</param>
+        ///// <returns>返回查询表达式。</returns>
+        //public static Expression<Func<TMigration, bool>> GetMigrationUniqueIndexExpression<TMigration, TGenId>(string modelHash)
+        //    where TMigration : DataMigration<TGenId>
+        //    where TGenId : IEquatable<TGenId>
+        //{
+        //    modelHash.NotEmpty(nameof(modelHash));
 
-            return p => p.ModelHash == modelHash;
-        }
+        //    return p => p.ModelHash == modelHash;
+        //}
 
         /// <summary>
         /// 获取数据租户唯一索引表达式。

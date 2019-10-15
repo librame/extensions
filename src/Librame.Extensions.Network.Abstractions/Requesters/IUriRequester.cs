@@ -17,10 +17,12 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network
 {
+    using Core;
+
     /// <summary>
     /// URI 请求程序接口。
     /// </summary>
-    public interface IUriRequester : INetworkService
+    public interface IUriRequester : INetworkService, ISortableService
     {
         /// <summary>
         /// 字节编解码器。

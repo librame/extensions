@@ -22,181 +22,137 @@ namespace Librame.Extensions.Core
     public static class AbstractionMemoryLockerExtensions
     {
         /// <summary>
-        /// 等待动作。
+        /// 等待动作方法。
         /// </summary>
         /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
-        /// <param name="action">给定要等待的动作方法。</param>
+        /// <param name="action">给定执行的动作方法。</param>
+        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
         /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
         /// <param name="timeout">给定的超时（可选）。</param>
-        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
-        /// <param name="catchExceptionAction">给定的捕获异常动作（可选）。</param>
-        public static void WaitAction(this IMemoryLocker locker, Action action,
-            int? millisecondsTimeout = null, TimeSpan? timeout = null, CancellationToken? cancellationToken = null,
-            int? releaseCount = null, Action<Exception> catchExceptionAction = null)
-            => locker.WaitAction<Exception>(action, millisecondsTimeout, timeout, cancellationToken, releaseCount,
-                catchExceptionAction);
-
-        /// <summary>
-        /// 异步等待动作。
-        /// </summary>
-        /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
-        /// <param name="factory">给定要等待的动作方法。</param>
-        /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
-        /// <param name="timeout">给定的超时（可选）。</param>
-        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
-        /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
-        /// <param name="catchExceptionAction">给定的捕获异常动作（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public static Task WaitActionAsync(this IMemoryLocker locker, Func<Task> factory,
-            int? millisecondsTimeout = null, TimeSpan? timeout = null, CancellationToken? cancellationToken = null,
-            int? releaseCount = null, Action<Exception> catchExceptionAction = null)
-            => locker.WaitActionAsync<Exception>(factory, millisecondsTimeout, timeout, cancellationToken, releaseCount,
-                catchExceptionAction);
-
-
-        /// <summary>
-        /// 等待工厂。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
-        /// <param name="factory">给定要等待的工厂方法。</param>
-        /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
-        /// <param name="timeout">给定的超时（可选）。</param>
-        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
-        /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
-        /// <param name="catchExceptionFactory">给定的捕获异常工厂方法（可选）。</param>
-        /// <returns>返回 <typeparamref name="TResult"/>。</returns>
-        public static TResult WaitFactory<TResult>(this IMemoryLocker locker, Func<TResult> factory,
-            int? millisecondsTimeout = null, TimeSpan? timeout = null, CancellationToken? cancellationToken = null,
-            int? releaseCount = null, Func<Exception, TResult> catchExceptionFactory = null)
-            => locker.WaitFactory<Exception, TResult>(factory, millisecondsTimeout, timeout, cancellationToken, releaseCount,
-                catchExceptionFactory);
-
-        /// <summary>
-        /// 等待工厂。
-        /// </summary>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
-        /// <param name="factory">给定要等待的工厂方法。</param>
-        /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
-        /// <param name="timeout">给定的超时（可选）。</param>
-        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
-        /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
-        /// <param name="catchExceptionFactory">给定的捕获异常工厂方法（可选）。</param>
-        /// <returns>返回 <see cref="Task{TResult}"/>。</returns>
-        public static Task<TResult> WaitFactoryAsync<TResult>(this IMemoryLocker locker, Func<Task<TResult>> factory,
-            int? millisecondsTimeout = null, TimeSpan? timeout = null, CancellationToken? cancellationToken = null,
-            int? releaseCount = null, Func<Exception, TResult> catchExceptionFactory = null)
-            => locker.WaitFactoryAsync<Exception, TResult>(factory, millisecondsTimeout, timeout, cancellationToken,
-                releaseCount, catchExceptionFactory);
-
-
-        /// <summary>
-        /// 等待动作。
-        /// </summary>
-        /// <typeparam name="TException">指定的异常类型。</typeparam>
-        /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
-        /// <param name="action">给定要等待的动作方法。</param>
-        /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
-        /// <param name="timeout">给定的超时（可选）。</param>
-        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
-        /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
-        /// <param name="catchExceptionAction">给定的捕获异常动作（可选）。</param>
-        public static void WaitAction<TException>(this IMemoryLocker locker, Action action,
-            int? millisecondsTimeout = null, TimeSpan? timeout = null, CancellationToken? cancellationToken = null,
-            int? releaseCount = null, Action<TException> catchExceptionAction = null)
-            where TException : Exception
+        public static void WaitAction(this IMemoryLocker locker,
+            Action action, CancellationToken? cancellationToken = null,
+            int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
         {
             locker.NotNull(nameof(locker));
             action.NotNull(nameof(action));
 
             locker.Wait(millisecondsTimeout, timeout, cancellationToken);
 
-            try
-            {
-                action.Invoke();
-            }
-            catch (TException ex)
-            {
-                catchExceptionAction?.Invoke(ex);
-            }
-            finally
-            {
-                locker.Release(releaseCount);
-            }
+            action.Invoke();
+
+            locker.Release(releaseCount);
         }
 
         /// <summary>
-        /// 异步等待动作。
+        /// 异步等待动作方法。
         /// </summary>
-        /// <typeparam name="TException">指定的异常类型。</typeparam>
         /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
-        /// <param name="factory">给定要等待的动作方法。</param>
+        /// <param name="factory">给定执行的工厂方法。</param>
+        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
         /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
         /// <param name="timeout">给定的超时（可选）。</param>
-        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
-        /// <param name="catchExceptionAction">给定的捕获异常动作（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        public static async Task WaitActionAsync<TException>(this IMemoryLocker locker, Func<Task> factory,
-            int? millisecondsTimeout = null, TimeSpan? timeout = null, CancellationToken? cancellationToken = null,
-            int? releaseCount = null, Action<TException> catchExceptionAction = null)
-            where TException : Exception
+        public static async Task WaitActionAsync(this IMemoryLocker locker,
+            Func<Task> factory, CancellationToken? cancellationToken = null,
+            int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
         {
             locker.NotNull(nameof(locker));
             factory.NotNull(nameof(factory));
 
             await locker.WaitAsync(millisecondsTimeout, timeout, cancellationToken).ConfigureAndWaitAsync();
 
-            try
-            {
-                await factory.Invoke().ConfigureAndWaitAsync();
-            }
-            catch (TException ex)
-            {
-                catchExceptionAction?.Invoke(ex);
-            }
-            finally
-            {
-                locker.Release(releaseCount);
-            }
+            await factory.Invoke().ConfigureAndWaitAsync();
+
+            locker.Release(releaseCount);
         }
 
 
         /// <summary>
-        /// 等待工厂。
+        /// 等待工厂方法。
         /// </summary>
-        /// <typeparam name="TException">指定的异常类型。</typeparam>
         /// <typeparam name="TResult">指定的结果类型。</typeparam>
         /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
-        /// <param name="factory">给定要等待的工厂方法。</param>
+        /// <param name="factory">给定执行的工厂方法。</param>
+        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
         /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
         /// <param name="timeout">给定的超时（可选）。</param>
-        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
-        /// <param name="catchExceptionFactory">给定的捕获异常工厂方法（可选）。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
-        public static TResult WaitFactory<TException, TResult>(this IMemoryLocker locker, Func<TResult> factory,
-            int? millisecondsTimeout = null, TimeSpan? timeout = null, CancellationToken? cancellationToken = null,
-            int? releaseCount = null, Func<TException, TResult> catchExceptionFactory = null)
-            where TException : Exception
+        public static TResult WaitFactory<TResult>(this IMemoryLocker locker,
+            Func<TResult> factory, CancellationToken? cancellationToken = null,
+            int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
         {
             locker.NotNull(nameof(locker));
             factory.NotNull(nameof(factory));
 
             locker.Wait(millisecondsTimeout, timeout, cancellationToken);
 
+            var result = factory.Invoke();
+
+            locker.Release(releaseCount);
+
+            return result;
+        }
+
+        /// <summary>
+        /// 异步等待工厂方法。
+        /// </summary>
+        /// <typeparam name="TResult">指定的结果类型。</typeparam>
+        /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
+        /// <param name="factory">给定执行的工厂方法。</param>
+        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
+        /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
+        /// <param name="timeout">给定的超时（可选）。</param>
+        /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
+        /// <returns>返回 <see cref="Task{TResult}"/>。</returns>
+        public static async Task<TResult> WaitFactoryAsync<TResult>(this IMemoryLocker locker,
+            Func<Task<TResult>> factory, CancellationToken? cancellationToken = null,
+            int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
+        {
+            locker.NotNull(nameof(locker));
+            factory.NotNull(nameof(factory));
+
+            await locker.WaitAsync(millisecondsTimeout, timeout, cancellationToken).ConfigureAndWaitAsync();
+
+            var result = await factory.Invoke().ConfigureAndResultAsync();
+
+            locker.Release(releaseCount);
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// 尝试捕获异常的等待动作方法。
+        /// </summary>
+        /// <typeparam name="TException">指定的异常类型。</typeparam>
+        /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
+        /// <param name="tryAction">给定尝试执行的动作方法。</param>
+        /// <param name="catchAction">给定异常捕获的动作方法。</param>
+        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
+        /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
+        /// <param name="timeout">给定的超时（可选）。</param>
+        /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
+        public static void TryCatchWaitAction<TException>(this IMemoryLocker locker,
+            Action tryAction, Action<TException> catchAction, CancellationToken? cancellationToken = null,
+            int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
+            where TException : Exception
+        {
+            locker.NotNull(nameof(locker));
+            tryAction.NotNull(nameof(tryAction));
+            catchAction.NotNull(nameof(catchAction));
+
+            locker.Wait(millisecondsTimeout, timeout, cancellationToken);
+
             try
             {
-                return factory.Invoke();
+                tryAction.Invoke();
             }
             catch (TException ex)
             {
-                if (catchExceptionFactory.IsNull())
-                    return default;
-
-                return catchExceptionFactory.Invoke(ex);
+                catchAction.Invoke(ex);
             }
             finally
             {
@@ -205,39 +161,35 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 等待工厂。
+        /// 异步尝试捕获异常的等待动作方法。
         /// </summary>
         /// <typeparam name="TException">指定的异常类型。</typeparam>
-        /// <typeparam name="TResult">指定的结果类型。</typeparam>
         /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
-        /// <param name="factory">给定要等待的工厂方法。</param>
+        /// <param name="tryFactory">给定尝试执行的工厂方法。</param>
+        /// <param name="catchAction">给定异常捕获的动作方法。</param>
+        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
         /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
         /// <param name="timeout">给定的超时（可选）。</param>
-        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
-        /// <param name="catchExceptionFactory">给定的捕获异常工厂方法（可选）。</param>
-        /// <returns>返回 <see cref="Task{TResult}"/>。</returns>
-        public static async Task<TResult> WaitFactoryAsync<TException, TResult>(this IMemoryLocker locker,
-            Func<Task<TResult>> factory, int? millisecondsTimeout = null, TimeSpan? timeout = null,
-            CancellationToken? cancellationToken = null, int? releaseCount = null,
-            Func<TException, TResult> catchExceptionFactory = null)
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        public static async Task TryCatchWaitActionAsync<TException>(this IMemoryLocker locker,
+            Func<Task> tryFactory, Action<TException> catchAction, CancellationToken? cancellationToken = null,
+            int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
             where TException : Exception
         {
             locker.NotNull(nameof(locker));
-            factory.NotNull(nameof(factory));
+            tryFactory.NotNull(nameof(tryFactory));
+            catchAction.NotNull(nameof(catchAction));
 
             await locker.WaitAsync(millisecondsTimeout, timeout, cancellationToken).ConfigureAndWaitAsync();
 
             try
             {
-                return await factory.Invoke().ConfigureAndResultAsync();
+                await tryFactory.Invoke().ConfigureAndWaitAsync();
             }
             catch (TException ex)
             {
-                if (catchExceptionFactory.IsNull())
-                    return default;
-
-                return catchExceptionFactory.Invoke(ex);
+                catchAction.Invoke(ex);
             }
             finally
             {
@@ -245,5 +197,81 @@ namespace Librame.Extensions.Core
             }
         }
 
+
+        /// <summary>
+        /// 尝试捕获异常的等待工厂方法。
+        /// </summary>
+        /// <typeparam name="TException">指定的异常类型。</typeparam>
+        /// <typeparam name="TResult">指定的结果类型。</typeparam>
+        /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
+        /// <param name="tryFactory">给定尝试执行的工厂方法。</param>
+        /// <param name="catchFactory">给定异常捕获的工厂方法。</param>
+        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
+        /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
+        /// <param name="timeout">给定的超时（可选）。</param>
+        /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
+        /// <returns>返回 <typeparamref name="TResult"/>。</returns>
+        public static TResult TryCatchWaitFactory<TException, TResult>(this IMemoryLocker locker,
+            Func<TResult> tryFactory, Func<TException, TResult> catchFactory, CancellationToken? cancellationToken = null,
+            int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
+            where TException : Exception
+        {
+            locker.NotNull(nameof(locker));
+            tryFactory.NotNull(nameof(tryFactory));
+            catchFactory.NotNull(nameof(catchFactory));
+
+            locker.Wait(millisecondsTimeout, timeout, cancellationToken);
+
+            try
+            {
+                return tryFactory.Invoke();
+            }
+            catch (TException ex)
+            {
+                return catchFactory.Invoke(ex);
+            }
+            finally
+            {
+                locker.Release(releaseCount);
+            }
+        }
+
+        /// <summary>
+        /// 异步尝试捕获异常的等待工厂方法。
+        /// </summary>
+        /// <typeparam name="TException">指定的异常类型。</typeparam>
+        /// <typeparam name="TResult">指定的结果类型。</typeparam>
+        /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
+        /// <param name="tryFactory">给定尝试执行的工厂方法。</param>
+        /// <param name="catchFactory">给定异常捕获的工厂方法。</param>
+        /// <param name="cancellationToken">给定的取消令牌（可选）。</param>
+        /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
+        /// <param name="timeout">给定的超时（可选）。</param>
+        /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
+        /// <returns>返回 <see cref="Task{TResult}"/>。</returns>
+        public static async Task<TResult> TryCatchWaitFactoryAsync<TException, TResult>(this IMemoryLocker locker,
+            Func<Task<TResult>> tryFactory, Func<TException, TResult> catchFactory, CancellationToken? cancellationToken = null,
+            int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
+            where TException : Exception
+        {
+            locker.NotNull(nameof(locker));
+            tryFactory.NotNull(nameof(tryFactory));
+            catchFactory.NotNull(nameof(catchFactory));
+
+            await locker.WaitAsync(millisecondsTimeout, timeout, cancellationToken).ConfigureAndWaitAsync();
+
+            try
+            {
+                return await tryFactory.Invoke().ConfigureAndResultAsync();
+            }
+            catch (TException ex)
+            {
+                return catchFactory.Invoke(ex);
+            }
+            finally
+            {
+                locker.Release(releaseCount);
+            }
+        }
     }
 }

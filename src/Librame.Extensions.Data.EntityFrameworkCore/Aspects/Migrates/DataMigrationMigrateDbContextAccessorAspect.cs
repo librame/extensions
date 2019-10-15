@@ -10,14 +10,10 @@
 
 #endregion
 
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations.Design;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,7 +32,8 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     public class DataMigrationMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        : MigrateDbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+        , IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
         where TAudit : DataAudit<TGenId>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId>
@@ -54,9 +51,15 @@ namespace Librame.Extensions.Data
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public DataMigrationMigrateDbContextAccessorAspect(IClockService clock, IStoreIdentifier identifier,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, identifier, options, loggerFactory)
+            : base(clock, identifier, options, loggerFactory, priority: 1) // 迁移优先级最高
         {
         }
+
+
+        /// <summary>
+        /// 需要保存。
+        /// </summary>
+        public bool RequireSaving { get; set; }
 
 
         /// <summary>
@@ -72,16 +75,20 @@ namespace Librame.Extensions.Data
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         protected override void PostprocessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            var migration = GetMigration(dbContextAccessor, default);
+            // 存储迁移数据需作写入请求限制
+            if (!dbContextAccessor.IsWritingRequest())
+                return;
 
-            var uniqueExpression = StoreExpression.GetMigrationUniqueIndexExpression<TMigration, TGenId>(migration.ModelHash);
-            if (!dbContextAccessor.Migrations.Exists(uniqueExpression))
+            var currentMigration = GenerateMigration(dbContextAccessor);
+            var lastMigration = dbContextAccessor.Migrations.FirstOrDefaultByMax(s => s.CreatedTimeTicks);
+
+            if (lastMigration.IsNull() || !currentMigration.Equals(lastMigration))
             {
-                dbContextAccessor.Migrations.Add(migration);
-                RequiredSaveChanges = true;
+                dbContextAccessor.Migrations.Add(currentMigration);
+                RequireSaving = true;
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
-                mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = migration }).ConfigureAndWait();
+                mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = currentMigration }).ConfigureAndWait();
             }
         }
 
@@ -94,45 +101,48 @@ namespace Librame.Extensions.Data
         protected override async Task PostprocessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var migration = GetMigration(dbContextAccessor, cancellationToken);
+            // 存储迁移数据需作写入请求限制
+            if (!dbContextAccessor.IsWritingRequest())
+                return;
 
-            var uniqueExpression = StoreExpression.GetMigrationUniqueIndexExpression<TMigration, TGenId>(migration.ModelHash);
-            if (!await dbContextAccessor.Migrations.ExistsAsync(uniqueExpression, cancellationToken).ConfigureAndResultAsync())
+            var currentMigration = GenerateMigration(dbContextAccessor, cancellationToken);
+            var lastMigration = await dbContextAccessor.Migrations.FirstOrDefaultByMaxAsync(s => s.CreatedTimeTicks).ConfigureAndResultAsync();
+
+            if (lastMigration.IsNull() || !currentMigration.Equals(lastMigration))
             {
-                await dbContextAccessor.Migrations.AddAsync(migration, cancellationToken).ConfigureAndResultAsync();
-                RequiredSaveChanges = true;
+                await dbContextAccessor.Migrations.AddAsync(currentMigration, cancellationToken).ConfigureAndResultAsync();
+                RequireSaving = true;
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
-                await mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = migration }).ConfigureAndWaitAsync();
+                await mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = currentMigration }).ConfigureAndWaitAsync();
             }
         }
 
+
         /// <summary>
-        /// 获取数据迁移。
+        /// 生成数据迁移。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <typeparamref name="TMigration"/>。</returns>
-        protected virtual TMigration GetMigration(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
-            CancellationToken cancellationToken)
+        protected virtual TMigration GenerateMigration(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+            CancellationToken cancellationToken = default)
         {
             var accessorType = dbContextAccessor.GetType();
-            var modelSnapshotTypeName = new TypeNameCombiner(accessorType.Namespace, $"{accessorType.GetBodyName()}{nameof(ModelSnapshot)}");
+            var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(accessorType);
 
-            var generator = dbContextAccessor.ServiceFactory.GetRequiredService<IMigrationsCodeGenerator>();
-            var dependencyOptions = dbContextAccessor.ServiceFactory.GetRequiredService<DataBuilderDependencyOptions>();
-
-            // 生成模型快照
-            var modelSnapshot = GenerateModelSnapshot(dbContextAccessor.Model, modelSnapshotTypeName,
-                accessorType, generator, dependencyOptions);
+            // 编译模型快照
+            var modelSnapshot = ModelSnapshotCompiler.CompileInMemory(dbContextAccessor,
+                dbContextAccessor.Model, Options, modelSnapshotTypeName, accessorType);
 
             var migration = typeof(TMigration).EnsureCreate<TMigration>();
             migration.Id = GetMigrationId(cancellationToken);
             migration.AccessorName = accessorType.GetSimpleFullName();
             migration.ModelSnapshotName = modelSnapshotTypeName;
-            migration.ModelBody = modelSnapshot.Bytes;
+            migration.ModelBody = modelSnapshot.Body;
             migration.ModelHash = modelSnapshot.Hash;
             migration.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
+            migration.CreatedTimeTicks = migration.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
             migration.CreatedBy = GetType().GetBodyName();
 
             return migration;
@@ -147,65 +157,6 @@ namespace Librame.Extensions.Data
         {
             var migrationId = Identifier.GetEntityIdAsync(cancellationToken).ConfigureAndResult();
             return migrationId.CastTo<string, TGenId>(nameof(migrationId));
-        }
-
-        /// <summary>
-        /// 生成模型快照。
-        /// </summary>
-        /// <param name="model">给定的 <see cref="IModel"/>。</param>
-        /// <param name="modelSnapshotTypeName">给定的模型快照类型名。</param>
-        /// <param name="dbContextAccessorType">给定的数据库上下文访问器类型。</param>
-        /// <param name="generator">给定的 <see cref="IMigrationsCodeGenerator"/>。</param>
-        /// <param name="dependencyOptions">给定的 <see cref="DataBuilderDependencyOptions"/>。</param>
-        /// <returns>返回字节数组。</returns>
-        protected (byte[] Bytes, string Hash) GenerateModelSnapshot(IModel model, TypeNameCombiner modelSnapshotTypeName,
-            Type dbContextAccessorType, IMigrationsCodeGenerator generator, DataBuilderDependencyOptions dependencyOptions)
-        {
-            var modelSnapshotCode = generator.GenerateSnapshot(modelSnapshotTypeName.Namespace, dbContextAccessorType,
-                modelSnapshotTypeName.Name, model);
-
-            var references = GetAssemblyReferences(dbContextAccessorType);
-            if (Options.ExportModelSnapshotFilePath.IsNotEmpty())
-            {
-                FilePathCombiner filePath = Options.ExportModelSnapshotFilePath;
-                filePath.ChangeBasePathIfEmpty(dependencyOptions.BaseDirectory);
-
-                // 导出包含模型快照的程序集文件
-                ModelSnapshotCompiler.CompileInFile(filePath, references, modelSnapshotCode);
-            }
-
-            var bytes = ModelSnapshotCompiler.CompileInMemory(references, modelSnapshotCode);
-            return (bytes.Compress(), modelSnapshotCode.Sha256Base64String());
-        }
-
-        /// <summary>
-        /// 获取程序集引用集合。
-        /// </summary>
-        /// <param name="dbContextAccessorType">给定的数据库上下文访问器类型。</param>
-        /// <returns>返回 <see cref="IReadOnlyList{AssemblyReference}"/>。</returns>
-        protected virtual IReadOnlyList<AssemblyReference> GetAssemblyReferences(Type dbContextAccessorType)
-        {
-            //var baseReferences = new List<AssemblyReference>
-            //{
-            //    AssemblyReference.ByName("Microsoft.EntityFrameworkCore"),
-            //    AssemblyReference.ByName("Microsoft.EntityFrameworkCore.Relational"),
-            //    AssemblyReference.ByName("Librame.Extensions.Data.Abstractions"),
-            //    AssemblyReference.ByName("Librame.Extensions.Data.EntityFrameworkCore"),
-            //    // Add DesignTimeServices AssemblyReference,
-            //    // Add DbContextAccessor AssemblyReference,
-            //    AssemblyReference.ByName("netstandard")
-            //};
-
-            var references = new List<AssemblyReference>(Options.MigrationAssemblyReferences);
-
-            // Add DbContextAccessor AssemblyReference
-            var dbContextAccessorReference = AssemblyReference.ByAssembly(dbContextAccessorType.Assembly);
-            if (!references.Contains(dbContextAccessorReference))
-                references.Add(dbContextAccessorReference);
-
-            references.Sort();
-
-            return references.AsReadOnlyList();
         }
 
     }

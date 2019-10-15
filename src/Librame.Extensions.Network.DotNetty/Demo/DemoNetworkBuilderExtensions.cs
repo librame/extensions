@@ -10,44 +10,36 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    /// <summary>
-    /// DEMO 网络构建器静态扩展。
-    /// </summary>
     static class DemoNetworkBuilderExtensions
     {
-        /// <summary>
-        /// 增加 DEMO。
-        /// </summary>
-        /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
-        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddDemo(this INetworkBuilder builder)
+        internal static INetworkBuilder AddDemo(this INetworkBuilder builder)
         {
-            builder.Services.AddScoped<IDiscardClient, DiscardClient>();
-            builder.Services.AddScoped<IDiscardServer, DiscardServer>();
+            builder.Services.TryAddScoped<IDiscardClient, DiscardClient>();
+            builder.Services.TryAddScoped<IDiscardServer, DiscardServer>();
 
-            builder.Services.AddScoped<IEchoClient, EchoClient>();
-            builder.Services.AddScoped<IEchoServer, EchoServer>();
+            builder.Services.TryAddScoped<IEchoClient, EchoClient>();
+            builder.Services.TryAddScoped<IEchoServer, EchoServer>();
 
-            builder.Services.AddScoped<IFactorialClient, FactorialClient>();
-            builder.Services.AddScoped<IFactorialServer, FactorialServer>();
+            builder.Services.TryAddScoped<IFactorialClient, FactorialClient>();
+            builder.Services.TryAddScoped<IFactorialServer, FactorialServer>();
 
-            builder.Services.AddScoped<IHttpServer, HttpServer>();
+            builder.Services.TryAddScoped<IHttpServer, HttpServer>();
 
-            builder.Services.AddScoped<IQuoteOfTheMomentClient, QuoteOfTheMomentClient>();
-            builder.Services.AddScoped<IQuoteOfTheMomentServer, QuoteOfTheMomentServer>();
+            builder.Services.TryAddScoped<IQuoteOfTheMomentClient, QuoteOfTheMomentClient>();
+            builder.Services.TryAddScoped<IQuoteOfTheMomentServer, QuoteOfTheMomentServer>();
 
-            builder.Services.AddScoped<ISecureChatClient, SecureChatClient>();
-            builder.Services.AddScoped<ISecureChatServer, SecureChatServer>();
+            builder.Services.TryAddScoped<ISecureChatClient, SecureChatClient>();
+            builder.Services.TryAddScoped<ISecureChatServer, SecureChatServer>();
 
-            builder.Services.AddScoped<ITelnetClient, TelnetClient>();
-            builder.Services.AddScoped<ITelnetServer, TelnetServer>();
+            builder.Services.TryAddScoped<ITelnetClient, TelnetClient>();
+            builder.Services.TryAddScoped<ITelnetServer, TelnetServer>();
 
-            builder.Services.AddScoped<IWebSocketClient, WebSocketClient>();
-            builder.Services.AddScoped<IWebSocketServer, WebSocketServer>();
+            builder.Services.TryAddScoped<IWebSocketClient, WebSocketClient>();
+            builder.Services.TryAddScoped<IWebSocketServer, WebSocketServer>();
 
             return builder;
         }

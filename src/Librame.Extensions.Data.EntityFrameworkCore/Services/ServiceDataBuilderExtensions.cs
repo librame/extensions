@@ -10,16 +10,16 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Data
 {
     static class ServiceDataBuilderExtensions
     {
-        public static IDataBuilder AddServices(this IDataBuilder builder)
+        internal static IDataBuilder AddServices(this IDataBuilder builder)
         {
-            builder.Services.AddScoped(typeof(IMigrationService<,,,,,,>), typeof(MigrationService<,,,,,,>));
-            builder.Services.AddScoped(typeof(ITenantService<,,,,,,>), typeof(TenantService<,,,,,,>));
+            builder.Services.TryAddScoped(typeof(IMigrationService<,,,,,,>), typeof(MigrationService<,,,,,,>));
+            builder.Services.TryAddScoped(typeof(ITenantService<,,,,,,>), typeof(TenantService<,,,,,,>));
 
             return builder;
         }

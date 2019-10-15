@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,7 +37,8 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     public class DataEntityMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        : MigrateDbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+        , IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
         where TAudit : DataAudit<TGenId>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId>
@@ -57,9 +59,15 @@ namespace Librame.Extensions.Data
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public DataEntityMigrateDbContextAccessorAspect(IClockService clock, IStoreIdentifier identifier,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, identifier, options, loggerFactory)
+            : base(clock, identifier, options, loggerFactory, priority: 2)
         {
         }
+
+
+        /// <summary>
+        /// 需要保存。
+        /// </summary>
+        public bool RequireSaving { get; set; }
 
 
         /// <summary>
@@ -82,15 +90,52 @@ namespace Librame.Extensions.Data
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         protected override void PostprocessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            var diff = GetDifference(dbContextAccessor);
-            if (diff.IsNotEmpty())
-            {
-                dbContextAccessor.Entities.AddRange(diff);
-                _cache.AddRange(diff);
-                RequiredSaveChanges = true;
+            // 注册实体需作写入请求限制
+            if (!dbContextAccessor.IsWritingRequest())
+                return;
 
+            EntityNotification<TEntity, TGenId> notification = null;
+
+            var result = GetDifference(dbContextAccessor);
+
+            if (result.Adds.IsNotEmpty())
+            {
+                dbContextAccessor.Entities.AddRangeAsync(result.Adds);
+                _cache.AddRange(result.Adds);
+
+                RequireSaving = true;
+
+                notification = new EntityNotification<TEntity, TGenId> { Adds = result.Adds };
+            }
+
+            if (result.Updates.IsNotEmpty())
+            {
+                dbContextAccessor.Entities.UpdateRange(result.Updates);
+                result.Updates.ForEach(item => _cache.Remove(item));
+                _cache.AddRange(result.Updates);
+
+                RequireSaving = true;
+
+                notification = new EntityNotification<TEntity, TGenId> { Updates = result.Updates };
+            }
+
+            if (result.Removes.IsNotEmpty())
+            {
+                dbContextAccessor.Entities.RemoveRange(result.Removes);
+                result.Removes.ForEach(item => _cache.Remove(item));
+
+                RequireSaving = true;
+
+                if (notification.IsNull())
+                    notification = new EntityNotification<TEntity, TGenId> { Removes = result.Removes };
+                else
+                    notification.Removes = result.Removes;
+            }
+
+            if (notification.IsNotNull())
+            {
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
-                mediator.Publish(new EntityNotification<TEntity, TGenId> { Entities = diff }).ConfigureAndWait();
+                mediator.Publish(notification).ConfigureAndWait();
             }
         }
 
@@ -103,15 +148,41 @@ namespace Librame.Extensions.Data
         protected override async Task PostprocessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var diff = GetDifference(dbContextAccessor, cancellationToken);
-            if (diff.IsNotEmpty())
-            {
-                await dbContextAccessor.Entities.AddRangeAsync(diff, cancellationToken).ConfigureAndWaitAsync();
-                _cache.AddRange(diff);
-                RequiredSaveChanges = true;
+            // 注册实体需作写入请求限制
+            if (!dbContextAccessor.IsWritingRequest())
+                return;
 
+            EntityNotification<TEntity, TGenId> notification = null;
+
+            var result = GetDifference(dbContextAccessor, cancellationToken);
+            if (result.Adds.IsNotEmpty())
+            {
+                await dbContextAccessor.Entities.AddRangeAsync(result.Adds, cancellationToken).ConfigureAndWaitAsync();
+                _cache.AddRange(result.Adds);
+
+                RequireSaving = true;
+
+                if (notification.IsNull())
+                    notification = new EntityNotification<TEntity, TGenId> { Adds = result.Adds };
+            }
+
+            if (result.Removes.IsNotEmpty())
+            {
+                dbContextAccessor.Entities.RemoveRange(result.Removes);
+                result.Removes.ForEach(item => _cache.Remove(item));
+
+                RequireSaving = true;
+
+                if (notification.IsNull())
+                    notification = new EntityNotification<TEntity, TGenId> { Removes = result.Removes };
+                else
+                    notification.Removes = result.Removes;
+            }
+
+            if (notification.IsNotNull())
+            {
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
-                await mediator.Publish(new EntityNotification<TEntity, TGenId> { Entities = diff }).ConfigureAndWaitAsync();
+                await mediator.Publish(notification).ConfigureAndWaitAsync();
             }
         }
 
@@ -120,40 +191,83 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="List{DataEntity}"/>。</returns>
-        protected virtual List<TEntity> GetDifference(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+        /// <returns>返回包含添加、更新以及删除的 <see cref="List{DataEntity}"/> 元组。</returns>
+        protected virtual (List<TEntity> Adds, List<TEntity> Updates, List<TEntity> Removes) GetDifference(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
             if (_cache.IsEmpty())
             {
-                var entitis = dbContextAccessor.Entities.ToList();
-                if (entitis.IsNotEmpty())
-                    _cache.AddRange(entitis);
+                var dbEntitis = dbContextAccessor.Entities.ToList();
+                if (dbEntitis.IsNotEmpty())
+                    _cache.AddRange(dbEntitis);
             }
 
-            var diff = dbContextAccessor.Model.GetEntityTypes()
-                .Select(s => GetEntity(s, cancellationToken))
-                .ToList();
+            var modelEntities = dbContextAccessor.Model.GetEntityTypes()
+                .Select(s => GenerateEntity(s, cancellationToken)).ToList();
 
-            if (_cache.IsNotEmpty())
-                diff = diff.Except(_cache).ToList();
+            // 如果缓存不为空且全等于模型实体集合，则直接返回
+            if (_cache.IsNotEmpty() && modelEntities.SequencePropertyValuesEquals(_cache))
+            {
+                return (null, null, null);
+            }
 
-            return diff;
+            //if (_cache.IsNotEmpty())
+            //    modelEntities = modelEntities.Except(_cache).ToList();
+
+            // 双向同步
+            var adds = new List<TEntity>();
+            var updates = new List<TEntity>();
+            var removes = new List<TEntity>();
+
+            foreach (var entity in modelEntities.Union(_cache))
+            {
+                // 查找唯一索引
+                var cacheEntity = _cache.FirstOrDefault(p => p.Equals(entity));
+                var modelEntity = modelEntities.FirstOrDefault(p => p.Equals(entity));
+
+                if (cacheEntity.IsNull())
+                {
+                    // 缓存不存在则表示添加
+                    adds.Add(entity);
+                    continue;
+                }
+                else if (modelEntity.IsNull() && !entity.IsSharding)
+                {
+                    // 生成实体不存在且实体未分表，则表示删除
+                    removes.Add(entity);
+                    continue;
+                }
+                else if (!cacheEntity.PropertyValuesEquals(modelEntity))
+                {
+                    // 缓存存在但属性值集合不全等，则表示更新
+                    modelEntity.Id = cacheEntity.Id;
+                    modelEntity.CreatedTime = cacheEntity.CreatedTime;
+
+                    updates.Add(modelEntity); // 以模型生成的实体为主体
+                    continue;
+                }
+                else
+                {
+                }
+            }
+
+            return (adds, updates, removes);
         }
 
         /// <summary>
-        /// 获取数据实体。
+        /// 生成数据实体。
         /// </summary>
         /// <param name="entityType">给定的 <see cref="IEntityType"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <typeparamref name="TEntity"/>。</returns>
-        protected virtual TEntity GetEntity(IEntityType entityType, CancellationToken cancellationToken)
+        protected virtual TEntity GenerateEntity(IEntityType entityType, CancellationToken cancellationToken)
         {
             var entity = typeof(TEntity).EnsureCreate<TEntity>();
             entity.Id = GetEntityId(cancellationToken);
             entity.EntityName = entityType.ClrType.GetSimpleFullName();
             entity.AssemblyName = entityType.ClrType.GetSimpleAssemblyName();
             entity.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
+            entity.CreatedTimeTicks = entity.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
             entity.CreatedBy = GetType().GetBodyName();
 
             if (entityType.ClrType.TryGetCustomAttribute(out DescriptionAttribute descr)
@@ -164,6 +278,8 @@ namespace Librame.Extensions.Data
 
             entity.Name = entityType.GetTableName();
             entity.Schema = entityType.GetSchema();
+            entity.IsSharding = entityType.ClrType.TryGetCustomAttribute(out ShardingTableAttribute attribute)
+                && attribute.Mode == ShardingTableMode.Create;
 
             if (entity.Name.IsEmpty())
                 SetDefaultTableName(entity, entityType);

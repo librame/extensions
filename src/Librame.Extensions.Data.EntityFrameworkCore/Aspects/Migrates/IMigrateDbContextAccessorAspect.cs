@@ -14,8 +14,6 @@ using System;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
-
     /// <summary>
     /// 迁移数据库上下文访问器截面接口（通常用于后置保存变化操作）。
     /// </summary>
@@ -37,19 +35,8 @@ namespace Librame.Extensions.Data
         where TIncremId : IEquatable<TIncremId>
     {
         /// <summary>
-        /// 时钟服务。
+        /// 需要保存。
         /// </summary>
-        IClockService Clock { get; }
-
-        /// <summary>
-        /// 标识符。
-        /// </summary>
-        IStoreIdentifier Identifier { get; }
-
-
-        /// <summary>
-        /// 需要保存变化。
-        /// </summary>
-        bool RequiredSaveChanges { get; set; }
+        bool RequireSaving { get; set; }
     }
 }

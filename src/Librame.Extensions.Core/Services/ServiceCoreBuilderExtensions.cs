@@ -10,23 +10,23 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Core
 {
     static class ServiceCoreBuilderExtensions
     {
-        public static ICoreBuilder AddServices(this ICoreBuilder builder)
+        internal static ICoreBuilder AddServices(this ICoreBuilder builder)
         {
-            builder.Services.AddTransient<ServiceFactoryDelegate>(serviceProvider => serviceProvider.GetService);
+            builder.Services.TryAddTransient<ServiceFactoryDelegate>(serviceProvider => serviceProvider.GetService);
 
-            builder.Services.AddScoped(typeof(IServicesManager<>), typeof(ServicesManager<>));
-            builder.Services.AddScoped(typeof(IServicesManager<,>), typeof(ServicesManager<,>));
+            builder.Services.TryAddTransient(typeof(IServicesManager<,>), typeof(ServicesManager<,>));
+            builder.Services.TryAddScoped(typeof(IServicesManager<>), typeof(ServicesManager<>));
 
-            builder.Services.AddScoped<IClockService, ClockService>();
-            builder.Services.AddScoped<IHumanizationService, HumanizationService>();
-            builder.Services.AddScoped<IInjectionService, InjectionService>();
-            builder.Services.AddScoped<IEnvironmentService, EnvironmentService>();
+            builder.Services.TryAddScoped<IClockService, ClockService>();
+            builder.Services.TryAddScoped<IHumanizationService, HumanizationService>();
+            builder.Services.TryAddScoped<IInjectionService, InjectionService>();
+            builder.Services.TryAddScoped<IEnvironmentService, EnvironmentService>();
 
             return builder;
         }

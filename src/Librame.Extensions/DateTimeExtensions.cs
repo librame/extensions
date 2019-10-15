@@ -20,6 +20,38 @@ namespace Librame.Extensions
     /// </summary>
     public static class DateTimeExtensions
     {
+        private static readonly Type _dateTimeType
+            = typeof(DateTime);
+
+        private static readonly Type _dateTimeOffsetType
+            = typeof(DateTimeOffset);
+
+
+        /// <summary>
+        /// 是日期与时间类型。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsDateTimeType(this Type type)
+            => _dateTimeType.Equals(type);
+
+        /// <summary>
+        /// 是日期与时间偏移类型。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsDateTimeOffsetType(this Type type)
+            => _dateTimeOffsetType.Equals(type);
+
+        /// <summary>
+        /// 是日期与时间或偏移类型。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsDateTimeOrOffsetType(this Type type)
+            => type.IsDateTimeType() || type.IsDateTimeOffsetType();
+
+
         /// <summary>
         /// 转换为文件名。
         /// </summary>
@@ -61,13 +93,13 @@ namespace Librame.Extensions
             if (containsDate)
             {
                 // 长度 22
-                return CombineFileTime(dateTime.ToString("yyyyMMddHHmmssfff", CultureInfo.CurrentCulture),
-                    dateTime.ToFileTime().ToString(CultureInfo.CurrentCulture));
+                return CombineFileTime(dateTime.ToString("yyyyMMddHHmmssfff", CultureInfo.InvariantCulture),
+                    dateTime.ToFileTime().ToString(CultureInfo.InvariantCulture));
             }
 
             // 长度 14
-            return CombineFileTime(dateTime.ToString("HHmmssfff", CultureInfo.CurrentCulture),
-                dateTime.ToFileTime().ToString(CultureInfo.CurrentCulture));
+            return CombineFileTime(dateTime.ToString("HHmmssfff", CultureInfo.InvariantCulture),
+                dateTime.ToFileTime().ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -82,13 +114,13 @@ namespace Librame.Extensions
             if (containsDate)
             {
                 // 长度 22
-                return CombineFileTime(dateTimeOffset.ToString("yyyyMMddHHmmssfff", CultureInfo.CurrentCulture),
-                    dateTimeOffset.ToFileTime().ToString(CultureInfo.CurrentCulture));
+                return CombineFileTime(dateTimeOffset.ToString("yyyyMMddHHmmssfff", CultureInfo.InvariantCulture),
+                    dateTimeOffset.ToFileTime().ToString(CultureInfo.InvariantCulture));
             }
 
             // 长度 14
-            return CombineFileTime(dateTimeOffset.ToString("HHmmssfff", CultureInfo.CurrentCulture),
-                dateTimeOffset.ToFileTime().ToString(CultureInfo.CurrentCulture));
+            return CombineFileTime(dateTimeOffset.ToString("HHmmssfff", CultureInfo.InvariantCulture),
+                dateTimeOffset.ToFileTime().ToString(CultureInfo.InvariantCulture));
         }
 
         private static string CombineFileTime(string dateTime, string fileTime)

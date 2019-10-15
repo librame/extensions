@@ -66,6 +66,7 @@ namespace Librame.Extensions.Data
                     b.Property(p => p.EntityId).HasMaxLength(maxLength);
                     b.Property(p => p.StateName).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
+                    b.Property(p => p.CreatedTimeTicks).HasMaxLength(maxLength);
                 }
             });
 
@@ -102,6 +103,7 @@ namespace Librame.Extensions.Data
                 b.Property(p => p.Id).HasMaxLength(256);
                 b.Property(p => p.Schema).HasMaxLength(256).IsRequired();
                 b.Property(p => p.Name).HasMaxLength(256).IsRequired();
+                b.Property(p => p.IsSharding).HasDefaultValue(false);
 
                 if (maxLength > 0)
                 {
@@ -109,6 +111,7 @@ namespace Librame.Extensions.Data
                     b.Property(p => p.AssemblyName).HasMaxLength(maxLength);
                     b.Property(p => p.Description).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
+                    b.Property(p => p.CreatedTimeTicks).HasMaxLength(maxLength);
                 }
             });
 
@@ -119,7 +122,8 @@ namespace Librame.Extensions.Data
 
                 b.HasKey(k => k.Id);
 
-                b.HasIndex(i => i.ModelHash).HasName().IsUnique();
+                // 不做唯一索引
+                b.HasIndex(i => i.ModelHash).HasName();
 
                 b.Property(p => p.Id).HasMaxLength(256);
                 b.Property(p => p.ModelHash).HasMaxLength(256).IsRequired();
@@ -129,6 +133,7 @@ namespace Librame.Extensions.Data
                     b.Property(p => p.AccessorName).HasMaxLength(maxLength);
                     b.Property(p => p.ModelSnapshotName).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
+                    b.Property(p => p.CreatedTimeTicks).HasMaxLength(maxLength);
                 }
             });
 
@@ -150,6 +155,9 @@ namespace Librame.Extensions.Data
                     b.Property(p => p.DefaultConnectionString).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.WritingConnectionString).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
+                    b.Property(p => p.CreatedTimeTicks).HasMaxLength(maxLength);
+                    b.Property(p => p.UpdatedBy).HasMaxLength(maxLength);
+                    b.Property(p => p.UpdatedTimeTicks).HasMaxLength(maxLength);
                 }
             });
         }

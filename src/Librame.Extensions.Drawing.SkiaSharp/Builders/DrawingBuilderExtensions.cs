@@ -10,13 +10,13 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Librame.Extensions;
+using Librame.Extensions.Core;
+using Librame.Extensions.Drawing;
 using System;
 
-namespace Librame.Extensions.Drawing
+namespace Microsoft.Extensions.DependencyInjection
 {
-    using Core;
-
     /// <summary>
     /// 图画构建器静态扩展。
     /// </summary>

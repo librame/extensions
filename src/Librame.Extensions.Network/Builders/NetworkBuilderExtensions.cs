@@ -10,13 +10,13 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Librame.Extensions;
+using Librame.Extensions.Core;
+using Librame.Extensions.Network;
 using System;
 
-namespace Librame.Extensions.Network
+namespace Microsoft.Extensions.DependencyInjection
 {
-    using Core;
-
     /// <summary>
     /// 网络构建器静态扩展。
     /// </summary>

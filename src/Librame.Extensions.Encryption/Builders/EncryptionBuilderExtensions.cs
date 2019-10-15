@@ -10,13 +10,13 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Librame.Extensions;
+using Librame.Extensions.Core;
+using Librame.Extensions.Encryption;
 using System;
 
-namespace Librame.Extensions.Encryption
+namespace Microsoft.Extensions.DependencyInjection
 {
-    using Core;
-
     /// <summary>
     /// 加密构建器静态扩展。
     /// </summary>

@@ -21,7 +21,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>, IRank<float>, IStatus<DataStatus>
+    public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>, ISortable<float>, IStatus<DataStatus>
         where TId : IEquatable<TId>
     {
         /// <summary>
@@ -42,7 +42,7 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
     [NotMapped]
-    public abstract class AbstractEntity<TId, TRank, TStatus> : AbstractId<TId>, IRank<TRank>, IStatus<TStatus>
+    public abstract class AbstractEntity<TId, TRank, TStatus> : AbstractId<TId>, ISortable<TRank>, IStatus<TStatus>
         where TId : IEquatable<TId>
         where TRank : struct
         where TStatus : struct

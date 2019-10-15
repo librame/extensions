@@ -36,7 +36,8 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     public class DataAuditSaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        : SaveChangesDbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+        , ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
         where TAudit : DataAudit<TGenId>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId>
@@ -54,7 +55,7 @@ namespace Librame.Extensions.Data
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public DataAuditSaveChangesDbContextAccessorAspect(IClockService clock, IStoreIdentifier identifier,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, identifier, options, loggerFactory)
+            : base(clock, identifier, options, loggerFactory, priority: 1)
         {
         }
 
@@ -195,19 +196,24 @@ namespace Librame.Extensions.Data
 
             if (entry.State == EntityState.Modified && entry.Entity is IUpdation updation)
             {
+                // 使用实体更新时间
                 audit.CreatedTime = ToDateTime(updation.GetUpdatedTime(), cancellationToken);
                 audit.CreatedBy = ToBy(updation.GetUpdatedBy());
             }
             else if (entry.Entity is ICreation creation)
             {
+                // 使用实体创建时间
                 audit.CreatedTime = ToDateTime(creation.GetCreatedTime(), cancellationToken);
                 audit.CreatedBy = ToBy(creation.GetCreatedBy());
             }
             else
             {
+                // 使用当前时间
                 audit.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true,
                     cancellationToken).ConfigureAndResult();
             }
+
+            audit.CreatedTimeTicks = audit.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
 
             return new KeyValuePair<TAudit, List<TAuditProperty>>(audit, auditProperties);
         }
@@ -264,7 +270,7 @@ namespace Librame.Extensions.Data
             if (obj is DateTime dateTime)
                 return new DateTimeOffset(dateTime);
 
-            return DateTimeOffset.Parse(obj.ToString(), CultureInfo.CurrentCulture);
+            return DateTimeOffset.Parse(obj.ToString(), CultureInfo.InvariantCulture);
         }
 
         /// <summary>

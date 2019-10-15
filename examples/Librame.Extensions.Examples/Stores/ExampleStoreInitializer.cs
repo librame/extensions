@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Librame.Extensions.Examples
@@ -52,6 +53,11 @@ namespace Librame.Extensions.Examples
                     }
                 };
 
+                _categories.ForEach(category =>
+                {
+                    category.CreatedTimeTicks = category.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+                });
+
                 accessor.Categories.AddRange(_categories);
                 RequiredSaveChanges = true;
             }
@@ -67,19 +73,21 @@ namespace Librame.Extensions.Examples
             {
                 var articles = new List<Article>();
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < 10; i++)
                 {
-                    var articleId = Identifier.GetArticleIdAsync().ConfigureAndResult();
-
-                    articles.Add(new Article
+                    var article = new Article
                     {
-                        Id = articleId,
+                        Id = Identifier.GetArticleIdAsync().ConfigureAndResult(),
                         Title = $"{nameof(Article)} {i.FormatString(3)}",
                         Descr = $"{nameof(Article.Descr)} {i.FormatString(3)}",
-                        Category = (i < 50) ? _categories.First() : _categories.Last(),
+                        Category = (i < 5) ? _categories.First() : _categories.Last(),
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
                         CreatedBy = GetType().GetSimpleName()
-                    });
+                    };
+
+                    article.CreatedTimeTicks = article.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+
+                    articles.Add(article);
                 }
 
                 stores.Articles.AddRange(articles);

@@ -30,7 +30,7 @@ namespace Librame.Extensions.Network
 
 
         public CrawlerService(IMemoryCache memoryCache, IServicesManager<IUriRequester, HttpClientRequester> requesters)
-            : base(requesters.Default.CastTo<IUriRequester, NetworkServiceBase>(nameof(requesters)))
+            : base(requesters.DefaultService.CastTo<IUriRequester, NetworkServiceBase>(nameof(requesters)))
         {
             _memoryCache = memoryCache.NotNull(nameof(memoryCache));
             _requesters = requesters;
@@ -141,7 +141,7 @@ namespace Librame.Extensions.Network
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromSeconds(Options.Crawler.CacheExpirationSeconds));
 
-                return _requesters.Default.GetResponseStringAsync(url, postData,
+                return _requesters.DefaultService.GetResponseStringAsync(url, postData,
                     cancellationToken: cancellationToken);
             });
         }

@@ -13,6 +13,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace Librame.Extensions.Data
 {
@@ -21,7 +22,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractEntityCreation<TId> : AbstractEntityCreation<TId, string, DateTimeOffset>
+    public abstract class AbstractEntityCreation<TId> : AbstractEntityCreation<TId, string, DateTimeOffset>, ICreatedTimeTicks
         where TId : IEquatable<TId>
     {
         /// <summary>
@@ -30,7 +31,15 @@ namespace Librame.Extensions.Data
         public AbstractEntityCreation()
         {
             CreatedTime = DataDefaults.UtcNowOffset;
+            CreatedTimeTicks = CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
         }
+
+
+        /// <summary>
+        /// 创建时间周期数。
+        /// </summary>
+        [Display(Name = nameof(CreatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
+        public virtual string CreatedTimeTicks { get; set; }
     }
 
 
@@ -66,7 +75,7 @@ namespace Librame.Extensions.Data
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     /// <typeparam name="TCreatedTime">指定的创建时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
     [NotMapped]
-    public abstract class AbstractEntityCreation<TId, TRank, TStatus, TCreatedBy, TCreatedTime> : AbstractCreation<TId, TCreatedBy, TCreatedTime>, IRank<TRank>, IStatus<TStatus>
+    public abstract class AbstractEntityCreation<TId, TRank, TStatus, TCreatedBy, TCreatedTime> : AbstractCreation<TId, TCreatedBy, TCreatedTime>, ISortable<TRank>, IStatus<TStatus>
         where TId : IEquatable<TId>
         where TRank : struct
         where TStatus : struct

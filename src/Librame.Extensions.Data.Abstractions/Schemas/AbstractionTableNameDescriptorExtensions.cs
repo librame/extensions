@@ -35,7 +35,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public static TableNameDescriptor ChangeDateSuffixByYear(this TableNameDescriptor descriptor)
-            => descriptor?.ChangeDateSuffix(now => now.ToString("yy", CultureInfo.CurrentCulture));
+            => descriptor?.ChangeDateSuffix(now => now.ToString("yy", CultureInfo.InvariantCulture));
 
         /// <summary>
         /// 改变日期后缀为年份月份（即按年月进行分表；参考：_1910）。
@@ -43,7 +43,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public static TableNameDescriptor ChangeDateSuffixByYearMonth(this TableNameDescriptor descriptor)
-            => descriptor?.ChangeDateSuffix(now => now.ToString("yyMM", CultureInfo.CurrentCulture));
+            => descriptor?.ChangeDateSuffix(now => now.ToString("yyMM", CultureInfo.InvariantCulture));
 
         /// <summary>
         /// 改变日期后缀为年份周数（即按年周进行分表；参考：_1925）。
@@ -51,7 +51,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public static TableNameDescriptor ChangeDateSuffixByYearWeek(this TableNameDescriptor descriptor)
-            => descriptor?.ChangeDateSuffix(now => $"{now.ToString("yy", CultureInfo.CurrentCulture)}{now.AsWeekOfYear().FormatString(2)}");
+            => descriptor?.ChangeDateSuffix(now => $"{now.ToString("yy", CultureInfo.InvariantCulture)}{now.AsWeekOfYear().FormatString(2)}");
 
         /// <summary>
         /// 改变日期后缀为年份季度（即按年季度进行分表；参考：_1903）。
@@ -59,7 +59,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public static TableNameDescriptor ChangeDateSuffixByYearQuarter(this TableNameDescriptor descriptor)
-            => descriptor?.ChangeDateSuffix(now => $"{now.ToString("yy", CultureInfo.CurrentCulture)}{now.AsQuarterOfYear().FormatString(2)}");
+            => descriptor?.ChangeDateSuffix(now => $"{now.ToString("yy", CultureInfo.InvariantCulture)}{now.AsQuarterOfYear().FormatString(2)}");
 
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public static TableNameDescriptor ChangeDateOffsetSuffixByYear(this TableNameDescriptor descriptor)
-            => descriptor?.ChangeDateOffsetSuffix(now => now.ToString("yy", CultureInfo.CurrentCulture));
+            => descriptor?.ChangeDateOffsetSuffix(now => now.ToString("yy", CultureInfo.InvariantCulture));
 
         /// <summary>
         /// 改变日期后缀为年份月份（即按年月进行分表；参考：_1910）。
@@ -76,7 +76,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public static TableNameDescriptor ChangeDateOffsetSuffixByYearMonth(this TableNameDescriptor descriptor)
-            => descriptor?.ChangeDateOffsetSuffix(now => now.ToString("yyMM", CultureInfo.CurrentCulture));
+            => descriptor?.ChangeDateOffsetSuffix(now => now.ToString("yyMM", CultureInfo.InvariantCulture));
 
         /// <summary>
         /// 改变日期后缀为年份周数（即按年周进行分表；参考：_1925）。
@@ -84,7 +84,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public static TableNameDescriptor ChangeDateOffsetSuffixByYearWeek(this TableNameDescriptor descriptor)
-            => descriptor?.ChangeDateOffsetSuffix(now => $"{now.ToString("yy", CultureInfo.CurrentCulture)}{now.AsWeekOfYear().FormatString(2)}");
+            => descriptor?.ChangeDateOffsetSuffix(now => $"{now.ToString("yy", CultureInfo.InvariantCulture)}{now.AsWeekOfYear().FormatString(2)}");
 
         /// <summary>
         /// 改变日期后缀为年份季度（即按年季度进行分表；参考：_1903）。
@@ -92,6 +92,6 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
         public static TableNameDescriptor ChangeDateOffsetSuffixByYearQuarter(this TableNameDescriptor descriptor)
-            => descriptor?.ChangeDateOffsetSuffix(now => $"{now.ToString("yy", CultureInfo.CurrentCulture)}{now.AsQuarterOfYear().FormatString(2)}");
+            => descriptor?.ChangeDateOffsetSuffix(now => $"{now.ToString("yy", CultureInfo.InvariantCulture)}{now.AsQuarterOfYear().FormatString(2)}");
     }
 }

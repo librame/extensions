@@ -18,8 +18,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 自注册服务特性。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class,
-        AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class AutoRegistrationServiceAttribute : Attribute
     {
         /// <summary>

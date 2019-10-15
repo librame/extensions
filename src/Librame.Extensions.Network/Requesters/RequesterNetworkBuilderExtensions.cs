@@ -11,15 +11,20 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Collections.Generic;
 
 namespace Librame.Extensions.Network
 {
     static class RequesterNetworkBuilderExtensions
     {
-        public static INetworkBuilder AddRequesters(this INetworkBuilder builder)
+        internal static INetworkBuilder AddRequesters(this INetworkBuilder builder)
         {
-            builder.Services.AddScoped<IUriRequester, HttpClientRequester>();
-            builder.Services.AddScoped<IUriRequester, HttpWebRequester>();
+            builder.Services.TryAddEnumerable(new List<ServiceDescriptor>
+            {
+                ServiceDescriptor.Scoped<IUriRequester, HttpClientRequester>(),
+                ServiceDescriptor.Scoped<IUriRequester, HttpWebRequester>()
+            });
 
             return builder;
         }

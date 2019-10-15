@@ -10,18 +10,18 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Librame.Extensions.Encryption
 {
     static class ServiceEncryptionBuilderExtensions
     {
-        public static IEncryptionBuilder AddServices(this IEncryptionBuilder builder)
+        internal static IEncryptionBuilder AddServices(this IEncryptionBuilder builder)
         {
-            builder.Services.AddScoped<IHashService, HashService>();
-            builder.Services.AddScoped<IKeyedHashService, KeyedHashService>();
-            builder.Services.AddScoped<IRsaService, RsaService>();
-            builder.Services.AddScoped<ISymmetricService, SymmetricService>();
+            builder.Services.TryAddScoped<IHashService, HashService>();
+            builder.Services.TryAddScoped<IKeyedHashService, KeyedHashService>();
+            builder.Services.TryAddScoped<IRsaService, RsaService>();
+            builder.Services.TryAddScoped<ISymmetricService, SymmetricService>();
 
             return builder;
         }

@@ -10,14 +10,16 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Librame.Extensions;
+using Librame.Extensions.Core;
+using Librame.Extensions.Encryption;
+using Librame.Extensions.Network;
+using Librame.Extensions.Network.DotNetty;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Microsoft.Extensions.DependencyInjection
 {
-    using Core;
-    using Encryption;
-
     /// <summary>
     /// DotNetty 网络构建器静态扩展。
     /// </summary>
@@ -78,10 +80,10 @@ namespace Librame.Extensions.Network.DotNetty
 
         private static INetworkBuilder AddWrappers(this INetworkBuilder builder)
         {
-            builder.Services.AddScoped<IBootstrapWrapperFactory, BootstrapWrapperFactory>();
-            builder.Services.AddScoped<IBootstrapWrapper, BootstrapWrapper>();
-            builder.Services.AddScoped<IServerBootstrapWrapper, ServerBootstrapWrapper>();
-            builder.Services.AddScoped(typeof(IBootstrapWrapper<,>), typeof(BootstrapWrapper<,>));
+            builder.Services.TryAddScoped<IBootstrapWrapperFactory, BootstrapWrapperFactory>();
+            builder.Services.TryAddScoped<IBootstrapWrapper, BootstrapWrapper>();
+            builder.Services.TryAddScoped<IServerBootstrapWrapper, ServerBootstrapWrapper>();
+            builder.Services.TryAddScoped(typeof(IBootstrapWrapper<,>), typeof(BootstrapWrapper<,>));
 
             return builder;
         }

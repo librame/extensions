@@ -73,6 +73,11 @@ namespace Librame.Extensions.Data
         public string CreatedTime { get; set; }
 
         /// <summary>
+        /// 创建时间周期数。
+        /// </summary>
+        public string CreatedTimeTicks { get; set; }
+
+        /// <summary>
         /// 创建者。
         /// </summary>
         public string CreatedBy { get; set; }
@@ -81,6 +86,11 @@ namespace Librame.Extensions.Data
         /// 更新时间。
         /// </summary>
         public string UpdatedTime { get; set; }
+
+        /// <summary>
+        /// 更新时间周期数。
+        /// </summary>
+        public string UpdatedTimeTicks { get; set; }
 
         /// <summary>
         /// 更新者。

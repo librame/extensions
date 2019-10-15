@@ -10,13 +10,13 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Librame.Extensions;
+using Librame.Extensions.Core;
+using Librame.Extensions.Storage;
 using System;
 
-namespace Librame.Extensions.Storage
+namespace Microsoft.Extensions.DependencyInjection
 {
-    using Core;
-
     /// <summary>
     /// 存储构建器静态扩展。
     /// </summary>

@@ -16,6 +16,8 @@ namespace Librame.Extensions.Data.Tests
 
         public DbSet<Article> Articles { get; set; }
 
+        //public DbSet<TestEntity> TestEntities { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,7 +47,23 @@ namespace Librame.Extensions.Data.Tests
                 b.Property(x => x.Id).HasMaxLength(256);
                 b.Property(x => x.Title).HasMaxLength(256).IsRequired();
             });
-        }
 
+            //modelBuilder.Entity<TestEntity>(b =>
+            //{
+            //    b.ToTable();
+
+            //    b.HasKey(x => x.Id);
+
+            //    b.Property(x => x.Id).ValueGeneratedOnAdd();
+            //    b.Property(x => x.Name).HasMaxLength(256);
+            //});
+        }
+    }
+
+    public class TestEntity : IId<int>
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; }
     }
 }

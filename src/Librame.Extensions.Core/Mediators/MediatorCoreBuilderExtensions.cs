@@ -11,20 +11,25 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Collections.Generic;
 
 namespace Librame.Extensions.Core
 {
     static class MediatorCoreBuilderExtensions
     {
-        public static ICoreBuilder AddMediators(this ICoreBuilder builder)
+        internal static ICoreBuilder AddMediators(this ICoreBuilder builder)
         {
-            builder.Services.AddTransient(typeof(IRequestPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
-            builder.Services.AddTransient(typeof(IRequestPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
+            builder.Services.TryAddEnumerable(new List<ServiceDescriptor>
+            {
+                ServiceDescriptor.Transient(typeof(IRequestPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>)),
+                ServiceDescriptor.Transient(typeof(IRequestPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>))
+            });
 
-            builder.Services.AddTransient(typeof(IRequestHandlerWrapper<,>), typeof(RequestHandlerWrapper<,>));
-            builder.Services.AddTransient(typeof(INotificationHandlerWrapper<>), typeof(NotificationHandlerWrapper<>));
+            builder.Services.TryAddTransient(typeof(IRequestHandlerWrapper<,>), typeof(RequestHandlerWrapper<,>));
+            builder.Services.TryAddTransient(typeof(INotificationHandlerWrapper<>), typeof(NotificationHandlerWrapper<>));
 
-            builder.Services.AddScoped<IMediator, ServiceFactoryMediator>();
+            builder.Services.TryAddScoped<IMediator, ServiceFactoryMediator>();
 
             return builder;
         }
