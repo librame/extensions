@@ -1,4 +1,4 @@
-#Librame Design Guidelines 设计准则
+# Librame Design Guidelines 设计准则
 Updated in 2019-10-24
 
 Mainly follow the NET framework design guidelines, please refer to the [links](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/) for details. 主要遵循 C#/.NET 框架设计准则，详情参考此[链接](https://docs.microsoft.com/zh-cn/dotnet/standard/design-guidelines/)。
@@ -221,7 +221,7 @@ For example, IComponent (descriptive noun), ICustomAttributeProvider (noun phras
 ** ✓ CONSIDER ** using T as the type parameter name for types with one single-letter type parameter.
 ** ✓ 考虑 ** 使用 T 作为具有一个单字母类型参数的类型的类型参数名称。
 
-```
+```c#
 public int IComparer<T> { ... }  
 public delegate bool Predicate<T>(T item);  
 public struct Nullable<T> where T:struct { ... }
@@ -230,7 +230,7 @@ public struct Nullable<T> where T:struct { ... }
 ** ✓ DO ** prefix descriptive type parameter names with T.
 ** ✓ 务必 ** 使用 T 作为描述性类型参数名称的前缀。
 
-```
+```c#
 public interface ISessionChannel<TSession> where TSession : ISession {  
     TSession Session { get; }  
 }
@@ -328,7 +328,7 @@ Because methods are the means of taking action, the design guidelines require th
 ** ✓ DO ** give methods names that are verbs or verb phrases.
 ** ✓ 务必 ** 使用谓词或谓词短语作为方法名称。
 
-```
+```c#
 public class String {  
     public int CompareTo(...);  
     public string[] Split(...);  
@@ -347,7 +347,7 @@ Unlike other members, properties should be given noun phrase or adjective names.
 ** X DO NOT ** have properties that match the name of "Get" methods as in the following example:
 ** X 不要 ** 设立与 "Get" 方法名称匹配的属性，如下例所示：
 
-```
+```c#
 public string TextWriter { get {...} set {...} }
 public string GetTextWriter(int value) { ... }
 ```
@@ -367,7 +367,7 @@ This pattern typically indicates that the property should really be a method.
 For example, the following property correctly gets and sets an enum value named Color, so the property is named Color:
 例如，以下属性正确获取并设置了名为 Color 的枚举值，因此该属性名为 Color：
 
-```
+```c#
 public enum Color {...}  
 public class Control {  
     public Color Color { get {...} set {...} }  
@@ -397,7 +397,7 @@ For example, a close event that is raised before a window is closed would be cal
 ** ✓ DO ** name event handlers (delegates used as types of events) with the "EventHandler" suffix, as shown in the following example:
 请使用 “EventHandler” 后缀来命名事件处理程序（用作事件类型的委托），如以下示例所示：
 
-```
+```c#
 public delegate void ClickedEventHandler(object sender, ClickedEventArgs e);
 ```
 
@@ -478,7 +478,7 @@ Because localizable resources can be referenced via certain objects as if they w
 The resource identifier should be the exception type name plus a short identifier of the exception:
 资源标识符应为异常类型名称加上异常的短标识符：
 
-```
+```c#
 ArgumentExceptionIllegalCharacters
 ArgumentExceptionInvalidName
 ArgumentExceptionFileNameIsMalformed
@@ -750,7 +750,7 @@ For example, an enum passed to a method defined on a class should not be defined
 
 成员重载意味着在同一类型上创建两个或多个成员，这些成员仅在参数的数量或类型中不同，但具有相同的名称。 例如，在下面的中，将重载 WriteLine 方法：
 
-```
+```c#
 public static class Console {  
     public void WriteLine();  
     public void WriteLine(string value);  
