@@ -93,7 +93,7 @@ Rule References 规则参考
 **X 不要** 在标识符名称中使用缩写形式或缩略形式。
 
 For example, use GetWindow rather than GetWin.  
-使用 GetWindow 而非 GetWin。
+例如，使用 GetWindow 而非 GetWin。
 
 **X DO NOT** use any acronyms that are not widely accepted, and even if they are, only when necessary.  
 **X 不要** 使用任何不常用的首字母缩写形式，即使是常用形式，也应只在必要时使用。
@@ -417,7 +417,7 @@ sender 参数表示引发事件的对象。sender 参数的类型通常是 objec
 **✓ DO** name event argument classes with the "EventArgs" suffix.  
 **✓ 务必** 使用“EventArgs”后缀来命名事件参数类。
 
-** Names of Fields 字段的名称
+### Names of Fields 字段的名称
 
 The field-naming guidelines apply to static public and protected fields. Internal and private fields are not covered by guidelines, and public or protected instance fields are not allowed by the member design guidelines.  
 字段命名准则适用于静态公共字段和受保护字段。 准则不适用于内部字段和专用字段，成员设计准则不允许使用公共或受保护的实例字段。
@@ -690,14 +690,14 @@ Consider calling the value something like "None." If such a value is not appropr
 3. A smaller underlying type would result in substantial savings in space. If you expect the enum to be used mainly as an argument for flow of control, the size makes little difference. The size savings might be significant if:  
    较小的基础类型将大大节省空间。如果希望将枚举主要用作控制流的参数，则大小差别不大。如果符合以下条件，则可以大大节省空间：
 
-    *You expect the enum to be used as a field in a very frequently instantiated structure or class.  
-    *希望将枚举在非常频繁实例化的结构或类中用作字段。
+    * You expect the enum to be used as a field in a very frequently instantiated structure or class.  
+    * 希望将枚举在非常频繁实例化的结构或类中用作字段。
 
-    *You expect users to create large arrays or collections of the enum instances.  
-    *希望用户创建枚举实例的大型数组或集合。
+    * You expect users to create large arrays or collections of the enum instances.  
+    * 希望用户创建枚举实例的大型数组或集合。
 
-    *You expect a large number of instances of the enum to be serialized.  
-    *希望序列化大量枚举实例。
+    * You expect a large number of instances of the enum to be serialized.  
+    * 希望序列化大量枚举实例。
 
 **✓ DO** name flag enums with plural nouns or noun phrases and simple enums with singular nouns or noun phrases.  
 **✓ 务必** 为标志枚举使用复数名词或名词短语命名，为简单枚举使用单数名词或名词短语命名。
@@ -807,14 +807,14 @@ Because only methods, constructors, and indexed properties can have parameters, 
 **✓ DO** allow null to be passed for optional arguments.  
 **✓ 务必** 允许为可选参数传递 null 值。
 
-~~**✓ DO** use member overloading rather than defining members with default arguments.  
-~~**✓ 务必** 使用成员重载，而不是使用默认参数定义成员。
+~~**✓ DO** use member overloading rather than defining members with default arguments.~~  
+~~**✓ 务必** 使用成员重载，而不是使用默认参数定义成员。~~
 
-~~Default arguments are not CLS compliant.  
-~~默认参数不符合 CLS。
+~~Default arguments are not CLS compliant.~~  
+~~默认参数不符合 CLS。~~
 
-It is recommended to define members with default parameters first, which reduces member overloading.  
-推荐优先使用默认参数定义成员，这样可以减少成员重载。
+**✓** It is recommended to define members with default parameters first, which reduces member overloading.  
+**✓** 推荐优先使用默认参数定义成员，这样可以减少成员重载。
 
 ## [Property Design](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/property) [属性设计](https://docs.microsoft.com/zh-cn/dotnet/standard/design-guidelines/property)
 
