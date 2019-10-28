@@ -36,31 +36,31 @@ Rule References 规则参考
 
 | Pascal 帕斯卡      | Camel 驼峰     | Not 不是                                  |
 |------------------  |--------------  |-----------------------------------------  |
-| BitFlag            | bitFlag        | Bitflag                                   |
-| Callback           | callback       | CallBack                                  |
-| Canceled           | canceled       | Cancelled                                 |
-| DoNot              | doNot          | Don't                                     |
-| Email              | email          | EMail                                     |
-| Endpoint           | endpoint       | EndPoint                                  |
-| FileName           | fileName       | Filename                                  |
-| Gridline           | gridline       | GridLine                                  |
-| Hashtable          | hashtable      | HashTable                                 |
-| Id                 | id             | ID                                        |
-| Indexes            | indexes        | Indices                                   |
-| LogOff             | logOff         | LogOut                                    |
-| LogOn              | logOn          | LogIn                                     |
-| Metadata           | metadata       | MetaData, metaData                        |
-| Multipanel         | multipanel     | MultiPanel                                |
-| Multiview          | multiview      | MultiView                                 |
-| Namespace          | namespace      | NameSpace                                 |
-| Ok                 | ok             | OK                                        |
-| Pi                 | pi             | PI                                        |
-| Placeholder        | placeholder    | PlaceHolder                               |
-| SignIn             | signIn         | SignOn                                    |
-| SignOut            | signOut        | SignOff                                   |
-| UserName           | userName       | Username                                  |
-| WhiteSpace         | whiteSpace     | Whitespace                                |
-| Writable           | writable       | Writeable                                 |
+| BitFlag            | bitFlag        | ~~Bitflag~~                               |
+| Callback           | callback       | ~~CallBack~~                              |
+| Canceled           | canceled       | ~~Cancelled~~                             |
+| DoNot              | doNot          | ~~Don't~~                                 |
+| Email              | email          | ~~EMail~~                                 |
+| Endpoint           | endpoint       | ~~EndPoint~~                              |
+| FileName           | fileName       | ~~Filename~~                              |
+| Gridline           | gridline       | ~~GridLine~~                              |
+| Hashtable          | hashtable      | ~~HashTable~~                             |
+| Id                 | id             | ~~ID~~                                    |
+| Indexes            | indexes        | ~~Indices~~                               |
+| LogOff             | logOff         | ~~LogOut~~                                |
+| LogOn              | logOn          | ~~LogIn~~                                 |
+| Metadata           | metadata       | ~~MetaData, metaData~~                    |
+| Multipanel         | multipanel     | ~~MultiPanel~~                            |
+| Multiview          | multiview      | ~~MultiView~~                             |
+| Namespace          | namespace      | ~~NameSpace~~                             |
+| Ok                 | ok             | ~~OK~~                                    |
+| Pi                 | pi             | ~~PI~~                                    |
+| Placeholder        | placeholder    | ~~PlaceHolder~~                           |
+| SignIn             | signIn         | ~~SignOn~~                                |
+| SignOut            | signOut        | ~~SignOff~~                               |
+| UserName           | userName       | ~~Username~~                              |
+| WhiteSpace         | whiteSpace     | ~~Whitespace~~                            |
+| Writable           | writable       | ~~Writeable~~                             |
 
 ### Case Sensitivity 区分大小写
 
@@ -496,24 +496,24 @@ ArgumentExceptionFileNameIsMalformed
 # [Type Design Guidelines](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/type) [类型设计准则](https://docs.microsoft.com/zh-cn/dotnet/standard/design-guidelines/type)
 
 **✓ DO** ensure that each type is a well-defined set of related members, not just a random collection of unrelated functionality.  
-确保每个类型中的成员相互关联，而不仅仅是将不相关的功能集合在一起。
+**✓ 确保** 每个类型中的成员相互关联，而不仅仅是将不相关的功能集合在一起。
 
 ## [Choosing Between Class and Struct](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/choosing-between-class-and-struct) [在类和结构之间选择](https://docs.microsoft.com/zh-cn/dotnet/standard/design-guidelines/choosing-between-class-and-struct)
 
-*First, allocations and deallocations of value types are in general cheaper than allocations and deallocations of reference types.  
-*首先，值类型的分配和释放通常比引用类型的分配和释放开销更低。
+* First, allocations and deallocations of value types are in general cheaper than allocations and deallocations of reference types.  
+    首先，值类型的分配和释放通常比引用类型的分配和释放开销更低。
 
-*Next, allocations and deallocations of value type arrays are much cheaper than allocations and deallocations of reference type arrays. In addition, in a majority of cases value type arrays exhibit much better locality of reference.  
-*其次，值类型数组的分配和释放比引用类型数组的分配和释放开销更低。此外，在大多数情况下，值类型数组具有更好的引用地址。
+* Next, allocations and deallocations of value type arrays are much cheaper than allocations and deallocations of reference type arrays. In addition, in a majority of cases value type arrays exhibit much better locality of reference.  
+    其次，值类型数组的分配和释放比引用类型数组的分配和释放开销更低。此外，在大多数情况下，值类型数组具有更好的引用地址。
 
 Otherwise, Value types get boxed when cast to a reference type or one of the interfaces they implement. They get unboxed when cast back to the value type. In contrast, no such boxing occurs as reference types are cast.  
 另外，当值类型转换为引用类型或它们实现的接口之一时，该值类型会被装箱。它们在转回值类型时会被拆箱。相反，在转换引用类型时不会发生这样的装箱。
 
-*Next, reference type assignments copy the reference, whereas value type assignments copy the entire value. Therefore, assignments of large reference types are cheaper than assignments of large value types.  
-*再次，引用类型的赋值复制引用，而值类型的赋值复制整个值。因此，大型引用类型的赋值比大型值类型的赋值开销更低。
+* Next, reference type assignments copy the reference, whereas value type assignments copy the entire value. Therefore, assignments of large reference types are cheaper than assignments of large value types.  
+    再次，引用类型的赋值复制引用，而值类型的赋值复制整个值。因此，大型引用类型的赋值比大型值类型的赋值开销更低。
 
-*Finally, reference types are passed by reference, whereas value types are passed by value. Changes to an instance of a reference type affect all references pointing to the instance. Value type instances are copied when they are passed by value. When an instance of a value type is changed, it of course does not affect any of its copies.  
-*最后，引用类型通过引用传递，而值类型通过值传递。对引用类型实例的更改会影响指向该实例的所有引用。值类型实例在按值传递时被复制。 当更改值类型的实例时，它当然不会影响其任何副本。
+* Finally, reference types are passed by reference, whereas value types are passed by value. Changes to an instance of a reference type affect all references pointing to the instance. Value type instances are copied when they are passed by value. When an instance of a value type is changed, it of course does not affect any of its copies.  
+    最后，引用类型通过引用传递，而值类型通过值传递。对引用类型实例的更改会影响指向该实例的所有引用。值类型实例在按值传递时被复制。 当更改值类型的实例时，它当然不会影响其任何副本。
 
 As a rule of thumb, the majority of types in a framework should be classes. There are, however, some situations in which the characteristics of a value type make it more appropriate to use structs.  
 一般来说，框架中的大多数类型应该是类。但是，在某些情况下，值类型的特征使得其更适合使用结构。
@@ -691,13 +691,13 @@ Consider calling the value something like "None." If such a value is not appropr
    较小的基础类型将大大节省空间。如果希望将枚举主要用作控制流的参数，则大小差别不大。如果符合以下条件，则可以大大节省空间：
 
     * You expect the enum to be used as a field in a very frequently instantiated structure or class.  
-    * 希望将枚举在非常频繁实例化的结构或类中用作字段。
+        希望将枚举在非常频繁实例化的结构或类中用作字段。
 
     * You expect users to create large arrays or collections of the enum instances.  
-    * 希望用户创建枚举实例的大型数组或集合。
+        希望用户创建枚举实例的大型数组或集合。
 
     * You expect a large number of instances of the enum to be serialized.  
-    * 希望序列化大量枚举实例。
+        希望序列化大量枚举实例。
 
 **✓ DO** name flag enums with plural nouns or noun phrases and simple enums with singular nouns or noun phrases.  
 **✓ 务必** 为标志枚举使用复数名词或名词短语命名，为简单枚举使用单数名词或名词短语命名。
