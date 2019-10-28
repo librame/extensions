@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -23,68 +24,72 @@ namespace Librame.Extensions
     public static class StringExtensions
     {
         /// <summary>
-        /// 向当前字符串末尾附加不存在的字符（如果末尾已存在则不附加并直接返回当前字符串）。
+        /// 确保字符串以指定字符开始。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="str"/> or <paramref name="append"/> is null.
+        /// <paramref name="str"/> or <paramref name="value"/> is null.
         /// </exception>
         /// <param name="str">给定的当前字符串。</param>
-        /// <param name="append">给定的附加字符。</param>
+        /// <param name="value">给定要确保的字符。</param>
         /// <returns>返回字符串。</returns>
-        public static string AppendEndsWithout(this string str, char append)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
+        public static string EnsureLeading(this string str, char value)
         {
             str.NotEmpty(nameof(str));
-            return str.EndsWith(append) ? str : $"{str}{append}";
+            return str.StartsWith(value) ? str : $"{value}{str}";
         }
 
         /// <summary>
-        /// 向当前字符串末尾附加不存在的字符串（如果末尾已存在则不附加并直接返回当前字符串）。
+        /// 确保字符串以指定字符串开始。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="str"/> or <paramref name="append"/> is null.
+        /// <paramref name="str"/> or <paramref name="value"/> is null.
         /// </exception>
         /// <param name="str">给定的当前字符串。</param>
-        /// <param name="append">给定的附加字符串。</param>
+        /// <param name="value">给定要确保的字符串。</param>
         /// <param name="comparisonType">给定的 <see cref="StringComparison"/>（可选；默认忽略大小写）。</param>
         /// <returns>返回字符串。</returns>
-        public static string AppendEndsWithout(this string str, string append,
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
+        public static string EnsureLeading(this string str, string value,
             StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
             str.NotEmpty(nameof(str));
-            return str.EndsWith(append, comparisonType) ? str : $"{str}{append}";
+            return str.StartsWith(value, comparisonType) ? str : $"{value}{str}";
         }
 
 
         /// <summary>
-        /// 向当前字符串起始插入不存在的字符（如果起始已存在则不插入并直接返回当前字符串）。
+        /// 确保字符串以指定字符结尾。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="str"/> or <paramref name="insert"/> is null.
+        /// <paramref name="str"/> or <paramref name="value"/> is null.
         /// </exception>
         /// <param name="str">给定的当前字符串。</param>
-        /// <param name="insert">给定的插入字符。</param>
+        /// <param name="value">给定要确保的字符。</param>
         /// <returns>返回字符串。</returns>
-        public static string InsertStartsWithout(this string str, char insert)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
+        public static string EnsureTrailing(this string str, char value)
         {
             str.NotEmpty(nameof(str));
-            return str.StartsWith(insert) ? str : $"{insert}{str}";
+            return str.EndsWith(value) ? str : $"{str}{value}";
         }
 
         /// <summary>
-        /// 向当前字符串起始插入不存在的字符串（如果起始已存在则不插入并直接返回当前字符串）。
+        /// 确保字符串以指定字符串结尾。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="str"/> or <paramref name="insert"/> is null.
+        /// <paramref name="str"/> or <paramref name="value"/> is null.
         /// </exception>
         /// <param name="str">给定的当前字符串。</param>
-        /// <param name="insert">给定的插入字符串。</param>
+        /// <param name="value">给定要确保的字符串。</param>
         /// <param name="comparisonType">给定的 <see cref="StringComparison"/>（可选；默认忽略大小写）。</param>
         /// <returns>返回字符串。</returns>
-        public static string InsertStartsWithout(this string str, string insert,
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
+        public static string EnsureTrailing(this string str, string value,
             StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
             str.NotEmpty(nameof(str));
-            return str.StartsWith(insert, comparisonType) ? str : $"{insert}{str}";
+            return str.EndsWith(value, comparisonType) ? str : $"{str}{value}";
         }
 
 
@@ -157,27 +162,93 @@ namespace Librame.Extensions
         #region Naming Conventions
 
         /// <summary>
-        /// 包含一到多个单词，每一个单词第一个字母大写，其余字母均小写。例如：HelloWorld 等。
+        /// 将单词转换为对应首字符大写的形式。如将 hello 转换为 Hello。
         /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// words 为空或空字符串。
-        /// </exception>
-        /// <param name="words">给定的英文单词（多个单词以空格区分）。</param>
+        /// <param name="word">给定的英文单词。</param>
+        /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsPascalCasing(this string[] words)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "word")]
+        [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
+        public static string AsPascalCasing(this string word, char separator)
         {
-            words.NotNull(nameof(words));
-
-            string str = string.Empty;
-            foreach (var w in words)
-            {
-                // 首字母大写，其余字母均小写
-                str += char.ToUpper(w[0], CultureInfo.InvariantCulture) + w.Substring(1).ToLower(CultureInfo.InvariantCulture);
-            }
-
-            return str;
+            word.NotEmpty(nameof(word));
+            return string.Join(separator, word.Split(separator).AsPascalCasing());
         }
 
+        /// <summary>
+        /// 将单词转换为对应首字符大写的形式。如将 hello 转换为 Hello。
+        /// </summary>
+        /// <param name="word">给定的英文单词。</param>
+        /// <param name="separator">给定的分隔符（可选）。</param>
+        /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "word")]
+        [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
+        public static string AsPascalCasing(this string word, string separator = null)
+        {
+            word.NotEmpty(nameof(word));
+
+            if (separator.IsNotEmpty() && word.Contains(separator, StringComparison.OrdinalIgnoreCase))
+                return string.Join(separator, word.Split(separator).AsPascalCasing());
+
+            return char.ToUpperInvariant(word[0]) + word.Substring(1);
+        }
+
+        /// <summary>
+        /// 将数组的各单词转换为对应首字符大写的形式。如将 hello 转换为 Hello。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// words 为空或空字符串数组。
+        /// </exception>
+        /// <param name="words">给定的英文单词数组。</param>
+        /// <returns>返回字符串数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "words")]
+        [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
+        public static string[] AsPascalCasing(this string[] words)
+        {
+            words.NotEmpty(nameof(words));
+
+            var array = new string[words.Length];
+            words.ForEach((word, i) =>
+            {
+                // 首字符大写
+                array[i] = char.ToUpperInvariant(word[0]) + word.Substring(1);
+            });
+
+            return array;
+        }
+
+
+        /// <summary>
+        /// 将单词转换为对应首字符小写的形式。如将 Hello 转换为 hello。
+        /// </summary>
+        /// <param name="word">给定的英文单词。</param>
+        /// <param name="separator">给定的分隔符。</param>
+        /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "word")]
+        [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
+        public static string AsCamelCasing(this string word, char separator)
+        {
+            word.NotEmpty(nameof(word));
+            return string.Join(separator, word.Split(separator).AsCamelCasing());
+        }
+
+        /// <summary>
+        /// 将单词转换为对应首字符小写的形式。如将 Hello 转换为 hello。
+        /// </summary>
+        /// <param name="word">给定的英文单词。</param>
+        /// <param name="separator">给定的分隔符（可选）。</param>
+        /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "word")]
+        [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
+        public static string AsCamelCasing(this string word, string separator = null)
+        {
+            word.NotEmpty(nameof(word));
+
+            if (separator.IsNotEmpty() && word.Contains(separator, StringComparison.OrdinalIgnoreCase))
+                return string.Join(separator, word.Split(separator).AsCamelCasing());
+
+            return char.ToLowerInvariant(word[0]) + word.Substring(1);
+        }
 
         /// <summary>
         /// 包含一到多个单词，第一个单词小写，其余单词中每一个单词第一个字母大写，其余字母均小写。例如：helloWorld 等。
@@ -187,24 +258,29 @@ namespace Librame.Extensions
         /// </exception>
         /// <param name="words">给定的英文单词（多个单词以空格区分）。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsCamelCasing(this string[] words)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "words")]
+        [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
+        public static string[] AsCamelCasing(this string[] words)
         {
-            words.NotNull(nameof(words));
+            words.NotEmpty(nameof(words));
 
-            // 首单词小写
-            string str = words[0].ToLower(CultureInfo.InvariantCulture);
+            var array = new string[words.Length];
+
+            // 首单词首字符小写
+            var first = words[0];
+            array[0] = char.ToLowerInvariant(first[0]) + first.Substring(1);
+
             if (words.Length > 1)
             {
                 for (var i = 1; i < words.Length; i++)
                 {
-                    var w = words[i];
-
-                    // 首字母大写，其余字母均小写
-                    str += char.ToUpper(w[0], CultureInfo.InvariantCulture) + w.Substring(1).ToLower(CultureInfo.InvariantCulture);
+                    // 首字符大写
+                    var word = words[i];
+                    array[i] = char.ToUpperInvariant(word[0]) + word.Substring(1);
                 }
             }
 
-            return str;
+            return array;
         }
 
         #endregion
@@ -289,12 +365,88 @@ namespace Librame.Extensions
         /// <param name="pair">给定的键值对字符串。</param>
         /// <param name="separator">给定字符串包含的分隔符（可选；默认为等号）。</param>
         /// <returns>返回键值对。</returns>
-        public static KeyValuePair<string, string> SplitPair(this string pair, string separator = "=")
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pair")]
+        public static KeyValuePair<string, string> SplitPair(this string pair, char separator = '=')
         {
             pair.NotEmpty(nameof(pair));
-            //separator.NotEmpty(nameof(separator));
 
             var separatorIndex = pair.IndexOf(separator, StringComparison.OrdinalIgnoreCase);
+            var name = pair.Substring(0, separatorIndex);
+            var value = pair.Substring(separatorIndex + 1);
+
+            return new KeyValuePair<string, string>(name, value);
+        }
+
+        /// <summary>
+        /// 分拆键值对字符串。
+        /// </summary>
+        /// <example>
+        /// var pair = "key==-value";
+        /// return (Key:key, Value:=-value).
+        /// </example>
+        /// <exception cref="ArgumentNullException">
+        /// pair or separator is empty.
+        /// </exception>
+        /// <param name="pair">给定的键值对字符串。</param>
+        /// <param name="separator">给定字符串包含的分隔符。</param>
+        /// <returns>返回键值对。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pair")]
+        public static KeyValuePair<string, string> SplitPair(this string pair, string separator)
+        {
+            pair.NotEmpty(nameof(pair));
+
+            var separatorIndex = pair.IndexOf(separator, StringComparison.OrdinalIgnoreCase);
+            var name = pair.Substring(0, separatorIndex);
+            var value = pair.Substring(separatorIndex + separator.Length);
+
+            return new KeyValuePair<string, string>(name, value);
+        }
+
+
+        /// <summary>
+        /// 分拆键值对字符串。
+        /// </summary>
+        /// <example>
+        /// var pair = "key==-value";
+        /// return (Key:key, Value:=-value).
+        /// </example>
+        /// <exception cref="ArgumentNullException">
+        /// pair or separator is empty.
+        /// </exception>
+        /// <param name="pair">给定的键值对字符串。</param>
+        /// <param name="separator">给定字符串包含的分隔符（可选；默认为等号）。</param>
+        /// <returns>返回键值对。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pair")]
+        public static KeyValuePair<string, string> SplitPairByLastIndexOf(this string pair, char separator = '=')
+        {
+            pair.NotEmpty(nameof(pair));
+
+            var separatorIndex = pair.LastIndexOf(separator);
+            var name = pair.Substring(0, separatorIndex);
+            var value = pair.Substring(separatorIndex + 1);
+
+            return new KeyValuePair<string, string>(name, value);
+        }
+
+        /// <summary>
+        /// 分拆键值对字符串。
+        /// </summary>
+        /// <example>
+        /// var pair = "key==-value";
+        /// return (Key:key, Value:=-value).
+        /// </example>
+        /// <exception cref="ArgumentNullException">
+        /// pair or separator is empty.
+        /// </exception>
+        /// <param name="pair">给定的键值对字符串。</param>
+        /// <param name="separator">给定字符串包含的分隔符。</param>
+        /// <returns>返回键值对。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pair")]
+        public static KeyValuePair<string, string> SplitPairByLastIndexOf(this string pair, string separator)
+        {
+            pair.NotEmpty(nameof(pair));
+
+            var separatorIndex = pair.LastIndexOf(separator, StringComparison.OrdinalIgnoreCase);
             var name = pair.Substring(0, separatorIndex);
             var value = pair.Substring(separatorIndex + separator.Length);
 

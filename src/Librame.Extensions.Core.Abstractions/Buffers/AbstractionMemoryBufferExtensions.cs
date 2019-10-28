@@ -13,9 +13,9 @@
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 可读写的连续内存缓冲区静态扩展。
+    /// 抽象可读写的连续内存缓冲区静态扩展。
     /// </summary>
-    public static class MemoryBufferExtensions
+    public static class AbstractionMemoryBufferExtensions
     {
         /// <summary>
         /// 转换为 <see cref="MemoryBuffer{T}"/>。

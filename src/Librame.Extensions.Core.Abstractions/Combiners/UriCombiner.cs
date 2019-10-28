@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -381,7 +382,7 @@ namespace Librame.Extensions.Core
         public static ConcurrentDictionary<string, string> FromQuery(string queryString)
         {
             var queries = new ConcurrentDictionary<string, string>();
-
+            
             if (queryString.IsNotEmpty())
             {
                 queryString.TrimStart('?').Split('&').ForEach(segment =>

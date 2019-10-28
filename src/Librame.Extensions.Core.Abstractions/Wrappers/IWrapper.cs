@@ -10,20 +10,18 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
-using System;
-
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 服务接口。
+    /// 封装器接口。
     /// </summary>
-    public interface IService : IDisposable
+    /// <typeparam name="TSource">指定的源类型。</typeparam>
+    public interface IWrapper<out TSource>
+        where TSource : class
     {
         /// <summary>
-        /// 日志工厂。
+        /// 源实例。
         /// </summary>
-        /// <value>返回 <see cref="ILoggerFactory"/>。</value>
-        ILoggerFactory LoggerFactory { get; }
+        TSource Source { get; }
     }
 }

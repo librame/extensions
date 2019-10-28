@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -29,6 +30,7 @@ namespace Librame.Extensions
         /// <param name="provider">指定的 <see cref="ICustomAttributeProvider"/>。</param>
         /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
         /// <returns>返回是否已定义此特性的布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "provider")]
         public static bool IsDefined<TAttribute>(this ICustomAttributeProvider provider, bool inherit = false)
             where TAttribute : Attribute
             => provider.NotNull(nameof(provider)).IsDefined(typeof(TAttribute), inherit);
@@ -43,12 +45,14 @@ namespace Librame.Extensions
         /// <param name="provider">指定的 <see cref="ICustomAttributeProvider"/>。</param>
         /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
         /// <returns>返回自定义特性。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "provider")]
         public static TAttribute GetCustomAttribute<TAttribute>(this ICustomAttributeProvider provider, bool inherit = false)
             where TAttribute : Attribute
         {
             var attributes = provider.NotNull(nameof(provider)).GetCustomAttributes(typeof(TAttribute), inherit);
             return !attributes.IsEmpty() ? (TAttribute)attributes[0] : null;
         }
+
         /// <summary>
         /// 得到特性集合。
         /// </summary>
@@ -56,12 +60,14 @@ namespace Librame.Extensions
         /// <param name="provider">指定的 <see cref="ICustomAttributeProvider"/>。</param>
         /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
         /// <returns>返回自定义特性集合。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "provider")]
         public static IEnumerable<TAttribute> GetCustomAttributes<TAttribute>(this ICustomAttributeProvider provider, bool inherit = false)
             where TAttribute : Attribute
         {
             var attributes = provider.NotNull(nameof(provider)).GetCustomAttributes(typeof(TAttribute), inherit);
             return !attributes.IsEmpty() ? attributes.Select(attrib => (TAttribute)attrib) : null;
         }
+
 
         /// <summary>
         /// 尝试得到特性。
@@ -71,13 +77,14 @@ namespace Librame.Extensions
         /// <param name="attribute">输出得到的自定义特性。</param>
         /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
         /// <returns>返回是否得到自定义特性的布尔值。</returns>
-        public static bool TryGetCustomAttribute<TAttribute>(this ICustomAttributeProvider provider,
-            out TAttribute attribute, bool inherit = false)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "provider")]
+        public static bool TryGetCustomAttribute<TAttribute>(this ICustomAttributeProvider provider, out TAttribute attribute, bool inherit = false)
             where TAttribute : Attribute
         {
             attribute = provider.GetCustomAttribute<TAttribute>(inherit);
             return attribute.IsNotNull();
         }
+
         /// <summary>
         /// 尝试得到特性集合。
         /// </summary>
@@ -86,6 +93,7 @@ namespace Librame.Extensions
         /// <param name="attributes">输出得到的自定义特性。</param>
         /// <param name="inherit">指定是否搜索该成员的继承链以查找这些特性。</param>
         /// <returns>返回是否得到自定义特性集合的布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "provider")]
         public static bool TryGetCustomAttributes<TAttribute>(this ICustomAttributeProvider provider,
             out IEnumerable<TAttribute> attributes, bool inherit = false)
             where TAttribute : Attribute

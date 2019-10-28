@@ -43,9 +43,9 @@ namespace Librame.Extensions.Core
         /// <param name="configureAction">给定的配置动作（可选）。</param>
         /// <returns>返回 <typeparamref name="TDependencyOptions"/>。</returns>
         public static TDependencyOptions ConfigureDependency<TDependencyOptions>(this Action<TDependencyOptions> configureAction)
-            where TDependencyOptions : class, IExtensionBuilderDependencyOptions, new()
+            where TDependencyOptions : class, IExtensionBuilderDependencyOptions
         {
-            var options = new TDependencyOptions();
+            var options = typeof(TDependencyOptions).EnsureCreate<TDependencyOptions>();
 
             // configureAction = dependency.Configuration = ...;
             configureAction?.Invoke(options);

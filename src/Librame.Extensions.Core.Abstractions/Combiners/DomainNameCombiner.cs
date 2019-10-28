@@ -463,8 +463,8 @@ namespace Librame.Extensions.Core
                 return false;
             }
 
-            if (host.Contains(":"))
-                host = host.SplitPair(":").Key;
+            if (host.Contains(':', StringComparison.OrdinalIgnoreCase))
+                host = host.SplitPair(':').Key;
 
             if (host.IsIPAddress(out IPAddress address))
             {

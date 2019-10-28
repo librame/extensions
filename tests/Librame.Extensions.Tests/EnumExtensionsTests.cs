@@ -41,7 +41,7 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void AsEnumDictionaryTest()
         {
-            var dict = typeof(TestEnum).AsEnumDictionary();
+            var dict = typeof(TestEnum).AsEnumValuesDictionary();
             Assert.False(dict.IsEmpty());
 
             var dict2 = typeof(TestEnum).AsEnumDictionary(f => f.GetCustomAttribute<DescriptionAttribute>());

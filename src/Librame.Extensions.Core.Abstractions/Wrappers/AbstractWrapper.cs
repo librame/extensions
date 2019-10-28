@@ -10,30 +10,28 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 可用特性。
+    /// 抽象封装器。
     /// </summary>
-    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
-    public class AvailableAttribute : Attribute
+    /// <typeparam name="TSource">指定的源类型。</typeparam>
+    public abstract class AbstractWrapper<TSource> : IWrapper<TSource>
+        where TSource : class
     {
         /// <summary>
-        /// 构造一个 <see cref="AvailableAttribute"/>。
+        /// 构造一个抽象封装器。
         /// </summary>
-        /// <param name="enabled">是否启用此特性。</param>
-        public AvailableAttribute(bool enabled)
-            : base()
+        /// <param name="source">给定的 <typeparamref name="TSource"/>。</param>
+        protected AbstractWrapper(TSource source)
         {
-            Enabled = enabled;
+            Source = source.NotNull(nameof(source));
         }
 
 
         /// <summary>
-        /// 启用特性。
+        /// 源实例。
         /// </summary>
-        public bool Enabled { get; set; }
+        public TSource Source { get; }
     }
 }

@@ -22,10 +22,10 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构造一个 <see cref="AbstractService"/>。
         /// </summary>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractService(ILoggerFactory loggerFactory)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>（可选）。</param>
+        protected AbstractService(ILoggerFactory loggerFactory = null)
         {
-            LoggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
+            LoggerFactory = loggerFactory;
         }
 
 
@@ -40,13 +40,13 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <value>返回 <see cref="ILogger"/>。</value>
         protected virtual ILogger Logger
-            => LoggerFactory.CreateLogger(GetType());
+            => LoggerFactory?.CreateLogger(GetType());
 
 
         /// <summary>
         /// 释放服务。
         /// </summary>
         protected override void DisposeCore()
-            => Logger.LogTrace($"The {GetType().GetSimpleFullName()} was disposed.");
+            => Logger?.LogTrace($"The {GetType().GetSimpleFullName()} was disposed.");
     }
 }

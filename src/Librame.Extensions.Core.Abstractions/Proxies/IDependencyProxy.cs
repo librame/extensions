@@ -13,9 +13,20 @@
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 字符型可读写的连续内存缓冲区接口。
+    /// 依赖代理接口。
     /// </summary>
-    public interface ICharMemoryBuffer : IMemoryBuffer<char>
+    /// <typeparam name="TInterface">指定的接口类型。</typeparam>
+    public interface IDependencyProxy<TInterface>
+        where TInterface : class
     {
+        /// <summary>
+        /// 调用依赖。
+        /// </summary>
+        IInvokeDependency<TInterface> Dependency { get; }
+
+        /// <summary>
+        /// 源实例。
+        /// </summary>
+        TInterface Source { get; set; }
     }
 }

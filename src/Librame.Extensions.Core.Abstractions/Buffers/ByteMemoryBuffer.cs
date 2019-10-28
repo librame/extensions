@@ -15,25 +15,26 @@ using System;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 可用特性。
+    /// 字节型可读写的连续内存缓冲区。
     /// </summary>
-    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
-    public class AvailableAttribute : Attribute
+    public class ByteMemoryBuffer : MemoryBuffer<byte>, IByteMemoryBuffer
     {
         /// <summary>
-        /// 构造一个 <see cref="AvailableAttribute"/>。
+        /// 构造一个 <see cref="ByteMemoryBuffer"/>。
         /// </summary>
-        /// <param name="enabled">是否启用此特性。</param>
-        public AvailableAttribute(bool enabled)
-            : base()
+        /// <param name="memory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
+        public ByteMemoryBuffer(Memory<byte> memory)
+            : base(memory)
         {
-            Enabled = enabled;
         }
 
-
         /// <summary>
-        /// 启用特性。
+        /// 构造一个 <see cref="ByteMemoryBuffer"/>。
         /// </summary>
-        public bool Enabled { get; set; }
+        /// <param name="array">给定的字节数组。</param>
+        public ByteMemoryBuffer(byte[] array)
+            : base(array)
+        {
+        }
     }
 }

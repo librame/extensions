@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 核心资源管理器字符串定位器工厂。
     /// </summary>
-    public class CoreResourceManagerStringLocalizerFactory : ResourceManagerStringLocalizerFactory, IStringLocalizerFactory
+    public class CoreResourceManagerStringLocalizerFactory : ResourceManagerStringLocalizerFactory
     {
         /// <summary>
         /// 构造一个 <see cref="CoreResourceManagerStringLocalizerFactory"/>。
@@ -73,12 +73,12 @@ namespace Librame.Extensions.Core
                     resourceMapping.Factory = BuilderOptions.ResourceMappingFactory;
 
                 prefix = resourceMapping.Factory.Invoke(new ResourceMappingDescriptor(typeInfo, baseNamespace, resourcesRelativePath));
-                Logger.LogInformation($"Get resource prefix “{prefix}” by {nameof(CoreResourceManagerStringLocalizerFactory)}");
+                Logger.LogTrace($"Get resource prefix “{prefix}” by {nameof(CoreResourceManagerStringLocalizerFactory)}");
             }
             else
             {
                 prefix = base.GetResourcePrefix(typeInfo, baseNamespace, resourcesRelativePath);
-                Logger.LogInformation($"Get resource prefix “{prefix}” by {nameof(ResourceManagerStringLocalizerFactory)}");
+                Logger.LogTrace($"Get resource prefix “{prefix}” by {nameof(ResourceManagerStringLocalizerFactory)}");
             }
 
             return prefix;

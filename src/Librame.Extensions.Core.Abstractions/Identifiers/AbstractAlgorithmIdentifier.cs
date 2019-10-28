@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -105,7 +106,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位带符号整数。</returns>
         public override int GetHashCode()
-            => ToString().GetHashCode();
+            => ToString().GetHashCode(StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>
@@ -128,7 +129,7 @@ namespace Librame.Extensions.Core
                 i *= b + 1;
 
             // Length(15): 8d737ebe809e70e
-            return string.Format("{0:x}", _ = timestamp.Ticks);
+            return string.Format(CultureInfo.InvariantCulture, "{0:x}", _ = timestamp.Ticks);
         }
 
 

@@ -105,6 +105,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Configure Builder
             return coreBuilder
+                .AddDecorators()
                 .AddLocalizers()
                 .AddMediators()
                 .AddServices()

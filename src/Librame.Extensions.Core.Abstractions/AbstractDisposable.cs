@@ -38,13 +38,14 @@ namespace Librame.Extensions.Core
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
         /// 释放对象。
         /// </summary>
         /// <param name="disposing">是否立即释放。</param>
-        protected void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             // 如果不释放或已释放
             if (!disposing || _disposed)

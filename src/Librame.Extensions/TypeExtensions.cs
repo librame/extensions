@@ -159,7 +159,7 @@ namespace Librame.Extensions
             type.NotNull(nameof(type));
 
             if (type.IsGenericType)
-                return type.Name.SplitPair("`").Key;
+                return type.Name.SplitPair('`').Key;
 
             return type.Name;
         }
@@ -173,7 +173,7 @@ namespace Librame.Extensions
         /// <param name="assembly">给定的 <see cref="Assembly"/>。</param>
         /// <returns>返回字符串。</returns>
         public static string GetSimpleName(this Assembly assembly)
-            => assembly.GetName().Name;
+            => assembly?.GetName()?.Name;
 
         /// <summary>
         /// 获取简单程序集名（参考 <see cref="AssemblyName.Name"/>）。
@@ -181,7 +181,7 @@ namespace Librame.Extensions
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
         public static string GetSimpleAssemblyName(this Type type)
-            => type.Assembly.GetSimpleName();
+            => type?.Assembly.GetSimpleName();
 
 
         /// <summary>

@@ -24,7 +24,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="type">给定的类型。</param>
         public TypeNameCombiner(Type type)
-            : this(type.FullName)
+            : this(type?.FullName)
         {
         }
 

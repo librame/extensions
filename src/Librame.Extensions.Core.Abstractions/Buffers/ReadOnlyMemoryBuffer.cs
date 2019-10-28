@@ -11,30 +11,31 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象只读的连续内存区域缓冲区。
+    /// 只读的连续内存区域缓冲区。
     /// </summary>
     /// <typeparam name="T">指定的类型。</typeparam>
-    public abstract class AbstractReadOnlyMemoryBuffer<T> : AbstractDisposable, IReadOnlyMemoryBuffer<T>
+    public class ReadOnlyMemoryBuffer<T> : AbstractDisposable, IReadOnlyMemoryBuffer<T>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractReadOnlyMemoryBuffer{T}"/>。
+        /// 构造一个 <see cref="ReadOnlyMemoryBuffer{T}"/>。
         /// </summary>
         /// <param name="readOnlyMemory">给定的 <see cref="ReadOnlyMemory{T}"/>。</param>
-        public AbstractReadOnlyMemoryBuffer(ReadOnlyMemory<T> readOnlyMemory)
+        public ReadOnlyMemoryBuffer(ReadOnlyMemory<T> readOnlyMemory)
         {
             Memory = readOnlyMemory;
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractReadOnlyMemoryBuffer{T}"/>。
+        /// 构造一个 <see cref="ReadOnlyMemoryBuffer{T}"/>。
         /// </summary>
         /// <param name="array">给定的数组。</param>
-        public AbstractReadOnlyMemoryBuffer(T[] array)
+        public ReadOnlyMemoryBuffer(T[] array)
         {
             Memory = array.NotNull(nameof(array));
         }
@@ -52,6 +53,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="other">给定的 <see cref="IReadOnlyMemoryBuffer{T}"/>。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "other")]
         public virtual bool Equals(IReadOnlyMemoryBuffer<T> other)
         {
             other.NotNull(nameof(other));
@@ -94,27 +96,27 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 是否相等。
         /// </summary>
-        /// <param name="a">给定的 <see cref="AbstractReadOnlyMemoryBuffer{T}"/>。</param>
-        /// <param name="b">给定的 <see cref="AbstractReadOnlyMemoryBuffer{T}"/>。</param>
+        /// <param name="a">给定的 <see cref="ReadOnlyMemoryBuffer{T}"/>。</param>
+        /// <param name="b">给定的 <see cref="ReadOnlyMemoryBuffer{T}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator ==(AbstractReadOnlyMemoryBuffer<T> a, AbstractReadOnlyMemoryBuffer<T> b)
+        public static bool operator ==(ReadOnlyMemoryBuffer<T> a, ReadOnlyMemoryBuffer<T> b)
             => (a?.Equals(b)).Value;
 
         /// <summary>
         /// 是否不等。
         /// </summary>
-        /// <param name="a">给定的 <see cref="AbstractReadOnlyMemoryBuffer{T}"/>。</param>
-        /// <param name="b">给定的 <see cref="AbstractReadOnlyMemoryBuffer{T}"/>。</param>
+        /// <param name="a">给定的 <see cref="ReadOnlyMemoryBuffer{T}"/>。</param>
+        /// <param name="b">给定的 <see cref="ReadOnlyMemoryBuffer{T}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator !=(AbstractReadOnlyMemoryBuffer<T> a, AbstractReadOnlyMemoryBuffer<T> b)
+        public static bool operator !=(ReadOnlyMemoryBuffer<T> a, ReadOnlyMemoryBuffer<T> b)
             => !(a?.Equals(b)).Value;
 
 
         /// <summary>
         /// 隐式转换为字符串形式。
         /// </summary>
-        /// <param name="buffer">给定的 <see cref="AbstractReadOnlyMemoryBuffer{T}"/>。</param>
-        public static implicit operator string(AbstractReadOnlyMemoryBuffer<T> buffer)
+        /// <param name="buffer">给定的 <see cref="ReadOnlyMemoryBuffer{T}"/>。</param>
+        public static implicit operator string(ReadOnlyMemoryBuffer<T> buffer)
             => buffer?.ToString();
     }
 }

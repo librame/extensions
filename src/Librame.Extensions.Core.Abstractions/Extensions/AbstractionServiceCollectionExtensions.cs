@@ -29,11 +29,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="serviceDescriptor">输出服务描述符。</param>
+        /// <param name="descriptor">输出 <see cref="ServiceDescriptor"/>。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGet<TService>(this IServiceCollection services, out ServiceDescriptor serviceDescriptor)
+        public static bool TryGet<TService>(this IServiceCollection services, out ServiceDescriptor descriptor)
             where TService : class
-            => services.TryGet(typeof(TService), out serviceDescriptor);
+            => services.TryGet(typeof(TService), out descriptor);
 
         /// <summary>
         /// 尝试得到服务描述符。
@@ -41,33 +41,33 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <typeparam name="TImplementation">指定的实现类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="serviceDescriptor">输出服务描述符。</param>
+        /// <param name="descriptor">输出 <see cref="ServiceDescriptor"/>。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGet<TService, TImplementation>(this IServiceCollection services, out ServiceDescriptor serviceDescriptor)
+        public static bool TryGet<TService, TImplementation>(this IServiceCollection services, out ServiceDescriptor descriptor)
             where TService : class
             where TImplementation : class, TService
-            => services.TryGet(typeof(TService), typeof(TImplementation), out serviceDescriptor);
+            => services.TryGet(typeof(TService), typeof(TImplementation), out descriptor);
 
         /// <summary>
         /// 尝试得到服务描述符。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceType">给定的服务类型。</param>
-        /// <param name="serviceDescriptor">输出服务描述符。</param>
+        /// <param name="descriptor">输出 <see cref="ServiceDescriptor"/>。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGet(this IServiceCollection services, Type serviceType, out ServiceDescriptor serviceDescriptor)
-            => services.TryGet(serviceType, implementationType: null, out serviceDescriptor);
+        public static bool TryGet(this IServiceCollection services, Type serviceType, out ServiceDescriptor descriptor)
+            => services.TryGet(serviceType, implementationType: null, out descriptor);
 
         /// <summary>
-        /// 尝试得到服务描述符。
+        /// 尝试获取指定类型的服务描述符。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="implementationType">给定的实现类型。</param>
-        /// <param name="serviceDescriptor">输出服务描述符。</param>
+        /// <param name="descriptor">输出 <see cref="ServiceDescriptor"/>。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
         public static bool TryGet(this IServiceCollection services, Type serviceType, Type implementationType,
-            out ServiceDescriptor serviceDescriptor)
+            out ServiceDescriptor descriptor)
         {
             Func<ServiceDescriptor, bool> predicate = null;
 
@@ -76,15 +76,29 @@ namespace Microsoft.Extensions.DependencyInjection
             else
                 predicate = p => p.ServiceType == serviceType && p.ImplementationType == implementationType;
 
-            serviceDescriptor = services.FirstOrDefault(predicate);
+            descriptor = services.SingleOrDefault(predicate);
+            return descriptor.IsNotNull();
+        }
 
-            return serviceDescriptor.IsNotNull();
+        /// <summary>
+        /// 尝试获取指定类型的服务描述符。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="predicate">给定的断定工厂方法。</param>
+        /// <param name="descriptor">输出 <see cref="ServiceDescriptor"/>。</param>
+        /// <returns>返回是否成功获取的布尔值。</returns>
+        public static bool TryGet(this IServiceCollection services, Type serviceType, Func<ServiceDescriptor, bool> predicate,
+            out ServiceDescriptor descriptor)
+        {
+            descriptor = services.Where(p => p.ServiceType == serviceType).SingleOrDefault(predicate);
+            return descriptor.IsNotNull();
         }
 
         #endregion
 
 
-        #region TryReplace ServiceType
+        #region TryReplace
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -156,12 +170,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
-        public static bool TryReplace<TService>(this IServiceCollection services, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+        public static bool TryReplace<TService>(this IServiceCollection services, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
             where TService : class
-            => services.TryReplace(typeof(TService), typeof(TService), out descriptor, throwIfNotFound);
+            => services.TryReplace(typeof(TService), typeof(TService), out oldDescriptor, throwIfNotFound);
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -169,14 +183,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <typeparam name="TNewImplementation">指定的新实现类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace<TService, TNewImplementation>(this IServiceCollection services,
-            out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
             where TService : class
             where TNewImplementation : class, TService
-            => services.TryReplace(typeof(TService), typeof(TNewImplementation), out descriptor, throwIfNotFound);
+            => services.TryReplace(typeof(TService), typeof(TNewImplementation), out oldDescriptor, throwIfNotFound);
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -185,15 +199,15 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TOldImplementation">指定的旧实现类型。</typeparam>
         /// <typeparam name="TNewImplementation">指定的新实现类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace<TService, TOldImplementation, TNewImplementation>(this IServiceCollection services,
-            out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
             where TService : class
             where TOldImplementation : class, TService
             where TNewImplementation : class, TService
-            => services.TryReplace(typeof(TService), typeof(TOldImplementation), typeof(TNewImplementation), out descriptor, throwIfNotFound);
+            => services.TryReplace(typeof(TService), typeof(TOldImplementation), typeof(TNewImplementation), out oldDescriptor, throwIfNotFound);
 
 
         /// <summary>
@@ -202,12 +216,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="newImplementationType">给定用于替换的新实现类型。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Type newImplementationType,
-            out ServiceDescriptor descriptor, bool throwIfNotFound = true)
-            => services.TryReplace(serviceType, oldImplementationType: null, newImplementationType, out descriptor, throwIfNotFound);
+            out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
+            => services.TryReplace(serviceType, oldImplementationType: null, newImplementationType, out oldDescriptor, throwIfNotFound);
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -216,16 +230,16 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="oldImplementationType">给定的旧实现类型。</param>
         /// <param name="newImplementationType">给定用于替换的新实现类型。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Type oldImplementationType, Type newImplementationType,
-            out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
         {
-            if (services.TryGet(serviceType, oldImplementationType, out descriptor))
+            if (services.TryGet(serviceType, oldImplementationType, out oldDescriptor))
             {
-                services.Remove(descriptor);
-                services.Add(ServiceDescriptor.Describe(serviceType, newImplementationType, descriptor.Lifetime));
+                services.Remove(oldDescriptor);
+                services.Add(ServiceDescriptor.Describe(serviceType, newImplementationType, oldDescriptor.Lifetime));
                 return true;
             }
 
@@ -236,6 +250,48 @@ namespace Microsoft.Extensions.DependencyInjection
                 else
                     throw new ArgumentException($"No service type '{serviceType.FullName}' were found.");
             }
+
+            return false;
+        }
+
+
+        /// <summary>
+        /// 尝试替换服务描述符。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="predicate">给定的断定工厂方法。</param>
+        /// <param name="newDescriptorFactory">给定用于替换的新 <see cref="ServiceDescriptor"/> 工厂方法。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功替换的布尔值。</returns>
+        public static bool TryReplace<TService>(this IServiceCollection services, Func<ServiceDescriptor, bool> predicate,
+            Func<ServiceDescriptor, ServiceDescriptor> newDescriptorFactory, bool throwIfNotFound = true)
+            => services.TryReplace(typeof(TService), predicate, newDescriptorFactory, throwIfNotFound);
+
+        /// <summary>
+        /// 尝试替换服务描述符。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="predicate">给定的断定工厂方法。</param>
+        /// <param name="newDescriptorFactory">给定用于替换的新 <see cref="ServiceDescriptor"/> 工厂方法。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功替换的布尔值。</returns>
+        public static bool TryReplace(this IServiceCollection services, Type serviceType, Func<ServiceDescriptor, bool> predicate,
+            Func<ServiceDescriptor, ServiceDescriptor> newDescriptorFactory, bool throwIfNotFound = true)
+        {
+            newDescriptorFactory.NotNull(nameof(newDescriptorFactory));
+
+            if (services.TryGet(serviceType, predicate, out ServiceDescriptor oldDescriptor))
+            {
+                var newDescriptor = newDescriptorFactory.Invoke(oldDescriptor);
+                services.Remove(oldDescriptor);
+                services.Add(newDescriptor);
+                return true;
+            }
+
+            if (throwIfNotFound)
+                throw new ArgumentException($"No service type '{serviceType.FullName}' were found.");
 
             return false;
         }
@@ -323,13 +379,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="implementationFactory">给定用于替换的实现类型工厂方法。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace<TService>(this IServiceCollection services,
-            Func<IServiceProvider, TService> implementationFactory, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            Func<IServiceProvider, TService> implementationFactory, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
             where TService : class
-            => services.TryReplace(typeof(TService), implementationFactory, out descriptor, throwIfNotFound);
+            => services.TryReplace(typeof(TService), implementationFactory, out oldDescriptor, throwIfNotFound);
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -338,14 +394,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TNewImplementation">指定的新实现类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="newImplementationFactory">给定用于替换的新实现类型工厂方法。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace<TService, TNewImplementation>(this IServiceCollection services,
-            Func<IServiceProvider, TNewImplementation> newImplementationFactory, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            Func<IServiceProvider, TNewImplementation> newImplementationFactory, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
             where TService : class
             where TNewImplementation : class, TService
-            => services.TryReplace(typeof(TService), newImplementationFactory, out descriptor, throwIfNotFound);
+            => services.TryReplace(typeof(TService), newImplementationFactory, out oldDescriptor, throwIfNotFound);
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -355,15 +411,15 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TNewImplementation">指定的新实现类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="newImplementationFactory">给定用于替换的新实现类型工厂方法。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace<TService, TOldImplementation, TNewImplementation>(this IServiceCollection services,
-            Func<IServiceProvider, TNewImplementation> newImplementationFactory, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            Func<IServiceProvider, TNewImplementation> newImplementationFactory, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
             where TService : class
             where TOldImplementation : class, TService
             where TNewImplementation : class, TService
-            => services.TryReplace(typeof(TService), typeof(TOldImplementation), newImplementationFactory, out descriptor, throwIfNotFound);
+            => services.TryReplace(typeof(TService), typeof(TOldImplementation), newImplementationFactory, out oldDescriptor, throwIfNotFound);
 
 
         /// <summary>
@@ -372,12 +428,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="newImplementationFactory">给定用于替换的新实现类型工厂方法。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace(this IServiceCollection services, Type serviceType,
-            Func<IServiceProvider, object> newImplementationFactory, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
-            => services.TryReplace(serviceType, oldImplementationType: null, newImplementationFactory, out descriptor, throwIfNotFound);
+            Func<IServiceProvider, object> newImplementationFactory, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
+            => services.TryReplace(serviceType, oldImplementationType: null, newImplementationFactory, out oldDescriptor, throwIfNotFound);
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -386,16 +442,16 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="oldImplementationType">给定的旧实现类型。</param>
         /// <param name="newImplementationFactory">给定用于替换的新实现类型工厂方法。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Type oldImplementationType,
-            Func<IServiceProvider, object> newImplementationFactory, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            Func<IServiceProvider, object> newImplementationFactory, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
         {
-            if (services.TryGet(serviceType, oldImplementationType, out descriptor))
+            if (services.TryGet(serviceType, oldImplementationType, out oldDescriptor))
             {
-                services.Remove(descriptor);
-                services.Add(ServiceDescriptor.Describe(serviceType, newImplementationFactory, descriptor.Lifetime));
+                services.Remove(oldDescriptor);
+                services.Add(ServiceDescriptor.Describe(serviceType, newImplementationFactory, oldDescriptor.Lifetime));
                 return true;
             }
 
@@ -488,12 +544,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="newInstance">给定的新实例。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
-        public static bool TryReplace<TService>(this IServiceCollection services, TService newInstance, out ServiceDescriptor descriptor,
+        public static bool TryReplace<TService>(this IServiceCollection services, TService newInstance, out ServiceDescriptor oldDescriptor,
             bool throwIfNotFound = true)
-            => services.TryReplace(typeof(TService), newInstance, out descriptor, throwIfNotFound);
+            => services.TryReplace(typeof(TService), newInstance, out oldDescriptor, throwIfNotFound);
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -502,12 +558,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TNewImplementation">指定的新实现类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="newInstance">给定的新实例。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace<TService, TNewImplementation>(this IServiceCollection services,
-            TNewImplementation newInstance, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
-            => services.TryReplace(typeof(TService), newInstance, out descriptor, throwIfNotFound);
+            TNewImplementation newInstance, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
+            => services.TryReplace(typeof(TService), newInstance, out oldDescriptor, throwIfNotFound);
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -517,15 +573,15 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TNewImplementation">指定的新实现类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="newInstance">给定的新实例。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace<TService, TOldImplementation, TNewImplementation>(this IServiceCollection services,
-            TNewImplementation newInstance, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            TNewImplementation newInstance, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
             where TService : class
             where TOldImplementation : class, TService
             where TNewImplementation : class, TService
-            => services.TryReplace(typeof(TService), typeof(TOldImplementation), newInstance, out descriptor, throwIfNotFound);
+            => services.TryReplace(typeof(TService), typeof(TOldImplementation), newInstance, out oldDescriptor, throwIfNotFound);
 
 
         /// <summary>
@@ -534,12 +590,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="newInstance">给定的新实例。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace(this IServiceCollection services, Type serviceType, object newInstance,
-            out ServiceDescriptor descriptor, bool throwIfNotFound = true)
-            => services.TryReplace(serviceType, oldImplementationType: null, newInstance, out descriptor, throwIfNotFound);
+            out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
+            => services.TryReplace(serviceType, oldImplementationType: null, newInstance, out oldDescriptor, throwIfNotFound);
 
         /// <summary>
         /// 尝试替换服务描述符。
@@ -548,15 +604,15 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="oldImplementationType">给定的旧实现类型。</param>
         /// <param name="newInstance">给定的新实例。</param>
-        /// <param name="descriptor">输出得到的 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Type oldImplementationType,
-            object newInstance, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            object newInstance, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
         {
-            if (services.TryGet(serviceType, oldImplementationType, out descriptor))
+            if (services.TryGet(serviceType, oldImplementationType, out oldDescriptor))
             {
-                services.Remove(descriptor);
+                services.Remove(oldDescriptor);
                 services.Add(new ServiceDescriptor(serviceType, newInstance));
                 return true;
             }

@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -56,6 +57,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="currentPath">给定的当前目录。</param>
         /// <returns>返回目录字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "currentPath")]
         public static string WithoutDevelopmentRelativePath(this string currentPath)
         {
             currentPath.NotEmpty(nameof(currentPath));
@@ -100,6 +102,7 @@ namespace Librame.Extensions
         /// <param name="directory">给定的 <see cref="DirectoryInfo"/>。</param>
         /// <param name="folderName">给定的目录名称。</param>
         /// <returns>返回 <see cref="DirectoryInfo"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "directory")]
         public static DirectoryInfo Subdirectory(this DirectoryInfo directory, string folderName)
         {
             directory.NotNull(nameof(directory));
@@ -115,6 +118,7 @@ namespace Librame.Extensions
         /// <param name="filePath">给定的文件路径。</param>
         /// <param name="newFileNameFactory">给定的新文件名方法；输入参数依次为文件基础名、文件扩展名（不存在则为 <see cref="string.Empty"/>）。</param>
         /// <returns>返回路径。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "newFileNameFactory")]
         public static string ChangeFileName(this string filePath, Func<string, string, string> newFileNameFactory)
         {
             newFileNameFactory.NotNull(nameof(newFileNameFactory));
@@ -137,13 +141,13 @@ namespace Librame.Extensions
 
         #region CombinePath
 
-
         /// <summary>
         /// 合并路径。
         /// </summary>
         /// <param name="basePath">给定的基础路径。</param>
         /// <param name="relativePath">给定要附加的相对路径。</param>
         /// <returns>返回路径字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "basePath")]
         public static string CombinePath(this string basePath, string relativePath)
         {
             basePath.NotEmpty(nameof(basePath));
@@ -165,7 +169,7 @@ namespace Librame.Extensions
             if (!relativePath.Contains(_altDirectorySeparatorChar, StringComparison.CurrentCultureIgnoreCase)
                 && !relativePath.Contains(_directorySeparatorChar, StringComparison.CurrentCultureIgnoreCase))
             {
-                return $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath}";
+                return $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath}";
             }
 
             // RelativePath: ../ or ..\
@@ -176,7 +180,7 @@ namespace Librame.Extensions
             if (basePath.TryCombineSiblingPath(relativePath, basePathSeparator, out resultPath))
                 return resultPath;
 
-            return $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath}";
+            return $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath}";
         }
 
         private static bool TryCombineParentPath(this string basePath, string relativePath, char basePathSeparator, out string resultPath)
@@ -188,7 +192,7 @@ namespace Librame.Extensions
             if (relativePath.StartsWith(altSeparatorMark, StringComparison.OrdinalIgnoreCase))
             {
                 var parent = BackToParentPath(new DirectoryInfo(basePath), relativePath, altSeparatorMark);
-                resultPath = $"{parent.Info.FullName.AppendEndsWithout(basePathSeparator)}{parent.RelativePath}";
+                resultPath = $"{parent.Info.FullName.EnsureTrailing(basePathSeparator)}{parent.RelativePath}";
                 return true;
             }
 
@@ -197,7 +201,7 @@ namespace Librame.Extensions
             if (relativePath.StartsWith(separatorMark, StringComparison.OrdinalIgnoreCase))
             {
                 var parent = BackToParentPath(new DirectoryInfo(basePath), relativePath, separatorMark);
-                resultPath = $"{parent.Info.FullName.AppendEndsWithout(basePathSeparator)}{parent.RelativePath}";
+                resultPath = $"{parent.Info.FullName.EnsureTrailing(basePathSeparator)}{parent.RelativePath}";
                 return true;
             }
 
@@ -223,7 +227,7 @@ namespace Librame.Extensions
             var altSeparatorMark = $"{siblingMark}{_altDirectorySeparatorChar}";
             if (relativePath.StartsWith(altSeparatorMark, StringComparison.OrdinalIgnoreCase))
             {
-                resultPath = $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath.TrimStart(altSeparatorMark)}";
+                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(altSeparatorMark)}";
                 return true;
             }
 
@@ -231,21 +235,21 @@ namespace Librame.Extensions
             var separatorMark = $"{siblingMark}{_directorySeparatorChar}";
             if (relativePath.StartsWith(separatorMark, StringComparison.OrdinalIgnoreCase))
             {
-                resultPath = $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath.TrimStart(separatorMark)}";
+                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(separatorMark)}";
                 return true;
             }
 
             // RelativePath: /
             if (relativePath.StartsWith(_altDirectorySeparatorChar))
             {
-                resultPath = $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath.TrimStart(_altDirectorySeparatorChar)}";
+                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(_altDirectorySeparatorChar)}";
                 return true;
             }
 
             // RelativePath: \
             if (relativePath.StartsWith(_directorySeparatorChar))
             {
-                resultPath = $"{basePath.AppendEndsWithout(basePathSeparator)}{relativePath.TrimStart(_directorySeparatorChar)}";
+                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(_directorySeparatorChar)}";
                 return true;
             }
 
@@ -287,7 +291,7 @@ namespace Librame.Extensions
         /// <param name="extensions">给定的扩展名集合。</param>
         /// <returns>返回布尔值。</returns>
         public static bool TryHasExtension(this string path, IEnumerable<string> extensions)
-            => path.TryHasExtension(extensions, out string extension);
+            => path.TryHasExtension(extensions, out _);
 
         /// <summary>
         /// 尝试检测路径具备某扩展名。
@@ -321,6 +325,7 @@ namespace Librame.Extensions
         /// <param name="hasExtensionFactory">给定具有扩展名的断定方法。</param>
         /// <param name="extension">输出具有的扩展名。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "extensions")]
         public static bool TryHasExtension<T>(this T item, IEnumerable<string> extensions,
             Func<T, string, bool> hasExtensionFactory, out string extension)
         {

@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -242,6 +243,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
         public static bool IsConcreteType(this Type type)
             => type.IsNotNull() && !type.IsAbstract && !type.IsInterface;
 
@@ -250,6 +252,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
         public static bool IsOpenGenericType(this Type type)
         {
             // 如泛型 List<string>，则 GenericTypeDefinition 为 List<T>，GenericParameters 为 string
@@ -262,6 +265,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
         public static bool IsNullableType(this Type type)
         {
             // 如可空泛型 int?，则 GenericTypeDefinition() 为 Nullable<T>
@@ -290,6 +294,7 @@ namespace Librame.Extensions
         /// <param name="baseType">给定的基础类型。</param>
         /// <param name="targetType">给定的目标类型。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool IsAssignableFromTargetType(this Type baseType, Type targetType)
         {
             baseType.NotNull(nameof(baseType));
@@ -425,7 +430,7 @@ namespace Librame.Extensions
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsSpecial(this char c)
-            => AlgorithmExtensions.SPECIAL.Contains(c);
+            => AlgorithmExtensions.SPECIAL.Contains(c, StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>

@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -79,7 +80,7 @@ namespace Librame.Extensions
         /// <param name="enumType">给定的枚举类型。</param>
         /// <returns>返回字段信息数组。</returns>
         public static FieldInfo[] AsEnumFields(this Type enumType)
-            => enumType.GetTypeInfo().GetFields(BindingFlags.Static | BindingFlags.Public);
+            => enumType?.GetFields(BindingFlags.Static | BindingFlags.Public);
 
         #endregion
 
@@ -130,22 +131,32 @@ namespace Librame.Extensions
         #region AsEnumDictionary
 
         /// <summary>
-        /// 当作枚举字典。
+        /// 当作枚举名称、特性集合字典。
         /// </summary>
         /// <param name="enumType">给定的枚举类型。</param>
-        /// <returns>返回结果字典。</returns>
-        public static Dictionary<string, int> AsEnumDictionary(this Type enumType)
-            => enumType.AsEnumDictionary<int>();
+        /// <returns>返回名称、特性集合字典。</returns>
+        public static ConcurrentDictionary<string, IEnumerable<Attribute>> AsEnumAttributesDictionary(this Type enumType)
+            => enumType.AsEnumDictionary(field => field.GetCustomAttributes());
+
 
         /// <summary>
-        /// 当作枚举字典。
+        /// 当作枚举名称、常量值字典。
+        /// </summary>
+        /// <param name="enumType">给定的枚举类型。</param>
+        /// <returns>返回名称、常量值字典。</returns>
+        public static ConcurrentDictionary<string, int> AsEnumValuesDictionary(this Type enumType)
+            => enumType.AsEnumValuesDictionary<int>();
+
+        /// <summary>
+        /// 当作枚举名称、常量值字典。
         /// </summary>
         /// <typeparam name="TConst">指定的常量类型。</typeparam>
         /// <param name="enumType">给定的枚举类型。</param>
-        /// <returns>返回结果字典。</returns>
-        public static Dictionary<string, TConst> AsEnumDictionary<TConst>(this Type enumType)
+        /// <returns>返回名称、常量值字典。</returns>
+        public static ConcurrentDictionary<string, TConst> AsEnumValuesDictionary<TConst>(this Type enumType)
             where TConst : struct
             => enumType.AsEnumDictionary(field => (TConst)field.GetValue(null));
+
 
         /// <summary>
         /// 当作枚举结果字典。
@@ -154,18 +165,18 @@ namespace Librame.Extensions
         /// <param name="enumType">给定的枚举类型。</param>
         /// <param name="converter">给定的结果转换方法。</param>
         /// <returns>返回结果字典。</returns>
-        public static Dictionary<string, TResult> AsEnumDictionary<TResult>(this Type enumType,
+        public static ConcurrentDictionary<string, TResult> AsEnumDictionary<TResult>(this Type enumType,
             Func<FieldInfo, TResult> converter)
         {
             converter.NotNull(nameof(converter));
 
-            var dict = new Dictionary<string, TResult>();
+            var dict = new ConcurrentDictionary<string, TResult>();
 
-            var fields = enumType.AsEnumFields();
-            if (fields.IsEmpty()) return dict;
-
-            foreach (var field in fields)
-                dict.Add(field.Name, converter.Invoke(field));
+            enumType.AsEnumFields().ForEach(field =>
+            {
+                var result = converter.Invoke(field);
+                dict.AddOrUpdate(field.Name, result, (key, value) => result);
+            });
 
             return dict;
         }

@@ -10,12 +10,15 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 字符型只读的连续内存缓冲区接口。
+    /// 可选配置接口。
     /// </summary>
-    public interface ICharReadOnlyMemoryBuffer : IReadOnlyMemoryBuffer<char>
+    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
+    public interface IOptional
     {
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using Xunit;
 
 namespace Librame.Extensions.Core.Tests
@@ -19,8 +20,18 @@ namespace Librame.Extensions.Core.Tests
             Assert.True(services.TryReplace<ITestAnimal, TestCat, TestTiger>());
             Assert.True(services.TryGet<ITestAnimal, TestTiger>(out serviceDescriptor));
             Assert.Equal(typeof(TestTiger), serviceDescriptor.ImplementationType);
+
             Assert.False(services.TryGet<ITestAnimal, TestCat>(out serviceDescriptor));
             Assert.Null(serviceDescriptor);
+            Assert.Throws<ArgumentException>(() =>
+            {
+                services.TryReplace<ITestAnimal, TestCat, TestTiger>();
+            });
+
+            Assert.True(services.TryReplace<ITestAnimal>(descriptor => descriptor.ImplementationType == typeof(TestTiger),
+                oldDescriptor => new ServiceDescriptor(typeof(ITestAnimal), typeof(TestCat), oldDescriptor.Lifetime)));
+            Assert.True(services.TryGet<ITestAnimal, TestCat>(out serviceDescriptor));
+            Assert.Equal(typeof(TestCat), serviceDescriptor.ImplementationType);
         }
     }
 

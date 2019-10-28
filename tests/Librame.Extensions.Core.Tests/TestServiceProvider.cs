@@ -19,6 +19,11 @@ namespace Librame.Extensions.Core.Tests
 
                 services.AddScoped<TestInjectionService>();
 
+                services.AddScoped<CoreDecoratorTests.TestService>();
+                services.AddScoped<CoreDecoratorTests.TestServiceDecorator>();
+                services.AddScoped<CoreDecoratorTests.TestImplementation>();
+                services.AddScoped<CoreDecoratorTests.TestImplementationDecorator>();
+
                 return services.BuildServiceProvider();
             });
         }

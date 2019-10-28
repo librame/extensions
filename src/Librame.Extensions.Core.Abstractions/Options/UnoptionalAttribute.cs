@@ -10,21 +10,15 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 构建器封装器接口。
+    /// 非可选配置特性。
     /// </summary>
-    /// <remarks>
-    /// 适用于对 <see cref="IExtensionBuilder"/> 或第三方构建器进行封装。
-    /// </remarks>
-    /// <typeparam name="TBuilder">指定的构建器类型。</typeparam>
-    public interface IBuilderWrapper<out TBuilder>
-        where TBuilder : class
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = false)]
+    public class UnoptionalAttribute : Attribute
     {
-        /// <summary>
-        /// 原始构建器。
-        /// </summary>
-        TBuilder RawBuilder { get; }
     }
 }

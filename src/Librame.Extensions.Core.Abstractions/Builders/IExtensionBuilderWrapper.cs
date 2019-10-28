@@ -15,9 +15,9 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 扩展构建器封装器接口。
     /// </summary>
-    /// <typeparam name="TBuilder">指定的构建器类型。</typeparam>
-    public interface IExtensionBuilderWrapper<out TBuilder> : IExtensionBuilder, IBuilderWrapper<TBuilder>
-        where TBuilder : class
+    /// <typeparam name="TSource">指定的源类型。</typeparam>
+    public interface IExtensionBuilderWrapper<out TSource> : IExtensionBuilder, IWrapper<TSource>
+        where TSource : class
     {
     }
 }

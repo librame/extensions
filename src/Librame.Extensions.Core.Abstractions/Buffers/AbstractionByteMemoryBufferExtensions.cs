@@ -15,9 +15,9 @@ using System.Text;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 字节型可读写的连续内存缓冲区静态扩展。
+    /// 抽象字节型可读写的连续内存缓冲区静态扩展。
     /// </summary>
-    public static class ByteMemoryBufferExtensions
+    public static class AbstractionByteMemoryBufferExtensions
     {
         /// <summary>
         /// 将字符串还原为 <see cref="ByteMemoryBuffer"/>。
@@ -26,7 +26,7 @@ namespace Librame.Extensions.Core
         /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认使用 <see cref="Encoding.UTF8"/>）。</param>
         /// <returns>返回 <see cref="ByteMemoryBuffer"/>。</returns>
         public static ByteMemoryBuffer AsByteBufferFromEncodingString(this string str, Encoding encoding = null)
-            => str.FromEncodingString(encoding);
+            => new ByteMemoryBuffer(str.FromEncodingString(encoding));
 
         /// <summary>
         /// 转换为字符编码字符串。
@@ -44,7 +44,7 @@ namespace Librame.Extensions.Core
         /// <param name="base64String">给定的 BASE64 字符串。</param>
         /// <returns>返回 <see cref="ByteMemoryBuffer"/>。</returns>
         public static ByteMemoryBuffer AsByteBufferFromBase64String(this string base64String)
-            => base64String.FromBase64String();
+            => new ByteMemoryBuffer(base64String.FromBase64String());
 
         /// <summary>
         /// 将 16 进制字符串还原为 <see cref="ByteMemoryBuffer"/>。
@@ -52,7 +52,7 @@ namespace Librame.Extensions.Core
         /// <param name="hexString">给定的 16 进制字符串。</param>
         /// <returns>返回 <see cref="ByteMemoryBuffer"/>。</returns>
         public static ByteMemoryBuffer AsByteBufferFromHexString(this string hexString)
-            => hexString.FromHexString();
+            => new ByteMemoryBuffer(hexString.FromHexString());
 
 
         /// <summary>

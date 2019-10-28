@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Librame.Extensions
@@ -29,6 +30,9 @@ namespace Librame.Extensions
         /// <returns>返回消息字符串。</returns>
         public static string AsInnerMessage(this Exception ex)
         {
+            if (ex.IsNull())
+                return null;
+
             if (ex.InnerException.IsNotNull())
                 return ex.InnerException.AsInnerMessage();
 
@@ -232,6 +236,8 @@ namespace Librame.Extensions
         /// <param name="baseType">给定的基础类型。</param>
         /// <param name="targetType">给定的目标类型。</param>
         /// <returns>返回目标类型或抛出异常。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseType")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "targetType")]
         public static Type AssignableFromTarget(this Type baseType, Type targetType)
         {
             if (!baseType.IsAssignableFromTargetType(targetType))
@@ -275,12 +281,11 @@ namespace Librame.Extensions
         /// <returns>返回目标类型实例或抛出异常。</returns>
         public static TTarget CastTo<TSource, TTarget>(this TSource source, string paramName)
         {
-            if (source == null) // 未限定源类型为 Class
-                throw new ArgumentNullException(paramName);
+            source.NotNull(paramName);
 
             if (!(source is TTarget target))
             {
-                var sourceType = source?.GetType() ?? typeof(TSource);
+                var sourceType = source.GetType();
                 var message = $"The \"{sourceType.FullName}\" is not require type \"{typeof(TTarget).FullName}\".";
                 throw new ArgumentException(message);
             }
