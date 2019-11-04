@@ -12,6 +12,7 @@
 
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -22,7 +23,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// RSA 安全密钥加载器。
     /// </summary>
-    public class RsaSecurityKeyLoader
+    public static class RsaSecurityKeyLoader
     {
         /// <summary>
         /// 加载 RSA 安全密钥。
@@ -87,18 +88,21 @@ namespace Librame.Extensions.Encryption
             return key;
         }
 
+        [SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope")]
         private static RsaSecurityKey CreateRsaSecurityKey()
         {
-            var rsa = RSA.Create();
             RsaSecurityKey key;
 
+            var rsa = RSA.Create();
             if (rsa is RSACryptoServiceProvider)
             {
                 rsa.Dispose();
-                var cng = new RSACng(2048);
 
-                var parameters = cng.ExportParameters(includePrivateParameters: true);
-                key = new RsaSecurityKey(parameters);
+                using (var cng = new RSACng(2048))
+                {
+                    var parameters = cng.ExportParameters(includePrivateParameters: true);
+                    key = new RsaSecurityKey(parameters);
+                }
             }
             else
             {
@@ -107,6 +111,7 @@ namespace Librame.Extensions.Encryption
             }
 
             key.KeyId = RandomNumberAlgorithmIdentifier.New(16);
+
             return key;
         }
 

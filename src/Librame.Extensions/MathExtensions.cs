@@ -25,10 +25,14 @@ namespace Librame.Extensions
         /// <returns>返回整数。</returns>
         public static int ComputeGCD(this int a, int b)
         {
-            if (a == b) return a; // BUG: a,b 相同时，if(a < b) 为 false 仍会执行代码段
+            if (a == b) return a;
 
             if (a < b)
-                a = a + b; b = a - b; a = a - b;
+            {
+                a += b;
+                b = a - b;
+                a -= b;
+            }
 
             return (a % b == 0) ? b : ComputeGCD(a % b, b);
         }

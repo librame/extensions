@@ -35,11 +35,11 @@ namespace Librame.Extensions.Storage
         /// <summary>
         /// 二进制。
         /// </summary>
-        public CapacityUnitDescriptor Binary { get; set; }
+        public CapacityUnitDescriptor BinaryUnit { get; set; }
 
         /// <summary>
         /// 十进制。
         /// </summary>
-        public CapacityUnitDescriptor Decimal { get; set; }
+        public CapacityUnitDescriptor DecimalUnit { get; set; }
     }
 }

@@ -18,6 +18,8 @@ using System.IO;
 
 namespace Librame.Extensions
 {
+    using Resources;
+
     /// <summary>
     /// 异常静态扩展。
     /// </summary>
@@ -117,7 +119,7 @@ namespace Librame.Extensions
         /// 得到不大于（等于）对比值。
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// value is (equal or) greater than.
+        /// The '{0}' value '{1}' is (equal or) greater than '{2}'.
         /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="value">给定的值。</param>
@@ -129,10 +131,7 @@ namespace Librame.Extensions
             where T : IComparable<T>
         {
             if (value.IsGreater(compare, equals))
-            {
-                var message = $"The \"{paramName}\" value \"{value}\" is (equal or) greater than \"{compare}\".";
-                throw new ArgumentOutOfRangeException(paramName, message);
-            }
+                throw new ArgumentException(InternalResource.ArgumentExceptionGreaterFormat.Format(paramName, value, compare));
 
             return value;
         }
@@ -141,7 +140,7 @@ namespace Librame.Extensions
         /// 得到不小于（等于）的值。
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// value is (equal or) lesser than.
+        /// The '{0}' value '{1}' is (equal or) lesser than '{2}'.
         /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="value">给定的值。</param>
@@ -153,10 +152,7 @@ namespace Librame.Extensions
             where T : IComparable<T>
         {
             if (value.IsLesser(compare, equals))
-            {
-                var message = $"The \"{paramName}\" value \"{value}\" is (equal or) lesser than \"{compare}\".";
-                throw new ArgumentOutOfRangeException(paramName, message);
-            }
+                throw new ArgumentException(InternalResource.ArgumentExceptionLesserFormat.Format(paramName, value, compare));
 
             return value;
         }
@@ -165,7 +161,7 @@ namespace Librame.Extensions
         /// 得到不超出范围的值。
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// value is out of range.
+        /// The '{0}' value '{1}' is out of range (min: '{2}', max: '{3}').
         /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="value">给定的值。</param>
@@ -180,10 +176,7 @@ namespace Librame.Extensions
             where T : IComparable<T>
         {
             if (value.IsOutOfRange(compareMinimum, compareMaximum, equalMinimum, equalMaximum))
-            {
-                var message = $"The \"{paramName}\" value \"{value}\" is out of range (min: \"{compareMinimum}\", max: \"{compareMaximum}\").";
-                throw new ArgumentOutOfRangeException(paramName, message);
-            }
+                throw new ArgumentOutOfRangeException(InternalResource.ArgumentOutOfRangeExceptionFormat.Format(paramName, value, compareMinimum, compareMaximum));
 
             return value;
         }
@@ -231,20 +224,16 @@ namespace Librame.Extensions
         /// <paramref name="baseType"/> 或 <paramref name="targetType"/> 为空。
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="baseType"/> 不能从 <paramref name="targetType"/> 分配。
+        /// The base type '{0}' is not assignable from target type '{1}'.
         /// </exception>
         /// <param name="baseType">给定的基础类型。</param>
         /// <param name="targetType">给定的目标类型。</param>
         /// <returns>返回目标类型或抛出异常。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseType")]
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "targetType")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static Type AssignableFromTarget(this Type baseType, Type targetType)
         {
             if (!baseType.IsAssignableFromTargetType(targetType))
-            {
-                var message = $"The \"{baseType.ToString()}\" is not assignable from \"{targetType.ToString()}\".";
-                throw new ArgumentException(message);
-            }
+                throw new ArgumentException(InternalResource.ArgumentExceptionAssignableFromFormat.Format(baseType.GetSimpleFullName()), targetType.GetSimpleFullName());
 
             return targetType;
         }
@@ -272,7 +261,7 @@ namespace Librame.Extensions
         /// <paramref name="source"/> 为空。
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="source"/> 不是目标类型。
+        /// The source type '{0}' cannot be cast to target type '{1}'.
         /// </exception>
         /// <typeparam name="TSource">指定的来源类型。</typeparam>
         /// <typeparam name="TTarget">指定的目标类型。</typeparam>
@@ -284,11 +273,7 @@ namespace Librame.Extensions
             source.NotNull(paramName);
 
             if (!(source is TTarget target))
-            {
-                var sourceType = source.GetType();
-                var message = $"The \"{sourceType.FullName}\" is not require type \"{typeof(TTarget).FullName}\".";
-                throw new ArgumentException(message);
-            }
+                throw new ArgumentException(InternalResource.ArgumentExceptionCastToFormat.Format(source.GetType().GetSimpleFullName(), typeof(TTarget).GetSimpleFullName()));
 
             return target;
         }

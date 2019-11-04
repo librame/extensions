@@ -17,11 +17,13 @@ using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class WebSocketClientHandler : SimpleChannelInboundHandler<object>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class WebSocketClientHandler : SimpleChannelInboundHandler<object>
     {
         private readonly IWebSocketClient _client;
         private readonly ILogger _logger;

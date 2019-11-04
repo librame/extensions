@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -136,6 +137,7 @@ namespace Librame.Extensions.Data
         /// <param name="size">给定的页大小。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "orderedFactory")]
         public static ValueTask<IPageable<TEntity>> AsPagingByIndexAsync<TEntity>(this IQueryable<TEntity> query,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
             int index, int size, CancellationToken cancellationToken = default)
@@ -296,6 +298,7 @@ namespace Librame.Extensions.Data
         /// <param name="take">给定的获取条数。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "orderedFactory")]
         public static ValueTask<IPageable<TEntity>> AsPagingBySkipAsync<TEntity>(this IQueryable<TEntity> query,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderedFactory,
             int skip, int take, CancellationToken cancellationToken = default)

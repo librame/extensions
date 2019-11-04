@@ -17,11 +17,13 @@ using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class HttpServerHandler : ChannelHandlerAdapter
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class HttpServerHandler : ChannelHandlerAdapter
     {
         private static readonly ThreadLocalCache _cache = new ThreadLocalCache();
 

@@ -32,7 +32,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 服务工厂。
         /// </summary>
-        ServiceFactoryDelegate ServiceFactory { get; }
+        ServiceFactory ServiceFactory { get; }
 
         /// <summary>
         /// 内存锁定器。

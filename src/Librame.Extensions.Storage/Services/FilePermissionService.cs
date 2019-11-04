@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +20,8 @@ namespace Librame.Extensions.Storage
 {
     using Core;
 
-    class FilePermissionService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFilePermissionService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class FilePermissionService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFilePermissionService
     {
         public FilePermissionService(IOptions<StorageBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
@@ -27,7 +29,7 @@ namespace Librame.Extensions.Storage
         }
 
 
-        private Task<string> GenerateTokenAsync(CancellationToken cancellationToken, string idTraceName)
+        private Task<string> GenerateTokenAsync(string idTraceName, CancellationToken cancellationToken)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
@@ -40,13 +42,13 @@ namespace Librame.Extensions.Storage
 
 
         public Task<string> GeAccessTokenAsync(CancellationToken cancellationToken = default)
-            => GenerateTokenAsync(cancellationToken, "access token");
+            => GenerateTokenAsync("access token", cancellationToken);
 
         public Task<string> GetAuthorizationCodeAsync(CancellationToken cancellationToken = default)
-            => GenerateTokenAsync(cancellationToken, "authorization code");
+            => GenerateTokenAsync("authorization code", cancellationToken);
 
         public Task<string> GetCookieValueAsync(CancellationToken cancellationToken = default)
-            => GenerateTokenAsync(cancellationToken, "cookie value");
+            => GenerateTokenAsync("cookie value", cancellationToken);
 
     }
 }

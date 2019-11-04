@@ -11,6 +11,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Storage
 {
@@ -31,6 +32,7 @@ namespace Librame.Extensions.Storage
         /// <summary>
         /// 文件提供程序列表。
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IList<IStorageFileProvider> FileProviders { get; set; }
             = new List<IStorageFileProvider>();
 

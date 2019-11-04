@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.FileProviders.Physical;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Librame.Extensions.Storage
@@ -27,6 +28,7 @@ namespace Librame.Extensions.Storage
         /// <param name="fileSystemInfo">给定的 <see cref="FileSystemInfo"/>。</param>
         /// <param name="filters">给定的 <see cref="ExclusionFilters"/>。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "fileSystemInfo")]
         public static bool IsExcluded(this FileSystemInfo fileSystemInfo, ExclusionFilters filters)
         {
             if (filters == ExclusionFilters.None)

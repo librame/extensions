@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -41,6 +42,7 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 获取该类的单例实例。
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static TSingleton Instance
             => SingletonFactory.Instance;
 

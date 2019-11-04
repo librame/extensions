@@ -14,6 +14,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -27,7 +28,17 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构造一个 <see cref="UriCombiner"/>。
         /// </summary>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
+        public UriCombiner(string absoluteUriString)
+            : this(absoluteUriString.AsAbsoluteUri())
+        {
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="UriCombiner"/>。
+        /// </summary>
         /// <param name="uri">给定的 <see cref="Uri"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public UriCombiner(Uri uri)
             : base(uri)
         {
@@ -213,9 +224,12 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="queriesAction">给定的改变查询参数集合动作（内部支持对参数值的特殊字符进行转码处理）。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "queriesAction")]
         public UriCombiner NewQueries(Action<ConcurrentDictionary<string, string>> queriesAction)
         {
-            var queries = FromQuery(Query.ToString());
+            queriesAction.NotNull(nameof(queriesAction));
+
+            var queries = FromQuery(Query.ToString(CultureInfo.InvariantCulture));
             queriesAction.Invoke(queries);
 
             var queryString = ToQuery(queries);
@@ -236,7 +250,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="host">给定的主机。</param>
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
-        private DomainNameCombiner CreateDomainNameCombiner(string host)
+        private static DomainNameCombiner CreateDomainNameCombiner(string host)
         {
             if (DomainNameCombiner.TryParseAllLevelSegmentsFromHost(host,
                 out IEnumerable<string> allLevelSegments))
@@ -279,7 +293,7 @@ namespace Librame.Extensions.Core
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is UriCombiner other) ? Equals(other) : false;
+            => (obj is UriCombiner other) ? Equals(other.Source) : false;
 
 
         /// <summary>
@@ -324,33 +338,6 @@ namespace Librame.Extensions.Core
         public static implicit operator string(UriCombiner combiner)
             => combiner?.ToString();
 
-        /// <summary>
-        /// 隐式转换为 URI 组合器。
-        /// </summary>
-        /// <param name="uriString">给定的绝对 URI 字符串。</param>
-        public static implicit operator UriCombiner(string uriString)
-        {
-            if (uriString.IsAbsoluteUri(out Uri result))
-                return new UriCombiner(result);
-
-            throw new ArgumentException($"Invalid absolute uri string: {uriString}.");
-        }
-
-
-        /// <summary>
-        /// 显式转换为 URI。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
-        public static implicit operator Uri(UriCombiner combiner)
-            => combiner?.Source;
-
-        /// <summary>
-        /// 显式转换为 URI 组合器。
-        /// </summary>
-        /// <param name="uri">给定的 <see cref="Uri"/>。</param>
-        public static explicit operator UriCombiner(Uri uri)
-            => new UriCombiner(uri);
-
 
         /// <summary>
         /// 组合 URI。
@@ -379,6 +366,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="queryString">给定的查询参数字符串。</param>
         /// <returns>返回 <see cref="ConcurrentDictionary{String, String}"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static ConcurrentDictionary<string, string> FromQuery(string queryString)
         {
             var queries = new ConcurrentDictionary<string, string>();

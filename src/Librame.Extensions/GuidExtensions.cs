@@ -33,24 +33,24 @@ namespace Librame.Extensions
         /// <summary>
         /// 转换为有顺序的 GUID。
         /// </summary>
-        /// <param name="guid">给定的 <see cref="Guid"/>。</param>
+        /// <param name="g">给定的 <see cref="Guid"/>。</param>
         /// <param name="timestamp">给定的时间戳。</param>
         /// <returns>返回 <see cref="Guid"/>。</returns>
-        public static Guid AsCombGuid(this Guid guid, DateTimeOffset timestamp)
+        public static Guid AsCombGuid(this Guid g, DateTimeOffset timestamp)
         {
-            var buffer = guid.ToByteArray();
-            var baseDate = new DateTimeOffset(new DateTime(1900, 1, 1), timestamp.Offset);
+            var buffer = g.ToByteArray();
+            var baseDate = new DateTimeOffset(ExtensionSettings.BaseDateTime, timestamp.Offset);
 
             // Get the days and milliseconds which will be used to build the byte string 
-            var days = new TimeSpan(timestamp.Date.Ticks - baseDate.Ticks);
+            var days = new TimeSpan(timestamp.Ticks - baseDate.Ticks);
             var msecs = new TimeSpan(timestamp.Ticks - timestamp.Date.Ticks);
 
-            // Convert to a byte array 
+            // Convert to a byte array
             // SQL Server is accurate to 1/300th of a millisecond so we divide by 3.333333 
             var daysArray = BitConverter.GetBytes(days.Days);
             var msecsArray = BitConverter.GetBytes((long)(msecs.TotalMilliseconds / 3.333333));
 
-            // Reverse the bytes to match SQL Servers ordering 
+            // Reverse the bytes to match SQL Servers ordering
             Array.Reverse(daysArray);
             Array.Reverse(msecsArray);
 
@@ -96,5 +96,6 @@ namespace Librame.Extensions
             guids = count.GenerateGuids();
             return guids.AsCombGuids(timestamp);
         }
+
     }
 }

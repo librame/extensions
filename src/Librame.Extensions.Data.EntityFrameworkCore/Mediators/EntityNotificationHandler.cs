@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +20,8 @@ namespace Librame.Extensions.Data
 {
     using Core;
 
-    class EntityNotificationHandler<TEntity, TGenId> : AbstractNotificationHandler<EntityNotification<TEntity, TGenId>>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class EntityNotificationHandler<TEntity, TGenId> : AbstractNotificationHandler<EntityNotification<TEntity, TGenId>>
         where TEntity : DataEntity<TGenId>
         where TGenId : IEquatable<TGenId>
     {

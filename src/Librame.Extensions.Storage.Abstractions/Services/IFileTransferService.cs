@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -56,6 +57,7 @@ namespace Librame.Extensions.Storage
         /// <param name="savePath">给定的保存路径。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含 <see cref="FilePathCombiner"/> 的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "downloadUrl")]
         Task<FilePathCombiner> DownloadFileAsync(string downloadUrl, string savePath,
             CancellationToken cancellationToken = default);
 
@@ -63,11 +65,12 @@ namespace Librame.Extensions.Storage
         /// <summary>
         /// 异步上传文件。
         /// </summary>
-        /// <param name="uploadUri">给定用于接收上传文件的远程 URL。</param>
+        /// <param name="uploadUrl">给定用于接收上传文件的远程 URL。</param>
         /// <param name="filePath">给定的文件路径。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回一个包含远程响应字符串数组的异步操作。</returns>
-        Task<string> UploadFileAsync(string uploadUri, string filePath,
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "uploadUrl")]
+        Task<string> UploadFileAsync(string uploadUrl, string filePath,
             CancellationToken cancellationToken = default);
     }
 }

@@ -13,11 +13,13 @@
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class FactorialServerHandler : SimpleChannelInboundHandler<BigInteger>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class FactorialServerHandler : SimpleChannelInboundHandler<BigInteger>
     {
         private readonly ILogger _logger;
 

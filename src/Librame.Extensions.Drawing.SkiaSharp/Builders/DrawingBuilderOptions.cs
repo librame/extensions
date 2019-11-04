@@ -11,6 +11,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace Librame.Extensions.Drawing
@@ -49,6 +50,7 @@ namespace Librame.Extensions.Drawing
         /// <summary>
         /// 缩放选项。
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IList<ScaleOptions> Scales { get; set; }
             = new List<ScaleOptions>
             {

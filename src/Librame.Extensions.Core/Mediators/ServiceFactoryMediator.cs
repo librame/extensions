@@ -10,14 +10,17 @@
 
 #endregion
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
 {
-    class ServiceFactoryMediator : IMediator
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class ServiceFactoryMediator : IMediator
     {
         private static ConcurrentDictionary<Type, IRequestHandlerWrapper> _requestHandlers
             = new ConcurrentDictionary<Type, IRequestHandlerWrapper>();
@@ -25,12 +28,14 @@ namespace Librame.Extensions.Core
         private static ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers
             = new ConcurrentDictionary<Type, INotificationHandlerWrapper>();
 
-        private ServiceFactoryDelegate _serviceFactory = null;
+        private ServiceFactory _serviceFactory = null;
+        private ILogger _logger = null;
 
 
-        public ServiceFactoryMediator(ServiceFactoryDelegate serviceFactory)
+        public ServiceFactoryMediator(ServiceFactory serviceFactory)
         {
             _serviceFactory = serviceFactory.NotNull(nameof(serviceFactory));
+            _logger = serviceFactory.GetRequiredService<ILogger<ServiceFactoryMediator>>();
         }
 
 
@@ -73,7 +78,8 @@ namespace Librame.Extensions.Core
             if (notification is INotification _notification)
                 return Publish(_notification, cancellationToken);
 
-            throw new ArgumentException($"{nameof(notification)} does not implement ${nameof(INotification)}");
+            _logger.LogWarning($"{notification.GetType().GetSimpleFullName()} does not implement {nameof(INotification)}");
+            return Task.CompletedTask;
         }
 
         public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)

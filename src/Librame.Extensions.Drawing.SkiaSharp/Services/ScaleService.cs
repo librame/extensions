@@ -14,7 +14,9 @@ using Microsoft.Extensions.Logging;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +25,8 @@ namespace Librame.Extensions.Drawing
 {
     using Core;
 
-    class ScaleService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IScaleService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class ScaleService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IScaleService
     {
         public ScaleService(IWatermarkService watermark)
             : base(watermark.CastTo<IWatermarkService, AbstractExtensionBuilderService<DrawingBuilderOptions>>(nameof(watermark)))
@@ -52,7 +55,7 @@ namespace Librame.Extensions.Drawing
 
                     foreach (var scale in Options.Scales)
                     {
-                        if (fileName.Contains(scale.Suffix))
+                        if (fileName.Contains(scale.Suffix, StringComparison.OrdinalIgnoreCase))
                         {
                             File.Delete(file);
                             count++;
@@ -108,7 +111,7 @@ namespace Librame.Extensions.Drawing
 
         public bool DrawFile(string imagePath, string savePathTemplate = null)
         {
-            if (Options.Scales.Count < 1)
+            if (Options.Scales.IsEmpty())
             {
                 Logger.LogWarning("Scale options is not found.");
                 return false;
@@ -154,7 +157,7 @@ namespace Librame.Extensions.Drawing
                         using (var data = img.Encode(skFormat, Options.Quality))
                         {
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
-                            var middleName = s.Suffix.NotEmptyOrDefault(() => DateTime.Now.Ticks.ToString());
+                            var middleName = s.Suffix.NotEmptyOrDefault(() => DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture));
 
                             // 设定缩放保存路径
                             var scaleSavePath = savePathTemplate.NotEmptyOrDefault(imagePath);
@@ -216,10 +219,9 @@ namespace Librame.Extensions.Drawing
             if (string.IsNullOrEmpty(path))
                 return false;
 
-            var lower = path.ToLower();
             foreach (var ext in ImageExtensions)
             {
-                if (lower.EndsWith(ext))
+                if (path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
 

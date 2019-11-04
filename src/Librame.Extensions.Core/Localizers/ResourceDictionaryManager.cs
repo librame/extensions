@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 
@@ -26,6 +27,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="resourceBaseType">给定的资源基础类型。</param>
         /// <param name="resourceAssembly">给定资源程序集（可选；默认为资源基础类型所在的程序集）。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "resourceBaseType")]
         public ResourceDictionaryManager(Type resourceBaseType, Assembly resourceAssembly = null)
         {
             ResourceBaseType = resourceBaseType.NotNull(nameof(resourceBaseType));
@@ -63,5 +65,6 @@ namespace Librame.Extensions.Core
             var suffixName = CultureInfo.CurrentUICulture.Name.Replace('-', '_');
             return Type.GetType($"{ResourceBaseType.FullName}_{suffixName}, {ResourceAssembly}");
         }
+
     }
 }

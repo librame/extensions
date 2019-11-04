@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -88,6 +89,7 @@ namespace Librame.Extensions.Data
         /// 后置处理核心。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
         protected override void PostprocessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
             // 注册实体需作写入请求限制
@@ -145,6 +147,7 @@ namespace Librame.Extensions.Data
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
         protected override async Task PostprocessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
@@ -192,6 +195,7 @@ namespace Librame.Extensions.Data
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回包含添加、更新以及删除的 <see cref="List{DataEntity}"/> 元组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
         protected virtual (List<TEntity> Adds, List<TEntity> Updates, List<TEntity> Removes) GetDifference(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
@@ -260,6 +264,7 @@ namespace Librame.Extensions.Data
         /// <param name="entityType">给定的 <see cref="IEntityType"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <typeparamref name="TEntity"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "entityType")]
         protected virtual TEntity GenerateEntity(IEntityType entityType, CancellationToken cancellationToken)
         {
             var entity = typeof(TEntity).EnsureCreate<TEntity>();
@@ -306,6 +311,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="entity">给定的 <typeparamref name="TEntity"/>。</param>
         /// <param name="entityType">给定的实体类型。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual void SetDefaultTableName(TEntity entity, IEntityType entityType)
             => entity.Name = entityType.ClrType.Name;
 
@@ -314,6 +320,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="entity">给定的 <typeparamref name="TEntity"/>。</param>
         /// <param name="entityType">给定的实体类型。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "entity")]
         protected virtual void SetDefaultTableSchema(TEntity entity, IEntityType entityType)
             => entity.Schema = Options.Tables.DefaultSchema.NotEmptyOrDefault("dbo");
 

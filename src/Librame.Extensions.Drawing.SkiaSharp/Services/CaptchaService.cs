@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -24,13 +25,14 @@ namespace Librame.Extensions.Drawing
 {
     using Core;
 
-    class CaptchaService : AbstractExtensionBuilderService<DrawingBuilderOptions>, ICaptchaService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class CaptchaService : AbstractExtensionBuilderService<DrawingBuilderOptions>, ICaptchaService
     {
         public CaptchaService(DrawingBuilderDependencyOptions dependencyOptions,
             IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
-            FontFilePathCombiner = Options.Captcha.Font.FilePath;
+            FontFilePathCombiner = new FilePathCombiner(Options.Captcha.Font.FilePath);
             FontFilePathCombiner.ChangeBasePathIfEmpty(dependencyOptions.BaseDirectory);
         }
 

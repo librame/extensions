@@ -12,13 +12,15 @@
 
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class RsaService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IRsaService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class RsaService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IRsaService
     {
         private readonly Lazy<RSA> _rsa;
 

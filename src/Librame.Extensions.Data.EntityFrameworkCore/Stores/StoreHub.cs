@@ -139,7 +139,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 初始化初始化器。
         /// </summary>
-        protected virtual void InitializeInitializer()
+        private void InitializeInitializer()
         {
             if (Accessor.BuilderOptions.Stores.InitializationEnabled
                 && Initializer is StoreInitializer storeInitializer)
@@ -299,7 +299,7 @@ namespace Librame.Extensions.Data
         public virtual Task<bool> ContainTenantAsync(string name, string host, CancellationToken cancellationToken = default)
         {
             var predicate = StoreExpression.GetTenantUniqueIndexExpression<TTenant, TGenId>(name, host);
-            return Accessor.Tenants.ExistsAsync(predicate, cancellationToken);
+            return Accessor.Tenants.ExistsAsync(predicate, lookupLocal: true, cancellationToken);
         }
 
         /// <summary>

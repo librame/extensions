@@ -11,6 +11,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core
 {
@@ -19,6 +20,7 @@ namespace Librame.Extensions.Core
     /// </summary>
     /// <typeparam name="TService">指定的服务类型。</typeparam>
     /// <typeparam name="TDefault">指定的默认服务类型。</typeparam>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public interface IServicesManager<out TService, TDefault> : IServicesManager<TService>
         where TService : ISortableService
         where TDefault : TService
@@ -30,6 +32,7 @@ namespace Librame.Extensions.Core
     /// 服务集合管理器接口。
     /// </summary>
     /// <typeparam name="TService">指定的服务类型。</typeparam>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public interface IServicesManager<out TService> : IEnumerable<TService>
         where TService : ISortableService
     {

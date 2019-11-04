@@ -75,17 +75,17 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 获取更新时间。
+        /// 获取自定义更新时间。
         /// </summary>
         /// <returns>返回日期与时间。</returns>
-        public virtual object GetUpdatedTime()
+        public virtual object GetCustomUpdatedTime()
             => UpdatedTime;
 
         /// <summary>
-        /// 获取更新者。
+        /// 获取自定义更新者。
         /// </summary>
         /// <returns>返回更新者。</returns>
-        public virtual object GetUpdatedBy()
+        public virtual object GetCustomUpdatedBy()
             => UpdatedBy;
     }
 }

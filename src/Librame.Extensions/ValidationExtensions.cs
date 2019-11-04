@@ -184,6 +184,7 @@ namespace Librame.Extensions
             value.NotNull(nameof(value));
             return equals ? value.CompareTo(compare) >= 0 : value.CompareTo(compare) > 0;
         }
+
         /// <summary>
         /// 是否小于或小于等于对比值。
         /// </summary>
@@ -271,7 +272,7 @@ namespace Librame.Extensions
             // 如可空泛型 int?，则 GenericTypeDefinition() 为 Nullable<T>
             return type.IsNotNull()
                 && type.IsGenericType
-                && type.GetGenericTypeDefinition() == TypeExtensions.NullableType;
+                && type.GetGenericTypeDefinition() == ExtensionSettings.NullableType;
         }
 
         /// <summary>
@@ -280,7 +281,7 @@ namespace Librame.Extensions
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsStringType(this Type type)
-            => type.IsNotNull() && type == TypeExtensions.StringType;
+            => type.IsNotNull() && type == ExtensionSettings.StringType;
 
         /// <summary>
         /// 是否可以从目标类型分配。
@@ -331,10 +332,10 @@ namespace Librame.Extensions
         #endregion
 
 
-        #region Digit & Letter & Special
+        #region Digit & Letter & AlgorithmSpecial
 
         /// <summary>
-        /// 是否有数字。
+        /// 具有数字。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -342,7 +343,7 @@ namespace Librame.Extensions
             => str.Any(IsDigit);
 
         /// <summary>
-        /// 是否为数字。
+        /// 是数字。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -350,7 +351,7 @@ namespace Librame.Extensions
             => str.All(IsDigit);
 
         /// <summary>
-        /// 是否为数字。
+        /// 是数字。
         /// </summary>
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
@@ -359,7 +360,7 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 是否有小写字母。
+        /// 具有小写字母。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -367,7 +368,7 @@ namespace Librame.Extensions
             => str.Any(IsLower);
 
         /// <summary>
-        /// 是否为小写字母。
+        /// 是小写字母。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -375,7 +376,7 @@ namespace Librame.Extensions
             => str.All(IsLower);
 
         /// <summary>
-        /// 是否为小写字母。
+        /// 是小写字母。
         /// </summary>
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
@@ -384,7 +385,7 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 是否有大写字母。
+        /// 具有大写字母。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -392,7 +393,7 @@ namespace Librame.Extensions
             => str.Any(IsUpper);
 
         /// <summary>
-        /// 是否为大写字母。
+        /// 是大写字母。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -400,7 +401,7 @@ namespace Librame.Extensions
             => str.All(IsUpper);
 
         /// <summary>
-        /// 是否为大写字母。
+        /// 是大写字母。
         /// </summary>
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
@@ -409,32 +410,32 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 是否有部分特殊符号。
+        /// 具有算法特殊符号。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool HasSpecial(this string str)
-            => str.Any(IsSpecial);
+        public static bool HasAlgorithmSpecial(this string str)
+            => str.Any(IsAlgorithmSpecial);
 
         /// <summary>
-        /// 是否为部分特殊符号。
+        /// 是算法特殊符号。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsSpecial(this string str)
-            => str.All(IsSpecial);
+        public static bool IsAlgorithmSpecial(this string str)
+            => str.All(IsAlgorithmSpecial);
 
         /// <summary>
-        /// 是否为部分特殊符号。
+        /// 是算法特殊符号。
         /// </summary>
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsSpecial(this char c)
-            => AlgorithmExtensions.SPECIAL.Contains(c, StringComparison.OrdinalIgnoreCase);
+        public static bool IsAlgorithmSpecial(this char c)
+            => ExtensionSettings.AlgorithmSpecialSymbols.Contains(c, StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>
-        /// 是否有大小写字母。
+        /// 具有大小写字母。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -442,7 +443,7 @@ namespace Librame.Extensions
             => str.HasUpper() && str.HasLower();
 
         /// <summary>
-        /// 是否为大小写字母。
+        /// 是大小写字母。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -450,21 +451,16 @@ namespace Librame.Extensions
             => str.HasLetter() && str.All(IsLetter);
 
         /// <summary>
-        /// 是否为大小写字母。
+        /// 是大小写字母。
         /// </summary>
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsLetter(this char c)
-        {
-            if (c.IsUpper())
-                return true;
-
-            return c.IsLower();
-        }
+            => !(!c.IsUpper() && !c.IsLower());
 
 
         /// <summary>
-        /// 是否有大小写字母和数字。
+        /// 具有大小写字母和数字。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -472,7 +468,7 @@ namespace Librame.Extensions
             => str.HasLetter() && str.HasDigit();
 
         /// <summary>
-        /// 是否为大小写字母和数字。
+        /// 是大小写字母和数字。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
@@ -480,47 +476,37 @@ namespace Librame.Extensions
             => str.HasLetterAndDigit() && str.All(IsLetterAndDigit);
 
         /// <summary>
-        /// 是否为大小写字母和数字。
+        /// 是大小写字母和数字。
         /// </summary>
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsLetterAndDigit(this char c)
-        {
-            if (c.IsLetter())
-                return true;
-
-            return c.IsDigit();
-        }
+            => !(!c.IsLetter() && !c.IsDigit());
 
 
         /// <summary>
-        /// 是否有大小写字母、数字和部分特殊符号。
+        /// 具有算法安全性（包括大小写字母、数字和部分特殊符号）。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool HasSafety(this string str)
-            => str.HasLetterAndDigit() && str.HasSpecial();
+        public static bool HasAlgorithmSafety(this string str)
+            => str.HasLetterAndDigit() && str.HasAlgorithmSpecial();
 
         /// <summary>
-        /// 是否为大小写字母、数字和部分特殊符号。
+        /// 是算法安全性（包括大小写字母、数字和部分特殊符号）。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsSafety(this string str)
-            => str.HasSafety() && str.All(IsSafety);
+        public static bool IsAlgorithmSafety(this string str)
+            => str.HasAlgorithmSafety() && str.All(IsAlgorithmSafety);
 
         /// <summary>
-        /// 是否为大小写字母、数字和部分特殊符号。
+        /// 是算法安全性（包括大小写字母、数字和部分特殊符号）。
         /// </summary>
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsSafety(this char c)
-        {
-            if (c.IsLetterAndDigit())
-                return true;
-
-            return c.IsSpecial();
-        }
+        public static bool IsAlgorithmSafety(this char c)
+            => !(!c.IsLetterAndDigit() && !c.IsAlgorithmSpecial());
 
         #endregion
 

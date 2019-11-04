@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Librame.Extensions.Encryption
@@ -31,9 +32,12 @@ namespace Librame.Extensions.Encryption
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <param name="credentials">给定的签名证书集合。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static IEncryptionBuilder AddSigningCredentials(this IEncryptionBuilder builder,
             params KeyValuePair<string, SigningCredentials>[] credentials)
         {
+            builder.NotNull(nameof(builder));
+
             foreach (var cred in credentials)
             {
                 if (!(cred.Value.Key is AsymmetricSecurityKey
@@ -60,7 +64,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="credentials">给定的 <see cref="SigningCredentials"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
         public static IEncryptionBuilder AddGlobalSigningCredentials(this IEncryptionBuilder builder, SigningCredentials credentials)
-            => builder.AddSigningCredentials(new KeyValuePair<string, SigningCredentials>(EncryptionBuilderOptions.GLOBAL_KEY, credentials));
+            => builder.AddSigningCredentials(new KeyValuePair<string, SigningCredentials>(EncryptionBuilderOptions.GlobalSigningCredentialsKey, credentials));
 
         /// <summary>
         /// 添加全局签名证书。
@@ -83,8 +87,11 @@ namespace Librame.Extensions.Encryption
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <param name="rsaKey">给定的 <see cref="RsaSecurityKey"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsaKey")]
         public static IEncryptionBuilder AddGlobalSigningCredentials(this IEncryptionBuilder builder, RsaSecurityKey rsaKey)
         {
+            rsaKey.NotNull(nameof(rsaKey));
+
             if (rsaKey.PrivateKeyStatus == PrivateKeyStatus.DoesNotExist)
                 throw new InvalidOperationException("RSA key does not have a private key.");
 

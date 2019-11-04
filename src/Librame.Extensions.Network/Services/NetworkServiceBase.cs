@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Librame.Extensions.Network
@@ -41,6 +42,7 @@ namespace Librame.Extensions.Network
         /// 构造一个 <see cref="NetworkServiceBase"/>。
         /// </summary>
         /// <param name="serviceBase">给定的 <see cref="NetworkServiceBase"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "serviceBase")]
         protected NetworkServiceBase(NetworkServiceBase serviceBase)
             : base(serviceBase)
         {

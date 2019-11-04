@@ -41,15 +41,15 @@ namespace Librame.Extensions.Data
     public interface ICreation
     {
         /// <summary>
-        /// 获取创建时间。
+        /// 获取自定义创建时间。
         /// </summary>
         /// <returns>返回日期与时间（兼容 DateTime 或 DateTimeOffset）。</returns>
-        object GetCreatedTime();
+        object GetCustomCreatedTime();
 
         /// <summary>
-        /// 获取创建者。
+        /// 获取自定义创建者。
         /// </summary>
         /// <returns>返回创建者（兼容标识或字符串）。</returns>
-        object GetCreatedBy();
+        object GetCustomCreatedBy();
     }
 }

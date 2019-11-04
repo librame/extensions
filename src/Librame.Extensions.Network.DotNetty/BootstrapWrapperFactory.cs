@@ -15,12 +15,14 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Libuv;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime;
 using System.Runtime.InteropServices;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class BootstrapWrapperFactory : IBootstrapWrapperFactory
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class BootstrapWrapperFactory : IBootstrapWrapperFactory
     {
         private readonly ILoggerFactory _loggerFactory;
 

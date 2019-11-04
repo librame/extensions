@@ -13,6 +13,7 @@
 using Librame.Extensions;
 using Librame.Extensions.Data;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -111,6 +112,7 @@ namespace System.Collections.Generic
         /// <summary>
         /// 子节点列表。
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IList<TreeingNode<T, TId>> Children
         {
             get
@@ -183,7 +185,7 @@ namespace System.Collections.Generic
         /// </summary>
         /// <param name="parentId">给定的父编号。</param>
         /// <returns>返回树形节点列表。</returns>
-        public IList<TreeingNode<T, TId>> GetChildren(TId parentId)
+        public IList<TreeingNode<T, TId>> GetParentChildren(TId parentId)
         {
             if (Children.IsEmpty()) return null;
             return Children.Where(p => p.ParentId.Equals(parentId)).ToList();
@@ -195,6 +197,7 @@ namespace System.Collections.Generic
         /// </summary>
         /// <param name="other">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "other")]
         public bool Equals(TreeingNode<T, TId> other)
         {
             other.NotNull(nameof(other));
@@ -230,6 +233,7 @@ namespace System.Collections.Generic
         /// </summary>
         /// <param name="toStringFactory">给定的转换方法。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "toStringFactory")]
         public string ToString(Func<TreeingNode<T, TId>, string> toStringFactory)
         {
             if (Children.IsEmpty())

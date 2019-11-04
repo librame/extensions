@@ -11,6 +11,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +19,8 @@ namespace Librame.Extensions.Network
 {
     using Core;
 
-    class SmsService : NetworkServiceBase, ISmsService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class SmsService : NetworkServiceBase, ISmsService
     {
         private readonly IServicesManager<IUriRequester, HttpClientRequester> _requesters;
 

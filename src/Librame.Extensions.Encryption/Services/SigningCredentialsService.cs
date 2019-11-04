@@ -34,7 +34,7 @@ namespace Librame.Extensions.Encryption
 
 
         public SigningCredentials GetGlobalSigningCredentials()
-            => GetSigningCredentials(EncryptionBuilderOptions.GLOBAL_KEY);
+            => GetSigningCredentials(EncryptionBuilderOptions.GlobalSigningCredentialsKey);
 
         public SigningCredentials GetSigningCredentials(string key)
             => _credentials[key];

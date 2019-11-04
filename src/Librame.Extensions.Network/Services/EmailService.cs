@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -23,7 +24,8 @@ namespace Librame.Extensions.Network
 {
     using Core;
 
-    class EmailService : NetworkServiceBase, IEmailService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class EmailService : NetworkServiceBase, IEmailService
     {
         private readonly IByteCodecService _byteCodec;
 

@@ -13,6 +13,7 @@
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 
@@ -79,6 +80,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="resourceBaseType">给定的资源基础类型。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "resourceBaseType")]
         public static string GenerateKey(Type resourceBaseType)
         {
             resourceBaseType.NotNull(nameof(resourceBaseType));

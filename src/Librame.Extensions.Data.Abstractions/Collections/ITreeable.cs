@@ -11,6 +11,7 @@
 #endregion
 
 using Librame.Extensions.Data;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System.Collections.Generic
 {
@@ -18,6 +19,7 @@ namespace System.Collections.Generic
     /// 可树形接口。
     /// </summary>
     /// <typeparam name="T">指定的树形元素类型。</typeparam>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public interface ITreeable<T> : ITreeable<T, int>
         where T : IParentId<int>
     {
@@ -29,6 +31,7 @@ namespace System.Collections.Generic
     /// </summary>
     /// <typeparam name="T">指定的树形元素类型。</typeparam>
     /// <typeparam name="TId">指定的树形元素标识类型。</typeparam>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public interface ITreeable<T, TId> : IEnumerable<TreeingNode<T, TId>>
         where T : IParentId<TId>
         where TId : IEquatable<TId>

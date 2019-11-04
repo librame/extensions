@@ -11,10 +11,12 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core
 {
-    class ServicesManager<TService, TDefault> : AbstractServicesManager<TService, TDefault>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class ServicesManager<TService, TDefault> : AbstractServicesManager<TService, TDefault>
         where TService : ISortableService
         where TDefault : TService
     {
@@ -25,7 +27,8 @@ namespace Librame.Extensions.Core
     }
 
 
-    class ServicesManager<TService> : AbstractServicesManager<TService>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class ServicesManager<TService> : AbstractServicesManager<TService>
         where TService : ISortableService
     {
         public ServicesManager(IEnumerable<TService> services)

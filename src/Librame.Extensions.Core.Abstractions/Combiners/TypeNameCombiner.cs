@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core
 {
@@ -32,6 +33,7 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="TypeNameCombiner"/>。
         /// </summary>
         /// <param name="fullName">给定的类型完整名（不包含程序集名）。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public TypeNameCombiner(string fullName)
             : base(fullName)
         {
@@ -142,7 +144,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Source.GetHashCode();
+            => Source.GetHashCode(StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>
@@ -178,28 +180,6 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="TypeNameCombiner"/>。</param>
         public static implicit operator string(TypeNameCombiner combiner)
             => combiner?.ToString();
-
-        /// <summary>
-        /// 隐式转换为类型名组合器。
-        /// </summary>
-        /// <param name="fullName">给定的完整名。</param>
-        public static implicit operator TypeNameCombiner(string fullName)
-            => new TypeNameCombiner(fullName);
-
-
-        /// <summary>
-        /// 显式式转换为类型（因不包含程序集名，所以可能会出现不同程序集下相同命名空间与类型名会出现转换异常）。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="TypeNameCombiner"/>。</param>
-        public static explicit operator Type(TypeNameCombiner combiner)
-            => Type.GetType(combiner);
-
-        /// <summary>
-        /// 显式转换为类型名组合器。
-        /// </summary>
-        /// <param name="type">给定的类型名。</param>
-        public static explicit operator TypeNameCombiner(Type type)
-            => new TypeNameCombiner(type);
 
 
         /// <summary>

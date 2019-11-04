@@ -14,6 +14,7 @@ using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -21,7 +22,8 @@ namespace Librame.Extensions.Network.DotNetty
 {
     using Encryption;
 
-    class QuoteOfTheMomentClient : ChannelServiceBase, IQuoteOfTheMomentClient
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class QuoteOfTheMomentClient : ChannelServiceBase, IQuoteOfTheMomentClient
     {
         private readonly ClientOptions _clientOptions;
 
@@ -38,6 +40,7 @@ namespace Librame.Extensions.Network.DotNetty
         public Task StartAsync(Action<IChannel> configureProcess)
             => StartAsync(new QuoteOfTheMomentClientHandler(this), configureProcess);
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public async Task StartAsync<TChannelHandler>(TChannelHandler channelHandler,
             Action<IChannel> configureProcess)
             where TChannelHandler : IChannelHandler
@@ -64,7 +67,7 @@ namespace Librame.Extensions.Network.DotNetty
             finally
             {
                 await group.ShutdownGracefullyAsync(_clientOptions.QuietPeriod,
-                    _clientOptions.TimeOut);
+                    _clientOptions.TimeOut).ConfigureAndWaitAsync();
             }
         }
 

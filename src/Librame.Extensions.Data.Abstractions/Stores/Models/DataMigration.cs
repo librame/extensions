@@ -13,6 +13,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data
 {
@@ -46,6 +47,7 @@ namespace Librame.Extensions.Data
         /// 模型主体。
         /// </summary>
         [Display(Name = nameof(ModelBody), ResourceType = typeof(DataMigrationResource))]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public virtual byte[] ModelBody { get; set; }
 
 

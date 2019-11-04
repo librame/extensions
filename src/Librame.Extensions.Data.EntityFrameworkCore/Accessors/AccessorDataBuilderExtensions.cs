@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -44,11 +45,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="setupAction">给定的 <see cref="Action{DataBuilderOptions, DbContextOptionsBuilder}"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static IDataBuilder AddAccessor<TService, TImplementation>(this IDataBuilder builder,
             Action<DataBuilderOptions, DbContextOptionsBuilder> setupAction)
             where TService : IAccessor
             where TImplementation : DbContext, TService
         {
+            builder.NotNull(nameof(builder));
             setupAction.NotNull(nameof(setupAction));
 
             builder.Services.AddDbContext<TService, TImplementation>((serviceProvider, optionsBuilder) =>

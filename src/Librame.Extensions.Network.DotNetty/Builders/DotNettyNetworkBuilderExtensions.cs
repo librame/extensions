@@ -17,6 +17,7 @@ using Librame.Extensions.Network;
 using Librame.Extensions.Network.DotNetty;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -59,10 +60,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
         /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static INetworkBuilder AddDotNetty<TDependencyOptions>(this INetworkBuilder builder,
             Action<TDependencyOptions> dependencyAction = null)
             where TDependencyOptions : DotNettyDependencyOptions, new()
         {
+            builder.NotNull(nameof(builder));
+
             // Configure DependencyOptions
             var dependency = dependencyAction.ConfigureDependency();
             builder.Services.AddAllOptionsConfigurators(dependency);

@@ -62,12 +62,20 @@ namespace Librame.Extensions.Network
             var stream = await GetResponseStreamAsync(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAndResultAsync();
             if (stream.IsNotNull())
             {
-                var bytes = new byte[stream.Length];
+                var bytes = Array.Empty<byte>();
 
-                stream.Read(bytes, 0, bytes.Length);
+                using (var ms = new MemoryStream())
+                {
+                    var buffer = new byte[64 * Options.BufferSize];
 
-                // 重置流定位到开始处
-                stream.Seek(0, SeekOrigin.Begin);
+                    int length;
+                    while ((length = stream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        ms.Write(buffer, 0, length);
+                    }
+
+                    bytes = ms.ToArray();
+                }
 
                 return ByteCodec.Decode(bytes, enableCodec);
             }

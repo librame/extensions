@@ -24,6 +24,9 @@ namespace Librame.Extensions.Tests
         {
             var uri = @"http://www.domain.name/controller/action";
             Assert.NotNull(uri.AsAbsoluteUri());
+
+            uri = "\\controller\\action";
+            Assert.Throws<ArgumentException>(() => uri.AsAbsoluteUri());
         }
 
         [Fact]

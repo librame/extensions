@@ -22,7 +22,7 @@ namespace Librame.Extensions.Tests
             pairs = 20.RandomStrings(hasSpecial: true);
             foreach (var p in pairs)
             {
-                Assert.True(p.Key.HasSpecial());
+                Assert.True(p.Key.HasAlgorithmSpecial());
             }
         }
 

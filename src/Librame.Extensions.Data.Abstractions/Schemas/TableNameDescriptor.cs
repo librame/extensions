@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Librame.Extensions.Data
@@ -139,6 +140,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="newSuffixFactory">给定的新日期后缀工厂方法。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "newSuffixFactory")]
         public TableNameDescriptor ChangeDateSuffix(Func<DateTime, string> newSuffixFactory)
         {
             newSuffixFactory.NotNull(nameof(newSuffixFactory));
@@ -150,6 +152,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="newSuffixFactory">给定的新日期后缀工厂方法。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "newSuffixFactory")]
         public TableNameDescriptor ChangeDateOffsetSuffix(Func<DateTimeOffset, string> newSuffixFactory)
         {
             newSuffixFactory.NotNull(nameof(newSuffixFactory));
@@ -208,7 +211,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => ToString().GetHashCode();
+            => ToString().GetHashCode(StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>

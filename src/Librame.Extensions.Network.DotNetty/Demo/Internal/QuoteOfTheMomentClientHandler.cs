@@ -14,10 +14,12 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class QuoteOfTheMomentClientHandler : SimpleChannelInboundHandler<DatagramPacket>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class QuoteOfTheMomentClientHandler : SimpleChannelInboundHandler<DatagramPacket>
     {
         private readonly IQuoteOfTheMomentClient _client;
         private readonly ILogger _logger;
@@ -41,7 +43,7 @@ namespace Librame.Extensions.Network.DotNetty
             }
 
             var message = packet.Content.ToString(_client.Options.Encoding);
-            if (!message.StartsWith("QOTM: "))
+            if (!message.StartsWith("QOTM: ", StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }

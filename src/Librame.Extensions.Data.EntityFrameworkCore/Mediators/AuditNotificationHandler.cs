@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +19,8 @@ namespace Librame.Extensions.Data
 {
     using Core;
 
-    class AuditNotificationHandler<TAudit, TAuditProperty> : AbstractNotificationHandler<AuditNotification<TAudit, TAuditProperty>>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class AuditNotificationHandler<TAudit, TAuditProperty> : AbstractNotificationHandler<AuditNotification<TAudit, TAuditProperty>>
         where TAudit : class
         where TAuditProperty : class
     {

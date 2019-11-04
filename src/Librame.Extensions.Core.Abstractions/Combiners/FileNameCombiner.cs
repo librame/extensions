@@ -133,7 +133,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Source.GetHashCode();
+            => Source.GetHashCode(StringComparison.InvariantCulture);
 
 
         /// <summary>
@@ -169,13 +169,6 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FileNameCombiner"/>。</param>
         public static implicit operator string(FileNameCombiner combiner)
             => combiner?.ToString();
-
-        /// <summary>
-        /// 隐式转换文件名组合器。
-        /// </summary>
-        /// <param name="fileName">给定的文件名。</param>
-        public static implicit operator FileNameCombiner(string fileName)
-            => new FileNameCombiner(fileName);
 
 
         /// <summary>

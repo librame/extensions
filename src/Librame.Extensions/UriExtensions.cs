@@ -11,11 +11,14 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 
 namespace Librame.Extensions
 {
+    using Resources;
+
     /// <summary>
     /// URI 静态扩展。
     /// </summary>
@@ -29,11 +32,32 @@ namespace Librame.Extensions
         /// </example>
         /// <param name="path">给定的路径。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "path")]
         public static bool IsAbsoluteVirtualPath(this string path)
         {
             path.NotEmpty(nameof(path));
-            return path.StartsWith("~/") || path.StartsWith("/");
+            return path.StartsWith("~/", StringComparison.OrdinalIgnoreCase) || path.StartsWith("/", StringComparison.OrdinalIgnoreCase);
         }
+
+
+        /// <summary>
+        /// 是绝对 URI。
+        /// </summary>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        public static bool IsAbsoluteUri(this string absoluteUriString)
+            => absoluteUriString.IsAbsoluteUri(out _);
+
+        /// <summary>
+        /// 是绝对 URI。
+        /// </summary>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
+        /// <param name="result">输出 <see cref="Uri"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        public static bool IsAbsoluteUri(this string absoluteUriString, out Uri result)
+            => Uri.TryCreate(absoluteUriString, UriKind.Absolute, out result);
 
 
         /// <summary>
@@ -44,80 +68,54 @@ namespace Librame.Extensions
         /// </exception>
         /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <returns>返回 <see cref="Uri"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
         public static Uri AsAbsoluteUri(this string absoluteUriString)
         {
             if (!absoluteUriString.IsAbsoluteUri(out Uri result))
-                throw new ArgumentException($"Invalid uri string: {absoluteUriString}.");
+                throw new ArgumentException(InternalResource.ArgumentExceptionAbsoluteUriStringFormat.Format(absoluteUriString));
 
             return result;
         }
 
 
         /// <summary>
-        /// 是绝对 URI。
-        /// </summary>
-        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool IsAbsoluteUri(this string absoluteUriString)
-            => absoluteUriString.IsAbsoluteUri(out _);
-
-        /// <summary>
-        /// 是绝对 URI。
-        /// </summary>
-        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
-        /// <param name="result">输出 <see cref="Uri"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool IsAbsoluteUri(this string absoluteUriString, out Uri result)
-            => Uri.TryCreate(absoluteUriString, UriKind.Absolute, out result);
-
-
-        /// <summary>
         /// 同一 DNS 主机名或 IP 地址及端口号。
         /// </summary>
         /// <param name="absoluteUriString">给定的绝对 URL 字符串。</param>
-        /// <param name="host">给定的 DNS 主机名或 IP 地址及端口号（如：localhost:80）。</param>
+        /// <param name="host">给定的 DNS 主机名或 IP 地址及端口号（如：localhost:8000）。</param>
         /// <returns>返回布尔值。</returns>
         public static bool SameHost(this string absoluteUriString, string host)
-        {
-            if (absoluteUriString.IsAbsoluteUri(out Uri result))
-                return result.SameHost(host);
+            => absoluteUriString.IsAbsoluteUri(out Uri result) ? result.SameHost(host) : false;
 
-            return false;
-        }
         /// <summary>
         /// 同一 DNS 主机名或 IP 地址及端口号。
         /// </summary>
         /// <param name="absoluteUri">给定的 <see cref="Uri"/>。</param>
         /// <param name="host">给定的 DNS 主机名或 IP 地址及端口号（如：localhost:80）。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "absoluteUri")]
         public static bool SameHost(this Uri absoluteUri, string host)
-        {
-            absoluteUri.NotNull(nameof(absoluteUri));
-            return absoluteUri.Authority.Equals(host, StringComparison.OrdinalIgnoreCase);
-        }
+            => absoluteUri.NotNull(nameof(absoluteUri)).Authority.Equals(host, StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>
         /// 获取 URI 字符串中的主机。
         /// </summary>
-        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetHost(this string uriString)
-            => uriString.GetHost(out _);
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        public static string GetHost(this string absoluteUriString)
+            => absoluteUriString.GetHost(out _);
 
         /// <summary>
         /// 获取 URI 字符串中的主机。
         /// </summary>
-        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <param name="result">输出可能存在的 <see cref="Uri"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetHost(this string uriString, out Uri result)
-        {
-            if (uriString.IsAbsoluteUri(out result))
-                return result.Authority;
-
-            return uriString;
-        }
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        public static string GetHost(this string absoluteUriString, out Uri result)
+            => absoluteUriString.IsAbsoluteUri(out result) ? result.Authority : absoluteUriString;
 
 
         /// <summary>
@@ -125,6 +123,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="pathOrUri">给定的路径或 URI。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "pathOrUri")]
         public static string GetPath(this string pathOrUri)
             => pathOrUri.GetPath(out _);
 
@@ -134,12 +133,14 @@ namespace Librame.Extensions
         /// <param name="pathOrUri">给定的路径或 URI。</param>
         /// <param name="result">输出可能存在的 <see cref="Uri"/>。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "pathOrUri")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pathOrUri")]
         public static string GetPath(this string pathOrUri, out Uri result)
         {
             if (pathOrUri.IsAbsoluteUri(out result))
                 return result.AbsolutePath;
 
-            if (pathOrUri.StartsWith("~/"))
+            if (pathOrUri.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
                 return pathOrUri.TrimStart('~');
 
             return pathOrUri;
@@ -149,24 +150,21 @@ namespace Librame.Extensions
         /// <summary>
         /// 获取 URI 字符串中的查询。
         /// </summary>
-        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetQuery(this string uriString)
-            => uriString.GetQuery(out _);
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        public static string GetQuery(this string absoluteUriString)
+            => absoluteUriString.GetQuery(out _);
 
         /// <summary>
         /// 获取 URI 字符串中的查询。
         /// </summary>
-        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <param name="result">输出可能存在的 <see cref="Uri"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetQuery(this string uriString, out Uri result)
-        {
-            if (uriString.IsAbsoluteUri(out result))
-                return result.Query;
-
-            return uriString;
-        }
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        public static string GetQuery(this string absoluteUriString, out Uri result)
+            => absoluteUriString.IsAbsoluteUri(out result) ? result.Query : absoluteUriString;
 
 
         #region CombineUri
@@ -193,6 +191,8 @@ namespace Librame.Extensions
         /// <param name="baseUriString">给定的基础 URI 字符串。</param>
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "relativeUri")]
+        [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings")]
         public static string CombineUriToString(this string baseUriString, string relativeUri)
             => baseUriString.CombineUri(relativeUri).ToString();
 
@@ -202,6 +202,7 @@ namespace Librame.Extensions
         /// <param name="baseUri">给定的基础 URI。</param>
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "relativeUri")]
         public static string CombineUriToString(this Uri baseUri, string relativeUri)
             => baseUri.CombineUri(relativeUri).ToString();
 
@@ -212,6 +213,7 @@ namespace Librame.Extensions
         /// <param name="baseUriString">给定的基础 URI 字符串。</param>
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回 <see cref="Uri"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "relativeUri")]
         public static Uri CombineUri(this string baseUriString, string relativeUri)
             => new Uri(baseUriString).CombineUri(relativeUri);
 
@@ -221,6 +223,7 @@ namespace Librame.Extensions
         /// <param name="baseUri">给定的基础 URI。</param>
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回 <see cref="Uri"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "relativeUri")]
         public static Uri CombineUri(this Uri baseUri, string relativeUri)
             => new Uri(baseUri, relativeUri);
 

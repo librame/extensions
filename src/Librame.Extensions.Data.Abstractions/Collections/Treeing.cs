@@ -12,6 +12,7 @@
 
 using Librame.Extensions.Data;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace System.Collections.Generic
@@ -20,6 +21,7 @@ namespace System.Collections.Generic
     /// 树形集合。
     /// </summary>
     /// <typeparam name="T">指定的树形元素类型。</typeparam>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     [NotMapped]
     public class Treeing<T> : Treeing<T, int>, ITreeable<T>
         where T : IParentId<int>
@@ -49,6 +51,7 @@ namespace System.Collections.Generic
     /// </summary>
     /// <typeparam name="T">指定的树形元素类型。</typeparam>
     /// <typeparam name="TId">指定的树形元素标识类型。</typeparam>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     [NotMapped]
     public class Treeing<T, TId> : ITreeable<T, TId>, IEnumerable<TreeingNode<T, TId>>
         where T : IParentId<TId>

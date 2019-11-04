@@ -32,7 +32,7 @@ namespace Librame.Extensions.Core
         {
             return (IAlgorithmIdentifier)HashString
                 .FromBase64String()
-                .Decompress()
+                .RtlDecompress()
                 .DeserializeBinary();
         }
 
@@ -45,7 +45,7 @@ namespace Librame.Extensions.Core
         {
             HashString = identifier
                 .SerializeBinary()
-                .Compress()
+                .RtlCompress()
                 .SerializeBinary()
                 .AsBase64String();
 

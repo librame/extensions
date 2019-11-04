@@ -15,7 +15,16 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 字节型可读写的连续内存缓冲区至字符串转换器接口。
     /// </summary>
-    public interface IByteMemoryBufferToStringConverter : IByteMemoryBufferToConverter<string>
+    public interface IByteMemoryBufferConverter : IByteMemoryBufferConverter<string>
+    {
+    }
+
+
+    /// <summary>
+    /// 字节型可读写的连续内存缓冲区转换器接口。
+    /// </summary>
+    /// <typeparam name="TTarget">指定的目标类型。</typeparam>
+    public interface IByteMemoryBufferConverter<TTarget> : IConverter<IByteMemoryBuffer, TTarget>
     {
     }
 }

@@ -26,8 +26,18 @@ namespace Librame.Extensions.Data
         where TAuditProperty : class
     {
         /// <summary>
+        /// 构造一个审计通知。
+        /// </summary>
+        /// <param name="audits">给定的审计集合。</param>
+        public AuditNotification(IDictionary<TAudit, List<TAuditProperty>> audits)
+        {
+            Audits = audits.NotEmpty(nameof(audits));
+        }
+
+
+        /// <summary>
         /// 审计集合。
         /// </summary>
-        public IDictionary<TAudit, List<TAuditProperty>> Audits { get; set; }
+        public IDictionary<TAudit, List<TAuditProperty>> Audits { get; }
     }
 }

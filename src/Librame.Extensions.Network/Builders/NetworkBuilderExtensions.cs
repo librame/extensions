@@ -14,6 +14,7 @@ using Librame.Extensions;
 using Librame.Extensions.Core;
 using Librame.Extensions.Network;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -62,6 +63,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
         /// <param name="builderFactory">给定创建网络构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static INetworkBuilder AddNetwork<TDependencyOptions>(this IExtensionBuilder builder,
             Action<TDependencyOptions> dependencyAction = null,
             Func<IExtensionBuilder, TDependencyOptions, INetworkBuilder> builderFactory = null)

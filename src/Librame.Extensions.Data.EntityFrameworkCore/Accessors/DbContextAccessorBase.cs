@@ -19,12 +19,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data
 {
     using Core;
+    using Resources;
 
     /// <summary>
     /// 数据库上下文访问器基类。
@@ -63,8 +65,8 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 服务工厂。
         /// </summary>
-        public ServiceFactoryDelegate ServiceFactory
-            => this.GetService<ServiceFactoryDelegate>();
+        public ServiceFactory ServiceFactory
+            => this.GetService<ServiceFactory>();
 
         /// <summary>
         /// 内存锁定器。
@@ -214,6 +216,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="changeFactory">给定改变租户数据库连接的工厂方法。</param>
         /// <returns>返回是否切换的布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "changeFactory")]
         public virtual bool ChangeDbConnection(Func<ITenant, string> changeFactory)
         {
             changeFactory.NotNull(nameof(changeFactory));
@@ -228,6 +231,7 @@ namespace Librame.Extensions.Data
                 {
                     _currentTenant = switchTenant;
                     isSwitched = true;
+                    Logger.LogTrace(InternalResource.SwitchNewTenantFormat.Format(switchTenant.ToString()));
                 }
             }
 
@@ -237,13 +241,13 @@ namespace Librame.Extensions.Data
             var changeConnectionString = changeFactory.Invoke(CurrentTenant);
             if (changeConnectionString.IsEmpty())
             {
-                Logger.LogTrace($"The change connection string is empty, cancel switch.");
+                Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
                 return false;
             }
 
             if (IsCurrentConnectionString(changeConnectionString))
             {
-                Logger.LogTrace($"The change connection string same as the current connection string, cancel switch.");
+                Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
                 return false;
             }
             _currentConnectionString = changeConnectionString;
@@ -270,7 +274,7 @@ namespace Librame.Extensions.Data
             if (connection.State != ConnectionState.Closed)
             {
                 connection.Close();
-                Logger.LogTrace($"Close connection string: {connection.ConnectionString}");
+                Logger.LogTrace(InternalResource.CloseConnectionFormat.Format(connection.ConnectionString));
             }
 
             // MYSql: System.InvalidOperationException
@@ -279,7 +283,7 @@ namespace Librame.Extensions.Data
             //  Source = MySqlConnector
             // connection.ChangeDatabase(connectionString);
             connection.ConnectionString = CurrentConnectionString;
-            Logger.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) change connection string: {CurrentConnectionString}");
+            Logger.LogInformation(InternalResource.ChangeNewConnectionFormat.Format(CurrentTenant.ToString(), CurrentConnectionString));
 
             // 先尝试创建数据库
             if (BuilderOptions.IsCreateDatabase)
@@ -289,7 +293,7 @@ namespace Librame.Extensions.Data
             {
                 // 如果数据库不存在，打开时会抛出异常
                 connection.Open();
-                Logger.LogInformation($"Open connection string: {CurrentConnectionString}");
+                Logger.LogInformation(InternalResource.OpenConnectionFormat.Format(CurrentConnectionString));
             }
 
             BuilderOptions.PostChangedDbConnectionAction?.Invoke(this);
@@ -303,6 +307,7 @@ namespace Librame.Extensions.Data
         /// <param name="changeFactory">给定改变租户数据库连接的工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否已切换的布尔值的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "changeFactory")]
         public virtual async Task<bool> ChangeDbConnectionAsync(Func<ITenant, string> changeFactory,
             CancellationToken cancellationToken = default)
         {
@@ -318,6 +323,7 @@ namespace Librame.Extensions.Data
                 {
                     _currentTenant = switchTenant;
                     isSwitched = true;
+                    Logger.LogTrace(InternalResource.SwitchNewTenantFormat.Format(switchTenant.ToString()));
                 }
             }
 
@@ -327,13 +333,13 @@ namespace Librame.Extensions.Data
             var changeConnectionString = changeFactory.Invoke(CurrentTenant);
             if (changeConnectionString.IsEmpty())
             {
-                Logger.LogTrace($"The change connection string is empty, cancel switch.");
+                Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
                 return false;
             }
 
             if (IsCurrentConnectionString(changeConnectionString))
             {
-                Logger.LogTrace($"The change connection string same as the current connection string, cancel switch.");
+                Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
                 return false;
             }
             _currentConnectionString = changeConnectionString;
@@ -363,7 +369,7 @@ namespace Librame.Extensions.Data
             if (connection.State != ConnectionState.Closed)
             {
                 await connection.CloseAsync().ConfigureAndWaitAsync();
-                Logger.LogTrace($"Close connection string: {connection.ConnectionString}");
+                Logger.LogTrace(InternalResource.CloseConnectionFormat.Format(connection.ConnectionString));
             }
 
             // MYSql: System.InvalidOperationException
@@ -372,7 +378,7 @@ namespace Librame.Extensions.Data
             //  Source = MySqlConnector
             // connection.ChangeDatabase(connectionString);
             connection.ConnectionString = CurrentConnectionString;
-            Logger?.LogInformation($"The tenant({CurrentTenant.Name}:{CurrentTenant.Host}) change connection string: {CurrentConnectionString}");
+            Logger?.LogInformation(InternalResource.ChangeNewConnectionFormat.Format(CurrentTenant.ToString(), CurrentConnectionString));
 
             // 先尝试创建数据库
             if (BuilderOptions.IsCreateDatabase)
@@ -382,7 +388,7 @@ namespace Librame.Extensions.Data
             {
                 // 如果数据库不存在，打开时会抛出异常
                 await connection.OpenAsync(cancellationToken).ConfigureAndWaitAsync();
-                Logger?.LogInformation($"Open connection string: {CurrentConnectionString}");
+                Logger?.LogInformation(InternalResource.OpenConnectionFormat.Format(CurrentConnectionString));
             }
 
             BuilderOptions.PostChangedDbConnectionAction?.Invoke(this);

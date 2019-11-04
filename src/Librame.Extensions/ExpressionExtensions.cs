@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -28,6 +29,7 @@ namespace Librame.Extensions
         /// <typeparam name="TProperty">指定的属性类型。</typeparam>
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "propertyExpression")]
         public static string AsPropertyName<T, TProperty>(this Expression<Func<T, TProperty>> propertyExpression)
             where T : class
         {
@@ -68,14 +70,15 @@ namespace Librame.Extensions
         {
             source.NotNull(nameof(source));
 
+            var name = propertyExpression.AsPropertyName();
+            if (name.IsEmpty()) return default;
+
             try
             {
-                var name = propertyExpression.AsPropertyName();
                 var pi = typeof(T).GetRuntimeProperty(name);
-
-                return (TValue)pi?.GetValue(source);
+                return (TValue)pi.GetValue(source);
             }
-            catch
+            catch (AmbiguousMatchException)
             {
                 return default;
             }
@@ -307,6 +310,7 @@ namespace Librame.Extensions
         /// <param name="value">给定的参考值。</param>
         /// <param name="compareToFactory">给定的对比方法。</param>
         /// <returns>返回 Lambda 表达式。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "compareToFactory")]
         public static Expression<Func<T, bool>> AsPropertyExpression<T, TExpression>(this string propertyName, Type propertyType,
             object value, Func<MemberExpression, ConstantExpression, TExpression> compareToFactory)
             where T : class
@@ -322,7 +326,7 @@ namespace Librame.Extensions
             var constant = Expression.Constant(value, propertyType);
 
             // 调用方法（如：Expression.Equal(property, constant);）
-            var body = compareToFactory(property, constant);
+            var body = compareToFactory.Invoke(property, constant);
 
             // p => p.PropertyName == value
             return Expression.Lambda<Func<T, bool>>(body, p);

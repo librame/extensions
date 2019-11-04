@@ -19,8 +19,8 @@ namespace Librame.Extensions.Core.Tests
                 Assert.NotNull(assembly);
             });
 
-            Assert.True(AssemblyUtility.CurrentDomainAssemblies.Length
-                > AssemblyUtility.CurrentDomainAssembliesWithoutSystem.Length);
+            Assert.True(AssemblyUtility.CurrentDomainAssemblies.Count
+                > AssemblyUtility.CurrentDomainAssembliesWithoutSystem.Count);
         }
     }
 }

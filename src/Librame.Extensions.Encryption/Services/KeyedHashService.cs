@@ -12,13 +12,15 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class KeyedHashService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyedHashService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class KeyedHashService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyedHashService
     {
         private readonly Lazy<HMACMD5> _hmacMd5;
         private readonly Lazy<HMACSHA1> _hmacSha1;
@@ -27,6 +29,8 @@ namespace Librame.Extensions.Encryption
         private readonly Lazy<HMACSHA512> _hmacSha512;
 
 
+        [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
+        [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
         public KeyedHashService(IKeyGenerator keyGenerator)
             : base(keyGenerator.CastTo<IKeyGenerator, AbstractExtensionBuilderService<EncryptionBuilderOptions>>(nameof(keyGenerator)))
         {

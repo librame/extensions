@@ -12,17 +12,19 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network
 {
     using Core;
 
-    class ByteCodecService : NetworkServiceBase, IByteCodecService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class ByteCodecService : NetworkServiceBase, IByteCodecService
     {
-        private readonly ServiceFactoryDelegate _serviceFactory;
+        private readonly ServiceFactory _serviceFactory;
 
 
-        public ByteCodecService(ServiceFactoryDelegate serviceFactory)
+        public ByteCodecService(ServiceFactory serviceFactory)
             : base(serviceFactory.GetService<IOptions<CoreBuilderOptions>>(),
                   serviceFactory.GetService<IOptions<NetworkBuilderOptions>>(),
                   serviceFactory.GetService<ILoggerFactory>())

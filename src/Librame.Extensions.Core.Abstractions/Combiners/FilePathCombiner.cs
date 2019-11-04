@@ -151,7 +151,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="fileName">给定的文件名。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
-        private FileNameCombiner CreateFileNameCombiner(string fileName)
+        private static FileNameCombiner CreateFileNameCombiner(string fileName)
             => new FileNameCombiner(fileName);
 
 
@@ -194,7 +194,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Source.GetHashCode();
+            => Source.GetHashCode(StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>
@@ -230,13 +230,6 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         public static implicit operator string(FilePathCombiner combiner)
             => combiner?.ToString();
-
-        /// <summary>
-        /// 隐式转换为文件路径组合器。
-        /// </summary>
-        /// <param name="fileName">给定的文件名。</param>
-        public static implicit operator FilePathCombiner(string fileName)
-            => new FilePathCombiner(fileName);
 
 
         /// <summary>

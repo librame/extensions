@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -38,8 +39,7 @@ namespace Librame.Extensions.Core
 
                 _withoutSystemAssemblyPrefixes.ForEach(prefix =>
                 {
-                    assemblies = assemblies.Where(assembly => !assembly
-                        .FullName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+                    assemblies = assemblies.Where(assembly => !assembly.FullName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
                 });
 
                 return assemblies.ToArray();
@@ -48,13 +48,13 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 当前线程应用域的程序集数组。
+        /// 当前线程应用域的程序集列表。
         /// </summary>
-        public static Assembly[] CurrentDomainAssemblies { get; }
+        public static IReadOnlyList<Assembly> CurrentDomainAssemblies { get; }
 
         /// <summary>
-        /// 当前线程应用域除系统外的第三方程序集数组。
+        /// 当前线程应用域除系统外的第三方程序集列表。
         /// </summary>
-        public static Assembly[] CurrentDomainAssembliesWithoutSystem { get; }
+        public static IReadOnlyList<Assembly> CurrentDomainAssembliesWithoutSystem { get; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
@@ -16,7 +17,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal("developer.microsoft.com", combiner.SecondLevel);
             Assert.Equal("4.developer.microsoft.com", combiner.ThirdLevel);
 
-            Assert.Equal(3, combiner.OtherLevelSegments.Length); // { 1, 2, 3 }
+            Assert.Equal(3, combiner.OtherLevelSegments.Count); // { 1, 2, 3 }
 
             Assert.Equal("microsoft", combiner.TopLevelSegment);
             Assert.Equal("developer", combiner.SecondLevelSegment);
@@ -31,7 +32,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal("developer.google.org", combiner.SecondLevel);
             Assert.Equal("4.developer.google.org", combiner.ThirdLevel);
 
-            Assert.Equal(3, combiner.OtherLevelSegments.Length); // { 1, 2, 3 }
+            Assert.Equal(3, combiner.OtherLevelSegments.Count); // { 1, 2, 3 }
 
             Assert.Equal("google", combiner.TopLevelSegment);
             Assert.Equal("developer", combiner.SecondLevelSegment);
@@ -42,6 +43,8 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal("google.org", onlyTwoLevels.Parent);
 
             Assert.NotEqual(combiner, combiner.NewDomainName("microsoft.com"));
+
+            Assert.Throws<NotSupportedException>(() => "192.168.0.1".AsDomainNameCombiner());
         }
     }
 }

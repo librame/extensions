@@ -23,6 +23,9 @@ namespace Librame.Extensions
     /// </summary>
     public static class StringExtensions
     {
+
+        #region Leading & Trailing
+
         /// <summary>
         /// 确保字符串以指定字符开始。
         /// </summary>
@@ -92,8 +95,20 @@ namespace Librame.Extensions
             return str.EndsWith(value, comparisonType) ? str : $"{str}{value}";
         }
 
+        #endregion
 
-        #region FormatString
+
+        #region Format
+
+        /// <summary>
+        /// 格式化字符串参数。
+        /// </summary>
+        /// <param name="format">给定的格式化字符串。</param>
+        /// <param name="args">给定的参数数组。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Format(this string format, params object[] args)
+            => string.Format(CultureInfo.CurrentCulture, format, args);
+
 
         /// <summary>
         /// 将数值格式化为 2 位长度的字符串（如：01）。
@@ -274,9 +289,9 @@ namespace Librame.Extensions
             {
                 for (var i = 1; i < words.Length; i++)
                 {
-                    // 首字符大写
+                    // 首字符小写
                     var word = words[i];
-                    array[i] = char.ToUpperInvariant(word[0]) + word.Substring(1);
+                    array[i] = char.ToLowerInvariant(word[0]) + word.Substring(1);
                 }
             }
 

@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Encryption
 {
@@ -31,7 +32,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="source">给定的来源实例。</param>
         /// <returns>返回 <see cref="IEncryptionBuffer{TConverter, TSource}"/>。</returns>
         public static IEncryptionBuffer<TConverter, TSource> AsEncryptionBuffer<TConverter, TSource>(this TConverter converter, TSource source)
-            where TConverter : IByteMemoryBufferToConverter<TSource>
+            where TConverter : IByteMemoryBufferConverter<TSource>
             => new EncryptionBuffer<TConverter, TSource>(converter, source);
 
 
@@ -43,6 +44,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="str">给定的密文字符串。</param>
         /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
         /// <returns>返回算法缓冲区。</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope")]
         public static IEncryptionBuffer<ICiphertextConverter, string> AsCiphertextBuffer(this string str,
             IServiceProvider serviceProvider)
         {
@@ -71,6 +73,7 @@ namespace Librame.Extensions.Encryption
         /// <param name="str">给定的明文字符串。</param>
         /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
         /// <returns>返回算法缓冲区。</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope")]
         public static IEncryptionBuffer<IPlaintextConverter, string> AsPlaintextBuffer(this string str,
             IServiceProvider serviceProvider)
         {

@@ -16,6 +16,7 @@ using Microsoft.Extensions.FileProviders.Physical;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -24,6 +25,7 @@ namespace Librame.Extensions.Storage
     /// <summary>
     /// 物理存储目录内容集合。
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public class PhysicalStorageDirectoryContents : IStorageDirectoryContents
     {
         private IEnumerable<IStorageFileInfo> _entries;

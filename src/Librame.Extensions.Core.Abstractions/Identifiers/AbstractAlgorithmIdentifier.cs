@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -39,6 +40,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="identifier">给定的算法字符串。</param>
         /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "converter")]
         public AbstractAlgorithmIdentifier(string identifier, IAlgorithmConverter converter)
         {
             Converter = converter.NotNull(nameof(converter));
@@ -50,7 +52,9 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="info">给定的 <see cref="SerializationInfo"/>。</param>
         /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
-        public AbstractAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "context")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "info")]
+        protected AbstractAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
         {
             var converterType = Type.GetType(info.GetString("ConverterTypeName"));
             Converter = (IAlgorithmConverter)info.GetValue("Converter", converterType);
@@ -76,6 +80,8 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="info">给定的 <see cref="SerializationInfo"/>。</param>
         /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "context")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "info")]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Identifier", Converter.ConvertTo(Memory));

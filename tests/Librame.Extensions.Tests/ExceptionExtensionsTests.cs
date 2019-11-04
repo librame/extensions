@@ -64,12 +64,12 @@ namespace Librame.Extensions.Tests
         public void NotGreaterTest()
         {
             var num = 3;
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Throws<ArgumentException>(() =>
             {
                 return num.NotGreater(2, nameof(num));
             });
 
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Throws<ArgumentException>(() =>
             {
                 return num.NotGreater(3, nameof(num), true);
             });
@@ -80,12 +80,12 @@ namespace Librame.Extensions.Tests
         public void NotLesserTest()
         {
             var num = 3;
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Throws<ArgumentException>(() =>
             {
                 return num.NotLesser(4, nameof(num));
             });
 
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Throws<ArgumentException>(() =>
             {
                 return num.NotLesser(3, nameof(num), true);
             });

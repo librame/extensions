@@ -11,130 +11,65 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace Librame.Extensions
 {
+    using Resources;
+
     /// <summary>
     /// 压缩静态扩展。
     /// </summary>
-    /// <remarks>https://blog.csdn.net/mengdong_zy/article/details/28636469</remarks>
     public static class CompressionExtensions
     {
         /// <summary>
-        /// 压缩格式。
+        /// RTL 压缩字节数组。
         /// </summary>
-        public const ushort COMPRESSION_FORMAT_LZNT1
-            = 2;
-
-        /// <summary>
-        /// 压缩引擎最大值。
-        /// </summary>
-        public const ushort COMPRESSION_ENGINE_MAXIMUM
-            = 0x100;
-
-        private const string NTDLL
-            = "ntdll.dll";
-
-        private const string KERNEL32DLL
-            = "kernel32.dll";
-
-
-        /// <summary>
-        /// 获取压缩工作区大小。
-        /// </summary>
-        /// <param name="dCompressionFormat"></param>
-        /// <param name="dNeededBufferSize"></param>
-        /// <param name="dUnknown"></param>
-        /// <returns></returns>
-        [DllImport(NTDLL)]
-        public static extern uint RtlGetCompressionWorkSpaceSize(ushort dCompressionFormat, out uint dNeededBufferSize, out uint dUnknown);
-
-        /// <summary>
-        /// 压缩缓冲区。
-        /// </summary>
-        /// <param name="dCompressionFormat"></param>
-        /// <param name="dSourceBuffer"></param>
-        /// <param name="dSourceBufferLength"></param>
-        /// <param name="dDestinationBuffer"></param>
-        /// <param name="dDestinationBufferLength"></param>
-        /// <param name="dUnknown"></param>
-        /// <param name="dDestinationSize"></param>
-        /// <param name="dWorkspaceBuffer"></param>
-        /// <returns></returns>
-        [DllImport(NTDLL)]
-        public static extern uint RtlCompressBuffer(ushort dCompressionFormat, byte[] dSourceBuffer, int dSourceBufferLength,
-            byte[] dDestinationBuffer, int dDestinationBufferLength, uint dUnknown, out int dDestinationSize, IntPtr dWorkspaceBuffer);
-
-        /// <summary>
-        /// 解压缩缓冲区。
-        /// </summary>
-        /// <param name="dCompressionFormat"></param>
-        /// <param name="dDestinationBuffer"></param>
-        /// <param name="dDestinationBufferLength"></param>
-        /// <param name="dSourceBuffer"></param>
-        /// <param name="dSourceBufferLength"></param>
-        /// <param name="dDestinationSize"></param>
-        /// <returns></returns>
-        [DllImport(NTDLL)]
-        public static extern uint RtlDecompressBuffer(ushort dCompressionFormat, byte[] dDestinationBuffer, int dDestinationBufferLength,
-            byte[] dSourceBuffer, int dSourceBufferLength, out uint dDestinationSize);
-
-        /// <summary>
-        /// 从堆中分配指定数量的内存。
-        /// </summary>
-        /// <param name="uFlags"></param>
-        /// <param name="sizetdwBytes"></param>
-        /// <returns></returns>
-        [DllImport(KERNEL32DLL, CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr LocalAlloc(int uFlags, IntPtr sizetdwBytes);
-
-        /// <summary>
-        /// 释放局部内存对象并使句柄失效。
-        /// </summary>
-        /// <param name="hMem"></param>
-        /// <returns></returns>
-        [DllImport(KERNEL32DLL, SetLastError = true)]
-        public static extern IntPtr LocalFree(IntPtr hMem);
-
-
-        /// <summary>
-        /// 压缩字节数组。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="originalBuffer">给定的原生字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] Compress(this byte[] buffer)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
+        public static byte[] RtlCompress(this byte[] originalBuffer)
         {
-            var outputBuffer = new byte[buffer.Length * 6];
-            var size = RtlGetCompressionWorkSpaceSize(COMPRESSION_FORMAT_LZNT1 | COMPRESSION_ENGINE_MAXIMUM, out uint dwSize, out _);
+            originalBuffer.NotEmpty(nameof(originalBuffer));
+
+            var outputBuffer = new byte[originalBuffer.Length * 6];
+            ushort compressionFormat = ExtensionSettings.CompressionFormatLZNT1 | ExtensionSettings.CompressionEngineMaximum;
+
+            var size = SafeNativeMethods.RtlGetCompressionWorkSpaceSize(compressionFormat, out uint dwSize, out _);
             if (size != 0) return null;
 
-            var hWork = LocalAlloc(0, new IntPtr(dwSize));
+            var hWork = SafeNativeMethods.LocalAlloc(0, new IntPtr(dwSize));
 
-            size = RtlCompressBuffer(COMPRESSION_FORMAT_LZNT1 | COMPRESSION_ENGINE_MAXIMUM, buffer, buffer.Length, outputBuffer,
+            size = SafeNativeMethods.RtlCompressBuffer(compressionFormat, originalBuffer, originalBuffer.Length, outputBuffer,
                 outputBuffer.Length, 0, out int dstSize, hWork);
             if (size != 0) return null;
 
-            LocalFree(hWork);
+            SafeNativeMethods.LocalFree(hWork);
 
             Array.Resize(ref outputBuffer, dstSize);
             return outputBuffer;
         }
 
         /// <summary>
-        /// 解压缩字节数组。
+        /// RTL 解压缩字节数组。
         /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="compressedBuffer">给定的已压缩字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] Decompress(this byte[] buffer)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
+        public static byte[] RtlDecompress(this byte[] compressedBuffer)
         {
-            var outputBuffer = new byte[buffer.Length * 6];
-            var size = RtlGetCompressionWorkSpaceSize(COMPRESSION_FORMAT_LZNT1, out _, out _);
+            compressedBuffer.NotEmpty(nameof(compressedBuffer));
+
+            var outputBuffer = new byte[compressedBuffer.Length * 6];
+            var size = SafeNativeMethods.RtlGetCompressionWorkSpaceSize(ExtensionSettings.CompressionFormatLZNT1, out _, out _);
             if (size != 0) return null;
 
-            size = RtlDecompressBuffer(COMPRESSION_FORMAT_LZNT1, outputBuffer, outputBuffer.Length, buffer, buffer.Length, out uint dwRet);
+            size = SafeNativeMethods.RtlDecompressBuffer(ExtensionSettings.CompressionFormatLZNT1, outputBuffer, outputBuffer.Length,
+                compressedBuffer, compressedBuffer.Length, out uint dwRet);
             if (size != 0) return null;
 
             Array.Resize(ref outputBuffer, (int)dwRet);
@@ -147,83 +82,83 @@ namespace Librame.Extensions
         /// <summary>
         /// GZip 压缩文件。
         /// </summary>
-        /// <param name="fileInfo">给定的 <see cref="FileInfo"/>。</param>
-        /// <param name="zipFileExtension">给定的压缩文件扩展名（可选；默认为“.gz”）。</param>
+        /// <param name="originalFileInfo">给定的原始 <see cref="FileInfo"/>。</param>
         /// <returns>返回原始或压缩的 <see cref="FileInfo"/>。</returns>
-        public static FileInfo GZipCompress(this FileInfo fileInfo, string zipFileExtension = ".gz")
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalFileInfo")]
+        public static FileInfo GZipCompress(this FileInfo originalFileInfo)
         {
-            fileInfo.NotNull(nameof(fileInfo));
+            originalFileInfo.NotNull(nameof(originalFileInfo));
 
-            if ((File.GetAttributes(fileInfo.FullName) & FileAttributes.Hidden)
-                != FileAttributes.Hidden & !fileInfo.Extension.Equals(zipFileExtension, StringComparison.OrdinalIgnoreCase))
+            if ((File.GetAttributes(originalFileInfo.FullName) & FileAttributes.Hidden)
+                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.GZipCompressedFileType, StringComparison.OrdinalIgnoreCase))
             {
-                var zipFilePath = fileInfo.FullName + zipFileExtension;
+                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.GZipCompressedFileType;
 
-                using (var readStream = fileInfo.OpenRead())
-                using (var writeStream = File.Create(zipFilePath))
+                using (var originalStream = originalFileInfo.OpenRead())
+                using (var compressedStream = File.Create(compressedFilePath))
                 {
-                    readStream.GZipCompress(writeStream);
+                    originalStream.GZipCompress(compressedStream);
                 }
 
-                return new FileInfo(zipFilePath);
+                return new FileInfo(compressedFilePath);
             }
 
-            return fileInfo;
+            return originalFileInfo;
         }
 
         /// <summary>
         /// GZip 解压缩文件。
         /// </summary>
-        /// <exception cref="ArgumentException">
-        /// Unsupported unzip file.
+        /// <exception cref="FileLoadException">
+        /// Unsupported compressed file type (current: '{0}', required: '{1}').
         /// </exception>
-        /// <param name="fileInfo">给定的 <see cref="FileInfo"/>。</param>
-        /// <param name="zipFileExtension">给定的压缩文件扩展名（可选；默认为“.gz”）。</param>
+        /// <param name="compressedFileInfo">给定的已压缩 <see cref="FileInfo"/>。</param>
         /// <returns>返回解压缩的 <see cref="FileInfo"/>。</returns>
-        public static FileInfo GZipDecompress(this FileInfo fileInfo, string zipFileExtension = ".gz")
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "compressedFileInfo")]
+        public static FileInfo GZipDecompress(this FileInfo compressedFileInfo)
         {
-            fileInfo.NotNull(nameof(fileInfo));
+            compressedFileInfo.NotNull(nameof(compressedFileInfo));
 
-            if (!fileInfo.Extension.Equals(zipFileExtension, StringComparison.OrdinalIgnoreCase))
-                throw new ArgumentException("Unsupported unzip file.");
+            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.GZipCompressedFileType, StringComparison.OrdinalIgnoreCase))
+                throw new FileLoadException(InternalResource.FileLoadExceptionUnsupportedCompressedFileTypeFormat.Format(compressedFileInfo.Extension, ExtensionSettings.GZipCompressedFileType));
 
-            var unzipFilePath = fileInfo.FullName.TrimEnd(zipFileExtension);
+            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.GZipCompressedFileType);
 
-            using (var readStream = fileInfo.OpenRead())
-            using (var writeStream = File.Create(unzipFilePath))
+            using (var compressedStream = compressedFileInfo.OpenRead())
+            using (var decompressedStream = File.Create(decompressedFilePath))
             {
-                readStream.GZipDecompress(writeStream);
+                compressedStream.GZipDecompress(decompressedStream);
             }
 
-            return new FileInfo(unzipFilePath);
+            return new FileInfo(decompressedFilePath);
         }
 
 
         /// <summary>
         /// GZip 压缩字节数组。
         /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="originalBuffer">给定的原始字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GZipCompress(this byte[] buffer)
+        public static byte[] GZipCompress(this byte[] originalBuffer)
         {
-            using (var outputStream = new MemoryStream())
+            using (var compressedStream = new MemoryStream())
             {
-                buffer.GZipCompress(outputStream);
-                return outputStream.ToArray();
+                originalBuffer.GZipCompress(compressedStream);
+                return compressedStream.ToArray();
             }
         }
 
         /// <summary>
         /// GZip 解压缩字节数组。
         /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="compressedBuffer">给定的已压缩字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] GZipDecompress(this byte[] buffer)
+        public static byte[] GZipDecompress(this byte[] compressedBuffer)
         {
-            using (var outputStream = new MemoryStream())
+            using (var decompressedStream = new MemoryStream())
             {
-                buffer.GZipDecompress(outputStream);
-                return outputStream.ToArray();
+                compressedBuffer.GZipDecompress(decompressedStream);
+                return decompressedStream.ToArray();
             }
         }
 
@@ -231,58 +166,229 @@ namespace Librame.Extensions
         /// <summary>
         /// GZip 压缩字节数组。
         /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="outputStream">给定的输出流。</param>
-        public static void GZipCompress(this byte[] buffer, Stream outputStream)
+        /// <param name="originalBuffer">给定的原始字节数组。</param>
+        /// <param name="compressedStream">给定的已压缩流。</param>
+        public static void GZipCompress(this byte[] originalBuffer, Stream compressedStream)
         {
-            using (var inputStream = new MemoryStream(buffer))
+            using (var originalStream = new MemoryStream(originalBuffer))
             {
-                inputStream.GZipCompress(outputStream);
+                originalStream.GZipCompress(compressedStream);
             }
         }
 
         /// <summary>
         /// GZip 解压缩字节数组。
         /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="outputStream">给定的输出流。</param>
+        /// <param name="compressedBuffer">给定的已压缩字节数组。</param>
+        /// <param name="decompressedStream">给定的已解压缩流。</param>
         /// <returns>返回字节数组。</returns>
-        public static void GZipDecompress(this byte[] buffer, Stream outputStream)
+        public static void GZipDecompress(this byte[] compressedBuffer, Stream decompressedStream)
         {
-            using (var inputStream = new MemoryStream(buffer))
+            using (var compressedStream = new MemoryStream(compressedBuffer))
             {
-                inputStream.GZipDecompress(outputStream);
+                compressedStream.GZipDecompress(decompressedStream);
             }
         }
 
 
         /// <summary>
-        /// GZip 压缩输入流。
+        /// GZip 压缩。
         /// </summary>
-        /// <param name="inputStream">给定的输入流。</param>
-        /// <param name="outputStream">给定的输出流。</param>
-        public static void GZipCompress(this Stream inputStream, Stream outputStream)
+        /// <param name="originalStream">给定的原始流。</param>
+        /// <param name="compressedStream">给定的已压缩流。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalStream")]
+        public static void GZipCompress(this Stream originalStream, Stream compressedStream)
         {
-            using (var zipStream = new GZipStream(outputStream, CompressionMode.Compress, true))
+            originalStream.NotNull(nameof(originalStream));
+
+            using (var compressionStream = new GZipStream(compressedStream, CompressionMode.Compress, true))
             {
-                inputStream.CopyTo(zipStream);
+                originalStream.CopyTo(compressionStream);
             }
         }
 
         /// <summary>
-        /// GZip 解压缩输入流。
+        /// GZip 解压缩。
         /// </summary>
-        /// <param name="inputStream">给定的输入流。</param>
-        /// <param name="outputStream">给定的输出流。</param>
-        public static void GZipDecompress(this Stream inputStream, Stream outputStream)
+        /// <param name="compressedStream">给定的已压缩流。</param>
+        /// <param name="decompressedStream">给定的已解压缩流。</param>
+        public static void GZipDecompress(this Stream compressedStream, Stream decompressedStream)
         {
-            using (var zipStream = new GZipStream(inputStream, CompressionMode.Decompress, true))
+            using (var decompressionStream = new GZipStream(compressedStream, CompressionMode.Decompress, true))
             {
-                zipStream.CopyTo(outputStream);
+                decompressionStream.CopyTo(decompressedStream);
             }
         }
 
         #endregion
 
+
+        #region Deflate
+
+        /// <summary>
+        /// Deflate 压缩文件。
+        /// </summary>
+        /// <param name="originalFileInfo">给定的原始 <see cref="FileInfo"/>。</param>
+        /// <returns>返回原始或压缩的 <see cref="FileInfo"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalFileInfo")]
+        public static FileInfo DeflateCompress(this FileInfo originalFileInfo)
+        {
+            originalFileInfo.NotNull(nameof(originalFileInfo));
+
+            if ((File.GetAttributes(originalFileInfo.FullName) & FileAttributes.Hidden)
+                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.DeflateCompressedFileType, StringComparison.OrdinalIgnoreCase))
+            {
+                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.DeflateCompressedFileType;
+
+                using (var originalStream = originalFileInfo.OpenRead())
+                using (var compressedStream = File.Create(compressedFilePath))
+                {
+                    originalStream.DeflateCompress(compressedStream);
+                }
+
+                return new FileInfo(compressedFilePath);
+            }
+
+            return originalFileInfo;
+        }
+
+        /// <summary>
+        /// Deflate 解压缩文件。
+        /// </summary>
+        /// <exception cref="FileLoadException">
+        /// Unsupported compressed file type (current: '{0}', required: '{1}').
+        /// </exception>
+        /// <param name="compressedFileInfo">给定的已压缩 <see cref="FileInfo"/>。</param>
+        /// <returns>返回解压缩的 <see cref="FileInfo"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "compressedFileInfo")]
+        public static FileInfo DeflateDecompress(this FileInfo compressedFileInfo)
+        {
+            compressedFileInfo.NotNull(nameof(compressedFileInfo));
+
+            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.DeflateCompressedFileType, StringComparison.OrdinalIgnoreCase))
+                throw new FileLoadException(InternalResource.FileLoadExceptionUnsupportedCompressedFileTypeFormat.Format(compressedFileInfo.Extension, ExtensionSettings.DeflateCompressedFileType));
+
+            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.DeflateCompressedFileType);
+
+            using (var compressedStream = compressedFileInfo.OpenRead())
+            using (var decompressedStream = File.Create(decompressedFilePath))
+            {
+                compressedStream.DeflateDecompress(decompressedStream);
+            }
+
+            return new FileInfo(decompressedFilePath);
+        }
+
+
+        /// <summary>
+        /// Deflate 压缩字节数组。
+        /// </summary>
+        /// <param name="originalBuffer">给定的原始字节数组。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] DeflateCompress(this byte[] originalBuffer)
+        {
+            using (var compressedStream = new MemoryStream())
+            {
+                originalBuffer.DeflateCompress(compressedStream);
+                return compressedStream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Deflate 解压缩字节数组。
+        /// </summary>
+        /// <param name="compressedBuffer">给定的已压缩字节数组。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] DeflateDecompress(this byte[] compressedBuffer)
+        {
+            using (var decompressedStream = new MemoryStream())
+            {
+                compressedBuffer.DeflateDecompress(decompressedStream);
+                return decompressedStream.ToArray();
+            }
+        }
+
+
+        /// <summary>
+        /// Deflate 压缩字节数组。
+        /// </summary>
+        /// <param name="originalBuffer">给定的原始字节数组。</param>
+        /// <param name="compressedStream">给定的已压缩流。</param>
+        public static void DeflateCompress(this byte[] originalBuffer, Stream compressedStream)
+        {
+            using (var originalStream = new MemoryStream(originalBuffer))
+            {
+                originalStream.DeflateCompress(compressedStream);
+            }
+        }
+
+        /// <summary>
+        /// Deflate 解压缩字节数组。
+        /// </summary>
+        /// <param name="compressedBuffer">给定的已压缩字节数组。</param>
+        /// <param name="decompressedStream">给定的已解压缩流。</param>
+        /// <returns>返回字节数组。</returns>
+        public static void DeflateDecompress(this byte[] compressedBuffer, Stream decompressedStream)
+        {
+            using (var compressedStream = new MemoryStream(compressedBuffer))
+            {
+                compressedStream.DeflateDecompress(decompressedStream);
+            }
+        }
+
+
+        /// <summary>
+        /// Deflate 压缩。
+        /// </summary>
+        /// <param name="originalStream">给定的原始流。</param>
+        /// <param name="compressedStream">给定的已压缩流。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalStream")]
+        public static void DeflateCompress(this Stream originalStream, Stream compressedStream)
+        {
+            originalStream.NotNull(nameof(originalStream));
+
+            using (var compressionStream = new DeflateStream(compressedStream, CompressionMode.Compress, true))
+            {
+                originalStream.CopyTo(compressionStream);
+            }
+        }
+
+        /// <summary>
+        /// Deflate 解压缩。
+        /// </summary>
+        /// <param name="compressedStream">给定的已压缩流。</param>
+        /// <param name="decompressedStream">给定的已解压缩流。</param>
+        public static void DeflateDecompress(this Stream compressedStream, Stream decompressedStream)
+        {
+            using (var decompressionStream = new DeflateStream(compressedStream, CompressionMode.Decompress, true))
+            {
+                decompressionStream.CopyTo(decompressedStream);
+            }
+        }
+
+        #endregion
+
+    }
+
+
+    [SuppressUnmanagedCodeSecurity]
+    static class SafeNativeMethods
+    {
+        [DllImport(ExtensionSettings.NtDllFileName, CharSet = CharSet.Auto, ExactSpelling = true)]
+        internal static extern uint RtlGetCompressionWorkSpaceSize(ushort dCompressionFormat, out uint dNeededBufferSize, out uint dUnknown);
+
+        [DllImport(ExtensionSettings.NtDllFileName, CharSet = CharSet.Auto, ExactSpelling = true)]
+        internal static extern uint RtlCompressBuffer(ushort dCompressionFormat, byte[] dSourceBuffer, int dSourceBufferLength,
+            byte[] dDestinationBuffer, int dDestinationBufferLength, uint dUnknown, out int dDestinationSize, IntPtr dWorkspaceBuffer);
+
+        [DllImport(ExtensionSettings.NtDllFileName, CharSet = CharSet.Auto, ExactSpelling = true)]
+        internal static extern uint RtlDecompressBuffer(ushort dCompressionFormat, byte[] dDestinationBuffer, int dDestinationBufferLength,
+            byte[] dSourceBuffer, int dSourceBufferLength, out uint dDestinationSize);
+
+        [DllImport(ExtensionSettings.Kernel32DllFileName, CharSet = CharSet.Auto, ExactSpelling = true, SetLastError = true)]
+        internal static extern IntPtr LocalAlloc(int uFlags, IntPtr sizetdwBytes);
+
+        [DllImport(ExtensionSettings.Kernel32DllFileName, CharSet = CharSet.Auto, ExactSpelling = true, SetLastError = true)]
+        internal static extern IntPtr LocalFree(IntPtr hMem);
     }
 }

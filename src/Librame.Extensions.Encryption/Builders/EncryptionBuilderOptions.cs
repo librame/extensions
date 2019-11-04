@@ -20,16 +20,16 @@ namespace Librame.Extensions.Encryption
     public class EncryptionBuilderOptions : IExtensionBuilderOptions
     {
         /// <summary>
-        /// 全局键名。
+        /// 全局签名证书键名。
         /// </summary>
-        public const string GLOBAL_KEY = "Global";
+        public const string GlobalSigningCredentialsKey = "Global";
 
 
         /// <summary>
         /// 签名证书键名（默认使用全局键名）。
         /// </summary>
         public string SigningCredentialsKey { get; set; }
-            = GLOBAL_KEY;
+            = GlobalSigningCredentialsKey;
 
         /// <summary>
         /// 生成随机密钥（默认不随机生成）。

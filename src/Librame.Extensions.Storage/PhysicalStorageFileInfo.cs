@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.FileProviders;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Librame.Extensions.Storage
@@ -25,6 +26,7 @@ namespace Librame.Extensions.Storage
         /// 构造一个 <see cref="PhysicalStorageFileInfo"/>。
         /// </summary>
         /// <param name="info">给定的 <see cref="FileInfo"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "info")]
         public PhysicalStorageFileInfo(FileInfo info)
         {
             info.NotNull(nameof(info));
@@ -41,6 +43,7 @@ namespace Librame.Extensions.Storage
         /// 构造一个 <see cref="PhysicalStorageFileInfo"/>。
         /// </summary>
         /// <param name="info">给定的 <see cref="IFileInfo"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "info")]
         public PhysicalStorageFileInfo(IFileInfo info)
         {
             info.NotNull(nameof(info));

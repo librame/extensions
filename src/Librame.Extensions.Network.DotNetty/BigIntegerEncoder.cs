@@ -13,6 +13,7 @@
 using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace Librame.Extensions.Network.DotNetty
@@ -28,8 +29,12 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="context">给定的 <see cref="IChannelHandlerContext"/>。</param>
         /// <param name="message">给定的 <see cref="BigInteger"/>。</param>
         /// <param name="output">给定的输出对象列表。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected override void Encode(IChannelHandlerContext context, BigInteger message, List<object> output)
         {
+            context.NotNull(nameof(context));
+            output.NotNull(nameof(output));
+
             var buffer = context.Allocator.Buffer();
             
             //https://msdn.microsoft.com/en-us/library/system.numerics.biginteger.tobytearray(v=vs.110).aspx

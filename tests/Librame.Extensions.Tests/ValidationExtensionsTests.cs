@@ -130,9 +130,9 @@ namespace Librame.Extensions.Tests
             Assert.False("xX".IsUpper());
             Assert.True("X".IsUpper());
 
-            Assert.True("xX$".HasSpecial());
-            Assert.False("xX$".IsSpecial());
-            Assert.True("$".IsSpecial());
+            Assert.True("xX$".HasAlgorithmSpecial());
+            Assert.False("xX$".IsAlgorithmSpecial());
+            Assert.True("$".IsAlgorithmSpecial());
 
             Assert.True("012xX".HasLetter());
             Assert.False("012xX".IsLetter());
@@ -142,9 +142,9 @@ namespace Librame.Extensions.Tests
             Assert.False("012xX!".IsLetterAndDigit());
             Assert.True("012xX".IsLetterAndDigit());
 
-            Assert.True("012xX$^*".HasSafety());
-            Assert.False("xX$^*".IsSafety());
-            Assert.True("012xX$^*".IsSafety());
+            Assert.True("012xX$^*".HasAlgorithmSafety());
+            Assert.False("xX$^*".IsAlgorithmSafety());
+            Assert.True("012xX$^*".IsAlgorithmSafety());
         }
     }
 }

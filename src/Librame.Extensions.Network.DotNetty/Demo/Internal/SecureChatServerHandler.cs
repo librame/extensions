@@ -14,11 +14,13 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Groups;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class SecureChatServerHandler : SimpleChannelInboundHandler<string>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class SecureChatServerHandler : SimpleChannelInboundHandler<string>
     {
         private readonly ISecureChatServer _server;
         private readonly ILogger _logger;

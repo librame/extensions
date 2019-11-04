@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.IO;
 using System.Threading;
@@ -56,7 +57,7 @@ namespace Librame.Extensions.Storage
         {
             if (Options.FileProviders.IsEmpty())
             {
-                Logger.LogTrace($"{nameof(StorageBuilderOptions)}.{nameof(StorageBuilderOptions.FileProviders)} is null or empty.");
+                Logger.LogWarning($"Options.FileProviders is null or empty.");
                 return null;
             }
 
@@ -129,6 +130,7 @@ namespace Librame.Extensions.Storage
         /// </summary>
         /// <param name="fileInfo">给定的 <see cref="IStorageFileInfo"/>。</param>
         /// <returns>返回 <see cref="Task{String}"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "fileInfo")]
         public Task<string> ReadStringAsync(IStorageFileInfo fileInfo)
         {
             fileInfo.NotNull(nameof(fileInfo));
@@ -147,6 +149,7 @@ namespace Librame.Extensions.Storage
         /// <param name="writeStream">给定的写入 <see cref="Stream"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public async Task ReadAsync(IStorageFileInfo fileInfo, Stream writeStream, CancellationToken cancellationToken = default)
         {
             fileInfo.NotNull(nameof(fileInfo));
@@ -187,6 +190,7 @@ namespace Librame.Extensions.Storage
         /// <param name="fileInfo">给定的 <see cref="IStorageFileInfo"/>。</param>
         /// <param name="content">给定的写入字符串。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "fileInfo")]
         public Task WriteStringAsync(IStorageFileInfo fileInfo, string content)
         {
             fileInfo.NotNull(nameof(fileInfo));
@@ -206,6 +210,7 @@ namespace Librame.Extensions.Storage
         /// <param name="readStream">给定的读取 <see cref="Stream"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public async Task WriteAsync(IStorageFileInfo fileInfo, Stream readStream, CancellationToken cancellationToken = default)
         {
             fileInfo.NotNull(nameof(fileInfo));

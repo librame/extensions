@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Librame.Extensions.Core
@@ -20,23 +21,23 @@ namespace Librame.Extensions.Core
     /// </summary>
     public class SnowflakeIdentifierGenerator
     {
-        private static long _machineId = 0L;
-        private static long _dataCenterId = 0L;
-        private static long _sequence = 0L;
+        private long _machineId = 0L;
+        private long _dataCenterId = 0L;
+        private long _sequence = 0L;
 
-        private static long _twepoch = 687888001020L;
+        private long _twepoch = 687888001020L;
 
         private static long _machineIdBits = 5L;
         private static long _dataCenterIdBits = 5L;
-        private static long _maxMachineId = -1L ^ -1L << (int)_machineIdBits;
-        private static long _maxDatacenterId = -1L ^ (-1L << (int)_dataCenterIdBits);
+        private long _maxMachineId = -1L ^ -1L << (int)_machineIdBits;
+        private long _maxDatacenterId = -1L ^ (-1L << (int)_dataCenterIdBits);
 
         private static long _sequenceBits = 12L;
-        private static long _machineIdShift = _sequenceBits;
-        private static long _dataCenterIdShift = _sequenceBits + _machineIdBits;
-        private static long _timestampLeftShift = _sequenceBits + _machineIdBits + _dataCenterIdBits;
-        private static long _sequenceMask = -1L ^ -1L << (int)_sequenceBits;
-        private static long _lastTimestamp = -1L;
+        private long _machineIdShift = _sequenceBits;
+        private long _dataCenterIdShift = _sequenceBits + _machineIdBits;
+        private long _timestampLeftShift = _sequenceBits + _machineIdBits + _dataCenterIdBits;
+        private long _sequenceMask = -1L ^ -1L << (int)_sequenceBits;
+        private long _lastTimestamp = -1L;
 
 
         /// <summary>
@@ -52,13 +53,14 @@ namespace Librame.Extensions.Core
             if (dataCenterId >= 0)
                 _dataCenterId = dataCenterId.NotGreater(_maxDatacenterId, nameof(dataCenterId));
         }
-        
+
 
         /// <summary>
         /// 生成标识符。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <returns>返回长整数。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "clock")]
         public long Generate(IClockService clock)
         {
             clock.NotNull(nameof(clock));
@@ -91,12 +93,12 @@ namespace Librame.Extensions.Core
             });
         }
 
-        private long GetCurrentTimestamp(IClockService clock)
+        private static long GetCurrentTimestamp(IClockService clock)
         {
             return clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).ConfigureAndResult().ToFileTime();
         }
 
-        private long GetNextTimestamp(long lastTimestamp, IClockService clock)
+        private static long GetNextTimestamp(long lastTimestamp, IClockService clock)
         {
             var timestamp = GetCurrentTimestamp(clock);
 

@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core
     {
         internal static ICoreBuilder AddServices(this ICoreBuilder builder)
         {
-            builder.Services.TryAddTransient<ServiceFactoryDelegate>(serviceProvider => serviceProvider.GetService);
+            builder.Services.TryAddTransient<ServiceFactory>(serviceProvider => serviceProvider.GetService);
 
             builder.Services.TryAddTransient(typeof(IServicesManager<,>), typeof(ServicesManager<,>));
             builder.Services.TryAddScoped(typeof(IServicesManager<>), typeof(ServicesManager<>));

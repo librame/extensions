@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Librame.Extensions.Core
@@ -22,6 +23,7 @@ namespace Librame.Extensions.Core
     /// </summary>
     /// <typeparam name="TService">指定的服务类型。</typeparam>
     /// <typeparam name="TDefault">指定的默认服务类型。</typeparam>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public abstract class AbstractServicesManager<TService, TDefault> : AbstractServicesManager<TService>, IServicesManager<TService, TDefault>
         where TService : ISortableService
         where TDefault : TService
@@ -53,6 +55,7 @@ namespace Librame.Extensions.Core
     /// 抽象服务集合管理器。
     /// </summary>
     /// <typeparam name="TService">指定的服务类型。</typeparam>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public abstract class AbstractServicesManager<TService> : IServicesManager<TService>
         where TService : ISortableService
     {

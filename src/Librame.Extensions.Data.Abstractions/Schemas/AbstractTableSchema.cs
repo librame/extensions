@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// </summary>
     public abstract class AbstractTableSchema
     {
-        private static readonly string _defaultConnector
+        private const string DefaultConnector
             = ".";
 
 
@@ -44,7 +44,7 @@ namespace Librame.Extensions.Data
         public override string ToString()
         {
             if (Schema.IsNotEmpty())
-                return $"{Schema}{_defaultConnector}";
+                return $"{Schema}{DefaultConnector}";
 
             return Schema;
         }

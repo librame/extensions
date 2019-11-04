@@ -14,6 +14,7 @@ using Librame.Extensions;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -89,6 +90,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="configureOptionsInstance">给定的配置选项实例。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool TryReplaceConfigureOptions(this IServiceCollection services, object configureOptionsInstance)
         {
             configureOptionsInstance.NotNull(nameof(configureOptionsInstance));

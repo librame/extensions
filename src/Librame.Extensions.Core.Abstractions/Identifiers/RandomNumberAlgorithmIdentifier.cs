@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 
@@ -51,7 +52,8 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="info">给定的 <see cref="SerializationInfo"/>。</param>
         /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
-        public RandomNumberAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "context")]
+        protected RandomNumberAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

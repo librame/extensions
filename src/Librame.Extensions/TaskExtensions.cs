@@ -10,6 +10,7 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -20,16 +21,17 @@ namespace Librame.Extensions
     /// </summary>
     public static class TaskExtensions
     {
+
+        #region Task
+
         /// <summary>
         /// 异步配置并等待。
         /// </summary>
         /// <param name="task">给定的 <see cref="Task"/>。</param>
         /// <returns>返回 <see cref="ConfiguredTaskAwaitable"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "task")]
         public static ConfiguredTaskAwaitable ConfigureAndWaitAsync(this Task task)
-        {
-            if (task.IsNull()) return default;
-            return task.ConfigureAwait(false);
-        }
+            => task.NotNull(nameof(task)).ConfigureAwait(false);
 
         /// <summary>
         /// 异步配置并返回结果。
@@ -37,11 +39,9 @@ namespace Librame.Extensions
         /// <typeparam name="TResult">指定的类型。</typeparam>
         /// <param name="task">给定的 <see cref="Task{TResult}"/>。</param>
         /// <returns>返回 <see cref="ConfiguredTaskAwaitable{TResult}"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "task")]
         public static ConfiguredTaskAwaitable<TResult> ConfigureAndResultAsync<TResult>(this Task<TResult> task)
-        {
-            if (task.IsNull()) return default;
-            return task.ConfigureAwait(true);
-        }
+            => task.NotNull(nameof(task)).ConfigureAwait(true);
 
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="task">给定的 <see cref="Task"/>。</param>
         public static void ConfigureAndWait(this Task task)
-            => task?.ConfigureAwait(false).GetAwaiter().GetResult();
+            => task.ConfigureAndWaitAsync().GetAwaiter().GetResult();
 
         /// <summary>
         /// 配置并返回结果。
@@ -58,10 +58,9 @@ namespace Librame.Extensions
         /// <param name="task">给定的 <see cref="Task{TResult}"/>。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
         public static TResult ConfigureAndResult<TResult>(this Task<TResult> task)
-        {
-            if (task.IsNull()) return default;
-            return task.ConfigureAwait(true).GetAwaiter().GetResult();
-        }
+            => task.ConfigureAndResultAsync().GetAwaiter().GetResult();
+
+        #endregion
 
 
         #region ValueTask
@@ -72,10 +71,7 @@ namespace Librame.Extensions
         /// <param name="valueTask">给定的 <see cref="ValueTask"/>。</param>
         /// <returns>返回 <see cref="ConfiguredValueTaskAwaitable"/>。</returns>
         public static ConfiguredValueTaskAwaitable ConfigureAndWaitAsync(this ValueTask valueTask)
-        {
-            if (valueTask.IsNull()) return default;
-            return valueTask.ConfigureAwait(false);
-        }
+            => valueTask.ConfigureAwait(false);
 
         /// <summary>
         /// 异步配置并返回结果。
@@ -84,10 +80,7 @@ namespace Librame.Extensions
         /// <param name="valueTask">给定的 <see cref="ValueTask{TResult}"/>。</param>
         /// <returns>返回 <see cref="ConfiguredValueTaskAwaitable{TResult}"/>。</returns>
         public static ConfiguredValueTaskAwaitable<TResult> ConfigureAndResultAsync<TResult>(this ValueTask<TResult> valueTask)
-        {
-            if (valueTask.IsNull()) return default;
-            return valueTask.ConfigureAwait(true);
-        }
+            => valueTask.ConfigureAwait(true);
 
 
         /// <summary>
@@ -95,10 +88,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="valueTask">给定的 <see cref="ValueTask"/>。</param>
         public static void ConfigureAndWait(this ValueTask valueTask)
-        {
-            if (valueTask.IsNull()) return;
-            valueTask.ConfigureAwait(false).GetAwaiter().GetResult();
-        }
+            => valueTask.ConfigureAndWaitAsync().GetAwaiter().GetResult();
 
         /// <summary>
         /// 配置并返回结果。
@@ -107,10 +97,7 @@ namespace Librame.Extensions
         /// <param name="valueTask">给定的 <see cref="ValueTask{TResult}"/>。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
         public static TResult ConfigureAndResult<TResult>(this ValueTask<TResult> valueTask)
-        {
-            if (valueTask.IsNull()) return default;
-            return valueTask.ConfigureAwait(true).GetAwaiter().GetResult();
-        }
+            => valueTask.ConfigureAndResultAsync().GetAwaiter().GetResult();
 
         #endregion
 

@@ -18,6 +18,7 @@ using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +27,8 @@ using static DotNetty.Codecs.Http.HttpResponseStatus;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class WebSocketServerHandler : SimpleChannelInboundHandler<object>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class WebSocketServerHandler : SimpleChannelInboundHandler<object>
     {
         private readonly IWebSocketServer _server;
         private readonly ILogger _logger;
@@ -83,7 +85,7 @@ namespace Librame.Extensions.Network.DotNetty
             }
 
             // Send the demo page and favicon.ico
-            if ("/".Equals(request.Uri))
+            if ("/".Equals(request.Uri, StringComparison.OrdinalIgnoreCase))
             {
                 var content = WebSocketServerBenchmarkPage.GetContent(GetWebSocketLocation(request));
                 var response = new DefaultFullHttpResponse(Http11, OK, content);
@@ -94,7 +96,7 @@ namespace Librame.Extensions.Network.DotNetty
                 SendHttpResponse(context, request, response);
                 return;
             }
-            if ("/favicon.ico".Equals(request.Uri))
+            if ("/favicon.ico".Equals(request.Uri, StringComparison.OrdinalIgnoreCase))
             {
                 var res = new DefaultFullHttpResponse(Http11, NotFound);
                 SendHttpResponse(context, request, res);

@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption
     /// <summary>
     /// 明文转换器接口。
     /// </summary>
-    public interface IPlaintextConverter : IByteMemoryBufferToStringConverter, IEncoding
+    public interface IPlaintextConverter : IByteMemoryBufferConverter, IEncoding
     {
     }
 }

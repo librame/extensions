@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Librame.Extensions.Data
@@ -84,6 +85,7 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <param name="stores">给定的 <see cref="StoreHub{TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "stores")]
         public virtual void Initialize<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
             (StoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> stores)
             where TAccessor : IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
@@ -154,6 +156,7 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <param name="stores">给定的 <see cref="StoreHub{TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "stores")]
         protected virtual void InitializeTenants<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
             (StoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> stores)
             where TAccessor : IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>

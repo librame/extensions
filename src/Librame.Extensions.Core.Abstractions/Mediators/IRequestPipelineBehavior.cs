@@ -27,9 +27,9 @@ namespace Librame.Extensions.Core
         /// 异步管道处理程序。执行任何附加行为，并根据需要等待响应动作。
         /// </summary>
         /// <param name="request">给定传入的请求。</param>
-        /// <param name="next">用于管道中的下一个操作的可等待委托。最终，这个委托表示处理程序。</param>
+        /// <param name="nextHandler">用于管道中的下一个操作的可等待委托。最终，这个委托表示处理程序。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TResponse"/> 的异步操作。</returns>
-        Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken = default);
+        Task<TResponse> HandleAsync(TRequest request, RequestHandler<TResponse> nextHandler, CancellationToken cancellationToken = default);
     }
 }

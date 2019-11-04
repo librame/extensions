@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core
 {
@@ -37,6 +38,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         protected AbstractExtensionBuilder(IExtensionBuilder builder, IExtensionBuilderDependencyOptions dependencyOptions)
         {
             ParentBuilder = builder.NotNull(nameof(builder));

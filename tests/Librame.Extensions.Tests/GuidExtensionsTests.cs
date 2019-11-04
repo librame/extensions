@@ -21,7 +21,7 @@ namespace Librame.Extensions.Tests
             var combids = guids.AsCombGuids(timestamp);
             Assert.False(guids.SequenceEqual(combids));
 
-            var newCombids = 10.GenerateCombIds(timestamp, out IEnumerable <Guid> newGuids);
+            var newCombids = 10.GenerateCombIds(timestamp, out IEnumerable<Guid> newGuids);
             Assert.False(newCombids.SequenceEqual(newGuids));
         }
 

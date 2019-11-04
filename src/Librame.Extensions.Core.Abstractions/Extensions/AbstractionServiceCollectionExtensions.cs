@@ -12,6 +12,7 @@
 
 using Librame.Extensions;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -233,6 +234,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Type oldImplementationType, Type newImplementationType,
             out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
         {
@@ -277,6 +279,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="newDescriptorFactory">给定用于替换的新 <see cref="ServiceDescriptor"/> 工厂方法。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Func<ServiceDescriptor, bool> predicate,
             Func<ServiceDescriptor, ServiceDescriptor> newDescriptorFactory, bool throwIfNotFound = true)
         {
@@ -445,6 +448,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Type oldImplementationType,
             Func<IServiceProvider, object> newImplementationFactory, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
         {
@@ -607,6 +611,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="oldDescriptor">输出旧 <see cref="ServiceDescriptor"/>。</param>
         /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
         /// <returns>返回是否成功替换的布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool TryReplace(this IServiceCollection services, Type serviceType, Type oldImplementationType,
             object newInstance, out ServiceDescriptor oldDescriptor, bool throwIfNotFound = true)
         {

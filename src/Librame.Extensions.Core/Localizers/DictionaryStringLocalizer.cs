@@ -13,6 +13,7 @@
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Librame.Extensions.Core
@@ -26,6 +27,7 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="DictionaryStringLocalizer"/>。
         /// </summary>
         /// <param name="manager">给定的 <see cref="ResourceDictionaryManager"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "manager")]
         public DictionaryStringLocalizer(ResourceDictionaryManager manager)
         {
             Manager = manager.NotNull(nameof(manager));
@@ -60,7 +62,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="LocalizedString"/>。</returns>
         public LocalizedString this[string name, params object[] arguments]
             => ToLocalizedString(name, !Dictionary.TryGetValue(name, out object value),
-                value.IsNotNull() ? string.Format(value.ToString(), arguments) : null);
+                value.IsNotNull() ? string.Format(CultureInfo.CurrentCulture, value.ToString(), arguments) : null);
 
 
         /// <summary>
@@ -83,6 +85,7 @@ namespace Librame.Extensions.Core
         /// <param name="resourceNotFound">未找到此资源。</param>
         /// <param name="value">给定的值。</param>
         /// <returns>返回 <see cref="LocalizedString"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1822:MarkMembersAsStatic")]
         protected LocalizedString ToLocalizedString(string name, bool resourceNotFound, string value)
             => new LocalizedString(name, value.NotEmptyOrDefault(name), resourceNotFound, searchedLocation: null);
 
@@ -98,5 +101,6 @@ namespace Librame.Extensions.Core
             CultureInfo.CurrentUICulture = culture;
             return new DictionaryStringLocalizer(Manager);
         }
+
     }
 }

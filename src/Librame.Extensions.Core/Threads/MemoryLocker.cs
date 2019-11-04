@@ -12,12 +12,14 @@
 
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
 {
-    class MemoryLocker : AbstractDisposable, IMemoryLocker
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class MemoryLocker : AbstractDisposable, IMemoryLocker
     {
         private SemaphoreSlim _locker;
 

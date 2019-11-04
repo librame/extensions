@@ -14,10 +14,12 @@ using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class DiscardClientHandler : SimpleChannelInboundHandler<object>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class DiscardClientHandler : SimpleChannelInboundHandler<object>
     {
         private readonly IDiscardClient _client;
         private readonly ILogger _logger;
@@ -29,7 +31,7 @@ namespace Librame.Extensions.Network.DotNetty
         public DiscardClientHandler(IDiscardClient client)
             : base()
         {
-            _client = client;
+            _client = client.NotNull(nameof(client));
             _logger = client.LoggerFactory.CreateLogger<DiscardClientHandler>();
         }
 
@@ -54,6 +56,7 @@ namespace Librame.Extensions.Network.DotNetty
             _context.CloseAsync();
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         private async void GenerateTraffic()
         {
             try

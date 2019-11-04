@@ -13,7 +13,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,6 +20,8 @@ using System.Text.RegularExpressions;
 
 namespace Librame.Extensions
 {
+    using Resources;
+
     /// <summary>
     /// 路径静态扩展。
     /// </summary>
@@ -39,19 +40,6 @@ namespace Librame.Extensions
     /// </remarks>
     public static class PathExtensions
     {
-        /// <summary>
-        /// 正向目录分隔字符（/）。
-        /// </summary>
-        private static readonly char _altDirectorySeparatorChar
-            = Path.AltDirectorySeparatorChar;
-
-        /// <summary>
-        /// 反向目录分隔字符（\）。
-        /// </summary>
-        private static readonly char _directorySeparatorChar
-            = Path.DirectorySeparatorChar;
-
-
         /// <summary>
         /// 没有开发相对路径的路径。
         /// </summary>
@@ -73,9 +61,9 @@ namespace Librame.Extensions
 
             string GetPattern()
             {
-                var separator = currentPath.Contains(_directorySeparatorChar, StringComparison.OrdinalIgnoreCase)
-                    ? Regex.Escape(_directorySeparatorChar.ToString(CultureInfo.InvariantCulture))
-                    : _altDirectorySeparatorChar.ToString(CultureInfo.InvariantCulture);
+                var separator = currentPath.Contains(ExtensionSettings.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+                    ? Regex.Escape(ExtensionSettings.DirectorySeparator)
+                    : ExtensionSettings.AltDirectorySeparator;
 
                 var sb = new StringBuilder();
                 sb.Append($"({separator}bin|{separator}obj)");
@@ -115,6 +103,9 @@ namespace Librame.Extensions
         /// <summary>
         /// 改变指定路径的文件名。
         /// </summary>
+        /// <exception cref="ArgumentException">
+        /// Invalid file path '{0}'.
+        /// </exception>
         /// <param name="filePath">给定的文件路径。</param>
         /// <param name="newFileNameFactory">给定的新文件名方法；输入参数依次为文件基础名、文件扩展名（不存在则为 <see cref="string.Empty"/>）。</param>
         /// <returns>返回路径。</returns>
@@ -125,7 +116,7 @@ namespace Librame.Extensions
 
             var fileName = Path.GetFileName(filePath);
             if (string.IsNullOrEmpty(fileName))
-                throw new ArgumentException($"Invalid file path '{filePath}'.");
+                throw new ArgumentException(InternalResource.ArgumentExceptionFilePathFormat.Format(filePath));
 
             var basePath = Path.GetDirectoryName(filePath);
             var extension = Path.GetExtension(filePath);
@@ -144,6 +135,9 @@ namespace Librame.Extensions
         /// <summary>
         /// 合并路径。
         /// </summary>
+        /// <exception cref="ArgumentException">
+        /// Invalid base path '{0}'.
+        /// </exception>
         /// <param name="basePath">给定的基础路径。</param>
         /// <param name="relativePath">给定要附加的相对路径。</param>
         /// <returns>返回路径字符串。</returns>
@@ -153,21 +147,18 @@ namespace Librame.Extensions
             basePath.NotEmpty(nameof(basePath));
             relativePath.NotEmpty(nameof(relativePath));
 
-            var altSeparatorIndex = basePath.IndexOf(_altDirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
-            var separatorIndex = basePath.IndexOf(_directorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+            var altSeparatorIndex = basePath.IndexOf(ExtensionSettings.AltDirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+            var separatorIndex = basePath.IndexOf(ExtensionSettings.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
 
-            // 正反向分隔符不能同时存在（或不存在）于基础路径中（也不能位于开头字符）
-            if ((altSeparatorIndex < 1 && separatorIndex < 1)
-                || (altSeparatorIndex > 0 && separatorIndex > 0))
-            {
-                throw new ArgumentException($"Invalid base path '{basePath}'.");
-            }
+            // 正反向分隔符不能同时存在（或不存在）于基础路径中，且不能位于开头字符
+            if ((altSeparatorIndex < 1 && separatorIndex < 1) || (altSeparatorIndex > 0 && separatorIndex > 0))
+                throw new ArgumentException(InternalResource.ArgumentExceptionBasePathFormat.Format(basePath));
 
-            var basePathSeparator = altSeparatorIndex > 0 ? _altDirectorySeparatorChar : _directorySeparatorChar;
+            var basePathSeparator = altSeparatorIndex > 0 ? ExtensionSettings.AltDirectorySeparatorChar : ExtensionSettings.DirectorySeparatorChar;
 
             // RelativePath: filename.ext
-            if (!relativePath.Contains(_altDirectorySeparatorChar, StringComparison.CurrentCultureIgnoreCase)
-                && !relativePath.Contains(_directorySeparatorChar, StringComparison.CurrentCultureIgnoreCase))
+            if (!relativePath.Contains(ExtensionSettings.AltDirectorySeparatorChar, StringComparison.CurrentCultureIgnoreCase)
+                && !relativePath.Contains(ExtensionSettings.DirectorySeparatorChar, StringComparison.CurrentCultureIgnoreCase))
             {
                 return $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath}";
             }
@@ -188,7 +179,7 @@ namespace Librame.Extensions
             var parentMark = "..";
 
             // RelativePath: ../
-            var altSeparatorMark = $"{parentMark}{_altDirectorySeparatorChar}";
+            var altSeparatorMark = $"{parentMark}{ExtensionSettings.AltDirectorySeparatorChar}";
             if (relativePath.StartsWith(altSeparatorMark, StringComparison.OrdinalIgnoreCase))
             {
                 var parent = BackToParentPath(new DirectoryInfo(basePath), relativePath, altSeparatorMark);
@@ -197,7 +188,7 @@ namespace Librame.Extensions
             }
 
             // RelativePath: ..\
-            var separatorMark = $"{parentMark}{_directorySeparatorChar}";
+            var separatorMark = $"{parentMark}{ExtensionSettings.DirectorySeparatorChar}";
             if (relativePath.StartsWith(separatorMark, StringComparison.OrdinalIgnoreCase))
             {
                 var parent = BackToParentPath(new DirectoryInfo(basePath), relativePath, separatorMark);
@@ -224,7 +215,7 @@ namespace Librame.Extensions
             var siblingMark = ".";
 
             // RelativePath: ./
-            var altSeparatorMark = $"{siblingMark}{_altDirectorySeparatorChar}";
+            var altSeparatorMark = $"{siblingMark}{ExtensionSettings.AltDirectorySeparatorChar}";
             if (relativePath.StartsWith(altSeparatorMark, StringComparison.OrdinalIgnoreCase))
             {
                 resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(altSeparatorMark)}";
@@ -232,7 +223,7 @@ namespace Librame.Extensions
             }
 
             // RelativePath: .\
-            var separatorMark = $"{siblingMark}{_directorySeparatorChar}";
+            var separatorMark = $"{siblingMark}{ExtensionSettings.DirectorySeparatorChar}";
             if (relativePath.StartsWith(separatorMark, StringComparison.OrdinalIgnoreCase))
             {
                 resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(separatorMark)}";
@@ -240,16 +231,16 @@ namespace Librame.Extensions
             }
 
             // RelativePath: /
-            if (relativePath.StartsWith(_altDirectorySeparatorChar))
+            if (relativePath.StartsWith(ExtensionSettings.AltDirectorySeparatorChar))
             {
-                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(_altDirectorySeparatorChar)}";
+                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(ExtensionSettings.AltDirectorySeparatorChar)}";
                 return true;
             }
 
             // RelativePath: \
-            if (relativePath.StartsWith(_directorySeparatorChar))
+            if (relativePath.StartsWith(ExtensionSettings.DirectorySeparatorChar))
             {
-                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(_directorySeparatorChar)}";
+                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(ExtensionSettings.DirectorySeparatorChar)}";
                 return true;
             }
 

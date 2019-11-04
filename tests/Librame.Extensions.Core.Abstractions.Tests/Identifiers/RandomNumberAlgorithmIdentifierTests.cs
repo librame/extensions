@@ -18,11 +18,11 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal(identifier.ToString(), other.ToString());
 
             // Serialization
-            var buffer = identifier.SerializeBinary().Compress();
+            var buffer = identifier.SerializeBinary().RtlCompress();
             var base64String = buffer.AsBase64String();
             Assert.NotEmpty(base64String);
 
-            buffer = base64String.FromBase64String().Decompress();
+            buffer = base64String.FromBase64String().RtlDecompress();
             var obj = buffer.DeserializeBinary();
             Assert.True(identifier.Equals(obj));
         }

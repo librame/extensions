@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    public class DictionaryExpressionLocalizerTests
+    public class DictionaryStringLocalizerTests
     {
         public static readonly string[] DefaultNames
             = new string[] { "TestName", "测试名称", "測試名稱" };
@@ -51,8 +51,8 @@ namespace Librame.Extensions.Core.Tests
             {
                 CultureInfo.CurrentUICulture = new CultureInfo(cultures[i]);
 
-                var localizer = TestServiceProvider.Current.GetRequiredService<IDictionaryExpressionLocalizer<TestResource>>();
-                var name = localizer[r => r.Name];
+                var localizer = TestServiceProvider.Current.GetRequiredService<IDictionaryStringLocalizer<TestResource>>();
+                var name = localizer.GetString(r => r.Name);
                 Assert.False(name.ResourceNotFound);
                 Assert.Equal(DefaultNames[i], name.Value);
             }

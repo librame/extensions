@@ -18,9 +18,9 @@ using System.Linq.Expressions;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象字符串组合器静态扩展。
+    /// 抽象定位器静态扩展。
     /// </summary>
-    public static class AbstractionStringLocalizerExtensions
+    public static class AbstractionLocalizerExtensions
     {
 
         #region IStringLocalizer

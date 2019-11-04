@@ -15,11 +15,13 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class ServerBootstrapWrapper : BootstrapWrapper<ServerBootstrap, IServerChannel>, IServerBootstrapWrapper
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class ServerBootstrapWrapper : BootstrapWrapper<ServerBootstrap, IServerChannel>, IServerBootstrapWrapper
     {
         public ServerBootstrapWrapper(ServerBootstrap bootstrap, ILoggerFactory loggerFactory)
             : base(bootstrap, loggerFactory)
@@ -27,7 +29,7 @@ namespace Librame.Extensions.Network.DotNetty
         }
 
 
-        public IServerBootstrapWrapper AddHandler<TInitializeChannel>(X509Certificate2 tlsCertificate = null,
+        public IServerBootstrapWrapper AddChannelHandler<TInitializeChannel>(X509Certificate2 tlsCertificate = null,
             Action<IChannelPipeline> pipelineAction = null, bool addTlsPipelineName = false)
             where TInitializeChannel : IChannel
         {

@@ -24,12 +24,12 @@ namespace Librame.Extensions.Storage
         /// 二进制。
         /// </summary>
         [Description("二进制")]
-        Binary = 2,
+        BinaryUnit = 2,
 
         /// <summary>
         /// 十进制。
         /// </summary>
         [Description("十进制")]
-        Decimal = 10
+        DecimalUnit = 10
     }
 }

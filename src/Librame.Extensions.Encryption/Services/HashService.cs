@@ -12,17 +12,21 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class HashService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IHashService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class HashService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IHashService
     {
+        [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
         private readonly Lazy<MD5> _md5
             = new Lazy<MD5>(() => MD5.Create());
 
+        [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
         private readonly Lazy<SHA1> _sha1
             = new Lazy<SHA1>(() => SHA1.Create());
 

@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core
 {
@@ -48,12 +49,13 @@ namespace Librame.Extensions.Core
         /// </summary>
         [ThreadStatic]
         private static readonly Lazy<TSingleton> _lazy
-            = new Lazy<TSingleton>(() => DefaultExtensions.EnsureCreate<TSingleton>());
+            = new Lazy<TSingleton>(() => ObjectExtensions.EnsureCreate<TSingleton>());
 
-        
+
         /// <summary>
         /// 得到单例。
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1000:DoNotDeclareStaticMembersOnGenericTypes")]
         public static TSingleton Instance
             => _lazy.Value;
     }

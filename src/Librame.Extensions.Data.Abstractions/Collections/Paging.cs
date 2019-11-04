@@ -11,6 +11,7 @@
 #endregion
 
 using Librame.Extensions;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace System.Collections.Generic
@@ -19,6 +20,7 @@ namespace System.Collections.Generic
     /// 分页集合。
     /// </summary>
     /// <typeparam name="T">指定的分页类型。</typeparam>
+    [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public class Paging<T> : IPageable<T>
     {
         private readonly ICollection<T> _rows;
@@ -29,6 +31,7 @@ namespace System.Collections.Generic
         /// </summary>
         /// <param name="rows">给定的行集合。</param>
         /// <param name="descriptor">给定的描述符。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public Paging(ICollection<T> rows, PagingDescriptor descriptor)
         {
             rows.NotNull(nameof(rows));

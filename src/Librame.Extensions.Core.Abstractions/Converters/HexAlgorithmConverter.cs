@@ -31,17 +31,17 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 还原 <see cref="ReadOnlyMemory{Byte}"/>。
         /// </summary>
-        /// <param name="from">给定的 16 进制字符串。</param>
+        /// <param name="target">给定的 16 进制字符串。</param>
         /// <returns>返回 <see cref="ReadOnlyMemory{Byte}"/>。</returns>
-        public ReadOnlyMemory<byte> ConvertFrom(string from)
-            => from.FromHexString();
+        public ReadOnlyMemory<byte> ConvertFrom(string target)
+            => target.FromHexString();
 
         /// <summary>
         /// 转换 <see cref="ReadOnlyMemory{Byte}"/>。
         /// </summary>
-        /// <param name="to">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
+        /// <param name="source">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
         /// <returns>返回 16 进制字符串。</returns>
-        public string ConvertTo(ReadOnlyMemory<byte> to)
-            => to.ToArray().AsHexString();
+        public string ConvertTo(ReadOnlyMemory<byte> source)
+            => source.ToArray().AsHexString();
     }
 }

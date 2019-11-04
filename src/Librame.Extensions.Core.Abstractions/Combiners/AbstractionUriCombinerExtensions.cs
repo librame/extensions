@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core
 {
@@ -23,18 +24,18 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 转换为 URL 组合器。
         /// </summary>
-        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <param name="newScheme">给定的新协议（可选）。</param>
         /// <param name="newHost">给定可能包含端口号的新主机（可选）。</param>
         /// <param name="newPath">给定以 / 开始的新路径（可选）。</param>
         /// <param name="newQuery">给定以 ? 开始的新查询（可选）。</param>
         /// <param name="newAnchor">给定以 # 开始的新锚点（可选）。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
-        public static UriCombiner AsUriCombiner(this string uriString, string newScheme = null,
+        public static UriCombiner AsUriCombiner(this string absoluteUriString, string newScheme = null,
             string newHost = null, string newPath = null, string newQuery = null,
             string newAnchor = null)
         {
-            var combiner = (UriCombiner)uriString;
+            var combiner = new UriCombiner(absoluteUriString);
 
             return combiner.ChangeParameters(newScheme, newHost, newPath,
                 newQuery, queriesAction: null, newAnchor);
@@ -43,18 +44,18 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 转换为 URL 组合器。
         /// </summary>
-        /// <param name="uriString">给定的 URI 字符串。</param>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <param name="queriesAction">给定的改变查询参数集合动作。</param>
         /// <param name="newScheme">给定的新协议（可选）。</param>
         /// <param name="newHost">给定可能包含端口号的新主机（可选）。</param>
         /// <param name="newPath">给定以 / 开始的新路径（可选）。</param>
         /// <param name="newAnchor">给定以 # 开始的新锚点（可选）。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
-        public static UriCombiner AsUriCombiner(this string uriString,
+        public static UriCombiner AsUriCombiner(this string absoluteUriString,
             Action<ConcurrentDictionary<string, string>> queriesAction, string newScheme = null,
             string newHost = null, string newPath = null, string newAnchor = null)
         {
-            var combiner = (UriCombiner)uriString;
+            var combiner = new UriCombiner(absoluteUriString);
 
             return combiner.ChangeParameters(newScheme, newHost, newPath,
                 newQuery: default, queriesAction, newAnchor);
@@ -75,7 +76,7 @@ namespace Librame.Extensions.Core
             string newHost = null, string newPath = null, string newQuery = null,
             string newAnchor = null)
         {
-            var combiner = (UriCombiner)uri;
+            var combiner = new UriCombiner(uri);
 
             return combiner.ChangeParameters(newScheme, newHost, newPath,
                 newQuery, queriesAction: null, newAnchor);
@@ -95,7 +96,7 @@ namespace Librame.Extensions.Core
             Action<ConcurrentDictionary<string, string>> queriesAction, string newScheme = null,
             string newHost = null, string newPath = null, string newAnchor = null)
         {
-            var combiner = (UriCombiner)uri;
+            var combiner = new UriCombiner(uri);
 
             return combiner.ChangeParameters(newScheme, newHost, newPath,
                 newQuery: null, queriesAction, newAnchor);
@@ -134,6 +135,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newSchemeFactory">给定的新协议字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner ChangeScheme(this UriCombiner combiner, Func<string, string> newSchemeFactory)
         {
             combiner.NotNull(nameof(combiner));
@@ -149,6 +151,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newHostFactory">给定可能包含端口号的新主机字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner ChangeHost(this UriCombiner combiner, Func<string, string> newHostFactory)
         {
             combiner.NotNull(nameof(combiner));
@@ -164,6 +167,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newPathFactory">给定以 / 开始的新路径字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner ChangePath(this UriCombiner combiner, Func<string, string> newPathFactory)
         {
             combiner.NotNull(nameof(combiner));
@@ -179,6 +183,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newQueryFactory">给定以 ? 开始的新查询字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner ChangeQuery(this UriCombiner combiner, Func<string, string> newQueryFactory)
         {
             combiner.NotNull(nameof(combiner));
@@ -194,6 +199,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newAnchorFactory">给定以 # 开始的新锚点工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner ChangeAnchor(this UriCombiner combiner, Func<string, string> newAnchorFactory)
         {
             combiner.NotNull(nameof(combiner));
@@ -210,6 +216,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newSchemeFactory">给定的新协议字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner NewScheme(this UriCombiner combiner, Func<string, string> newSchemeFactory)
         {
             combiner.NotNull(nameof(combiner));
@@ -225,6 +232,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newHostFactory">给定可能包含端口号的新主机字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner NewHost(this UriCombiner combiner, Func<string, string> newHostFactory)
         {
             combiner.NotNull(nameof(combiner));
@@ -240,6 +248,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newPathFactory">给定以 / 开始的新路径字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner NewPath(this UriCombiner combiner, Func<string, string> newPathFactory)
         {
             combiner.NotNull(nameof(combiner));
@@ -255,6 +264,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newQueryFactory">给定以 ? 开始的新查询字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner NewQuery(this UriCombiner combiner, Func<string, string> newQueryFactory)
         {
             combiner.NotNull(nameof(combiner));
@@ -270,6 +280,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         /// <param name="newAnchorFactory">给定以 # 开始的新锚点字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static UriCombiner NewAnchor(this UriCombiner combiner, Func<string, string> newAnchorFactory)
         {
             combiner.NotNull(nameof(combiner));

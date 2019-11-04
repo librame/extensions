@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Librame.Extensions.Core
@@ -24,12 +25,12 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构造一个 <see cref="UniqueAlgorithmIdentifier"/>。
         /// </summary>
-        /// <param name="guid">给定的 <see cref="Guid"/> 。</param>
+        /// <param name="g">给定的 <see cref="Guid"/> 。</param>
         /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>。</param>
-        public UniqueAlgorithmIdentifier(Guid guid, IAlgorithmConverter converter)
-            : base(guid.ToByteArray(), converter)
+        public UniqueAlgorithmIdentifier(Guid g, IAlgorithmConverter converter)
+            : base(g.ToByteArray(), converter)
         {
-            RawGuid = guid;
+            RawGuid = g;
         }
 
         /// <summary>
@@ -48,7 +49,8 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="info">给定的 <see cref="SerializationInfo"/>。</param>
         /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
-        public UniqueAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "context")]
+        protected UniqueAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             RawGuid = new Guid(Memory.ToArray());

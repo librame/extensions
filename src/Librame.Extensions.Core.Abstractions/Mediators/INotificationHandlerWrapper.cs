@@ -10,6 +10,7 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,10 +27,10 @@ namespace Librame.Extensions.Core
         /// 异步处理通知。
         /// </summary>
         /// <param name="notification">给定的 <see cref="INotification"/>。</param>
-        /// <param name="serviceFactory">给定的 <see cref="ServiceFactoryDelegate"/>。</param>
+        /// <param name="serviceFactory">给定的 <see cref="ServiceFactory"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个异步操作。</returns>
-        Task HandleAsync(INotification notification, ServiceFactoryDelegate serviceFactory,
+        Task HandleAsync(INotification notification, ServiceFactory serviceFactory,
             CancellationToken cancellationToken = default);
     }
 
@@ -37,6 +38,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 通知处理程序封装接口。
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
     public interface INotificationHandlerWrapper
     {
     }

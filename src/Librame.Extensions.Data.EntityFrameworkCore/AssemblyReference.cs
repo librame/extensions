@@ -13,6 +13,7 @@
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -53,6 +54,15 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 是否相等。
         /// </summary>
+        /// <param name="x">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <param name="y">给定的 <see cref="AssemblyReference"/>。</param>
+        /// <returns>返回的布尔值。</returns>
+        public bool Equals(AssemblyReference x, AssemblyReference y)
+            => x?.Equals(y) == true;
+
+        /// <summary>
+        /// 是否相等。
+        /// </summary>
         /// <param name="other">给定的 <see cref="AssemblyReference"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(AssemblyReference other)
@@ -71,15 +81,6 @@ namespace Librame.Extensions.Data
 
             return true;
         }
-
-        /// <summary>
-        /// 是否相等。
-        /// </summary>
-        /// <param name="x">给定的 <see cref="AssemblyReference"/>。</param>
-        /// <param name="y">给定的 <see cref="AssemblyReference"/>。</param>
-        /// <returns>返回的布尔值。</returns>
-        public bool Equals(AssemblyReference x, AssemblyReference y)
-            => x?.Equals(y) == true;
 
         /// <summary>
         /// 是否相等。
@@ -124,6 +125,14 @@ namespace Librame.Extensions.Data
         /// <returns>返回整数。</returns>
         public int CompareTo(object obj)
             => obj is AssemblyReference other ? CompareTo(other) : -1;
+
+
+        /// <summary>
+        /// 转换为字符串。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => string.Join(',', Metadatas.Select(s => s.Display));
 
 
         /// <summary>
@@ -192,6 +201,7 @@ namespace Librame.Extensions.Data
         /// <param name="assembly">给定的程序集。</param>
         /// <param name="copyLocal">是否复制到本地（可选；默认不复制）。</param>
         /// <returns>返回 <see cref="AssemblyReference"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "assembly")]
         public static AssemblyReference ByAssembly(Assembly assembly, bool copyLocal = false)
         {
             MetadataReference metadata = MetadataReference.CreateFromFile(assembly.Location);

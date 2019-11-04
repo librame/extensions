@@ -14,12 +14,14 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace Librame.Extensions.Core
 {
-    class InjectionService : AbstractService, IInjectionService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class InjectionService : AbstractService, IInjectionService
     {
         ConcurrentDictionary<Type, Action<object, IServiceProvider>> _injectedActions
             = new ConcurrentDictionary<Type, Action<object, IServiceProvider>>();

@@ -12,6 +12,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -31,6 +32,7 @@ namespace Librame.Extensions.Data
         /// <param name="dbSet">给定的 <see cref="DbSet{TEntity}"/>。</param>
         /// <param name="lookupLocal">同时查找本地缓存（可选；默认查找）。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbSet")]
         public static bool Exists<TEntity>(this DbSet<TEntity> dbSet, bool lookupLocal = true)
             where TEntity : class
         {
@@ -50,6 +52,7 @@ namespace Librame.Extensions.Data
         /// <param name="predicate">给定断定实体存在的工厂方法表达式。</param>
         /// <param name="lookupLocal">同时查找本地缓存（可选；默认查找）。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool Exists<TEntity>(this DbSet<TEntity> dbSet, Expression<Func<TEntity, bool>> predicate,
             bool lookupLocal = true)
             where TEntity : class
@@ -69,11 +72,12 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <typeparam name="TEntity">指定的实体类型。</typeparam>
         /// <param name="dbSet">给定的 <see cref="DbSet{TEntity}"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="lookupLocal">同时查找本地缓存（可选；默认查找）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbSet")]
         public static Task<bool> ExistsAsync<TEntity>(this DbSet<TEntity> dbSet,
-            CancellationToken cancellationToken = default, bool lookupLocal = true)
+            bool lookupLocal = true, CancellationToken cancellationToken = default)
             where TEntity : class
         {
             dbSet.NotNull(nameof(dbSet));
@@ -90,11 +94,12 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TEntity">指定的实体类型。</typeparam>
         /// <param name="dbSet">给定的 <see cref="DbSet{TEntity}"/>。</param>
         /// <param name="predicate">给定断定实体存在的工厂方法表达式。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="lookupLocal">同时查找本地缓存（可选；默认查找）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static Task<bool> ExistsAsync<TEntity>(this DbSet<TEntity> dbSet, Expression<Func<TEntity, bool>> predicate,
-            CancellationToken cancellationToken = default, bool lookupLocal = true)
+            bool lookupLocal = true, CancellationToken cancellationToken = default)
             where TEntity : class
         {
             dbSet.NotNull(nameof(dbSet));

@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data
 {
@@ -29,16 +30,19 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 添加实体集合。
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public List<TEntity> Adds { get; set; }
 
         /// <summary>
         /// 更新实体集合。
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public List<TEntity> Updates { get; set; }
 
         /// <summary>
         /// 删除实体集合。
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public List<TEntity> Removes { get; set; }
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -38,9 +39,12 @@ namespace Librame.Extensions.Core
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <param name="assemblies">给定要查找的程序集数组。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static ICoreBuilder AddAutoRegistrationMediators(this ICoreBuilder builder,
-            params Assembly[] assemblies)
+            IEnumerable<Assembly> assemblies)
         {
+            builder.NotNull(nameof(builder));
+
             builder.Services.ConnectImplementationsToTypesClosing(assemblies,
                 typeof(IRequestHandler<,>), false);
             builder.Services.ConnectImplementationsToTypesClosing(assemblies,
@@ -72,7 +76,7 @@ namespace Librame.Extensions.Core
         }
 
         private static void ConnectImplementationsToTypesClosing(this IServiceCollection services,
-            Assembly[] assemblies, Type openRequestInterface, bool addIfAlreadyExists)
+            IEnumerable<Assembly> assemblies, Type openRequestInterface, bool addIfAlreadyExists)
         {
             var concretions = new List<Type>();
             var interfaces = new List<Type>();
@@ -125,6 +129,7 @@ namespace Librame.Extensions.Core
             }
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         private static void AddConcretionsThatCouldBeClosed(this IServiceCollection services,
             Type @interface, List<Type> concretions)
         {

@@ -48,8 +48,8 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 服务工厂。
         /// </summary>
-        /// <value>返回 <see cref="ServiceFactoryDelegate"/>。</value>
-        public ServiceFactoryDelegate ServiceFactory
+        /// <value>返回 <see cref="Core.ServiceFactory"/>。</value>
+        public ServiceFactory ServiceFactory
             => Accessor.ServiceFactory;
 
 

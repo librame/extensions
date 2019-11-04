@@ -14,6 +14,7 @@ using Librame.Extensions;
 using Librame.Extensions.Data;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -123,10 +124,13 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="descrAction">给定的 <see cref="Action{TableNameDescriptor}"/>（可自定义表名前后缀、连接符）。</param>
         /// <param name="tableFactory">给定的实体类型转换表名架构的工厂方法。</param>
         /// <returns>返回 <see cref="EntityTypeBuilder{TEntity}"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static EntityTypeBuilder ToTable(this EntityTypeBuilder builder,
             Action<TableNameDescriptor> descrAction,
             Func<TableNameDescriptor, TableNameSchema> tableFactory)
         {
+            builder.NotNull(nameof(builder));
+
             if (tableFactory.IsNull())
                 tableFactory = descr => descr.AsSchema();
 
@@ -143,8 +147,10 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="builder">给定的 <see cref="EntityTypeBuilder"/>。</param>
         /// <param name="table">给定的 <see cref="TableNameSchema"/>。</param>
         /// <returns>返回 <see cref="EntityTypeBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static EntityTypeBuilder ToTable(this EntityTypeBuilder builder, TableNameSchema table)
         {
+            builder.NotNull(nameof(builder));
             table.NotNull(nameof(table));
 
             if (table.Schema.IsNotEmpty())

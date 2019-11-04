@@ -13,12 +13,14 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class KeyGenerator : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyGenerator
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class KeyGenerator : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyGenerator
     {
         private readonly IAlgorithmIdentifier _optionsIdentifier;
 
@@ -84,7 +86,7 @@ namespace Librame.Extensions.Encryption
             }
             Logger.LogDebug($"Generate key length: {length}");
 
-            return (ByteMemoryBuffer)result;
+            return new ByteMemoryBuffer(result);
         }
 
     }

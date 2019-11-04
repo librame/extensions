@@ -12,6 +12,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data
 {
@@ -32,6 +33,7 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void ConfigureDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
             (this ModelBuilder modelBuilder, DataBuilderOptions options)
             where TAudit : DataAudit<TGenId>
@@ -42,6 +44,9 @@ namespace Librame.Extensions.Data
             where TGenId : IEquatable<TGenId>
             where TIncremId : IEquatable<TIncremId>
         {
+            modelBuilder.NotNull(nameof(modelBuilder));
+            options.NotNull(nameof(options));
+
             if (options.Tables.DefaultSchema.IsNotEmpty())
                 modelBuilder.HasDefaultSchema(options.Tables.DefaultSchema);
 

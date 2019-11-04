@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 服务工厂。
         /// </summary>
-        /// <value>返回 <see cref="ServiceFactoryDelegate"/>。</value>
-        ServiceFactoryDelegate ServiceFactory { get; }
+        /// <value>返回 <see cref="Core.ServiceFactory"/>。</value>
+        ServiceFactory ServiceFactory { get; }
     }
 }

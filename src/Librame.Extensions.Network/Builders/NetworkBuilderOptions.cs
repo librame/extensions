@@ -24,6 +24,12 @@ namespace Librame.Extensions.Network
     public class NetworkBuilderOptions : IExtensionBuilderOptions
     {
         /// <summary>
+        /// 缓冲区大小。
+        /// </summary>
+        public int BufferSize { get; set; } = 1024;
+
+
+        /// <summary>
         /// 字节编解码。
         /// </summary>
         public ByteCodecOptions ByteCodec { get; set; }
@@ -69,12 +75,12 @@ namespace Librame.Extensions.Network
         /// <summary>
         /// 解码工厂方法。
         /// </summary>
-        public Func<ServiceFactoryDelegate, byte[], byte[]> DecodeFactory { get; set; }
+        public Func<ServiceFactory, byte[], byte[]> DecodeFactory { get; set; }
 
         /// <summary>
         /// 编码工厂方法。
         /// </summary>
-        public Func<ServiceFactoryDelegate, byte[], byte[]> EncodeFactory { get; set; }
+        public Func<ServiceFactory, byte[], byte[]> EncodeFactory { get; set; }
     }
 
 

@@ -23,35 +23,57 @@ namespace Librame.Extensions.Tests
         public void AllTest()
         {
             var str = nameof(CompressionExtensionsTests);
-            
             var buffer = str.FromEncodingString();
-            var compress = buffer.Compress(); // buffer.Length = 29
+
+            // RTL
+            var compress = buffer.RtlCompress(); // buffer.Length = 29
             Assert.NotEqual(buffer.Length, compress.Length);
 
-            var decompress = compress.Decompress();
+            var decompress = compress.RtlDecompress();
             Assert.Equal(buffer.Length, decompress.Length);
 
             var raw = decompress.AsEncodingString();
             Assert.Equal(str, raw);
 
-            var zipCompress = buffer.GZipCompress(); // buffer.Length = 43
-            var zipDecompress = zipCompress.GZipDecompress();
-            Assert.True(buffer.SequenceEqual(zipDecompress));
-            Assert.Equal(str, zipDecompress.AsEncodingString());
+            // Deflate
+            var compressedBuffer = buffer.DeflateCompress(); // buffer.Length = 25
+            var decompressedBuffer = compressedBuffer.DeflateDecompress();
+            Assert.True(buffer.SequenceEqual(decompressedBuffer));
+            Assert.Equal(str, decompressedBuffer.AsEncodingString());
 
             var filePath = Path.Combine(Path.GetTempPath(), DateTime.Now.ToFileTime() + ".txt");
             File.WriteAllText(filePath, str);
 
             var fileInfo = new FileInfo(filePath);
-            var zipFileInfo = fileInfo.GZipCompress();
-            Assert.NotEqual(fileInfo.FullName, zipFileInfo.FullName);
-            Assert.True(zipFileInfo.Exists);
+            var compressedFileInfo = fileInfo.DeflateCompress();
+            Assert.NotEqual(fileInfo.FullName, compressedFileInfo.FullName);
+            Assert.True(compressedFileInfo.Exists);
 
-            var unzipFileInfo = zipFileInfo.GZipDecompress();
-            Assert.Equal(fileInfo.FullName, unzipFileInfo.FullName);
+            var decompressedFileInfo = compressedFileInfo.DeflateDecompress();
+            Assert.Equal(fileInfo.FullName, decompressedFileInfo.FullName);
 
-            zipFileInfo.Delete();
-            Assert.False(File.Exists(zipFileInfo.FullName)); // zipFileInfo.Exists = true
+            compressedFileInfo.Delete();
+            Assert.False(File.Exists(compressedFileInfo.FullName)); // compressedFileInfo.Exists = true
+
+            // GZip
+            compressedBuffer = buffer.GZipCompress(); // buffer.Length = 43
+            decompressedBuffer = compressedBuffer.GZipDecompress();
+            Assert.True(buffer.SequenceEqual(decompressedBuffer));
+            Assert.Equal(str, decompressedBuffer.AsEncodingString());
+
+            filePath = Path.Combine(Path.GetTempPath(), DateTime.Now.ToFileTime() + ".txt");
+            File.WriteAllText(filePath, str);
+
+            fileInfo = new FileInfo(filePath);
+            compressedFileInfo = fileInfo.GZipCompress();
+            Assert.NotEqual(fileInfo.FullName, compressedFileInfo.FullName);
+            Assert.True(compressedFileInfo.Exists);
+
+            decompressedFileInfo = compressedFileInfo.GZipDecompress();
+            Assert.Equal(fileInfo.FullName, decompressedFileInfo.FullName);
+
+            compressedFileInfo.Delete();
+            Assert.False(File.Exists(compressedFileInfo.FullName)); // compressedFileInfo.Exists = true
         }
 
     }

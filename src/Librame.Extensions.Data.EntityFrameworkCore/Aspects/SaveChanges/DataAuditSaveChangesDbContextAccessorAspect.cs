@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -71,6 +72,7 @@ namespace Librame.Extensions.Data
         /// 前置处理核心。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
         protected override void PreprocessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
             var dictionary = GetAuditPropertiesDictionary(dbContextAccessor.ChangeTracker, default);
@@ -82,7 +84,7 @@ namespace Librame.Extensions.Data
                     dbContextAccessor.AuditProperties.AddRange(properties);
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
-                mediator.Publish(new AuditNotification<TAudit, TAuditProperty> { Audits = dictionary }).ConfigureAndWait();
+                mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary)).ConfigureAndWait();
             }
         }
 
@@ -92,6 +94,7 @@ namespace Librame.Extensions.Data
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
         protected override async Task PreprocessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
@@ -104,7 +107,7 @@ namespace Librame.Extensions.Data
                     await dbContextAccessor.AuditProperties.AddRangeAsync(properties, cancellationToken).ConfigureAndWaitAsync();
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
-                await mediator.Publish(new AuditNotification<TAudit, TAuditProperty> { Audits = dictionary }).ConfigureAndWaitAsync();
+                await mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary)).ConfigureAndWaitAsync();
             }
         }
 
@@ -115,6 +118,7 @@ namespace Librame.Extensions.Data
         /// <param name="changeTracker">给定的 <see cref="ChangeTracker"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回字典集合。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "changeTracker")]
         protected virtual IDictionary<TAudit, List<TAuditProperty>> GetAuditPropertiesDictionary
             (ChangeTracker changeTracker, CancellationToken cancellationToken)
         {
@@ -143,6 +147,7 @@ namespace Librame.Extensions.Data
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回键值对。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "entry")]
         protected virtual KeyValuePair<TAudit, List<TAuditProperty>> GetAuditProperties
             (EntityEntry entry, CancellationToken cancellationToken)
         {
@@ -197,14 +202,14 @@ namespace Librame.Extensions.Data
             if (entry.State == EntityState.Modified && entry.Entity is IUpdation updation)
             {
                 // 使用实体更新时间
-                audit.CreatedTime = ToDateTime(updation.GetUpdatedTime(), cancellationToken);
-                audit.CreatedBy = ToBy(updation.GetUpdatedBy());
+                audit.CreatedTime = ToDateTime(updation.GetCustomUpdatedTime(), cancellationToken);
+                audit.CreatedBy = ToBy(updation.GetCustomUpdatedBy());
             }
             else if (entry.Entity is ICreation creation)
             {
                 // 使用实体创建时间
-                audit.CreatedTime = ToDateTime(creation.GetCreatedTime(), cancellationToken);
-                audit.CreatedBy = ToBy(creation.GetCreatedBy());
+                audit.CreatedTime = ToDateTime(creation.GetCustomCreatedTime(), cancellationToken);
+                audit.CreatedBy = ToBy(creation.GetCustomCreatedBy());
             }
             else
             {
@@ -234,56 +239,58 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "entry")]
         protected virtual string GetTableName(EntityEntry entry)
             => new TableNameSchema(entry.Metadata.GetTableName(), entry.Metadata.GetSchema());
 
         /// <summary>
         /// 获取实体标识。
         /// </summary>
-        /// <param name="property">给定的 <see cref="PropertyEntry"/>。</param>
+        /// <param name="propertyEntry">给定的 <see cref="PropertyEntry"/>。</param>
         /// <returns>返回字符串。</returns>
-        protected virtual string GetEntityId(PropertyEntry property)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "propertyEntry")]
+        protected virtual string GetEntityId(PropertyEntry propertyEntry)
         {
-            if (property.EntityEntry.State == EntityState.Deleted)
-                return property.OriginalValue?.ToString();
+            if (propertyEntry.EntityEntry.State == EntityState.Deleted)
+                return propertyEntry.OriginalValue?.ToString();
 
-            return property.CurrentValue?.ToString();
+            return propertyEntry.CurrentValue?.ToString();
         }
 
         /// <summary>
         /// 转换为日期时间格式。
         /// </summary>
-        /// <param name="obj">给定的对象。</param>
+        /// <param name="dt">给定的日期对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <see cref="DateTimeOffset"/>。</returns>
-        protected virtual DateTimeOffset ToDateTime(object obj, CancellationToken cancellationToken)
+        protected virtual DateTimeOffset ToDateTime(object dt, CancellationToken cancellationToken)
         {
-            if (obj.IsNull())
+            if (dt.IsNull())
             {
                 return Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true,
                     cancellationToken).ConfigureAndResult();
             }
 
-            if (obj is DateTimeOffset dateTimeOffset)
+            if (dt is DateTimeOffset dateTimeOffset)
                 return dateTimeOffset;
 
-            if (obj is DateTime dateTime)
+            if (dt is DateTime dateTime)
                 return new DateTimeOffset(dateTime);
 
-            return DateTimeOffset.Parse(obj.ToString(), CultureInfo.InvariantCulture);
+            return DateTimeOffset.Parse(dt.ToString(), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
         /// 转换为人员内容。
         /// </summary>
-        /// <param name="obj">给定的对象。</param>
+        /// <param name="by">给定的对象。</param>
         /// <returns>返回字符串。</returns>
-        protected virtual string ToBy(object obj)
+        protected virtual string ToBy(object by)
         {
-            if (obj is string str)
+            if (by is string str)
                 return str;
 
-            return obj?.ToString();
+            return by?.ToString();
         }
 
     }

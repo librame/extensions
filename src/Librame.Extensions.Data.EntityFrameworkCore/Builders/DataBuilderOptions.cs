@@ -13,6 +13,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data
 {
@@ -58,6 +59,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 审计实体状态数组（默认对实体的增加、修改、删除状态进行审核）。
         /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public EntityState[] AuditEntityStates { get; set; }
             = new EntityState[] { EntityState.Added, EntityState.Modified, EntityState.Deleted };
 

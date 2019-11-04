@@ -12,16 +12,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 
 namespace Librame.Extensions.Core
 {
+    using Resources;
+
     /// <summary>
     /// 域名组合器。
     /// </summary>
     public class DomainNameCombiner : AbstractCombiner<string>
     {
+        /// <summary>
+        /// 从根域名开始的顺序集合。
+        /// </summary>
         private List<string> _allLevelSegments = null;
 
 
@@ -52,7 +58,7 @@ namespace Librame.Extensions.Core
         public string Root
         {
             get => _allLevelSegments.First();
-            private set => _allLevelSegments[0] = value;
+            private set => AddOrUpdateAllLevelSegments(value);
         }
 
         /// <summary>
@@ -61,13 +67,7 @@ namespace Librame.Extensions.Core
         public string TopLevelSegment
         {
             get => _allLevelSegments.Count > 1 ? _allLevelSegments[1] : null;
-            private set
-            {
-                if (_allLevelSegments.Count > 1)
-                    _allLevelSegments[1] = value;
-                else
-                    _allLevelSegments.Add(value);
-            }
+            private set => AddOrUpdateAllLevelSegments(value, currentLevelIndex: 1);
         }
 
         /// <summary>
@@ -76,15 +76,7 @@ namespace Librame.Extensions.Core
         public string SecondLevelSegment
         {
             get => _allLevelSegments.Count > 2 ? _allLevelSegments[2] : null;
-            private set
-            {
-                if (_allLevelSegments.Count > 2)
-                    _allLevelSegments[2] = value;
-                else if (_allLevelSegments.Count < 2)
-                    throw new ArgumentException("Can't set second level name for root.");
-                else
-                    _allLevelSegments.Add(value);
-            }
+            private set => AddOrUpdateAllLevelSegments(value, currentLevelIndex: 2);
         }
 
         /// <summary>
@@ -93,23 +85,15 @@ namespace Librame.Extensions.Core
         public string ThirdLevelSegment
         {
             get => _allLevelSegments.Count > 3 ? _allLevelSegments[3] : null;
-            private set
-            {
-                if (_allLevelSegments.Count > 3)
-                    _allLevelSegments[3] = value;
-                else if (_allLevelSegments.Count < 3)
-                    throw new ArgumentException("Can't set third level name for top level name.");
-                else
-                    _allLevelSegments.Add(value);
-            }
+            private set => AddOrUpdateAllLevelSegments(value, currentLevelIndex: 3);
         }
 
         /// <summary>
         /// 其他级别片段集合（除三级外所有子级）。
         /// </summary>
-        public string[] OtherLevelSegments
+        public IReadOnlyList<string> OtherLevelSegments
         {
-            get => _allLevelSegments.Count > 4 ? _allLevelSegments.Skip(4).Reverse().ToArray() : null;
+            get => _allLevelSegments.Count > 4 ? _allLevelSegments.Skip(4).Reverse().AsReadOnlyList() : null;
             private set => value.ForEach((str, i) => _allLevelSegments[i + 4] = str);
         }
 
@@ -139,6 +123,48 @@ namespace Librame.Extensions.Core
         public override string Source
             => CombineString(_allLevelSegments);
 
+
+        /// <summary>
+        /// 添加或更新所有级别片段集合。
+        /// </summary>
+        /// <param name="value">给定的值。</param>
+        /// <param name="currentLevelIndex">指定当前级别索引（可选；默认为 0）。</param>
+        protected void AddOrUpdateAllLevelSegments(string value, int currentLevelIndex = 0)
+        {
+            switch (currentLevelIndex)
+            {
+                case 0:
+                    _allLevelSegments[currentLevelIndex] = value.NotEmpty(nameof(value));
+                    break;
+
+                case 1:
+                    {
+                        value.NotEmpty(nameof(value));
+
+                        if (_allLevelSegments.Count > currentLevelIndex)
+                            _allLevelSegments[currentLevelIndex] = value;
+                        else
+                            _allLevelSegments.Add(value);
+                    }
+                    break;
+
+                default:
+                    {
+                        if (_allLevelSegments.Count > currentLevelIndex)
+                        {
+                            if (value.IsEmpty())
+                                _allLevelSegments.RemoveRange(currentLevelIndex, _allLevelSegments.Count - currentLevelIndex);
+                            else
+                                _allLevelSegments[currentLevelIndex] = value;
+                        }
+                        else
+                        {
+                            _allLevelSegments.Add(value);
+                        }
+                    }
+                    break;
+            }
+        }
 
         /// <summary>
         /// 更新部分或所有级别片段集合。
@@ -369,7 +395,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Source.GetHashCode();
+            => Source.GetHashCode(StringComparison.OrdinalIgnoreCase);
 
 
         /// <summary>
@@ -406,13 +432,6 @@ namespace Librame.Extensions.Core
         public static implicit operator string(DomainNameCombiner combiner)
             => combiner?.ToString();
 
-        /// <summary>
-        /// 隐式转换为域名组合器。
-        /// </summary>
-        /// <param name="domainName">给定的域名。</param>
-        public static implicit operator DomainNameCombiner(string domainName)
-            => new DomainNameCombiner(domainName);
-
 
         /// <summary>
         /// 组合字符串。
@@ -427,7 +446,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 解析指定域名包含的所有级别片段正序集合（如：org/domain/...）。
+        /// 尝试从主机解析包含所有级别片段从根开始的顺序集合（如：org/domain/...）。
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="domainName"/> is null or empty.
@@ -443,18 +462,19 @@ namespace Librame.Extensions.Core
                 && allLevelSegments.IsNotNull() && !allLevelSegments.Any())
             {
                 // 不支持除本机环回地址外的 IP 地址
-                throw new NotSupportedException("IP address are not supported except loopback address.");
+                throw new NotSupportedException(InternalResource.NotSupportedExceptionDomainName);
             }
 
             return allLevelSegments;
         }
 
         /// <summary>
-        /// 尝试从主机解析包含的所有级别片段集合。
+        /// 尝试从主机解析包含所有级别片段从根开始的顺序集合。
         /// </summary>
         /// <param name="host">给定的主机名。</param>
-        /// <param name="allLevelSegments">输出 <see cref="IEnumerable{String}"/>。</param>
+        /// <param name="allLevelSegments">输出 <see cref="IEnumerable{String}"/>（如：org/domain/...）。</param>
         /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "host")]
         public static bool TryParseAllLevelSegmentsFromHost(string host, out IEnumerable<string> allLevelSegments)
         {
             if (host.IsEmpty())

@@ -41,15 +41,15 @@ namespace Librame.Extensions.Data
     public interface IUpdation : ICreation
     {
         /// <summary>
-        /// 获取更新时间。
+        /// 获取自定义更新时间。
         /// </summary>
         /// <returns>返回日期与时间（兼容 DateTime 或 DateTimeOffset）。</returns>
-        object GetUpdatedTime();
+        object GetCustomUpdatedTime();
 
         /// <summary>
-        /// 获取更新者。
+        /// 获取自定义更新者。
         /// </summary>
         /// <returns>返回更新者（兼容标识或字符串）。</returns>
-        object GetUpdatedBy();
+        object GetCustomUpdatedBy();
     }
 }

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SkiaSharp;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -23,16 +24,17 @@ namespace Librame.Extensions.Drawing
 {
     using Core;
 
-    class WatermarkService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IWatermarkService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class WatermarkService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IWatermarkService
     {
         public WatermarkService(DrawingBuilderDependencyOptions dependencyOptions,
             IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
-            ImageFilePathCombiner = Options.Watermark.ImagePath;
+            ImageFilePathCombiner = new FilePathCombiner(Options.Watermark.ImagePath);
             ImageFilePathCombiner.ChangeBasePathIfEmpty(dependencyOptions.BaseDirectory);
 
-            FontFilePathCombiner = Options.Watermark.Font.FilePath;
+            FontFilePathCombiner = new FilePathCombiner(Options.Watermark.Font.FilePath);
             FontFilePathCombiner.ChangeBasePathIfEmpty(dependencyOptions.BaseDirectory);
         }
 

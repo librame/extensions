@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,6 +27,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="action">给定的动作方法。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "action")]
         public static void RunActionOrCancellation(this CancellationToken cancellationToken, Action action)
         {
             if (cancellationToken.IsCancellationRequested)
@@ -40,6 +42,7 @@ namespace Librame.Extensions
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="action">给定的动作方法。</param>
         /// <returns>返回一个异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "action")]
         public static Task RunActionOrCancellationAsync(this CancellationToken cancellationToken, Action action)
         {
             //cancellationToken.ThrowIfSourceDisposed();
@@ -64,14 +67,15 @@ namespace Librame.Extensions
         /// </summary>
         /// <typeparam name="TResult">指定的结果类型。</typeparam>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="factory">给定的工厂方法。</param>
+        /// <param name="func">给定的工厂方法。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
-        public static TResult RunFactoryOrCancellation<TResult>(this CancellationToken cancellationToken, Func<TResult> factory)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "func")]
+        public static TResult RunFactoryOrCancellation<TResult>(this CancellationToken cancellationToken, Func<TResult> func)
         {
             if (cancellationToken.IsCancellationRequested)
                 return default;
 
-            return factory.Invoke();
+            return func.Invoke();
         }
 
         /// <summary>
@@ -79,15 +83,16 @@ namespace Librame.Extensions
         /// </summary>
         /// <typeparam name="TResult">指定的结果类型。</typeparam>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="factory">给定的工厂方法。</param>
+        /// <param name="func">给定的工厂方法。</param>
         /// <returns>返回一个包含 <typeparamref name="TResult"/> 的异步操作。</returns>
-        public static Task<TResult> RunFactoryOrCancellationAsync<TResult>(this CancellationToken cancellationToken, Func<TResult> factory)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "func")]
+        public static Task<TResult> RunFactoryOrCancellationAsync<TResult>(this CancellationToken cancellationToken, Func<TResult> func)
         {
             //cancellationToken.ThrowIfSourceDisposed();
             if (cancellationToken.IsCancellationRequested)
                 return Task.FromCanceled<TResult>(cancellationToken);
 
-            return Task.Run(factory, cancellationToken);
+            return Task.Run(func, cancellationToken);
         }
 
         /// <summary>
@@ -95,9 +100,9 @@ namespace Librame.Extensions
         /// </summary>
         /// <typeparam name="TResult">指定的结果类型。</typeparam>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="factory">给定的工厂方法。</param>
+        /// <param name="func">给定的工厂方法。</param>
         /// <returns>返回一个包含 <typeparamref name="TResult"/> 的异步操作。</returns>
-        public static ValueTask<TResult> RunFactoryOrCancellationValueAsync<TResult>(this CancellationToken cancellationToken, Func<TResult> factory)
-            => new ValueTask<TResult>(cancellationToken.RunFactoryOrCancellationAsync(factory));
+        public static ValueTask<TResult> RunFactoryOrCancellationValueAsync<TResult>(this CancellationToken cancellationToken, Func<TResult> func)
+            => new ValueTask<TResult>(cancellationToken.RunFactoryOrCancellationAsync(func));
     }
 }

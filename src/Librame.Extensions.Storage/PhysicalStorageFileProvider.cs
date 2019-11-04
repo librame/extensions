@@ -40,13 +40,13 @@ namespace Librame.Extensions.Storage
         }
 
 
-        /// <summary>
-        /// 析构 <see cref="PhysicalStorageFileProvider"/>。
-        /// </summary>
-        ~PhysicalStorageFileProvider()
-        {
-            Dispose(false);
-        }
+        ///// <summary>
+        ///// 析构 <see cref="PhysicalStorageFileProvider"/>。
+        ///// </summary>
+        //~PhysicalStorageFileProvider()
+        //{
+        //    Dispose(false);
+        //}
 
 
         /// <summary>

@@ -13,10 +13,12 @@
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class TelnetClientHandler : SimpleChannelInboundHandler<string>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class TelnetClientHandler : SimpleChannelInboundHandler<string>
     {
         private readonly ITelnetClient _client;
         private readonly ILogger _logger;

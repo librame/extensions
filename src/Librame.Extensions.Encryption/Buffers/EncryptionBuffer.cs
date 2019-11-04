@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption
     using Core;
 
     class EncryptionBuffer<TConverter, TSource> : ByteMemoryBuffer, IEncryptionBuffer<TConverter, TSource>
-        where TConverter : IByteMemoryBufferToConverter<TSource>
+        where TConverter : IByteMemoryBufferConverter<TSource>
     {
         public EncryptionBuffer(TConverter converter, TSource source)
             : this(converter, source, converter.ConvertFrom(source))

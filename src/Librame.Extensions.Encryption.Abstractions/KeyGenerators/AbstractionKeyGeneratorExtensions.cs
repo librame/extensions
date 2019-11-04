@@ -10,6 +10,8 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Librame.Extensions.Encryption
 {
     using Core;
@@ -110,8 +112,9 @@ namespace Librame.Extensions.Encryption
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "keyGenerator")]
         public static IByteMemoryBuffer GetKey64(this IKeyGenerator keyGenerator, UniqueAlgorithmIdentifier identifier = null)
-            => keyGenerator.GenerateKey(8, identifier); // 64
+            => keyGenerator.NotNull(nameof(keyGenerator)).GenerateKey(8, identifier); // 64
 
         /// <summary>
         /// 获取 128 位密钥。
@@ -119,8 +122,9 @@ namespace Librame.Extensions.Encryption
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "keyGenerator")]
         public static IByteMemoryBuffer GetKey128(this IKeyGenerator keyGenerator, UniqueAlgorithmIdentifier identifier = null)
-            => keyGenerator.GenerateKey(16, identifier); // 128
+            => keyGenerator.NotNull(nameof(keyGenerator)).GenerateKey(16, identifier); // 128
 
         /// <summary>
         /// 获取 192 位密钥。
@@ -128,8 +132,9 @@ namespace Librame.Extensions.Encryption
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "keyGenerator")]
         public static IByteMemoryBuffer GetKey192(this IKeyGenerator keyGenerator, UniqueAlgorithmIdentifier identifier = null)
-            => keyGenerator.GenerateKey(24, identifier); // 192
+            => keyGenerator.NotNull(nameof(keyGenerator)).GenerateKey(24, identifier); // 192
 
         /// <summary>
         /// 获取 256 位密钥。
@@ -137,8 +142,9 @@ namespace Librame.Extensions.Encryption
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "keyGenerator")]
         public static IByteMemoryBuffer GetKey256(this IKeyGenerator keyGenerator, UniqueAlgorithmIdentifier identifier = null)
-            => keyGenerator.GenerateKey(32, identifier); // 256
+            => keyGenerator.NotNull(nameof(keyGenerator)).GenerateKey(32, identifier); // 256
 
         /// <summary>
         /// 获取 384 位密钥。
@@ -146,8 +152,9 @@ namespace Librame.Extensions.Encryption
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "keyGenerator")]
         public static IByteMemoryBuffer GetKey384(this IKeyGenerator keyGenerator, UniqueAlgorithmIdentifier identifier = null)
-            => keyGenerator.GenerateKey(48, identifier); // 384
+            => keyGenerator.NotNull(nameof(keyGenerator)).GenerateKey(48, identifier); // 384
 
         /// <summary>
         /// 获取 512 位密钥。
@@ -155,8 +162,9 @@ namespace Librame.Extensions.Encryption
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "keyGenerator")]
         public static IByteMemoryBuffer GetKey512(this IKeyGenerator keyGenerator, UniqueAlgorithmIdentifier identifier = null)
-            => keyGenerator.GenerateKey(64, identifier); // 512
+            => keyGenerator.NotNull(nameof(keyGenerator)).GenerateKey(64, identifier); // 512
 
         /// <summary>
         /// 获取 1024 位密钥。
@@ -164,8 +172,9 @@ namespace Librame.Extensions.Encryption
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "keyGenerator")]
         public static IByteMemoryBuffer GetKey1024(this IKeyGenerator keyGenerator, UniqueAlgorithmIdentifier identifier = null)
-            => keyGenerator.GenerateKey(128, identifier); // 1024
+            => keyGenerator.NotNull(nameof(keyGenerator)).GenerateKey(128, identifier); // 1024
 
         /// <summary>
         /// 获取 2048 位密钥。
@@ -173,8 +182,9 @@ namespace Librame.Extensions.Encryption
         /// <param name="keyGenerator">给定的 <see cref="IKeyGenerator"/>。</param>
         /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "keyGenerator")]
         public static IByteMemoryBuffer GetKey2048(this IKeyGenerator keyGenerator, UniqueAlgorithmIdentifier identifier = null)
-            => keyGenerator.GenerateKey(256, identifier); // 2048
+            => keyGenerator.NotNull(nameof(keyGenerator)).GenerateKey(256, identifier); // 2048
 
         #endregion
 

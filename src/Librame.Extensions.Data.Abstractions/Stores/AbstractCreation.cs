@@ -69,17 +69,17 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 获取创建时间。
+        /// 获取自定义创建时间。
         /// </summary>
         /// <returns>返回日期与时间。</returns>
-        public virtual object GetCreatedTime()
+        public virtual object GetCustomCreatedTime()
             => CreatedTime;
 
         /// <summary>
-        /// 获取创建者。
+        /// 获取自定义创建者。
         /// </summary>
         /// <returns>返回创建者。</returns>
-        public virtual object GetCreatedBy()
+        public virtual object GetCustomCreatedBy()
             => CreatedBy;
     }
 }

@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data
 {
@@ -42,6 +43,7 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TIdentifier">指定的标识符类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static IDataBuilder AddIdentifier<TIdentifier>(this IDataBuilder builder)
             where TIdentifier : class, IStoreIdentifier
         {
@@ -57,6 +59,7 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TInitializer">指定的初始化器类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static IDataBuilder AddInitializer<TInitializer>(this IDataBuilder builder)
             where TInitializer : class, IStoreInitializer
         {
@@ -72,6 +75,7 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TStoreHub">指定的存储中心类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static IDataBuilder AddStoreHub<TStoreHub>(this IDataBuilder builder)
             where TStoreHub : class, IStoreHub
         {

@@ -13,6 +13,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -23,7 +24,8 @@ namespace Librame.Extensions.Storage
 {
     using Core;
 
-    class FileTransferService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFileTransferService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class FileTransferService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFileTransferService
     {
         private readonly IFilePermissionService _permissionService;
 
@@ -54,6 +56,7 @@ namespace Librame.Extensions.Storage
         public Action<long, long> ProgressAction { get; set; }
 
 
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "downloadUrl")]
         public async Task<FilePathCombiner> DownloadFileAsync(string downloadUrl, string savePath,
             CancellationToken cancellationToken = default)
         {
@@ -83,7 +86,7 @@ namespace Librame.Extensions.Storage
             {
                 // Accept-Ranges: bytes or none.
                 var acceptRanges = wr.Headers[HttpResponseHeader.AcceptRanges];
-                var supportRanges = acceptRanges?.Contains("bytes");
+                var supportRanges = acceptRanges?.Contains("bytes", StringComparison.OrdinalIgnoreCase);
 
                 using (var s = wr.GetResponseStream())
                 {
@@ -117,6 +120,7 @@ namespace Librame.Extensions.Storage
         }
 
 
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "uploadUrl")]
         public async Task<string> UploadFileAsync(string uploadUrl, string filePath,
             CancellationToken cancellationToken = default)
         {
@@ -148,7 +152,7 @@ namespace Librame.Extensions.Storage
             {
                 using (var sr = new StreamReader(s, Encoding))
                 {
-                    response = await sr.ReadToEndAsync();
+                    response = await sr.ReadToEndAsync().ConfigureAndResultAsync();
                     Logger.LogDebug($"Response: {response}");
                 }
             }

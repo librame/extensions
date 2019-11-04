@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Xunit;
 using System.Globalization;
 
@@ -12,26 +13,26 @@ namespace Librame.Extensions.Data.Tests
         public void ResourceTest()
         {
             var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
-            var localizer = TestServiceProvider.Current.GetRequiredService<IExpressionLocalizer<DataMigrationResource>>();
+            var localizer = TestServiceProvider.Current.GetRequiredService<IStringLocalizer<DataMigrationResource>>();
 
             foreach (var name in cultureNames)
                 RunTest(localizer, name);
         }
         
-        private void RunTest(IExpressionLocalizer<DataMigrationResource> localizer, string cultureName)
+        private void RunTest(IStringLocalizer<DataMigrationResource> localizer, string cultureName)
         {
             CultureUtility.Register(new CultureInfo(cultureName));
 
-            var accessorName = localizer[r => r.AccessorName];
+            var accessorName = localizer.GetString(r => r.AccessorName);
             Assert.False(accessorName.ResourceNotFound);
 
-            var modelSnapshotName = localizer[r => r.ModelSnapshotName];
+            var modelSnapshotName = localizer.GetString(r => r.ModelSnapshotName);
             Assert.False(modelSnapshotName.ResourceNotFound);
 
-            var modelHash = localizer[r => r.ModelHash];
+            var modelHash = localizer.GetString(r => r.ModelHash);
             Assert.False(modelHash.ResourceNotFound);
 
-            var modelBody = localizer[r => r.ModelBody];
+            var modelBody = localizer.GetString(r => r.ModelBody);
             Assert.False(modelBody.ResourceNotFound);
         }
 

@@ -203,7 +203,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// 签名证书键名（默认使用全局键名）。
         /// </summary>
         public string SigningCredentialsKey { get; set; }
-            = EncryptionBuilderOptions.GLOBAL_KEY;
+            = EncryptionBuilderOptions.GlobalSigningCredentialsKey;
 
         /// <summary>
         /// 是 SSL（默认不是）。

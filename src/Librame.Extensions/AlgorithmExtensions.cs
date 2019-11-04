@@ -13,53 +13,20 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Librame.Extensions
 {
+    using Resources;
+
     /// <summary>
     /// 算法静态扩展。
     /// </summary>
     public static class AlgorithmExtensions
     {
-        /// <summary>
-        /// 26 个小写字母。
-        /// </summary>
-        public const string LOWER = "abcdefghijklmnopqrstuvwxyz";
-
-        /// <summary>
-        /// 26 个大写字母。
-        /// </summary>
-        public const string UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-        /// <summary>
-        /// 10 个数字。
-        /// </summary>
-        public const string NUMBER = "0123456789";
-
-        /// <summary>
-        /// 9 个部分特殊符号。
-        /// </summary>
-        public const string SPECIAL = "~!@#$%^&*";
-
-        /// <summary>
-        /// 52 个大小写字母。
-        /// </summary>
-        public const string LETTER = LOWER + UPPER;
-
-        /// <summary>
-        /// 62 个大小写字母和数字。
-        /// </summary>
-        public const string LETTER_NUMBER = LETTER + NUMBER;
-
-        /// <summary>
-        /// 71 个大小写字母、数字和特殊符号。
-        /// </summary>
-        public const string LETTER_NUMBER_SPECIAL = LETTER + NUMBER + SPECIAL;
-
-
         /// <summary>
         /// 随机字符串字典。
         /// </summary>
@@ -75,7 +42,7 @@ namespace Librame.Extensions
                 encodeFactory = Md5Base64String;
 
             var pairs = new Dictionary<string, string>();
-            var chars = hasSpecial ? LETTER_NUMBER_SPECIAL : LETTER_NUMBER;
+            var chars = hasSpecial ? ExtensionSettings.AlgorithmChars : ExtensionSettings.AllLettersAndDigits;
             var random = new Random((int)DateTime.Now.Ticks);
 
             var offset = 0;
@@ -100,7 +67,7 @@ namespace Librame.Extensions
                     continue; // 如果全是数字则重新生成
                 }
 
-                if (hasSpecial && (!str.HasSpecial() || str.IsSpecial()))
+                if (hasSpecial && (!str.HasAlgorithmSpecial() || str.IsAlgorithmSpecial()))
                 {
                     offset++;
                     continue; // 如果没有或全是特殊符号则重新生成
@@ -115,13 +82,12 @@ namespace Librame.Extensions
 
         #region Base and Hex
 
-        private const string BASE32_CHARS = UPPER + "234567";
-
         /// <summary>
         /// 转换 BASE32 字符串。
         /// </summary>
         /// <param name="bytes">给定的字节数组。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "bytes")]
         public static string AsBase32String(this byte[] bytes)
         {
             bytes.NotEmpty(nameof(bytes));
@@ -132,14 +98,14 @@ namespace Librame.Extensions
                 var numCharsToOutput = GetNextGroup(bytes, ref offset,
                     out byte a, out byte b, out byte c, out byte d, out byte e, out byte f, out byte g, out byte h);
 
-                sb.Append((numCharsToOutput >= 1) ? BASE32_CHARS[a] : '=');
-                sb.Append((numCharsToOutput >= 2) ? BASE32_CHARS[b] : '=');
-                sb.Append((numCharsToOutput >= 3) ? BASE32_CHARS[c] : '=');
-                sb.Append((numCharsToOutput >= 4) ? BASE32_CHARS[d] : '=');
-                sb.Append((numCharsToOutput >= 5) ? BASE32_CHARS[e] : '=');
-                sb.Append((numCharsToOutput >= 6) ? BASE32_CHARS[f] : '=');
-                sb.Append((numCharsToOutput >= 7) ? BASE32_CHARS[g] : '=');
-                sb.Append((numCharsToOutput >= 8) ? BASE32_CHARS[h] : '=');
+                sb.Append((numCharsToOutput >= 1) ? ExtensionSettings.Base32Chars[a] : '=');
+                sb.Append((numCharsToOutput >= 2) ? ExtensionSettings.Base32Chars[b] : '=');
+                sb.Append((numCharsToOutput >= 3) ? ExtensionSettings.Base32Chars[c] : '=');
+                sb.Append((numCharsToOutput >= 4) ? ExtensionSettings.Base32Chars[d] : '=');
+                sb.Append((numCharsToOutput >= 5) ? ExtensionSettings.Base32Chars[e] : '=');
+                sb.Append((numCharsToOutput >= 6) ? ExtensionSettings.Base32Chars[f] : '=');
+                sb.Append((numCharsToOutput >= 7) ? ExtensionSettings.Base32Chars[g] : '=');
+                sb.Append((numCharsToOutput >= 8) ? ExtensionSettings.Base32Chars[h] : '=');
             }
 
             return sb.ToString();
@@ -183,6 +149,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="base32String">给定的 BASE32 字符串。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "base32String")]
         public static byte[] FromBase32String(this string base32String)
         {
             base32String.NotEmpty(nameof(base32String));
@@ -202,8 +169,9 @@ namespace Librame.Extensions
 
             while (outputIndex < bytes.Length)
             {
-                var byteIndex = BASE32_CHARS.IndexOf(base32String[inputIndex],
+                var byteIndex = ExtensionSettings.Base32Chars.IndexOf(base32String[inputIndex],
                     StringComparison.OrdinalIgnoreCase);
+
                 if (byteIndex < 0)
                     throw new FormatException();
 
@@ -262,17 +230,20 @@ namespace Librame.Extensions
         /// <summary>
         /// 还原 16 进制字符串。
         /// </summary>
+        /// <exception cref="ArgumentException">
+        /// Invalid hex string.
+        /// </exception>
         /// <param name="hexString">给定的 16 进制字符串。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "hexString")]
         public static byte[] FromHexString(this string hexString)
         {
             hexString.NotEmpty(nameof(hexString));
 
             if (!hexString.Length.IsMultiples(2))
-                throw new ArgumentException("Hex length must be in multiples of 2.");
+                throw new ArgumentException(InternalResource.ArgumentExceptionHexString);
 
             //var memory = hexString.AsMemory();
-
             var length = hexString.Length / 2;
             var buffer = new byte[length];
 
@@ -376,8 +347,9 @@ namespace Librame.Extensions
         /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
         /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
         public static byte[] Md5(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => buffer.Hash(HashAlgorithmName.MD5, rsa, padding);
+            => Hash(buffer, HashAlgorithmName.MD5, rsa, padding);
 
         /// <summary>
         /// 计算 SHA1。
@@ -386,8 +358,9 @@ namespace Librame.Extensions
         /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
         /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
         public static byte[] Sha1(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => buffer.Hash(HashAlgorithmName.SHA1, rsa, padding);
+            => Hash(buffer, HashAlgorithmName.SHA1, rsa, padding);
 
         /// <summary>
         /// 计算 SHA256。
@@ -396,8 +369,9 @@ namespace Librame.Extensions
         /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
         /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
         public static byte[] Sha256(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => buffer.Hash(HashAlgorithmName.SHA256, rsa, padding);
+            => Hash(buffer, HashAlgorithmName.SHA256, rsa, padding);
 
         /// <summary>
         /// 计算 SHA384。
@@ -406,8 +380,9 @@ namespace Librame.Extensions
         /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
         /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
         public static byte[] Sha384(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => buffer.Hash(HashAlgorithmName.SHA384, rsa, padding);
+            => Hash(buffer, HashAlgorithmName.SHA384, rsa, padding);
 
         /// <summary>
         /// 计算 SHA512。
@@ -416,14 +391,15 @@ namespace Librame.Extensions
         /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
         /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
         public static byte[] Sha512(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => buffer.Hash(HashAlgorithmName.SHA512, rsa, padding);
+            => Hash(buffer, HashAlgorithmName.SHA512, rsa, padding);
 
 
         private static ConcurrentDictionary<HashAlgorithmName, HashAlgorithm> _hashAlgorithms
             = new ConcurrentDictionary<HashAlgorithmName, HashAlgorithm>();
 
-        private static byte[] Hash(this byte[] buffer, HashAlgorithmName algorithmName, RSA rsa = null, RSASignaturePadding padding = null)
+        private static byte[] Hash(byte[] buffer, HashAlgorithmName algorithmName, RSA rsa = null, RSASignaturePadding padding = null)
         {
             var algorithm = _hashAlgorithms.GetOrAdd(algorithmName, name => HashAlgorithm.Create(name.Name));
             var hash = algorithm.ComputeHash(buffer);
@@ -537,8 +513,9 @@ namespace Librame.Extensions
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
         public static byte[] HmacMd5(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACMD5), key, () => new HMACMD5());
+            => HmacHash(buffer, nameof(HMACMD5), key, () => new HMACMD5());
 
         /// <summary>
         /// 计算 HMACSHA1。
@@ -546,8 +523,9 @@ namespace Librame.Extensions
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
         public static byte[] HmacSha1(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACSHA1), key, () => new HMACSHA1());
+            => HmacHash(buffer, nameof(HMACSHA1), key, () => new HMACSHA1());
 
         /// <summary>
         /// 计算 HMACSHA256。
@@ -556,7 +534,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha256(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACSHA256), key, () => new HMACSHA256());
+            => HmacHash(buffer, nameof(HMACSHA256), key, () => new HMACSHA256());
 
         /// <summary>
         /// 计算 HMACSHA384。
@@ -565,7 +543,7 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha384(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACSHA384), key, () => new HMACSHA384());
+            => HmacHash(buffer, nameof(HMACSHA384), key, () => new HMACSHA384());
 
         /// <summary>
         /// 计算 HMACSHA512。
@@ -574,13 +552,13 @@ namespace Librame.Extensions
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha512(this byte[] buffer, byte[] key)
-            => buffer.HmacHash(nameof(HMACSHA512), key, () => new HMACSHA512());
+            => HmacHash(buffer, nameof(HMACSHA512), key, () => new HMACSHA512());
 
 
         private static ConcurrentDictionary<string, HMAC> _hmacAlgorithms
             = new ConcurrentDictionary<string, HMAC>();
 
-        private static byte[] HmacHash(this byte[] buffer, string algorithmName, byte[] key, Func<HMAC> factory)
+        private static byte[] HmacHash(byte[] buffer, string algorithmName, byte[] key, Func<HMAC> factory)
         {
             var algorithm = _hmacAlgorithms.GetOrAdd($"N={algorithmName},K={key.AsBase64String()}", name =>
             {
@@ -660,8 +638,9 @@ namespace Librame.Extensions
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
         public static byte[] AsAes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(Aes), isEncrypt: true, () => Aes.Create());
+            => SymAlgorithm(buffer, key, nameof(Aes), isEncrypt: true, () => Aes.Create());
 
         /// <summary>
         /// 还原 AES。
@@ -669,8 +648,9 @@ namespace Librame.Extensions
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
         public static byte[] FromAes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(Aes), isEncrypt: false, () => Aes.Create());
+            => SymAlgorithm(buffer, key, nameof(Aes), isEncrypt: false, () => Aes.Create());
 
 
         /// <summary>
@@ -679,8 +659,10 @@ namespace Librame.Extensions
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
+        [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
         public static byte[] AsDes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(DES), isEncrypt: true, () => DES.Create());
+            => SymAlgorithm(buffer, key, nameof(DES), isEncrypt: true, () => DES.Create());
 
         /// <summary>
         /// 还原 DES。
@@ -688,8 +670,10 @@ namespace Librame.Extensions
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
+        [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
         public static byte[] FromDes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(DES), isEncrypt: false, () => DES.Create());
+            => SymAlgorithm(buffer, key, nameof(DES), isEncrypt: false, () => DES.Create());
 
 
         /// <summary>
@@ -698,8 +682,10 @@ namespace Librame.Extensions
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
+        [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
         public static byte[] AsTripleDes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(TripleDES), isEncrypt: true, () => TripleDES.Create());
+            => SymAlgorithm(buffer, key, nameof(TripleDES), isEncrypt: true, () => TripleDES.Create());
 
         /// <summary>
         /// 还原 TripleDES。
@@ -707,14 +693,16 @@ namespace Librame.Extensions
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
+        [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
         public static byte[] FromTripleDes(this byte[] buffer, byte[] key)
-            => buffer.SymAlgorithm(key, nameof(TripleDES), isEncrypt: false, () => TripleDES.Create());
+            => SymAlgorithm(buffer, key, nameof(TripleDES), isEncrypt: false, () => TripleDES.Create());
 
 
         private static ConcurrentDictionary<string, SymmetricAlgorithm> _symAlgorithms
             = new ConcurrentDictionary<string, SymmetricAlgorithm>();
 
-        private static byte[] SymAlgorithm(this byte[] buffer, byte[] key, string algorithmName, bool isEncrypt, Func<SymmetricAlgorithm> factory)
+        private static byte[] SymAlgorithm(byte[] buffer, byte[] key, string algorithmName, bool isEncrypt, Func<SymmetricAlgorithm> factory)
         {
             var algorithm = _symAlgorithms.GetOrAdd($"N={algorithmName},K={key.AsBase64String()}", name =>
             {
@@ -770,7 +758,7 @@ namespace Librame.Extensions
         /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] AsRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
-            => buffer.RsaAlgorithm(parameters, padding, isEncrypt: true);
+            => RsaAlgorithm(buffer, parameters, padding, isEncrypt: true);
 
         /// <summary>
         /// 还原 RSA。
@@ -780,13 +768,13 @@ namespace Librame.Extensions
         /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
-            => buffer.RsaAlgorithm(parameters, padding, isEncrypt: false);
+            => RsaAlgorithm(buffer, parameters, padding, isEncrypt: false);
 
 
         private static ConcurrentDictionary<string, RSA> _rsaAlgorithms
             = new ConcurrentDictionary<string, RSA>();
 
-        private static byte[] RsaAlgorithm(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding, bool isEncrypt)
+        private static byte[] RsaAlgorithm(byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding, bool isEncrypt)
         {
             var algorithm = _rsaAlgorithms.GetOrAdd($"{ToRSAParametersString(parameters)}", name =>
             {

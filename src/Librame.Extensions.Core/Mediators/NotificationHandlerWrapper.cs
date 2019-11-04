@@ -12,16 +12,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
 {
-    class NotificationHandlerWrapper<TNotification> : INotificationHandlerWrapper<TNotification>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class NotificationHandlerWrapper<TNotification> : INotificationHandlerWrapper<TNotification>
         where TNotification : INotification
     {
-        public Task HandleAsync(INotification notification, ServiceFactoryDelegate serviceFactory,
+        public Task HandleAsync(INotification notification, ServiceFactory serviceFactory,
             CancellationToken cancellationToken = default)
         {
             var handlers = serviceFactory.GetRequiredService<IEnumerable<INotificationHandler<TNotification>>>();

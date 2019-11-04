@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using System.Globalization;
 using Xunit;
 
@@ -10,29 +11,29 @@ namespace Librame.Extensions.Core.Tests
         public void ResourceTest()
         {
             var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
-            var localizer = TestServiceProvider.Current.GetRequiredService<IExpressionLocalizer<HumanizationResource>>();
+            var localizer = TestServiceProvider.Current.GetRequiredService<IStringLocalizer<HumanizationResource>>();
 
             foreach (var name in cultureNames)
                 RunTest(localizer, name);
         }
 
-        private void RunTest(IExpressionLocalizer<HumanizationResource> localizer, string cultureName)
+        private void RunTest(IStringLocalizer<HumanizationResource> localizer, string cultureName)
         {
             CultureUtility.Register(new CultureInfo(cultureName));
 
-            var minutesAgo = localizer[r => r.HumanizedMinutesAgo];
+            var minutesAgo = localizer.GetString(r => r.HumanizedMinutesAgo);
             Assert.False(minutesAgo.ResourceNotFound);
 
-            var hoursAgo = localizer[r => r.HumanizedHoursAgo];
+            var hoursAgo = localizer.GetString(r => r.HumanizedHoursAgo);
             Assert.False(hoursAgo.ResourceNotFound);
 
-            var daysAgo = localizer[r => r.HumanizedDaysAgo];
+            var daysAgo = localizer.GetString(r => r.HumanizedDaysAgo);
             Assert.False(daysAgo.ResourceNotFound);
 
-            var monthsAgo = localizer[r => r.HumanizedMonthsAgo];
+            var monthsAgo = localizer.GetString(r => r.HumanizedMonthsAgo);
             Assert.False(monthsAgo.ResourceNotFound);
 
-            var yearsAgo = localizer[r => r.HumanizedYearsAgo];
+            var yearsAgo = localizer.GetString(r => r.HumanizedYearsAgo);
             Assert.False(yearsAgo.ResourceNotFound);
         }
 

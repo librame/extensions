@@ -13,6 +13,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Librame.Extensions.Data
@@ -28,6 +29,7 @@ namespace Librame.Extensions.Data
         /// <param name="indexBuilder">给定的 <see cref="IndexBuilder"/>。</param>
         /// <param name="nameFactory">给定的名称工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IndexBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "indexBuilder")]
         public static IndexBuilder HasName(this IndexBuilder indexBuilder, Func<string, string> nameFactory = null)
         {
             indexBuilder.NotNull(nameof(indexBuilder));

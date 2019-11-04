@@ -14,6 +14,7 @@ using Librame.Extensions;
 using Librame.Extensions.Core;
 using Librame.Extensions.Storage;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -62,11 +63,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
         /// <param name="builderFactory">给定创建存储构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static IStorageBuilder AddStorage<TDependencyOptions>(this IExtensionBuilder builder,
             Action<TDependencyOptions> dependencyAction = null,
             Func<IExtensionBuilder, TDependencyOptions, IStorageBuilder> builderFactory = null)
             where TDependencyOptions : StorageBuilderDependencyOptions, new()
         {
+            builder.NotNull(nameof(builder));
+
             // Configure DependencyOptions
             var dependency = dependencyAction.ConfigureDependency();
             builder.Services.AddAllOptionsConfigurators(dependency);

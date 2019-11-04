@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,6 +31,7 @@ namespace Librame.Extensions.Core
         /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
         /// <param name="timeout">给定的超时（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void WaitAction(this IMemoryLocker locker,
             Action action, CancellationToken? cancellationToken = null,
             int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
@@ -54,6 +56,7 @@ namespace Librame.Extensions.Core
         /// <param name="timeout">给定的超时（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static async Task WaitActionAsync(this IMemoryLocker locker,
             Func<Task> factory, CancellationToken? cancellationToken = null,
             int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
@@ -80,6 +83,7 @@ namespace Librame.Extensions.Core
         /// <param name="timeout">给定的超时（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static TResult WaitFactory<TResult>(this IMemoryLocker locker,
             Func<TResult> factory, CancellationToken? cancellationToken = null,
             int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
@@ -107,6 +111,7 @@ namespace Librame.Extensions.Core
         /// <param name="timeout">给定的超时（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
         /// <returns>返回 <see cref="Task{TResult}"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static async Task<TResult> WaitFactoryAsync<TResult>(this IMemoryLocker locker,
             Func<Task<TResult>> factory, CancellationToken? cancellationToken = null,
             int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
@@ -135,6 +140,7 @@ namespace Librame.Extensions.Core
         /// <param name="millisecondsTimeout">给定的毫秒超时数（可选）。</param>
         /// <param name="timeout">给定的超时（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void TryCatchWaitAction<TException>(this IMemoryLocker locker,
             Action tryAction, Action<TException> catchAction, CancellationToken? cancellationToken = null,
             int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
@@ -172,6 +178,7 @@ namespace Librame.Extensions.Core
         /// <param name="timeout">给定的超时（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static async Task TryCatchWaitActionAsync<TException>(this IMemoryLocker locker,
             Func<Task> tryFactory, Action<TException> catchAction, CancellationToken? cancellationToken = null,
             int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
@@ -211,6 +218,7 @@ namespace Librame.Extensions.Core
         /// <param name="timeout">给定的超时（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static TResult TryCatchWaitFactory<TException, TResult>(this IMemoryLocker locker,
             Func<TResult> tryFactory, Func<TException, TResult> catchFactory, CancellationToken? cancellationToken = null,
             int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
@@ -249,6 +257,7 @@ namespace Librame.Extensions.Core
         /// <param name="timeout">给定的超时（可选）。</param>
         /// <param name="releaseCount">给定要释放的线程数（可选）。</param>
         /// <returns>返回 <see cref="Task{TResult}"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static async Task<TResult> TryCatchWaitFactoryAsync<TException, TResult>(this IMemoryLocker locker,
             Func<Task<TResult>> tryFactory, Func<TException, TResult> catchFactory, CancellationToken? cancellationToken = null,
             int? millisecondsTimeout = null, TimeSpan? timeout = null, int? releaseCount = null)
@@ -273,5 +282,6 @@ namespace Librame.Extensions.Core
                 locker.Release(releaseCount);
             }
         }
+
     }
 }

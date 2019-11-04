@@ -10,11 +10,14 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 单例接口。
     /// </summary>
+    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
     public interface ISingleton
     {
     }

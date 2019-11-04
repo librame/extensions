@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -23,7 +24,8 @@ namespace Librame.Extensions.Network.DotNetty
 {
     using Encryption;
 
-    class EchoClient : ChannelServiceBase, IEchoClient
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class EchoClient : ChannelServiceBase, IEchoClient
     {
         private readonly ClientOptions _clientOptions;
 
@@ -40,6 +42,7 @@ namespace Librame.Extensions.Network.DotNetty
         public Task StartAsync(Action<IChannel> configureProcess, string host = null, int? port = null)
             => StartAsync(new EchoClientHandler(this), configureProcess, host, port);
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public async Task StartAsync<TChannelHandler>(TChannelHandler channelHandler,
             Action<IChannel> configureProcess, string host = null, int? port = null)
             where TChannelHandler : IChannelHandler
@@ -73,7 +76,7 @@ namespace Librame.Extensions.Network.DotNetty
             }
             finally
             {
-                await group.ShutdownGracefullyAsync(_clientOptions.QuietPeriod, _clientOptions.TimeOut);
+                await group.ShutdownGracefullyAsync(_clientOptions.QuietPeriod, _clientOptions.TimeOut).ConfigureAndWaitAsync();
             }
         }
 

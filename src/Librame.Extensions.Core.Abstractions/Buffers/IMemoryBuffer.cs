@@ -12,7 +12,6 @@
 
 using System;
 using System.Buffers;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core
 {
@@ -27,14 +26,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="newMemoryFactory">给定的新 <see cref="Memory{T}"/> 工厂方法。</param>
         /// <returns>返回 <see cref="IMemoryBuffer{T}"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "newMemoryFactory")]
-        public IMemoryBuffer<T> ChangeMemory(Func<Memory<T>, Memory<T>> newMemoryFactory)
-        {
-            newMemoryFactory.NotNull(nameof(newMemoryFactory));
-
-            var newMemory = newMemoryFactory.Invoke(Memory);
-            return ChangeMemory(newMemory);
-        }
+        IMemoryBuffer<T> ChangeMemory(Func<Memory<T>, Memory<T>> newMemoryFactory);
 
         /// <summary>
         /// 改变 <see cref="Memory{T}"/>。

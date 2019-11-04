@@ -12,12 +12,15 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
 {
-    class EnvironmentService : AbstractConcurrentService, IEnvironmentService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class EnvironmentService : AbstractConcurrentService, IEnvironmentService
     {
         public EnvironmentService(IMemoryLocker locker, ILoggerFactory loggerFactory)
             : base(locker, loggerFactory)
@@ -32,7 +35,7 @@ namespace Librame.Extensions.Core
                 return cancellationToken.RunFactoryOrCancellationAsync(() =>
                 {
                     IEnvironmentInfo info = new EnvironmentInfo();
-                    Logger.LogInformation($"Refresh environment info at {DateTimeOffset.Now.ToString()}");
+                    Logger.LogInformation($"Refresh environment info at {DateTimeOffset.Now.ToString(CultureInfo.CurrentCulture)}");
 
                     return info;
                 });

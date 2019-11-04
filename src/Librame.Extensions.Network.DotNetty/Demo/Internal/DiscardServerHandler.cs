@@ -13,10 +13,12 @@
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class DiscardServerHandler : SimpleChannelInboundHandler<object>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class DiscardServerHandler : SimpleChannelInboundHandler<object>
     {
         private readonly IDiscardServer _server;
         private readonly ILogger _logger;

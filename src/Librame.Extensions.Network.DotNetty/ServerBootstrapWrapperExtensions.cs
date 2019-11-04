@@ -14,6 +14,7 @@ using DotNetty.Codecs;
 using DotNetty.Codecs.Http;
 using DotNetty.Handlers.Logging;
 using DotNetty.Transport.Channels;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Librame.Extensions.Network.DotNetty
@@ -31,11 +32,14 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="httpHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IServerBootstrapWrapper"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
         public static IServerBootstrapWrapper AddHttpHandler<TChannelHandler>(this IServerBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler httpHandler)
             where TChannelHandler : IChannelHandler
         {
-            return wrapper.AddHandler<IChannel>(tlsCertificate, pipeline =>
+            wrapper.NotNull(nameof(wrapper));
+
+            return wrapper.AddChannelHandler<IChannel>(tlsCertificate, pipeline =>
             {
                 pipeline.AddLast("encoder", new HttpResponseEncoder());
                 pipeline.AddLast("decoder", new HttpRequestDecoder(4096, 8192, 8192, false));
@@ -51,11 +55,14 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="discardHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IServerBootstrapWrapper"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
         public static IServerBootstrapWrapper AddDiscardHandler<TChannelHandler>(this IServerBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler discardHandler)
             where TChannelHandler : IChannelHandler
         {
-            return wrapper.AddHandler<IChannel>(tlsCertificate, pipeline =>
+            wrapper.NotNull(nameof(wrapper));
+
+            return wrapper.AddChannelHandler<IChannel>(tlsCertificate, pipeline =>
             {
                 pipeline.AddLast(new LoggingHandler("CONN"));
                 pipeline.AddLast(discardHandler);
@@ -70,11 +77,14 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="echoHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IServerBootstrapWrapper"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
         public static IServerBootstrapWrapper AddEchoHandler<TChannelHandler>(this IServerBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler echoHandler)
             where TChannelHandler : IChannelHandler
         {
-            return wrapper.AddHandler<IChannel>(tlsCertificate, pipeline =>
+            wrapper.NotNull(nameof(wrapper));
+
+            return wrapper.AddChannelHandler<IChannel>(tlsCertificate, pipeline =>
             {
                 pipeline.AddLast(new LoggingHandler("SRV-CONN"));
                 pipeline.AddLast("framing-enc", new LengthFieldPrepender(2));
@@ -92,11 +102,14 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="factorialHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IServerBootstrapWrapper"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
         public static IServerBootstrapWrapper AddFactorialHandler<TChannelHandler>(this IServerBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler factorialHandler)
             where TChannelHandler : IChannelHandler
         {
-            return wrapper.AddHandler<IChannel>(tlsCertificate, pipeline =>
+            wrapper.NotNull(nameof(wrapper));
+
+            return wrapper.AddChannelHandler<IChannel>(tlsCertificate, pipeline =>
             {
                 pipeline.AddLast(new LoggingHandler("CONN"));
                 pipeline.AddLast(new BigIntegerEncoder());
@@ -113,11 +126,14 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="secureChatHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IServerBootstrapWrapper"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
         public static IServerBootstrapWrapper AddSecureChatHandler<TChannelHandler>(this IServerBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler secureChatHandler)
             where TChannelHandler : IChannelHandler
         {
-            return wrapper.AddHandler<IChannel>(tlsCertificate, pipeline =>
+            wrapper.NotNull(nameof(wrapper));
+
+            return wrapper.AddChannelHandler<IChannel>(tlsCertificate, pipeline =>
             {
                 pipeline.AddLast(new DelimiterBasedFrameDecoder(8192, Delimiters.LineDelimiter()));
                 pipeline.AddLast(new StringEncoder());
@@ -134,11 +150,14 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="telnetHandler">给定的 <see cref="IChannelHandler"/> 工厂方法。</param>
         /// <returns>返回 <see cref="IServerBootstrapWrapper"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
         public static IServerBootstrapWrapper AddTelnetHandler<TChannelHandler>(this IServerBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler telnetHandler)
             where TChannelHandler : IChannelHandler
         {
-            return wrapper.AddHandler<IChannel>(tlsCertificate, pipeline =>
+            wrapper.NotNull(nameof(wrapper));
+
+            return wrapper.AddChannelHandler<IChannel>(tlsCertificate, pipeline =>
             {
                 pipeline.AddLast(new DelimiterBasedFrameDecoder(8192, Delimiters.LineDelimiter()));
                 pipeline.AddLast(new StringEncoder());
@@ -155,11 +174,14 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="webSocketHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IServerBootstrapWrapper"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
         public static IServerBootstrapWrapper AddWebSocketHandler<TChannelHandler>(this IServerBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler webSocketHandler)
             where TChannelHandler : IChannelHandler
         {
-            return wrapper.AddHandler<IChannel>(tlsCertificate, pipeline =>
+            wrapper.NotNull(nameof(wrapper));
+
+            return wrapper.AddChannelHandler<IChannel>(tlsCertificate, pipeline =>
             {
                 pipeline.AddLast(new HttpServerCodec());
                 pipeline.AddLast(new HttpObjectAggregator(65536));

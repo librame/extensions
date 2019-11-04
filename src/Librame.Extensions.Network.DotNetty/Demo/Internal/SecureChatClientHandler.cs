@@ -13,10 +13,12 @@
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class SecureChatClientHandler : SimpleChannelInboundHandler<string>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class SecureChatClientHandler : SimpleChannelInboundHandler<string>
     {
         private readonly ILogger _logger;
 

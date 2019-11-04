@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -23,7 +24,8 @@ namespace Librame.Extensions.Network.DotNetty
 {
     using Encryption;
 
-    class TelnetClient : ChannelServiceBase, ITelnetClient
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class TelnetClient : ChannelServiceBase, ITelnetClient
     {
         private readonly ClientOptions _clientOptions;
 
@@ -40,6 +42,7 @@ namespace Librame.Extensions.Network.DotNetty
         public Task StartAsync(Action<IChannel> configureProcess, string host = null, int? port = null)
             => StartAsync(new TelnetClientHandler(this), configureProcess, host, port);
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public async Task StartAsync<TChannelHandler>(TChannelHandler channelHandler,
             Action<IChannel> configureProcess, string host = null, int? port = null)
             where TChannelHandler : IChannelHandler

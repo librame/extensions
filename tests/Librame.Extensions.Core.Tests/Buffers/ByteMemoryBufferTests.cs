@@ -8,7 +8,7 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void AllTest()
         {
-            IByteMemoryBuffer buffer = new TestByteMemoryBuffer(Memory<byte>.Empty);
+            var buffer = new TestByteMemoryBuffer(Memory<byte>.Empty);
             Assert.True(buffer.Memory.IsEmpty);
 
             var array = new byte[] { 12, 34 };

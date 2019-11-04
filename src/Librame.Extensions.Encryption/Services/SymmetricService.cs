@@ -12,19 +12,23 @@
 
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
 {
     using Core;
 
-    class SymmetricService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISymmetricService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class SymmetricService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISymmetricService
     {
         private readonly Lazy<Aes> _aes;
         private readonly Lazy<DES> _des;
         private readonly Lazy<TripleDES> _3des;
 
 
+        [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
+        [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
         public SymmetricService(IKeyGenerator keyGenerator)
             : base(keyGenerator.CastTo<IKeyGenerator, AbstractExtensionBuilderService<EncryptionBuilderOptions>>(nameof(keyGenerator)))
         {

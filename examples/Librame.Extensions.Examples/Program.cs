@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Pomelo.EntityFrameworkCore.MySql.Design.Internal;
 using System;
 
 namespace Librame.Extensions.Examples
@@ -42,27 +43,43 @@ namespace Librame.Extensions.Examples
             })
             .AddData(options =>
             {
+                // SQLite
                 options.DefaultTenant.DefaultConnectionString = "Data Source=" + basePath.CombinePath("librame_data_default.db");
                 options.DefaultTenant.WritingConnectionString = "Data Source=" + basePath.CombinePath("librame_data_writing.db");
+
+                // MySQL
+                //options.DefaultTenant.DefaultConnectionString = "Server=localhost;Database=librame_data_default;User=root;Password=123456;";
+                //options.DefaultTenant.DefaultConnectionString = "Server=localhost;Database=librame_data_writing;User=root;Password=123456;";
+
                 options.DefaultTenant.WritingSeparation = true;
             })
             .AddAccessor<ExampleDbContextAccessor>((options, optionsBuilder) =>
             {
+                // SQLite
                 optionsBuilder.UseSqlite(options.DefaultTenant.DefaultConnectionString,
                     sqlite => sqlite.MigrationsAssembly(typeof(Program).GetSimpleAssemblyName()));
+
+                // MySQL
+                //optionsBuilder.UseMySql(options.DefaultTenant.DefaultConnectionString,
+                //    mysql => mysql.MigrationsAssembly(typeof(Program).GetSimpleAssemblyName()));
             })
             .AddDbDesignTime<SqliteDesignTimeServices>()
+            //.AddDbDesignTime<MySqlDesignTimeServices>()
             .AddIdentifier<ExampleStoreIdentifier>()
             .AddInitializer<ExampleStoreInitializer>()
             .AddStoreHub<ExampleStoreHub>()
             .AddEncryption()
             .AddDeveloperGlobalSigningCredentials();
-
+            
             var provider = services.BuildServiceProvider();
 
             RunHello(provider);
 
+            // SQLite
             RunSqlite(provider);
+
+            // MySQL
+            //RunMySql(provider);
 
             RunEncryption(provider);
 
@@ -88,6 +105,32 @@ namespace Librame.Extensions.Examples
         private static void RunSqlite(IServiceProvider provider)
         {
             Console.WriteLine("Run sqlite database test:");
+
+            using (var stores = provider.GetRequiredService<ExampleStoreHub>())
+            {
+                var categories = stores.GetCategories();
+                Console.WriteLine($"Default database categories is empty: {categories.IsEmpty()}.");
+
+                categories = stores.UseWriteDbConnection().GetCategories();
+                Console.WriteLine($"Writing database categories is empty: {categories.IsEmpty()}.");
+                categories.ForEach(category => Console.WriteLine(category));
+
+                var articles = stores.UseDefaultDbConnection().GetArticles();
+                Console.WriteLine($"Default database articles is empty: {articles.IsEmpty()}.");
+
+                articles = stores.UseWriteDbConnection().GetArticles();
+                Console.WriteLine($"Writing database articles is empty: {articles.IsEmpty()}."); // 如果已分表，则此表内容可能为空
+                if (articles.IsNotEmpty())
+                    articles.ForEach(article => Console.WriteLine(article));
+            }
+
+            Console.WriteLine("Press any key to continue");
+            Console.ReadKey();
+        }
+
+        private static void RunMySql(IServiceProvider provider)
+        {
+            Console.WriteLine("Run mysql database test:");
 
             using (var stores = provider.GetRequiredService<ExampleStoreHub>())
             {

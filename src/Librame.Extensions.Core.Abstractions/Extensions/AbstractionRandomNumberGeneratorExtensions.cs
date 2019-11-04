@@ -10,6 +10,7 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace Librame.Extensions.Core
@@ -25,6 +26,7 @@ namespace Librame.Extensions.Core
         /// <param name="generator">给定的 <see cref="RandomNumberGenerator"/>。</param>
         /// <param name="length">给定要生成的字节数组长度。</param>
         /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static byte[] GenerateByteArray(this RandomNumberGenerator generator, int length)
         {
             generator.NotNull(nameof(generator));

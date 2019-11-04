@@ -15,6 +15,7 @@ using Librame.Extensions.Core;
 using Librame.Extensions.Data;
 using Microsoft.EntityFrameworkCore.Design;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -63,11 +64,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
         /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static IDataBuilder AddData<TDependencyOptions>(this IExtensionBuilder builder,
             Action<TDependencyOptions> dependencyAction = null,
             Func<IExtensionBuilder, TDependencyOptions, IDataBuilder> builderFactory = null)
             where TDependencyOptions : DataBuilderDependencyOptions, new()
         {
+            builder.NotNull(nameof(builder));
+
             // Configure DependencyOptions
             var dependency = dependencyAction.ConfigureDependency();
             builder.Services.AddAllOptionsConfigurators(dependency);
@@ -94,9 +98,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TDesignTime">指定的设计时类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static IDataBuilder AddDbDesignTime<TDesignTime>(this IDataBuilder builder)
             where TDesignTime : class, IDesignTimeServices
         {
+            builder.NotNull(nameof(builder));
+
             var designTimeType = typeof(TDesignTime);
             var designTime = designTimeType.EnsureCreate<TDesignTime>();
             designTime.ConfigureDesignTimeServices(builder.Services);

@@ -21,21 +21,21 @@ namespace Librame.Extensions.Core
     /// </summary>
     public class CoreBuilderOptions : IExtensionBuilderOptions, IEncoding
     {
-        private static readonly CultureInfo _zhCNCultureInfo
-            = new CultureInfo("zh-CN");
+        //private static readonly CultureInfo _zhCNCultureInfo
+        //    = new CultureInfo("zh-CN");
 
 
-        /// <summary>
-        /// 文化信息（默认为 zh-CN）。
-        /// </summary>
-        public CultureInfo CultureInfo { get; set; }
-            = _zhCNCultureInfo;
+        ///// <summary>
+        ///// 文化信息（默认为 zh-CN）。
+        ///// </summary>
+        //public CultureInfo CultureInfo { get; set; }
+        //    = _zhCNCultureInfo;
 
-        /// <summary>
-        /// UI 文化信息（默认为 zh-CN）。
-        /// </summary>
-        public CultureInfo CultureUIInfo { get; set; }
-            = _zhCNCultureInfo;
+        ///// <summary>
+        ///// UI 文化信息（默认为 zh-CN）。
+        ///// </summary>
+        //public CultureInfo CultureUIInfo { get; set; }
+        //    = _zhCNCultureInfo;
 
 
         /// <summary>
@@ -62,19 +62,5 @@ namespace Librame.Extensions.Core
         /// </summary>
         public int ThreadsCount { get; set; }
             = Environment.ProcessorCount;
-
-
-        /// <summary>
-        /// 资源映射工厂方法。
-        /// </summary>
-        public Func<ResourceMappingDescriptor, string> ResourceMappingFactory { get; set; }
-            = descr =>
-            {
-                if (descr.RelativePath.IsEmpty())
-                    return $"{descr.BaseNamespace}.{descr.TypeInfo.Name}";
-
-                // _resourcesRelativePath 已格式化为点分隔符（如：Resources.）
-                return $"{descr.BaseNamespace}.{descr.RelativePath}{descr.TypeInfo.Name}";
-            };
     }
 }

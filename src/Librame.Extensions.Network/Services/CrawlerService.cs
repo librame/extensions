@@ -14,6 +14,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -23,7 +24,8 @@ namespace Librame.Extensions.Network
 {
     using Core;
 
-    class CrawlerService : NetworkServiceBase, ICrawlerService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class CrawlerService : NetworkServiceBase, ICrawlerService
     {
         private readonly IMemoryCache _memoryCache;
         private readonly IServicesManager<IUriRequester, HttpClientRequester> _requesters;
@@ -90,9 +92,9 @@ namespace Librame.Extensions.Network
                     Logger.LogDebug($"Match url: {link}");
 
                     // 修正无方案的情况（如：//domain.com/file.ext）
-                    if (link.StartsWith("//"))
+                    if (link.StartsWith("//", StringComparison.OrdinalIgnoreCase))
                     {
-                        var schemeIndex = url.IndexOf("//");
+                        var schemeIndex = url.IndexOf("//", StringComparison.OrdinalIgnoreCase);
                         if (schemeIndex < 1)
                         {
                             // 如果方案提取失败，则跳过此链接（因本地文件不能提取 URL 方案）
@@ -114,7 +116,7 @@ namespace Librame.Extensions.Network
                     Logger.LogDebug($"Match path: {link}");
 
                     // 排除代码中的注释情况（如：// console.log）
-                    if (!link.StartsWith("//"))
+                    if (!link.StartsWith("//", StringComparison.OrdinalIgnoreCase))
                     {
                         var baseUrl = new Uri(url);
                         link = new Uri(baseUrl, link).ToString();

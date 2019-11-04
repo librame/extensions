@@ -10,19 +10,23 @@
 
 #endregion
 
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
 {
-    class HumanizationService : AbstractConcurrentService, IHumanizationService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class HumanizationService : AbstractConcurrentService, IHumanizationService
     {
-        private readonly IExpressionLocalizer<HumanizationResource> _localizer;
+        private readonly IStringLocalizer<HumanizationResource> _localizer;
 
 
-        public HumanizationService(IExpressionLocalizer<HumanizationResource> localizer,
+        public HumanizationService(IStringLocalizer<HumanizationResource> localizer,
             IMemoryLocker locker, ILoggerFactory loggerFactory)
             : base(locker, loggerFactory)
         {
@@ -40,7 +44,7 @@ namespace Librame.Extensions.Core
                     if (now <= dateTime)
                     {
                         Logger.LogWarning($"The {dateTime} is greater than {now}");
-                        return now.ToString();
+                        return now.ToString(CultureInfo.CurrentCulture);
                     }
 
                     return HumanizeCore(now - dateTime);
@@ -58,7 +62,7 @@ namespace Librame.Extensions.Core
                     if (now <= dateTimeOffset)
                     {
                         Logger.LogWarning($"The {dateTimeOffset} is greater than {now}");
-                        return now.ToString();
+                        return now.ToString(CultureInfo.CurrentCulture);
                     }
 
                     return HumanizeCore(now - dateTimeOffset);
@@ -74,27 +78,27 @@ namespace Librame.Extensions.Core
             if (timeSpan.TotalDays > 365)
             {
                 count = (int)Math.Round(timeSpan.TotalDays / 365);
-                label = _localizer[r => r.HumanizedYearsAgo];
+                label = _localizer.GetString(r => r.HumanizedYearsAgo);
             }
             else if (timeSpan.TotalDays > 30)
             {
                 count = (int)Math.Round(timeSpan.TotalDays / 30);
-                label = _localizer[r => r.HumanizedMonthsAgo];
+                label = _localizer.GetString(r => r.HumanizedMonthsAgo);
             }
             else if (timeSpan.TotalDays > 1)
             {
                 count = (int)Math.Round(timeSpan.TotalDays / 1);
-                label = _localizer[r => r.HumanizedDaysAgo];
+                label = _localizer.GetString(r => r.HumanizedDaysAgo);
             }
             else if (timeSpan.TotalHours > 1)
             {
                 count = (int)Math.Round(timeSpan.TotalHours / 1);
-                label = _localizer[r => r.HumanizedHoursAgo];
+                label = _localizer.GetString(r => r.HumanizedHoursAgo);
             }
             else if (timeSpan.TotalMinutes > 1)
             {
                 count = (int)Math.Round(timeSpan.TotalMinutes / 1);
-                label = _localizer[r => r.HumanizedMinutesAgo];
+                label = _localizer.GetString(r => r.HumanizedMinutesAgo);
             }
 
             return $"{count} {label}";

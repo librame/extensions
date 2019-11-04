@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -37,7 +38,7 @@ namespace Librame.Extensions.Core
         /// <param name="assemblies">给定要查找的程序集数组。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddAutoRegistrationServices(this ICoreBuilder builder,
-            params Assembly[] assemblies)
+            IEnumerable<Assembly> assemblies)
         {
             var objectType = typeof(object);
             

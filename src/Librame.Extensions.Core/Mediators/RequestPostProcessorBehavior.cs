@@ -11,12 +11,14 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
 {
-    class RequestPostProcessorBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class RequestPostProcessorBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
         private readonly IEnumerable<IRequestPostProcessor<TRequest, TResponse>> _postProcessors;
@@ -28,12 +30,12 @@ namespace Librame.Extensions.Core
         }
 
 
-        public async Task<TResponse> HandleAsync(TRequest request, RequestHandlerDelegate<TResponse> next,
+        public async Task<TResponse> HandleAsync(TRequest request, RequestHandler<TResponse> nextHandler,
             CancellationToken cancellationToken = default)
         {
-            next.NotNull(nameof(next));
+            nextHandler.NotNull(nameof(nextHandler));
 
-            var response = await next.Invoke().ConfigureAndResultAsync();
+            var response = await nextHandler.Invoke().ConfigureAndResultAsync();
 
             foreach (var post in _postProcessors)
                 await post.Process(request, response, cancellationToken).ConfigureAndWaitAsync();

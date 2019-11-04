@@ -20,20 +20,13 @@ namespace Librame.Extensions
     /// </summary>
     public static class DateTimeExtensions
     {
-        private static readonly Type _dateTimeType
-            = typeof(DateTime);
-
-        private static readonly Type _dateTimeOffsetType
-            = typeof(DateTimeOffset);
-
-
         /// <summary>
         /// 是日期与时间类型。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsDateTimeType(this Type type)
-            => _dateTimeType.Equals(type);
+            => ExtensionSettings.DateTimeType.Equals(type);
 
         /// <summary>
         /// 是日期与时间偏移类型。
@@ -41,7 +34,7 @@ namespace Librame.Extensions
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsDateTimeOffsetType(this Type type)
-            => _dateTimeOffsetType.Equals(type);
+            => ExtensionSettings.DateTimeOffsetType.Equals(type);
 
         /// <summary>
         /// 是日期与时间或偏移类型。
@@ -125,7 +118,7 @@ namespace Librame.Extensions
 
         private static string CombineFileTime(string dateTime, string fileTime)
         {
-            // 后 5 位转换为毫秒
+            // 截取后 5 位为时间戳
             return dateTime + fileTime.Substring(fileTime.Length - 5);
         }
 
@@ -151,7 +144,7 @@ namespace Librame.Extensions
         private static int ComputeWeekOfYear(int year, int dayOfYear)
         {
             // 得到今年第一天是周几
-            var dayOfWeek = DateTimeOffset.Parse(year + "-1-1").DayOfWeek;
+            var dayOfWeek = DateTimeOffset.Parse(year + "-1-1", CultureInfo.CurrentCulture).DayOfWeek;
             var firstWeekend = (int)dayOfWeek;
 
             // 计算第一周的差额（如果是周日，则 firstWeekend 为 0，第一周也就是从周日开始）

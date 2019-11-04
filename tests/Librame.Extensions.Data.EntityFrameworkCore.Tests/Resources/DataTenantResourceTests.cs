@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Xunit;
 using System.Globalization;
 
@@ -12,29 +13,29 @@ namespace Librame.Extensions.Data.Tests
         public void ResourceTest()
         {
             var cultureNames = new string[] { "en-US", "zh-CN", "zh-TW" };
-            var localizer = TestServiceProvider.Current.GetRequiredService<IExpressionLocalizer<DataTenantResource>>();
+            var localizer = TestServiceProvider.Current.GetRequiredService<IStringLocalizer<DataTenantResource>>();
 
             foreach (var name in cultureNames)
                 RunTest(localizer, name);
         }
         
-        private void RunTest(IExpressionLocalizer<DataTenantResource> localizer, string cultureName)
+        private void RunTest(IStringLocalizer<DataTenantResource> localizer, string cultureName)
         {
             CultureUtility.Register(new CultureInfo(cultureName));
 
-            var name = localizer[r => r.Name];
+            var name = localizer.GetString(r => r.Name);
             Assert.False(name.ResourceNotFound);
 
-            var host = localizer[r => r.Host];
+            var host = localizer.GetString(r => r.Host);
             Assert.False(host.ResourceNotFound);
 
-            var defaultConnection = localizer[r => r.DefaultConnectionString];
+            var defaultConnection = localizer.GetString(r => r.DefaultConnectionString);
             Assert.False(defaultConnection.ResourceNotFound);
 
-            var writeConnection = localizer[r => r.WriteConnectionString];
+            var writeConnection = localizer.GetString(r => r.WriteConnectionString);
             Assert.False(writeConnection.ResourceNotFound);
 
-            var separation = localizer[r => r.WriteConnectionSeparation];
+            var separation = localizer.GetString(r => r.WriteConnectionSeparation);
             Assert.False(separation.ResourceNotFound);
         }
 

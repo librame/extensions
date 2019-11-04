@@ -15,10 +15,12 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class QuoteOfTheMomentServerHandler : SimpleChannelInboundHandler<DatagramPacket>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class QuoteOfTheMomentServerHandler : SimpleChannelInboundHandler<DatagramPacket>
     {
         static readonly Random _random = new Random();
 

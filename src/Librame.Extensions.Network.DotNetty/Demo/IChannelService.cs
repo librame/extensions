@@ -10,8 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
-
 namespace Librame.Extensions.Network.DotNetty
 {
     using Core;
@@ -22,12 +20,6 @@ namespace Librame.Extensions.Network.DotNetty
     /// </summary>
     public interface IChannelService : IService
     {
-        /// <summary>
-        /// 记录器工厂。
-        /// </summary>
-        /// <value>返回 <see cref="ILoggerFactory"/>。</value>
-        ILoggerFactory LoggerFactory { get; }
-
         /// <summary>
         /// 签名证书。
         /// </summary>

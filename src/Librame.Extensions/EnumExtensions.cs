@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -95,6 +96,7 @@ namespace Librame.Extensions
         /// <param name="enumField">给定的枚举项。</param>
         /// <param name="converter">给定的结果转换方法。</param>
         /// <returns>返回结果。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "converter")]
         public static TResult AsEnumResult<TEnum, TResult>(this TEnum enumField,
             Func<FieldInfo, TResult> converter)
             where TEnum : struct

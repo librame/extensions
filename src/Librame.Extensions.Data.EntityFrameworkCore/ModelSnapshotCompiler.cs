@@ -17,12 +17,14 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations.Design;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
 namespace Librame.Extensions.Data
 {
     using Core;
+    using Resources;
 
     /// <summary>
     /// 模型快照编译器。
@@ -53,7 +55,7 @@ namespace Librame.Extensions.Data
         /// <param name="buffer">给定的字节数组。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] RestoreAssembly(byte[] buffer)
-            => buffer?.Decompress();
+            => buffer?.RtlDecompress();
 
         /// <summary>
         /// 存储程序集。
@@ -61,7 +63,7 @@ namespace Librame.Extensions.Data
         /// <param name="buffer">给定的字节数组。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] StoreAssembly(byte[] buffer)
-            => buffer?.Compress();
+            => buffer?.RtlCompress();
 
 
         /// <summary>
@@ -106,6 +108,7 @@ namespace Librame.Extensions.Data
         /// <param name="model">给定的 <see cref="IModel"/>。</param>
         /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
         /// <returns>返回包含字节数组与哈希的元组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FilePathCombiner CompileInFile(IAccessor accessor, IModel model, DataBuilderOptions options)
         {
             accessor.NotNull(nameof(accessor));
@@ -134,21 +137,22 @@ namespace Librame.Extensions.Data
         /// <param name="references">给定的 <see cref="IEnumerable{AssemblyReference}"/>。</param>
         /// <param name="sourceCodes">给定的源代码数组。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FilePathCombiner CompileInFile(FilePathCombiner filePath, IEnumerable<AssemblyReference> references,
             params string[] sourceCodes)
         {
             filePath.NotNull(nameof(filePath));
 
             if (!filePath.FileName.IsExtension(".dll"))
-                throw new InvalidOperationException("Only supported “.dll” file extension.");
+                throw new InvalidOperationException(InternalResource.InvalidOperationExceptionCompileFileExtension);
 
             var metadatas = new List<MetadataReference>();
             foreach (var reference in references)
             {
                 if (reference.CopyLocal)
                 {
-                    if (string.IsNullOrEmpty(reference.Location))
-                        throw new InvalidOperationException("Could not find path for reference " + reference);
+                    if (reference.Location.IsEmpty())
+                        throw new InvalidOperationException(InternalResource.InvalidOperationExceptionNotFindPathForAssemblyReferenceFormat.Format(reference.ToString()));
 
                     File.Copy(reference.Location, Path.Combine(filePath.BasePath, Path.GetFileName(reference.Location)), overwrite: true);
                 }
@@ -179,6 +183,7 @@ namespace Librame.Extensions.Data
         /// <param name="typeName">给定的模型快照 <see cref="TypeNameCombiner"/>。</param>
         /// <param name="accessorType">给定的访问器类型。</param>
         /// <returns>返回包含字节数组与哈希的元组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static (byte[] Body, string Hash) CompileInMemory(IAccessor accessor, IModel model,
             DataBuilderOptions options, TypeNameCombiner typeName, Type accessorType)
         {

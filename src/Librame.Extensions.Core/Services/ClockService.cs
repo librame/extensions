@@ -13,12 +13,15 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core
 {
-    class ClockService : AbstractConcurrentService, IClockService
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class ClockService : AbstractConcurrentService, IClockService
     {
         public ClockService(IOptions<CoreBuilderOptions> options,
             IMemoryLocker locker, ILoggerFactory loggerFactory)
@@ -52,7 +55,7 @@ namespace Librame.Extensions.Core
                         Logger.LogTrace($"Clock reflux: {timestamp} is greater than {now} (IsUTC: {isUtc}).");
                     }
 
-                    Logger.LogInformation($"Get DateTime: {now.ToString()}");
+                    Logger.LogInformation($"Get DateTime: {now.ToString(CultureInfo.CurrentCulture)}");
                     return now;
                 });
             });
@@ -79,7 +82,7 @@ namespace Librame.Extensions.Core
                         Logger.LogTrace($"Clock reflux: {timestamp} is greater than {now} (IsUTC: {isUtc}).");
                     }
 
-                    Logger.LogInformation($"Get DateTimeOffset: {now.ToString()}");
+                    Logger.LogInformation($"Get DateTimeOffset: {now.ToString(CultureInfo.CurrentCulture)}");
                     return now;
                 });
             });

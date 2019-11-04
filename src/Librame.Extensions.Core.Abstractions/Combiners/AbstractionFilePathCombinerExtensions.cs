@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -46,7 +47,7 @@ namespace Librame.Extensions.Core
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
         public static FilePathCombiner AsFilePathCombiner(this string filePath, string basePath = null)
         {
-            var combiner = (FilePathCombiner)filePath;
+            var combiner = new FilePathCombiner(filePath);
 
             if (!basePath.IsEmpty())
                 combiner.ChangeBasePath(basePath);
@@ -60,8 +61,11 @@ namespace Librame.Extensions.Core
         /// <param name="filePaths">给定的文件路径数组。</param>
         /// <param name="basePath">给定的基础路径。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/> 数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "filePaths")]
         public static FilePathCombiner[] AsFilePathCombiners(this string[] filePaths, string basePath = null)
         {
+            filePaths.NotEmpty(nameof(filePaths));
+
             var combiners = new FilePathCombiner[filePaths.Length];
 
             for (var i = 0; i < filePaths.Length; i++)
@@ -88,8 +92,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiners">给定的 <see cref="FilePathCombiner"/> 集合。</param>
         /// <returns>返回字符串集合。</returns>
         public static IEnumerable<string> ToStrings(this IEnumerable<FilePathCombiner> combiners)
-            => combiners.NotEmpty(nameof(combiners))
-            .Select(combiner => combiner?.ToString());
+            => combiners.NotEmpty(nameof(combiners)).Select(combiner => combiner?.ToString());
 
 
         /// <summary>
@@ -98,6 +101,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiners">给定的 <see cref="FilePathCombiner"/> 集合。</param>
         /// <param name="newBasePath">给定的新基础路径。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/> 集合。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiners")]
         public static IEnumerable<FilePathCombiner> ChangeBasePath(this IEnumerable<FilePathCombiner> combiners, string newBasePath)
         {
             combiners.NotEmpty(nameof(combiners));
@@ -114,9 +118,9 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="newBasePathFactory">给定的新基础路径工厂方法（输入参数为当前基础路径）。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FilePathCombiner ChangeBasePath(this FilePathCombiner combiner, Func<string, string> newBasePathFactory)
-            => combiner.NotNull(nameof(combiner))
-            .ChangeBasePath(newBasePathFactory?.Invoke(combiner.BasePath));
+            => combiner.NotNull(nameof(combiner)).ChangeBasePath(newBasePathFactory?.Invoke(combiner.BasePath));
 
         /// <summary>
         /// 改变文件名。
@@ -124,9 +128,9 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FilePathCombiner ChangeFileName(this FilePathCombiner combiner, Func<FileNameCombiner, string> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner))
-            .ChangeFileName(newFileNameFactory?.Invoke(combiner.FileName));
+            => combiner.NotNull(nameof(combiner)).ChangeFileName(newFileNameFactory?.Invoke(combiner.FileName));
 
         /// <summary>
         /// 改变文件名。
@@ -134,9 +138,9 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FilePathCombiner ChangeFileName(this FilePathCombiner combiner, Func<FileNameCombiner, FileNameCombiner> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner))
-            .ChangeFileName(newFileNameFactory?.Invoke(combiner.FileName));
+            => combiner.NotNull(nameof(combiner)).ChangeFileName(newFileNameFactory?.Invoke(combiner.FileName));
 
 
         /// <summary>
@@ -145,9 +149,9 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="newBasePathFactory">给定的新基础路径工厂方法（输入参数为当前基础路径）。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FilePathCombiner NewBasePath(this FilePathCombiner combiner, Func<string, string> newBasePathFactory)
-            => combiner.NotNull(nameof(combiner))
-            .NewBasePath(newBasePathFactory?.Invoke(combiner.BasePath));
+            => combiner.NotNull(nameof(combiner)).NewBasePath(newBasePathFactory?.Invoke(combiner.BasePath));
 
         /// <summary>
         /// 依据当前文件组合器的基础路径与指定的文件名，新建一个 <see cref="FilePathCombiner"/>。
@@ -155,9 +159,9 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FilePathCombiner NewFileName(this FilePathCombiner combiner, Func<FileNameCombiner, string> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner))
-            .NewFileName(newFileNameFactory?.Invoke(combiner.FileName));
+            => combiner.NotNull(nameof(combiner)).NewFileName(newFileNameFactory?.Invoke(combiner.FileName));
 
         /// <summary>
         /// 依据当前文件组合器的基础路径与指定的文件名，新建一个 <see cref="FilePathCombiner"/>。
@@ -165,9 +169,9 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FilePathCombiner NewFileName(this FilePathCombiner combiner, Func<FileNameCombiner, FileNameCombiner> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner))
-            .NewFileName(newFileNameFactory?.Invoke(combiner.FileName));
+            => combiner.NotNull(nameof(combiner)).NewFileName(newFileNameFactory?.Invoke(combiner.FileName));
 
 
         /// <summary>

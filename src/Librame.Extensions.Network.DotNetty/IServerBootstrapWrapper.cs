@@ -23,14 +23,14 @@ namespace Librame.Extensions.Network.DotNetty
     public interface IServerBootstrapWrapper : IBootstrapWrapper<ServerBootstrap, IServerChannel>
     {
         /// <summary>
-        /// 增加处理程序。
+        /// 增加信道处理程序。
         /// </summary>
         /// <typeparam name="TInitializeChannel">指定的初始化信道类型。</typeparam>
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>（可选）。</param>
         /// <param name="pipelineAction">给定的 <see cref="IChannelPipeline"/> 动作方法（可选）。</param>
         /// <param name="addTlsPipelineName">增加 TLS 管道名称（可选；默认不增加）。</param>
         /// <returns>返回 <see cref="IServerBootstrapWrapper"/>。</returns>
-        IServerBootstrapWrapper AddHandler<TInitializeChannel>(X509Certificate2 tlsCertificate = null,
+        IServerBootstrapWrapper AddChannelHandler<TInitializeChannel>(X509Certificate2 tlsCertificate = null,
             Action<IChannelPipeline> pipelineAction = null, bool addTlsPipelineName = false)
             where TInitializeChannel : IChannel;
 

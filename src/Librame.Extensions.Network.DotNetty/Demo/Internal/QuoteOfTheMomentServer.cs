@@ -15,13 +15,15 @@ using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network.DotNetty
 {
     using Encryption;
 
-    class QuoteOfTheMomentServer : ChannelServiceBase, IQuoteOfTheMomentServer
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class QuoteOfTheMomentServer : ChannelServiceBase, IQuoteOfTheMomentServer
     {
         private readonly ServerOptions _serverOptions;
 
@@ -38,6 +40,7 @@ namespace Librame.Extensions.Network.DotNetty
         public Task StartAsync(Action<IChannel> configureProcess)
             => StartAsync(new QuoteOfTheMomentServerHandler(this), configureProcess);
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public async Task StartAsync<TChannelHandler>(TChannelHandler channelHandler,
             Action<IChannel> configureProcess)
             where TChannelHandler : IChannelHandler

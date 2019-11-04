@@ -11,10 +11,12 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core
 {
-    class CoreDecorator<TSource, TImplementation> : AbstractDecorator<TSource, TImplementation>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class CoreDecorator<TSource, TImplementation> : AbstractDecorator<TSource, TImplementation>
         where TSource : class
         where TImplementation : TSource
     {
@@ -25,7 +27,8 @@ namespace Librame.Extensions.Core
     }
 
 
-    class CoreDecorator<TSource> : AbstractDecorator<TSource>
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class CoreDecorator<TSource> : AbstractDecorator<TSource>
         where TSource : class
     {
         public CoreDecorator(TSource instance, ILoggerFactory loggerFactory)

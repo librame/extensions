@@ -15,6 +15,7 @@ using Librame.Extensions.Core;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -35,6 +36,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="options">给定的 <typeparamref name="TDependencyOptions"/>。</param>
         /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "options")]
         public static IServiceCollection AddAllOptionsConfigurators<TDependencyOptions>(this IServiceCollection services,
             TDependencyOptions options)
             where TDependencyOptions : class, IExtensionBuilderDependencyOptions

@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -23,30 +24,6 @@ namespace Librame.Extensions
     /// </summary>
     public static class TypeExtensions
     {
-        /// <summary>
-        /// 字符串类型。
-        /// </summary>
-        public static readonly Type StringType = typeof(string);
-
-        /// <summary>
-        /// 可空类型。
-        /// </summary>
-        public static readonly Type NullableType = typeof(Nullable<>);
-
-
-        /// <summary>
-        /// 常用标记（包括公开、非公开、实例、静态等）。
-        /// </summary>
-        public static readonly BindingFlags CommonFlags
-            = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
-
-        /// <summary>
-        /// 常用非静态标记（包括公开、非公开、实例等）。
-        /// </summary>
-        public static readonly BindingFlags CommonFlagsWithoutStatic
-            = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-
-
         /// <summary>
         /// 序列元素属性值集合相等比较。
         /// </summary>
@@ -111,42 +88,37 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字段信息数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
         public static FieldInfo[] GetAllFields(this Type type)
-        {
-            type.NotNull(nameof(type));
-            return type.GetFields(CommonFlags);
-        }
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.CommonFlags);
+
         /// <summary>
         /// 获取所有非静态字段集合（包括公开、非公开、实例等）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字段信息数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
         public static FieldInfo[] GetAllFieldsWithoutStatic(this Type type)
-        {
-            type.NotNull(nameof(type));
-            return type.GetFields(CommonFlagsWithoutStatic);
-        }
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.CommonFlagsWithoutStatic);
+
 
         /// <summary>
         /// 获取所有属性集合（包括公开、非公开、实例、静态等）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字段信息数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
         public static PropertyInfo[] GetAllProperties(this Type type)
-        {
-            type.NotNull(nameof(type));
-            return type.GetProperties(CommonFlags);
-        }
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.CommonFlags);
+
         /// <summary>
         /// 获取所有非静态属性集合（包括公开、非公开、实例等）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字段信息数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
         public static PropertyInfo[] GetAllPropertiesWithoutStatic(this Type type)
-        {
-            type.NotNull(nameof(type));
-            return type.GetProperties(CommonFlagsWithoutStatic);
-        }
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.CommonFlagsWithoutStatic);
 
 
         /// <summary>
@@ -154,6 +126,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的名称。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
         public static string GetBodyName(this Type type)
         {
             type.NotNull(nameof(type));
@@ -218,6 +191,7 @@ namespace Librame.Extensions
         /// <param name="type">给定的类型。</param>
         /// <param name="factory">给定的类型字符串工厂方法。</param>
         /// <returns>返回字符串。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "factory")]
         public static string GetCustomString(this Type type, Func<Type, string> factory)
         {
             type.NotNull(nameof(type));
@@ -277,6 +251,7 @@ namespace Librame.Extensions
         /// <param name="action">给定的注册动作。</param>
         /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
         /// <returns>返回已调用的类型集合数。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "filterTypes")]
         public static int InvokeTypes(this IEnumerable<Assembly> assemblies,
             Action<Type> action, Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
         {

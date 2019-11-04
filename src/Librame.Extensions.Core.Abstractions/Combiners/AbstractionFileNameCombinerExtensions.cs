@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Librame.Extensions.Core
@@ -27,9 +28,7 @@ namespace Librame.Extensions.Core
         /// <param name="fileName">给定的文件名。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
         public static FileNameCombiner AsFileNameCombiner(this string fileName)
-        {
-            return (FileNameCombiner)fileName;
-        }
+            => new FileNameCombiner(fileName);
 
         /// <summary>
         /// 转换为文件名组合器。
@@ -38,21 +37,22 @@ namespace Librame.Extensions.Core
         /// <param name="extension">给定的扩展名。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
         public static FileNameCombiner AsFileNameCombiner(this string baseName, string extension)
-        {
-            return new FileNameCombiner(baseName, extension);
-        }
+            => new FileNameCombiner(baseName, extension);
 
         /// <summary>
         /// 将文件名数组转换为文件名组合器数组。
         /// </summary>
         /// <param name="fileNames">给定的文件名数组。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/> 数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "fileNames")]
         public static FileNameCombiner[] AsFileNameCombiners(this string[] fileNames)
         {
+            fileNames.NotEmpty(nameof(fileNames));
+
             var combiners = new FileNameCombiner[fileNames.Length];
 
             for (var i = 0; i < fileNames.Length; i++)
-                combiners[i] = (FileNameCombiner)fileNames[i];
+                combiners[i] = new FileNameCombiner(fileNames[i]);
 
             return combiners;
         }
@@ -87,9 +87,9 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FileNameCombiner"/>。</param>
         /// <param name="newBaseNameFactory">给定的新基础名工厂方法（输入参数为当前基础名）。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FileNameCombiner ChangeBaseName(this FileNameCombiner combiner, Func<string, string> newBaseNameFactory)
-            => combiner.NotNull(nameof(combiner))
-            .ChangeBaseName(newBaseNameFactory?.Invoke(combiner.BaseName));
+            => combiner.NotNull(nameof(combiner)).ChangeBaseName(newBaseNameFactory?.Invoke(combiner.BaseName));
 
         /// <summary>
         /// 改变扩展名。
@@ -97,9 +97,9 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FileNameCombiner"/>。</param>
         /// <param name="newExtensionFactory">给定的新扩展名工厂方法（输入参数为当前扩展名）。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FileNameCombiner ChangeExtension(this FileNameCombiner combiner, Func<string, string> newExtensionFactory)
-            => combiner.NotNull(nameof(combiner))
-            .ChangeExtension(newExtensionFactory?.Invoke(combiner.Extension));
+            => combiner.NotNull(nameof(combiner)).ChangeExtension(newExtensionFactory?.Invoke(combiner.Extension));
 
         /// <summary>
         /// 批量改变扩展名。
@@ -107,6 +107,7 @@ namespace Librame.Extensions.Core
         /// <param name="combiners">给定的 <see cref="FileNameCombiner"/> 集合。</param>
         /// <param name="newExtension">给定的新扩展名。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/> 集合。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiners")]
         public static IEnumerable<FileNameCombiner> ChangeExtension(this IEnumerable<FileNameCombiner> combiners, string newExtension)
         {
             combiners.NotNull(nameof(combiners));
@@ -124,9 +125,9 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FileNameCombiner"/>。</param>
         /// <param name="newBaseNameFactory">给定的新基础名工厂方法（输入参数为当前基础名）。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FileNameCombiner NewBaseName(this FileNameCombiner combiner, Func<string, string> newBaseNameFactory)
-            => combiner.NotNull(nameof(combiner))
-            .NewBaseName(newBaseNameFactory?.Invoke(combiner.BaseName));
+            => combiner.NotNull(nameof(combiner)).NewBaseName(newBaseNameFactory?.Invoke(combiner.BaseName));
 
         /// <summary>
         /// 依据当前文件组合器的基础名与指定的扩展名，新建一个 <see cref="FileNameCombiner"/>。
@@ -134,9 +135,8 @@ namespace Librame.Extensions.Core
         /// <param name="combiner">给定的 <see cref="FileNameCombiner"/>。</param>
         /// <param name="newExtensionFactory">给定的新扩展名工厂方法（输入参数为当前扩展名）。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
         public static FileNameCombiner NewExtension(this FileNameCombiner combiner, Func<string, string> newExtensionFactory)
-            => combiner.NotNull(nameof(combiner))
-            .NewExtension(newExtensionFactory?.Invoke(combiner.Extension));
-
+            => combiner.NotNull(nameof(combiner)).NewExtension(newExtensionFactory?.Invoke(combiner.Extension));
     }
 }

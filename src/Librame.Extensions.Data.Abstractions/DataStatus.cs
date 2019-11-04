@@ -10,7 +10,6 @@
 
 #endregion
 
-using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,7 +18,6 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 数据状态。
     /// </summary>
-    [Flags]
     [Description("数据状态")]
     public enum DataStatus
     {

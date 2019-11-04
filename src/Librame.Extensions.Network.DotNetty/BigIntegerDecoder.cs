@@ -15,6 +15,7 @@ using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace Librame.Extensions.Network.DotNetty
@@ -30,8 +31,12 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="context">给定的 <see cref="IChannelHandlerContext"/>。</param>
         /// <param name="input">给定的 <see cref="IByteBuffer"/>。</param>
         /// <param name="output">给定的输出对象列表。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected override void Decode(IChannelHandlerContext context, IByteBuffer input, List<object> output)
         {
+            input.NotNull(nameof(input));
+            output.NotNull(nameof(output));
+
             if (input.ReadableBytes < 5)
             {
                 return;

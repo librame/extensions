@@ -24,7 +24,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.NotEqual(combiner, combiner.NewScheme("https"));
             Assert.NotEqual(combiner, combiner.NewHost("developer.microsoft.com"));
             Assert.NotEqual(combiner, combiner.NewPath("/en-us/fabric"));
-            Assert.False(combiner == combiner.NewAnchor("#/get-started")); // BUG: Assert.NotEqual
+            Assert.NotEqual(combiner, combiner.NewAnchor("#/get-started")); // BUG: Assert.NotEqual
 
             Assert.Equal("?query=testQuery", combiner.ChangeQuery("?query=testQuery").Query);
             Assert.NotEmpty(combiner.Queries);

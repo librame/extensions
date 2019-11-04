@@ -10,6 +10,8 @@
 
 #endregion
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Librame.Extensions.Data
 {
     /// <summary>
@@ -23,6 +25,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <param name="options">给定的 <see cref="TableNameSchemaOptions"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "descriptor")]
         public static TableNameDescriptor ChangeInternalPrefix(this TableNameDescriptor descriptor, TableNameSchemaOptions options)
         {
             return descriptor
@@ -36,6 +39,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <param name="options">给定的 <see cref="TableNameSchemaOptions"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "descriptor")]
         public static TableNameDescriptor ChangePrivatePrefix(this TableNameDescriptor descriptor, TableNameSchemaOptions options)
         {
             return descriptor
@@ -49,6 +53,7 @@ namespace Librame.Extensions.Data
         /// <param name="descriptor">给定的 <see cref="TableNameDescriptor"/>。</param>
         /// <param name="options">给定的 <see cref="TableNameSchemaOptions"/>。</param>
         /// <returns>返回 <see cref="TableNameDescriptor"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static TableNameDescriptor Change(this TableNameDescriptor descriptor, TableNameSchemaOptions options)
         {
             descriptor.NotNull(nameof(descriptor));

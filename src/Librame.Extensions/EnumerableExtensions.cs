@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,7 +43,7 @@ namespace Librame.Extensions
         /// <returns>返回 <see cref="IAsyncEnumerable{T}"/>。</returns>
         public static async IAsyncEnumerable<T> YieldAsyncEnumerable<T>(this Task<T> task)
         {
-            yield return await task;
+            yield return await task.ConfigureAndResultAsync();
         }
 
         /// <summary>
@@ -51,10 +52,13 @@ namespace Librame.Extensions
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="enumerable">给定的可枚举异步操作。</param>
         /// <returns>返回 <see cref="IAsyncEnumerable{T}"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "enumerable")]
         public static async IAsyncEnumerable<T> AsAsyncEnumerable<T>(this IEnumerable<Task<T>> enumerable)
         {
+            enumerable.NotNull(nameof(enumerable));
+
             foreach (var task in enumerable)
-                yield return await task;
+                yield return await task.ConfigureAndResultAsync();
         }
 
 
@@ -83,6 +87,7 @@ namespace Librame.Extensions
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="list">给定的 <see cref="IList{T}"/>。</param>
         /// <param name="value">给定的新增的值。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "list")]
         public static void AddIfNotContains<T>(this IList<T> list, T value)
         {
             list.NotNull(nameof(list));
@@ -113,26 +118,71 @@ namespace Librame.Extensions
         /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// action is null.
+        /// <paramref name="items"/> or <paramref name="action"/> is null.
         /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="items">给定的元素集合。</param>
         /// <param name="action">给定的遍历动作。</param>
-        /// <param name="breakFactory">给定跳出遍历的动作（可选）。</param>
         /// <returns>返回一个异步操作。</returns>
-        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> items, Action<T> action,
-            Func<T, bool> breakFactory = null)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> items, Action<T> action)
         {
-            if (items.IsNull()) return;
-
+            items.NotNull(nameof(items));
             action.NotNull(nameof(action));
+
+            await foreach (var item in items)
+                action.Invoke(item);
+        }
+
+        /// <summary>
+        /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/>, <paramref name="action"/> or <paramref name="breakFactory"/> is null.
+        /// </exception>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="items">给定的元素集合。</param>
+        /// <param name="action">给定的遍历动作。</param>
+        /// <param name="breakFactory">给定跳出遍历的动作。</param>
+        /// <returns>返回一个异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> items, Action<T> action, Func<T, bool> breakFactory)
+        {
+            items.NotNull(nameof(items));
+            action.NotNull(nameof(action));
+            breakFactory.NotNull(nameof(breakFactory));
 
             await foreach (var item in items)
             {
                 action.Invoke(item);
 
-                if (breakFactory?.Invoke(item) == true)
+                if (breakFactory.Invoke(item))
                     break;
+            }
+        }
+
+
+        /// <summary>
+        /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/> or <paramref name="action"/> is null.
+        /// </exception>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="items">给定的元素集合。</param>
+        /// <param name="action">给定的遍历动作。</param>
+        /// <returns>返回一个异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> items, Action<T, int> action)
+        {
+            items.NotNull(nameof(items));
+            action.NotNull(nameof(action));
+
+            int i = 0;
+            await foreach (var item in items)
+            {
+                action.Invoke(item, i);
+                i++;
             }
         }
 
@@ -140,26 +190,26 @@ namespace Librame.Extensions
         /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// action is null.
+        /// <paramref name="items"/>, <paramref name="action"/> or <paramref name="breakFactory"/> is null.
         /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="items">给定的元素集合。</param>
         /// <param name="action">给定的遍历动作。</param>
-        /// <param name="breakFactory">给定跳出遍历的动作（可选）。</param>
+        /// <param name="breakFactory">给定跳出遍历的动作。</param>
         /// <returns>返回一个异步操作。</returns>
-        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> items, Action<T, int> action,
-            Func<T, int, bool> breakFactory = null)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> items, Action<T, int> action, Func<T, int, bool> breakFactory)
         {
-            if (items.IsNull()) return;
-
+            items.NotNull(nameof(items));
             action.NotNull(nameof(action));
+            breakFactory.NotNull(nameof(breakFactory));
 
             int i = 0;
             await foreach (var item in items)
             {
                 action.Invoke(item, i);
 
-                if (breakFactory?.Invoke(item, i) == true)
+                if (breakFactory.Invoke(item, i))
                     break;
 
                 i++;
@@ -171,25 +221,68 @@ namespace Librame.Extensions
         /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// action is null.
+        /// <paramref name="items"/> or <paramref name="action"/> is null.
         /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="items">给定的元素集合。</param>
         /// <param name="action">给定的遍历动作。</param>
-        /// <param name="breakFactory">给定跳出遍历的动作（可选）。</param>
-        public static void ForEach<T>(this IEnumerable<T> items, Action<T> action,
-            Func<T, bool> breakFactory = null)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> action)
         {
-            if (items.IsNull()) return;
-
+            items.NotNull(nameof(items));
             action.NotNull(nameof(action));
+
+            foreach (var item in items)
+                action.Invoke(item);
+        }
+
+        /// <summary>
+        /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/>, <paramref name="action"/> or <paramref name="breakFactory"/> is null.
+        /// </exception>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="items">给定的元素集合。</param>
+        /// <param name="action">给定的遍历动作。</param>
+        /// <param name="breakFactory">给定跳出遍历的动作。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T> action, Func<T, bool> breakFactory)
+        {
+            items.NotNull(nameof(items));
+            action.NotNull(nameof(action));
+            breakFactory.NotNull(nameof(breakFactory));
 
             foreach (var item in items)
             {
                 action.Invoke(item);
 
-                if (breakFactory?.Invoke(item) == true)
+                if (breakFactory.Invoke(item))
                     break;
+            }
+        }
+
+
+        /// <summary>
+        /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/> or <paramref name="action"/> is null.
+        /// </exception>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="items">给定的元素集合。</param>
+        /// <param name="action">给定的遍历动作。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T, int> action)
+        {
+            items.NotNull(nameof(items));
+            action.NotNull(nameof(action));
+
+            int i = 0;
+            foreach (var item in items)
+            {
+                action.Invoke(item, i);
+                i++;
             }
         }
 
@@ -197,25 +290,25 @@ namespace Librame.Extensions
         /// 遍历元素集合（元素集合为空或空集合则返回，不抛异常）。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// action is null.
+        /// <paramref name="items"/>, <paramref name="action"/> or <paramref name="breakFactory"/> is null.
         /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="items">给定的元素集合。</param>
         /// <param name="action">给定的遍历动作。</param>
-        /// <param name="breakFactory">给定跳出遍历的动作（可选）。</param>
-        public static void ForEach<T>(this IEnumerable<T> items, Action<T, int> action,
-            Func<T, int, bool> breakFactory = null)
+        /// <param name="breakFactory">给定跳出遍历的动作。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static void ForEach<T>(this IEnumerable<T> items, Action<T, int> action, Func<T, int, bool> breakFactory)
         {
-            if (items.IsNull()) return;
-
+            items.NotNull(nameof(items));
             action.NotNull(nameof(action));
+            breakFactory.NotNull(nameof(breakFactory));
 
             int i = 0;
             foreach (var item in items)
             {
                 action.Invoke(item, i);
 
-                if (breakFactory?.Invoke(item, i) == true)
+                if (breakFactory.Invoke(item, i))
                     break;
 
                 i++;
@@ -230,94 +323,113 @@ namespace Librame.Extensions
         /// <summary>
         /// 修剪可枚举集合的指定初始与末尾项。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/> is null.
+        /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
-        /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
+        /// <param name="items">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="trim">要修剪的实例。</param>
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        public static IEnumerable<T> Trim<T>(this IEnumerable<T> enumerable, T trim, bool isLoop = true)
-            => enumerable.Trim(item => item.Equals(trim), isLoop);
+        public static IEnumerable<T> Trim<T>(this IEnumerable<T> items, T trim, bool isLoop = true)
+            => items.Trim(item => item.Equals(trim), isLoop);
 
         /// <summary>
         /// 修剪可枚举集合的指定初始与末尾项。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/> or <paramref name="predicateFactory"/> is null.
+        /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
-        /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
+        /// <param name="items">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="predicateFactory">给定用于修剪的断定工厂方法。</param>
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        public static IEnumerable<T> Trim<T>(this IEnumerable<T> enumerable, Func<T, bool> predicateFactory, bool isLoop = true)
-            => enumerable.TrimStart(predicateFactory, isLoop).TrimEnd(predicateFactory, isLoop);
+        public static IEnumerable<T> Trim<T>(this IEnumerable<T> items, Func<T, bool> predicateFactory, bool isLoop = true)
+            => items.TrimStart(predicateFactory, isLoop).TrimEnd(predicateFactory, isLoop);
 
 
         /// <summary>
         /// 修剪可枚举集合的指定末尾项。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/> is null.
+        /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
-        /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
+        /// <param name="items">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="endItem">给定要修剪的末尾项。</param>
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        public static IEnumerable<T> TrimEnd<T>(this IEnumerable<T> enumerable, T endItem, bool isLoop = true)
-            => enumerable.TrimEnd(item => item.Equals(endItem), isLoop);
+        public static IEnumerable<T> TrimEnd<T>(this IEnumerable<T> items, T endItem, bool isLoop = true)
+            => items.TrimEnd(item => item.Equals(endItem), isLoop);
 
         /// <summary>
         /// 修剪可枚举集合的指定末尾项。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/> or <paramref name="endFactory"/> is null.
+        /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
-        /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
+        /// <param name="items">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="endFactory">给定要修剪末尾项的断定工厂方法。</param>
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        public static IEnumerable<T> TrimEnd<T>(this IEnumerable<T> enumerable, Func<T, bool> endFactory, bool isLoop = true)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "endFactory")]
+        public static IEnumerable<T> TrimEnd<T>(this IEnumerable<T> items, Func<T, bool> endFactory, bool isLoop = true)
         {
             endFactory.NotNull(nameof(endFactory));
-            return enumerable.TrimLast(endFactory, isLoop);
+            return items.TrimLast(endFactory, isLoop);
         }
 
 
         /// <summary>
         /// 修剪可枚举集合的指定初始项。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/> is null.
+        /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
-        /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
+        /// <param name="items">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="startItem">给定要修剪的初始项。</param>
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        public static IEnumerable<T> TrimStart<T>(this IEnumerable<T> enumerable, T startItem, bool isLoop = true)
-            => enumerable.TrimStart(item => item.Equals(startItem), isLoop);
+        public static IEnumerable<T> TrimStart<T>(this IEnumerable<T> items, T startItem, bool isLoop = true)
+            => items.TrimStart(item => item.Equals(startItem), isLoop);
 
         /// <summary>
         /// 修剪可枚举集合的指定初始项。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="items"/> or <paramref name="startFactory"/> is null.
+        /// </exception>
         /// <typeparam name="T">指定的类型。</typeparam>
-        /// <param name="enumerable">给定的 <see cref="IEnumerable{T}"/>。</param>
+        /// <param name="items">给定的 <see cref="IEnumerable{T}"/>。</param>
         /// <param name="startFactory">给定要修剪初始项的断定工厂方法。</param>
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        public static IEnumerable<T> TrimStart<T>(this IEnumerable<T> enumerable, Func<T, bool> startFactory, bool isLoop = true)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "startFactory")]
+        public static IEnumerable<T> TrimStart<T>(this IEnumerable<T> items, Func<T, bool> startFactory, bool isLoop = true)
         {
             startFactory.NotNull(nameof(startFactory));
-            return enumerable.Reverse().TrimLast(startFactory, isLoop).Reverse();
+            return items.Reverse().TrimLast(startFactory, isLoop).Reverse();
         }
 
 
-        private static IEnumerable<T> TrimLast<T>(this IEnumerable<T> enumerable, Func<T, bool> predicateFactory, bool isLoop = true)
+        private static IEnumerable<T> TrimLast<T>(this IEnumerable<T> items, Func<T, bool> predicateFactory, bool isLoop = true)
         {
-            if (enumerable.IsEmpty())
-                return enumerable;
+            items.NotNull(nameof(items));
 
-            if (predicateFactory.Invoke(enumerable.Last()))
+            if (predicateFactory.Invoke(items.Last()))
             {
-                enumerable = enumerable.Take(enumerable.Count() - 1);
+                items = items.Take(items.Count() - 1);
 
                 if (isLoop) // 循环修剪
-                    return enumerable.TrimLast(predicateFactory, isLoop);
+                    return items.TrimLast(predicateFactory, isLoop);
 
-                return enumerable;
+                return items;
             }
 
-            return enumerable;
+            return items;
         }
 
         #endregion

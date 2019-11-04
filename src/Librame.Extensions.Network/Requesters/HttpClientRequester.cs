@@ -13,6 +13,7 @@
 using Microsoft.Extensions.Logging;
 using Polly;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -111,6 +112,7 @@ namespace Librame.Extensions.Network
         /// <param name="parameters">给定的自定义参数（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="HttpResponseMessage"/> 的异步操作。</returns>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope")]
         protected virtual Task<HttpResponseMessage> GetResponseMessage(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {

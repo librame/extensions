@@ -14,10 +14,12 @@ using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    class EchoServerHandler : ChannelHandlerAdapter
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class EchoServerHandler : ChannelHandlerAdapter
     {
         private readonly IEchoServer _server;
         private readonly ILogger _logger;
