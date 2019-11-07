@@ -28,6 +28,14 @@ namespace Librame.Extensions.Tests
                 Assert.NotEqual(current, next);
                 current = next;
             }
+
+            current = DateTimeOffset.Now.AsCombFileTime(hasDatePart: false);
+            for (var i = 0; i < 100; i++)
+            {
+                var next = DateTimeOffset.Now.AsCombFileTime(hasDatePart: false);
+                Assert.NotEqual(current, next);
+                current = next;
+            }
         }
 
         [Fact]

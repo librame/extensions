@@ -14,6 +14,8 @@ using System;
 
 namespace Librame.Extensions.Core
 {
+    using Resources;
+
     /// <summary>
     /// 选项动作配置器。
     /// </summary>
@@ -30,7 +32,7 @@ namespace Librame.Extensions.Core
             : base()
         {
             if (OptionsType.IsAssignableToBaseType(typeof(IExtensionBuilderDependencyOptions)))
-                throw new ArgumentException("Configuration of dependency options is not supported.");
+                throw new ArgumentException(InternalResource.ArgumentExceptionNotSupportedConfigurationOfDependencyOptions);
 
             Action = action ?? (_ => { });
             AutoConfigureAction = autoConfigureAction;

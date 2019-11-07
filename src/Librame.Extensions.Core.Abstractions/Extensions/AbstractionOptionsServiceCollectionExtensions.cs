@@ -103,6 +103,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return true;
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1303:DoNotPassLiteralsAsLocalizedParameters")]
         private static IEnumerable<Type> FindIConfigureOptions(Type type)
         {
             var serviceTypes = type.GetTypeInfo().ImplementedInterfaces

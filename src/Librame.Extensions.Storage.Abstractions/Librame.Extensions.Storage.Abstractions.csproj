@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.1;netcoreapp3.0;net48</TargetFrameworks>
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.1.933.211</Version>
-    <Authors>Librame Pang</Authors>
+    <Version>7.1.936.211</Version>
+    <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Core.Abstractions on Storage extension package.</Description>
     <Copyright>Copyright © 2012-2019</Copyright>
@@ -15,24 +15,24 @@
     <PackageIcon>Librame.png</PackageIcon>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Librame,Extensions,Storage,Abstractions</PackageTags>
+    <PackageTags>Librame,Extensions,Storage,Abstractions,netstandard,netcore,net</PackageTags>
     <PackageReleaseNotes>Based Librame.Extensions.Core.Abstractions on Storage extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.1.933.211</AssemblyVersion>
-    <FileVersion>7.1.1911.41</FileVersion>
+    <AssemblyVersion>7.1.936.211</AssemblyVersion>
+    <FileVersion>7.1.1911.71</FileVersion>
     <RootNamespace>Librame.Extensions.Storage</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\</OutputPath>
-    <DocumentationFile>..\..\bin\netstandard2.1\Librame.Extensions.Storage.Abstractions.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\$(TargetFramework)\Librame.Extensions.Storage.Abstractions.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\bin\</OutputPath>
-    <DocumentationFile>..\..\bin\netstandard2.1\Librame.Extensions.Storage.Abstractions.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\$(TargetFramework)\Librame.Extensions.Storage.Abstractions.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
@@ -42,6 +42,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net48'">
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
   </ItemGroup>
 
   <ItemGroup>

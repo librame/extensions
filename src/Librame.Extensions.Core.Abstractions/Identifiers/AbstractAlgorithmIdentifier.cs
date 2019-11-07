@@ -112,7 +112,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位带符号整数。</returns>
         public override int GetHashCode()
-            => ToString().GetHashCode(StringComparison.OrdinalIgnoreCase);
+            => ToString().CompatibleGetHashCode();
 
 
         /// <summary>

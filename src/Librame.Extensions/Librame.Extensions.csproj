@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.1;netcoreapp3.0;net48</TargetFrameworks>
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.1.933.211</Version>
-    <Authors>Librame Pang</Authors>
+    <Version>7.1.936.211</Version>
+    <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based .NET Standard on common static extension package.</Description>
     <Copyright>Copyright © 2012-2019</Copyright>
@@ -15,23 +15,23 @@
     <PackageIcon>Librame.png</PackageIcon>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Librame,Extensions</PackageTags>
+    <PackageTags>librame,extensions,netstandard,netcore,net</PackageTags>
     <PackageReleaseNotes>Based .NET Standard on common static extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.1.933.211</AssemblyVersion>
-    <FileVersion>7.1.1911.41</FileVersion>
+    <AssemblyVersion>7.1.936.211</AssemblyVersion>
+    <FileVersion>7.1.1911.71</FileVersion>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\..\bin\</OutputPath>
-    <DocumentationFile>..\..\bin\netstandard2.1\Librame.Extensions.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\$(TargetFramework)\Librame.Extensions.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\bin\</OutputPath>
-    <DocumentationFile>..\..\bin\netstandard2.1\Librame.Extensions.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\$(TargetFramework)\Librame.Extensions.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
     
@@ -40,6 +40,20 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net48'">
+    <PackageReference Include="System.Interactive.Async" Version="4.0.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
 
   <ItemGroup>

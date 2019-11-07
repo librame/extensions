@@ -25,8 +25,7 @@ namespace Librame.Extensions.Core
         /// <param name="memberInfo">给定的 <see cref="MemberInfo"/>。</param>
         /// <param name="args">给定的参数数组。</param>
         /// <returns>返回验证是否成功的布尔值。</returns>
-        public bool Validate(MemberInfo memberInfo, object[] args)
-            => Validate(memberInfo, args, out _);
+        bool Validate(MemberInfo memberInfo, object[] args);
 
         /// <summary>
         /// 验证成员参数值。

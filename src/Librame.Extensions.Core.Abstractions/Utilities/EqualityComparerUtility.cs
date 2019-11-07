@@ -80,7 +80,8 @@ namespace Librame.Extensions.Core
             selector.NotNull(nameof(selector));
 
             return GetComparer((x, y) => selector.Invoke(x).Equals(selector.Invoke(y), StringComparison.OrdinalIgnoreCase),
-                hashFactory ?? (x => selector.Invoke(x).GetHashCode(StringComparison.OrdinalIgnoreCase)));
+                hashFactory ?? (x => selector.Invoke(x).CompatibleGetHashCode()));
         }
+
     }
 }

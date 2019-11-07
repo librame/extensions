@@ -205,10 +205,10 @@ namespace Librame.Extensions.Core
         {
             if (location.IsNotEmpty())
             {
-                if (location.Contains(ExtensionSettings.AltDirectorySeparator, StringComparison.OrdinalIgnoreCase))
+                if (location.CompatibleContains(ExtensionSettings.AltDirectorySeparator))
                     location = location.Replace(ExtensionSettings.AltDirectorySeparatorChar, '.');
 
-                if (location.Contains(ExtensionSettings.DirectorySeparator, StringComparison.OrdinalIgnoreCase))
+                if (location.CompatibleContains(ExtensionSettings.DirectorySeparator))
                     location = location.Replace(ExtensionSettings.DirectorySeparatorChar, '.');
             }
 

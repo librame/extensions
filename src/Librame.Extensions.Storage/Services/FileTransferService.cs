@@ -86,7 +86,7 @@ namespace Librame.Extensions.Storage
             {
                 // Accept-Ranges: bytes or none.
                 var acceptRanges = wr.Headers[HttpResponseHeader.AcceptRanges];
-                var supportRanges = acceptRanges?.Contains("bytes", StringComparison.OrdinalIgnoreCase);
+                var supportRanges = acceptRanges?.CompatibleContains("bytes");
 
                 using (var s = wr.GetResponseStream())
                 {

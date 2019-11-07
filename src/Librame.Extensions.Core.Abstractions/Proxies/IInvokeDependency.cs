@@ -41,9 +41,8 @@ namespace Librame.Extensions.Core
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <param name="kind">给定的 <see cref="InvokeDependencyKind"/>。</param>
         /// <param name="preActions">给定的前置动作数组。</param>
-        public void AddPreActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
-            InvokeDependencyKind kind, params Action<TInterface>[] preActions)
-            => AddPreActions(new InvokeDependencyKey(propertyExpression.AsPropertyName(), kind), preActions);
+        void AddPreActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
+            InvokeDependencyKind kind, params Action<TInterface>[] preActions);
 
         /// <summary>
         /// 添加前置动作集合。
@@ -60,9 +59,8 @@ namespace Librame.Extensions.Core
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <param name="kind">给定的 <see cref="InvokeDependencyKind"/>。</param>
         /// <param name="postActions">给定的后置动作数组。</param>
-        public void AddPostActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
-            InvokeDependencyKind kind, params Action<TInterface, object>[] postActions)
-            => AddPostActions(new InvokeDependencyKey(propertyExpression.AsPropertyName(), kind), postActions);
+        void AddPostActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
+            InvokeDependencyKind kind, params Action<TInterface, object>[] postActions);
 
         /// <summary>
         /// 添加后置动作集合。
@@ -84,9 +82,8 @@ namespace Librame.Extensions.Core
         /// <param name="kind">给定的 <see cref="InvokeDependencyKind"/>。</param>
         /// <param name="preActions">输出得到的前置动作数组。</param>
         /// <returns>返回布尔值。</returns>
-        public bool TryGetPreActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
-            InvokeDependencyKind kind, out IEnumerable<Action<TInterface>> preActions)
-            => TryGetPreActions(new InvokeDependencyKey(propertyExpression.AsPropertyName(), kind), out preActions);
+        bool TryGetPreActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
+            InvokeDependencyKind kind, out IEnumerable<Action<TInterface>> preActions);
 
         /// <summary>
         /// 尝试获取前置动作集合。
@@ -105,9 +102,8 @@ namespace Librame.Extensions.Core
         /// <param name="kind">给定的 <see cref="InvokeDependencyKind"/>。</param>
         /// <param name="postActions">输出得到的后置动作集合。</param>
         /// <returns>返回布尔值。</returns>
-        public bool TryGetPostActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
-            InvokeDependencyKind kind, out IEnumerable<Action<TInterface, object>> postActions)
-            => TryGetPostActions(new InvokeDependencyKey(propertyExpression.AsPropertyName(), kind), out postActions);
+        bool TryGetPostActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
+            InvokeDependencyKind kind, out IEnumerable<Action<TInterface, object>> postActions);
 
         /// <summary>
         /// 尝试获取后置动作集合。
@@ -130,9 +126,8 @@ namespace Librame.Extensions.Core
         /// <param name="kind">给定的 <see cref="InvokeDependencyKind"/>。</param>
         /// <param name="preActions">输出移除的前置动作集合。</param>
         /// <returns>返回布尔值。</returns>
-        public bool TryRemovePreActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
-            InvokeDependencyKind kind, out IEnumerable<Action<TInterface>> preActions)
-            => TryRemovePreActions(new InvokeDependencyKey(propertyExpression.AsPropertyName(), kind), out preActions);
+        bool TryRemovePreActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
+            InvokeDependencyKind kind, out IEnumerable<Action<TInterface>> preActions);
 
         /// <summary>
         /// 尝试移除前置动作集合。
@@ -151,9 +146,8 @@ namespace Librame.Extensions.Core
         /// <param name="kind">给定的 <see cref="InvokeDependencyKind"/>。</param>
         /// <param name="postActions">输出移除的后置动作集合。</param>
         /// <returns>返回布尔值。</returns>
-        public bool TryRemovePostActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
-            InvokeDependencyKind kind, out IEnumerable<Action<TInterface, object>> postActions)
-            => TryRemovePostActions(new InvokeDependencyKey(propertyExpression.AsPropertyName(), kind), out postActions);
+        bool TryRemovePostActions<TProperty>(Expression<Func<TInterface, TProperty>> propertyExpression,
+            InvokeDependencyKind kind, out IEnumerable<Action<TInterface, object>> postActions);
 
         /// <summary>
         /// 尝试移除后置动作集合。

@@ -144,7 +144,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Source.GetHashCode(StringComparison.OrdinalIgnoreCase);
+            => Source.CompatibleGetHashCode();
 
 
         /// <summary>

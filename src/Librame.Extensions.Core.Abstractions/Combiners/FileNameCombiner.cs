@@ -133,7 +133,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Source.GetHashCode(StringComparison.InvariantCulture);
+            => Source.CompatibleGetHashCode();
 
 
         /// <summary>

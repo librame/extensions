@@ -169,11 +169,9 @@ namespace Librame.Extensions
 
             while (outputIndex < bytes.Length)
             {
-                var byteIndex = ExtensionSettings.Base32Chars.IndexOf(base32String[inputIndex],
-                    StringComparison.OrdinalIgnoreCase);
-
+                var byteIndex = ExtensionSettings.Base32Chars.CompatibleIndexOf(base32String[inputIndex]);
                 if (byteIndex < 0)
-                    throw new FormatException();
+                    throw new FormatException(InternalResource.FormatExceptionBase32StringFormat.Format(base32String));
 
                 var bits = Math.Min(5 - bitIndex, 8 - outputBits);
                 bytes[outputIndex] <<= bits;
@@ -224,8 +222,7 @@ namespace Librame.Extensions
         /// <param name="bytes">给定的字节数组。</param>
         /// <returns>返回字符串。</returns>
         public static string AsHexString(this byte[] bytes)
-            => BitConverter.ToString(bytes).Replace("-", string.Empty,
-                StringComparison.OrdinalIgnoreCase);
+            => BitConverter.ToString(bytes).CompatibleReplace("-", string.Empty);
 
         /// <summary>
         /// 还原 16 进制字符串。

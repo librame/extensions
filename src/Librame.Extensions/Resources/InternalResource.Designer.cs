@@ -158,5 +158,14 @@ namespace Librame.Extensions.Resources {
                 return ResourceManager.GetString("FileLoadExceptionUnsupportedCompressedFileTypeFormat", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 Invalid BASE32 string format &apos;{0}&apos;. 的本地化字符串。
+        /// </summary>
+        internal static string FormatExceptionBase32StringFormat {
+            get {
+                return ResourceManager.GetString("FormatExceptionBase32StringFormat", resourceCulture);
+            }
+        }
     }
 }

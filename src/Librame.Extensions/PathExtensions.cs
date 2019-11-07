@@ -61,7 +61,7 @@ namespace Librame.Extensions
 
             string GetPattern()
             {
-                var separator = currentPath.Contains(ExtensionSettings.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+                var separator = currentPath.CompatibleContains(ExtensionSettings.DirectorySeparatorChar)
                     ? Regex.Escape(ExtensionSettings.DirectorySeparator)
                     : ExtensionSettings.AltDirectorySeparator;
 
@@ -147,8 +147,8 @@ namespace Librame.Extensions
             basePath.NotEmpty(nameof(basePath));
             relativePath.NotEmpty(nameof(relativePath));
 
-            var altSeparatorIndex = basePath.IndexOf(ExtensionSettings.AltDirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
-            var separatorIndex = basePath.IndexOf(ExtensionSettings.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+            var altSeparatorIndex = basePath.CompatibleIndexOf(ExtensionSettings.AltDirectorySeparatorChar);
+            var separatorIndex = basePath.CompatibleIndexOf(ExtensionSettings.DirectorySeparatorChar);
 
             // 正反向分隔符不能同时存在（或不存在）于基础路径中，且不能位于开头字符
             if ((altSeparatorIndex < 1 && separatorIndex < 1) || (altSeparatorIndex > 0 && separatorIndex > 0))
@@ -157,11 +157,9 @@ namespace Librame.Extensions
             var basePathSeparator = altSeparatorIndex > 0 ? ExtensionSettings.AltDirectorySeparatorChar : ExtensionSettings.DirectorySeparatorChar;
 
             // RelativePath: filename.ext
-            if (!relativePath.Contains(ExtensionSettings.AltDirectorySeparatorChar, StringComparison.CurrentCultureIgnoreCase)
-                && !relativePath.Contains(ExtensionSettings.DirectorySeparatorChar, StringComparison.CurrentCultureIgnoreCase))
-            {
+            if (!relativePath.CompatibleContains(ExtensionSettings.AltDirectorySeparatorChar)
+                && !relativePath.CompatibleContains(ExtensionSettings.DirectorySeparatorChar))
                 return $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath}";
-            }
 
             // RelativePath: ../ or ..\
             if (basePath.TryCombineParentPath(relativePath, basePathSeparator, out string resultPath))
@@ -231,14 +229,14 @@ namespace Librame.Extensions
             }
 
             // RelativePath: /
-            if (relativePath.StartsWith(ExtensionSettings.AltDirectorySeparatorChar))
+            if (relativePath.CompatibleStartsWith(ExtensionSettings.AltDirectorySeparatorChar))
             {
                 resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(ExtensionSettings.AltDirectorySeparatorChar)}";
                 return true;
             }
 
             // RelativePath: \
-            if (relativePath.StartsWith(ExtensionSettings.DirectorySeparatorChar))
+            if (relativePath.CompatibleStartsWith(ExtensionSettings.DirectorySeparatorChar))
             {
                 resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(ExtensionSettings.DirectorySeparatorChar)}";
                 return true;

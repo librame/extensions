@@ -75,7 +75,9 @@ namespace Librame.Extensions.Tests
         {
             var listType = typeof(IList<string>);
             var qualifiedName = listType.GetSimpleAssemblyQualifiedName();
-            Assert.Equal("System.Collections.Generic.IList`1[System.String], System.Private.CoreLib", qualifiedName);
+
+            var targetQualifiedName = $"System.Collections.Generic.IList`1[System.String], {listType.Assembly.GetSimpleName()}";
+            Assert.Equal(targetQualifiedName, qualifiedName);
         }
 
 

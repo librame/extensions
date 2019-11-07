@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using Xunit;
 
 namespace Librame.Extensions.Core.Tests
@@ -24,8 +25,8 @@ namespace Librame.Extensions.Core.Tests
 
         public class TestSourceProxy : AbstractDependencyProxy<ITestSource>
         {
-            public static readonly ITestSource Instance
-                = Create<ITestSource, TestSourceProxy>();
+            //public static readonly ITestSource Instance
+            //    = Create<ITestSource, TestSourceProxy>();
 
 
             public TestSourceProxy()
@@ -40,7 +41,8 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void AllTest()
         {
-            var proxy = TestSourceProxy.Instance;
+            //var proxy = TestSourceProxy.Instance;
+            var proxy = DispatchProxy.Create<ITestSource, TestSourceProxy>();
 
             proxy.Name = nameof(TestSource);
             Assert.Equal(proxy.Name, proxy.NameChanged);

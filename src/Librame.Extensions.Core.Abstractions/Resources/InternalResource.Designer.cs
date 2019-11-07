@@ -61,6 +61,15 @@ namespace Librame.Extensions.Core.Resources {
         }
         
         /// <summary>
+        ///   查找类似 Configuration of dependency options is not supported. 的本地化字符串。
+        /// </summary>
+        internal static string ArgumentExceptionNotSupportedConfigurationOfDependencyOptions {
+            get {
+                return ResourceManager.GetString("ArgumentExceptionNotSupportedConfigurationOfDependencyOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 IP addresses other than loopback addresses are not supported. 的本地化字符串。
         /// </summary>
         internal static string NotSupportedExceptionDomainName {

@@ -39,7 +39,7 @@ namespace Librame.Extensions
         public static string EnsureLeading(this string str, char value)
         {
             str.NotEmpty(nameof(str));
-            return str.StartsWith(value) ? str : $"{value}{str}";
+            return str.CompatibleStartsWith(value) ? str : $"{value}{str}";
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Librame.Extensions
         public static string EnsureTrailing(this string str, char value)
         {
             str.NotEmpty(nameof(str));
-            return str.EndsWith(value) ? str : $"{str}{value}";
+            return str.CompatibleEndsWith(value) ? str : $"{str}{value}";
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Librame.Extensions
         public static string AsPascalCasing(this string word, char separator)
         {
             word.NotEmpty(nameof(word));
-            return string.Join(separator, word.Split(separator).AsPascalCasing());
+            return word.Split(separator).AsPascalCasing().CompatibleJoinString(separator);
         }
 
         /// <summary>
@@ -202,8 +202,8 @@ namespace Librame.Extensions
         {
             word.NotEmpty(nameof(word));
 
-            if (separator.IsNotEmpty() && word.Contains(separator, StringComparison.OrdinalIgnoreCase))
-                return string.Join(separator, word.Split(separator).AsPascalCasing());
+            if (separator.IsNotEmpty() && word.CompatibleContains(separator))
+                return string.Join(separator, word.CompatibleSplit(separator).AsPascalCasing());
 
             return char.ToUpperInvariant(word[0]) + word.Substring(1);
         }
@@ -244,7 +244,7 @@ namespace Librame.Extensions
         public static string AsCamelCasing(this string word, char separator)
         {
             word.NotEmpty(nameof(word));
-            return string.Join(separator, word.Split(separator).AsCamelCasing());
+            return word.Split(separator).AsCamelCasing().CompatibleJoinString(separator);
         }
 
         /// <summary>
@@ -259,8 +259,8 @@ namespace Librame.Extensions
         {
             word.NotEmpty(nameof(word));
 
-            if (separator.IsNotEmpty() && word.Contains(separator, StringComparison.OrdinalIgnoreCase))
-                return string.Join(separator, word.Split(separator).AsCamelCasing());
+            if (separator.IsNotEmpty() && word.CompatibleContains(separator))
+                return string.Join(separator, word.CompatibleSplit(separator).AsCamelCasing());
 
             return char.ToLowerInvariant(word[0]) + word.Substring(1);
         }
@@ -385,7 +385,7 @@ namespace Librame.Extensions
         {
             pair.NotEmpty(nameof(pair));
 
-            var separatorIndex = pair.IndexOf(separator, StringComparison.OrdinalIgnoreCase);
+            var separatorIndex = pair.CompatibleIndexOf(separator);
             var name = pair.Substring(0, separatorIndex);
             var value = pair.Substring(separatorIndex + 1);
 

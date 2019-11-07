@@ -100,7 +100,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位带符号整数。</returns>
         public override int GetHashCode()
-            => ToString().GetHashCode(StringComparison.OrdinalIgnoreCase);
+            => ToString().CompatibleGetHashCode();
 
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Librame.Extensions.Core
 
             var list = new List<InvokeDependencyKey>();
 
-            if (methodInfo.Name.Contains("_", StringComparison.OrdinalIgnoreCase))
+            if (methodInfo.Name.CompatibleContains("_"))
             {
                 var pair = methodInfo.Name.SplitPair('_');
                 switch (pair.Key)

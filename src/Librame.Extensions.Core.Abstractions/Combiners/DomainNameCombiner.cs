@@ -395,7 +395,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Source.GetHashCode(StringComparison.OrdinalIgnoreCase);
+            => Source.CompatibleGetHashCode();
 
 
         /// <summary>
@@ -483,7 +483,7 @@ namespace Librame.Extensions.Core
                 return false;
             }
 
-            if (host.Contains(':', StringComparison.OrdinalIgnoreCase))
+            if (host.CompatibleContains(':'))
                 host = host.SplitPair(':').Key;
 
             if (host.IsIPAddress(out IPAddress address))

@@ -12,6 +12,7 @@
 
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace Librame.Extensions
 {
@@ -78,48 +79,59 @@ namespace Librame.Extensions
         /// 转换为有顺序的文件时间。
         /// </summary>
         /// <param name="dateTime">给定的 <see cref="DateTime"/>。</param>
-        /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
-        /// <returns>返回长度 14/22 的字符串。</returns>
-        public static string AsCombFileTime(this DateTime dateTime,
-            bool containsDate = true)
+        /// <param name="hasDatePart">具有日期部分，反之只有时间部分（可选；默认有日期部分）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AsCombFileTime(this DateTime dateTime, bool hasDatePart = true)
         {
-            if (containsDate)
-            {
-                // 长度 22
-                return CombineFileTime(dateTime.ToString("yyyyMMddHHmmssfff", CultureInfo.InvariantCulture),
-                    dateTime.ToFileTime().ToString(CultureInfo.InvariantCulture));
-            }
+            var mainName = hasDatePart
+                ? dateTime.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture)
+                : dateTime.ToString("HHmmss", CultureInfo.InvariantCulture);
 
-            // 长度 14
-            return CombineFileTime(dateTime.ToString("HHmmssfff", CultureInfo.InvariantCulture),
-                dateTime.ToFileTime().ToString(CultureInfo.InvariantCulture));
+            #if !NET48
+            // 字符串长度为：21（带日期部分）、13（不带日期部分）
+            return mainName + GetTimestamp(dateTime.TimeOfDay.TotalSeconds);
+            #else
+            // 解决 NET 环境中多个 DateTime.Now.Ticks 会出现重复的情况
+            Thread.Sleep(1);
+            return mainName + GetTimestamp(DateTime.Now.TimeOfDay.TotalSeconds);
+            #endif
         }
 
         /// <summary>
         /// 转换为有顺序的文件时间。
         /// </summary>
         /// <param name="dateTimeOffset">给定的 <see cref="DateTimeOffset"/>。</param>
-        /// <param name="containsDate">包含日期部分（可选；默认包含）。</param>
-        /// <returns>返回长度 14/22 的字符串。</returns>
-        public static string AsCombFileTime(this DateTimeOffset dateTimeOffset,
-            bool containsDate = true)
+        /// <param name="hasDatePart">具有日期部分，反之只有时间部分（可选；默认有日期部分）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AsCombFileTime(this DateTimeOffset dateTimeOffset, bool hasDatePart = true)
         {
-            if (containsDate)
-            {
-                // 长度 22
-                return CombineFileTime(dateTimeOffset.ToString("yyyyMMddHHmmssfff", CultureInfo.InvariantCulture),
-                    dateTimeOffset.ToFileTime().ToString(CultureInfo.InvariantCulture));
-            }
+            var mainName = hasDatePart
+                ? dateTimeOffset.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture)
+                : dateTimeOffset.ToString("HHmmss", CultureInfo.InvariantCulture);
 
-            // 长度 14
-            return CombineFileTime(dateTimeOffset.ToString("HHmmssfff", CultureInfo.InvariantCulture),
-                dateTimeOffset.ToFileTime().ToString(CultureInfo.InvariantCulture));
+            #if !NET48
+            // 字符串长度为：21（带日期部分）、13（不带日期部分）
+            return mainName + GetTimestamp(dateTimeOffset.TimeOfDay.TotalSeconds);
+            #else
+            // 解决 NET 环境中多个 DateTime.Now.Ticks 会出现重复的情况
+            Thread.Sleep(1);
+            return mainName + GetTimestamp(DateTimeOffset.Now.TimeOfDay.TotalSeconds);
+            #endif
         }
 
-        private static string CombineFileTime(string dateTime, string fileTime)
+        private static string GetTimestamp(double totalSeconds)
         {
-            // 截取后 5 位为时间戳
-            return dateTime + fileTime.Substring(fileTime.Length - 5);
+            // 取得所有小数位
+            var timestamp = totalSeconds.ToString("G", CultureInfo.InvariantCulture).SplitPair('.').Value;
+
+            // 以 7 位为基准
+            if (timestamp.Length < 7)
+                timestamp = int.Parse(timestamp, CultureInfo.InvariantCulture).FormatString(7);
+
+            if (timestamp.Length > 7)
+                timestamp = timestamp.Substring(0, 7);
+
+            return timestamp;
         }
 
 

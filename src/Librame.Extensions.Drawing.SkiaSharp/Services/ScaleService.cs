@@ -55,7 +55,7 @@ namespace Librame.Extensions.Drawing
 
                     foreach (var scale in Options.Scales)
                     {
-                        if (fileName.Contains(scale.Suffix, StringComparison.OrdinalIgnoreCase))
+                        if (fileName.CompatibleContains(scale.Suffix))
                         {
                             File.Delete(file);
                             count++;

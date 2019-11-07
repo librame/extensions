@@ -66,8 +66,7 @@ namespace Librame.Extensions.Network
         /// </summary>
         /// <returns>返回整数。</returns>
         public override int GetHashCode()
-            => Accept.GetHashCode(StringComparison.OrdinalIgnoreCase)
-            ^ ContentType.GetHashCode(StringComparison.OrdinalIgnoreCase);
+            => Accept.CompatibleGetHashCode() ^ ContentType.CompatibleGetHashCode();
 
 
         /// <summary>

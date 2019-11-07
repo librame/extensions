@@ -211,7 +211,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => ToString().GetHashCode(StringComparison.OrdinalIgnoreCase);
+            => ToString().CompatibleGetHashCode();
 
 
         /// <summary>

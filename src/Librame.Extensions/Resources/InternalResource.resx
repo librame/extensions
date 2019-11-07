@@ -150,4 +150,7 @@
   <data name="FileLoadExceptionUnsupportedCompressedFileTypeFormat" xml:space="preserve">
     <value>Unsupported compressed file type (current: '{0}', required: '{1}').</value>
   </data>
+  <data name="FormatExceptionBase32StringFormat" xml:space="preserve">
+    <value>Invalid BASE32 string format '{0}'.</value>
+  </data>
 </root>
