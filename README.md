@@ -19,7 +19,7 @@
 | Network.DotNetty             | ✓                  | ✓                      |
 | Storage                      | ✓                  | ✓                      |
 
-✓ Native, ! Compliant
+**✓ Native, ! Compliant**
 
     // Install-Package Microsoft.Extensions.DependencyInjection
     var services = new ServiceCollection();
@@ -102,15 +102,15 @@
 
 ## Supported databases
 
-| Database (based EFCore)      | Multi-Tenancy  | WritingSeparation  | Migration  | Audit  | Entity(Table) Management  |
-|----------------------------  |--------------  |------------------  |----------  |------  |-------------------------  |
-| SQL Server                   | ✓              | ✓                  | ✓          | ✓      | ✓                         |
-| SQLite                       | ✓              | ✓                  | ✓          | ✓      | ✓                         |
-| MySQL                        | ✓              | ✓                  | ✓          | ✓      | ✓                         |
+| Database     | Multi-Tenancy  | WritingSeparation  | Migration  | Audit  | Entity/Table Management  |
+|------------  |--------------  |------------------  |----------  |------  |------------------------  |
+| SQL Server   | ✓              | ✓                  | ✓          | ✓      | ✓                        |
+| SQLite       | ✓              | ✓                  | ✓          | ✓      | ✓                        |
+| MySQL        | ✓              | ✓                  | ✓          | ✓      | ✓                        |
 
-SQLServer used Microsoft.EntityFrameworkCore.SqlServer v3.0.0, Tested in SQL Server 2016.
-SQLite used Microsoft.EntityFrameworkCore.Sqlite v3.0.0.
-MySQL used Pomelo.EntityFrameworkCore.MySql v3.0.0-rc3.final, Tested in MySQL 5.7.
+**SQLServer** used Microsoft.EntityFrameworkCore.SqlServer v3.0.0, Tested in SQL Server 2016.  
+**SQLite** used Microsoft.EntityFrameworkCore.Sqlite v3.0.0.  
+**MySQL** used Pomelo.EntityFrameworkCore.MySql v3.0.0-rc3.final, Tested in MySQL 5.7.
 
 ## Install Extension
 
