@@ -100,7 +100,7 @@
 
 ### Librame.Extensions.Data.EntityFrameworkCore
 
-## Supported databases
+## Tested databases
 
 | Database     | Multi-Tenancy  | WritingSeparation  | Migration  | Audit  | Entity/Table Management  |
 |------------  |--------------  |------------------  |----------  |------  |------------------------  |
