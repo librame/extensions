@@ -12,7 +12,6 @@ namespace Librame.Extensions.Data.Tests
             Current = Current.EnsureSingleton(() =>
             {
                 var services = new ServiceCollection();
-                //services.AddEntityFrameworkSqlServer();
 
                 services.AddLibrame()
                     .AddData(options =>

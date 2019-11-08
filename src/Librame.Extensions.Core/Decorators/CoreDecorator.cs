@@ -10,7 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core
@@ -20,8 +19,8 @@ namespace Librame.Extensions.Core
         where TSource : class
         where TImplementation : TSource
     {
-        public CoreDecorator(TImplementation instance, ILoggerFactory loggerFactory)
-            : base(instance, loggerFactory)
+        public CoreDecorator(TImplementation source)
+            : base(source)
         {
         }
     }
@@ -31,8 +30,8 @@ namespace Librame.Extensions.Core
     internal class CoreDecorator<TSource> : AbstractDecorator<TSource>
         where TSource : class
     {
-        public CoreDecorator(TSource instance, ILoggerFactory loggerFactory)
-            : base(instance, loggerFactory)
+        public CoreDecorator(TSource source)
+            : base(source)
         {
         }
     }

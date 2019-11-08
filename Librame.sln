@@ -97,9 +97,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.HttpServer", "examples\Librame.Extensions.Network.DotNetty.HttpServer\Librame.Extensions.Network.DotNetty.HttpServer.csproj", "{2ECCAEF5-764D-4C23-9E18-8FB51D311562}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client", "examples\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client.csproj", "{4111D5EA-3EAE-49A1-81AB-466350C72F5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client", "examples\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client.csproj", "{4111D5EA-3EAE-49A1-81AB-466350C72F5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server", "examples\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server.csproj", "{AF2AB323-D90D-4FFD-AE2B-F6CA02D40B22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server", "examples\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server\Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server.csproj", "{AF2AB323-D90D-4FFD-AE2B-F6CA02D40B22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -339,7 +339,7 @@ Global
 		{AF2AB323-D90D-4FFD-AE2B-F6CA02D40B22} = {237805FE-5E8A-46A2-AA8B-A2BACBBC5AAA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4B0E8A00-41DB-40AA-826D-5EFA8FF281F0}
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.PolicyInjection.6.0.1304.0\lib\NET45
+		SolutionGuid = {4B0E8A00-41DB-40AA-826D-5EFA8FF281F0}
 	EndGlobalSection
 EndGlobal

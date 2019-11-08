@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Pomelo.EntityFrameworkCore.MySql.Design.Internal;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 
 namespace Librame.Extensions.Examples
@@ -44,27 +45,30 @@ namespace Librame.Extensions.Examples
             .AddData(options =>
             {
                 // SQLite
-                options.DefaultTenant.DefaultConnectionString = "Data Source=" + basePath.CombinePath("librame_data_default.db");
-                options.DefaultTenant.WritingConnectionString = "Data Source=" + basePath.CombinePath("librame_data_writing.db");
+                //options.DefaultTenant.DefaultConnectionString = "Data Source=" + basePath.CombinePath("librame_data_default.db");
+                //options.DefaultTenant.WritingConnectionString = "Data Source=" + basePath.CombinePath("librame_data_writing.db");
 
                 // MySQL
-                //options.DefaultTenant.DefaultConnectionString = "Server=localhost;Database=librame_data_default;User=root;Password=123456;";
-                //options.DefaultTenant.DefaultConnectionString = "Server=localhost;Database=librame_data_writing;User=root;Password=123456;";
+                options.DefaultTenant.DefaultConnectionString = MySqlConnectionStringHelper.Validate("Server=localhost;Database=librame_data_default;User=root;Password=123456;");
+                options.DefaultTenant.WritingConnectionString = MySqlConnectionStringHelper.Validate("Server=localhost;Database=librame_data_writing;User=root;Password=123456;");
 
                 options.DefaultTenant.WritingSeparation = true;
             })
             .AddAccessor<ExampleDbContextAccessor>((options, optionsBuilder) =>
             {
                 // SQLite
-                optionsBuilder.UseSqlite(options.DefaultTenant.DefaultConnectionString,
-                    sqlite => sqlite.MigrationsAssembly(typeof(Program).GetSimpleAssemblyName()));
+                //optionsBuilder.UseSqlite(options.DefaultTenant.DefaultConnectionString,
+                //    sqlite => sqlite.MigrationsAssembly(typeof(Program).GetSimpleAssemblyName()));
 
                 // MySQL
-                //optionsBuilder.UseMySql(options.DefaultTenant.DefaultConnectionString,
-                //    mysql => mysql.MigrationsAssembly(typeof(Program).GetSimpleAssemblyName()));
+                optionsBuilder.UseMySql(options.DefaultTenant.DefaultConnectionString, mySql =>
+                {
+                    mySql.MigrationsAssembly(typeof(Program).GetSimpleAssemblyName());
+                    mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
+                });
             })
-            .AddDbDesignTime<SqliteDesignTimeServices>()
-            //.AddDbDesignTime<MySqlDesignTimeServices>()
+            //.AddDbDesignTime<SqliteDesignTimeServices>()
+            .AddDbDesignTime<MySqlDesignTimeServices>()
             .AddIdentifier<ExampleStoreIdentifier>()
             .AddInitializer<ExampleStoreInitializer>()
             .AddStoreHub<ExampleStoreHub>()
@@ -76,10 +80,10 @@ namespace Librame.Extensions.Examples
             RunHello(provider);
 
             // SQLite
-            RunSqlite(provider);
+            //RunSqlite(provider);
 
             // MySQL
-            //RunMySql(provider);
+            RunMySql(provider);
 
             RunEncryption(provider);
 

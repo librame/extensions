@@ -69,6 +69,7 @@ namespace Librame.Extensions.Network.DotNetty
 
         #region CreateBootstrap
 
+        [SuppressMessage("Microsoft.Design", "CA1303:DoNotPassLiteralsAsLocalizedParameters")]
         private Bootstrap CreateBootstrap(bool useLibuv, out IEventLoopGroup group)
         {
             Logger.LogInformation($"\n{RuntimeInformation.OSArchitecture} {RuntimeInformation.OSDescription}"
@@ -83,7 +84,7 @@ namespace Librame.Extensions.Network.DotNetty
             {
                 group = new MultithreadEventLoopGroup();
             }
-            Logger.LogInformation("Transport type: " + (useLibuv ? "Libuv" : "Socket"));
+            Logger.LogDebug("Transport type: " + (useLibuv ? "Libuv" : "Socket"));
 
             var bootstrap = new Bootstrap().Group(group);
             Logger.LogDebug($"Use group: {group.GetType().GetSimpleFullName()}");
@@ -91,6 +92,7 @@ namespace Librame.Extensions.Network.DotNetty
             return bootstrap;
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1303:DoNotPassLiteralsAsLocalizedParameters")]
         private ServerBootstrap CreateServerBootstrap(bool useLibuv,
             out IEventLoopGroup bossGroup, out IEventLoopGroup workerGroup)
         {
@@ -117,7 +119,7 @@ namespace Librame.Extensions.Network.DotNetty
                 bossGroup = new MultithreadEventLoopGroup(1);
                 workerGroup = new MultithreadEventLoopGroup();
             }
-            Logger.LogInformation("Transport type: " + (useLibuv ? "Libuv" : "Socket"));
+            Logger.LogDebug("Transport type: " + (useLibuv ? "Libuv" : "Socket"));
 
             var bootstrap = new ServerBootstrap().Group(bossGroup, workerGroup);
             Logger.LogDebug($"Use boss group: {bossGroup.GetType().GetSimpleFullName()}");

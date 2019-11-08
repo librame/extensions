@@ -21,6 +21,8 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Librame.Extensions.Encryption
 {
+    using Resources;
+
     /// <summary>
     /// 签名证书加密构建器静态扩展。
     /// </summary>
@@ -42,8 +44,7 @@ namespace Librame.Extensions.Encryption
             {
                 if (!(cred.Value.Key is AsymmetricSecurityKey
                     || cred.Value.Key is JsonWebKey && ((JsonWebKey)cred.Value.Key).HasPrivateKey))
-                    //&& !credential.Key.IsSupportedAlgorithm(SecurityAlgorithms.RsaSha256Signature))
-                    throw new InvalidOperationException("Signing key is not asymmetric");
+                    throw new InvalidOperationException(InternalResource.InvalidOperationExceptionInvalidSigningKey);
             }
 
             builder.Services.AddSingleton<ISigningCredentialsService>(provider =>
@@ -75,7 +76,7 @@ namespace Librame.Extensions.Encryption
         public static IEncryptionBuilder AddGlobalSigningCredentials(this IEncryptionBuilder builder, X509Certificate2 certificate)
         {
             if (!certificate.NotNull(nameof(certificate)).HasPrivateKey)
-                throw new InvalidOperationException("X509 certificate does not have a private key.");
+                throw new InvalidOperationException(InternalResource.InvalidOperationExceptionNotHavePrivateKeyFormat.Format(nameof(X509Certificate2)));
 
             var credentials = new SigningCredentials(new X509SecurityKey(certificate), SecurityAlgorithms.RsaSha256);
             return builder.AddGlobalSigningCredentials(credentials);
@@ -93,7 +94,7 @@ namespace Librame.Extensions.Encryption
             rsaKey.NotNull(nameof(rsaKey));
 
             if (rsaKey.PrivateKeyStatus == PrivateKeyStatus.DoesNotExist)
-                throw new InvalidOperationException("RSA key does not have a private key.");
+                throw new InvalidOperationException(InternalResource.InvalidOperationExceptionNotHavePrivateKeyFormat.Format(nameof(RsaSecurityKey)));
 
             var credential = new SigningCredentials(rsaKey, SecurityAlgorithms.RsaSha256);
             return builder.AddGlobalSigningCredentials(credential);

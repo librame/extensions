@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Librame.Extensions.Core.Resources {
+namespace Librame.Extensions.Encryption.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Librame.Extensions.Core.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Librame.Extensions.Core.Resources.InternalResource", typeof(InternalResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Librame.Extensions.Encryption.Resources.InternalResource", typeof(InternalResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,29 +61,11 @@ namespace Librame.Extensions.Core.Resources {
         }
         
         /// <summary>
-        ///   查找类似 Configuration of dependency options is not supported. 的本地化字符串。
+        ///   查找类似 The security key for the signing certificate is not supported. 的本地化字符串。
         /// </summary>
-        internal static string ArgumentExceptionNotSupportedConfigurationOfDependencyOptions {
+        internal static string NotSupportedExceptionSecurityKey {
             get {
-                return ResourceManager.GetString("ArgumentExceptionNotSupportedConfigurationOfDependencyOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 IP addresses other than loopback addresses are not supported. 的本地化字符串。
-        /// </summary>
-        internal static string NotSupportedExceptionDomainName {
-            get {
-                return ResourceManager.GetString("NotSupportedExceptionDomainName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 Invalid {0} value &apos;{1}&apos; for validation {2}. 的本地化字符串。
-        /// </summary>
-        internal static string ValidationErrorMessageFormat {
-            get {
-                return ResourceManager.GetString("ValidationErrorMessageFormat", resourceCulture);
+                return ResourceManager.GetString("NotSupportedExceptionSecurityKey", resourceCulture);
             }
         }
     }

@@ -11,7 +11,9 @@
 #endregion
 
 using Librame.Extensions;
+using Librame.Extensions.Encryption.Resources;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -28,10 +30,10 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="credentials">给定的 <see cref="SigningCredentials"/>。</param>
         /// <param name="throwIfError">是否抛出异常（可选；默认抛出异常）。</param>
         /// <returns>返回 <see cref="RSA"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "credentials")]
         public static RSA ResolveRsa(this SigningCredentials credentials, bool throwIfError = true)
         {
-            if (credentials.IsNull() && throwIfError)
-                throw new ArgumentException($"Have you registered the IEncryptionBuilder.AddSigningCredentials()");
+            credentials.NotNull(nameof(credentials));
 
             if (credentials.Key is X509SecurityKey x509Key)
                 return x509Key.PrivateKey as RSA;
@@ -50,7 +52,7 @@ namespace Microsoft.IdentityModel.Tokens
             }
 
             if (throwIfError)
-                throw new ArgumentException("Creation of RSA is not supported");
+                throw new NotSupportedException(InternalResource.NotSupportedExceptionSecurityKey);
 
             return null;
         }
@@ -62,16 +64,16 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="credentials">给定的 <see cref="SigningCredentials"/>。</param>
         /// <param name="throwIfError">是否抛出异常（可选；默认抛出异常）。</param>
         /// <returns>返回 <see cref="X509Certificate2"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "credentials")]
         public static X509Certificate2 ResolveCertificate(this SigningCredentials credentials, bool throwIfError = true)
         {
-            if (credentials.IsNull() && throwIfError)
-                throw new ArgumentException($"Have you registered the IEncryptionBuilder.AddSigningCredentials()");
+            credentials.NotNull(nameof(credentials));
             
             if (credentials.Key is X509SecurityKey x509Key)
                 return x509Key.Certificate;
 
             if (throwIfError)
-                throw new ArgumentException("Creation of RSA is not supported");
+                throw new NotSupportedException(InternalResource.NotSupportedExceptionSecurityKey);
 
             return null;
         }

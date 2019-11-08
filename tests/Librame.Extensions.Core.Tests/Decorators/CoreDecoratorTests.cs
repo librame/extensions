@@ -35,13 +35,15 @@ namespace Librame.Extensions.Core.Tests
             }
         }
 
-        public class TestImplementationDecorator : TestImplementation
+        public class TestImplementationDecorator
         {
             public TestImplementationDecorator(IDecorator<TestService, TestImplementation> decorator)
                 : base()
             {
-                Message = decorator.Source.Message + "1";
+                OtherMessage = decorator.Source.Message + "1";
             }
+
+            public string OtherMessage { get; }
         }
 
 
@@ -54,15 +56,15 @@ namespace Librame.Extensions.Core.Tests
 
             var impl = TestServiceProvider.Current.GetRequiredService<TestImplementation>();
             var implDecorator = TestServiceProvider.Current.GetRequiredService<TestImplementationDecorator>();
-            Assert.NotEqual(impl.Message, implDecorator.Message);
+            Assert.NotEqual(impl.Message, implDecorator.OtherMessage);
 
             Assert.NotEqual(test.Message, impl.Message);
-            Assert.NotEqual(testDecorator.Message, implDecorator.Message);
+            Assert.NotEqual(testDecorator.Message, implDecorator.OtherMessage);
 
             Assert.Equal("1", test.Message);
             Assert.Equal("2", impl.Message);
             Assert.Equal("12", testDecorator.Message);
-            Assert.Equal("21", implDecorator.Message);
+            Assert.Equal("21", implDecorator.OtherMessage);
         }
     }
 }

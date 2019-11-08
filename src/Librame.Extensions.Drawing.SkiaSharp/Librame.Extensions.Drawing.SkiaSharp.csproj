@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.1.936.211</Version>
+    <Version>7.1.937.211</Version>
     <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Drawing.Abstractions on SkiaSharp extension implementation.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Drawing.Abstractions on SkiaSharp extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.1.936.211</AssemblyVersion>
-    <FileVersion>7.1.1911.71</FileVersion>
+    <AssemblyVersion>7.1.937.211</AssemblyVersion>
+    <FileVersion>7.1.1911.81</FileVersion>
     <RootNamespace>Librame.Extensions.Drawing</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>

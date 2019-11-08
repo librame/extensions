@@ -13,25 +13,11 @@
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象封装器。
+    /// 扩展构建器装饰器接口。
     /// </summary>
     /// <typeparam name="TSource">指定的源类型。</typeparam>
-    public abstract class AbstractWrapper<TSource> : IWrapper<TSource>
+    public interface IExtensionBuilderDecorator<out TSource> : IExtensionBuilder, IDecorator<TSource>
         where TSource : class
     {
-        /// <summary>
-        /// 构造一个抽象封装器。
-        /// </summary>
-        /// <param name="source">给定的 <typeparamref name="TSource"/>。</param>
-        protected AbstractWrapper(TSource source)
-        {
-            Source = source.NotNull(nameof(source));
-        }
-
-
-        /// <summary>
-        /// 源实例。
-        /// </summary>
-        public TSource Source { get; }
     }
 }

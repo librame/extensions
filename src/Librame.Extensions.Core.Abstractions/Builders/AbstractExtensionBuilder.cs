@@ -23,19 +23,6 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
         /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
-        protected AbstractExtensionBuilder(IServiceCollection services, IExtensionBuilderDependencyOptions dependencyOptions)
-        {
-            ParentBuilder = null;
-
-            Services = services.NotNull(nameof(services));
-            DependencyOptions = dependencyOptions.NotNull(nameof(dependencyOptions));
-        }
-
-        /// <summary>
-        /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
-        /// </summary>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
@@ -44,6 +31,19 @@ namespace Librame.Extensions.Core
             ParentBuilder = builder.NotNull(nameof(builder));
 
             Services = builder.Services;
+            DependencyOptions = dependencyOptions.NotNull(nameof(dependencyOptions));
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
+        protected AbstractExtensionBuilder(IServiceCollection services, IExtensionBuilderDependencyOptions dependencyOptions)
+        {
+            ParentBuilder = null;
+
+            Services = services.NotNull(nameof(services));
             DependencyOptions = dependencyOptions.NotNull(nameof(dependencyOptions));
         }
 

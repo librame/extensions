@@ -10,9 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
-using System;
-
 namespace Librame.Extensions.Core
 {
     /// <summary>
@@ -24,6 +21,11 @@ namespace Librame.Extensions.Core
         where TSource : class
         where TImplementation : TSource
     {
+        /// <summary>
+        /// 实现实例。
+        /// </summary>
+        /// <value>返回 <typeparamref name="TImplementation"/>。</value>
+        new TImplementation Source { get; }
     }
 
 
@@ -31,7 +33,7 @@ namespace Librame.Extensions.Core
     /// 装饰器接口。
     /// </summary>
     /// <typeparam name="TSource">指定的源类型。</typeparam>
-    public interface IDecorator<out TSource> : IDisposable
+    public interface IDecorator<out TSource>
         where TSource : class
     {
         /// <summary>
@@ -39,11 +41,5 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <value>返回 <typeparamref name="TSource"/>。</value>
         TSource Source { get; }
-
-        /// <summary>
-        /// 日志工厂。
-        /// </summary>
-        /// <value>返回 <see cref="ILoggerFactory"/>。</value>
-        ILoggerFactory LoggerFactory { get; }
     }
 }

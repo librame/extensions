@@ -33,6 +33,7 @@ namespace Librame.Extensions.Network.DotNetty
         }
 
 
+        [SuppressMessage("Microsoft.Cryptography", "CA5359")]
         public IBootstrapWrapper AddChannelHandlerAsync<TInitializeChannel>(X509Certificate2 tlsCertificate = null,
             Action<IChannelPipeline> pipelineAction = null, bool addTlsPipelineName = false)
             where TInitializeChannel : IChannel

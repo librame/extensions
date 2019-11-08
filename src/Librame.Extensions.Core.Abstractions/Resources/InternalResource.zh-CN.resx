@@ -123,4 +123,7 @@
   <data name="NotSupportedExceptionDomainName" xml:space="preserve">
     <value>不支持除环回地址以外的其余 IP 地址。</value>
   </data>
+  <data name="ValidationErrorMessageFormat" xml:space="preserve">
+    <value>验证 {2} 无效的 {0} 值 '{1}'。</value>
+  </data>
 </root>

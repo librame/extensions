@@ -117,13 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgumentExceptionNotSupportedConfigurationOfDependencyOptions" xml:space="preserve">
-    <value>Configuration of dependency options is not supported.</value>
-  </data>
-  <data name="NotSupportedExceptionDomainName" xml:space="preserve">
-    <value>IP addresses other than loopback addresses are not supported.</value>
-  </data>
-  <data name="ValidationErrorMessageFormat" xml:space="preserve">
-    <value>Invalid {0} value '{1}' for validation {2}.</value>
+  <data name="NotSupportedExceptionSecurityKey" xml:space="preserve">
+    <value>The security key for the signing certificate is not supported.</value>
   </data>
 </root>

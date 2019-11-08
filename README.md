@@ -7,7 +7,19 @@
 
 * Official releases are on [NuGet](https://www.nuget.org/packages?q=Librame).
 
-## Use
+## How to use
+
+| Extensions                   | .NET Standard 2.1  | .NET Framework 4.8     |
+|----------------------------  |------------------  |-------------------     |
+| Core                         | ✓                  | ✓                      |
+| Data.EntityFrameworkCore     | ✓                  | !                      |
+| Drawing.SkiaSharp            | ✓                  | ! Compiled to x86/x64  |
+| Encryption                   | ✓                  | ✓                      |
+| Network                      | ✓                  | ✓                      |
+| Network.DotNetty             | ✓                  | ✓                      |
+| Storage                      | ✓                  | ✓                      |
+
+✓ Native, ! Compliant
 
     // Install-Package Microsoft.Extensions.DependencyInjection
     var services = new ServiceCollection();
@@ -87,6 +99,18 @@
     Assert.NotNull(letters.Default) // default CService
 
 ### Librame.Extensions.Data.EntityFrameworkCore
+
+## Supported databases
+
+| Database (based EFCore)      | Multi-Tenancy  | WritingSeparation  | Migration  | Audit  | Entity(Table) Management  |
+|----------------------------  |--------------  |------------------  |----------  |------  |-------------------------  |
+| SQL Server                   | ✓              | ✓                  | ✓          | ✓      | ✓                         |
+| SQLite                       | ✓              | ✓                  | ✓          | ✓      | ✓                         |
+| MySQL                        | ✓              | ✓                  | ✓          | ✓      | ✓                         |
+
+SQLServer used Microsoft.EntityFrameworkCore.SqlServer v3.0.0, Tested in SQL Server 2016.
+SQLite used Microsoft.EntityFrameworkCore.Sqlite v3.0.0.
+MySQL used Pomelo.EntityFrameworkCore.MySql v3.0.0-rc3.final, Tested in MySQL 5.7.
 
 ## Install Extension
 

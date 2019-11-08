@@ -31,6 +31,10 @@ namespace Librame.Extensions.Data
     /// </summary>
     public static class ModelSnapshotCompiler
     {
+        // 使用 .dll 扩展名会导致读写抛出未授权异常
+        private const string ExportAssemblyFileExtension = ".dat";
+
+
         /// <summary>
         /// 生成模型快照名称。
         /// </summary>
@@ -46,7 +50,7 @@ namespace Librame.Extensions.Data
         /// <param name="basePath">给定的基础路径。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
         public static FilePathCombiner GetAssemblyPath(Type accessorType, string basePath)
-            => new FilePathCombiner($"{accessorType?.Assembly.GetSimpleName()}.ModelSnapshot.dll").ChangeBasePathIfEmpty(basePath);
+            => new FilePathCombiner($"{accessorType?.Assembly.GetSimpleName()}.ModelSnapshot{ExportAssemblyFileExtension}").ChangeBasePathIfEmpty(basePath);
 
 
         /// <summary>
@@ -124,26 +128,26 @@ namespace Librame.Extensions.Data
                 typeName.Name, model);
 
             // 导出包含模型快照的程序集文件
-            var exportFilePath = GetAssemblyPath(accessorType, dependencyOptions.BaseDirectory);
+            var exportAssemblyPath = GetAssemblyPath(accessorType, dependencyOptions.BaseDirectory);
             var references = GetAssemblyReferences(options, accessorType);
 
-            return CompileInFile(exportFilePath, references, sourceCode);
+            return CompileInFile(exportAssemblyPath, references, sourceCode);
         }
 
         /// <summary>
         /// 在文件中编译模型快照。
         /// </summary>
-        /// <param name="filePath">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="assemblyPath">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="references">给定的 <see cref="IEnumerable{AssemblyReference}"/>。</param>
         /// <param name="sourceCodes">给定的源代码数组。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static FilePathCombiner CompileInFile(FilePathCombiner filePath, IEnumerable<AssemblyReference> references,
+        public static FilePathCombiner CompileInFile(FilePathCombiner assemblyPath, IEnumerable<AssemblyReference> references,
             params string[] sourceCodes)
         {
-            filePath.NotNull(nameof(filePath));
+            assemblyPath.NotNull(nameof(assemblyPath));
 
-            if (!filePath.FileName.IsExtension(".dll"))
+            if (!assemblyPath.FileName.IsExtension(ExportAssemblyFileExtension))
                 throw new InvalidOperationException(InternalResource.InvalidOperationExceptionCompileFileExtension);
 
             var metadatas = new List<MetadataReference>();
@@ -154,23 +158,23 @@ namespace Librame.Extensions.Data
                     if (reference.Location.IsEmpty())
                         throw new InvalidOperationException(InternalResource.InvalidOperationExceptionNotFindPathForAssemblyReferenceFormat.Format(reference.ToString()));
 
-                    File.Copy(reference.Location, Path.Combine(filePath.BasePath, Path.GetFileName(reference.Location)), overwrite: true);
+                    File.Copy(reference.Location, Path.Combine(assemblyPath.BasePath, Path.GetFileName(reference.Location)), overwrite: true);
                 }
                 metadatas.AddRange(reference.Metadatas);
             }
 
             var syntaxTrees = sourceCodes.Select(s => SyntaxFactory.ParseSyntaxTree(s));
             var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-            var compilation = CSharpCompilation.Create(filePath.FileName, syntaxTrees, metadatas, compileOptions);
+            var compilation = CSharpCompilation.Create(assemblyPath.FileName, syntaxTrees, metadatas, compileOptions);
 
-            using (var stream = File.OpenWrite(filePath))
+            using (var stream = File.OpenWrite(assemblyPath))
             {
                 var result = compilation.Emit(stream);
                 if (!result.Success)
                     throw new InvalidOperationException($"Build failed. Diagnostics: {string.Join(Environment.NewLine, result.Diagnostics)}");
             }
 
-            return filePath;
+            return assemblyPath;
         }
 
 

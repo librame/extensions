@@ -294,4 +294,5 @@ __pycache__/
 *.ps1
 *.db
 *.dll
+*.dat
 logs/

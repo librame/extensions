@@ -18,6 +18,8 @@ using System.Reflection;
 
 namespace Librame.Extensions.Core
 {
+    using Resources;
+
     /// <summary>
     /// 调用验证。
     /// </summary>
@@ -87,7 +89,8 @@ namespace Librame.Extensions.Core
                 return errorMessage;
 
             errorMessage = value?.ToString() ?? "null";
-            return $"Invalid {memberInfo.MemberType.ToString().AsCamelCasing()} value '{errorMessage}' for validation '{validation.GetType().GetSimpleFullName()}'.";
+            return InternalResource.ValidationErrorMessageFormat.Format(memberInfo.MemberType.ToString().AsCamelCasing(),
+                errorMessage, validation.GetType().GetSimpleFullName());
         }
 
     }
