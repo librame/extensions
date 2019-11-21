@@ -41,11 +41,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net48'">
