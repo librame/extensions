@@ -1,5 +1,5 @@
+using Microsoft.EntityFrameworkCore.Migrations.Design;
 using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
 using Xunit;
 
 namespace Librame.Extensions.Data.Tests
@@ -11,23 +11,25 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void AllTest()
         {
-            using (var stores = TestServiceProvider.Current.GetRequiredService<TestStoreHub>())
-            {
-                var categories = stores.GetCategories();
-                Assert.Empty(categories);
+            var stores = TestServiceProvider.Current.GetRequiredService<TestStoreHub>();
 
-                categories = stores.UseWriteDbConnection().GetCategories();
-                Assert.NotEmpty(categories);
+            var dependencies = stores.ServiceFactory.GetService<MigrationsScaffolderDependencies>();
+            Assert.NotNull(dependencies);
 
-                var articles = stores.UseDefaultDbConnection().GetArticles();
-                Assert.Empty(articles);
+            var categories = stores.GetCategories();
+            Assert.Empty(categories);
 
-                articles = stores.UseWriteDbConnection().GetArticles();
-                Assert.True(articles.Total >= 0); // 如果已分表，则此表内容可能为空
+            categories = stores.UseWriteDbConnection().GetCategories();
+            Assert.NotEmpty(categories);
 
-                //var testEntities = stores.Accessor.TestEntities.ToList();
-                //Assert.Empty(testEntities);
-            }
+            var articles = stores.UseDefaultDbConnection().GetArticles();
+            Assert.Empty(articles);
+
+            articles = stores.UseWriteDbConnection().GetArticles();
+            Assert.True(articles.Total >= 0); // 如果已分表，则此表内容可能为空
+
+            //var testEntities = stores.Accessor.TestEntities.ToList();
+            //Assert.Empty(testEntities);
         }
 
     }

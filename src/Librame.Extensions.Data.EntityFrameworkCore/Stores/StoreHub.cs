@@ -36,6 +36,7 @@ namespace Librame.Extensions.Data
         protected StoreHub(IStoreInitializer initializer, IAccessor accessor)
             : base(initializer, accessor)
         {
+            Initializer = initializer.CastTo<IStoreInitializer, TInitializer>(nameof(initializer));
         }
 
         /// <summary>
@@ -46,6 +47,7 @@ namespace Librame.Extensions.Data
         protected StoreHub(TInitializer initializer, TAccessor accessor)
             : base(initializer, accessor)
         {
+            Initializer = initializer;
         }
 
 

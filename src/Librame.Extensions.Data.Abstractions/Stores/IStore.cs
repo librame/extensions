@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 存储接口。
     /// </summary>
-    public interface IStore : IDisposable
+    public interface IStore
     {
         /// <summary>
         /// 访问器。

@@ -13,7 +13,10 @@
 using Librame.Extensions;
 using Librame.Extensions.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -60,12 +63,26 @@ namespace Microsoft.Extensions.DependencyInjection
                 setupAction.Invoke(options, optionsBuilder);
             });
 
-            builder.Services.TryAddScoped(serviceProvider =>
-            {
-                return (TImplementation)serviceProvider.GetRequiredService<TService>();
-            });
+            builder.Services.AddScoped(serviceProvider => (TImplementation)serviceProvider.GetRequiredService<TService>());
 
-            //builder.Services.AddDbContextDesignTimeServices();
+            builder.AddAccessorDesignTimeServices<TImplementation>();
+
+            return builder;
+        }
+
+        private static IDataBuilder AddAccessorDesignTimeServices<TDbContext>(this IDataBuilder builder)
+            where TDbContext : DbContext, IAccessor
+        {
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<ICurrentDbContext>());
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<IDatabaseProvider>());
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<IDbContextOptions>());
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<IHistoryRepository>());
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<IMigrationsAssembly>());
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<IMigrationsIdGenerator>());
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<IMigrationsModelDiffer>());
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<IMigrator>());
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<IRelationalTypeMappingSource>());
+            builder.Services.AddTransient(serviceProvider => serviceProvider.GetRequiredService<TDbContext>().GetService<IModel>());
 
             return builder;
         }

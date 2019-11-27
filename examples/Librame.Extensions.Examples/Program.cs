@@ -110,23 +110,22 @@ namespace Librame.Extensions.Examples
         {
             Console.WriteLine("Run sqlite database test:");
 
-            using (var stores = provider.GetRequiredService<ExampleStoreHub>())
-            {
-                var categories = stores.GetCategories();
-                Console.WriteLine($"Default database categories is empty: {categories.IsEmpty()}.");
+            var stores = provider.GetRequiredService<ExampleStoreHub>();
 
-                categories = stores.UseWriteDbConnection().GetCategories();
-                Console.WriteLine($"Writing database categories is empty: {categories.IsEmpty()}.");
-                categories.ForEach(category => Console.WriteLine(category));
+            var categories = stores.GetCategories();
+            Console.WriteLine($"Default database categories is empty: {categories.IsEmpty()}.");
 
-                var articles = stores.UseDefaultDbConnection().GetArticles();
-                Console.WriteLine($"Default database articles is empty: {articles.IsEmpty()}.");
+            categories = stores.UseWriteDbConnection().GetCategories();
+            Console.WriteLine($"Writing database categories is empty: {categories.IsEmpty()}.");
+            categories.ForEach(category => Console.WriteLine(category));
 
-                articles = stores.UseWriteDbConnection().GetArticles();
-                Console.WriteLine($"Writing database articles is empty: {articles.IsEmpty()}."); // 如果已分表，则此表内容可能为空
-                if (articles.IsNotEmpty())
-                    articles.ForEach(article => Console.WriteLine(article));
-            }
+            var articles = stores.UseDefaultDbConnection().GetArticles();
+            Console.WriteLine($"Default database articles is empty: {articles.IsEmpty()}.");
+
+            articles = stores.UseWriteDbConnection().GetArticles();
+            Console.WriteLine($"Writing database articles is empty: {articles.IsEmpty()}."); // 如果已分表，则此表内容可能为空
+            if (articles.IsNotEmpty())
+                articles.ForEach(article => Console.WriteLine(article));
 
             Console.WriteLine("Press any key to continue");
             Console.ReadKey();
@@ -136,23 +135,22 @@ namespace Librame.Extensions.Examples
         {
             Console.WriteLine("Run mysql database test:");
 
-            using (var stores = provider.GetRequiredService<ExampleStoreHub>())
-            {
-                var categories = stores.GetCategories();
-                Console.WriteLine($"Default database categories is empty: {categories.IsEmpty()}.");
+            var stores = provider.GetRequiredService<ExampleStoreHub>();
 
-                categories = stores.UseWriteDbConnection().GetCategories();
-                Console.WriteLine($"Writing database categories is empty: {categories.IsEmpty()}.");
-                categories.ForEach(category => Console.WriteLine(category));
+            var categories = stores.GetCategories();
+            Console.WriteLine($"Default database categories is empty: {categories.IsEmpty()}.");
 
-                var articles = stores.UseDefaultDbConnection().GetArticles();
-                Console.WriteLine($"Default database articles is empty: {articles.IsEmpty()}.");
+            categories = stores.UseWriteDbConnection().GetCategories();
+            Console.WriteLine($"Writing database categories is empty: {categories.IsEmpty()}.");
+            categories.ForEach(category => Console.WriteLine(category));
 
-                articles = stores.UseWriteDbConnection().GetArticles();
-                Console.WriteLine($"Writing database articles is empty: {articles.IsEmpty()}."); // 如果已分表，则此表内容可能为空
-                if (articles.IsNotEmpty())
-                    articles.ForEach(article => Console.WriteLine(article));
-            }
+            var articles = stores.UseDefaultDbConnection().GetArticles();
+            Console.WriteLine($"Default database articles is empty: {articles.IsEmpty()}.");
+
+            articles = stores.UseWriteDbConnection().GetArticles();
+            Console.WriteLine($"Writing database articles is empty: {articles.IsEmpty()}."); // 如果已分表，则此表内容可能为空
+            if (articles.IsNotEmpty())
+                articles.ForEach(article => Console.WriteLine(article));
 
             Console.WriteLine("Press any key to continue");
             Console.ReadKey();

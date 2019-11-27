@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.1.937.211</Version>
+    <Version>7.1.956.211</Version>
     <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Drawing.Abstractions on SkiaSharp extension implementation.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Drawing.Abstractions on SkiaSharp extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.1.937.211</AssemblyVersion>
-    <FileVersion>7.1.1911.81</FileVersion>
+    <AssemblyVersion>7.1.956.211</AssemblyVersion>
+    <FileVersion>7.1.1911.271</FileVersion>
     <RootNamespace>Librame.Extensions.Drawing</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
@@ -37,11 +37,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SkiaSharp" Version="1.68.0" />
+    <PackageReference Include="SkiaSharp" Version="1.68.1" />
   </ItemGroup>
 
   <ItemGroup>

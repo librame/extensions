@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 抽象存储。
     /// </summary>
-    public abstract class AbstractStore : AbstractDisposable, IStore
+    public abstract class AbstractStore : IStore
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractStore"/>。
@@ -51,13 +51,5 @@ namespace Librame.Extensions.Data
         /// <value>返回 <see cref="Core.ServiceFactory"/>。</value>
         public ServiceFactory ServiceFactory
             => Accessor.ServiceFactory;
-
-
-        /// <summary>
-        /// 释放存储。
-        /// </summary>
-        protected override void DisposeCore()
-        {
-        }
     }
 }
