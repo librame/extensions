@@ -23,11 +23,11 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="AbstractSortableService"/>。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        /// <param name="rank">给定的服务优先级（数值越小越优先）。</param>
-        protected AbstractSortableService(ILoggerFactory loggerFactory, float rank)
+        /// <param name="priority">给定的服务优先级（数值越小越优先）。</param>
+        protected AbstractSortableService(ILoggerFactory loggerFactory, float priority)
             : base(loggerFactory)
         {
-            Priority = rank;
+            Priority = priority;
         }
 
 
