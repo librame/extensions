@@ -22,9 +22,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Aspects
 {
-    using Core;
+    using Accessors;
+    using Builders;
+    using Core.Mediators;
+    using Core.Services;
+    using Mediators;
+    using Schemas;
+    using Stores;
 
     /// <summary>
     /// 数据审计保存变化访问器截面。
@@ -154,7 +160,7 @@ namespace Librame.Extensions.Data
             var audit = typeof(TAudit).EnsureCreate<TAudit>();
             audit.Id = GetAuditId(cancellationToken);
             audit.TableName = GetTableName(entry);
-            audit.EntityTypeName = entry.Metadata.ClrType.GetSimpleFullName();
+            audit.EntityTypeName = entry.Metadata.ClrType.GetDisplayNameWithNamespace();
             audit.State = (int)entry.State;
             audit.StateName = entry.State.ToString();
 
@@ -170,7 +176,7 @@ namespace Librame.Extensions.Data
                 var auditProperty = typeof(TAuditProperty).EnsureCreate<TAuditProperty>();
                 auditProperty.AuditId = audit.Id;
                 auditProperty.PropertyName = property.Name;
-                auditProperty.PropertyTypeName = property.ClrType.GetSimpleFullName();
+                auditProperty.PropertyTypeName = property.ClrType.GetDisplayNameWithNamespace();
 
                 switch (entry.State)
                 {

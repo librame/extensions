@@ -20,9 +20,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Services
 {
-    using Core;
+    using Core.Services;
+    using Requesters;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class CrawlerService : NetworkServiceBase, ICrawlerService

@@ -10,9 +10,11 @@ using System;
 
 namespace Librame.Extensions.Examples
 {
-    using Core;
-    using Data;
-    using Encryption;
+    using Core.Builders;
+    using Data.Builders;
+    using Encryption.Buffers;
+    using Encryption.Builders;
+    using Newtonsoft.Json;
 
     class Program
     {
@@ -31,9 +33,10 @@ namespace Librame.Extensions.Examples
 
             services.AddLibrame<ExampleCoreBuilderDependencyOptions>(dependency =>
             {
-                dependency.Configuration = root.GetSection(dependency.Name);
+                dependency.ConfigurationRoot = root;
+                //dependency.Configuration = root.GetSection(dependency.Name);
 
-                dependency.LoggingAction = logging =>
+                dependency.ConfigureLoggingBuilder = logging =>
                 {
                     logging.ClearProviders();
                     logging.SetMinimumLevel(LogLevel.Trace);
@@ -63,7 +66,7 @@ namespace Librame.Extensions.Examples
                 // MySQL
                 optionsBuilder.UseMySql(options.DefaultTenant.DefaultConnectionString, mySql =>
                 {
-                    mySql.MigrationsAssembly(typeof(Program).GetSimpleAssemblyName());
+                    mySql.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName());
                     mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
                 });
             })
@@ -76,6 +79,11 @@ namespace Librame.Extensions.Examples
             .AddDeveloperGlobalSigningCredentials();
             
             var provider = services.BuildServiceProvider();
+            Console.WriteLine($"Export dependencies:");
+
+            var dependencies = provider.ExportDependencies(services);
+            var json = JsonConvert.SerializeObject(dependencies, Formatting.Indented);
+            Console.WriteLine(json);
 
             RunHello(provider);
 
@@ -169,10 +177,10 @@ namespace Librame.Extensions.Examples
                 RunEncryption(provider);
             }
             
-            var hash = provider.GetRequiredService<IHashService>();
             var plaintextBuffer = content.AsPlaintextBuffer(provider);
+            plaintextBuffer.UseHash((hash, buffer) => hash.Md5(buffer));
 
-            Console.WriteLine($"Content MD5: {hash.Md5(plaintextBuffer).AsBase64String()}");
+            Console.WriteLine($"Content MD5: {plaintextBuffer.AsBase64String()}");
 
             Console.WriteLine("Press any key to continue");
             Console.ReadKey();

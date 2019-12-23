@@ -10,8 +10,10 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
+    using Accessors;
+
     /// <summary>
     /// 抽象存储中心。
     /// </summary>

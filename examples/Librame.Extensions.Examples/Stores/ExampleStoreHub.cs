@@ -3,7 +3,9 @@ using System.Linq;
 
 namespace Librame.Extensions.Examples
 {
-    using Data;
+    using Data.Accessors;
+    using Data.Collections;
+    using Data.Stores;
     using Models;
 
     public class ExampleStoreHub : StoreHub<ExampleDbContextAccessor, ExampleStoreInitializer>

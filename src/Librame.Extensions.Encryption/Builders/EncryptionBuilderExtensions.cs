@@ -11,8 +11,8 @@
 #endregion
 
 using Librame.Extensions;
-using Librame.Extensions.Core;
-using Librame.Extensions.Encryption;
+using Librame.Extensions.Core.Builders;
+using Librame.Extensions.Encryption.Builders;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -26,19 +26,19 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加加密扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="builderAction">给定的选项配置动作。</param>
+        /// <param name="baseBuilder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureOptions">给定的选项配置动作。</param>
         /// <param name="builderFactory">给定创建加密构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddEncryption(this IExtensionBuilder builder,
-            Action<EncryptionBuilderOptions> builderAction,
-            Func<IExtensionBuilder, EncryptionBuilderDependencyOptions, IEncryptionBuilder> builderFactory = null)
+        public static IEncryptionBuilder AddEncryption(this IExtensionBuilder baseBuilder,
+            Action<EncryptionBuilderOptions> configureOptions,
+            Func<IExtensionBuilder, EncryptionBuilderDependency, IEncryptionBuilder> builderFactory = null)
         {
-            builderAction.NotNull(nameof(builderAction));
+            configureOptions.NotNull(nameof(configureOptions));
 
-            return builder.AddEncryption(dependency =>
+            return baseBuilder.AddEncryption(dependency =>
             {
-                dependency.Builder.Action = builderAction;
+                dependency.Builder.ConfigureOptions = configureOptions;
             },
             builderFactory);
         }
@@ -46,41 +46,38 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加加密扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="baseBuilder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建加密构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddEncryption(this IExtensionBuilder builder,
-            Action<EncryptionBuilderDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, EncryptionBuilderDependencyOptions, IEncryptionBuilder> builderFactory = null)
-            => builder.AddEncryption<EncryptionBuilderDependencyOptions>(dependencyAction, builderFactory);
+        public static IEncryptionBuilder AddEncryption(this IExtensionBuilder baseBuilder,
+            Action<EncryptionBuilderDependency> configureDependency = null,
+            Func<IExtensionBuilder, EncryptionBuilderDependency, IEncryptionBuilder> builderFactory = null)
+            => baseBuilder.AddEncryption<EncryptionBuilderDependency>(configureDependency, builderFactory);
 
         /// <summary>
         /// 添加加密扩展。
         /// </summary>
         /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="baseBuilder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建加密构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
-        public static IEncryptionBuilder AddEncryption<TDependencyOptions>(this IExtensionBuilder builder,
-            Action<TDependencyOptions> dependencyAction = null,
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseBuilder")]
+        public static IEncryptionBuilder AddEncryption<TDependencyOptions>(this IExtensionBuilder baseBuilder,
+            Action<TDependencyOptions> configureDependency = null,
             Func<IExtensionBuilder, TDependencyOptions, IEncryptionBuilder> builderFactory = null)
-            where TDependencyOptions : EncryptionBuilderDependencyOptions, new()
+            where TDependencyOptions : EncryptionBuilderDependency, new()
         {
-            // Configure DependencyOptions
-            var dependency = dependencyAction.ConfigureDependency();
-            builder.Services.AddAllOptionsConfigurators(dependency);
+            // Configure Dependency
+            var dependency = configureDependency.ConfigureDependency(baseBuilder);
 
             // Create Builder
             var encryptionBuilder = builderFactory.NotNullOrDefault(()
-                => (b, d) => new EncryptionBuilder(b, d)).Invoke(builder, dependency);
+                => (b, d) => new EncryptionBuilder(b, d)).Invoke(baseBuilder, dependency);
 
             // Configure Builder
             return encryptionBuilder
-                .AddBuffers()
-                .AddConverters()
                 .AddKeyGenerators()
                 .AddServices();
         }

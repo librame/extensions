@@ -11,7 +11,8 @@
 #endregion
 
 using Librame.Extensions;
-using Librame.Extensions.Data;
+using Librame.Extensions.Data.Accessors;
+using Librame.Extensions.Data.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -47,21 +48,34 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TImplementation">指定的访问器实现类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="setupAction">给定的 <see cref="Action{DataBuilderOptions, DbContextOptionsBuilder}"/>。</param>
+        /// <param name="poolSize">设置池保留的最大实例数（可选；默认为128，如果小于1，将使用 AddDbContext() 注册）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static IDataBuilder AddAccessor<TService, TImplementation>(this IDataBuilder builder,
-            Action<DataBuilderOptions, DbContextOptionsBuilder> setupAction)
-            where TService : IAccessor
+            Action<DataBuilderOptions, DbContextOptionsBuilder> setupAction, int poolSize = 128)
+            where TService : class, IAccessor
             where TImplementation : DbContext, TService
         {
             builder.NotNull(nameof(builder));
             setupAction.NotNull(nameof(setupAction));
 
-            builder.Services.AddDbContext<TService, TImplementation>((serviceProvider, optionsBuilder) =>
+            if (poolSize > 0)
             {
-                var options = serviceProvider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
-                setupAction.Invoke(options, optionsBuilder);
-            });
+                builder.Services.AddDbContextPool<TService, TImplementation>((serviceProvider, optionsBuilder) =>
+                {
+                    var options = serviceProvider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
+                    setupAction.Invoke(options, optionsBuilder);
+                },
+                poolSize);
+            }
+            else
+            {
+                builder.Services.AddDbContext<TService, TImplementation>((serviceProvider, optionsBuilder) =>
+                {
+                    var options = serviceProvider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
+                    setupAction.Invoke(options, optionsBuilder);
+                });
+            }
 
             builder.Services.AddScoped(serviceProvider => (TImplementation)serviceProvider.GetRequiredService<TService>());
 

@@ -10,16 +10,18 @@
 
 #endregion
 
-using Librame.Extensions;
-using Librame.Extensions.Data;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace System.Collections.Generic
+namespace Librame.Extensions.Data.Collections
 {
+    using Stores;
+
     /// <summary>
     /// 树形节点。
     /// </summary>

@@ -20,9 +20,10 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Services
 {
-    using Core;
+    using Builders;
+    using Core.Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class EmailService : NetworkServiceBase, IEmailService
@@ -70,17 +71,17 @@ namespace Librame.Extensions.Network
             Action<MailMessage> configureMessage = null,
             Action<SmtpClient> configureClient = null)
         {
-            var from = new MailAddress(Options.Email.EmailAddress, Options.Email.DisplayName, Encoding);
+            var from = new MailAddress(Options.Mail.EmailAddress, Options.Mail.DisplayName, Encoding);
             var to = new MailAddress(toAddress);
 
             using (var message = new MailMessage(from, to))
             {
-                Logger.LogDebug($"Create mail message: from={Options.Email.EmailAddress}, to={toAddress}, encoding={Encoding.AsName()}");
+                Logger.LogDebug($"Create mail message: from={Options.Mail.EmailAddress}, to={toAddress}, encoding={Encoding.AsName()}");
 
-                message.Body = _byteCodec.EncodeString(body, Options.Email.EnableCodec);
+                message.Body = _byteCodec.EncodeString(body, Options.Mail.EnableCodec);
                 message.BodyEncoding = Encoding;
 
-                message.Subject = _byteCodec.EncodeString(subject, Options.Email.EnableCodec);
+                message.Subject = _byteCodec.EncodeString(subject, Options.Mail.EnableCodec);
                 message.SubjectEncoding = Encoding;
 
                 // Configure MailMessage

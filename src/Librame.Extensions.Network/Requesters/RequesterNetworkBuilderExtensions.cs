@@ -14,8 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Builders
 {
+    using Requesters;
+
     static class RequesterNetworkBuilderExtensions
     {
         internal static INetworkBuilder AddRequesters(this INetworkBuilder builder)

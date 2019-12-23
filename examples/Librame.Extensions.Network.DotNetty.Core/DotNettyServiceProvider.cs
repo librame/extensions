@@ -6,9 +6,8 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    using Core;
-    using Encryption;
-    using Network;
+    using Core.Combiners;
+    using Encryption.Builders;
 
     public class DotNettyServiceProvider
     {

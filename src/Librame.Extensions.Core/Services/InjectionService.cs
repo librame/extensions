@@ -18,7 +18,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class InjectionService : AbstractService, IInjectionService
@@ -86,16 +86,6 @@ namespace Librame.Extensions.Core
 
             _injectedActions[serviceType] = injectAction;
             injectAction.Invoke(service, ServiceProvider);
-        }
-
-
-        /// <summary>
-        /// 释放注入动作集合。
-        /// </summary>
-        protected override void DisposeCore()
-        {
-            _injectedActions.Clear();
-            base.DisposeCore();
         }
 
     }

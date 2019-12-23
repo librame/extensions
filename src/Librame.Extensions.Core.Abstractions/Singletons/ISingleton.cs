@@ -12,7 +12,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Singletons
 {
     /// <summary>
     /// 单例接口。

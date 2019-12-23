@@ -14,7 +14,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
     /// <summary>
     /// 时钟服务接口。

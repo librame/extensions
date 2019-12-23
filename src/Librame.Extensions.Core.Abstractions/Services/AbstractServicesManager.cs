@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
     /// <summary>
     /// 抽象服务集合管理器。

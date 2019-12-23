@@ -11,39 +11,28 @@
 #endregion
 
 using System;
-using System.Globalization;
 using System.Text;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
+    using Serializers;
+
     /// <summary>
     /// 核心构建器选项。
     /// </summary>
-    public class CoreBuilderOptions : IExtensionBuilderOptions, IEncoding
+    public class CoreBuilderOptions : IExtensionBuilderOptions
     {
-        //private static readonly CultureInfo _zhCNCultureInfo
-        //    = new CultureInfo("zh-CN");
-
-
-        ///// <summary>
-        ///// 文化信息（默认为 zh-CN）。
-        ///// </summary>
-        //public CultureInfo CultureInfo { get; set; }
-        //    = _zhCNCultureInfo;
-
-        ///// <summary>
-        ///// UI 文化信息（默认为 zh-CN）。
-        ///// </summary>
-        //public CultureInfo CultureUIInfo { get; set; }
-        //    = _zhCNCultureInfo;
-
-
         /// <summary>
         /// 字符编码（默认为 UTF8）。
         /// </summary>
-        public Encoding Encoding { get; set; }
-            = Encoding.UTF8;
+        public SerializableObject<Encoding> Encoding { get; }
+            = SerializableHelper.CreateEncoding();
 
+        /// <summary>
+        /// 解决时钟回流的偏移量（默认为 1）。
+        /// </summary>
+        public int ClockRefluxOffset { get; set; }
+            = 1;
 
         /// <summary>
         /// 是 UTC 时钟。
@@ -51,14 +40,7 @@ namespace Librame.Extensions.Core
         public bool IsUtcClock { get; set; }
 
         /// <summary>
-        /// 解决时钟回流的偏移量（默认在当前时钟差基础上新增 1 秒）。
-        /// </summary>
-        public TimeSpan ClockRefluxOffset { get; set; }
-            = TimeSpan.FromSeconds(1);
-
-
-        /// <summary>
-        /// 线程数（默认为当前 CPU 框框数）。
+        /// 线程数（默认为当前 CPU 线程数）。
         /// </summary>
         public int ThreadsCount { get; set; }
             = Environment.ProcessorCount;

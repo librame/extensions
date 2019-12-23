@@ -18,9 +18,15 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Aspects
 {
-    using Core;
+    using Accessors;
+    using Builders;
+    using Core.Mediators;
+    using Core.Services;
+    using Mediators;
+    using Microsoft.EntityFrameworkCore;
+    using Stores;
 
     /// <summary>
     /// 数据迁移迁移数据库上下文访问器截面。
@@ -141,13 +147,13 @@ namespace Librame.Extensions.Data
 
             var migration = typeof(TMigration).EnsureCreate<TMigration>();
             migration.Id = GetMigrationId(cancellationToken);
-            migration.AccessorName = accessorType.GetSimpleFullName();
+            migration.AccessorName = accessorType.GetDisplayNameWithNamespace();
             migration.ModelSnapshotName = modelSnapshotTypeName;
             migration.ModelBody = modelSnapshot.Body;
             migration.ModelHash = modelSnapshot.Hash;
             migration.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
             migration.CreatedTimeTicks = migration.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
-            migration.CreatedBy = GetType().GetBodyName();
+            migration.CreatedBy = GetType().GetGenericBodyName();
 
             return migration;
         }

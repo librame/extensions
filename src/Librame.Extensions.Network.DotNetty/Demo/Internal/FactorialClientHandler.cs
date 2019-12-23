@@ -11,14 +11,15 @@
 #endregion
 
 using DotNetty.Transport.Channels;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-    internal class FactorialClientHandler : SimpleChannelInboundHandler<BigInteger>
+    internal class FactorialClientHandler : SimpleChannelInboundHandler<BigInteger>, IDisposable
     {
         private readonly IFactorialClient _client;
         //private readonly ILogger _logger;
@@ -49,7 +50,9 @@ namespace Librame.Extensions.Network.DotNetty
             _receivedMessages++;
 
             if (_receivedMessages == _client.Options.FactorialClient.Count)
+            {
                 context.CloseAsync().ContinueWith(t => _answer.Add(message));
+            }
         }
 
         private void SendNumbers()
@@ -63,5 +66,7 @@ namespace Librame.Extensions.Network.DotNetty
             _context.Flush();
         }
 
+        public void Dispose()
+            => _answer.Dispose();
     }
 }

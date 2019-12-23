@@ -14,22 +14,27 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Services
 {
-    using Core;
+    using Builders;
+    using Core.Builders;
+    using Core.Services;
+    using Encryption.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ByteCodecService : NetworkServiceBase, IByteCodecService
     {
         private readonly ServiceFactory _serviceFactory;
+        private readonly ISymmetricService _symmetric;
 
 
         public ByteCodecService(ServiceFactory serviceFactory)
-            : base(serviceFactory.GetService<IOptions<CoreBuilderOptions>>(),
-                  serviceFactory.GetService<IOptions<NetworkBuilderOptions>>(),
-                  serviceFactory.GetService<ILoggerFactory>())
+            : base(serviceFactory?.GetService<IOptions<CoreBuilderOptions>>(),
+                  serviceFactory?.GetService<IOptions<NetworkBuilderOptions>>(),
+                  serviceFactory?.GetService<ILoggerFactory>())
         {
             _serviceFactory = serviceFactory;
+            _symmetric = _serviceFactory.GetRequiredService<ISymmetricService>();
         }
 
 
@@ -51,7 +56,7 @@ namespace Librame.Extensions.Network
         public byte[] Decode(byte[] buffer, bool enableCodec)
         {
             if (enableCodec)
-                return Options.ByteCodec.DecodeFactory?.Invoke(_serviceFactory, buffer) ?? buffer;
+                return _symmetric.DecryptAes(buffer);
 
             return buffer;
         }
@@ -75,7 +80,7 @@ namespace Librame.Extensions.Network
         public byte[] Encode(byte[] buffer, bool enableCodec)
         {
             if (enableCodec)
-                return Options.ByteCodec.EncodeFactory?.Invoke(_serviceFactory, buffer) ?? buffer;
+                return _symmetric.EncryptAes(buffer);
 
             return buffer;
         }

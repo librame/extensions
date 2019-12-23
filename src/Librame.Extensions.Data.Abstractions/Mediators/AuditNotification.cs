@@ -12,9 +12,9 @@
 
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Mediators
 {
-    using Core;
+    using Core.Mediators;
 
     /// <summary>
     /// 审计通知。

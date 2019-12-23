@@ -16,8 +16,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
+    using Services;
+    using Utilities;
+
     /// <summary>
     /// 抽象服务核心构建器静态扩展。
     /// </summary>
@@ -29,7 +32,7 @@ namespace Librame.Extensions.Core
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddAutoRegistrationServices(this ICoreBuilder builder)
-            => builder.AddAutoRegistrationServices(AssemblyUtility.CurrentDomainAssembliesWithoutSystem);
+            => builder.AddAutoRegistrationServices(AssemblyUtility.CurrentAssembliesWithoutSystem);
 
         /// <summary>
         /// 添加指定程序集数组中已定义 <see cref="AutoRegistrationServiceAttribute"/> 特性的服务集合。

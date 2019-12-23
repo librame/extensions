@@ -12,7 +12,7 @@
 
 using System;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
     /// 抽象组合器。

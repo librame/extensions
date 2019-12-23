@@ -16,8 +16,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Threads
 {
+    using Builders;
+
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class MemoryLocker : AbstractDisposable, IMemoryLocker
     {

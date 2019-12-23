@@ -16,7 +16,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Singletons
 {
     /// <summary>
     /// 抽象单例（使用时须定义一个派生自本抽象单例的密封类）。

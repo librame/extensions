@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
     /// <summary>
     /// 可排序接口。

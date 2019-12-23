@@ -18,9 +18,11 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
-    using Encryption;
+    using Builders;
+    using Core.Builders;
+    using Encryption.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class QuoteOfTheMomentServer : ChannelServiceBase, IQuoteOfTheMomentServer
@@ -29,9 +31,9 @@ namespace Librame.Extensions.Network.DotNetty
 
 
         public QuoteOfTheMomentServer(IBootstrapWrapperFactory wrapperFactory,
-            ISigningCredentialsService signingCredentials,
+            ISigningCredentialsService signingCredentials, IOptions<CoreBuilderOptions> coreOptions,
             IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
-            : base(wrapperFactory, signingCredentials, options, loggerFactory)
+            : base(wrapperFactory, signingCredentials, coreOptions, options, loggerFactory)
         {
             _serverOptions = Options.FactorialServer;
         }

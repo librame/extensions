@@ -12,7 +12,7 @@
 
 using System.Reflection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Proxies
 {
     /// <summary>
     /// 调用验证接口。

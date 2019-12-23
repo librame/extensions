@@ -11,8 +11,9 @@
 #endregion
 
 using Librame.Extensions;
-using Librame.Extensions.Core;
+using Librame.Extensions.Core.Builders;
 using Librame.Extensions.Data;
+using Librame.Extensions.Data.Builders;
 using Microsoft.EntityFrameworkCore.Design;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -27,19 +28,19 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加数据扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="builderAction">给定的选项配置动作。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureOptions">给定的配置选项动作方法。</param>
         /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddData(this IExtensionBuilder builder,
-            Action<DataBuilderOptions> builderAction,
-            Func<IExtensionBuilder, DataBuilderDependencyOptions, IDataBuilder> builderFactory = null)
+        public static IDataBuilder AddData(this IExtensionBuilder baseBuilder,
+            Action<DataBuilderOptions> configureOptions,
+            Func<IExtensionBuilder, DataBuilderDependency, IDataBuilder> builderFactory = null)
         {
-            builderAction.NotNull(nameof(builderAction));
+            configureOptions.NotNull(nameof(configureOptions));
 
-            return builder.AddData(dependency =>
+            return baseBuilder.AddData(dependency =>
             {
-                dependency.Builder.Action = builderAction;
+                dependency.Builder.ConfigureOptions = configureOptions;
             },
             builderFactory);
         }
@@ -47,41 +48,41 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加数据扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddData(this IExtensionBuilder builder,
-            Action<DataBuilderDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, DataBuilderDependencyOptions, IDataBuilder> builderFactory = null)
-            => builder.AddData<DataBuilderDependencyOptions>(dependencyAction, builderFactory);
+        public static IDataBuilder AddData(this IExtensionBuilder baseBuilder,
+            Action<DataBuilderDependency> configureDependency = null,
+            Func<IExtensionBuilder, DataBuilderDependency, IDataBuilder> builderFactory = null)
+            => baseBuilder.AddData<DataBuilderDependency>(configureDependency, builderFactory);
 
         /// <summary>
         /// 添加数据扩展。
         /// </summary>
         /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
-        public static IDataBuilder AddData<TDependencyOptions>(this IExtensionBuilder builder,
-            Action<TDependencyOptions> dependencyAction = null,
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseBuilder")]
+        public static IDataBuilder AddData<TDependencyOptions>(this IExtensionBuilder baseBuilder,
+            Action<TDependencyOptions> configureDependency = null,
             Func<IExtensionBuilder, TDependencyOptions, IDataBuilder> builderFactory = null)
-            where TDependencyOptions : DataBuilderDependencyOptions, new()
+            where TDependencyOptions : DataBuilderDependency, new()
         {
-            builder.NotNull(nameof(builder));
+            baseBuilder.NotNull(nameof(baseBuilder));
 
-            // Configure DependencyOptions
-            var dependency = dependencyAction.ConfigureDependency();
-            builder.Services.AddAllOptionsConfigurators(dependency);
+            // Configure Dependency
+            var dependency = configureDependency.ConfigureDependency(baseBuilder);
 
-            // AddEntityFrameworkDesignTimeServices
-            builder.Services.AddEntityFrameworkDesignTimeServices();
+            // Add Dependencies
+            baseBuilder.Services
+                .AddEntityFrameworkDesignTimeServices();
 
             // Create Builder
             var dataBuilder = builderFactory.NotNullOrDefault(()
-                => (b, d) => new DataBuilder(b, d)).Invoke(builder, dependency);
+                => (b, d) => new DataBuilder(b, d)).Invoke(baseBuilder, dependency);
 
             // Configure Builder
             return dataBuilder

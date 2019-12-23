@@ -12,7 +12,7 @@
 
 using System;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Schemas
 {
     /// <summary>
     /// 表名架构。

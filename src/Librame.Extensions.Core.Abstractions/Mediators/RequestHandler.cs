@@ -12,7 +12,7 @@
 
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Mediators
 {
     /// <summary>
     /// 表示要在中间件执行的下一个异步请求任务。

@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 using static DotNetty.Codecs.Http.HttpVersion;
 using static DotNetty.Codecs.Http.HttpResponseStatus;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class WebSocketServerHandler : SimpleChannelInboundHandler<object>
@@ -152,7 +152,7 @@ namespace Librame.Extensions.Network.DotNetty
             // Generate an error page if response getStatus code is not OK (200).
             if (response.Status.Code != 200)
             {
-                var buffer = Unpooled.CopiedBuffer(_server.Options.Encoding.GetBytes(response.Status.ToString()));
+                var buffer = Unpooled.CopiedBuffer(_server.CoreOptions.Encoding.Source.GetBytes(response.Status.ToString()));
                 response.Content.WriteBytes(buffer);
                 buffer.Release();
                 HttpUtil.SetContentLength(response, response.Content.ReadableBytes);

@@ -12,7 +12,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
     /// <summary>
     /// 扩展构建器选项接口。

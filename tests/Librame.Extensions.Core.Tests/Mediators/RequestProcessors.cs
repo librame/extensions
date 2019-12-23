@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Mediators;
+
     public class Ping : IRequest<Pong>
     {
         public string Message { get; set; }

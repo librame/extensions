@@ -39,7 +39,7 @@ namespace Librame.Extensions
             Func<string, string> encodeFactory = null, bool hasSpecial = false)
         {
             if (encodeFactory.IsNull())
-                encodeFactory = Md5Base64String;
+                encodeFactory = s => s.Md5Base64String(Encoding.UTF8);
 
             var pairs = new Dictionary<string, string>();
             var chars = hasSpecial ? ExtensionSettings.AlgorithmChars : ExtensionSettings.AllLettersAndDigits;
@@ -259,41 +259,46 @@ namespace Librame.Extensions
         /// 计算 MD5。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string Md5Base64String(this string str)
-            => str.FromEncodingString().Md5Base64String();
+        public static string Md5Base64String(this string str, Encoding encoding)
+            => str.FromEncodingString(encoding).Md5Base64String();
 
         /// <summary>
         /// 计算 SHA1。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string Sha1Base64String(this string str)
-            => str.FromEncodingString().Sha1Base64String();
+        public static string Sha1Base64String(this string str, Encoding encoding)
+            => str.FromEncodingString(encoding).Sha1Base64String();
 
         /// <summary>
         /// 计算 SHA256。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string Sha256Base64String(this string str)
-            => str.FromEncodingString().Sha256Base64String();
+        public static string Sha256Base64String(this string str, Encoding encoding)
+            => str.FromEncodingString(encoding).Sha256Base64String();
 
         /// <summary>
         /// 计算 SHA384。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string Sha384Base64String(this string str)
-            => str.FromEncodingString().Sha384Base64String();
+        public static string Sha384Base64String(this string str, Encoding encoding)
+            => str.FromEncodingString(encoding).Sha384Base64String();
 
         /// <summary>
         /// 计算 SHA512。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string Sha512Base64String(this string str)
-            => str.FromEncodingString().Sha512Base64String();
+        public static string Sha512Base64String(this string str, Encoding encoding)
+            => str.FromEncodingString(encoding).Sha512Base64String();
 
 
         /// <summary>
@@ -417,45 +422,50 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string HmacMd5Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacMd5Base64String(key);
+        public static string HmacMd5Base64String(this string str, byte[] key, Encoding encoding)
+            => str.FromEncodingString(encoding).HmacMd5Base64String(key);
 
         /// <summary>
         /// 计算 HMACSHA1。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string HmacSha1Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacSha1Base64String(key);
+        public static string HmacSha1Base64String(this string str, byte[] key, Encoding encoding)
+            => str.FromEncodingString(encoding).HmacSha1Base64String(key);
 
         /// <summary>
         /// 计算 HMACSHA256。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string HmacSha256Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacSha256Base64String(key);
+        public static string HmacSha256Base64String(this string str, byte[] key, Encoding encoding)
+            => str.FromEncodingString(encoding).HmacSha256Base64String(key);
 
         /// <summary>
         /// 计算 HMACSHA384。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string HmacSha384Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacSha384Base64String(key);
+        public static string HmacSha384Base64String(this string str, byte[] key, Encoding encoding)
+            => str.FromEncodingString(encoding).HmacSha384Base64String(key);
 
         /// <summary>
         /// 计算 HMACSHA512。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string HmacSha512Base64String(this string str, byte[] key)
-            => str.FromEncodingString().HmacSha512Base64String(key);
+        public static string HmacSha512Base64String(this string str, byte[] key, Encoding encoding)
+            => str.FromEncodingString(encoding).HmacSha512Base64String(key);
 
 
         /// <summary>
@@ -577,18 +587,20 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsAesBase64String(this string str, byte[] key)
-            => str.FromEncodingString().AsAes(key).AsBase64String();
+        public static string AsAesBase64String(this string str, byte[] key, Encoding encoding)
+            => str.FromEncodingString(encoding).AsAes(key).AsBase64String();
 
         /// <summary>
         /// 还原 AES。
         /// </summary>
         /// <param name="base64String">给定的 BASE64 字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string FromAesBase64String(this string base64String, byte[] key)
-            => base64String.FromBase64String().FromAes(key).AsEncodingString();
+        public static string FromAesBase64String(this string base64String, byte[] key, Encoding encoding)
+            => base64String.FromBase64String().FromAes(key).AsEncodingString(encoding);
 
 
         /// <summary>
@@ -596,18 +608,20 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsDesBase64String(this string str, byte[] key)
-            => str.FromEncodingString().AsDes(key).AsBase64String();
+        public static string AsDesBase64String(this string str, byte[] key, Encoding encoding)
+            => str.FromEncodingString(encoding).AsDes(key).AsBase64String();
 
         /// <summary>
         /// 还原 DES。
         /// </summary>
         /// <param name="base64String">给定的 BASE64 字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string FromDesBase64String(this string base64String, byte[] key)
-            => base64String.FromBase64String().FromDes(key).AsEncodingString();
+        public static string FromDesBase64String(this string base64String, byte[] key, Encoding encoding)
+            => base64String.FromBase64String().FromDes(key).AsEncodingString(encoding);
 
 
         /// <summary>
@@ -615,18 +629,20 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsTripleDesBase64String(this string str, byte[] key)
-            => str.FromEncodingString().AsTripleDes(key).AsBase64String();
+        public static string AsTripleDesBase64String(this string str, byte[] key, Encoding encoding)
+            => str.FromEncodingString(encoding).AsTripleDes(key).AsBase64String();
 
         /// <summary>
         /// 还原 TripleDES。
         /// </summary>
         /// <param name="base64String">给定的 BASE64 字符串。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string FromTripleDesBase64String(this string base64String, byte[] key)
-            => base64String.FromBase64String().FromTripleDes(key).AsEncodingString();
+        public static string FromTripleDesBase64String(this string base64String, byte[] key, Encoding encoding)
+            => base64String.FromBase64String().FromTripleDes(key).AsEncodingString(encoding);
 
 
         /// <summary>
@@ -730,21 +746,23 @@ namespace Librame.Extensions
         /// 转换为 RSA。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
         /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsRsaBase64String(this string str, RSAParameters parameters, RSAEncryptionPadding padding = null)
-            => str.FromEncodingString().AsRsa(parameters, padding).AsBase64String();
+        public static string AsRsaBase64String(this string str, Encoding encoding, RSAParameters parameters, RSAEncryptionPadding padding = null)
+            => str.FromEncodingString(encoding).AsRsa(parameters, padding).AsBase64String();
 
         /// <summary>
         /// 还原 RSA。
         /// </summary>
         /// <param name="base64String">给定的 BASE64 字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
         /// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
         /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string FromRsaBase64String(this string base64String, RSAParameters parameters, RSAEncryptionPadding padding = null)
-            => base64String.FromBase64String().FromRsa(parameters, padding).AsEncodingString();
+        public static string FromRsaBase64String(this string base64String, Encoding encoding, RSAParameters parameters, RSAEncryptionPadding padding = null)
+            => base64String.FromBase64String().FromRsa(parameters, padding).AsEncodingString(encoding);
 
 
         /// <summary>

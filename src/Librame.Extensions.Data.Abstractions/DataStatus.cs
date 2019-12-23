@@ -15,6 +15,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Librame.Extensions.Data
 {
+    using Resources;
+
     /// <summary>
     /// 数据状态。
     /// </summary>

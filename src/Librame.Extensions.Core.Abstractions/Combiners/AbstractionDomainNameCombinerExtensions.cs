@@ -13,7 +13,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
     /// 抽象域名组合器静态扩展。

@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations.Design;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -23,7 +24,11 @@ using System.Linq;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
+    using Accessors;
+    using Builders;
+    using Core.Builders;
+    using Core.Combiners;
+    using Core.Services;
     using Resources;
 
     /// <summary>
@@ -32,7 +37,7 @@ namespace Librame.Extensions.Data
     public static class ModelSnapshotCompiler
     {
         // 使用 .dll 扩展名会导致读写抛出未授权异常
-        private const string ExportAssemblyFileExtension = ".dat";
+        private const string ExportFileExtension = ".dat";
 
 
         /// <summary>
@@ -41,16 +46,16 @@ namespace Librame.Extensions.Data
         /// <param name="accessorType">给定的访问器类型。</param>
         /// <returns>返回 <see cref="TypeNameCombiner"/>。</returns>
         public static TypeNameCombiner GenerateTypeName(Type accessorType)
-            => new TypeNameCombiner(accessorType?.Namespace, $"{accessorType.GetBodyName()}{nameof(ModelSnapshot)}");
+            => new TypeNameCombiner(accessorType?.Namespace, $"{accessorType.GetGenericBodyName()}{nameof(ModelSnapshot)}");
 
         /// <summary>
-        /// 获取模型快照程序集路径。
+        /// 导出模型快照文件路径。
         /// </summary>
         /// <param name="accessorType">给定的访问器类型。</param>
         /// <param name="basePath">给定的基础路径。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        public static FilePathCombiner GetAssemblyPath(Type accessorType, string basePath)
-            => new FilePathCombiner($"{accessorType?.Assembly.GetSimpleName()}.ModelSnapshot{ExportAssemblyFileExtension}").ChangeBasePathIfEmpty(basePath);
+        public static FilePathCombiner ExportFilePath(Type accessorType, string basePath)
+            => new FilePathCombiner($"{accessorType?.Assembly.GetDisplayName()}.ModelSnapshot{ExportFileExtension}").ChangeBasePathIfEmpty(basePath);
 
 
         /// <summary>
@@ -122,13 +127,13 @@ namespace Librame.Extensions.Data
             var typeName = GenerateTypeName(accessorType);
 
             var generator = accessor.ServiceFactory.GetRequiredService<IMigrationsCodeGenerator>();
-            var dependencyOptions = accessor.ServiceFactory.GetRequiredService<DataBuilderDependencyOptions>();
+            var dependencyOptions = accessor.ServiceFactory.GetRequiredService<DataBuilderDependency>();
 
             var sourceCode = generator.GenerateSnapshot(typeName.Namespace, accessorType,
                 typeName.Name, model);
 
             // 导出包含模型快照的程序集文件
-            var exportAssemblyPath = GetAssemblyPath(accessorType, dependencyOptions.BaseDirectory);
+            var exportAssemblyPath = ExportFilePath(accessorType, dependencyOptions.ExportDirectory);
             var references = GetAssemblyReferences(options, accessorType);
 
             return CompileInFile(exportAssemblyPath, references, sourceCode);
@@ -147,7 +152,7 @@ namespace Librame.Extensions.Data
         {
             assemblyPath.NotNull(nameof(assemblyPath));
 
-            if (!assemblyPath.FileName.IsExtension(ExportAssemblyFileExtension))
+            if (!assemblyPath.FileName.IsExtension(ExportFileExtension))
                 throw new InvalidOperationException(InternalResource.InvalidOperationExceptionCompileFileExtension);
 
             var metadatas = new List<MetadataReference>();
@@ -197,6 +202,7 @@ namespace Librame.Extensions.Data
             accessorType.NotNull(nameof(accessorType));
 
             var generator = accessor.ServiceFactory.GetRequiredService<IMigrationsCodeGenerator>();
+            var coreOptions = accessor.ServiceFactory.GetRequiredService<IOptions<CoreBuilderOptions>>().Value;
 
             var sourceCode = generator.GenerateSnapshot(typeName.Namespace, accessorType,
                 typeName.Name, model);
@@ -204,7 +210,7 @@ namespace Librame.Extensions.Data
             var references = GetAssemblyReferences(options, accessorType);
 
             var buffer = CompileInMemory(references, sourceCode);
-            return (StoreAssembly(buffer), sourceCode.Sha256Base64String());
+            return (StoreAssembly(buffer), sourceCode.Sha256Base64String(coreOptions.Encoding.Source));
         }
 
         /// <summary>

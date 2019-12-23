@@ -14,8 +14,11 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
+    using Resources;
+    using Schemas;
+
     /// <summary>
     /// 数据实体。
     /// </summary>

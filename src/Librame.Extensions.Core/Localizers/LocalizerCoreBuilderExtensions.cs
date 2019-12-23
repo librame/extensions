@@ -14,8 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
+    using Localizers;
+
     static class LocalizerCoreBuilderExtensions
     {
         internal static ICoreBuilder AddLocalizers(this ICoreBuilder builder)

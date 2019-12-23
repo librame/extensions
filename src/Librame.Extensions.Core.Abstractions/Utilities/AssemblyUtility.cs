@@ -12,49 +12,74 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Utilities
 {
     /// <summary>
     /// 程序集实用工具。
     /// </summary>
     public static class AssemblyUtility
     {
-        private static readonly string[] _withoutSystemAssemblyPrefixes
-            = new string[] { "microsoft", "mscorlib", "netstandard", "sos", "system", "window" };
+        private static readonly string[] _systemAssemblyPrefixes
+            = new string[]
+            {
+                "anonymously",
+                "microsoft",
+                "mscorlib",
+                "netstandard",
+                "nuget",
+                "runtime",
+                "sos",
+                "system",
+                "testhost",
+                "window"
+            };
 
 
-        static AssemblyUtility()
+        /// <summary>
+        /// 当前程序集列表。
+        /// </summary>
+        public static IReadOnlyList<Assembly> CurrentAssemblies { get; }
+            = LoadContextAssemblies();
+
+        /// <summary>
+        /// 当前除系统外的第三方程序集列表。
+        /// </summary>
+        public static IReadOnlyList<Assembly> CurrentAssembliesWithoutSystem { get; }
+            = CurrentAssemblies.Where(NotSystemAssembly).AsReadOnlyList();
+
+
+        private static bool NotSystemAssembly(Assembly assembly)
         {
-            CurrentDomainAssemblies = CurrentDomainAssemblies.EnsureSingleton(() =>
+            foreach (var prefix in _systemAssemblyPrefixes)
             {
-                return AppDomain.CurrentDomain.GetAssemblies();
-            });
+                if (assembly.FullName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
 
-            CurrentDomainAssembliesWithoutSystem = CurrentDomainAssembliesWithoutSystem.EnsureSingleton(() =>
-            {
-                var assemblies = CurrentDomainAssemblies.AsEnumerable();
-
-                _withoutSystemAssemblyPrefixes.ForEach(prefix =>
-                {
-                    assemblies = assemblies.Where(assembly => !assembly.FullName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
-                });
-
-                return assemblies.ToArray();
-            });
+            return true;
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        private static IReadOnlyList<Assembly> LoadContextAssemblies()
+        {
+            #if !NET48
+                var context = AssemblyLoadContext.Default;
 
-        /// <summary>
-        /// 当前线程应用域的程序集列表。
-        /// </summary>
-        public static IReadOnlyList<Assembly> CurrentDomainAssemblies { get; }
+                var assemblies = (IEnumerable<Assembly>)context.GetType()
+                    .GetProperty("Assemblies")?.GetValue(context);
 
-        /// <summary>
-        /// 当前线程应用域除系统外的第三方程序集列表。
-        /// </summary>
-        public static IReadOnlyList<Assembly> CurrentDomainAssembliesWithoutSystem { get; }
+                if (assemblies.IsNull())
+                    throw new InvalidOperationException("Invalid load assemblies.");
+
+                return assemblies.AsReadOnlyList();
+            #else
+                return AppDomain.CurrentDomain.GetAssemblies();
+            #endif
+        }
     }
 }

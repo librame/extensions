@@ -12,15 +12,15 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Decorators
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class CoreDecorator<TSource, TImplementation> : AbstractDecorator<TSource, TImplementation>
         where TSource : class
         where TImplementation : TSource
     {
-        public CoreDecorator(TImplementation source)
-            : base(source)
+        public CoreDecorator(TImplementation implementation)
+            : base(implementation)
         {
         }
     }

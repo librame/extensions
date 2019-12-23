@@ -14,8 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Builders
 {
+    using Stores;
+
     /// <summary>
     /// 存储数据构建器静态扩展。
     /// </summary>

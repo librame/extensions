@@ -15,9 +15,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Services
 {
-    using Core;
+    using Builders;
+    using Core.Identifiers;
+    using Core.Services;
+    using KeyGenerators;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class SymmetricService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISymmetricService
@@ -69,32 +72,22 @@ namespace Librame.Extensions.Encryption
         public IKeyGenerator KeyGenerator { get; }
 
 
-        private IByteMemoryBuffer Encrypt(SymmetricAlgorithm algorithm, IByteMemoryBuffer buffer)
+        private byte[] Encrypt(SymmetricAlgorithm algorithm, byte[] buffer)
         {
-            buffer.ChangeMemory(memory =>
-            {
-                var encryptor = algorithm.CreateEncryptor();
-                var bytes = memory.ToArray();
-                bytes = encryptor.TransformFinalBlock(bytes, 0, bytes.Length);
-                Logger.LogDebug($"Encrypt final block: {nameof(CipherMode)}={algorithm.Mode.ToString()}, {nameof(PaddingMode)}={algorithm.Padding.ToString()}");
+            var encryptor = algorithm.CreateEncryptor();
 
-                return bytes;
-            });
+            buffer = encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
+            Logger.LogDebug($"Encrypt final block: {nameof(CipherMode)}={algorithm.Mode.ToString()}, {nameof(PaddingMode)}={algorithm.Padding.ToString()}");
 
             return buffer;
         }
 
-        private IByteMemoryBuffer Decrypt(SymmetricAlgorithm algorithm, IByteMemoryBuffer buffer)
+        private byte[] Decrypt(SymmetricAlgorithm algorithm, byte[] buffer)
         {
-            buffer.ChangeMemory(memory =>
-            {
-                var encryptor = algorithm.CreateDecryptor();
-                var bytes = memory.ToArray();
-                bytes = encryptor.TransformFinalBlock(bytes, 0, bytes.Length);
-                Logger.LogDebug($"Decrypt final block: {nameof(CipherMode)}={algorithm.Mode.ToString()}, {nameof(PaddingMode)}={algorithm.Padding.ToString()}");
+            var encryptor = algorithm.CreateDecryptor();
 
-                return bytes;
-            });
+            buffer = encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
+            Logger.LogDebug($"Decrypt final block: {nameof(CipherMode)}={algorithm.Mode.ToString()}, {nameof(PaddingMode)}={algorithm.Padding.ToString()}");
 
             return buffer;
         }
@@ -102,7 +95,7 @@ namespace Librame.Extensions.Encryption
 
         #region AES
 
-        public IByteMemoryBuffer ToAes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] EncryptAes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {
@@ -113,7 +106,7 @@ namespace Librame.Extensions.Encryption
             return Encrypt(_aes.Value, buffer);
         }
 
-        public IByteMemoryBuffer FromAes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] DecryptAes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {
@@ -129,7 +122,7 @@ namespace Librame.Extensions.Encryption
 
         #region DES
 
-        public IByteMemoryBuffer ToDes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] EncryptDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {
@@ -140,7 +133,7 @@ namespace Librame.Extensions.Encryption
             return Encrypt(_des.Value, buffer);
         }
 
-        public IByteMemoryBuffer FromDes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] DecryptDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {
@@ -156,7 +149,7 @@ namespace Librame.Extensions.Encryption
 
         #region TripleDES
 
-        public IByteMemoryBuffer ToTripleDes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] EncryptTripleDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {
@@ -167,7 +160,7 @@ namespace Librame.Extensions.Encryption
             return Encrypt(_3des.Value, buffer);
         }
 
-        public IByteMemoryBuffer FromTripleDes(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] DecryptTripleDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {

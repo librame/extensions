@@ -17,8 +17,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Mediators
 {
+    using Services;
+
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ServiceFactoryMediator : IMediator
     {
@@ -78,7 +80,7 @@ namespace Librame.Extensions.Core
             if (notification is INotification _notification)
                 return Publish(_notification, cancellationToken);
 
-            _logger.LogWarning($"{notification.GetType().GetSimpleFullName()} does not implement {nameof(INotification)}");
+            _logger.LogWarning($"{notification.GetType().GetDisplayNameWithNamespace()} does not implement {nameof(INotification)}");
             return Task.CompletedTask;
         }
 

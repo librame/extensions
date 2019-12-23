@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Proxies
 {
     /// <summary>
     /// 调用依赖键名。

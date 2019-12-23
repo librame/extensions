@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class TelnetClientHandler : SimpleChannelInboundHandler<string>

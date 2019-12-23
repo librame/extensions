@@ -12,7 +12,7 @@
 
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Services
 {
     /// <summary>
     /// 短信服务接口。

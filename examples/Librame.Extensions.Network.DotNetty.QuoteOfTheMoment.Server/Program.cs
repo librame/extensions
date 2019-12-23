@@ -3,6 +3,8 @@ using System;
 
 namespace Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Server
 {
+    using Demo;
+
     class Program
     {
         static void Main(string[] args)

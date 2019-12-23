@@ -65,7 +65,7 @@ namespace Librame.Extensions.Tests
         public void GetBodyNameTest()
         {
             var dictType = typeof(IDictionary<string, IList<string>>);
-            var bodyName = dictType.GetBodyName();
+            var bodyName = dictType.GetGenericBodyName();
             Assert.Equal("IDictionary", bodyName);
         }
 
@@ -74,9 +74,9 @@ namespace Librame.Extensions.Tests
         public void GetSimpleAssemblyQualifiedNameTest()
         {
             var listType = typeof(IList<string>);
-            var qualifiedName = listType.GetSimpleAssemblyQualifiedName();
+            var qualifiedName = listType.GetAssemblyQualifiedNameWithoutVersion();
 
-            var targetQualifiedName = $"System.Collections.Generic.IList`1[System.String], {listType.Assembly.GetSimpleName()}";
+            var targetQualifiedName = $"System.Collections.Generic.IList`1[System.String], {listType.Assembly.GetDisplayName()}";
             Assert.Equal(targetQualifiedName, qualifiedName);
         }
 
@@ -88,14 +88,14 @@ namespace Librame.Extensions.Tests
             var dictType = typeof(IDictionary<string, IList<string>>);
 
             // GetSimpleName
-            var listTypeName = listType.GetSimpleName();
-            var dictTypeName = dictType.GetSimpleName();
+            var listTypeName = listType.GetDisplayName();
+            var dictTypeName = dictType.GetDisplayName();
             Assert.Equal("IList`1[String]", listTypeName);
             Assert.Equal("IDictionary`2[String, IList`1[String]]", dictTypeName);
 
             // GetFullName
-            listTypeName = listType.GetSimpleFullName();
-            dictTypeName = dictType.GetSimpleFullName();
+            listTypeName = listType.GetDisplayNameWithNamespace();
+            dictTypeName = dictType.GetDisplayNameWithNamespace();
             Assert.Equal("System.Collections.Generic.IList`1[System.String]", listTypeName);
             Assert.Equal("System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]", dictTypeName);
         }

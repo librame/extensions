@@ -13,7 +13,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Utilities
 {
     /// <summary>
     /// 相等比较器实用工具。

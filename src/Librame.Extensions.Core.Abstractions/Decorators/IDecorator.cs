@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Decorators
 {
     /// <summary>
     /// 装饰器接口。

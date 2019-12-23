@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Accessors
 {
     /// <summary>
     /// 数据库上下文访问器工厂。

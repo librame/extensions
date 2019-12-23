@@ -16,9 +16,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Extensions.Storage.Services
 {
-    using Core;
+    using Builders;
+    using Core.Identifiers;
+    using Core.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class FilePermissionService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFilePermissionService
@@ -49,6 +51,5 @@ namespace Librame.Extensions.Storage
 
         public Task<string> GetCookieValueAsync(CancellationToken cancellationToken = default)
             => GenerateTokenAsync("cookie value", cancellationToken);
-
     }
 }

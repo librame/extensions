@@ -12,6 +12,7 @@ namespace Librame.Extensions.Network.Tests
                 var services = new ServiceCollection();
 
                 services.AddLibrame()
+                    .AddEncryption()
                     .AddNetwork();
 
                 return services.BuildServiceProvider();

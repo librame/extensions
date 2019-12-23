@@ -7,6 +7,7 @@ using System.Linq;
 namespace Librame.Extensions.Data.Tests
 {
     using Models;
+    using Stores;
 
     public class TestStoreInitializer : StoreInitializer<TestStoreIdentifier>
     {
@@ -42,13 +43,13 @@ namespace Librame.Extensions.Data.Tests
                     {
                         Name = $"First {nameof(Category)}",
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetSimpleName()
+                        CreatedBy = GetType().GetDisplayName()
                     },
                     new Category
                     {
                         Name = $"Last {nameof(Category)}",
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetSimpleName()
+                        CreatedBy = GetType().GetDisplayName()
                     }
                 };
 
@@ -81,7 +82,7 @@ namespace Librame.Extensions.Data.Tests
                         Descr = $"{nameof(Article.Descr)} {i.FormatString(3)}",
                         Category = (i < 50) ? _categories.First() : _categories.Last(),
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetSimpleName()
+                        CreatedBy = GetType().GetDisplayName()
                     };
 
                     article.CreatedTimeTicks = article.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);

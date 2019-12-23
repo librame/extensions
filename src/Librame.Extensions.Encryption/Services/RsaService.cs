@@ -15,9 +15,10 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Services
 {
-    using Core;
+    using Builders;
+    using Core.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class RsaService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IRsaService
@@ -51,36 +52,24 @@ namespace Librame.Extensions.Encryption
             = RSAEncryptionPadding.Pkcs1;
 
 
-        public IByteMemoryBuffer SignData(IByteMemoryBuffer buffer)
-        {
-            buffer.ChangeMemory(memory => _rsa.Value.SignData(memory.ToArray(), SignHashAlgorithm, SignaturePadding));
-            return buffer;
-        }
+        public byte[] SignData(byte[] buffer)
+            => _rsa.Value.SignData(buffer, SignHashAlgorithm, SignaturePadding);
 
-        public IByteMemoryBuffer SignHash(IByteMemoryBuffer buffer)
-        {
-            buffer.ChangeMemory(memory => _rsa.Value.SignHash(memory.ToArray(), SignHashAlgorithm, SignaturePadding));
-            return buffer;
-        }
+        public byte[] SignHash(byte[] buffer)
+            => _rsa.Value.SignHash(buffer, SignHashAlgorithm, SignaturePadding);
 
 
-        public bool VerifyData(IByteMemoryBuffer buffer, IReadOnlyMemoryBuffer<byte> signedBuffer)
-            => _rsa.Value.VerifyData(buffer.Memory.ToArray(), signedBuffer.Memory.ToArray(), SignHashAlgorithm, SignaturePadding);
+        public bool VerifyData(byte[] buffer, byte[] signedBuffer)
+            => _rsa.Value.VerifyData(buffer, signedBuffer, SignHashAlgorithm, SignaturePadding);
 
-        public bool VerifyHash(IByteMemoryBuffer buffer, IReadOnlyMemoryBuffer<byte> signedBuffer)
-            => _rsa.Value.VerifyHash(buffer.Memory.ToArray(), signedBuffer.Memory.ToArray(), SignHashAlgorithm, SignaturePadding);
+        public bool VerifyHash(byte[] buffer, byte[] signedBuffer)
+            => _rsa.Value.VerifyHash(buffer, signedBuffer, SignHashAlgorithm, SignaturePadding);
 
 
-        public IByteMemoryBuffer Encrypt(IByteMemoryBuffer buffer)
-        {
-            buffer.ChangeMemory(memory => _rsa.Value.Encrypt(memory.ToArray(), EncryptionPadding));
-            return buffer;
-        }
+        public byte[] Encrypt(byte[] buffer)
+            => _rsa.Value.Encrypt(buffer, EncryptionPadding);
 
-        public IByteMemoryBuffer Decrypt(IByteMemoryBuffer buffer)
-        {
-            buffer.ChangeMemory(memory => _rsa.Value.Decrypt(memory.ToArray(), EncryptionPadding));
-            return buffer;
-        }
+        public byte[] Decrypt(byte[] buffer)
+            => _rsa.Value.Decrypt(buffer, EncryptionPadding);
     }
 }

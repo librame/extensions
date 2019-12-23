@@ -17,8 +17,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Collections
 {
+    using Stores;
+
     /// <summary>
     /// 抽象树形节点静态扩展。
     /// </summary>

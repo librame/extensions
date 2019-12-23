@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Examples
 {
-    using Data;
-    using Core;
+    using Data.Stores;
+    using Core.Services;
 
     public class ExampleStoreIdentifier : StoreIdentifier
     {

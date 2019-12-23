@@ -11,11 +11,9 @@
 #endregion
 
 using Microsoft.Extensions.FileProviders.Physical;
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 
-namespace Librame.Extensions.Storage
+namespace System.IO
 {
     /// <summary>
     /// 文件系统信息静态扩展。

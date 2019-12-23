@@ -23,10 +23,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Accessors
 {
-    using Core;
+    using Builders;
+    using Core.Services;
+    using Core.Threads;
     using Resources;
+    using Stores;
 
     /// <summary>
     /// 数据库上下文访问器基类。

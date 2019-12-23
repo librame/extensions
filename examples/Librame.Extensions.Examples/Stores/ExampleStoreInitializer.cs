@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Librame.Extensions.Examples
 {
-    using Data;
+    using Data.Stores;
     using Models;
 
     public class ExampleStoreInitializer : StoreInitializer<ExampleStoreIdentifier>
@@ -43,13 +43,13 @@ namespace Librame.Extensions.Examples
                     {
                         Name = $"First {nameof(Category)}",
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetSimpleName()
+                        CreatedBy = GetType().GetDisplayName()
                     },
                     new Category
                     {
                         Name = $"Last {nameof(Category)}",
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetSimpleName()
+                        CreatedBy = GetType().GetDisplayName()
                     }
                 };
 
@@ -82,7 +82,7 @@ namespace Librame.Extensions.Examples
                         Descr = $"{nameof(Article.Descr)} {i.FormatString(3)}",
                         Category = (i < 5) ? _categories.First() : _categories.Last(),
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetSimpleName()
+                        CreatedBy = GetType().GetDisplayName()
                     };
 
                     article.CreatedTimeTicks = article.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);

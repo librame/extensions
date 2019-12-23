@@ -4,6 +4,8 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Mediators;
+
     public class RequestPostProcessorBehaviorTests
     {
         [Fact]

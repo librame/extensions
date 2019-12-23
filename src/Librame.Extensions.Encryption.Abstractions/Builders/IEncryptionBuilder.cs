@@ -10,9 +10,9 @@
 
 #endregion
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Builders
 {
-    using Core;
+    using Core.Builders;
 
     /// <summary>
     /// 加密构建器接口。

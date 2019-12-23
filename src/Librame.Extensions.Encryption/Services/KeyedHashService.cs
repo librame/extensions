@@ -15,9 +15,12 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Services
 {
-    using Core;
+    using Builders;
+    using Core.Identifiers;
+    using Core.Services;
+    using KeyGenerators;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class KeyedHashService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyedHashService
@@ -76,21 +79,16 @@ namespace Librame.Extensions.Encryption
         public IKeyGenerator KeyGenerator { get; }
 
 
-        private IByteMemoryBuffer ComputeHash(IByteMemoryBuffer buffer, HMAC hmac)
+        private byte[] ComputeHash(byte[] buffer, HMAC hmac)
         {
-            buffer.ChangeMemory(memory =>
-            {
-                var hash = hmac.ComputeHash(memory.ToArray());
-                Logger.LogDebug($"Compute HMAC hash: {hmac.HashName}");
-
-                return hash;
-            });
+            buffer = hmac.ComputeHash(buffer);
+            Logger.LogDebug($"Compute HMAC hash: {hmac.HashName}");
 
             return buffer;
         }
 
 
-        public IByteMemoryBuffer HmacMd5(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] HmacMd5(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {
@@ -101,7 +99,7 @@ namespace Librame.Extensions.Encryption
             return ComputeHash(buffer, _hmacMd5.Value);
         }
 
-        public IByteMemoryBuffer HmacSha1(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] HmacSha1(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {
@@ -112,7 +110,7 @@ namespace Librame.Extensions.Encryption
             return ComputeHash(buffer, _hmacSha1.Value);
         }
 
-        public IByteMemoryBuffer HmacSha256(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] HmacSha256(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {
@@ -123,7 +121,7 @@ namespace Librame.Extensions.Encryption
             return ComputeHash(buffer, _hmacSha256.Value);
         }
 
-        public IByteMemoryBuffer HmacSha384(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] HmacSha384(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {
@@ -134,7 +132,7 @@ namespace Librame.Extensions.Encryption
             return ComputeHash(buffer, _hmacSha384.Value);
         }
 
-        public IByteMemoryBuffer HmacSha512(IByteMemoryBuffer buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] HmacSha512(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
         {
             if (identifier.IsNotNull())
             {

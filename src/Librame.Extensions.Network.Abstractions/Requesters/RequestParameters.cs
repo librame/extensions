@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Requesters
 {
     /// <summary>
     /// 请求参数集。

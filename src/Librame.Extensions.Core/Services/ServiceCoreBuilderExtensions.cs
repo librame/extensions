@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
+    using Services;
+
     static class ServiceCoreBuilderExtensions
     {
         internal static ICoreBuilder AddServices(this ICoreBuilder builder)

@@ -1,5 +1,4 @@
-﻿using Librame.Extensions.Core;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +8,10 @@ using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {
+    using Core.Services;
+    using Requesters;
+    using Services;
+
     public class CrawlerServiceTests
     {
         public class TestCrawlerService : ICrawlerService
@@ -20,11 +23,6 @@ namespace Librame.Extensions.Network.Tests
             public ILoggerFactory LoggerFactory => throw new NotImplementedException();
 
             public Encoding Encoding { get; set; }
-
-            public void Dispose()
-            {
-                throw new NotImplementedException();
-            }
 
             public Task<IList<string>> GetHyperLinksAsync(string url, string pattern = null)
             {
@@ -49,7 +47,6 @@ namespace Librame.Extensions.Network.Tests
         {
             ICrawlerService service = new TestCrawlerService();
 
-            Assert.Throws<NotImplementedException>(() => service.Dispose());
             Assert.ThrowsAsync<NotImplementedException>(() => service.GetHyperLinksAsync(null));
             Assert.ThrowsAsync<NotImplementedException>(() => service.GetImageLinksAsync(null));
             Assert.ThrowsAsync<NotImplementedException>(() => service.GetContentAsync(null, null));

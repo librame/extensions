@@ -10,7 +10,9 @@
 
 #endregion
 
-using Microsoft.EntityFrameworkCore;
+using Librame.Extensions;
+using Librame.Extensions.Data;
+using Librame.Extensions.Data.Stores;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -18,7 +20,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Microsoft.EntityFrameworkCore
 {
     /// <summary>
     /// <see cref="DbSet{TEntity}"/> 静态扩展。

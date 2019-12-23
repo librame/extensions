@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Proxies
 {
     /// <summary>
     /// 依赖代理接口。

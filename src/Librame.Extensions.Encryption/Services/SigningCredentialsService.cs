@@ -16,11 +16,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Services
 {
-    using Core;
+    using Builders;
+    using Core.Services;
 
-    class SigningCredentialsService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISigningCredentialsService
+    internal class SigningCredentialsService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISigningCredentialsService
     {
         private readonly ConcurrentDictionary<string, SigningCredentials> _credentials;
 
@@ -38,6 +39,5 @@ namespace Librame.Extensions.Encryption
 
         public SigningCredentials GetSigningCredentials(string key)
             => _credentials[key];
-
     }
 }

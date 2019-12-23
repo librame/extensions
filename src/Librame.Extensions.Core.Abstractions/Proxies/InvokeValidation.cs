@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Proxies
 {
     using Resources;
 
@@ -90,7 +90,7 @@ namespace Librame.Extensions.Core
 
             errorMessage = value?.ToString() ?? "null";
             return InternalResource.ValidationErrorMessageFormat.Format(memberInfo.MemberType.ToString().AsCamelCasing(),
-                errorMessage, validation.GetType().GetSimpleFullName());
+                errorMessage, validation.GetType().GetDisplayNameWithNamespace());
         }
 
     }

@@ -18,16 +18,23 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
+    using Builders;
+    using Threads;
+
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ClockService : AbstractConcurrentService, IClockService
     {
+        private TimeSpan _clockRefluxOffsetSeconds;
+
+
         public ClockService(IOptions<CoreBuilderOptions> options,
             IMemoryLocker locker, ILoggerFactory loggerFactory)
             : base(locker, loggerFactory)
         {
             Options = options.NotNull(nameof(options)).Value;
+            _clockRefluxOffsetSeconds = TimeSpan.FromSeconds(Options.ClockRefluxOffset);
         }
 
 
@@ -48,7 +55,7 @@ namespace Librame.Extensions.Core
                     if (timestamp > now)
                     {
                         // 计算时间差并添加补偿以解决时钟回流
-                        var offset = (timestamp - now).Add(Options.ClockRefluxOffset);
+                        var offset = (timestamp - now).Add(_clockRefluxOffsetSeconds);
                         now.Add(offset);
 
                         Logger.LogWarning($"Suspected clock reflux, check if the local clock is synchronized (IsUTC: {isUtc}).");
@@ -75,7 +82,7 @@ namespace Librame.Extensions.Core
                     if (timestamp > now)
                     {
                         // 计算时间差并添加补偿以解决时钟回流
-                        var offset = (timestamp - now).Add(Options.ClockRefluxOffset);
+                        var offset = (timestamp - now).Add(_clockRefluxOffsetSeconds);
                         now.Add(offset);
 
                         Logger.LogWarning("Suspected clock reflux, check if the local clock is synchronized (IsUTC: {isUtc}).");

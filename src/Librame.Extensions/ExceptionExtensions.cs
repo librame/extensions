@@ -233,7 +233,7 @@ namespace Librame.Extensions
         public static Type AssignableFromTarget(this Type baseType, Type targetType)
         {
             if (!baseType.IsAssignableFromTargetType(targetType))
-                throw new ArgumentException(InternalResource.ArgumentExceptionAssignableFromFormat.Format(baseType.GetSimpleFullName()), targetType.GetSimpleFullName());
+                throw new ArgumentException(InternalResource.ArgumentExceptionAssignableFromFormat.Format(baseType.GetDisplayNameWithNamespace()), targetType.GetDisplayNameWithNamespace());
 
             return targetType;
         }
@@ -273,7 +273,7 @@ namespace Librame.Extensions
             source.NotNull(paramName);
 
             if (!(source is TTarget target))
-                throw new ArgumentException(InternalResource.ArgumentExceptionCastToFormat.Format(source.GetType().GetSimpleFullName(), typeof(TTarget).GetSimpleFullName()));
+                throw new ArgumentException(InternalResource.ArgumentExceptionCastToFormat.Format(source.GetType().GetDisplayNameWithNamespace(), typeof(TTarget).GetDisplayNameWithNamespace()));
 
             return target;
         }

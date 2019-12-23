@@ -18,8 +18,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
+    using Mediators;
+    using Utilities;
+
     /// <summary>
     /// 抽象中介者核心构建器静态扩展。
     /// </summary>
@@ -31,7 +34,7 @@ namespace Librame.Extensions.Core
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddAutoRegistrationMediators(this ICoreBuilder builder)
-            => builder.AddAutoRegistrationMediators(AssemblyUtility.CurrentDomainAssembliesWithoutSystem);
+            => builder.AddAutoRegistrationMediators(AssemblyUtility.CurrentAssembliesWithoutSystem);
 
         /// <summary>
         /// 通过指定的程序集数组添加中介者集合。

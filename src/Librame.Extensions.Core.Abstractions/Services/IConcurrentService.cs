@@ -10,8 +10,10 @@
 
 #endregion
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
+    using Threads;
+
     /// <summary>
     /// 并发服务接口。
     /// </summary>

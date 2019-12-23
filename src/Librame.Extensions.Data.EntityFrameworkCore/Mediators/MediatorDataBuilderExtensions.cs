@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Builders
 {
+    using Mediators;
+
     static class MediatorDataBuilderExtensions
     {
         internal static IDataBuilder AddMediators(this IDataBuilder builder)

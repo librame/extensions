@@ -12,8 +12,10 @@
 
 using System;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
+    using Accessors;
+
     /// <summary>
     /// 存储中心接口（主要用于依赖注入的服务注册）。
     /// </summary>

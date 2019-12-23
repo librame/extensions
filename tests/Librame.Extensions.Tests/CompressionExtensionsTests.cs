@@ -13,6 +13,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace Librame.Extensions.Tests
@@ -23,7 +24,8 @@ namespace Librame.Extensions.Tests
         public void AllTest()
         {
             var str = nameof(CompressionExtensionsTests);
-            var buffer = str.FromEncodingString();
+            var encoding = Encoding.UTF8;
+            var buffer = str.FromEncodingString(encoding);
 
             // RTL
             var compress = buffer.RtlCompress(); // buffer.Length = 29
@@ -32,14 +34,14 @@ namespace Librame.Extensions.Tests
             var decompress = compress.RtlDecompress();
             Assert.Equal(buffer.Length, decompress.Length);
 
-            var raw = decompress.AsEncodingString();
+            var raw = decompress.AsEncodingString(encoding);
             Assert.Equal(str, raw);
 
             // Deflate
             var compressedBuffer = buffer.DeflateCompress(); // buffer.Length = 25
             var decompressedBuffer = compressedBuffer.DeflateDecompress();
             Assert.True(buffer.SequenceEqual(decompressedBuffer));
-            Assert.Equal(str, decompressedBuffer.AsEncodingString());
+            Assert.Equal(str, decompressedBuffer.AsEncodingString(encoding));
 
             var filePath = Path.Combine(Path.GetTempPath(), DateTime.Now.ToFileTime() + ".txt");
             File.WriteAllText(filePath, str);
@@ -59,7 +61,7 @@ namespace Librame.Extensions.Tests
             compressedBuffer = buffer.GZipCompress(); // buffer.Length = 43
             decompressedBuffer = compressedBuffer.GZipDecompress();
             Assert.True(buffer.SequenceEqual(decompressedBuffer));
-            Assert.Equal(str, decompressedBuffer.AsEncodingString());
+            Assert.Equal(str, decompressedBuffer.AsEncodingString(encoding));
 
             filePath = Path.Combine(Path.GetTempPath(), DateTime.Now.ToFileTime() + ".txt");
             File.WriteAllText(filePath, str);

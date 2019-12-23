@@ -13,8 +13,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Collections
 {
+    using Stores;
+
     /// <summary>
     /// 抽象可树形化静态扩展。
     /// </summary>
@@ -28,7 +30,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回树形化接口。</returns>
         public static ITreeable<T> AsTreeing<T>(this IEnumerable<T> items)
             where T : IParentId<int>
-            => new Treeing<T>(items);
+            => new TreeingCollection<T>(items);
 
         /// <summary>
         /// 转换为可树形集合。
@@ -40,7 +42,7 @@ namespace Librame.Extensions.Data
         public static ITreeable<T, TId> AsTreeing<T, TId>(this IEnumerable<T> items)
             where T : IParentId<TId>
             where TId : IEquatable<TId>
-            => new Treeing<T, TId>(items);
+            => new TreeingCollection<T, TId>(items);
 
     }
 }

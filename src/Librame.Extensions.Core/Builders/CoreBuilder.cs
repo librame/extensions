@@ -12,11 +12,11 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
-    class CoreBuilder : AbstractExtensionBuilder, ICoreBuilder
+    internal class CoreBuilder : AbstractExtensionBuilder, ICoreBuilder
     {
-        public CoreBuilder(IServiceCollection services, CoreBuilderDependencyOptions dependencyOptions)
+        public CoreBuilder(IServiceCollection services, CoreBuilderDependency dependencyOptions)
             : base(services, dependencyOptions)
         {
             Services.AddSingleton<ICoreBuilder>(this);

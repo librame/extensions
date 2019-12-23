@@ -10,10 +10,10 @@
 
 #endregion
 
+using Librame.Extensions;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
 
-namespace Librame.Extensions.Core
+namespace System.Security.Cryptography
 {
     /// <summary>
     /// 抽象随机数生成器静态扩展。
@@ -36,5 +36,6 @@ namespace Librame.Extensions.Core
 
             return buffer;
         }
+
     }
 }

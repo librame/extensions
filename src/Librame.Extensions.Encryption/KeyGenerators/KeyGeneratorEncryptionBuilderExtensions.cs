@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Builders
 {
+    using KeyGenerators;
+
     static class KeyGeneratorEncryptionBuilderExtensions
     {
         internal static IEncryptionBuilder AddKeyGenerators(this IEncryptionBuilder builder)

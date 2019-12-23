@@ -15,8 +15,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
+    using Resources;
+
     /// <summary>
     /// 抽象实体创建。
     /// </summary>

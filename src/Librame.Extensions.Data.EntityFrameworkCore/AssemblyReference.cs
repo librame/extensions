@@ -19,7 +19,7 @@ using System.Reflection;
 
 namespace Librame.Extensions.Data
 {
-    using Core;
+    using Core.Utilities;
 
     /// <summary>
     /// 程序集引用。
@@ -218,8 +218,8 @@ namespace Librame.Extensions.Data
         {
             assemblyName.NotEmpty(nameof(assemblyName));
 
-            var assembly = AssemblyUtility.CurrentDomainAssemblies
-                .FirstOrDefault(assembly => assemblyName.Equals(assembly.GetSimpleName(), StringComparison.OrdinalIgnoreCase));
+            var assembly = AssemblyUtility.CurrentAssemblies
+                .FirstOrDefault(assembly => assemblyName.Equals(assembly.GetDisplayName(), StringComparison.OrdinalIgnoreCase));
 
             if (assembly.IsNull())
                 throw new InvalidOperationException($"Assembly '{assemblyName}' not found.");

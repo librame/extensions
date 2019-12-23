@@ -2,12 +2,13 @@
 
 namespace Librame.Extensions.Examples
 {
-    using Core;
+    using Core.Builders;
+    using Core.Dependencies;
 
-    public class ExampleCoreBuilderDependencyOptions : CoreBuilderDependencyOptions
+    public class ExampleCoreBuilderDependencyOptions : CoreBuilderDependency
     {
-        public OptionsActionConfigurator<ExampleOptions> Example { get; }
-            = new OptionsActionConfigurator<ExampleOptions>();
+        public OptionsDependency<ExampleOptions> Example { get; }
+            = new OptionsDependency<ExampleOptions>();
     }
 
     public class ExampleOptions

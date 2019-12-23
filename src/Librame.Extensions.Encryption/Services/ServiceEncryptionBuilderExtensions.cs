@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Builders
 {
+    using Services;
+
     static class ServiceEncryptionBuilderExtensions
     {
         internal static IEncryptionBuilder AddServices(this IEncryptionBuilder builder)

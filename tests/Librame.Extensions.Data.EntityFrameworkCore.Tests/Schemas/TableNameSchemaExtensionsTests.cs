@@ -2,6 +2,8 @@
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Schemas;
+
     public class TableNameSchemaExtensionsTests
     {
         public class TestEntity

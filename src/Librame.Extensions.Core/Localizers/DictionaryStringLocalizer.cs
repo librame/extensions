@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Localizers
 {
     /// <summary>
     /// 字典字符串定位器。

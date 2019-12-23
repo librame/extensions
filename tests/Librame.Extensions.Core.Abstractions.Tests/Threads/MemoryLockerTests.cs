@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Threads;
+
     public class MemoryLockerTests
     {
         public class TestMemoryLocker : AbstractDisposable, IMemoryLocker

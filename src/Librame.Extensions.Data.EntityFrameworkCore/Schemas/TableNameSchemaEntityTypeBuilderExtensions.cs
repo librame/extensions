@@ -11,7 +11,7 @@
 #endregion
 
 using Librame.Extensions;
-using Librame.Extensions.Data;
+using Librame.Extensions.Data.Schemas;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Diagnostics.CodeAnalysis;

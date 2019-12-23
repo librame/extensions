@@ -12,9 +12,9 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
-    using Core;
+    using Core.Services;
 
     /// <summary>
     /// 抽象存储初始化器。

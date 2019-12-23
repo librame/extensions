@@ -12,9 +12,10 @@
 
 using System;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
-    using Core;
+    using Accessors;
+    using Core.Services;
 
     /// <summary>
     /// 存储接口。
@@ -37,7 +38,7 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 服务工厂。
         /// </summary>
-        /// <value>返回 <see cref="Core.ServiceFactory"/>。</value>
+        /// <value>返回 <see cref="ServiceFactory"/>。</value>
         ServiceFactory ServiceFactory { get; }
     }
 }

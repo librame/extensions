@@ -5,6 +5,9 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Identifiers;
+    using Serializers;
+
     public class UniqueAlgorithmIdentifierTests
     {
         [Fact]
@@ -14,10 +17,10 @@ namespace Librame.Extensions.Core.Tests
             Assert.NotEmpty(str);
 
             var guid = Guid.NewGuid();
-            var identifier = new UniqueAlgorithmIdentifier(guid, HexAlgorithmConverter.Default);
+            var identifier = new UniqueAlgorithmIdentifier(SerializableHelper.CreateReadOnlyMemoryHex(guid.ToByteArray()));
             Assert.NotEmpty((string)identifier);
 
-            var other = new UniqueAlgorithmIdentifier(identifier, identifier.Converter);
+            var other = new UniqueAlgorithmIdentifier(identifier.ReadOnlyMemory);
             Assert.True(identifier == other);
             Assert.False(identifier != other);
             Assert.True(identifier.Equals(other));
@@ -27,22 +30,13 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal(identifier.GetHashCode(), other.GetHashCode());
             Assert.Equal(identifier.ToString(), other.ToString());
 
-            // Serialization
-            var buffer = identifier.SerializeBinary().RtlCompress();
-            var base64String = buffer.AsBase64String();
-            Assert.NotEmpty(base64String);
-
-            buffer = base64String.FromBase64String().RtlDecompress();
-            var obj = buffer.DeserializeBinary();
-            Assert.True(identifier.Equals(obj));
-
             // CombGuid
             var timestamp = DateTimeOffset.UtcNow;
             var combGuid = identifier.RawGuid.AsCombGuid(timestamp);
             Assert.False(guid == combGuid);
             Assert.True(guid != combGuid);
 
-            var identifiers = UniqueAlgorithmIdentifier.NewArray(10, identifier.Converter);
+            var identifiers = UniqueAlgorithmIdentifier.NewArray(10);
             Assert.NotEmpty(identifiers);
 
             var shorts = identifiers.Select(id =>

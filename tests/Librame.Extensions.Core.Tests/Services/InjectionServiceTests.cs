@@ -3,6 +3,9 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Builders;
+    using Services;
+
     public class TestInjectionService
     {
         [InjectionService]

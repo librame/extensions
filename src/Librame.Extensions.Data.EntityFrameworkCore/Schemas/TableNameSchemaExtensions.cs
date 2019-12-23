@@ -12,8 +12,10 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Schemas
 {
+    using Builders;
+
     /// <summary>
     /// 表名架构静态扩展。
     /// </summary>

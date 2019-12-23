@@ -17,8 +17,10 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
+    using Threads;
+
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class EnvironmentService : AbstractConcurrentService, IEnvironmentService
     {

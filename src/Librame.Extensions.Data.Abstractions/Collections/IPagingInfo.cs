@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace System.Collections.Generic
+namespace Librame.Extensions.Data.Collections
 {
     /// <summary>
     /// 分页信息接口。

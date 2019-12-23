@@ -12,13 +12,13 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Builders
 {
-    using Core;
+    using Core.Builders;
 
-    class DataBuilder : AbstractExtensionBuilder, IDataBuilder
+    internal class DataBuilder : AbstractExtensionBuilder, IDataBuilder
     {
-        public DataBuilder(IExtensionBuilder builder, DataBuilderDependencyOptions dependencyOptions)
+        public DataBuilder(IExtensionBuilder builder, DataBuilderDependency dependencyOptions)
             : base(builder, dependencyOptions)
         {
             Services.AddSingleton<IDataBuilder>(this);

@@ -14,14 +14,15 @@ using System.Text;
 
 namespace Librame.Extensions.Core
 {
-    /// <summary>
-    /// 字符编码接口。
-    /// </summary>
-    public interface IEncoding
-    {
-        /// <summary>
-        /// 字符编码。
-        /// </summary>
-        Encoding Encoding { get; set; }
-    }
+    ///// <summary>
+    ///// 字符编码接口。
+    ///// </summary>
+    //public interface IEncoding
+    //{
+    //    /// <summary>
+    //    /// 
+    //    /// </summary>
+    //    /// <returns></returns>
+    //    Encoding EncodingSource { get; set; }
+    //}
 }

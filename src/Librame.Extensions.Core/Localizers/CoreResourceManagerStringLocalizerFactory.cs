@@ -18,7 +18,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Localizers
 {
     /// <summary>
     /// 核心资源管理器字符串定位器工厂。
@@ -114,7 +114,7 @@ namespace Librame.Extensions.Core
                 return typeInfo.FullName;
 
             var prefix = $"{baseNamespace}.{resourcesRelativePath}";
-            prefix += TrimPrefix(typeInfo.FullName, typeInfo.GetSimpleAssemblyName() + ".", baseNamespace + ".");
+            prefix += TrimPrefix(typeInfo.FullName, typeInfo.GetAssemblyDisplayName() + ".", baseNamespace + ".");
             Logger.LogTrace($"Get resource prefix '{prefix}'.");
 
             return prefix;
@@ -138,7 +138,7 @@ namespace Librame.Extensions.Core
             var resourceLocation = GetResourcePath(assembly);
             var locationPath = rootNamespace + "." + resourceLocation;
 
-            baseResourceName = locationPath + TrimPrefix(baseResourceName, assembly.GetSimpleName() + ".", baseNamespace + ".");
+            baseResourceName = locationPath + TrimPrefix(baseResourceName, assembly.GetDisplayName() + ".", baseNamespace + ".");
 
             return baseResourceName;
         }
@@ -183,7 +183,7 @@ namespace Librame.Extensions.Core
             if (assembly.TryGetCustomAttribute(out RootNamespaceAttribute attribute))
                 return attribute.RootNamespace;
 
-            return assembly.GetSimpleName();
+            return assembly.GetDisplayName();
         }
 
         /// <summary>

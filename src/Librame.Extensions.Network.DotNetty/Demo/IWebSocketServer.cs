@@ -14,7 +14,7 @@ using DotNetty.Transport.Channels;
 using System;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
     /// <summary>
     /// WebSocket 服务端接口。

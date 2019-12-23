@@ -10,13 +10,13 @@
 
 #endregion
 
-using Microsoft.EntityFrameworkCore;
+using Librame.Extensions;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace Librame.Extensions.Data
+namespace Microsoft.EntityFrameworkCore
 {
     /// <summary>
     /// <see cref="IndexBuilder"/> 静态扩展。
@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data
             var sb = new StringBuilder();
 
             // Prefix: EntityBodyName
-            sb.Append(indexBuilder.Metadata.DeclaringEntityType.ClrType.GetBodyName());
+            sb.Append(indexBuilder.Metadata.DeclaringEntityType.ClrType.GetGenericBodyName());
 
             foreach (var property in indexBuilder.Metadata.Properties)
                 sb.Append(property.Name);

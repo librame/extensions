@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Schemas
 {
     /// <summary>
     /// 抽象表架构。

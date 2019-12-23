@@ -6,6 +6,9 @@ using Xunit;
 
 namespace Librame.Extensions.Storage.Tests
 {
+    using Core.Combiners;
+    using Services;
+
     public class FileServiceTests
     {
         private IFileService _service;

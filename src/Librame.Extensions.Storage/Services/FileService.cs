@@ -21,9 +21,10 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Extensions.Storage.Services
 {
-    using Core;
+    using Builders;
+    using Core.Services;
 
     /// <summary>
     /// 文件服务。
@@ -242,16 +243,6 @@ namespace Librame.Extensions.Storage
                     }
                 }
             }
-        }
-
-
-        /// <summary>
-        /// 释放服务。
-        /// </summary>
-        protected override void DisposeCore()
-        {
-            _memoryCache.Dispose();
-            base.DisposeCore();
         }
     }
 }

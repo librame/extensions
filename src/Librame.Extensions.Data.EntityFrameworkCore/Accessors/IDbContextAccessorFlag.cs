@@ -10,12 +10,15 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+using System.Diagnostics.CodeAnalysis;
+
+namespace Librame.Extensions.Data.Accessors
 {
     /// <summary>
     /// 数据库上下文访问器标记接口。
     /// </summary>
-    internal interface IDbContextAccessorFlag
+    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
+    public interface IDbContextAccessorFlag
     {
     }
 }

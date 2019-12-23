@@ -87,7 +87,7 @@ namespace Librame.Extensions.Network.DotNetty
             Logger.LogDebug("Transport type: " + (useLibuv ? "Libuv" : "Socket"));
 
             var bootstrap = new Bootstrap().Group(group);
-            Logger.LogDebug($"Use group: {group.GetType().GetSimpleFullName()}");
+            Logger.LogDebug($"Use group: {group.GetType().GetDisplayNameWithNamespace()}");
 
             return bootstrap;
         }
@@ -122,8 +122,8 @@ namespace Librame.Extensions.Network.DotNetty
             Logger.LogDebug("Transport type: " + (useLibuv ? "Libuv" : "Socket"));
 
             var bootstrap = new ServerBootstrap().Group(bossGroup, workerGroup);
-            Logger.LogDebug($"Use boss group: {bossGroup.GetType().GetSimpleFullName()}");
-            Logger.LogDebug($"Use worker group: {workerGroup.GetType().GetSimpleFullName()}");
+            Logger.LogDebug($"Use boss group: {bossGroup.GetType().GetDisplayNameWithNamespace()}");
+            Logger.LogDebug($"Use worker group: {workerGroup.GetType().GetDisplayNameWithNamespace()}");
 
             return bootstrap;
         }

@@ -3,6 +3,9 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Schemas;
+    using Stores;
+
     public class TableNameDescriptorTests
     {
         [Fact]

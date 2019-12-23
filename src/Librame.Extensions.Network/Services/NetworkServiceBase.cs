@@ -15,9 +15,11 @@ using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Services
 {
-    using Core;
+    using Builders;
+    using Core.Builders;
+    using Core.Services;
 
     /// <summary>
     /// 网络服务基类。
@@ -35,7 +37,7 @@ namespace Librame.Extensions.Network
             : base(options, loggerFactory)
         {
             CoreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
-            Encoding = CoreOptions.Encoding;
+            Encoding = CoreOptions.Encoding.Source;
         }
 
         /// <summary>
@@ -47,7 +49,7 @@ namespace Librame.Extensions.Network
             : base(serviceBase)
         {
             CoreOptions = serviceBase.CoreOptions;
-            Encoding = CoreOptions.Encoding;
+            Encoding = CoreOptions.Encoding.Source;
         }
 
 
@@ -61,6 +63,6 @@ namespace Librame.Extensions.Network
         /// 字符编码。
         /// </summary>
         /// <value>返回 <see cref="System.Text.Encoding"/>。</value>
-        public Encoding Encoding { get; set; }
+        public Encoding Encoding { get; }
     }
 }

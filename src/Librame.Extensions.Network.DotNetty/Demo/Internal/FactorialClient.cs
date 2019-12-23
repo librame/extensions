@@ -20,9 +20,11 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
-    using Encryption;
+    using Builders;
+    using Core.Builders;
+    using Encryption.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class FactorialClient : ChannelServiceBase, IFactorialClient
@@ -31,16 +33,28 @@ namespace Librame.Extensions.Network.DotNetty
 
 
         public FactorialClient(IBootstrapWrapperFactory wrapperFactory,
-            ISigningCredentialsService signingCredentials,
+            ISigningCredentialsService signingCredentials, IOptions<CoreBuilderOptions> coreOptions,
             IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
-            : base(wrapperFactory, signingCredentials, options, loggerFactory)
+            : base(wrapperFactory, signingCredentials, coreOptions, options, loggerFactory)
         {
             _clientOptions = Options.FactorialClient;
         }
 
 
-        public Task StartAsync(Action<IChannel> configureProcess, string host = null, int? port = null)
-            => StartAsync(new FactorialClientHandler(this), configureProcess, host, port);
+        public async Task StartAsync(Action<IChannel> configureProcess, string host = null, int? port = null)
+        {
+            FactorialClientHandler handler = null;
+
+            try
+            {
+                handler = new FactorialClientHandler(this);
+                await StartAsync(handler, configureProcess, host, port).ConfigureAndWaitAsync();
+            }
+            finally
+            {
+                handler?.Dispose();
+            }
+        }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public async Task StartAsync<TChannelHandler>(TChannelHandler channelHandler,

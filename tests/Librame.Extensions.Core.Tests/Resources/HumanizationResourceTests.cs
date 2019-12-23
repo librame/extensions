@@ -5,6 +5,9 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Resources;
+    using Utilities;
+
     public class HumanizationResourceTests
     {
         [Fact]

@@ -14,9 +14,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Extensions.Drawing.Builders
 {
-    using Core;
+    using Core.Builders;
 
     /// <summary>
     /// 图画构建器选项。

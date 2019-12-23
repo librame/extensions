@@ -13,7 +13,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Mediators
 {
     /// <summary>
     /// 请求管道行为接口。

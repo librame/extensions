@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Builders
 {
+    using Services;
+
     static class ServiceNetworkBuilderExtensions
     {
         internal static INetworkBuilder AddServices(this INetworkBuilder builder)

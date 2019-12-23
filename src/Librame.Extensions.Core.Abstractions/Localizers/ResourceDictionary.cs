@@ -12,7 +12,7 @@
 
 using System.Collections.Concurrent;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Localizers
 {
     /// <summary>
     /// 资源字典。

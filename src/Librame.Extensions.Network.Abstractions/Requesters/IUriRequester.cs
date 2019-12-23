@@ -15,9 +15,10 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Requesters
 {
-    using Core;
+    using Core.Services;
+    using Services;
 
     /// <summary>
     /// URI 请求程序接口。

@@ -5,6 +5,9 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Localizers;
+    using Resources;
+
     public class DictionaryStringLocalizerTests
     {
         public static readonly string[] DefaultNames

@@ -11,8 +11,8 @@
 #endregion
 
 using Librame.Extensions;
-using Librame.Extensions.Core;
-using Librame.Extensions.Storage;
+using Librame.Extensions.Core.Builders;
+using Librame.Extensions.Storage.Builders;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -26,19 +26,19 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加存储扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="builderAction">给定的选项配置动作。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureOptions">给定的选项配置动作。</param>
         /// <param name="builderFactory">给定创建存储构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
-        public static IStorageBuilder AddStorage(this IExtensionBuilder builder,
-            Action<StorageBuilderOptions> builderAction,
-            Func<IExtensionBuilder, StorageBuilderDependencyOptions, IStorageBuilder> builderFactory = null)
+        public static IStorageBuilder AddStorage(this IExtensionBuilder baseBuilder,
+            Action<StorageBuilderOptions> configureOptions,
+            Func<IExtensionBuilder, StorageBuilderDependency, IStorageBuilder> builderFactory = null)
         {
-            builderAction.NotNull(nameof(builderAction));
+            configureOptions.NotNull(nameof(configureOptions));
 
-            return builder.AddStorage(dependency =>
+            return baseBuilder.AddStorage(dependency =>
             {
-                dependency.Builder.Action = builderAction;
+                dependency.Builder.ConfigureOptions = configureOptions;
             },
             builderFactory);
         }
@@ -46,38 +46,37 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加存储扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建存储构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
-        public static IStorageBuilder AddStorage(this IExtensionBuilder builder,
-            Action<StorageBuilderDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, StorageBuilderDependencyOptions, IStorageBuilder> builderFactory = null)
-            => builder.AddStorage<StorageBuilderDependencyOptions>(dependencyAction, builderFactory);
+        public static IStorageBuilder AddStorage(this IExtensionBuilder baseBuilder,
+            Action<StorageBuilderDependency> configureDependency = null,
+            Func<IExtensionBuilder, StorageBuilderDependency, IStorageBuilder> builderFactory = null)
+            => baseBuilder.AddStorage<StorageBuilderDependency>(configureDependency, builderFactory);
 
         /// <summary>
         /// 添加存储扩展。
         /// </summary>
         /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建存储构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
-        public static IStorageBuilder AddStorage<TDependencyOptions>(this IExtensionBuilder builder,
-            Action<TDependencyOptions> dependencyAction = null,
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseBuilder")]
+        public static IStorageBuilder AddStorage<TDependencyOptions>(this IExtensionBuilder baseBuilder,
+            Action<TDependencyOptions> configureDependency = null,
             Func<IExtensionBuilder, TDependencyOptions, IStorageBuilder> builderFactory = null)
-            where TDependencyOptions : StorageBuilderDependencyOptions, new()
+            where TDependencyOptions : StorageBuilderDependency, new()
         {
-            builder.NotNull(nameof(builder));
+            baseBuilder.NotNull(nameof(baseBuilder));
 
-            // Configure DependencyOptions
-            var dependency = dependencyAction.ConfigureDependency();
-            builder.Services.AddAllOptionsConfigurators(dependency);
+            // Configure Dependency
+            var dependency = configureDependency.ConfigureDependency(baseBuilder);
 
             // Create Builder
             var storageBuilder = builderFactory.NotNullOrDefault(()
-                => (b, d) => new StorageBuilder(b, d)).Invoke(builder, dependency);
+                => (b, d) => new StorageBuilder(b, d)).Invoke(baseBuilder, dependency);
 
             // Configure Builder
             return storageBuilder

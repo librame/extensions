@@ -12,13 +12,13 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Extensions.Drawing.Builders
 {
-    using Core;
+    using Core.Builders;
 
     class DrawingBuilder : AbstractExtensionBuilder, IDrawingBuilder
     {
-        public DrawingBuilder(IExtensionBuilder builder, DrawingBuilderDependencyOptions dependencyOptions)
+        public DrawingBuilder(IExtensionBuilder builder, DrawingBuilderDependency dependencyOptions)
             : base(builder, dependencyOptions)
         {
             Services.AddSingleton<IDrawingBuilder>(this);

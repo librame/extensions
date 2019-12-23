@@ -15,9 +15,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Services
 {
-    using Core;
+    using Core.Services;
+    using Requesters;
 
     /// <summary>
     /// 抓取器服务接口。

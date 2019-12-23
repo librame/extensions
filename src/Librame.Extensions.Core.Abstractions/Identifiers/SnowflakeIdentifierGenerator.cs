@@ -14,8 +14,11 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Identifiers
 {
+    using Services;
+    using Threads;
+
     /// <summary>
     /// 雪花标识符生成器。
     /// </summary>

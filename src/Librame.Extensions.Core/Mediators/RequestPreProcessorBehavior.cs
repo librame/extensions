@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Mediators
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class RequestPreProcessorBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>

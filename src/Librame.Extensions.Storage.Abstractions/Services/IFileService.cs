@@ -16,9 +16,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Extensions.Storage.Services
 {
-    using Core;
+    using Core.Services;
 
     /// <summary>
     /// 文件服务接口。

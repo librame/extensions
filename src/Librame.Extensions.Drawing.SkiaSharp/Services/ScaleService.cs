@@ -21,9 +21,11 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Extensions.Drawing.Services
 {
-    using Core;
+    using Builders;
+    using Core.Combiners;
+    using Core.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ScaleService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IScaleService

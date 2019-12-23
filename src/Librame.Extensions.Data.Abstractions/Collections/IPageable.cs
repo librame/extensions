@@ -10,9 +10,10 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Collections.Generic
+namespace Librame.Extensions.Data.Collections
 {
     /// <summary>
     /// 可分页接口。

@@ -12,13 +12,13 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Builders
 {
-    using Core;
+    using Core.Builders;
 
-    class EncryptionBuilder : AbstractExtensionBuilder, IEncryptionBuilder
+    internal class EncryptionBuilder : AbstractExtensionBuilder, IEncryptionBuilder
     {
-        public EncryptionBuilder(IExtensionBuilder builder, EncryptionBuilderDependencyOptions dependencyOptions)
+        public EncryptionBuilder(IExtensionBuilder builder, EncryptionBuilderDependency dependencyOptions)
             : base(builder, dependencyOptions)
         {
             Services.AddSingleton<IEncryptionBuilder>(this);

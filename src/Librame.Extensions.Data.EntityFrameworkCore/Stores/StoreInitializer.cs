@@ -15,9 +15,10 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
-    using Core;
+    using Accessors;
+    using Core.Threads;
 
     /// <summary>
     /// 存储初始化器。
@@ -192,7 +193,7 @@ namespace Librame.Extensions.Data
                 tenant.Id = GetTenantId<TGenId>();
                 tenant.UpdatedTime = tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult();
                 tenant.UpdatedTimeTicks = tenant.CreatedTimeTicks = tenant.UpdatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
-                tenant.UpdatedBy = tenant.CreatedBy = GetType().GetSimpleName();
+                tenant.UpdatedBy = tenant.CreatedBy = GetType().GetDisplayName();
 
                 stores.TryCreate(tenant);
                 RequiredSaveChanges = true;

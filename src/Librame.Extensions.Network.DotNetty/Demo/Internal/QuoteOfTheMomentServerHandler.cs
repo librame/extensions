@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class QuoteOfTheMomentServerHandler : SimpleChannelInboundHandler<DatagramPacket>
@@ -60,13 +60,13 @@ namespace Librame.Extensions.Network.DotNetty
                 return;
             }
 
-            var message = packet.Content.ToString(_server.Options.Encoding);
+            var message = packet.Content.ToString(_server.CoreOptions.Encoding.Source);
             if (message != "QOTM?")
             {
                 return;
             }
 
-            var bytes = _server.Options.Encoding.GetBytes("QOTM: " + NextQuote());
+            var bytes = _server.CoreOptions.Encoding.Source.GetBytes("QOTM: " + NextQuote());
             var buffer = Unpooled.WrappedBuffer(bytes);
             ctx.WriteAsync(new DatagramPacket(buffer, packet.Sender));
         }

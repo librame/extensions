@@ -3,6 +3,8 @@ using System;
 
 namespace Librame.Extensions.Encryption.Tests
 {
+    using Builders;
+
     internal static class TestServiceProvider
     {
         static TestServiceProvider()

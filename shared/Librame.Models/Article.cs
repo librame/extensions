@@ -3,6 +3,7 @@
 namespace Librame.Models
 {
     using Extensions.Data;
+    using Extensions.Data.Stores;
 
     [Description("文章")]
     [ShardingTable]

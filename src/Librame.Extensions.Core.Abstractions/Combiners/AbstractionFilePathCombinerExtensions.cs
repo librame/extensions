@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
     /// 抽象文件路径组合器静态扩展。

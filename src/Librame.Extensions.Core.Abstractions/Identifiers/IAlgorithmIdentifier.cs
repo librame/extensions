@@ -11,23 +11,19 @@
 #endregion
 
 using System;
-using System.Runtime.Serialization;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Identifiers
 {
+    using Serializers;
+
     /// <summary>
     /// 算法标识符接口。
     /// </summary>
-    public interface IAlgorithmIdentifier : IEquatable<IAlgorithmIdentifier>, ISerializable
+    public interface IAlgorithmIdentifier : IEquatable<IAlgorithmIdentifier>
     {
         /// <summary>
-        /// 只读的连续内存区域。
+        /// 只读内存。
         /// </summary>
-        ReadOnlyMemory<byte> Memory { get; }
-
-        /// <summary>
-        /// 算法转换器。
-        /// </summary>
-        IAlgorithmConverter Converter { get; }
+        SerializableObject<ReadOnlyMemory<byte>> ReadOnlyMemory { get; }
     }
 }

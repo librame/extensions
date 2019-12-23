@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Utilities
 {
     /// <summary>
     /// 计时器实用工具。

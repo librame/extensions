@@ -17,9 +17,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Proxies
 {
-    class InvokeDependency<TInterface> : AbstractDisposable, IInvokeDependency<TInterface>
+    internal class InvokeDependency<TInterface> : IInvokeDependency<TInterface>
         where TInterface : class
     {
         private readonly ConcurrentDictionary<InvokeDependencyKey, IEnumerable<Action<TInterface>>> _preActions = null;
@@ -30,13 +30,6 @@ namespace Librame.Extensions.Core
         {
             _preActions = new ConcurrentDictionary<InvokeDependencyKey, IEnumerable<Action<TInterface>>>();
             _postActions = new ConcurrentDictionary<InvokeDependencyKey, IEnumerable<Action<TInterface, object>>>();
-        }
-
-
-        protected override void DisposeCore()
-        {
-            _preActions.Clear();
-            _postActions.Clear();
         }
 
 

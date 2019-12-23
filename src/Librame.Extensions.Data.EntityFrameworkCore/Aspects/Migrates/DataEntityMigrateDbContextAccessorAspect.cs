@@ -23,9 +23,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Aspects
 {
-    using Core;
+    using Accessors;
+    using Builders;
+    using Core.Mediators;
+    using Core.Services;
+    using Mediators;
+    using Stores;
 
     /// <summary>
     /// 数据实体迁移数据库上下文访问器截面。
@@ -269,11 +274,11 @@ namespace Librame.Extensions.Data
         {
             var entity = typeof(TEntity).EnsureCreate<TEntity>();
             entity.Id = GetEntityId(cancellationToken);
-            entity.EntityName = entityType.ClrType.GetSimpleFullName();
-            entity.AssemblyName = entityType.ClrType.GetSimpleAssemblyName();
+            entity.EntityName = entityType.ClrType.GetDisplayNameWithNamespace();
+            entity.AssemblyName = entityType.ClrType.GetAssemblyDisplayName();
             entity.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
             entity.CreatedTimeTicks = entity.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
-            entity.CreatedBy = GetType().GetBodyName();
+            entity.CreatedBy = GetType().GetGenericBodyName();
 
             if (entityType.ClrType.TryGetCustomAttribute(out DescriptionAttribute descr)
                 && descr.Description.IsNotEmpty())
@@ -323,12 +328,5 @@ namespace Librame.Extensions.Data
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "entity")]
         protected virtual void SetDefaultTableSchema(TEntity entity, IEntityType entityType)
             => entity.Schema = Options.Tables.DefaultSchema.NotEmptyOrDefault("dbo");
-
-
-        /// <summary>
-        /// 释放实体表缓存。
-        /// </summary>
-        protected override void DisposeCore()
-            => _cache.Clear();
     }
 }

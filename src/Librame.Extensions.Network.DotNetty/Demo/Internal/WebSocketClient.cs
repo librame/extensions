@@ -22,9 +22,11 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
-    using Encryption;
+    using Builders;
+    using Core.Builders;
+    using Encryption.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class WebSocketClient : ChannelServiceBase, IWebSocketClient
@@ -33,9 +35,9 @@ namespace Librame.Extensions.Network.DotNetty
 
 
         public WebSocketClient(IBootstrapWrapperFactory wrapperFactory,
-            ISigningCredentialsService signingCredentials,
+            ISigningCredentialsService signingCredentials, IOptions<CoreBuilderOptions> coreOptions,
             IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
-            : base(wrapperFactory, signingCredentials, options, loggerFactory)
+            : base(wrapperFactory, signingCredentials, coreOptions, options, loggerFactory)
         {
             _clientOptions = Options.WebSocketClient;
         }

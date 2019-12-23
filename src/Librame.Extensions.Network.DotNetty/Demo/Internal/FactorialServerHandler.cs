@@ -16,7 +16,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class FactorialServerHandler : SimpleChannelInboundHandler<BigInteger>

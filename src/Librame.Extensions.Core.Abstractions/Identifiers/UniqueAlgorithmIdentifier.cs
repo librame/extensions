@@ -11,24 +11,33 @@
 #endregion
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Serialization;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Identifiers
 {
+    using Serializers;
+
     /// <summary>
     /// 唯一算法标识符。
     /// </summary>
-    [Serializable]
     public class UniqueAlgorithmIdentifier : AbstractAlgorithmIdentifier
     {
         /// <summary>
         /// 构造一个 <see cref="UniqueAlgorithmIdentifier"/>。
         /// </summary>
-        /// <param name="g">给定的 <see cref="Guid"/> 。</param>
-        /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>。</param>
-        public UniqueAlgorithmIdentifier(Guid g, IAlgorithmConverter converter)
-            : base(g.ToByteArray(), converter)
+        /// <param name="readOnlyMemory">给定的 <see cref="SerializableObject{ReadOnlyMemory}"/>。</param>
+        public UniqueAlgorithmIdentifier(SerializableObject<ReadOnlyMemory<byte>> readOnlyMemory)
+            : base(readOnlyMemory)
+        {
+            RawGuid = new Guid(readOnlyMemory?.Source.ToArray());
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="UniqueAlgorithmIdentifier"/>。
+        /// </summary>
+        /// <param name="g">给定的 <see cref="Guid"/>。</param>
+        /// <param name="readOnlyMemory">给定的 <see cref="SerializableObject{ReadOnlyMemory}"/>。</param>
+        public UniqueAlgorithmIdentifier(Guid g, SerializableObject<ReadOnlyMemory<byte>> readOnlyMemory)
+            : base(readOnlyMemory?.ChangeSource(g.ToByteArray()))
         {
             RawGuid = g;
         }
@@ -36,24 +45,12 @@ namespace Librame.Extensions.Core
         /// <summary>
         /// 构造一个 <see cref="UniqueAlgorithmIdentifier"/>。
         /// </summary>
-        /// <param name="identifier">给定的算法字符串。</param>
-        /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>。</param>
-        public UniqueAlgorithmIdentifier(string identifier, IAlgorithmConverter converter)
-            : base(identifier, converter)
+        /// <param name="identifier">给定的标识符字符串。</param>
+        /// <param name="readOnlyMemory">给定的 <see cref="SerializableObject{ReadOnlyMemory}"/>。</param>
+        public UniqueAlgorithmIdentifier(string identifier, SerializableObject<ReadOnlyMemory<byte>> readOnlyMemory)
+            : base(readOnlyMemory?.ChangeValue(identifier))
         {
-            RawGuid = new Guid(Memory.ToArray());
-        }
-
-        /// <summary>
-        /// 构造一个 <see cref="UniqueAlgorithmIdentifier"/>。
-        /// </summary>
-        /// <param name="info">给定的 <see cref="SerializationInfo"/>。</param>
-        /// <param name="context">给定的 <see cref="StreamingContext"/>。</param>
-        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "context")]
-        protected UniqueAlgorithmIdentifier(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            RawGuid = new Guid(Memory.ToArray());
+            RawGuid = new Guid(readOnlyMemory.Source.ToArray());
         }
 
 
@@ -64,31 +61,36 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 只读空标识符实例（默认使用 <see cref="HexAlgorithmConverter"/> 转换器）。
+        /// 空实例（默认使用 HEX 序列化字节数组）。
         /// </summary>
         public static readonly UniqueAlgorithmIdentifier Empty
-            = new UniqueAlgorithmIdentifier(Guid.Empty, HexAlgorithmConverter.Default);
+            = new UniqueAlgorithmIdentifier(SerializableHelper.CreateReadOnlyMemoryHex(Guid.Empty.ToByteArray()));
 
 
         /// <summary>
         /// 新建实例。
         /// </summary>
-        /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>（可选；默认使用 <see cref="HexAlgorithmConverter"/> 转换器）。</param>
+        /// <param name="readOnlyMemory">给定的 <see cref="SerializableObject{ReadOnlyMemory}"/>（可选；默认使用 HEX 序列化字节数组）。</param>
         /// <returns>返回 <see cref="UniqueAlgorithmIdentifier"/>。</returns>
-        public static UniqueAlgorithmIdentifier New(IAlgorithmConverter converter = null)
-            => new UniqueAlgorithmIdentifier(Guid.NewGuid(), converter ?? HexAlgorithmConverter.Default);
+        public static UniqueAlgorithmIdentifier New(SerializableObject<ReadOnlyMemory<byte>> readOnlyMemory = null)
+        {
+            if (readOnlyMemory.IsNull())
+                return new UniqueAlgorithmIdentifier(SerializableHelper.CreateReadOnlyMemoryHex(Guid.NewGuid().ToByteArray()));
+
+            return new UniqueAlgorithmIdentifier(Guid.NewGuid(), readOnlyMemory);
+        }
 
         /// <summary>
-        /// 新建数组实例。
+        /// 新建实例数组。
         /// </summary>
         /// <param name="count">给定要生成的实例数量。</param>
-        /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>（可选；默认使用 <see cref="HexAlgorithmConverter"/> 转换器）。</param>
+        /// <param name="readOnlyMemory">给定的 <see cref="SerializableObject{ReadOnlyMemory}"/>（可选；默认使用 HEX 序列化字节数组）。</param>
         /// <returns>返回 <see cref="UniqueAlgorithmIdentifier"/> 数组。</returns>
-        public static UniqueAlgorithmIdentifier[] NewArray(int count, IAlgorithmConverter converter = null)
+        public static UniqueAlgorithmIdentifier[] NewArray(int count, SerializableObject<ReadOnlyMemory<byte>> readOnlyMemory = null)
         {
             var identifiers = new UniqueAlgorithmIdentifier[count];
             for (var i = 0; i < count; i++)
-                identifiers[i] = New(converter);
+                identifiers[i] = New(readOnlyMemory);
 
             return identifiers;
         }

@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Extensions.Storage.Builders
 {
+    using Services;
+
     static class ServiceStorageBuilderExtensions
     {
         internal static IStorageBuilder AddServices(this IStorageBuilder builder)

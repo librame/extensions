@@ -10,9 +10,9 @@
 
 #endregion
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Builders
 {
-    using Core;
+    using Core.Builders;
 
     /// <summary>
     /// 网络构建器接口。
@@ -20,19 +20,19 @@ namespace Librame.Extensions.Network
     public interface INetworkBuilder : IExtensionBuilder
     {
         /// <summary>
-        /// DotNetty 依赖选项。
+        /// DotNetty 依赖。
         /// </summary>
         /// <value>
-        /// 返回 <see cref="IExtensionBuilderDependencyOptions"/>。
+        /// 返回 <see cref="IExtensionBuilderDependency"/>。
         /// </value>
-        IExtensionBuilderDependencyOptions DotNettyDependencyOptions { get; }
+        IExtensionBuilderDependency DotNettyDependency { get; }
 
 
         /// <summary>
-        /// 添加 DotNetty 依赖选项。
+        /// 添加 DotNetty 依赖。
         /// </summary>
-        /// <param name="dependencyOptions">给定的 <see cref="IExtensionBuilderDependencyOptions"/>。</param>
+        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        INetworkBuilder AddDotNettyDependencyOptions(IExtensionBuilderDependencyOptions dependencyOptions);
+        INetworkBuilder AddDotNettyDependency(IExtensionBuilderDependency dependency);
     }
 }

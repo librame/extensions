@@ -4,7 +4,8 @@ using Xunit;
 
 namespace Librame.Extensions.Storage.Tests
 {
-    using Core;
+    using Core.Combiners;
+    using Services;
 
     public class FileTransferServiceTests
     {

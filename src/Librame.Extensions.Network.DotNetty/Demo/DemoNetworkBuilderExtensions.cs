@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.Builders
 {
+    using DotNetty.Demo;
+
     static class DemoNetworkBuilderExtensions
     {
         internal static INetworkBuilder AddDemo(this INetworkBuilder builder)

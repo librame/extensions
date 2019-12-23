@@ -12,7 +12,7 @@
 
 using System.Globalization;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Utilities
 {
     /// <summary>
     /// 文化信息实用工具。

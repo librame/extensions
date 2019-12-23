@@ -12,7 +12,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Mediators
 {
     /// <summary>
     /// 请求接口。

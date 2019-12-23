@@ -12,9 +12,10 @@
 
 using System;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Mediators
 {
-    using Core;
+    using Core.Mediators;
+    using Stores;
 
     /// <summary>
     /// 迁移通知。

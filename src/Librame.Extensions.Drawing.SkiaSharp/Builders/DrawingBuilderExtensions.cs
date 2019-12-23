@@ -11,8 +11,8 @@
 #endregion
 
 using Librame.Extensions;
-using Librame.Extensions.Core;
-using Librame.Extensions.Drawing;
+using Librame.Extensions.Core.Builders;
+using Librame.Extensions.Drawing.Builders;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -26,19 +26,19 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加图画扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="builderAction">给定的选项配置动作。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureOptions">给定的配置选项动作方法。</param>
         /// <param name="builderFactory">给定创建图画构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        public static IDrawingBuilder AddDrawing(this IExtensionBuilder builder,
-            Action<DrawingBuilderOptions> builderAction,
-            Func<IExtensionBuilder, DrawingBuilderDependencyOptions, IDrawingBuilder> builderFactory = null)
+        public static IDrawingBuilder AddDrawing(this IExtensionBuilder baseBuilder,
+            Action<DrawingBuilderOptions> configureOptions,
+            Func<IExtensionBuilder, DrawingBuilderDependency, IDrawingBuilder> builderFactory = null)
         {
-            builderAction.NotNull(nameof(builderAction));
+            configureOptions.NotNull(nameof(configureOptions));
 
-            return builder.AddDrawing(dependency =>
+            return baseBuilder.AddDrawing(dependency =>
             {
-                dependency.Builder.Action = builderAction;
+                dependency.Builder.ConfigureOptions = configureOptions;
             },
             builderFactory);
         }
@@ -46,36 +46,35 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加图画扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建图画构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        public static IDrawingBuilder AddDrawing(this IExtensionBuilder builder,
-            Action<DrawingBuilderDependencyOptions> dependencyAction = null,
-            Func<IExtensionBuilder, DrawingBuilderDependencyOptions, IDrawingBuilder> builderFactory = null)
-            => builder.AddDrawing<DrawingBuilderDependencyOptions>(dependencyAction, builderFactory);
+        public static IDrawingBuilder AddDrawing(this IExtensionBuilder baseBuilder,
+            Action<DrawingBuilderDependency> configureDependency = null,
+            Func<IExtensionBuilder, DrawingBuilderDependency, IDrawingBuilder> builderFactory = null)
+            => baseBuilder.AddDrawing<DrawingBuilderDependency>(configureDependency, builderFactory);
 
         /// <summary>
         /// 添加图画扩展。
         /// </summary>
         /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="dependencyAction">给定的依赖选项配置动作（可选）。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建图画构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "exception")]
-        public static IDrawingBuilder AddDrawing<TDependencyOptions>(this IExtensionBuilder builder,
-            Action<TDependencyOptions> dependencyAction = null,
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseBuilder")]
+        public static IDrawingBuilder AddDrawing<TDependencyOptions>(this IExtensionBuilder baseBuilder,
+            Action<TDependencyOptions> configureDependency = null,
             Func<IExtensionBuilder, TDependencyOptions, IDrawingBuilder> builderFactory = null)
-            where TDependencyOptions : DrawingBuilderDependencyOptions, new()
+            where TDependencyOptions : DrawingBuilderDependency, new()
         {
-            // Configure DependencyOptions
-            var dependency = dependencyAction.ConfigureDependency();
-            builder.Services.AddAllOptionsConfigurators(dependency);
+            // Configure Dependency
+            var dependency = configureDependency.ConfigureDependency(baseBuilder);
 
             // Create Builder
             var drawingBuilder = builderFactory.NotNullOrDefault(()
-                => (b, d) => new DrawingBuilder(b, d)).Invoke(builder, dependency);
+                => (b, d) => new DrawingBuilder(b, d)).Invoke(baseBuilder, dependency);
 
             // Configure Builder
             return drawingBuilder

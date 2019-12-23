@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Threads
 {
     /// <summary>
     /// 抽象内存锁定器静态扩展。

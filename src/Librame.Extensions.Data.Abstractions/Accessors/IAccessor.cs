@@ -15,9 +15,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Accessors
 {
-    using Core;
+    using Core.Services;
+    using Core.Threads;
+    using Stores;
 
     /// <summary>
     /// 访问器接口。

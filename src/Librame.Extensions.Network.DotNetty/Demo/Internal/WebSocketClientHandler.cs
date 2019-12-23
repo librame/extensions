@@ -20,7 +20,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class WebSocketClientHandler : SimpleChannelInboundHandler<object>
@@ -78,7 +78,7 @@ namespace Librame.Extensions.Network.DotNetty
             if (message is IFullHttpResponse response)
             {
                 throw new InvalidOperationException(
-                    $"Unexpected FullHttpResponse (getStatus={response.Status}, content={response.Content.ToString(_client.Options.Encoding)})");
+                    $"Unexpected FullHttpResponse (getStatus={response.Status}, content={response.Content.ToString(_client.CoreOptions.Encoding.Source)})");
             }
 
             if (message is TextWebSocketFrame textFrame)

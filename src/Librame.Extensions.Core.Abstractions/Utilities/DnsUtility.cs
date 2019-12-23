@@ -16,7 +16,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Utilities
 {
     /// <summary>
     /// DNS 实用工具。

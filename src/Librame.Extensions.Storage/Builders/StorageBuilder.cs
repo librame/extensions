@@ -12,13 +12,13 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Extensions.Storage.Builders
 {
-    using Core;
+    using Core.Builders;
 
-    class StorageBuilder : AbstractExtensionBuilder, IStorageBuilder
+    internal class StorageBuilder : AbstractExtensionBuilder, IStorageBuilder
     {
-        public StorageBuilder(IExtensionBuilder builder, StorageBuilderDependencyOptions dependencyOptions)
+        public StorageBuilder(IExtensionBuilder builder, StorageBuilderDependency dependencyOptions)
             : base(builder, dependencyOptions)
         {
             Services.AddSingleton<IStorageBuilder>(this);

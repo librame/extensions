@@ -13,7 +13,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
     /// <summary>
     /// 自注册服务特性。

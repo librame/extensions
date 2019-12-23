@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client
 {
+    using Demo;
+
     class Program
     {
         static void Main(string[] args)
@@ -17,7 +19,7 @@ namespace Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client
                 Console.WriteLine("Sending broadcast QOTM");
 
                 // Broadcast the QOTM request to port.
-                var bytes = client.Options.Encoding.GetBytes("QOTM?");
+                var bytes = client.CoreOptions.Encoding.Source.GetBytes("QOTM?");
                 var buffer = Unpooled.WrappedBuffer(bytes);
 
                 var endPoint = new IPEndPoint(IPAddress.Broadcast,

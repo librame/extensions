@@ -5,6 +5,8 @@ using System;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Builders;
+
     internal static class TestServiceProvider
     {
         static TestServiceProvider()
@@ -23,7 +25,7 @@ namespace Librame.Extensions.Data.Tests
                     .AddAccessor<TestDbContextAccessor>((options, optionsBuilder) =>
                     {
                         optionsBuilder.UseSqlServer(options.DefaultTenant.DefaultConnectionString,
-                            sql => sql.MigrationsAssembly(typeof(TestServiceProvider).GetSimpleAssemblyName()));
+                            sql => sql.MigrationsAssembly(typeof(TestServiceProvider).GetAssemblyDisplayName()));
                     })
                     .AddDbDesignTime<SqlServerDesignTimeServices>()
                     .AddIdentifier<TestStoreIdentifier>()

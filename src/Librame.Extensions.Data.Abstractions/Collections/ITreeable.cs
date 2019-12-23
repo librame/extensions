@@ -10,11 +10,14 @@
 
 #endregion
 
-using Librame.Extensions.Data;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Collections.Generic
+namespace Librame.Extensions.Data.Collections
 {
+    using Stores;
+
     /// <summary>
     /// 可树形接口。
     /// </summary>

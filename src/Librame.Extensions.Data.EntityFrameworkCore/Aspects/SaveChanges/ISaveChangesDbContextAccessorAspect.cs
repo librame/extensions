@@ -12,8 +12,10 @@
 
 using System;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Aspects
 {
+    using Stores;
+
     /// <summary>
     /// 保存变化数据库上下文访问器截面接口（通常用于无写入请求限制的前置保存变化操作）。
     /// </summary>

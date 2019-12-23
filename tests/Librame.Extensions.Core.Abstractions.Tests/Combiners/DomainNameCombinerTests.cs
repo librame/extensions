@@ -3,6 +3,8 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Combiners;
+
     public class DomainNameCombinerTests
     {
         [Fact]

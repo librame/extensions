@@ -12,8 +12,11 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Accessors
 {
+    using Builders;
+    using Stores;
+
     /// <summary>
     /// 数据库上下文访问器接口。
     /// </summary>

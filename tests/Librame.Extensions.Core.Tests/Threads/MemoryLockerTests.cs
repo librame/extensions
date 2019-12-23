@@ -6,6 +6,8 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Threads;
+
     public class MemoryLockerTests
     {
         [Fact]

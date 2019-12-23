@@ -4,7 +4,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Tests
 {
-    using Core;
+    using Core.Services;
+    using Stores;
 
     public class TestStoreIdentifier : StoreIdentifier
     {

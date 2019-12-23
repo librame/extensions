@@ -3,6 +3,8 @@ using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {
+    using Services;
+
     public class SmsServiceTests
     {
         private ISmsService _service;

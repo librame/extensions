@@ -12,12 +12,12 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
     /// <summary>
     /// 抽象服务。
     /// </summary>
-    public abstract class AbstractService : AbstractDisposable, IService
+    public abstract class AbstractService : IService
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractService"/>。
@@ -41,12 +41,5 @@ namespace Librame.Extensions.Core
         /// <value>返回 <see cref="ILogger"/>。</value>
         protected virtual ILogger Logger
             => LoggerFactory?.CreateLogger(GetType());
-
-
-        /// <summary>
-        /// 释放服务。
-        /// </summary>
-        protected override void DisposeCore()
-            => Logger?.LogTrace($"The {GetType().GetSimpleFullName()} was disposed.");
     }
 }

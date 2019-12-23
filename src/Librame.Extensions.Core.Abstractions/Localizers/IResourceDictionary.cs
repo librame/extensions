@@ -13,7 +13,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Localizers
 {
     /// <summary>
     /// 资源字典接口。

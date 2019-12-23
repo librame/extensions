@@ -3,6 +3,8 @@ using System;
 
 namespace Librame.Extensions.Network.DotNetty.Factorial.Server
 {
+    using Demo;
+
     class Program
     {
         static void Main(string[] args)

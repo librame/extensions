@@ -2,7 +2,8 @@
 
 namespace Librame.Extensions.Examples
 {
-    using Data;
+    using Data.Accessors;
+    using Data.Schemas;
     using Models;
 
     public class ExampleDbContextAccessor : DbContextAccessor

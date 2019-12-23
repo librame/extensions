@@ -15,13 +15,13 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Proxies
 {
     /// <summary>
     /// 调用依赖接口。
     /// </summary>
     /// <typeparam name="TInterface">指定的接口类型。</typeparam>
-    public interface IInvokeDependency<TInterface> : IDisposable
+    public interface IInvokeDependency<TInterface>
         where TInterface : class
     {
         /// <summary>

@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Extensions.Drawing.Builders
 {
+    using Services;
+
     static class ServiceDrawingBuilderExtensions
     {
         internal static IDrawingBuilder AddServices(this IDrawingBuilder builder)

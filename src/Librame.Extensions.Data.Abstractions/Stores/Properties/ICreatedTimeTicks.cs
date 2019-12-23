@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
     /// <summary>
     /// 创建时间周期数接口。

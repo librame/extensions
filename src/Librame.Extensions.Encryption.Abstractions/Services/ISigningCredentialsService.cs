@@ -12,9 +12,9 @@
 
 using Microsoft.IdentityModel.Tokens;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Services
 {
-    using Core;
+    using Core.Services;
 
     /// <summary>
     /// 签名证书服务接口。

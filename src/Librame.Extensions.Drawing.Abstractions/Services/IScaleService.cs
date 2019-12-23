@@ -15,9 +15,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Extensions.Drawing.Services
 {
-    using Core;
+    using Core.Services;
 
     /// <summary>
     /// 缩放服务接口。

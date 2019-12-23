@@ -13,9 +13,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
-    using Core;
+    using Core.Services;
 
     /// <summary>
     /// 存储标识符接口。

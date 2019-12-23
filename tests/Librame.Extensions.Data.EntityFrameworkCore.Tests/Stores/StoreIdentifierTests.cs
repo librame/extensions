@@ -3,6 +3,8 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Stores;
+
     public class StoreIdentifierTests
     {
         [Fact]

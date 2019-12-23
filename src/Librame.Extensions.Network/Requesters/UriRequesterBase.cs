@@ -15,8 +15,10 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Requesters
 {
+    using Services;
+
     /// <summary>
     /// URI 请求程序基类。
     /// </summary>

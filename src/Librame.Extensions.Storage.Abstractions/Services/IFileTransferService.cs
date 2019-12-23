@@ -12,18 +12,25 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Extensions.Storage.Services
 {
-    using Core;
+    using Core.Combiners;
+    using Core.Services;
 
     /// <summary>
     /// 文件传输服务接口。
     /// </summary>
-    public interface IFileTransferService : IService, IEncoding
+    public interface IFileTransferService : IService
     {
+        /// <summary>
+        /// 字符编码。
+        /// </summary>
+        Encoding Encoding { get; }
+
         /// <summary>
         /// 使用访问令牌。
         /// </summary>

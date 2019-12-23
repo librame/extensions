@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
     /// <summary>
     /// 核心构建器接口。

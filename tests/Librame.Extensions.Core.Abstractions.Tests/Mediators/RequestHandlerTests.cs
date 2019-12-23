@@ -4,6 +4,8 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Mediators;
+
     public class RequestHandlerTests
     {
         public class Ping : IRequest<Pong>

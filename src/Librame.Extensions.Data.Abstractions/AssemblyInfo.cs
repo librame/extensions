@@ -13,4 +13,4 @@
 using Microsoft.Extensions.Localization;
 
 [assembly: RootNamespace("Librame.Extensions.Data")]
-[assembly: ResourceLocation("Resources")]
+//[assembly: ResourceLocation("Resources")]

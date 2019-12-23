@@ -17,8 +17,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Collections
 {
+    using Stores;
+
     /// <summary>
     /// 抽象可分页静态扩展。
     /// </summary>
@@ -57,7 +59,7 @@ namespace Librame.Extensions.Data
             var descriptor = new PagingDescriptor((int)rows?.Count);
             computeAction?.Invoke(descriptor);
 
-            return new Paging<T>(rows, descriptor);
+            return new PagingCollection<T>(rows, descriptor);
         }
 
         #endregion
@@ -480,7 +482,7 @@ namespace Librame.Extensions.Data
             if (descriptor.Size > 0)
                 query = query.Take(descriptor.Size);
 
-            return new Paging<TEntity>(query.ToList(), descriptor);
+            return new PagingCollection<TEntity>(query.ToList(), descriptor);
         }
 
         #endregion

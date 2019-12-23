@@ -13,7 +13,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
     /// <summary>
     /// 服务集合管理器接口。

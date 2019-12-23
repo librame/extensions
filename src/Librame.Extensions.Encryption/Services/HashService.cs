@@ -15,9 +15,10 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Services
 {
-    using Core;
+    using Builders;
+    using Core.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class HashService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IHashService
@@ -50,19 +51,14 @@ namespace Librame.Extensions.Encryption
         public IRsaService Rsa { get; }
 
 
-        private IByteMemoryBuffer ComputeHash(HashAlgorithm algorithm, IByteMemoryBuffer buffer, bool isSigned = false)
+        private byte[] ComputeHash(HashAlgorithm algorithm, byte[] buffer, bool isSigned = false)
         {
-            buffer.ChangeMemory(memory =>
-            {
-                var hash = algorithm.ComputeHash(memory.ToArray());
-                Logger.LogDebug($"Compute hash: {algorithm.GetType().Name}");
-
-                return hash;
-            });
+            buffer = algorithm.ComputeHash(buffer);
+            Logger.LogDebug($"Compute hash: {algorithm.GetType().Name}");
 
             if (isSigned)
             {
-                Rsa.SignHash(buffer);
+                buffer = Rsa.SignHash(buffer);
                 Logger.LogDebug($"Use rsa sign hash: {Rsa.SignHashAlgorithm.Name}");
             }
 
@@ -70,19 +66,19 @@ namespace Librame.Extensions.Encryption
         }
 
         
-        public IByteMemoryBuffer Md5(IByteMemoryBuffer buffer, bool isSigned = false)
+        public byte[] Md5(byte[] buffer, bool isSigned = false)
             => ComputeHash(_md5.Value, buffer, isSigned);
 
-        public IByteMemoryBuffer Sha1(IByteMemoryBuffer buffer, bool isSigned = false)
+        public byte[] Sha1(byte[] buffer, bool isSigned = false)
             => ComputeHash(_sha1.Value, buffer, isSigned);
 
-        public IByteMemoryBuffer Sha256(IByteMemoryBuffer buffer, bool isSigned = false)
+        public byte[] Sha256(byte[] buffer, bool isSigned = false)
             => ComputeHash(_sha256.Value, buffer, isSigned);
 
-        public IByteMemoryBuffer Sha384(IByteMemoryBuffer buffer, bool isSigned = false)
+        public byte[] Sha384(byte[] buffer, bool isSigned = false)
             => ComputeHash(_sha384.Value, buffer, isSigned);
 
-        public IByteMemoryBuffer Sha512(IByteMemoryBuffer buffer, bool isSigned = false)
+        public byte[] Sha512(byte[] buffer, bool isSigned = false)
             => ComputeHash(_sha512.Value, buffer, isSigned);
     }
 }

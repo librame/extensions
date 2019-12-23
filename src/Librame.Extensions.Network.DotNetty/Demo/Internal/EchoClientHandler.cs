@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class EchoClientHandler : ChannelHandlerAdapter
@@ -35,7 +35,7 @@ namespace Librame.Extensions.Network.DotNetty
             _buffer = Unpooled.Buffer(_client.Options.EchoClient.BufferSize);
 
             var initMessage = "Welcome to Librame";
-            _buffer.WriteBytes(_client.Options.Encoding.GetBytes(initMessage));
+            _buffer.WriteBytes(_client.CoreOptions.Encoding.Source.GetBytes(initMessage));
             _logger.LogInformation($"Write message: {initMessage}");
         }
 
@@ -47,7 +47,7 @@ namespace Librame.Extensions.Network.DotNetty
         {
             var buffer = message as IByteBuffer;
             if (buffer.IsNotNull())
-                _logger.LogInformation($"Received from server: {buffer.ToString(_client.Options.Encoding)}");
+                _logger.LogInformation($"Received from server: {buffer.ToString(_client.CoreOptions.Encoding.Source)}");
 
             context.WriteAsync(message);
         }

@@ -15,9 +15,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Mediators
 {
-    using Core;
+    using Core.Mediators;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class AuditNotificationHandler<TAudit, TAuditProperty> : AbstractNotificationHandler<AuditNotification<TAudit, TAuditProperty>>

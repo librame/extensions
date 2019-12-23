@@ -15,7 +15,7 @@ using System.ComponentModel;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Services
 {
     /// <summary>
     /// 邮箱服务接口。

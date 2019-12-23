@@ -15,7 +15,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Proxies
 {
     /// <summary>
     /// 调用依赖种类助手。

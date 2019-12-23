@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Services
 {
     /// <summary>
     /// 字节编解码服务接口。

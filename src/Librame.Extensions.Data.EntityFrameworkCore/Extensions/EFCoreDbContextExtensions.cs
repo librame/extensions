@@ -10,12 +10,13 @@
 
 #endregion
 
-using Microsoft.EntityFrameworkCore;
+using Librame.Extensions;
+using Librame.Extensions.Data.Stores;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Librame.Extensions.Data
+namespace Microsoft.EntityFrameworkCore
 {
     /// <summary>
     /// <see cref="DbContext"/> 静态扩展。
@@ -30,7 +31,6 @@ namespace Librame.Extensions.Data
         /// <param name="exception">给定的 <see cref="DbUpdateConcurrencyException"/>。</param>
         /// <param name="predicate">给定获取单条数据的断定方法。</param>
         /// <param name="updatePropertyName">给定要更新的属性名（可选；默认为空表示更新所有属性值）。</param>
-        /// <returns>返回 <see cref="OperationResult"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void ConcurrentUpdates<TEntity>(this DbContext dbContext,
             DbUpdateConcurrencyException exception, Func<TEntity, bool> predicate, string updatePropertyName = null)

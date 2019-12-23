@@ -13,10 +13,12 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Librame.Extensions.Network.DotNetty
+namespace Librame.Extensions.Network.DotNetty.Demo
 {
-    using Core;
-    using Encryption;
+    using Builders;
+    using Core.Builders;
+    using Core.Services;
+    using Encryption.Services;
 
     /// <summary>
     /// 信道服务基类。
@@ -28,15 +30,17 @@ namespace Librame.Extensions.Network.DotNetty
         /// </summary>
         /// <param name="wrapperFactory">给定的 <see cref="IBootstrapWrapperFactory"/>。</param>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
+        /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DotNettyOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public ChannelServiceBase(IBootstrapWrapperFactory wrapperFactory,
-            ISigningCredentialsService signingCredentials,
+            ISigningCredentialsService signingCredentials, IOptions<CoreBuilderOptions> coreOptions,
             IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             WrapperFactory = wrapperFactory.NotNull(nameof(wrapperFactory));
             SigningCredentials = signingCredentials.NotNull(nameof(signingCredentials));
+            CoreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
             Options = options.NotNull(nameof(options)).Value;
         }
 
@@ -62,5 +66,11 @@ namespace Librame.Extensions.Network.DotNetty
         /// </summary>
         /// <value>返回 <see cref="DotNettyOptions"/>。</value>
         public DotNettyOptions Options { get; }
+
+        /// <summary>
+        /// 核心构建器选项。
+        /// </summary>
+        /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
+        public CoreBuilderOptions CoreOptions { get; }
     }
 }

@@ -10,9 +10,9 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Resources
 {
-    using Core;
+    using Core.Resources;
 
     /// <summary>
     /// 数据迁移资源。

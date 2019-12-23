@@ -2,7 +2,10 @@
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Accessors;
     using Models;
+    using Schemas;
+    using Stores;
 
     public class TestDbContextAccessor : DbContextAccessor
     {

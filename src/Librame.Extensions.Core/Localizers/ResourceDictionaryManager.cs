@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Localizers
 {
     /// <summary>
     /// 资源字典管理器。

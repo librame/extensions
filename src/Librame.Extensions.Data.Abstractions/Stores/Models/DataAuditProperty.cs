@@ -14,8 +14,10 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
+    using Resources;
+
     /// <summary>
     /// 数据审计属性。
     /// </summary>

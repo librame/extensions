@@ -23,10 +23,8 @@ using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Migrations
 {
-    using Core;
-
     /// <summary>
     ///     <para>
     ///         This is an internal API that supports the Entity Framework Core infrastructure and not subject to

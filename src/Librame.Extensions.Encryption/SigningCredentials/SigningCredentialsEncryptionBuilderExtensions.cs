@@ -19,9 +19,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.Builders
 {
     using Resources;
+    using Services;
 
     /// <summary>
     /// 签名证书加密构建器静态扩展。

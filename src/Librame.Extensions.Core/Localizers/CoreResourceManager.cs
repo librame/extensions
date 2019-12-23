@@ -19,7 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Resources;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Localizers
 {
     /// <summary>
     /// 核心资源管理器。
@@ -36,7 +36,7 @@ namespace Librame.Extensions.Core
         /// 构造一个 <see cref="CoreResourceManager"/>。
         /// </summary>
         /// <param name="resourceSource">给定的资源来源类型。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{AspNetResourceManager}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{CoreResourceManager}"/>。</param>
         public CoreResourceManager(Type resourceSource, ILogger<CoreResourceManager> logger)
             : base(resourceSource)
         {
@@ -48,7 +48,7 @@ namespace Librame.Extensions.Core
         /// </summary>
         /// <param name="baseName">给定的基础名称。</param>
         /// <param name="assembly">给定的程序集。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{AspNetResourceManager}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{CoreResourceManager}"/>。</param>
         public CoreResourceManager(string baseName, Assembly assembly, ILogger<CoreResourceManager> logger)
             : base(baseName, assembly)
         {
@@ -61,7 +61,7 @@ namespace Librame.Extensions.Core
         /// <param name="baseName">给定的基础名称。</param>
         /// <param name="assembly">给定的程序集。</param>
         /// <param name="usingResourceSet">给定的使用资源集类型。</param>
-        /// <param name="logger">给定的 <see cref="ILogger{AspNetResourceManager}"/>。</param>
+        /// <param name="logger">给定的 <see cref="ILogger{CoreResourceManager}"/>。</param>
         public CoreResourceManager(string baseName, Assembly assembly, Type usingResourceSet, ILogger<CoreResourceManager> logger)
             : base(baseName, assembly, usingResourceSet)
         {

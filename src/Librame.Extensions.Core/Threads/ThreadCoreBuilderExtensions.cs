@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
+    using Threads;
+
     static class ThreadCoreBuilderExtensions
     {
         internal static ICoreBuilder AddThreads(this ICoreBuilder builder)

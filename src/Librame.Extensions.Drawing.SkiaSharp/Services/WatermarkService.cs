@@ -20,14 +20,16 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Extensions.Drawing.Services
 {
-    using Core;
+    using Builders;
+    using Core.Combiners;
+    using Core.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class WatermarkService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IWatermarkService
     {
-        public WatermarkService(DrawingBuilderDependencyOptions dependencyOptions,
+        public WatermarkService(DrawingBuilderDependency dependencyOptions,
             IOptions<DrawingBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {

@@ -13,7 +13,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Mediators
 {
     /// <summary>
     /// 通知处理程序接口。

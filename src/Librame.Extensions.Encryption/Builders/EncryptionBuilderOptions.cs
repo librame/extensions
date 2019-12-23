@@ -10,9 +10,12 @@
 
 #endregion
 
-namespace Librame.Extensions.Encryption
+using System;
+
+namespace Librame.Extensions.Encryption.Builders
 {
-    using Core;
+    using Core.Builders;
+    using Core.Serializers;
 
     /// <summary>
     /// 加密构建器选项。
@@ -41,7 +44,7 @@ namespace Librame.Extensions.Encryption
         /// <summary>
         /// 标识符。
         /// </summary>
-        public AlgorithmIdentifierOptions Identifier { get; set; }
-            = new AlgorithmIdentifierOptions();
+        public SerializableObject<ReadOnlyMemory<byte>> Identifier { get; set; }
+            = SerializableHelper.CreateReadOnlyMemoryHex(Guid.NewGuid().ToByteArray());
     }
 }

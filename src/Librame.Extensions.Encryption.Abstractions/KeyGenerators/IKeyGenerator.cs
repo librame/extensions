@@ -10,9 +10,10 @@
 
 #endregion
 
-namespace Librame.Extensions.Encryption
+namespace Librame.Extensions.Encryption.KeyGenerators
 {
-    using Core;
+    using Core.Identifiers;
+    using Core.Services;
 
     /// <summary>
     /// 密钥生成器接口。
@@ -24,7 +25,7 @@ namespace Librame.Extensions.Encryption
         /// </summary>
         /// <param name="length">给定要生成的密钥长度。</param>
         /// <param name="identifier">给定的 <see cref="IAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
-        /// <returns>返回 <see cref="IByteMemoryBuffer"/>。</returns>
-        IByteMemoryBuffer GenerateKey(int length, IAlgorithmIdentifier identifier = null);
+        /// <returns>返回字节数组。</returns>
+        byte[] GenerateKey(int length, IAlgorithmIdentifier identifier = null);
     }
 }

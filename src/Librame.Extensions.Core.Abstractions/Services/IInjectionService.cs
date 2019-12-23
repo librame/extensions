@@ -12,7 +12,7 @@
 
 using System;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
     /// <summary>
     /// 注入服务接口。

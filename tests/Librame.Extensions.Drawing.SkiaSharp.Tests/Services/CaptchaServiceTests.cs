@@ -4,7 +4,8 @@ using Xunit;
 
 namespace Librame.Extensions.Drawing.Tests
 {
-    using Core;
+    using Core.Combiners;
+    using Services;
 
     public class CaptchaServiceTests
     {

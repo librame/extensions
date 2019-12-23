@@ -13,7 +13,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
     /// 类型名组合器（不包含程序集名）。

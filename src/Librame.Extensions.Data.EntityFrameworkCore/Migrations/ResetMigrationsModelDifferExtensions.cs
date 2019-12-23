@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Migrations
 {
     static class ResetMigrationsModelDifferExtensions
     {

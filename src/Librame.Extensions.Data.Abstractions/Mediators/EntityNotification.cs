@@ -14,9 +14,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Mediators
 {
-    using Core;
+    using Core.Mediators;
+    using Stores;
 
     /// <summary>
     /// 实体通知。

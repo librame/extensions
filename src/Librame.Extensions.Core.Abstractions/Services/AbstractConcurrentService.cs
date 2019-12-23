@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
+    using Threads;
+
     /// <summary>
     /// 抽象并发服务。
     /// </summary>
@@ -35,15 +37,5 @@ namespace Librame.Extensions.Core
         /// 内存锁定器。
         /// </summary>
         public IMemoryLocker Locker { get; }
-
-
-        /// <summary>
-        /// 释放服务。
-        /// </summary>
-        protected override void DisposeCore()
-        {
-            Locker.Dispose();
-            base.DisposeCore();
-        }
     }
 }

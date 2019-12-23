@@ -14,8 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Builders
 {
+    using Aspects;
+
     static class AspectDataBuilderExtensions
     {
         internal static IDataBuilder AddAspects(this IDataBuilder builder)

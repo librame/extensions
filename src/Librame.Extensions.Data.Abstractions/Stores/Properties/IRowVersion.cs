@@ -12,7 +12,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
     /// <summary>
     /// 行版本接口。

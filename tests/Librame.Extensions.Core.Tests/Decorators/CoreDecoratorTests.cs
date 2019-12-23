@@ -3,6 +3,9 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Decorators;
+    using Services;
+
     public class CoreDecoratorTests
     {
         public class TestService : AbstractService

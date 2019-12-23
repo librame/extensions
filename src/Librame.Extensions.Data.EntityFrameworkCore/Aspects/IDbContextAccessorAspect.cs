@@ -14,9 +14,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Aspects
 {
-    using Core;
+    using Accessors;
+    using Core.Services;
+    using Core.Threads;
+    using Stores;
 
     /// <summary>
     /// 数据库上下文访问器截面接口。

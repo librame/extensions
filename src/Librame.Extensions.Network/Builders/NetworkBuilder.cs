@@ -12,25 +12,25 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Builders
 {
-    using Core;
+    using Core.Builders;
 
     class NetworkBuilder : AbstractExtensionBuilder, INetworkBuilder
     {
-        public NetworkBuilder(IExtensionBuilder builder, NetworkBuilderDependencyOptions dependencyOptions)
-            : base(builder, dependencyOptions)
+        public NetworkBuilder(IExtensionBuilder builder, NetworkBuilderDependency dependency)
+            : base(builder, dependency)
         {
             Services.AddSingleton<INetworkBuilder>(this);
         }
 
 
-        public IExtensionBuilderDependencyOptions DotNettyDependencyOptions { get; private set; }
+        public IExtensionBuilderDependency DotNettyDependency { get; private set; }
 
 
-        public INetworkBuilder AddDotNettyDependencyOptions(IExtensionBuilderDependencyOptions dependencyOptions)
+        public INetworkBuilder AddDotNettyDependency(IExtensionBuilderDependency dependency)
         {
-            DotNettyDependencyOptions = dependencyOptions.NotNull(nameof(dependencyOptions));
+            DotNettyDependency = dependency.NotNull(nameof(dependency));
             return this;
         }
     }

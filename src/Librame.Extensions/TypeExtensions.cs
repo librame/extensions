@@ -122,12 +122,12 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 获取主体名称（如泛类型 IDictionary{string, IList{string}} 的主体名称为 IDictionary）。
+        /// 获取泛型主体名称，普通类型直接返回类型名称（如：泛类型 IDictionary{string, IList{string}} 的主体名称为 IDictionary）。
         /// </summary>
         /// <param name="type">给定的名称。</param>
         /// <returns>返回字符串。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
-        public static string GetBodyName(this Type type)
+        public static string GetGenericBodyName(this Type type)
         {
             type.NotNull(nameof(type));
 
@@ -138,52 +138,61 @@ namespace Librame.Extensions
         }
 
 
-        #region GetSimpleName
+        #region GetDisplayName
 
         /// <summary>
-        /// 获取简单名（参考 <see cref="AssemblyName.Name"/>）。
+        /// 获取显示名称（参考 <see cref="AssemblyName.Name"/>）。
         /// </summary>
         /// <param name="assembly">给定的 <see cref="Assembly"/>。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetSimpleName(this Assembly assembly)
+        public static string GetDisplayName(this Assembly assembly)
             => assembly?.GetName()?.Name;
 
         /// <summary>
-        /// 获取简单程序集名（参考 <see cref="AssemblyName.Name"/>）。
+        /// 获取程序集显示名称（参考 <see cref="AssemblyName.Name"/>）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetSimpleAssemblyName(this Type type)
-            => type?.Assembly.GetSimpleName();
+        public static string GetAssemblyDisplayName(this Type type)
+            => type?.Assembly.GetDisplayName();
 
 
         /// <summary>
-        /// 获取简单程序集限定名（不包含版本及版本号；格式：System.Collections.Generic.IList`1[System.String], System.Private.CoreLib）。
+        /// 获取带命名空间的程序集限定名，不包含版本及版本号（格式：System.Collections.Generic.IList`1[System.String], System.Private.CoreLib）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetSimpleAssemblyQualifiedName(this Type type)
+        public static string GetAssemblyQualifiedNameWithoutVersion(this Type type)
         {
             type.NotNull(nameof(type));
-            return Assembly.CreateQualifiedName(type.GetSimpleAssemblyName(), type.GetSimpleFullName());
+            return Assembly.CreateQualifiedName(type.GetAssemblyDisplayName(), type.GetDisplayNameWithNamespace());
         }
 
 
         /// <summary>
-        /// 获取简单完整名（如泛类型 IDictionary{string, IList{string}} 的名称为 IDictionary`2[String, IList`1[String]]）。
+        /// 获取显示名称（即 Type.Name。如：泛类型 IDictionary{string, IList{string}} 的名称为 IDictionary`2[String, IList`1[String]]）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetSimpleName(this Type type)
-            => type.GetCustomString(t => t.Name);
+        public static string GetDisplayName(this Type type)
+            => type.GetDisplayString(t => t.Name);
 
         /// <summary>
-        /// 获取带命名空间的简单完整名（如泛类型 IDictionary{string, IList{string}} 的名称为 System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]）。
+        /// 获取带命名空间的显示名称（如：泛类型 IDictionary{string, IList{string}} 的名称为 System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetSimpleFullName(this Type type)
-            => type.GetCustomString(t => $"{t.Namespace}.{t.Name}"); // not t.FullName
+        public static string GetDisplayNameWithNamespace(this Type type)
+        {
+            return type.GetDisplayString(t =>
+            {
+                if (!t.IsNested)
+                    return $"{t.Namespace}.{t.Name}";
+
+                // 支持嵌套类型：t.ReflectedType == t.DeclaringType
+                return $"{t.Namespace}.{t.ReflectedType.GetDisplayName()}+{t.Name}";
+            });
+        }
 
         /// <summary>
         /// 获取自定义字符串。
@@ -192,7 +201,7 @@ namespace Librame.Extensions
         /// <param name="factory">给定的类型字符串工厂方法。</param>
         /// <returns>返回字符串。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "factory")]
-        public static string GetCustomString(this Type type, Func<Type, string> factory)
+        public static string GetDisplayString(this Type type, Func<Type, string> factory)
         {
             type.NotNull(nameof(type));
 
@@ -206,7 +215,7 @@ namespace Librame.Extensions
 
                 argumentTypes.ForEach((argType, i) =>
                 {
-                    sb.Append(argType.GetCustomString(factory));
+                    sb.Append(argType.GetDisplayString(factory));
 
                     if (i < argumentTypes.Length - 1)
                         sb.Append(", ");

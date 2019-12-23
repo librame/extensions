@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    using Core;
+    using Core.Services;
 
     public class TestStoreHubTests
     {

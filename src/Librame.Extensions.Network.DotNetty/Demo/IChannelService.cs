@@ -12,8 +12,10 @@
 
 namespace Librame.Extensions.Network.DotNetty
 {
-    using Core;
-    using Encryption;
+    using Builders;
+    using Core.Builders;
+    using Core.Services;
+    using Encryption.Services;
 
     /// <summary>
     /// 信道服务接口。
@@ -33,5 +35,11 @@ namespace Librame.Extensions.Network.DotNetty
         /// </summary>
         /// <value>返回 <see cref="DotNettyOptions"/>。</value>
         DotNettyOptions Options { get; }
+
+        /// <summary>
+        /// 核心构建器选项。
+        /// </summary>
+        /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
+        public CoreBuilderOptions CoreOptions { get; }
     }
 }

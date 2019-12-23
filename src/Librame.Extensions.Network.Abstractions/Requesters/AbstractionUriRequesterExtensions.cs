@@ -15,7 +15,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Requesters
 {
     /// <summary>
     /// 抽象 <see cref="IUriRequester"/> 静态扩展。

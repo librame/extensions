@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Combiners
 {
     using Resources;
 

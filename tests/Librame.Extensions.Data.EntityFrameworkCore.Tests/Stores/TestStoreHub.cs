@@ -3,7 +3,10 @@ using System.Linq;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Accessors;
+    using Collections;
     using Models;
+    using Stores;
 
     public class TestStoreHub : StoreHub<TestDbContextAccessor, TestStoreInitializer>
     {

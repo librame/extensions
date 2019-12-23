@@ -17,8 +17,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
+    using Accessors;
+    using Collections;
+
     /// <summary>
     /// 存储中心。
     /// </summary>

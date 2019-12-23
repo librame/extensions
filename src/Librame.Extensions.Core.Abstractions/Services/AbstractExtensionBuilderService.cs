@@ -13,8 +13,10 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
+    using Builders;
+
     /// <summary>
     /// 抽象扩展构建器服务。
     /// </summary>

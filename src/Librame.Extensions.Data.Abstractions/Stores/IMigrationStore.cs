@@ -11,13 +11,14 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
+    using Collections;
+
     /// <summary>
     /// 迁移存储接口。
     /// </summary>

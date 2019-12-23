@@ -14,8 +14,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Mediators
 {
+    using Services;
+
     /// <summary>
     /// 请求处理程序封装接口。
     /// </summary>

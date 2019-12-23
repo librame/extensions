@@ -16,9 +16,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Services
 {
-    using Core;
+    using Accessors;
+    using Builders;
+    using Core.Services;
+    using Stores;
 
     /// <summary>
     /// 租户服务。

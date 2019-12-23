@@ -20,9 +20,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Storage
+namespace Librame.Extensions.Storage.Services
 {
-    using Core;
+    using Builders;
+    using Core.Builders;
+    using Core.Combiners;
+    using Core.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class FileTransferService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFileTransferService
@@ -35,11 +38,11 @@ namespace Librame.Extensions.Storage
         {
             _permissionService = permission;
 
-            Encoding = coreOptions.NotNull(nameof(coreOptions)).Value.Encoding;
+            Encoding = coreOptions.NotNull(nameof(coreOptions)).Value.Encoding.Source;
         }
 
 
-        public Encoding Encoding { get; set; }
+        public Encoding Encoding { get; }
 
         public bool UseAccessToken { get; set; }
             = false;

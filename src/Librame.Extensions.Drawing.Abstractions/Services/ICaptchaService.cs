@@ -14,9 +14,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Drawing
+namespace Librame.Extensions.Drawing.Services
 {
-    using Core;
+    using Core.Services;
 
     /// <summary>
     /// 图画服务接口。

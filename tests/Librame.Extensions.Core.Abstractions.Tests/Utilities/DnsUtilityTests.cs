@@ -2,6 +2,8 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Utilities;
+
     public class DnsUtilityTests
     {
         [Fact]

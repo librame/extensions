@@ -18,8 +18,10 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Network
+namespace Librame.Extensions.Network.Requesters
 {
+    using Services;
+
     /// <summary>
     /// <see cref="HttpWebRequest"/> 请求程序。
     /// </summary>

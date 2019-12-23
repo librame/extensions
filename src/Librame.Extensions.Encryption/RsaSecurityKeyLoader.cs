@@ -18,7 +18,7 @@ using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
 {
-    using Core;
+    using Core.Identifiers;
 
     /// <summary>
     /// RSA 安全密钥加载器。

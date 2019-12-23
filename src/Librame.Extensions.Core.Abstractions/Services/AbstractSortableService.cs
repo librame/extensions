@@ -12,7 +12,7 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
     /// <summary>
     /// 抽象可排序服务。

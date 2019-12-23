@@ -13,7 +13,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Mediators
 {
     /// <summary>
     /// 中介者接口。

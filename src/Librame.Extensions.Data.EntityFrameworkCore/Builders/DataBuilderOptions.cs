@@ -15,9 +15,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Builders
 {
-    using Core;
+    using Accessors;
+    using Core.Threads;
+    using Stores;
 
     /// <summary>
     /// 数据构建器选项。
@@ -33,6 +35,8 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 已创建数据库动作（默认调用 <see cref="PostChangedDbConnectionAction"/>）。
         /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public Action<DbContextAccessorBase> DatabaseCreatedAction { get; set; }
             = accessor =>
             {
@@ -42,6 +46,8 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 后置改变数据库连接动作。
         /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public Action<DbContextAccessorBase> PostChangedDbConnectionAction { get; set; }
             = accessor =>
             {
@@ -80,6 +86,8 @@ namespace Librame.Extensions.Data
         /// <summary>
         /// 迁移程序集引用列表。
         /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public List<AssemblyReference> MigrationAssemblyReferences { get; }
             = new List<AssemblyReference>
             {

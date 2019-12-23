@@ -17,8 +17,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Mediators
 {
+    using Services;
+
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class NotificationHandlerWrapper<TNotification> : INotificationHandlerWrapper<TNotification>
         where TNotification : INotification

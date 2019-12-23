@@ -31,9 +31,17 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Services
 {
-    using Core;
+    using Accessors;
+    using Aspects;
+    using Builders;
+    using Core.Builders;
+    using Core.Combiners;
+    using Core.Services;
+    using Core.Threads;
+    using Migrations;
+    using Stores;
 
     /// <summary>
     /// 迁移服务。
@@ -61,17 +69,22 @@ namespace Librame.Extensions.Data
         private static TMigration _lastMigration = null;
         private static IModel _defaultModel = null;
 
+        private readonly CoreBuilderOptions _coreOptions;
+
 
         /// <summary>
         /// 构造一个迁移服务。
         /// </summary>
         /// <param name="locker">给定的 <see cref="IMemoryLocker"/>。</param>
+        /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public MigrationService(IMemoryLocker locker, IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+        public MigrationService(IMemoryLocker locker, IOptions<CoreBuilderOptions> coreOptions,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
             Locker = locker.NotNull(nameof(locker));
+            _coreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
         }
 
 
@@ -314,7 +327,7 @@ namespace Librame.Extensions.Data
         /// <returns>返回字符串。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "command")]
         protected virtual string GetMigrationCommandKey(MigrationCommand command)
-            => command.CommandText.Sha256Base64String();
+            => command.CommandText.Sha256Base64String(_coreOptions.Encoding.Source);
 
         /// <summary>
         /// 获取差异迁移操作。
@@ -361,8 +374,8 @@ namespace Librame.Extensions.Data
             else
             {
                 // 从程序集文件
-                var dependencyOptions = dbContextAccessor.ServiceFactory.GetRequiredService<DataBuilderDependencyOptions>();
-                var assemblyPath = ModelSnapshotCompiler.GetAssemblyPath(dbContextAccessor.GetType(), dependencyOptions.BaseDirectory);
+                var dependencyOptions = dbContextAccessor.ServiceFactory.GetRequiredService<DataBuilderDependency>();
+                var assemblyPath = ModelSnapshotCompiler.ExportFilePath(dbContextAccessor.GetType(), dependencyOptions.ExportDirectory);
                 if (assemblyPath.Exists())
                 {
                     var modelAssembly = Assembly.LoadFile(assemblyPath);

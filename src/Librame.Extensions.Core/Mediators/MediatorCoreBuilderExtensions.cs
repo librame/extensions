@@ -14,8 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
+    using Mediators;
+
     static class MediatorCoreBuilderExtensions
     {
         internal static ICoreBuilder AddMediators(this ICoreBuilder builder)

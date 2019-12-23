@@ -16,7 +16,7 @@ using System.Reflection;
 
 namespace Librame.Extensions.Encryption
 {
-    class RsaKeyContractResolver : DefaultContractResolver
+    internal class RsaKeyContractResolver : DefaultContractResolver
     {
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {

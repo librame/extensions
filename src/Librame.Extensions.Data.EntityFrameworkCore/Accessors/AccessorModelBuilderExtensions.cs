@@ -14,8 +14,12 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Accessors
 {
+    using Builders;
+    using Schemas;
+    using Stores;
+
     /// <summary>
     /// 访问器模型构建器静态扩展。
     /// </summary>

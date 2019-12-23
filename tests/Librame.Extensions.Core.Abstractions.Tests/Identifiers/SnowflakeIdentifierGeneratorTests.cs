@@ -6,9 +6,13 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Identifiers;
+    using Services;
+    using Threads;
+
     public class SnowflakeIdentifierGeneratorTests
     {
-        public class NoneLoggerFactory : ILoggerFactory
+        public sealed class NoneLoggerFactory : ILoggerFactory
         {
             public void AddProvider(ILoggerProvider provider)
                 => throw new NotImplementedException();
@@ -39,10 +43,6 @@ namespace Librame.Extensions.Core.Tests
                 CancellationToken cancellationToken = default)
             {
                 return Task.FromResult(DateTimeOffset.UtcNow);
-            }
-
-            protected override void DisposeCore()
-            {
             }
         }
 

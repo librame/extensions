@@ -12,7 +12,7 @@
 
 using Microsoft.Extensions.Localization;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Localizers
 {
     /// <summary>
     /// 字典字符串定位器工厂接口。

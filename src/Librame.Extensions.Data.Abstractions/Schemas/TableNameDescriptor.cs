@@ -14,7 +14,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Schemas
 {
     /// <summary>
     /// 表名描述符。
@@ -49,7 +49,7 @@ namespace Librame.Extensions.Data
             = "_";
 
         private static readonly Func<Type, string> _defaultBodyNameFactory
-            = type => type.GetBodyName().AsPluralize();
+            = type => type.GetGenericBodyName().AsPluralize();
 
 
         /// <summary>

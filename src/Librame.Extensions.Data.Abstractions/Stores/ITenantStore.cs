@@ -16,8 +16,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
+    using Collections;
+
     /// <summary>
     /// 租户存储接口。
     /// </summary>

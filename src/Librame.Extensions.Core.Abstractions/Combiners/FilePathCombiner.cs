@@ -13,7 +13,7 @@
 using System;
 using System.IO;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
     /// 文件路径组合器。

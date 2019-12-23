@@ -15,8 +15,10 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
+    using Resources;
+
     /// <summary>
     /// 数据迁移。
     /// </summary>

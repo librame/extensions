@@ -4,6 +4,9 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Singletons;
+    using Utilities;
+
     public class AbstractSingletonTests
     {
         public sealed class GuidSingleton : AbstractSingleton<GuidSingleton>

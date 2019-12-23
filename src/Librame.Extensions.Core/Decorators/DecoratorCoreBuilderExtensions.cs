@@ -12,8 +12,10 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Builders
 {
+    using Decorators;
+
     static class DecoratorCoreBuilderExtensions
     {
         internal static ICoreBuilder AddDecorators(this ICoreBuilder builder)

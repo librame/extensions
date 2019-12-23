@@ -3,6 +3,9 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Collections;
+    using Stores;
+
     public class TreeingTests
     {
         public class TestTreeing : IParentId<int>

@@ -4,6 +4,8 @@ using Xunit;
 
 namespace Librame.Extensions.Network.Tests
 {
+    using Services;
+
     public class EmailServiceTests
     {
         private IEmailService _service;

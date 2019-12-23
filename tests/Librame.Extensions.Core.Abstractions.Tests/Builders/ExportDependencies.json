@@ -1,0 +1,32 @@
+{
+    "InternalBuilderDependency": {
+        "BaseDirectory": "D:\\Repositories\\Librame\\tests\\Librame.Extensions.Core.Abstractions.Tests",
+        "ConfigDirectory": "D:\\Repositories\\Librame\\tests\\Librame.Extensions.Core.Abstractions.Tests",
+        "ExportDirectory": "D:\\Repositories\\Librame\\tests\\Librame.Extensions.Core.Abstractions.Tests",
+        "Builder": {
+            "OptionsType": { "Value": "Librame.Extensions.Core.Tests.InternalBuilderOptions, Librame.Extensions.Core.Abstractions.Tests" },
+            "Options": { "TestString": null },
+            "AutoConfigureOptions": true,
+            "AutoPostConfigureOptions": false,
+            "Name": "InternalBuilderOptions",
+            "Type": { "Value": "Librame.Extensions.Core.Dependencies.OptionsDependency`1[Librame.Extensions.Core.Tests.InternalBuilderOptions], Librame.Extensions.Core.Abstractions" }
+        },
+        "Name": "InternalBuilderDependency",
+        "Type": { "Value": "Librame.Extensions.Core.Tests.InternalBuilderDependency, Librame.Extensions.Core.Abstractions.Tests" }
+    },
+    "PublicBuilderDependency": {
+        "BaseDirectory": "D:\\Repositories\\Librame\\tests\\Librame.Extensions.Core.Abstractions.Tests",
+        "ConfigDirectory": "D:\\Repositories\\Librame\\tests\\Librame.Extensions.Core.Abstractions.Tests",
+        "ExportDirectory": "D:\\Repositories\\Librame\\tests\\Librame.Extensions.Core.Abstractions.Tests",
+        "Builder": {
+            "OptionsType": { "Value": "Librame.Extensions.Core.Tests.PublicBuilderOptions, Librame.Extensions.Core.Abstractions.Tests" },
+            "Options": { "TestString": null },
+            "AutoConfigureOptions": true,
+            "AutoPostConfigureOptions": false,
+            "Name": "PublicBuilderOptions",
+            "Type": { "Value": "Librame.Extensions.Core.Dependencies.OptionsDependency`1[Librame.Extensions.Core.Tests.PublicBuilderOptions], Librame.Extensions.Core.Abstractions" }
+        },
+        "Name": "PublicBuilderDependency",
+        "Type": { "Value": "Librame.Extensions.Core.Tests.PublicBuilderDependency, Librame.Extensions.Core.Abstractions.Tests" }
+    }
+}

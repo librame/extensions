@@ -11,14 +11,13 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using System;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Services
 {
     /// <summary>
     /// 服务接口。
     /// </summary>
-    public interface IService : IDisposable
+    public interface IService
     {
         /// <summary>
         /// 日志工厂。

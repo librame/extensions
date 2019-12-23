@@ -3,6 +3,8 @@ using System;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Mediators;
+
     internal static class TestServiceProvider
     {
         static TestServiceProvider()

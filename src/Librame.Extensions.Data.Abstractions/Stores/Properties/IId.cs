@@ -12,7 +12,7 @@
 
 using System;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Data.Stores
 {
     /// <summary>
     /// 标识接口。

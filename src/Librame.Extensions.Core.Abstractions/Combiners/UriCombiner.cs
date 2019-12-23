@@ -18,7 +18,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
     /// URI 组合器。

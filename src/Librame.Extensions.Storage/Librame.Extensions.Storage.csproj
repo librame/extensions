@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.1.956.211</Version>
+    <Version>7.2.982.211</Version>
     <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Storage.Abstractions on .NET Standard extension implementation.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Storage.Abstractions on .NET Standard extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.1.956.211</AssemblyVersion>
-    <FileVersion>7.1.1911.271</FileVersion>
+    <AssemblyVersion>7.2.982.211</AssemblyVersion>
+    <FileVersion>7.2.1912.231</FileVersion>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
@@ -39,7 +39,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net48'">

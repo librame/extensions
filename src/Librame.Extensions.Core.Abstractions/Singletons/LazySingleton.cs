@@ -13,7 +13,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Librame.Extensions.Core
+namespace Librame.Extensions.Core.Singletons
 {
     /// <summary>
     /// 延迟单例。

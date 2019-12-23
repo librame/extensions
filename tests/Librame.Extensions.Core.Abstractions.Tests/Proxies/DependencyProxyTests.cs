@@ -4,6 +4,8 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Proxies;
+
     public class DependencyProxyTests
     {
         public interface ITestSource

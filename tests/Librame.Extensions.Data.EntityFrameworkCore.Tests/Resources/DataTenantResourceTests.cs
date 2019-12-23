@@ -5,7 +5,8 @@ using System.Globalization;
 
 namespace Librame.Extensions.Data.Tests
 {
-    using Core;
+    using Core.Utilities;
+    using Resources;
 
     public class DataTenantResourceTests
     {
