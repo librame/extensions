@@ -31,7 +31,7 @@ namespace Librame.Extensions.Examples
 
             var services = new ServiceCollection();
 
-            services.AddLibrame<ExampleCoreBuilderDependencyOptions>(dependency =>
+            services.AddLibrame<ExampleCoreBuilderDependency>(dependency =>
             {
                 dependency.ConfigurationRoot = root;
                 //dependency.Configuration = root.GetSection(dependency.Name);
