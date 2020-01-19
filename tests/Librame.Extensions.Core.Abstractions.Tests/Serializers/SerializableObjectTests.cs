@@ -10,12 +10,12 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void AllTest()
         {
-            var serializable = new SerializableObject<Encoding>(Encoding.UTF8, nameof(Encoding));
+            var serializable = SerializableObjectHelper.CreateEncoding(Encoding.UTF8);
             Assert.NotEmpty(serializable.Value);
 
             var encoding = serializable.Value;
-
             serializable.ChangeSource(Encoding.ASCII);
+            
             Assert.NotEmpty(serializable.Value);
             Assert.NotEqual(encoding, serializable.Value);
         }

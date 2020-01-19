@@ -12,10 +12,10 @@
 
 namespace Librame.Extensions.Core.Serializers
 {
-    /// <summary>
-    /// 对象字符串序列化器接口。
-    /// </summary>
-    public interface IObjectStringSerializer : ISerializer<object, string>
-    {
-    }
+    ///// <summary>
+    ///// 对象字符串序列化器接口。
+    ///// </summary>
+    //public interface IObjectStringSerializer : ISerializer<object, string>
+    //{
+    //}
 }

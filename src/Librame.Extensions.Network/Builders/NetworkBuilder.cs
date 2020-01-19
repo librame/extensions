@@ -16,10 +16,10 @@ namespace Librame.Extensions.Network.Builders
 {
     using Core.Builders;
 
-    class NetworkBuilder : AbstractExtensionBuilder, INetworkBuilder
+    internal class NetworkBuilder : AbstractExtensionBuilder, INetworkBuilder
     {
-        public NetworkBuilder(IExtensionBuilder builder, NetworkBuilderDependency dependency)
-            : base(builder, dependency)
+        public NetworkBuilder(IExtensionBuilder parentBuilder, NetworkBuilderDependency dependency)
+            : base(parentBuilder, dependency)
         {
             Services.AddSingleton<INetworkBuilder>(this);
         }

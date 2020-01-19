@@ -18,10 +18,11 @@ namespace Librame.Extensions.Data.Builders
 
     internal class DataBuilder : AbstractExtensionBuilder, IDataBuilder
     {
-        public DataBuilder(IExtensionBuilder builder, DataBuilderDependency dependencyOptions)
-            : base(builder, dependencyOptions)
+        public DataBuilder(IExtensionBuilder parentBuilder, DataBuilderDependency dependency)
+            : base(parentBuilder, dependency)
         {
             Services.AddSingleton<IDataBuilder>(this);
         }
+
     }
 }

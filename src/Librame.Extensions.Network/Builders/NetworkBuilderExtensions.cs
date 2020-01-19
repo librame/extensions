@@ -27,17 +27,17 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加网络扩展。
         /// </summary>
-        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureOptions">给定的选项配置动作。</param>
         /// <param name="builderFactory">给定创建网络构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddNetwork(this IExtensionBuilder baseBuilder,
+        public static INetworkBuilder AddNetwork(this IExtensionBuilder parentBuilder,
             Action<NetworkBuilderOptions> configureOptions,
             Func<IExtensionBuilder, NetworkBuilderDependency, INetworkBuilder> builderFactory = null)
         {
             configureOptions.NotNull(nameof(configureOptions));
 
-            return baseBuilder.AddNetwork(dependency =>
+            return parentBuilder.AddNetwork(dependency =>
             {
                 dependency.Builder.ConfigureOptions = configureOptions;
             },
@@ -47,46 +47,46 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加网络扩展。
         /// </summary>
-        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建网络构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddNetwork(this IExtensionBuilder baseBuilder,
+        public static INetworkBuilder AddNetwork(this IExtensionBuilder parentBuilder,
             Action<NetworkBuilderDependency> configureDependency = null,
             Func<IExtensionBuilder, NetworkBuilderDependency, INetworkBuilder> builderFactory = null)
-            => baseBuilder.AddNetwork<NetworkBuilderDependency>(configureDependency, builderFactory);
+            => parentBuilder.AddNetwork<NetworkBuilderDependency>(configureDependency, builderFactory);
 
         /// <summary>
         /// 添加网络扩展。
         /// </summary>
-        /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
-        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <typeparam name="TDependency">指定的依赖类型。</typeparam>
+        /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建网络构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseBuilder")]
-        public static INetworkBuilder AddNetwork<TDependencyOptions>(this IExtensionBuilder baseBuilder,
-            Action<TDependencyOptions> configureDependency = null,
-            Func<IExtensionBuilder, TDependencyOptions, INetworkBuilder> builderFactory = null)
-            where TDependencyOptions : NetworkBuilderDependency, new()
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "parentBuilder")]
+        public static INetworkBuilder AddNetwork<TDependency>(this IExtensionBuilder parentBuilder,
+            Action<TDependency> configureDependency = null,
+            Func<IExtensionBuilder, TDependency, INetworkBuilder> builderFactory = null)
+            where TDependency : NetworkBuilderDependency, new()
         {
-            if (!baseBuilder.ContainsParentBuilder<IEncryptionBuilder>())
+            if (!parentBuilder.ContainsParentBuilder<IEncryptionBuilder>())
             {
-                baseBuilder
+                parentBuilder
                     .AddEncryption()
                     .AddDeveloperGlobalSigningCredentials();
             }
 
             // Configure Dependency
-            var dependency = configureDependency.ConfigureDependency(baseBuilder);
+            var dependency = configureDependency.ConfigureDependency(parentBuilder);
 
             // Add Dependencies
-            baseBuilder.Services
+            parentBuilder.Services
                 .AddHttpClient();
 
             // Create Builder
             var networkBuilder = builderFactory.NotNullOrDefault(()
-                => (b, d) => new NetworkBuilder(b, d)).Invoke(baseBuilder, dependency);
+                => (b, d) => new NetworkBuilder(b, d)).Invoke(parentBuilder, dependency);
 
             // Configure Builder
             return networkBuilder

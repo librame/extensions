@@ -13,7 +13,7 @@ namespace Librame.Extensions.Tests
         public void NameTest()
         {
             var encodingName = _encoding.AsName();
-            Assert.Equal(_encoding, encodingName.FromName());
+            Assert.Equal(_encoding, encodingName.FromEncodingName());
         }
 
         [Fact]

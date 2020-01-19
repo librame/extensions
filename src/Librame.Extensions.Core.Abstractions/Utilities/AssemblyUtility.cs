@@ -12,10 +12,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Loader;
 
 namespace Librame.Extensions.Core.Utilities
 {
@@ -44,7 +42,7 @@ namespace Librame.Extensions.Core.Utilities
         /// 当前程序集列表。
         /// </summary>
         public static IReadOnlyList<Assembly> CurrentAssemblies { get; }
-            = LoadContextAssemblies();
+            = AppDomain.CurrentDomain.GetAssemblies();
 
         /// <summary>
         /// 当前除系统外的第三方程序集列表。
@@ -64,22 +62,5 @@ namespace Librame.Extensions.Core.Utilities
             return true;
         }
 
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-        private static IReadOnlyList<Assembly> LoadContextAssemblies()
-        {
-            #if !NET48
-                var context = AssemblyLoadContext.Default;
-
-                var assemblies = (IEnumerable<Assembly>)context.GetType()
-                    .GetProperty("Assemblies")?.GetValue(context);
-
-                if (assemblies.IsNull())
-                    throw new InvalidOperationException("Invalid load assemblies.");
-
-                return assemblies.AsReadOnlyList();
-            #else
-                return AppDomain.CurrentDomain.GetAssemblies();
-            #endif
-        }
     }
 }

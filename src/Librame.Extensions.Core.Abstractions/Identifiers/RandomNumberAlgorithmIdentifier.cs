@@ -65,7 +65,7 @@ namespace Librame.Extensions.Core.Identifiers
         public static RandomNumberAlgorithmIdentifier New(int length, SerializableObject<ReadOnlyMemory<byte>> readOnlyMemory = null)
         {
             if (readOnlyMemory.IsNull())
-                return new RandomNumberAlgorithmIdentifier(SerializableHelper.CreateReadOnlyMemoryHex(_generator.GenerateByteArray(length)));
+                return new RandomNumberAlgorithmIdentifier(SerializableObjectHelper.CreateHexString(_generator.GenerateByteArray(length)));
 
             return new RandomNumberAlgorithmIdentifier(length, readOnlyMemory);
         }

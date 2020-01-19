@@ -17,7 +17,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.NotEmpty(str);
 
             var guid = Guid.NewGuid();
-            var identifier = new UniqueAlgorithmIdentifier(SerializableHelper.CreateReadOnlyMemoryHex(guid.ToByteArray()));
+            var identifier = new UniqueAlgorithmIdentifier(SerializableObjectHelper.CreateHexString(guid.ToByteArray()));
             Assert.NotEmpty((string)identifier);
 
             var other = new UniqueAlgorithmIdentifier(identifier.ReadOnlyMemory);

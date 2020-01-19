@@ -11,8 +11,8 @@
 #endregion
 
 using Librame.Extensions;
+using Librame.Extensions.Core;
 using Librame.Extensions.Core.Builders;
-using Librame.Extensions.Data;
 using Librame.Extensions.Data.Builders;
 using Microsoft.EntityFrameworkCore.Design;
 using System;
@@ -28,17 +28,17 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加数据扩展。
         /// </summary>
-        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureOptions">给定的配置选项动作方法。</param>
         /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddData(this IExtensionBuilder baseBuilder,
+        public static IDataBuilder AddData(this IExtensionBuilder parentBuilder,
             Action<DataBuilderOptions> configureOptions,
             Func<IExtensionBuilder, DataBuilderDependency, IDataBuilder> builderFactory = null)
         {
             configureOptions.NotNull(nameof(configureOptions));
 
-            return baseBuilder.AddData(dependency =>
+            return parentBuilder.AddData(dependency =>
             {
                 dependency.Builder.ConfigureOptions = configureOptions;
             },
@@ -48,41 +48,41 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加数据扩展。
         /// </summary>
-        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddData(this IExtensionBuilder baseBuilder,
+        public static IDataBuilder AddData(this IExtensionBuilder parentBuilder,
             Action<DataBuilderDependency> configureDependency = null,
             Func<IExtensionBuilder, DataBuilderDependency, IDataBuilder> builderFactory = null)
-            => baseBuilder.AddData<DataBuilderDependency>(configureDependency, builderFactory);
+            => parentBuilder.AddData<DataBuilderDependency>(configureDependency, builderFactory);
 
         /// <summary>
         /// 添加数据扩展。
         /// </summary>
-        /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
-        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <typeparam name="TDependency">指定的依赖类型。</typeparam>
+        /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseBuilder")]
-        public static IDataBuilder AddData<TDependencyOptions>(this IExtensionBuilder baseBuilder,
-            Action<TDependencyOptions> configureDependency = null,
-            Func<IExtensionBuilder, TDependencyOptions, IDataBuilder> builderFactory = null)
-            where TDependencyOptions : DataBuilderDependency, new()
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "parentBuilder")]
+        public static IDataBuilder AddData<TDependency>(this IExtensionBuilder parentBuilder,
+            Action<TDependency> configureDependency = null,
+            Func<IExtensionBuilder, TDependency, IDataBuilder> builderFactory = null)
+            where TDependency : DataBuilderDependency, new()
         {
-            baseBuilder.NotNull(nameof(baseBuilder));
+            parentBuilder.NotNull(nameof(parentBuilder));
 
             // Configure Dependency
-            var dependency = configureDependency.ConfigureDependency(baseBuilder);
+            var dependency = configureDependency.ConfigureDependency(parentBuilder);
 
             // Add Dependencies
-            baseBuilder.Services
+            parentBuilder.Services
                 .AddEntityFrameworkDesignTimeServices();
 
             // Create Builder
             var dataBuilder = builderFactory.NotNullOrDefault(()
-                => (b, d) => new DataBuilder(b, d)).Invoke(baseBuilder, dependency);
+                => (b, d) => new DataBuilder(b, d)).Invoke(parentBuilder, dependency);
 
             // Configure Builder
             return dataBuilder
@@ -111,7 +111,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.Configure<DataBuilderOptions>(options =>
             {
-                var reference = AssemblyReference.ByAssembly(designTimeType.Assembly);
+                var reference = AssemblyReference.Load(designTimeType.Assembly);
                 if (!options.MigrationAssemblyReferences.Contains(reference))
                     options.MigrationAssemblyReferences.Add(reference);
             });

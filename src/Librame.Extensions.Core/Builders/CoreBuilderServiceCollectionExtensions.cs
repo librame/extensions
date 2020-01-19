@@ -87,6 +87,9 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IServiceCollection, TDependency, ICoreBuilder> builderFactory = null)
             where TDependency : CoreBuilderDependency, new()
         {
+            // Use BootstrapperStarter
+            services.UseBootstrapperStarter();
+
             // Configure Dependency
             var dependency = configureDependency.ConfigureDependencyRoot(services);
             

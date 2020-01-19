@@ -39,7 +39,7 @@ namespace Librame.Extensions.Core.Dependencies
             if (optionsType.IsAssignableToBaseType(typeof(IExtensionBuilderDependency)))
                 throw new ArgumentException(InternalResource.ArgumentExceptionNotSupportedConfigurationOfDependencyOptions);
 
-            OptionsType = SerializableHelper.CreateType(optionsType);
+            OptionsType = SerializableObjectHelper.CreateType(optionsType);
             Options = initialOptions ?? OptionsType.Source.EnsureCreate<TOptions>();
 
             ConfigureOptions = configureOptions ?? (_ => { });

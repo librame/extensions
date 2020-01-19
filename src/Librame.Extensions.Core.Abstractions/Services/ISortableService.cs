@@ -15,11 +15,7 @@ namespace Librame.Extensions.Core.Services
     /// <summary>
     /// 可排序服务接口。
     /// </summary>
-    public interface ISortableService : IService
+    public interface ISortableService : IService, ISortable
     {
-        /// <summary>
-        /// 服务优先级（数值越小越优先）。
-        /// </summary>
-        float Priority { get; set; }
     }
 }

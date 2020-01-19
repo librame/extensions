@@ -18,6 +18,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Data.Builders
 {
     using Accessors;
+    using Core;
     using Core.Threads;
     using Stores;
 
@@ -91,13 +92,13 @@ namespace Librame.Extensions.Data.Builders
         public List<AssemblyReference> MigrationAssemblyReferences { get; }
             = new List<AssemblyReference>
             {
-                AssemblyReference.ByName("Librame.Extensions.Data.Abstractions"),
-                AssemblyReference.ByName("Librame.Extensions.Data.EntityFrameworkCore"),
-                AssemblyReference.ByName("Microsoft.EntityFrameworkCore"),
-                AssemblyReference.ByName("Microsoft.EntityFrameworkCore.Relational"),
-                AssemblyReference.ByName("netstandard"),
-                AssemblyReference.ByName("System.Runtime"),
-                AssemblyReference.ByName("System.Private.CoreLib")
+                AssemblyReference.Load("Librame.Extensions.Data.Abstractions"),
+                AssemblyReference.Load("Librame.Extensions.Data.EntityFrameworkCore"),
+                AssemblyReference.Load("Microsoft.EntityFrameworkCore"),
+                AssemblyReference.Load("Microsoft.EntityFrameworkCore.Relational"),
+                AssemblyReference.Load("netstandard"),
+                AssemblyReference.Load("System.Runtime"),
+                AssemblyReference.Load("System.Private.CoreLib")
             };
 
         /// <summary>

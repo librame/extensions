@@ -10,19 +10,16 @@
 
 #endregion
 
-using System.Text;
-
 namespace Librame.Extensions.Core
 {
-    ///// <summary>
-    ///// 字符编码接口。
-    ///// </summary>
-    //public interface IEncoding
-    //{
-    //    /// <summary>
-    //    /// 
-    //    /// </summary>
-    //    /// <returns></returns>
-    //    Encoding EncodingSource { get; set; }
-    //}
+    /// <summary>
+    /// 可排序接口。
+    /// </summary>
+    public interface ISortable
+    {
+        /// <summary>
+        /// 服务优先级（数值越小越优先）。
+        /// </summary>
+        float Priority { get; set; }
+    }
 }

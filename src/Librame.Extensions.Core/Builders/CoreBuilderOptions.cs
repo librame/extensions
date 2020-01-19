@@ -26,7 +26,7 @@ namespace Librame.Extensions.Core.Builders
         /// 字符编码（默认为 UTF8）。
         /// </summary>
         public SerializableObject<Encoding> Encoding { get; }
-            = SerializableHelper.CreateEncoding();
+            = SerializableObjectHelper.CreateEncoding();
 
         /// <summary>
         /// 解决时钟回流的偏移量（默认为 1）。

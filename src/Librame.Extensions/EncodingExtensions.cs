@@ -33,7 +33,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="name">首选编码的代码页名称。</param>
         /// <returns>返回与指定代码页关联的编码。</returns>
-        public static Encoding FromName(this string name)
+        public static Encoding FromEncodingName(this string name)
             => Encoding.GetEncoding(name);
 
 

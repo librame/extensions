@@ -107,7 +107,7 @@ namespace Librame.Extensions.Examples
             var dataOptions = provider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
             dataOptions.MigrationAssemblyReferences.ForEach((refer, i) =>
             {
-                Console.WriteLine($"AssemblyReference {i + 1}: {refer.Location}");
+                Console.WriteLine($"AssemblyReference {i + 1}: {refer.Name}, IsItself: {refer.IsItself}");
             });
 
             Console.WriteLine("Press any key to continue");

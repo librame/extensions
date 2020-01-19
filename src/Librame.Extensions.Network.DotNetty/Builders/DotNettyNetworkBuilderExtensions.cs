@@ -29,15 +29,15 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加 DotNetty 扩展。
         /// </summary>
-        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureOptions">给定的选项配置动作。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddDotNetty(this INetworkBuilder baseBuilder,
+        public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
             Action<DotNettyOptions> configureOptions)
         {
             configureOptions.NotNull(nameof(configureOptions));
 
-            return baseBuilder.AddDotNetty(dependency =>
+            return builder.AddDotNetty(dependency =>
             {
                 dependency.Builder.ConfigureOptions = configureOptions;
             });
@@ -46,36 +46,36 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加 DotNetty 扩展。
         /// </summary>
-        /// <param name="baseBuilder">给定的基础 <see cref="INetworkBuilder"/>。</param>
+        /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddDotNetty(this INetworkBuilder baseBuilder,
+        public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
             Action<DotNettyDependency> configureDependency = null)
-            => baseBuilder.AddDotNetty<DotNettyDependency>(configureDependency);
+            => builder.AddDotNetty<DotNettyDependency>(configureDependency);
 
         /// <summary>
         /// 添加 DotNetty 扩展。
         /// </summary>
-        /// <typeparam name="TDependencyOptions">指定的依赖类型。</typeparam>
-        /// <param name="baseBuilder">给定的基础 <see cref="INetworkBuilder"/>。</param>
+        /// <typeparam name="TDependency">指定的依赖类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseBuilder")]
-        public static INetworkBuilder AddDotNetty<TDependencyOptions>(this INetworkBuilder baseBuilder,
-            Action<TDependencyOptions> configureDependency = null)
-            where TDependencyOptions : DotNettyDependency, new()
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
+        public static INetworkBuilder AddDotNetty<TDependency>(this INetworkBuilder builder,
+            Action<TDependency> configureDependency = null)
+            where TDependency : DotNettyDependency, new()
         {
-            baseBuilder.NotNull(nameof(baseBuilder));
+            builder.NotNull(nameof(builder));
 
             // Configure Dependency
-            var dependency = configureDependency.ConfigureDependency(baseBuilder);
+            var dependency = configureDependency.ConfigureDependency(builder);
 
             // Add Dependencies
-            if (!baseBuilder.ContainsParentBuilder<IEncryptionBuilder>())
-                baseBuilder.AddEncryption().AddDeveloperGlobalSigningCredentials();
+            if (!builder.ContainsParentBuilder<IEncryptionBuilder>())
+                builder.AddEncryption().AddDeveloperGlobalSigningCredentials();
 
             // Configure Builder
-            return baseBuilder
+            return builder
                 .AddDotNettyDependency(dependency)
                 .AddWrappers()
                 .AddDemo();

@@ -129,9 +129,6 @@
   <data name="CloseConnectionFormat" xml:space="preserve">
     <value>关闭数据连接 '{0}'。</value>
   </data>
-  <data name="InvalidOperationExceptionCompileFileExtension" xml:space="preserve">
-    <value>仅支持编译 '.dll' 文件类型。</value>
-  </data>
   <data name="InvalidOperationExceptionNotFindPathForAssemblyReferenceFormat" xml:space="preserve">
     <value>未找到程序集引用路径 '{0}'。</value>
   </data>

@@ -14,36 +14,36 @@ using System;
 
 namespace Librame.Extensions.Core.Serializers
 {
-    /// <summary>
-    /// 类型字符串序列化器。
-    /// </summary>
-    public class TypeStringSerializer : IObjectStringSerializer
-    {
-        internal const string DefaultName
-            = nameof(Type);
+    ///// <summary>
+    ///// 类型字符串序列化器。
+    ///// </summary>
+    //public class TypeStringSerializer : IObjectStringSerializer
+    //{
+    //    internal const string DefaultName
+    //        = nameof(Type);
 
 
-        /// <summary>
-        /// 名称。
-        /// </summary>
-        public string Name
-            => DefaultName;
+    //    /// <summary>
+    //    /// 名称。
+    //    /// </summary>
+    //    public string Name
+    //        => DefaultName;
 
 
-        /// <summary>
-        /// 反序列化为原始对象。
-        /// </summary>
-        /// <param name="target">给定的字符串。</param>
-        /// <returns>返回字符编码。</returns>
-        public object Deserialize(string target)
-            => Type.GetType(target, true);
+    //    /// <summary>
+    //    /// 反序列化为原始对象。
+    //    /// </summary>
+    //    /// <param name="target">给定的字符串。</param>
+    //    /// <returns>返回字符编码。</returns>
+    //    public object Deserialize(string target)
+    //        => Type.GetType(target, true);
 
-        /// <summary>
-        /// 序列化为字符串。
-        /// </summary>
-        /// <param name="source">给定的字符编码。</param>
-        /// <returns>返回字符串。</returns>
-        public string Serialize(object source)
-            => source is Type type ? type.GetAssemblyQualifiedNameWithoutVersion() : string.Empty;
-    }
+    //    /// <summary>
+    //    /// 序列化为字符串。
+    //    /// </summary>
+    //    /// <param name="source">给定的字符编码。</param>
+    //    /// <returns>返回字符串。</returns>
+    //    public string Serialize(object source)
+    //        => source is Type type ? type.GetAssemblyQualifiedNameWithoutVersion() : string.Empty;
+    //}
 }

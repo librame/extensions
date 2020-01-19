@@ -11,13 +11,13 @@
 #endregion
 
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.DependencyModel;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Core
 {
     using Core.Utilities;
 
@@ -26,29 +26,50 @@ namespace Librame.Extensions.Data
     /// </summary>
     public class AssemblyReference : IEquatable<AssemblyReference>, IEqualityComparer<AssemblyReference>, IComparable<AssemblyReference>, IComparable
     {
-        private AssemblyReference(IEnumerable<MetadataReference> metadatas,
-            bool copyLocal = false, string location = null)
+        /// <summary>
+        /// 构造一个 <see cref="AssemblyReference"/>。
+        /// </summary>
+        /// <param name="name">给定的名称。</param>
+        /// <param name="compiled">给定的已编译程序集。</param>
+        /// <param name="isItself">是否为已编译程序集自身（可选）。</param>
+        /// <param name="library">给定的 <see cref="CompilationLibrary"/>（可选）。</param>
+        public AssemblyReference(string name, Assembly compiled, bool? isItself = null, CompilationLibrary library = null)
         {
-            Metadatas = metadatas.NotEmpty(nameof(metadatas));
-            CopyLocal = copyLocal;
-            Location = location;
+            Name = name.NotEmpty(nameof(name));
+            Compiled = compiled.NotNull(nameof(compiled));
+
+            IsItself = isItself ?? Name == compiled.GetDisplayName();
+            Library = library;
         }
 
 
         /// <summary>
-        /// 元数据集合。
+        /// 名称。
         /// </summary>
-        public IEnumerable<MetadataReference> Metadatas { get; }
+        public string Name { get; }
 
         /// <summary>
-        /// 复制到本地。
+        /// 已编译程序集。
         /// </summary>
-        public bool CopyLocal { get; }
+        public Assembly Compiled { get; }
 
         /// <summary>
-        /// 已加载文件的完整路径或 UNC 位置。
+        /// 是否为已编译程序集自身。
         /// </summary>
-        public string Location { get; }
+        public bool IsItself { get; }
+
+        /// <summary>
+        /// 编译库。
+        /// </summary>
+        public CompilationLibrary Library { get; }
+
+
+        /// <summary>
+        /// 转换为元数据引用。
+        /// </summary>
+        /// <returns>返回 <see cref="MetadataReference"/>。</returns>
+        public MetadataReference ToMetadataReference()
+            => MetadataReference.CreateFromFile(Compiled.Location);
 
 
         /// <summary>
@@ -66,21 +87,7 @@ namespace Librame.Extensions.Data
         /// <param name="other">给定的 <see cref="AssemblyReference"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(AssemblyReference other)
-        {
-            if (other.IsNull() || other.Metadatas.IsEmpty()
-                || Metadatas.Count() != other.Metadatas.Count())
-            {
-                return false;
-            }
-
-            for (var i = 0; i < Metadatas.Count(); i++)
-            {
-                if (Metadatas.ElementAt(i).Display != other.Metadatas.ElementAt(i).Display)
-                    return false;
-            }
-
-            return true;
-        }
+            => Name == other?.Name && Compiled == other.Compiled;
 
         /// <summary>
         /// 是否相等。
@@ -104,10 +111,8 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定的 <see cref="AssemblyReference"/>。</param>
         /// <returns>返回整数。</returns>
         public int GetHashCode(AssemblyReference obj)
-        {
-            if (obj.IsNull()) return -1;
-            return obj.Metadatas.ComputeHashCode();
-        }
+            => obj.IsNull() ? -1
+            : obj.Name.CompatibleGetHashCode() ^ obj.Compiled.GetHashCode();
 
 
         /// <summary>
@@ -116,7 +121,7 @@ namespace Librame.Extensions.Data
         /// <param name="other">给定的 <see cref="AssemblyReference"/>。</param>
         /// <returns>返回整数。</returns>
         public int CompareTo(AssemblyReference other)
-            => string.Compare(Location, other?.Location, StringComparison.OrdinalIgnoreCase);
+            => string.CompareOrdinal(Name, other?.Name);
 
         /// <summary>
         /// 比较大小。
@@ -132,7 +137,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => string.Join(',', Metadatas.Select(s => s.Display));
+            => Name;
 
 
         /// <summary>
@@ -196,47 +201,45 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
-        /// 通过程序集引用。
+        /// 加载程序集引用。
         /// </summary>
         /// <param name="assembly">给定的程序集。</param>
-        /// <param name="copyLocal">是否复制到本地（可选；默认不复制）。</param>
         /// <returns>返回 <see cref="AssemblyReference"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "assembly")]
-        public static AssemblyReference ByAssembly(Assembly assembly, bool copyLocal = false)
-        {
-            MetadataReference metadata = MetadataReference.CreateFromFile(assembly.Location);
-            return new AssemblyReference(metadata.YieldEnumerable(), copyLocal, assembly.Location);
-        }
+        public static AssemblyReference Load(Assembly assembly)
+            => new AssemblyReference(assembly.GetDisplayName(), assembly, true);
 
         /// <summary>
-        /// 通过程序集名称引用。
+        /// 加载程序集引用。
         /// </summary>
         /// <param name="assemblyName">给定的程序集名称。</param>
-        /// <param name="copyLocal">是否复制到本地（可选；默认不复制）。</param>
+        /// <param name="throwIfError">如果加载失败则抛出异常（可选；默认抛出异常）。</param>
         /// <returns>返回 <see cref="AssemblyReference"/>。</returns>
-        public static AssemblyReference ByName(string assemblyName, bool copyLocal = false)
+        public static AssemblyReference Load(string assemblyName, bool throwIfError = true)
         {
-            assemblyName.NotEmpty(nameof(assemblyName));
+            var compiled = AssemblyUtility.CurrentAssemblies.SingleOrDefault(p => p.GetDisplayName() == assemblyName);
+            if (compiled.IsNotNull())
+                return new AssemblyReference(assemblyName, compiled, true);
 
-            var assembly = AssemblyUtility.CurrentAssemblies
-                .FirstOrDefault(assembly => assemblyName.Equals(assembly.GetDisplayName(), StringComparison.OrdinalIgnoreCase));
+            foreach (var library in DependencyContext.Default.CompileLibraries)
+            {
+                if (library.Name == assemblyName)
+                {
+                    compiled = AppDomain.CurrentDomain.Load(assemblyName);
+                    return new AssemblyReference(assemblyName, compiled, true, library);
+                }
 
-            if (assembly.IsNull())
-                throw new InvalidOperationException($"Assembly '{assemblyName}' not found.");
+                if (library.Assemblies.Contains(assemblyName))
+                {
+                    compiled = AppDomain.CurrentDomain.Load(assemblyName);
+                    return new AssemblyReference(assemblyName, compiled, false, library);
+                }
+            }
+            
+            if (throwIfError)
+                throw new ArgumentException($"Load assembly '{assemblyName}' error.");
 
-            MetadataReference reference = MetadataReference.CreateFromFile(assembly.Location);
-            return new AssemblyReference(reference.YieldEnumerable(), copyLocal, assembly.Location);
+            return null;
         }
 
-        /// <summary>
-        /// 通过程序集路径引用。
-        /// </summary>
-        /// <param name="assemblyPath">给定的程序集路径。</param>
-        /// <returns>返回 <see cref="AssemblyReference"/>。</returns>
-        public static AssemblyReference ByPath(string assemblyPath)
-        {
-            var metadatas = MetadataReference.CreateFromFile(assemblyPath).YieldEnumerable();
-            return new AssemblyReference(metadatas, location: assemblyPath);
-        }
     }
 }

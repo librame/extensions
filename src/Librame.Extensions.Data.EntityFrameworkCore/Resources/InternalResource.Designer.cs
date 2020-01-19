@@ -97,15 +97,6 @@ namespace Librame.Extensions.Data.Resources {
         }
         
         /// <summary>
-        ///   查找类似 Only supported &apos;.dll&apos; file extension. 的本地化字符串。
-        /// </summary>
-        internal static string InvalidOperationExceptionCompileFileExtension {
-            get {
-                return ResourceManager.GetString("InvalidOperationExceptionCompileFileExtension", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 Could not find path &apos;{0}&apos; for assembly reference. 的本地化字符串。
         /// </summary>
         internal static string InvalidOperationExceptionNotFindPathForAssemblyReferenceFormat {

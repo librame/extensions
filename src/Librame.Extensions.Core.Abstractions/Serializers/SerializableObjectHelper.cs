@@ -15,49 +15,36 @@ using System.Text;
 
 namespace Librame.Extensions.Core.Serializers
 {
+    using Converters;
+
     /// <summary>
-    /// 可序列化助手。
+    /// 可序列化对象助手。
     /// </summary>
-    public static class SerializableHelper
+    public static class SerializableObjectHelper
     {
         /// <summary>
         /// 创建只读内存字节的 BASE32 格式可序列化对象。
         /// </summary>
         /// <param name="readOnlyMemory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
         /// <returns>返回 <see cref="SerializableObject{ReadOnlyMemory}"/>。</returns>
-        public static SerializableObject<ReadOnlyMemory<byte>> CreateReadOnlyMemoryBase32(ReadOnlyMemory<byte> readOnlyMemory)
-        {
-            if (readOnlyMemory.IsEmpty)
-                return new SerializableObject<ReadOnlyMemory<byte>>(string.Empty, ReadOnlyMemoryBase32StringSerializer.DefaultName);
-
-            return new SerializableObject<ReadOnlyMemory<byte>>(readOnlyMemory, ReadOnlyMemoryBase32StringSerializer.DefaultName);
-        }
+        public static SerializableObject<ReadOnlyMemory<byte>> CreateBase32String(ReadOnlyMemory<byte> readOnlyMemory)
+            => new SerializableObject<ReadOnlyMemory<byte>>(readOnlyMemory, Base32StringConverter.Key);
 
         /// <summary>
         /// 创建只读内存字节的 BASE64 格式可序列化对象。
         /// </summary>
         /// <param name="readOnlyMemory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
         /// <returns>返回 <see cref="SerializableObject{ReadOnlyMemory}"/>。</returns>
-        public static SerializableObject<ReadOnlyMemory<byte>> CreateReadOnlyMemoryBase64(ReadOnlyMemory<byte> readOnlyMemory)
-        {
-            if (readOnlyMemory.IsEmpty)
-                return new SerializableObject<ReadOnlyMemory<byte>>(string.Empty, ReadOnlyMemoryBase64StringSerializer.DefaultName);
-
-            return new SerializableObject<ReadOnlyMemory<byte>>(readOnlyMemory, ReadOnlyMemoryBase64StringSerializer.DefaultName);
-        }
+        public static SerializableObject<ReadOnlyMemory<byte>> CreateBase64String(ReadOnlyMemory<byte> readOnlyMemory)
+            => new SerializableObject<ReadOnlyMemory<byte>>(readOnlyMemory, Base64StringConverter.Key);
 
         /// <summary>
         /// 创建只读内存字节的 HEX 格式可序列化对象。
         /// </summary>
         /// <param name="readOnlyMemory">给定的 <see cref="ReadOnlyMemory{Byte}"/>。</param>
         /// <returns>返回 <see cref="SerializableObject{ReadOnlyMemory}"/>。</returns>
-        public static SerializableObject<ReadOnlyMemory<byte>> CreateReadOnlyMemoryHex(ReadOnlyMemory<byte> readOnlyMemory)
-        {
-            if (readOnlyMemory.IsEmpty)
-                return new SerializableObject<ReadOnlyMemory<byte>>(string.Empty, ReadOnlyMemoryHexStringSerializer.DefaultName);
-
-            return new SerializableObject<ReadOnlyMemory<byte>>(readOnlyMemory, ReadOnlyMemoryHexStringSerializer.DefaultName);
-        }
+        public static SerializableObject<ReadOnlyMemory<byte>> CreateHexString(ReadOnlyMemory<byte> readOnlyMemory)
+            => new SerializableObject<ReadOnlyMemory<byte>>(readOnlyMemory, HexStringConverter.Key);
 
 
         /// <summary>
@@ -66,7 +53,7 @@ namespace Librame.Extensions.Core.Serializers
         /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="Encoding.UTF8"/>）。</param>
         /// <returns>返回 <see cref="SerializableObject{Encoding}"/>。</returns>
         public static SerializableObject<Encoding> CreateEncoding(Encoding encoding = null)
-            => new SerializableObject<Encoding>(encoding ?? Encoding.UTF8, EncodingStringSerializer.DefaultName);
+            => new SerializableObject<Encoding>(encoding ?? Encoding.UTF8, EncodingStringConverter.Key);
 
 
         /// <summary>
@@ -83,6 +70,6 @@ namespace Librame.Extensions.Core.Serializers
         /// <param name="type">给定的类型。</param>
         /// <returns>返回 <see cref="SerializableObject{Type}"/>。</returns>
         public static SerializableObject<Type> CreateType(Type type)
-            => new SerializableObject<Type>(type, TypeStringSerializer.DefaultName);
+            => new SerializableObject<Type>(type, TypeStringConverter.Key);
     }
 }

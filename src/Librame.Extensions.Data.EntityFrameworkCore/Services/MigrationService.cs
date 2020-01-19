@@ -36,6 +36,7 @@ namespace Librame.Extensions.Data.Services
     using Accessors;
     using Aspects;
     using Builders;
+    using Compilers;
     using Core.Builders;
     using Core.Combiners;
     using Core.Services;

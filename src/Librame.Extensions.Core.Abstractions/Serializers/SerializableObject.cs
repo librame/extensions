@@ -11,9 +11,12 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 
 namespace Librame.Extensions.Core.Serializers
 {
+    using Converters;
+
     /// <summary>
     /// 可序列化对象。
     /// </summary>
@@ -27,9 +30,19 @@ namespace Librame.Extensions.Core.Serializers
         /// 构造一个 <see cref="SerializableObject{TSource}"/>。
         /// </summary>
         /// <param name="value">给定的字符串值。</param>
-        /// <param name="serializerName">给定已注册的序列化器名称（参考：<see cref="SerializerRegistration"/>）。</param>
-        public SerializableObject(string value, string serializerName)
-            : this(serializerName)
+        /// <param name="name">给定已注册的转换器名称（默认支持框架原生的类型转换器。详情参考：<see cref="TypeConverterHelper.Register(TypeNamedKey, TypeConverter)"/>）。</param>
+        public SerializableObject(string value, string name)
+            : this(new TypeNamedKey<TSource>(name))
+        {
+            ChangeValue(value);
+        }
+        /// <summary>
+        /// 构造一个 <see cref="SerializableObject{TSource}"/>。
+        /// </summary>
+        /// <param name="value">给定的字符串值。</param>
+        /// <param name="key">给定的 <see cref="TypeNamedKey"/>（默认支持框架原生的类型转换器。详情参考：<see cref="TypeConverterHelper.Register(TypeNamedKey, TypeConverter)"/>）。</param>
+        public SerializableObject(string value, TypeNamedKey key)
+            : this(key)
         {
             ChangeValue(value);
         }
@@ -38,25 +51,46 @@ namespace Librame.Extensions.Core.Serializers
         /// 构造一个 <see cref="SerializableObject{TSource}"/>。
         /// </summary>
         /// <param name="source">给定的来源实例。</param>
-        /// <param name="serializerName">给定已注册的序列化器名称（参考：<see cref="SerializerRegistration"/>）。</param>
-        public SerializableObject(TSource source, string serializerName)
-            : this(serializerName)
+        /// <param name="name">给定已注册的转换器名称（默认支持框架原生的类型转换器。详情参考：<see cref="TypeConverterHelper.Register(TypeNamedKey, TypeConverter)"/>）。</param>
+        public SerializableObject(TSource source, string name)
+            : this(source, new TypeNamedKey<TSource>(name))
+        {
+        }
+        /// <summary>
+        /// 构造一个 <see cref="SerializableObject{TSource}"/>。
+        /// </summary>
+        /// <param name="source">给定的来源实例。</param>
+        /// <param name="key">给定的 <see cref="TypeNamedKey"/>（默认支持框架原生的类型转换器。详情参考：<see cref="TypeConverterHelper.Register(TypeNamedKey, TypeConverter)"/>）。</param>
+        public SerializableObject(TSource source, TypeNamedKey key)
+            : this(key)
         {
             ChangeSource(source);
         }
 
-        private SerializableObject(string serializerName)
+        private SerializableObject(TypeNamedKey key)
         {
-            Serializer = SerializerRegistration.GetObjectString(serializerName);
+            Key = key.NotNull(nameof(key));
+
+            if (!TypeConverterHelper.TryGet(key, out TypeConverter converter))
+                throw new ArgumentException($"The key '{key}' converter is not found.");
+
+            Converter = converter;
         }
 
 
         /// <summary>
-        /// 序列化器。
+        /// 类型命名键。
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IObjectStringSerializer Serializer { get; }
+        public TypeNamedKey Key { get; }
+
+        /// <summary>
+        /// 类型转换器。
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public TypeConverter Converter { get; }
 
         /// <summary>
         /// 来源实例。
@@ -83,7 +117,7 @@ namespace Librame.Extensions.Core.Serializers
         /// <returns>返回 <see cref="SerializableObject{TSource}"/>。</returns>
         public SerializableObject<TSource> ChangeValue(string newValue)
         {
-            Source = (TSource)Serializer.Deserialize(newValue);
+            Source = (TSource)Converter.ConvertFrom(newValue);
             _value = newValue;
 
             return this;
@@ -96,7 +130,7 @@ namespace Librame.Extensions.Core.Serializers
         /// <returns>返回 <see cref="SerializableObject{TSource}"/>。</returns>
         public SerializableObject<TSource> ChangeSource(TSource newSource)
         {
-            _value = Serializer.Serialize(newSource);
+            _value = (string)Converter.ConvertTo(newSource, typeof(string));
             Source = newSource;
 
             return this;
@@ -158,8 +192,8 @@ namespace Librame.Extensions.Core.Serializers
         /// <summary>
         /// 隐式转换为字符串形式。
         /// </summary>
-        /// <param name="serializable">给定的 <see cref="SerializableObject{TSource}"/>。</param>
-        public static implicit operator string(SerializableObject<TSource> serializable)
-            => serializable?.ToString();
+        /// <param name="value">给定的 <see cref="SerializableObject{TSource}"/>。</param>
+        public static implicit operator string(SerializableObject<TSource> value)
+            => value?.ToString();
     }
 }

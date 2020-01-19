@@ -18,8 +18,8 @@ namespace Librame.Extensions.Storage.Builders
 
     internal class StorageBuilder : AbstractExtensionBuilder, IStorageBuilder
     {
-        public StorageBuilder(IExtensionBuilder builder, StorageBuilderDependency dependencyOptions)
-            : base(builder, dependencyOptions)
+        public StorageBuilder(IExtensionBuilder parentBuilder, StorageBuilderDependency dependency)
+            : base(parentBuilder, dependency)
         {
             Services.AddSingleton<IStorageBuilder>(this);
         }

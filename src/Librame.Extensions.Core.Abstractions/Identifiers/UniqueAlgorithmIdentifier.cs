@@ -64,7 +64,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// 空实例（默认使用 HEX 序列化字节数组）。
         /// </summary>
         public static readonly UniqueAlgorithmIdentifier Empty
-            = new UniqueAlgorithmIdentifier(SerializableHelper.CreateReadOnlyMemoryHex(Guid.Empty.ToByteArray()));
+            = new UniqueAlgorithmIdentifier(SerializableObjectHelper.CreateHexString(Guid.Empty.ToByteArray()));
 
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Librame.Extensions.Core.Identifiers
         public static UniqueAlgorithmIdentifier New(SerializableObject<ReadOnlyMemory<byte>> readOnlyMemory = null)
         {
             if (readOnlyMemory.IsNull())
-                return new UniqueAlgorithmIdentifier(SerializableHelper.CreateReadOnlyMemoryHex(Guid.NewGuid().ToByteArray()));
+                return new UniqueAlgorithmIdentifier(SerializableObjectHelper.CreateHexString(Guid.NewGuid().ToByteArray()));
 
             return new UniqueAlgorithmIdentifier(Guid.NewGuid(), readOnlyMemory);
         }

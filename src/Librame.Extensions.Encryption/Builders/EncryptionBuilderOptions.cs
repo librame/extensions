@@ -45,6 +45,6 @@ namespace Librame.Extensions.Encryption.Builders
         /// 标识符。
         /// </summary>
         public SerializableObject<ReadOnlyMemory<byte>> Identifier { get; set; }
-            = SerializableHelper.CreateReadOnlyMemoryHex(Guid.NewGuid().ToByteArray());
+            = SerializableObjectHelper.CreateHexString(Guid.NewGuid().ToByteArray());
     }
 }

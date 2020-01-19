@@ -16,10 +16,10 @@ namespace Librame.Extensions.Drawing.Builders
 {
     using Core.Builders;
 
-    class DrawingBuilder : AbstractExtensionBuilder, IDrawingBuilder
+    internal class DrawingBuilder : AbstractExtensionBuilder, IDrawingBuilder
     {
-        public DrawingBuilder(IExtensionBuilder builder, DrawingBuilderDependency dependencyOptions)
-            : base(builder, dependencyOptions)
+        public DrawingBuilder(IExtensionBuilder parentBuilder, DrawingBuilderDependency dependency)
+            : base(parentBuilder, dependency)
         {
             Services.AddSingleton<IDrawingBuilder>(this);
         }

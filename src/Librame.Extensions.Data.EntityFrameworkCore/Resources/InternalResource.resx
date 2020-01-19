@@ -129,9 +129,6 @@
   <data name="CloseConnectionFormat" xml:space="preserve">
     <value>Close connection '{0}'.</value>
   </data>
-  <data name="InvalidOperationExceptionCompileFileExtension" xml:space="preserve">
-    <value>Only supported '.dll' file extension.</value>
-  </data>
   <data name="InvalidOperationExceptionNotFindPathForAssemblyReferenceFormat" xml:space="preserve">
     <value>Could not find path '{0}' for assembly reference.</value>
   </data>
