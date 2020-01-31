@@ -28,13 +28,15 @@ namespace Librame.Extensions.Core.Utilities
                 "anonymously",
                 "microsoft",
                 "mscorlib",
+                "newtonsoft",
                 "netstandard",
                 "nuget",
                 "runtime",
                 "sos",
                 "system",
                 "testhost",
-                "window"
+                "window",
+                "xunit"
             };
 
 
