@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.3.1021.210</Version>
+    <Version>7.4.1.0</Version>
     <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Network.Abstractions on .NET Standard extension implementation.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Network.Abstractions on .NET Standard extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.3.1021.210</AssemblyVersion>
-    <FileVersion>7.3.2001.131</FileVersion>
+    <AssemblyVersion>7.4.1.0</AssemblyVersion>
+    <FileVersion>7.4.1054.17415</FileVersion>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
@@ -40,7 +40,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net48'">

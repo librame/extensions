@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.3.1021.210</Version>
+    <Version>7.4.1.0</Version>
     <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based .NET Standard and Microsoft.Extensions packages on common framework.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based .NET Standard and Microsoft.Extensions packages on common framework.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.3.1021.210</AssemblyVersion>
-    <FileVersion>7.3.2001.131</FileVersion>
+    <AssemblyVersion>7.4.1.0</AssemblyVersion>
+    <FileVersion>7.4.1054.17415</FileVersion>
     <RootNamespace>Librame.Extensions.Core</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
@@ -42,14 +42,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="System.Text.Json" Version="4.7.0" />
+    <PackageReference Include="System.Text.Json" Version="4.7.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net48'">

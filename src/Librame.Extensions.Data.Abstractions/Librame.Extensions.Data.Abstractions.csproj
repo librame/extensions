@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.3.1021.210</Version>
+    <Version>7.4.1.0</Version>
     <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Core.Abstractions on Data extension package.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Core.Abstractions on Data extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.3.1021.210</AssemblyVersion>
-    <FileVersion>7.3.2001.131</FileVersion>
+    <AssemblyVersion>7.4.1.0</AssemblyVersion>
+    <FileVersion>7.4.1054.17415</FileVersion>
     <RootNamespace>Librame.Extensions.Data</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
