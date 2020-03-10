@@ -32,8 +32,8 @@ namespace Librame.Extensions.Data.Builders
         {
             builder.Services.TryAddScoped(typeof(IStoreHub<>), typeof(StoreHub<>));
 
-            builder.Services.TryAddScoped<IStoreIdentifier, StoreIdentifier>();
             builder.Services.TryAddScoped<IStoreInitializer, StoreInitializer>();
+            builder.Services.TryAddScoped<IStoreIdentifier, StoreIdentifier>();
 
             return builder;
         }

@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core.Identifiers
     /// <summary>
     /// 雪花标识符生成器。
     /// </summary>
-    public class SnowflakeIdentifierGenerator
+    public class SnowflakeIdentifierGenerator : IIdentifierGenerator<long>
     {
         private long _machineId = 0L;
         private long _dataCenterId = 0L;
@@ -97,9 +97,7 @@ namespace Librame.Extensions.Core.Identifiers
         }
 
         private static long GetCurrentTimestamp(IClockService clock)
-        {
-            return clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).ConfigureAndResult().ToFileTime();
-        }
+            => clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).ConfigureAndResult().ToFileTime();
 
         private static long GetNextTimestamp(long lastTimestamp, IClockService clock)
         {
@@ -124,7 +122,7 @@ namespace Librame.Extensions.Core.Identifiers
 
 
         /// <summary>
-        /// 默认生成器。
+        /// 默认生成器（机器与数据中心编号为 0）。
         /// </summary>
         public static readonly SnowflakeIdentifierGenerator Default
             = new SnowflakeIdentifierGenerator(0L, 0L);

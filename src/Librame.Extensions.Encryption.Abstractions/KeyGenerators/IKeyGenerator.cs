@@ -12,7 +12,6 @@
 
 namespace Librame.Extensions.Encryption.KeyGenerators
 {
-    using Core.Identifiers;
     using Core.Services;
 
     /// <summary>
@@ -24,8 +23,8 @@ namespace Librame.Extensions.Encryption.KeyGenerators
         /// 生成密钥。
         /// </summary>
         /// <param name="length">给定要生成的密钥长度。</param>
-        /// <param name="identifier">给定的 <see cref="IAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] GenerateKey(int length, IAlgorithmIdentifier identifier = null);
+        byte[] GenerateKey(int length, KeyDescriptor descriptor = null);
     }
 }

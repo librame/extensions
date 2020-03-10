@@ -17,8 +17,8 @@ using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption.Services
 {
-    using Builders;
     using Core.Services;
+    using Encryption.Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class RsaService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IRsaService

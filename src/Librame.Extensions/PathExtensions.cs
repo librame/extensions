@@ -150,11 +150,13 @@ namespace Librame.Extensions
             var altSeparatorIndex = basePath.CompatibleIndexOf(ExtensionSettings.AltDirectorySeparatorChar);
             var separatorIndex = basePath.CompatibleIndexOf(ExtensionSettings.DirectorySeparatorChar);
 
-            // 正反向分隔符不能同时存在（或不存在）于基础路径中，且不能位于开头字符
-            if ((altSeparatorIndex < 1 && separatorIndex < 1) || (altSeparatorIndex > 0 && separatorIndex > 0))
+            // 正反向分隔符不能同时存在（或不存在）于基础路径中
+            if (altSeparatorIndex >= 0 && separatorIndex >= 0 || altSeparatorIndex < 0 && separatorIndex < 0)
                 throw new ArgumentException(InternalResource.ArgumentExceptionBasePathFormat.Format(basePath));
 
-            var basePathSeparator = altSeparatorIndex > 0 ? ExtensionSettings.AltDirectorySeparatorChar : ExtensionSettings.DirectorySeparatorChar;
+            var basePathSeparator = altSeparatorIndex > 0
+                ? ExtensionSettings.AltDirectorySeparatorChar
+                : ExtensionSettings.DirectorySeparatorChar;
 
             // RelativePath: filename.ext
             if (!relativePath.CompatibleContains(ExtensionSettings.AltDirectorySeparatorChar)

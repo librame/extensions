@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data.Accessors
 {
     using Core.Services;
     using Core.Threads;
-    using Stores;
+    using Data.Stores;
 
     /// <summary>
     /// 访问器接口。
@@ -41,6 +41,11 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         IMemoryLocker Locker { get; }
 
+
+        /// <summary>
+        /// 当前类型。
+        /// </summary>
+        Type CurrentType { get; }
 
         /// <summary>
         /// 当前租户。

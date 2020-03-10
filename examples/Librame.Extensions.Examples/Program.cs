@@ -45,32 +45,31 @@ namespace Librame.Extensions.Examples
                     logging.AddFilter((str, level) => true);
                 };
             })
-            .AddData(options =>
+            .AddData(dependency =>
             {
-                // SQLite
-                //options.DefaultTenant.DefaultConnectionString = "Data Source=" + basePath.CombinePath("librame_data_default.db");
-                //options.DefaultTenant.WritingConnectionString = "Data Source=" + basePath.CombinePath("librame_data_writing.db");
+                // for SQLite
+                dependency.BindConnectionStrings(root, fileName => basePath.CombinePath(fileName));
 
-                // MySQL
-                options.DefaultTenant.DefaultConnectionString = MySqlConnectionStringHelper.Validate("Server=localhost;Database=librame_data_default;User=root;Password=123456;");
-                options.DefaultTenant.WritingConnectionString = MySqlConnectionStringHelper.Validate("Server=localhost;Database=librame_data_writing;User=root;Password=123456;");
-
-                options.DefaultTenant.WritingSeparation = true;
+                // for MySQL
+                dependency.BindDefaultTenant(root.GetSection(nameof(dependency.Options.DefaultTenant)),
+                    MySqlConnectionStringHelper.Validate);
             })
             .AddAccessor<ExampleDbContextAccessor>((options, optionsBuilder) =>
             {
-                // SQLite
+                // for SQLite
                 //optionsBuilder.UseSqlite(options.DefaultTenant.DefaultConnectionString,
                 //    sqlite => sqlite.MigrationsAssembly(typeof(Program).GetSimpleAssemblyName()));
 
-                // MySQL
+                // for MySQL
                 optionsBuilder.UseMySql(options.DefaultTenant.DefaultConnectionString, mySql =>
                 {
                     mySql.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName());
                     mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
                 });
             })
+            // for SQLite
             //.AddDbDesignTime<SqliteDesignTimeServices>()
+            // for MySQL
             .AddDbDesignTime<MySqlDesignTimeServices>()
             .AddIdentifier<ExampleStoreIdentifier>()
             .AddInitializer<ExampleStoreInitializer>()
@@ -87,10 +86,9 @@ namespace Librame.Extensions.Examples
 
             RunHello(provider);
 
-            // SQLite
+            // for SQLite
             //RunSqlite(provider);
-
-            // MySQL
+            // for MySQL
             RunMySql(provider);
 
             RunEncryption(provider);

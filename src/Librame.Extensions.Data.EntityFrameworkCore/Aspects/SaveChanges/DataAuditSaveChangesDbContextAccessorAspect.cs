@@ -24,13 +24,13 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Aspects
 {
-    using Accessors;
-    using Builders;
     using Core.Mediators;
     using Core.Services;
-    using Mediators;
-    using Schemas;
-    using Stores;
+    using Data.Accessors;
+    using Data.Builders;
+    using Data.Mediators;
+    using Data.Schemas;
+    using Data.Stores;
 
     /// <summary>
     /// 数据审计保存变化访问器截面。

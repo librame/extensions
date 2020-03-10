@@ -17,8 +17,8 @@ using System.Globalization;
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Accessors;
     using Core.Threads;
+    using Data.Accessors;
 
     /// <summary>
     /// 存储初始化器。

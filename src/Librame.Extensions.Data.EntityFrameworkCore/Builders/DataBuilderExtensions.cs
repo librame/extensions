@@ -29,26 +29,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加数据扩展。
         /// </summary>
         /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="configureOptions">给定的配置选项动作方法。</param>
-        /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public static IDataBuilder AddData(this IExtensionBuilder parentBuilder,
-            Action<DataBuilderOptions> configureOptions,
-            Func<IExtensionBuilder, DataBuilderDependency, IDataBuilder> builderFactory = null)
-        {
-            configureOptions.NotNull(nameof(configureOptions));
-
-            return parentBuilder.AddData(dependency =>
-            {
-                dependency.Builder.ConfigureOptions = configureOptions;
-            },
-            builderFactory);
-        }
-
-        /// <summary>
-        /// 添加数据扩展。
-        /// </summary>
-        /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>

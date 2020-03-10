@@ -19,10 +19,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Accessors
 {
-    using Aspects;
     using Core.Services;
-    using Services;
-    using Stores;
+    using Data.Aspects;
+    using Data.Services;
+    using Data.Stores;
 
     /// <summary>
     /// 数据库上下文访问器。

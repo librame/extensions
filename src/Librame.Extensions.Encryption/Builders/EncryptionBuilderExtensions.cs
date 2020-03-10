@@ -27,26 +27,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加加密扩展。
         /// </summary>
         /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="configureOptions">给定的选项配置动作。</param>
-        /// <param name="builderFactory">给定创建加密构建器的工厂方法（可选）。</param>
-        /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        public static IEncryptionBuilder AddEncryption(this IExtensionBuilder parentBuilder,
-            Action<EncryptionBuilderOptions> configureOptions,
-            Func<IExtensionBuilder, EncryptionBuilderDependency, IEncryptionBuilder> builderFactory = null)
-        {
-            configureOptions.NotNull(nameof(configureOptions));
-
-            return parentBuilder.AddEncryption(dependency =>
-            {
-                dependency.Builder.ConfigureOptions = configureOptions;
-            },
-            builderFactory);
-        }
-
-        /// <summary>
-        /// 添加加密扩展。
-        /// </summary>
-        /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建加密构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>

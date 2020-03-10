@@ -18,9 +18,9 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Storage.Services
 {
-    using Builders;
-    using Core.Identifiers;
     using Core.Services;
+    using Core.Utilities;
+    using Storage.Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class FilePermissionService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFilePermissionService
@@ -35,7 +35,8 @@ namespace Librame.Extensions.Storage.Services
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                string token = RandomNumberAlgorithmIdentifier.New(32);
+                var buffer = RandomUtility.GenerateNumber(32);
+                var token = buffer.AsBase64String();
                 Logger.LogTrace($"Generate {idTraceName}: {token}");
 
                 return token;

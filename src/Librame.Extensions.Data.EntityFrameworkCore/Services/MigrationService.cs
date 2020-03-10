@@ -23,7 +23,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -33,16 +32,16 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Services
 {
-    using Accessors;
-    using Aspects;
-    using Builders;
-    using Compilers;
     using Core.Builders;
     using Core.Combiners;
     using Core.Services;
     using Core.Threads;
-    using Migrations;
-    using Stores;
+    using Data.Accessors;
+    using Data.Aspects;
+    using Data.Builders;
+    using Data.Compilers;
+    using Data.Migrations;
+    using Data.Stores;
 
     /// <summary>
     /// 迁移服务。
@@ -64,9 +63,6 @@ namespace Librame.Extensions.Data.Services
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
-        private static ConcurrentDictionary<string, List<string>> _migrationCommands
-            = new ConcurrentDictionary<string, List<string>>();
-
         private static TMigration _lastMigration = null;
         private static IModel _defaultModel = null;
 
@@ -278,57 +274,69 @@ namespace Librame.Extensions.Data.Services
             //var historyRepository = dbContextAccessor.ServiceProvider.GetRequiredService<IHistoryRepository>();
             //var insertCommand = rawSqlCommandBuilder.Build(historyRepository.GetInsertScript(new HistoryRow(migration.GetId(), ProductInfo.GetVersion())));
 
-            var readOnlyCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
+            // 生成操作差异的迁移命令列表
+            var differenceCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
             //.Concat(new[] { new MigrationCommand(insertCommand, _currentContext.Context, _commandLogger) })
-            var executeCommands = new List<MigrationCommand>(readOnlyCommands);
 
-            for (var i = 0; i < readOnlyCommands.Count; i++)
-            {
-                var command = readOnlyCommands[i];
-                var commandKey = GetMigrationCommandKey(command);
-
-                if (_migrationCommands.TryGetValue(commandKey, out List<string> connectionStrings)
-                    && connectionStrings.Contains(dbContextAccessor.CurrentConnectionString))
-                {
-                    // 每个数据连接只执行一次相同命令
-                    executeCommands.Remove(command);
-                }
-            }
-
-            if (executeCommands.Count > 0)
+            // 验证需要执行的迁移命令集合
+            var executeCommands = MigrationCommandValidator.Validate(dbContextAccessor, differenceCommands, Options, _coreOptions);
+            if (executeCommands.IsNotEmpty())
             {
                 migrationCommandExecutor.ExecuteNonQuery(executeCommands, connection);
-
-                executeCommands.ForEach(command =>
-                {
-                    var commandKey = GetMigrationCommandKey(command);
-                    _migrationCommands.AddOrUpdate(commandKey, key =>
-                    {
-                        return new List<string>
-                        {
-                            dbContextAccessor.CurrentConnectionString
-                        };
-                    },
-                    (key, value) =>
-                    {
-                        value.Add(dbContextAccessor.CurrentConnectionString);
-                        return value;
-                    });
-                });
 
                 if (!dbContextAccessor.IsWritingRequest() && _defaultModel.IsNotNull())
                     _defaultModel = null; // 如果默认请求已迁移表结构，则清空默认模型
             }
+
+            //var executeCommands = new List<MigrationCommand>(readOnlyCommands);
+
+            //for (var i = 0; i < readOnlyCommands.Count; i++)
+            //{
+            //    var command = readOnlyCommands[i];
+            //    var commandKey = GetMigrationCommandKey(command);
+
+            //    if (_migrationCommands.TryGetValue(commandKey, out List<string> connectionStrings)
+            //        && connectionStrings.Contains(dbContextAccessor.CurrentConnectionString))
+            //    {
+            //        // 每个数据连接只执行一次相同命令
+            //        executeCommands.Remove(command);
+            //    }
+            //}
+
+            //if (executeCommands.Count > 0)
+            //{
+            //    migrationCommandExecutor.ExecuteNonQuery(executeCommands, connection);
+
+            //    executeCommands.ForEach(command =>
+            //    {
+            //        var commandKey = GetMigrationCommandKey(command);
+            //        _migrationCommands.AddOrUpdate(commandKey, key =>
+            //        {
+            //            return new List<string>
+            //            {
+            //                dbContextAccessor.CurrentConnectionString
+            //            };
+            //        },
+            //        (key, value) =>
+            //        {
+            //            value.Add(dbContextAccessor.CurrentConnectionString);
+            //            return value;
+            //        });
+            //    });
+
+            //    if (!dbContextAccessor.IsWritingRequest() && _defaultModel.IsNotNull())
+            //        _defaultModel = null; // 如果默认请求已迁移表结构，则清空默认模型
+            //}
         }
 
-        /// <summary>
-        /// 获取迁移命令键名。
-        /// </summary>
-        /// <param name="command">给定的 <see cref="MigrationCommand"/>。</param>
-        /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "command")]
-        protected virtual string GetMigrationCommandKey(MigrationCommand command)
-            => command.CommandText.Sha256Base64String(_coreOptions.Encoding.Source);
+        ///// <summary>
+        ///// 获取迁移命令键名。
+        ///// </summary>
+        ///// <param name="command">给定的 <see cref="MigrationCommand"/>。</param>
+        ///// <returns>返回字符串。</returns>
+        //[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "command")]
+        //protected virtual string GetMigrationCommandKey(MigrationCommand command)
+        //    => command.CommandText.Sha256Base64String(_coreOptions.Encoding.Source);
 
         /// <summary>
         /// 获取差异迁移操作。
@@ -376,11 +384,11 @@ namespace Librame.Extensions.Data.Services
             {
                 // 从程序集文件
                 var dependencyOptions = dbContextAccessor.ServiceFactory.GetRequiredService<DataBuilderDependency>();
-                var assemblyPath = ModelSnapshotCompiler.ExportFilePath(dbContextAccessor.GetType(), dependencyOptions.ExportDirectory);
+                var assemblyPath = ModelSnapshotCompiler.ExportFilePath(dbContextAccessor.CurrentType, dependencyOptions.ExportDirectory);
                 if (assemblyPath.Exists())
                 {
                     var modelAssembly = Assembly.LoadFile(assemblyPath);
-                    var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.GetType());
+                    var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.CurrentType);
                     snapshotType = modelAssembly.GetType(modelSnapshotTypeName, throwOnError: true, ignoreCase: false);
                 }
             }

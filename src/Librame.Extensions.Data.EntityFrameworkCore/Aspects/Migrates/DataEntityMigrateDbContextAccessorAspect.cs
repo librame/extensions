@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Aspects
 {
-    using Accessors;
-    using Builders;
     using Core.Mediators;
     using Core.Services;
-    using Mediators;
-    using Stores;
+    using Data.Accessors;
+    using Data.Builders;
+    using Data.Mediators;
+    using Data.Stores;
 
     /// <summary>
     /// 数据实体迁移数据库上下文访问器截面。

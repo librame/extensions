@@ -17,10 +17,9 @@ using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption.Services
 {
-    using Builders;
-    using Core.Identifiers;
     using Core.Services;
-    using KeyGenerators;
+    using Encryption.Builders;
+    using Encryption.KeyGenerators;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class SymmetricService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISymmetricService
@@ -95,22 +94,22 @@ namespace Librame.Extensions.Encryption.Services
 
         #region AES
 
-        public byte[] EncryptAes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] EncryptAes(byte[] buffer, KeyDescriptor descriptor = null)
         {
-            if (identifier.IsNotNull())
+            if (descriptor.IsNotNull())
             {
-                var key = KeyGenerator.GetAesKey(identifier);
+                var key = KeyGenerator.GetAesKey(descriptor);
                 _aes.Value.Key = key;
             }
 
             return Encrypt(_aes.Value, buffer);
         }
 
-        public byte[] DecryptAes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] DecryptAes(byte[] buffer, KeyDescriptor descriptor = null)
         {
-            if (identifier.IsNotNull())
+            if (descriptor.IsNotNull())
             {
-                var key = KeyGenerator.GetAesKey(identifier);
+                var key = KeyGenerator.GetAesKey(descriptor);
                 _aes.Value.Key = key;
             }
 
@@ -122,22 +121,22 @@ namespace Librame.Extensions.Encryption.Services
 
         #region DES
 
-        public byte[] EncryptDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] EncryptDes(byte[] buffer, KeyDescriptor descriptor = null)
         {
-            if (identifier.IsNotNull())
+            if (descriptor.IsNotNull())
             {
-                var key = KeyGenerator.GetDesKey(identifier);
+                var key = KeyGenerator.GetDesKey(descriptor);
                 _des.Value.Key = key;
             }
 
             return Encrypt(_des.Value, buffer);
         }
 
-        public byte[] DecryptDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] DecryptDes(byte[] buffer, KeyDescriptor descriptor = null)
         {
-            if (identifier.IsNotNull())
+            if (descriptor.IsNotNull())
             {
-                var key = KeyGenerator.GetDesKey(identifier);
+                var key = KeyGenerator.GetDesKey(descriptor);
                 _des.Value.Key = key;
             }
 
@@ -149,22 +148,22 @@ namespace Librame.Extensions.Encryption.Services
 
         #region TripleDES
 
-        public byte[] EncryptTripleDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] EncryptTripleDes(byte[] buffer, KeyDescriptor descriptor = null)
         {
-            if (identifier.IsNotNull())
+            if (descriptor.IsNotNull())
             {
-                var key = KeyGenerator.GetTripleDesKey(identifier);
+                var key = KeyGenerator.GetTripleDesKey(descriptor);
                 _3des.Value.Key = key;
             }
 
             return Encrypt(_3des.Value, buffer);
         }
 
-        public byte[] DecryptTripleDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null)
+        public byte[] DecryptTripleDes(byte[] buffer, KeyDescriptor descriptor = null)
         {
-            if (identifier.IsNotNull())
+            if (descriptor.IsNotNull())
             {
-                var key = KeyGenerator.GetTripleDesKey(identifier);
+                var key = KeyGenerator.GetTripleDesKey(descriptor);
                 _3des.Value.Key = key;
             }
 

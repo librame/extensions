@@ -17,7 +17,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Data.Mediators
 {
     using Core.Mediators;
-    using Stores;
+    using Data.Stores;
 
     /// <summary>
     /// 实体通知。

@@ -13,8 +13,8 @@
 namespace Librame.Extensions.Network.Builders
 {
     using Core.Builders;
-    using Requesters;
-    using Services;
+    using Network.Requesters;
+    using Network.Services;
 
     /// <summary>
     /// 网络构建器选项。

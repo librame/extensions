@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -20,14 +21,13 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Aspects
 {
-    using Accessors;
-    using Builders;
-    using Compilers;
     using Core.Mediators;
     using Core.Services;
-    using Mediators;
-    using Microsoft.EntityFrameworkCore;
-    using Stores;
+    using Data.Accessors;
+    using Data.Builders;
+    using Data.Compilers;
+    using Data.Mediators;
+    using Data.Stores;
 
     /// <summary>
     /// 数据迁移迁移数据库上下文访问器截面。
@@ -139,16 +139,15 @@ namespace Librame.Extensions.Data.Aspects
         protected virtual TMigration GenerateMigration(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var accessorType = dbContextAccessor.GetType();
-            var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(accessorType);
+            var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.CurrentType);
 
             // 编译模型快照
             var modelSnapshot = ModelSnapshotCompiler.CompileInMemory(dbContextAccessor,
-                dbContextAccessor.Model, Options, modelSnapshotTypeName, accessorType);
+                dbContextAccessor.Model, Options, modelSnapshotTypeName);
 
             var migration = typeof(TMigration).EnsureCreate<TMigration>();
             migration.Id = GetMigrationId(cancellationToken);
-            migration.AccessorName = accessorType.GetDisplayNameWithNamespace();
+            migration.AccessorName = dbContextAccessor.CurrentType.GetDisplayNameWithNamespace();
             migration.ModelSnapshotName = modelSnapshotTypeName;
             migration.ModelBody = modelSnapshot.Body;
             migration.ModelHash = modelSnapshot.Hash;

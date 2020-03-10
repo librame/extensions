@@ -23,9 +23,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing.Services
 {
-    using Builders;
     using Core.Combiners;
     using Core.Services;
+    using Drawing.Builders;
+    using Drawing.Resources;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ScaleService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IScaleService
@@ -158,6 +159,9 @@ namespace Librame.Extensions.Drawing.Services
                         using (var img = SKImage.FromBitmap(bmp))
                         using (var data = img.Encode(skFormat, Options.Quality))
                         {
+                            if (data.IsNull())
+                                throw new InvalidOperationException(InternalResource.InvalidOperationExceptionUnsupportedImageFormat);
+
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
                             var middleName = s.Suffix.NotEmptyOrDefault(() => DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture));
 

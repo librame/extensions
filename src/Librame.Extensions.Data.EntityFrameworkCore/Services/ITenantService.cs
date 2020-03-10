@@ -16,9 +16,9 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Services
 {
-    using Accessors;
     using Core.Services;
-    using Stores;
+    using Data.Accessors;
+    using Data.Stores;
 
     /// <summary>
     /// 租户服务接口。

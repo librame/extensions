@@ -39,7 +39,7 @@ namespace Librame.Extensions.Drawing.Builders
         /// 图像文件扩展名集合（以英文逗号分隔）。
         /// </summary>
         public string ImageExtensions { get; set; }
-            = ".jpg,.jpeg,.png,.bmp";
+            = ".bmp,.heif,.heic,.jpg,.jpeg,.png,.webp";
 
         /// <summary>
         /// 验证码选项。

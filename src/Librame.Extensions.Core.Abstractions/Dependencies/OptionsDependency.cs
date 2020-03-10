@@ -28,52 +28,39 @@ namespace Librame.Extensions.Core.Dependencies
         /// <summary>
         /// 构造一个 <see cref="OptionsDependency{TOptions}"/>。
         /// </summary>
-        /// <param name="configureOptions">给定的配置选项（可选）。</param>
-        /// <param name="initialOptions">给定的初始化选项实例（可选；默认使用选项类型构造）。</param>
-        /// <param name="autoConfigureOptions">自动配置选项（可选；默认自动配置）。</param>
-        /// <param name="autoPostConfigureOptions">自动后置配置选项（可选；默认不自动配置）。</param>
-        public OptionsDependency(Action<TOptions> configureOptions = null, TOptions initialOptions = null,
-            bool autoConfigureOptions = true, bool autoPostConfigureOptions = false)
-            : base(BuildName<TOptions>(out Type optionsType))
+        public OptionsDependency()
+            : this(BuildName<TOptions>(out Type optionsType), optionsType)
+        {
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="OptionsDependency{TOptions}"/>。
+        /// </summary>
+        /// <param name="name">给定的依赖名称。</param>
+        protected OptionsDependency(string name)
+            : this(name, typeof(TOptions))
+        {
+        }
+
+        private OptionsDependency(string name, Type optionsType)
+            : base(name)
         {
             if (optionsType.IsAssignableToBaseType(typeof(IExtensionBuilderDependency)))
                 throw new ArgumentException(InternalResource.ArgumentExceptionNotSupportedConfigurationOfDependencyOptions);
 
-            OptionsType = SerializableObjectHelper.CreateType(optionsType);
-            Options = initialOptions ?? OptionsType.Source.EnsureCreate<TOptions>();
-
-            ConfigureOptions = configureOptions ?? (_ => { });
-            AutoConfigureOptions = autoConfigureOptions;
-            AutoPostConfigureOptions = autoPostConfigureOptions;
+            OptionsType = new SerializableString<Type>(optionsType);
+            Options = OptionsType.Source.EnsureCreate<TOptions>();
         }
 
 
         /// <summary>
         /// 选项类型。
         /// </summary>
-        public SerializableObject<Type> OptionsType { get; }
+        public SerializableString<Type> OptionsType { get; }
 
         /// <summary>
         /// 选项实例。
         /// </summary>
         public TOptions Options { get; }
-
-
-        /// <summary>
-        /// 配置选项。
-        /// </summary>
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public Action<TOptions> ConfigureOptions { get; set; }
-
-        /// <summary>
-        /// 自动配置选项（默认自动）。
-        /// </summary>
-        public bool AutoConfigureOptions { get; set; }
-
-        /// <summary>
-        /// 自动后置配置选项。
-        /// </summary>
-        public bool AutoPostConfigureOptions { get; set; }
     }
 }

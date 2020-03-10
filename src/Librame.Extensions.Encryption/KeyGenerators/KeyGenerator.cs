@@ -18,28 +18,30 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Encryption.KeyGenerators
 {
     using Builders;
-    using Core.Identifiers;
     using Core.Services;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class KeyGenerator : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyGenerator
     {
-        private readonly IAlgorithmIdentifier _defaultIdentifier;
+        private readonly KeyDescriptor _defaultDescriptor;
 
 
         public KeyGenerator(IOptions<EncryptionBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(options, loggerFactory)
         {
-            _defaultIdentifier = new UniqueAlgorithmIdentifier(Options.Identifier);
+            _defaultDescriptor = new KeyDescriptor(Options.Key);
         }
 
 
-        public byte[] GenerateKey(int length, IAlgorithmIdentifier identifier = null)
+        public byte[] GenerateKey(int length, KeyDescriptor descriptor = null)
         {
-            var readOnlyMemory = (identifier ?? _defaultIdentifier).ReadOnlyMemory;
-            Logger.LogDebug($"Use identifier: {readOnlyMemory.Value}");
+            if (descriptor.IsNull())
+                descriptor = _defaultDescriptor;
 
-            return GenerateKey(readOnlyMemory.Source.ToArray(), length);
+            var readOnlyMemory = descriptor.ToReadOnlyMemory();
+            Logger.LogDebug($"Use Key: {descriptor}");
+
+            return GenerateKey(readOnlyMemory.ToArray(), length);
         }
 
 

@@ -23,13 +23,13 @@ using System.Linq;
 
 namespace Librame.Extensions.Data.Compilers
 {
-    using Accessors;
-    using Builders;
     using Core;
     using Core.Compilers;
     using Core.Builders;
     using Core.Combiners;
     using Core.Services;
+    using Data.Accessors;
+    using Data.Builders;
 
     /// <summary>
     /// 模型快照编译器。
@@ -55,7 +55,7 @@ namespace Librame.Extensions.Data.Compilers
         /// <param name="basePath">给定的基础路径。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
         public static FilePathCombiner ExportFilePath(Type accessorType, string basePath)
-            => new FilePathCombiner($"{accessorType?.Assembly.GetDisplayName()}.ModelSnapshot{CSharpCompiler.FileExtension}").ChangeBasePathIfEmpty(basePath);
+            => new FilePathCombiner($"{accessorType.GetAssemblyDisplayName()}.ModelSnapshot{CSharpCompiler.FileExtension}").ChangeBasePathIfEmpty(basePath);
 
 
         /// <summary>
@@ -111,24 +111,22 @@ namespace Librame.Extensions.Data.Compilers
         /// <param name="model">给定的 <see cref="IModel"/>。</param>
         /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
         /// <param name="typeName">给定的模型快照 <see cref="TypeNameCombiner"/>。</param>
-        /// <param name="accessorType">给定的访问器类型。</param>
         /// <returns>返回包含字节数组与哈希的元组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static (byte[] Body, string Hash) CompileInMemory(IAccessor accessor, IModel model,
-            DataBuilderOptions options, TypeNameCombiner typeName, Type accessorType)
+            DataBuilderOptions options, TypeNameCombiner typeName)
         {
             accessor.NotNull(nameof(accessor));
             model.NotNull(nameof(model));
             typeName.NotNull(nameof(typeName));
-            accessorType.NotNull(nameof(accessorType));
 
             var generator = accessor.ServiceFactory.GetRequiredService<IMigrationsCodeGenerator>();
             var coreOptions = accessor.ServiceFactory.GetRequiredService<IOptions<CoreBuilderOptions>>().Value;
 
-            var sourceCode = generator.GenerateSnapshot(typeName.Namespace, accessorType,
+            var sourceCode = generator.GenerateSnapshot(typeName.Namespace, accessor.CurrentType,
                 typeName.Name, model);
 
-            var references = GetMetadataReferences(options, accessorType);
+            var references = GetMetadataReferences(options, accessor.CurrentType);
 
             var buffer = CSharpCompiler.CompileInMemory(references, sourceCode);
             return (StoreAssembly(buffer), sourceCode.Sha256Base64String(coreOptions.Encoding.Source));

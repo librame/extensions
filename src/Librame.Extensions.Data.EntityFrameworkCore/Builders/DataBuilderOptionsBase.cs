@@ -13,8 +13,8 @@
 namespace Librame.Extensions.Data.Builders
 {
     using Core.Builders;
-    using Schemas;
-    using Stores;
+    using Data.Schemas;
+    using Data.Stores;
 
     /// <summary>
     /// 数据构建器选项基类。

@@ -15,12 +15,13 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Reflection;
-using OptionsHelper = Microsoft.Extensions.Options.Options;
+using BaseOptions = Microsoft.Extensions.Options.Options;
 
 namespace Librame.Extensions.Core.Builders
 {
     using Combiners;
     using Dependencies;
+    using Options;
 
     /// <summary>
     /// 扩展构建器依赖静态扩展。
@@ -34,29 +35,21 @@ namespace Librame.Extensions.Core.Builders
         /// 配置扩展构建器依赖（支持从文件加载初始配置）。
         /// </summary>
         /// <example>
-        /// ex. "appsettings.json" // see CoreBuilderDependencyTests.AllTest()
+        /// appsettings.json 根配置结构参考：
+        /// <code>
         /// {
         ///     "CoreBuilderDependency":
         ///     {
-        ///         "Name": "CoreBuilderDependency",
-        ///         "Type": { "Value": "Librame.Extensions.Core.CoreBuilderDependency, Librame.Extensions.Core" }
         ///         "BaseDirectory": "/DirectoryPath",
         ///         "ConfigDirectory": "/DirectoryPath",
         ///         "ExportDirectory": "/DirectoryPath",
         ///         
-        ///         "Builder":
-        ///         {
-        ///             "Name": "CoreBuilderOptions",
-        ///             "Type": { "Value": "Librame.Extensions.Core.Dependencies.OptionsDependency`1[Librame.Extensions.Core.Builders.CoreBuilderOptions], Librame.Extensions.Core.Abstractions" }
-        ///             "AutoConfigureAction": true,
-        ///             "AutoPostConfigureAction": false,
-        ///             "OptionsType": { "Value": "Librame.Extensions.Core.Builders.CoreBuilderOptions, Librame.Extensions.Core" }
-        ///             "Options": {
-        ///                 "Encoding": { "Value": "utf-8" },
-        ///                 "ClockRefluxOffset": 1,
-        ///                 "IsUtcClock": false,
-        ///                 "ThreadsCount": 12
-        ///             }
+        ///         "OptionsType": { "Value": "Librame.Extensions.Core.Builders.CoreBuilderOptions, Librame.Extensions.Core" }
+        ///         "Options": {
+        ///             "Encoding": { "Value": "utf-8" },
+        ///             "ClockRefluxOffset": 1,
+        ///             "IsUtcClock": false,
+        ///             "ThreadsCount": 12
         ///         },
         ///         
         ///         "Localization":
@@ -75,9 +68,13 @@ namespace Librame.Extensions.Core.Builders
         ///         {
         ///             // MemoryDistributedCacheOptions
         ///             ......
-        ///         }
+        ///         },
+        ///         
+        ///         "Name": "CoreBuilderDependency",
+        ///         "Type": { "Value": "Librame.Extensions.Core.CoreBuilderDependency, Librame.Extensions.Core" }
         ///     }
         /// }
+        /// </code>
         /// </example>
         /// <typeparam name="TDependencyRoot">指定的扩展构建器依赖根类型。</typeparam>
         /// <param name="configureDependency">给定的配置依赖动作方法（可空）。</param>
@@ -151,10 +148,17 @@ namespace Librame.Extensions.Core.Builders
         {
             services.AddSingleton(dependency);
 
+            // 利用选项实例的引用唯一性，注册一致性依赖选项实例以便 ConsistencyOptionsFactory 调用
+            // 如：CoreBuilderDependency 的 CoreBuilderOptions 选项
+            var optionsPropertyName = nameof(OptionsDependency<TDependency>.Options);
+            var optionsProperty = typeof(TDependency).GetProperty(optionsPropertyName);
+            var options = optionsProperty.GetValue(dependency, index: null);
+            ConsistencyOptionsPool.AddOrUpdate(optionsProperty.PropertyType, options);
+
             // 获取所有依赖属性集合
             var properties = typeof(TDependency).GetProperties().Where(p =>
             {
-                return p.PropertyType.IsAssignableToBaseType(OptionsTypeReferences.BaseDependencyType)
+                return p.PropertyType.IsAssignableToBaseType(OptionsDependencyTypes.BaseDependencyType)
                     && p.PropertyType.IsGenericType;
             });
 
@@ -171,7 +175,7 @@ namespace Librame.Extensions.Core.Builders
                 if (propertyDependency is IOptionsDependency propertyOptionsDependency)
                 {
                     RegisterPropertyOptionsDependency<TDependency>(services, property,
-                        propertyOptionsDependency, dependency);
+                        propertyOptionsDependency, optionsPropertyName);
                 }
             }
 
@@ -179,44 +183,43 @@ namespace Librame.Extensions.Core.Builders
         }
 
         private static void RegisterPropertyOptionsDependency<TDependency>(IServiceCollection services,
-            PropertyInfo property, IOptionsDependency propertyOptionsDependency, TDependency builderDependency)
+            PropertyInfo property, IOptionsDependency propertyOptionsDependency, string optionsPropertyName)
             where TDependency : class, IExtensionBuilderDependency
         {
+            // 利用选项实例的引用唯一性，注册一致性依赖属性选项实例以便 ConsistencyOptionsFactory 调用
+            // 如：CoreBuilderDependency.Localization 的 LocalizationOptions 选项
             var propertyOptionsType = propertyOptionsDependency.OptionsType.Source;
+            var propertyOptions = property.PropertyType.GetProperty(optionsPropertyName)
+                .GetValue(propertyOptionsDependency, index: null);
+            ConsistencyOptionsPool.AddOrUpdate(propertyOptionsType, propertyOptions);
 
-            var propertyOptionsConfigurationRegistered = false;
-            var propertyOptionsName = nameof(OptionsDependency<TDependency>.Options);
-
+            // 如果需要注册依赖配置对象的选项配置节点
+            //var propertyOptionsConfigurationRegistered = false;
             if (propertyOptionsDependency.Configuration.IsNotNull())
             {
-                var propertyOptionsConfiguration = propertyOptionsDependency.Configuration.GetSection(propertyOptionsName);
+                var propertyOptionsConfiguration = propertyOptionsDependency.Configuration.GetSection(optionsPropertyName);
                 RegisterPropertyOptionsConfiguration(services, propertyOptionsConfiguration, propertyOptionsType);
 
-                propertyOptionsConfigurationRegistered = true;
+                //propertyOptionsConfigurationRegistered = true;
             }
 
-            // 注册选项实例以供 OptionsFactory 调用
-            var propertyOptions = property.PropertyType.GetProperty(propertyOptionsName)?
-                .GetValue(propertyOptionsDependency, index: null);
-            OptionsDependencyTable.AddOrUpdate(propertyOptionsType, propertyOptions, builderDependency);
+            //if (!propertyOptionsDependency.AutoConfigureOptions && !propertyOptionsDependency.AutoPostConfigureOptions)
+            //    return;
 
-            if (!propertyOptionsDependency.AutoConfigureOptions && !propertyOptionsDependency.AutoPostConfigureOptions)
-                return;
+            //var propertyConfigureOptionsName = nameof(OptionsDependency<TDependency>.ConfigureOptions);
+            //var propertyConfigureOptionsAction = property.PropertyType.GetProperty(propertyConfigureOptionsName)?
+            //    .GetValue(propertyOptionsDependency, index: null);
 
-            var propertyConfigureOptionsName = nameof(OptionsDependency<TDependency>.ConfigureOptions);
-            var propertyConfigureOptions = property.PropertyType.GetProperty(propertyConfigureOptionsName)?
-                .GetValue(propertyOptionsDependency, index: null);
+            //if (propertyConfigureOptionsAction.IsNull())
+            //    return;
 
-            if (propertyConfigureOptions.IsNull())
-                return;
+            //if (propertyOptionsDependency.AutoConfigureOptions && !propertyOptionsConfigurationRegistered)
+            //    RegisterPropertyConfigureOptions(services, propertyOptionsType, propertyConfigureOptionsAction);
 
-            if (propertyOptionsDependency.AutoConfigureOptions && !propertyOptionsConfigurationRegistered)
-                RegisterPropertyConfigureOptions(services, propertyOptionsType, propertyConfigureOptions);
-
-            // ConfigureOptions 与 PostConfigureOptions 二选一
-            //if (!propertyOptionsDependency.AutoConfigureOptions && propertyOptionsDependency.AutoPostConfigureOptions)
-            if (propertyOptionsDependency.AutoPostConfigureOptions)
-                RegisterPropertyPostConfigureOptions(services, propertyOptionsType, propertyConfigureOptions);
+            //// ConfigureOptions 与 PostConfigureOptions 二选一
+            ////if (!propertyOptionsDependency.AutoConfigureOptions && propertyOptionsDependency.AutoPostConfigureOptions)
+            //if (propertyOptionsDependency.AutoPostConfigureOptions)
+            //    RegisterPropertyPostConfigureOptions(services, propertyOptionsType, propertyConfigureOptionsAction);
         }
 
         private static IServiceCollection RegisterPropertyOptionsConfiguration(IServiceCollection services,
@@ -225,14 +228,14 @@ namespace Librame.Extensions.Core.Builders
             // services.AddSingleton<IOptionsChangeTokenSource<TOptions>>(new ConfigurationChangeTokenSource<TOptions>(name, config));
             // services.AddSingleton<IConfigureOptions<TOptions>>(new NamedConfigureFromConfigurationOptions<TOptions>(name, config, configureBinder));
 
-            var baseSourceType = OptionsTypeReferences.BaseOptionsChangeTokenSourceType.MakeGenericType(propertyOptionsType);
-            var baseOptionsType = OptionsTypeReferences.BaseConfigureOptionsType.MakeGenericType(propertyOptionsType);
+            var baseSourceType = OptionsDependencyTypes.BaseOptionsChangeTokenSourceType.MakeGenericType(propertyOptionsType);
+            var baseOptionsType = OptionsDependencyTypes.BaseConfigureOptionsType.MakeGenericType(propertyOptionsType);
 
-            var configSourceType = OptionsTypeReferences.ConfigurationChangeTokenSourceType.MakeGenericType(propertyOptionsType);
-            var configOptionsType = OptionsTypeReferences.NamedConfigureFromConfigurationOptionsType.MakeGenericType(propertyOptionsType);
+            var configSourceType = OptionsDependencyTypes.ConfigurationChangeTokenSourceType.MakeGenericType(propertyOptionsType);
+            var configOptionsType = OptionsDependencyTypes.NamedConfigureFromConfigurationOptionsType.MakeGenericType(propertyOptionsType);
 
-            var configSource = configSourceType.EnsureCreateObject(OptionsHelper.DefaultName, propertyOptionsConfiguration);
-            var configOptions = configOptionsType.EnsureCreateObject(OptionsHelper.DefaultName, propertyOptionsConfiguration);
+            var configSource = configSourceType.EnsureCreateObject(BaseOptions.DefaultName, propertyOptionsConfiguration);
+            var configOptions = configOptionsType.EnsureCreateObject(BaseOptions.DefaultName, propertyOptionsConfiguration);
 
             services.AddSingleton(baseSourceType, configSource);
             services.AddSingleton(baseOptionsType, configOptions);
@@ -240,33 +243,33 @@ namespace Librame.Extensions.Core.Builders
             return services;
         }
 
-        private static IServiceCollection RegisterPropertyConfigureOptions(IServiceCollection services,
-            Type propertyOptionsType, object configureOptions)
-        {
-            // services.AddSingleton<IConfigureOptions<TOptions>>(new ConfigureNamedOptions<TOptions>(name, configureOptions));
+        //private static IServiceCollection RegisterPropertyConfigureOptions(IServiceCollection services,
+        //    Type propertyOptionsType, object configureOptionsAction)
+        //{
+        //    // services.AddSingleton<IConfigureOptions<TOptions>>(new ConfigureNamedOptions<TOptions>(name, configureOptions));
 
-            var configureOptionsType = OptionsTypeReferences.BaseConfigureOptionsType.MakeGenericType(propertyOptionsType);
-            var configureNamedOptions = OptionsTypeReferences.ConfigureNamedOptionsType.MakeGenericType(propertyOptionsType)
-                .EnsureCreateObject(OptionsHelper.DefaultName, configureOptions);
+        //    var configureOptionsType = OptionsDependencyTypes.BaseConfigureOptionsType.MakeGenericType(propertyOptionsType);
+        //    var configureNamedOptions = OptionsDependencyTypes.ConfigureNamedOptionsType.MakeGenericType(propertyOptionsType)
+        //        .EnsureCreateObject(BaseOptions.DefaultName, configureOptionsAction);
 
-            services.AddSingleton(configureOptionsType, configureNamedOptions);
+        //    services.AddSingleton(configureOptionsType, configureNamedOptions);
 
-            return services;
-        }
+        //    return services;
+        //}
 
-        private static IServiceCollection RegisterPropertyPostConfigureOptions(IServiceCollection services,
-            Type propertyOptionsType, object configureOptions)
-        {
-            // services.AddSingleton<IPostConfigureOptions<TOptions>>(new PostConfigureOptions<TOptions>(name, configureOptions));
+        //private static IServiceCollection RegisterPropertyPostConfigureOptions(IServiceCollection services,
+        //    Type propertyOptionsType, object configureOptionsAction)
+        //{
+        //    // services.AddSingleton<IPostConfigureOptions<TOptions>>(new PostConfigureOptions<TOptions>(name, configureOptions));
 
-            var postConfigureOptionsType = OptionsTypeReferences.BasePostConfigureOptionsType.MakeGenericType(propertyOptionsType);
-            var postConfigureOptions = OptionsTypeReferences.PostConfigureOptionsType.MakeGenericType(propertyOptionsType)
-                .EnsureCreateObject(OptionsHelper.DefaultName, configureOptions);
+        //    var postConfigureOptionsType = OptionsDependencyTypes.BasePostConfigureOptionsType.MakeGenericType(propertyOptionsType);
+        //    var postConfigureOptions = OptionsDependencyTypes.PostConfigureOptionsType.MakeGenericType(propertyOptionsType)
+        //        .EnsureCreateObject(BaseOptions.DefaultName, configureOptionsAction);
 
-            services.AddSingleton(postConfigureOptionsType, postConfigureOptions);
+        //    services.AddSingleton(postConfigureOptionsType, postConfigureOptions);
 
-            return services;
-        }
+        //    return services;
+        //}
 
         #endregion
 

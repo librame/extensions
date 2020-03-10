@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Mediators
 {
     using Core.Mediators;
-    using Stores;
+    using Data.Stores;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class MigrationNotificationHandler<TMigration, TGenId> : AbstractNotificationHandler<MigrationNotification<TMigration, TGenId>>

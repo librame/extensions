@@ -17,10 +17,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data.Builders
 {
-    using Accessors;
     using Core;
     using Core.Threads;
-    using Stores;
+    using Data.Accessors;
+    using Data.Stores;
 
     /// <summary>
     /// 数据构建器选项。
@@ -105,6 +105,12 @@ namespace Librame.Extensions.Data.Builders
         /// 导出迁移程序集。
         /// </summary>
         public bool ExportMigrationAssembly { get; set; }
+            = true;
+
+        /// <summary>
+        /// 导出迁移命令集合。
+        /// </summary>
+        public bool ExportMigrationCommands { get; set; }
             = true;
 
 

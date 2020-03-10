@@ -18,8 +18,8 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Encryption.Services
 {
-    using Builders;
     using Core.Services;
+    using Encryption.Builders;
 
     internal class SigningCredentialsService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISigningCredentialsService
     {

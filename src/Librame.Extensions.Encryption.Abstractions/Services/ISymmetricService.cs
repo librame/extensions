@@ -12,7 +12,6 @@
 
 namespace Librame.Extensions.Encryption.Services
 {
-    using Core.Identifiers;
     using Core.Services;
     using KeyGenerators;
 
@@ -36,17 +35,17 @@ namespace Librame.Extensions.Encryption.Services
         /// 加密 AES。
         /// </summary>
         /// <param name="buffer">给定待加密的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] EncryptAes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null);
+        byte[] EncryptAes(byte[] buffer, KeyDescriptor descriptor = null);
 
         /// <summary>
         /// 解密 AES。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] DecryptAes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null);
+        byte[] DecryptAes(byte[] buffer, KeyDescriptor descriptor = null);
 
         #endregion
 
@@ -57,17 +56,17 @@ namespace Librame.Extensions.Encryption.Services
         /// 加密 DES。
         /// </summary>
         /// <param name="buffer">给定待加密的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] EncryptDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null);
+        byte[] EncryptDes(byte[] buffer, KeyDescriptor descriptor = null);
 
         /// <summary>
         /// 解密 DES。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] DecryptDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null);
+        byte[] DecryptDes(byte[] buffer, KeyDescriptor descriptor = null);
 
         #endregion
 
@@ -78,17 +77,17 @@ namespace Librame.Extensions.Encryption.Services
         /// 加密 TripleDES。
         /// </summary>
         /// <param name="buffer">给定待加密的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] EncryptTripleDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null);
+        byte[] EncryptTripleDes(byte[] buffer, KeyDescriptor descriptor = null);
 
         /// <summary>
         /// 解密 TripleDES。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="identifier">给定的 <see cref="UniqueAlgorithmIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] DecryptTripleDes(byte[] buffer, UniqueAlgorithmIdentifier identifier = null);
+        byte[] DecryptTripleDes(byte[] buffer, KeyDescriptor descriptor = null);
 
         #endregion
 

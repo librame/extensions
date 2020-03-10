@@ -14,8 +14,8 @@ using System;
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Accessors;
     using Core.Services;
+    using Data.Accessors;
 
     /// <summary>
     /// 抽象存储。

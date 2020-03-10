@@ -92,7 +92,7 @@ namespace Librame.Extensions
             return mainName + GetTimestamp(dateTime.TimeOfDay.TotalSeconds);
             #else
             // 解决 NET 环境中多个 DateTime.Now.Ticks 会出现重复的情况
-            Thread.Sleep(1);
+            Thread.Sleep(1); // 毫秒
             return mainName + GetTimestamp(DateTime.Now.TimeOfDay.TotalSeconds);
             #endif
         }
@@ -114,7 +114,7 @@ namespace Librame.Extensions
             return mainName + GetTimestamp(dateTimeOffset.TimeOfDay.TotalSeconds);
             #else
             // 解决 NET 环境中多个 DateTime.Now.Ticks 会出现重复的情况
-            Thread.Sleep(1);
+            Thread.Sleep(1); // 毫秒
             return mainName + GetTimestamp(DateTimeOffset.Now.TimeOfDay.TotalSeconds);
             #endif
         }

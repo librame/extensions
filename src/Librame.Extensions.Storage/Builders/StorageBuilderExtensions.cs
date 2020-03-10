@@ -27,26 +27,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加存储扩展。
         /// </summary>
         /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="configureOptions">给定的选项配置动作。</param>
-        /// <param name="builderFactory">给定创建存储构建器的工厂方法（可选）。</param>
-        /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>
-        public static IStorageBuilder AddStorage(this IExtensionBuilder parentBuilder,
-            Action<StorageBuilderOptions> configureOptions,
-            Func<IExtensionBuilder, StorageBuilderDependency, IStorageBuilder> builderFactory = null)
-        {
-            configureOptions.NotNull(nameof(configureOptions));
-
-            return parentBuilder.AddStorage(dependency =>
-            {
-                dependency.Builder.ConfigureOptions = configureOptions;
-            },
-            builderFactory);
-        }
-
-        /// <summary>
-        /// 添加存储扩展。
-        /// </summary>
-        /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建存储构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IStorageBuilder"/>。</returns>

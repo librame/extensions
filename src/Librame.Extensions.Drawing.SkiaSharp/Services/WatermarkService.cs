@@ -22,9 +22,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing.Services
 {
-    using Builders;
     using Core.Combiners;
     using Core.Services;
+    using Drawing.Builders;
+    using Drawing.Resources;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class WatermarkService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IWatermarkService
@@ -124,6 +125,9 @@ namespace Librame.Extensions.Drawing.Services
                 {
                     using (var data = img.Encode(skFormat, Options.Quality))
                     {
+                        if (data.IsNull())
+                            throw new InvalidOperationException(InternalResource.InvalidOperationExceptionUnsupportedImageFormat);
+
                         postAction.Invoke(data);
                     }
                 }

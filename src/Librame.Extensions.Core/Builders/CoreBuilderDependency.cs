@@ -46,19 +46,19 @@ namespace Librame.Extensions.Core.Builders
         /// 本地化选项依赖。
         /// </summary>
         public OptionsDependency<LocalizationOptions> Localization { get; }
-            = new OptionsDependency<LocalizationOptions>(autoConfigureOptions: false); // 服务注册时手动注入配置动作
+            = new OptionsDependency<LocalizationOptions>();
 
         /// <summary>
         /// 内存缓存选项依赖。
         /// </summary>
         public OptionsDependency<MemoryCacheOptions> MemoryCache { get; }
-            = new OptionsDependency<MemoryCacheOptions>(autoConfigureOptions: false); // 服务注册时手动注入配置动作
+            = new OptionsDependency<MemoryCacheOptions>();
 
         /// <summary>
         /// 内存分布式缓存选项依赖。
         /// </summary>
         public OptionsDependency<MemoryDistributedCacheOptions> MemoryDistributedCache { get; }
-            = new OptionsDependency<MemoryDistributedCacheOptions>(autoConfigureOptions: false); // 服务注册时手动注入配置动作
+            = new OptionsDependency<MemoryDistributedCacheOptions>();
 
 
         /// <summary>

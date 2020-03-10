@@ -14,22 +14,27 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void SerializeTest()
         {
-            var dependency = TestServiceProvider.Current.GetRequiredService<CoreBuilderDependency>();
             var options = TestServiceProvider.Current.GetRequiredService<IOptions<CoreBuilderOptions>>().Value;
+            var encoding = options.Encoding.Value;
 
             // Change Encoding
             options.Encoding.ChangeSource(Encoding.ASCII);
-            Assert.Equal(options.Encoding, dependency.Builder.Options.Encoding);
 
-            var optionsJsonFromDependency = JsonConvert.SerializeObject(dependency.Builder.Options);
-            var optionsJson = JsonConvert.SerializeObject(options);
-            Assert.Equal(optionsJson, optionsJsonFromDependency);
+            // 对比字符串形式，如果是 Encoding 实例则相同，因为引用实例会发生变化
+            Assert.NotEqual(options.Encoding.Value, encoding);
 
+            // 依赖的选项实例同样发生了变化
+            var dependencyOptions = TestServiceProvider.Current.GetRequiredService<CoreBuilderDependency>();
+            Assert.Equal(options.Encoding.Value, dependencyOptions.Options.Encoding.Value);
+
+            // 序列化为 JSON 文件并保存
+            var json = JsonConvert.SerializeObject(options);
             var fileName = Path.GetTempFileName();
-            File.WriteAllText(fileName, optionsJson);
+            File.WriteAllText(fileName, json);
 
-            optionsJson = File.ReadAllText(fileName);
-            var deserializeOptions = JsonConvert.DeserializeObject<CoreBuilderOptions>(optionsJson);
+            // 读取 JSON 文件并验证实例是否相同
+            json = File.ReadAllText(fileName);
+            var deserializeOptions = JsonConvert.DeserializeObject<CoreBuilderOptions>(json);
             Assert.Equal(deserializeOptions.Encoding, options.Encoding);
 
             File.Delete(fileName);

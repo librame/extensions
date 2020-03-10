@@ -23,9 +23,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing.Services
 {
-    using Builders;
     using Core.Combiners;
     using Core.Services;
+    using Drawing.Builders;
+    using Drawing.Resources;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class CaptchaService : AbstractExtensionBuilderService<DrawingBuilderOptions>, ICaptchaService
@@ -126,7 +127,7 @@ namespace Librame.Extensions.Drawing.Services
                     // 绘制验证码
                     using (var foreFont = CreateFontPaint(colorOptions.ForeHex))
                     {
-                        using (var alterFont = string.IsNullOrEmpty(colorOptions.AlternateHex)
+                        using (var alterFont = colorOptions.AlternateHex.IsEmpty()
                             ? foreFont : CreateFontPaint(colorOptions.AlternateHex))
                         {
                             foreach (var p in sizeAndPoints.Points)
@@ -136,7 +137,7 @@ namespace Librame.Extensions.Drawing.Services
                                 var point = p.Value.Value;
 
                                 canvas.DrawText(character, point.X, point.Y,
-                                    (i % 2 > 0 ? alterFont : foreFont));
+                                    i % 2 > 0 ? alterFont : foreFont);
                             }
                         }
                     }
@@ -145,6 +146,9 @@ namespace Librame.Extensions.Drawing.Services
                     {
                         using (var data = img.Encode(skFormat, Options.Quality))
                         {
+                            if (data.IsNull())
+                                throw new InvalidOperationException(InternalResource.InvalidOperationExceptionUnsupportedImageFormat);
+
                             postAction.Invoke(data);
                         }
                     }

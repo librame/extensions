@@ -18,7 +18,7 @@ using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption
 {
-    using Core.Identifiers;
+    using Core.Utilities;
 
     /// <summary>
     /// RSA 安全密钥加载器。
@@ -110,7 +110,8 @@ namespace Librame.Extensions.Encryption
                 key = new RsaSecurityKey(rsa);
             }
 
-            key.KeyId = RandomNumberAlgorithmIdentifier.New(16);
+            var buffer = RandomUtility.GenerateNumber(16);
+            key.KeyId = buffer.AsBase64String();
 
             return key;
         }

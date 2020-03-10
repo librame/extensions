@@ -25,11 +25,11 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Accessors
 {
-    using Builders;
     using Core.Services;
     using Core.Threads;
-    using Resources;
-    using Stores;
+    using Data.Builders;
+    using Data.Resources;
+    using Data.Stores;
 
     /// <summary>
     /// 数据库上下文访问器基类。
@@ -98,21 +98,23 @@ namespace Librame.Extensions.Data.Accessors
 
 
         /// <summary>
+        /// 当前类型。
+        /// </summary>
+        public Type CurrentType
+            => GetType();
+
+        /// <summary>
         /// 当前租户。
         /// </summary>
         /// <value>返回 <see cref="ITenant"/>。</value>
         public ITenant CurrentTenant
-        {
-            get => _currentTenant.NotNullOrDefault(() => BuilderOptions.DefaultTenant);
-        }
+            => _currentTenant.NotNullOrDefault(() => BuilderOptions.DefaultTenant);
 
         /// <summary>
         /// 当前数据库连接字符串。
         /// </summary>
         public string CurrentConnectionString
-        {
-            get => _currentConnectionString.NotEmptyOrDefault(() => Database.GetDbConnection().ConnectionString);
-        }
+            => _currentConnectionString.NotEmptyOrDefault(() => Database.GetDbConnection().ConnectionString);
 
 
         /// <summary>

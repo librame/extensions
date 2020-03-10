@@ -40,8 +40,8 @@ namespace Librame.Extensions.Core.Dependencies
         /// <summary>
         /// 依赖类型。
         /// </summary>
-        public SerializableObject<Type> Type
-            => SerializableObjectHelper.CreateType(GetType());
+        public SerializableString<Type> Type
+            => new SerializableString<Type>(GetType());
 
         /// <summary>
         /// 依赖配置。

@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.4.1.0</Version>
+    <Version>7.4.1.10</Version>
     <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Core.Abstractions on Drawing extension package.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Core.Abstractions on Drawing extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.4.1.0</AssemblyVersion>
-    <FileVersion>7.4.1054.17415</FileVersion>
+    <AssemblyVersion>7.4.1.10</AssemblyVersion>
+    <FileVersion>7.4.1060.17415</FileVersion>
     <RootNamespace>Librame.Extensions.Drawing</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>

@@ -46,26 +46,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加 Librame。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="configureOptions">给定的配置选项动作方法。</param>
-        /// <param name="builderFactory">给定创建核心构建器的工厂方法（可选）。</param>
-        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
-        public static ICoreBuilder AddLibrame(this IServiceCollection services,
-            Action<CoreBuilderOptions> configureOptions,
-            Func<IServiceCollection, CoreBuilderDependency, ICoreBuilder> builderFactory = null)
-        {
-            configureOptions.NotNull(nameof(configureOptions));
-
-            return services.AddLibrame(dependency =>
-            {
-                dependency.Builder.ConfigureOptions = configureOptions;
-            },
-            builderFactory);
-        }
-
-        /// <summary>
-        /// 添加 Librame。
-        /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建核心构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
@@ -97,9 +77,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services
                 .AddOptions()
                 .AddLogging(dependency.ConfigureLoggingBuilder)
-                .AddLocalization(dependency.Localization.ConfigureOptions)
-                .AddMemoryCache(dependency.MemoryCache.ConfigureOptions)
-                .AddDistributedMemoryCache(dependency.MemoryDistributedCache.ConfigureOptions);
+                .AddLocalization()
+                .AddMemoryCache()
+                .AddDistributedMemoryCache();
 
             // Create Builder
             var coreBuilder = builderFactory.NotNullOrDefault(()
@@ -108,9 +88,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // Configure Builder
             return coreBuilder
                 .AddDecorators()
-                .AddDependencies()
                 .AddLocalizers()
                 .AddMediators()
+                .AddOptions()
                 .AddServices()
                 .AddThreads();
         }

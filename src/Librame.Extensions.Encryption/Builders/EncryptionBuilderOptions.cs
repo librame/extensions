@@ -10,12 +10,11 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Encryption.Builders
 {
     using Core.Builders;
     using Core.Serializers;
+    using Encryption.KeyGenerators;
 
     /// <summary>
     /// 加密构建器选项。
@@ -42,9 +41,9 @@ namespace Librame.Extensions.Encryption.Builders
 
 
         /// <summary>
-        /// 标识符。
+        /// 密钥描述符。
         /// </summary>
-        public SerializableObject<ReadOnlyMemory<byte>> Identifier { get; set; }
-            = SerializableObjectHelper.CreateHexString(Guid.NewGuid().ToByteArray());
+        public SerializableString<KeyDescriptor> Key { get; set; }
+            = new SerializableString<KeyDescriptor>(KeyDescriptor.New());
     }
 }

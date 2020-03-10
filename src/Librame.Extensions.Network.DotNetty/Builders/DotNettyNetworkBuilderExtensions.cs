@@ -29,23 +29,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加 DotNetty 扩展。
         /// </summary>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="configureOptions">给定的选项配置动作。</param>
-        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        public static INetworkBuilder AddDotNetty(this INetworkBuilder builder,
-            Action<DotNettyOptions> configureOptions)
-        {
-            configureOptions.NotNull(nameof(configureOptions));
-
-            return builder.AddDotNetty(dependency =>
-            {
-                dependency.Builder.ConfigureOptions = configureOptions;
-            });
-        }
-
-        /// <summary>
-        /// 添加 DotNetty 扩展。
-        /// </summary>
         /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>

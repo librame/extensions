@@ -15,7 +15,7 @@ using System;
 namespace Librame.Extensions.Data.Mediators
 {
     using Core.Mediators;
-    using Stores;
+    using Data.Stores;
 
     /// <summary>
     /// 迁移通知。

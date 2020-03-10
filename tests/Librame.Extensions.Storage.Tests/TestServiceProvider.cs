@@ -13,9 +13,9 @@ namespace Librame.Extensions.Storage.Tests
                 var services = new ServiceCollection();
 
                 services.AddLibrame()
-                    .AddStorage(options =>
+                    .AddStorage(dependency =>
                     {
-                        options.FileProviders.Add(new PhysicalStorageFileProvider(Path.GetTempPath()));
+                        dependency.Options.FileProviders.Add(new PhysicalStorageFileProvider(Path.GetTempPath()));
                     });
 
                 return services.BuildServiceProvider();

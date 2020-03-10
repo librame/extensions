@@ -70,6 +70,11 @@ namespace Librame.Extensions.Drawing
         /// <summary>
         /// DNG 图像格式。
         /// </summary>
-        Dng = 10
+        Dng = 10,
+
+        /// <summary>
+        /// HEIF 图像格式。
+        /// </summary>
+        Heif = 11
     }
 }

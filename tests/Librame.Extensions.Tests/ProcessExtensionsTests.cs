@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Xunit;
 
 namespace Librame.Extensions.Tests
@@ -9,19 +8,14 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void StartLocateInExplorerTest()
         {
-            Assert.Throws<UnauthorizedAccessException>(() =>
-            {
-                var fileName = @"c:\test.txt";
-                File.WriteAllText(fileName, nameof(StartLocateInExplorerTest));
+            var fileName = @"c:\test.txt";
+            File.WriteAllText(fileName, nameof(StartLocateInExplorerTest));
 
-                var explorer = fileName.StartLocateInExplorer();
-                Assert.False(explorer.HasExited);
+            var explorer = fileName.StartLocateInExplorer();
+            Assert.False(explorer.HasExited);
 
-                explorer.Close();
-                Assert.True(explorer.HasExited);
-
-                File.Delete(fileName);
-            });
+            explorer.Close();
+            File.Delete(fileName);
         }
 
         [Fact]

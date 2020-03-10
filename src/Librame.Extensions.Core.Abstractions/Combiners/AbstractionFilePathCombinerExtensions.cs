@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Librame.Extensions.Core.Combiners
 {
@@ -261,6 +262,50 @@ namespace Librame.Extensions.Core.Combiners
         {
             directoryInfo = combiner.AsDirectoryInfo();
             return directoryInfo.Exists;
+        }
+
+
+        /// <summary>
+        /// 读取所有文本。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string ReadAllText(this FilePathCombiner combiner, Encoding encoding = null)
+            => encoding.IsNull() ? File.ReadAllText(combiner?.Source) : File.ReadAllText(combiner?.Source, encoding);
+
+        /// <summary>
+        /// 写入所有文本。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="contents">给定的内容集合。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        public static void WriteAllText(this FilePathCombiner combiner, string contents, Encoding encoding = null)
+        {
+            if (encoding.IsNull())
+            {
+                File.WriteAllText(combiner?.Source, contents);
+                return;
+            }
+
+            File.WriteAllText(combiner?.Source, contents, encoding);
+        }
+
+        /// <summary>
+        /// 附加所有文本。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="contents">给定的内容集合。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        public static void AppendAllText(this FilePathCombiner combiner, string contents, Encoding encoding = null)
+        {
+            if (encoding.IsNull())
+            {
+                File.AppendAllText(combiner?.Source, contents);
+                return;
+            }
+
+            File.AppendAllText(combiner?.Source, contents, encoding);
         }
 
     }

@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core.Builders
         {
             builder.Services.TryAddTransient<ServiceFactory>(serviceProvider => serviceProvider.GetService);
 
-            builder.Services.TryAddTransient(typeof(IServicesManager<,>), typeof(ServicesManager<,>));
+            builder.Services.TryAddScoped(typeof(IServicesManager<,>), typeof(ServicesManager<,>));
             builder.Services.TryAddScoped(typeof(IServicesManager<>), typeof(ServicesManager<>));
 
             builder.Services.TryAddScoped<IClockService, ClockService>();

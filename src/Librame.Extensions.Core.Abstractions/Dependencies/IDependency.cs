@@ -30,7 +30,7 @@ namespace Librame.Extensions.Core.Dependencies
         /// <summary>
         /// 依赖类型。
         /// </summary>
-        SerializableObject<Type> Type { get; }
+        SerializableString<Type> Type { get; }
 
         /// <summary>
         /// 依赖配置。
