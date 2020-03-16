@@ -20,7 +20,7 @@ namespace Librame.Extensions.Encryption.Builders
     {
         internal static IEncryptionBuilder AddKeyGenerators(this IEncryptionBuilder builder)
         {
-            builder.Services.TryAddScoped<IKeyGenerator, KeyGenerator>();
+            builder.Services.TryAddSingleton<IKeyGenerator, KeyGenerator>();
 
             return builder;
         }

@@ -24,8 +24,8 @@ namespace Librame.Extensions.Network.Builders
         {
             builder.Services.TryAddEnumerable(new List<ServiceDescriptor>
             {
-                ServiceDescriptor.Scoped<IUriRequester, HttpClientRequester>(),
-                ServiceDescriptor.Scoped<IUriRequester, HttpWebRequester>()
+                ServiceDescriptor.Singleton<IUriRequester, HttpClientRequester>(),
+                ServiceDescriptor.Singleton<IUriRequester, HttpWebRequester>()
             });
 
             return builder;

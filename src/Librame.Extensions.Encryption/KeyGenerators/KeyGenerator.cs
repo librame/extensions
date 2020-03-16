@@ -17,8 +17,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Encryption.KeyGenerators
 {
-    using Builders;
     using Core.Services;
+    using Encryption.Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class KeyGenerator : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyGenerator

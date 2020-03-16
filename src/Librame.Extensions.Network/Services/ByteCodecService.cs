@@ -16,25 +16,21 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network.Services
 {
-    using Builders;
     using Core.Builders;
-    using Core.Services;
     using Encryption.Services;
+    using Network.Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ByteCodecService : NetworkServiceBase, IByteCodecService
     {
-        private readonly ServiceFactory _serviceFactory;
         private readonly ISymmetricService _symmetric;
 
 
-        public ByteCodecService(ServiceFactory serviceFactory)
-            : base(serviceFactory?.GetService<IOptions<CoreBuilderOptions>>(),
-                  serviceFactory?.GetService<IOptions<NetworkBuilderOptions>>(),
-                  serviceFactory?.GetService<ILoggerFactory>())
+        public ByteCodecService(ISymmetricService symmetric, IOptions<CoreBuilderOptions> coreOptions,
+            IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(coreOptions, options, loggerFactory)
         {
-            _serviceFactory = serviceFactory;
-            _symmetric = _serviceFactory.GetRequiredService<ISymmetricService>();
+            _symmetric = symmetric.NotNull(nameof(symmetric));
         }
 
 

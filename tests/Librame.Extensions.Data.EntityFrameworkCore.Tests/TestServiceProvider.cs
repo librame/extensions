@@ -28,8 +28,8 @@ namespace Librame.Extensions.Data.Tests
                             sql => sql.MigrationsAssembly(typeof(TestServiceProvider).GetAssemblyDisplayName()));
                     })
                     .AddDbDesignTime<SqlServerDesignTimeServices>()
-                    .AddIdentifier<TestStoreIdentifier>()
-                    .AddInitializer<TestStoreInitializer>()
+                    .AddStoreIdentifier<TestStoreIdentifier>()
+                    .AddStoreInitializer<TestStoreInitializer>()
                     .AddStoreHub<TestStoreHub>();
 
                 return services.BuildServiceProvider();

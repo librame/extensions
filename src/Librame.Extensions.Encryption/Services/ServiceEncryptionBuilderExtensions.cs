@@ -20,10 +20,10 @@ namespace Librame.Extensions.Encryption.Builders
     {
         internal static IEncryptionBuilder AddServices(this IEncryptionBuilder builder)
         {
-            builder.Services.TryAddScoped<IHashService, HashService>();
-            builder.Services.TryAddScoped<IKeyedHashService, KeyedHashService>();
-            builder.Services.TryAddScoped<IRsaService, RsaService>();
-            builder.Services.TryAddScoped<ISymmetricService, SymmetricService>();
+            builder.Services.TryAddSingleton<IHashService, HashService>();
+            builder.Services.TryAddSingleton<IKeyedHashService, KeyedHashService>();
+            builder.Services.TryAddSingleton<IRsaService, RsaService>();
+            builder.Services.TryAddSingleton<ISymmetricService, SymmetricService>();
 
             return builder;
         }

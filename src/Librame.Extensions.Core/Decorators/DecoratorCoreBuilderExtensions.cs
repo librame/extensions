@@ -20,8 +20,8 @@ namespace Librame.Extensions.Core.Builders
     {
         internal static ICoreBuilder AddDecorators(this ICoreBuilder builder)
         {
-            builder.Services.TryAddScoped(typeof(IDecorator<,>), typeof(CoreDecorator<,>));
-            builder.Services.TryAddScoped(typeof(IDecorator<>), typeof(CoreDecorator<>));
+            builder.Services.TryAddTransient(typeof(IDecorator<,>), typeof(CoreDecorator<,>));
+            builder.Services.TryAddTransient(typeof(IDecorator<>), typeof(CoreDecorator<>));
 
             return builder;
         }

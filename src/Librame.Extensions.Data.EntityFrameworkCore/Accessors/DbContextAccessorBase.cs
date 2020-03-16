@@ -257,9 +257,8 @@ namespace Librame.Extensions.Data.Accessors
             }
             _currentConnectionString = changeConnectionString;
 
-            var locker = this.GetService<IMemoryLocker>();
-            // 不使用尝试捕获异常锁，否则会中断异常后面的方法执行，不适合局部的异常处理
-            return locker.WaitFactory(ChangeDbConnectionCore);
+            // 不使用尝试捕获异常锁，否则会中断异常后面的方法执行，不适合局部异常处理
+            return Locker.WaitFactory(ChangeDbConnectionCore);
         }
 
         /// <summary>
@@ -349,9 +348,8 @@ namespace Librame.Extensions.Data.Accessors
             }
             _currentConnectionString = changeConnectionString;
 
-            var locker = this.GetService<IMemoryLocker>();
-            // 不使用尝试捕获异常锁，否则会中断异常后面的方法执行，不适合局部的异常处理
-            return await locker.WaitFactoryAsync(() => ChangeDbConnectionCoreAsync(cancellationToken),
+            // 不使用尝试捕获异常锁，否则会中断异常后面的方法执行，不适合局部异常处理
+            return await Locker.WaitFactoryAsync(() => ChangeDbConnectionCoreAsync(cancellationToken),
                 cancellationToken).ConfigureAndResultAsync();
         }
 

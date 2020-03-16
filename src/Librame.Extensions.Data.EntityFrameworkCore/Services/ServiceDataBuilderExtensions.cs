@@ -20,8 +20,8 @@ namespace Librame.Extensions.Data.Builders
     {
         internal static IDataBuilder AddServices(this IDataBuilder builder)
         {
-            builder.Services.TryAddScoped(typeof(IMigrationService<,,,,,,>), typeof(MigrationService<,,,,,,>));
-            builder.Services.TryAddScoped(typeof(ITenantService<,,,,,,>), typeof(TenantService<,,,,,,>));
+            builder.Services.TryAddSingleton(typeof(IMigrationService<,,,,,,>), typeof(MigrationService<,,,,,,>));
+            builder.Services.TryAddSingleton(typeof(ITenantService<,,,,,,>), typeof(TenantService<,,,,,,>));
 
             return builder;
         }

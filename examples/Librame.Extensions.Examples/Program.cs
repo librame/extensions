@@ -71,8 +71,8 @@ namespace Librame.Extensions.Examples
             //.AddDbDesignTime<SqliteDesignTimeServices>()
             // for MySQL
             .AddDbDesignTime<MySqlDesignTimeServices>()
-            .AddIdentifier<ExampleStoreIdentifier>()
-            .AddInitializer<ExampleStoreInitializer>()
+            .AddStoreIdentifier<ExampleStoreIdentifier>()
+            .AddStoreInitializer<ExampleStoreInitializer>()
             .AddStoreHub<ExampleStoreHub>()
             .AddEncryption()
             .AddDeveloperGlobalSigningCredentials();

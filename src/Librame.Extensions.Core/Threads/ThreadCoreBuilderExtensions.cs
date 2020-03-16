@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core.Builders
     {
         internal static ICoreBuilder AddThreads(this ICoreBuilder builder)
         {
-            builder.Services.TryAddScoped<IMemoryLocker, MemoryLocker>();
+            builder.Services.TryAddSingleton<IMemoryLocker, MemoryLocker>();
 
             return builder;
         }

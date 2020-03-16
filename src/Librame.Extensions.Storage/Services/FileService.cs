@@ -23,8 +23,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Storage.Services
 {
-    using Builders;
     using Core.Services;
+    using Storage.Builders;
 
     /// <summary>
     /// 文件服务。

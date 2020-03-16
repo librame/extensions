@@ -15,10 +15,10 @@ using Microsoft.Extensions.Options;
 
 namespace Librame.Extensions.Network.DotNetty.Demo
 {
-    using Builders;
     using Core.Builders;
     using Core.Services;
     using Encryption.Services;
+    using Network.Builders;
 
     /// <summary>
     /// 信道服务基类。

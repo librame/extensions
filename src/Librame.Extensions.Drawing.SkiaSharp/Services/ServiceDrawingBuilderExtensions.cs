@@ -20,9 +20,9 @@ namespace Librame.Extensions.Drawing.Builders
     {
         internal static IDrawingBuilder AddServices(this IDrawingBuilder builder)
         {
-            builder.Services.TryAddScoped<ICaptchaService, CaptchaService>();
-            builder.Services.TryAddScoped<IScaleService, ScaleService>();
-            builder.Services.TryAddScoped<IWatermarkService, WatermarkService>();
+            builder.Services.TryAddSingleton<ICaptchaService, CaptchaService>();
+            builder.Services.TryAddSingleton<IScaleService, ScaleService>();
+            builder.Services.TryAddSingleton<IWatermarkService, WatermarkService>();
 
             return builder;
         }

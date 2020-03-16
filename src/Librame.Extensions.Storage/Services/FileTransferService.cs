@@ -22,10 +22,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Storage.Services
 {
-    using Builders;
     using Core.Builders;
     using Core.Combiners;
     using Core.Services;
+    using Storage.Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class FileTransferService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFileTransferService

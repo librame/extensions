@@ -22,9 +22,9 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network.DotNetty.Demo
 {
-    using Builders;
     using Core.Builders;
     using Encryption.Services;
+    using Network.Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class EchoClient : ChannelServiceBase, IEchoClient

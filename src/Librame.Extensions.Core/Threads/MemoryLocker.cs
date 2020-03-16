@@ -29,7 +29,7 @@ namespace Librame.Extensions.Core.Threads
         public MemoryLocker(IOptions<CoreBuilderOptions> options)
         {
             ThreadsCount = options.NotNull(nameof(options)).Value.ThreadsCount;
-
+            
             _locker = new SemaphoreSlim(ThreadsCount);
         }
 

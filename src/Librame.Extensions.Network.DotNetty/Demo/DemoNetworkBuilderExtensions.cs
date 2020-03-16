@@ -20,28 +20,28 @@ namespace Librame.Extensions.Network.Builders
     {
         internal static INetworkBuilder AddDemo(this INetworkBuilder builder)
         {
-            builder.Services.TryAddScoped<IDiscardClient, DiscardClient>();
-            builder.Services.TryAddScoped<IDiscardServer, DiscardServer>();
+            builder.Services.TryAddSingleton<IDiscardClient, DiscardClient>();
+            builder.Services.TryAddSingleton<IDiscardServer, DiscardServer>();
 
-            builder.Services.TryAddScoped<IEchoClient, EchoClient>();
-            builder.Services.TryAddScoped<IEchoServer, EchoServer>();
+            builder.Services.TryAddSingleton<IEchoClient, EchoClient>();
+            builder.Services.TryAddSingleton<IEchoServer, EchoServer>();
 
-            builder.Services.TryAddScoped<IFactorialClient, FactorialClient>();
-            builder.Services.TryAddScoped<IFactorialServer, FactorialServer>();
+            builder.Services.TryAddSingleton<IFactorialClient, FactorialClient>();
+            builder.Services.TryAddSingleton<IFactorialServer, FactorialServer>();
 
-            builder.Services.TryAddScoped<IHttpServer, HttpServer>();
+            builder.Services.TryAddSingleton<IHttpServer, HttpServer>();
 
-            builder.Services.TryAddScoped<IQuoteOfTheMomentClient, QuoteOfTheMomentClient>();
-            builder.Services.TryAddScoped<IQuoteOfTheMomentServer, QuoteOfTheMomentServer>();
+            builder.Services.TryAddSingleton<IQuoteOfTheMomentClient, QuoteOfTheMomentClient>();
+            builder.Services.TryAddSingleton<IQuoteOfTheMomentServer, QuoteOfTheMomentServer>();
 
-            builder.Services.TryAddScoped<ISecureChatClient, SecureChatClient>();
-            builder.Services.TryAddScoped<ISecureChatServer, SecureChatServer>();
+            builder.Services.TryAddSingleton<ISecureChatClient, SecureChatClient>();
+            builder.Services.TryAddSingleton<ISecureChatServer, SecureChatServer>();
 
-            builder.Services.TryAddScoped<ITelnetClient, TelnetClient>();
-            builder.Services.TryAddScoped<ITelnetServer, TelnetServer>();
+            builder.Services.TryAddSingleton<ITelnetClient, TelnetClient>();
+            builder.Services.TryAddSingleton<ITelnetServer, TelnetServer>();
 
-            builder.Services.TryAddScoped<IWebSocketClient, WebSocketClient>();
-            builder.Services.TryAddScoped<IWebSocketServer, WebSocketServer>();
+            builder.Services.TryAddSingleton<IWebSocketClient, WebSocketClient>();
+            builder.Services.TryAddSingleton<IWebSocketServer, WebSocketServer>();
 
             return builder;
         }

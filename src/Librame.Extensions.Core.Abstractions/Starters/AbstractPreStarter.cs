@@ -12,18 +12,28 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Core.Bootstrappers
+namespace Librame.Extensions.Core.Starters
 {
     /// <summary>
-    /// 引导程序接口。
+    /// 抽象预启动器。
     /// </summary>
-    public interface IBootstrapper : ISortable
+    public abstract class AbstractPreStarter : AbstractSortable, IPreStarter
     {
         /// <summary>
-        /// 运行引导程序。
+        /// 构造一个 <see cref="AbstractPreStarter"/>。
+        /// </summary>
+        /// <param name="priority">给定的优先级（可选；默认为 <see cref="AbstractSortable.DefaultPriority"/>）。</param>
+        protected AbstractPreStarter(float? priority = null)
+            : base(priority)
+        {
+        }
+
+
+        /// <summary>
+        /// 启动。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
-        IServiceCollection Run(IServiceCollection services);
+        public abstract IServiceCollection Start(IServiceCollection services);
     }
 }

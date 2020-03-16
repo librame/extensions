@@ -17,9 +17,9 @@ using System.Text;
 
 namespace Librame.Extensions.Network.Services
 {
-    using Builders;
     using Core.Builders;
     using Core.Services;
+    using Network.Builders;
 
     /// <summary>
     /// 网络服务基类。

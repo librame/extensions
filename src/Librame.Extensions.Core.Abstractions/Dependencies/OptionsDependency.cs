@@ -28,8 +28,9 @@ namespace Librame.Extensions.Core.Dependencies
         /// <summary>
         /// 构造一个 <see cref="OptionsDependency{TOptions}"/>。
         /// </summary>
-        public OptionsDependency()
-            : this(BuildName<TOptions>(out Type optionsType), optionsType)
+        /// <param name="configureOptions">给定的选项配置动作（可选）。</param>
+        public OptionsDependency(Action<TOptions> configureOptions = null)
+            : this(BuildName<TOptions>(out Type optionsType), optionsType, configureOptions)
         {
         }
 
@@ -37,12 +38,13 @@ namespace Librame.Extensions.Core.Dependencies
         /// 构造一个 <see cref="OptionsDependency{TOptions}"/>。
         /// </summary>
         /// <param name="name">给定的依赖名称。</param>
-        protected OptionsDependency(string name)
-            : this(name, typeof(TOptions))
+        /// <param name="configureOptions">给定的选项配置动作（可选）。</param>
+        protected OptionsDependency(string name, Action<TOptions> configureOptions = null)
+            : this(name, typeof(TOptions), configureOptions)
         {
         }
 
-        private OptionsDependency(string name, Type optionsType)
+        private OptionsDependency(string name, Type optionsType, Action<TOptions> configureOptions = null)
             : base(name)
         {
             if (optionsType.IsAssignableToBaseType(typeof(IExtensionBuilderDependency)))
@@ -50,6 +52,7 @@ namespace Librame.Extensions.Core.Dependencies
 
             OptionsType = new SerializableString<Type>(optionsType);
             Options = OptionsType.Source.EnsureCreate<TOptions>();
+            configureOptions?.Invoke(Options);
         }
 
 

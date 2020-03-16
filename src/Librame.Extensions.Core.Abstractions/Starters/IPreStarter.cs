@@ -12,15 +12,15 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Librame.Extensions.Core.Bootstrappers
+namespace Librame.Extensions.Core.Starters
 {
     /// <summary>
-    /// 引导程序启动器接口。
+    /// 预启动器接口。
     /// </summary>
-    public interface IBootstrapperStarter
+    public interface IPreStarter : ISortable
     {
         /// <summary>
-        /// 启动启动器。
+        /// 启动预启动器。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <returns>返回 <see cref="IServiceCollection"/>。</returns>

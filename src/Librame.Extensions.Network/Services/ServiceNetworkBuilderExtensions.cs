@@ -20,10 +20,10 @@ namespace Librame.Extensions.Network.Builders
     {
         internal static INetworkBuilder AddServices(this INetworkBuilder builder)
         {
-            builder.Services.TryAddScoped<IByteCodecService, ByteCodecService>();
-            builder.Services.TryAddScoped<ICrawlerService, CrawlerService>();
-            builder.Services.TryAddScoped<IEmailService, EmailService>();
-            builder.Services.TryAddScoped<ISmsService, SmsService>();
+            builder.Services.TryAddSingleton<IByteCodecService, ByteCodecService>();
+            builder.Services.TryAddSingleton<ICrawlerService, CrawlerService>();
+            builder.Services.TryAddSingleton<IEmailService, EmailService>();
+            builder.Services.TryAddSingleton<ISmsService, SmsService>();
 
             return builder;
         }

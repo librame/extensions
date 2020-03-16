@@ -22,8 +22,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network.Services
 {
-    using Builders;
     using Core.Builders;
+    using Network.Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class EmailService : NetworkServiceBase, IEmailService

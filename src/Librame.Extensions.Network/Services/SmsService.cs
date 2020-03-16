@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Network.Services
 {
     using Core.Services;
-    using Requesters;
+    using Network.Requesters;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class SmsService : NetworkServiceBase, ISmsService

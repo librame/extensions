@@ -31,7 +31,7 @@ namespace Librame.Extensions.Core.Builders
             builder.Services.TryAddTransient(typeof(IRequestHandlerWrapper<,>), typeof(RequestHandlerWrapper<,>));
             builder.Services.TryAddTransient(typeof(INotificationHandlerWrapper<>), typeof(NotificationHandlerWrapper<>));
 
-            builder.Services.TryAddScoped<IMediator, ServiceFactoryMediator>();
+            builder.Services.TryAddTransient<IMediator, ServiceFactoryMediator>();
 
             return builder;
         }

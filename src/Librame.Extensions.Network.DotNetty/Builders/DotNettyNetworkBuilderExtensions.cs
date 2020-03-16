@@ -66,10 +66,11 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static INetworkBuilder AddWrappers(this INetworkBuilder builder)
         {
-            builder.Services.TryAddScoped<IBootstrapWrapperFactory, BootstrapWrapperFactory>();
-            builder.Services.TryAddScoped<IBootstrapWrapper, BootstrapWrapper>();
-            builder.Services.TryAddScoped<IServerBootstrapWrapper, ServerBootstrapWrapper>();
-            builder.Services.TryAddScoped(typeof(IBootstrapWrapper<,>), typeof(BootstrapWrapper<,>));
+            builder.Services.TryAddSingleton<IBootstrapWrapperFactory, BootstrapWrapperFactory>();
+
+            builder.Services.TryAddTransient<IBootstrapWrapper, BootstrapWrapper>();
+            builder.Services.TryAddTransient<IServerBootstrapWrapper, ServerBootstrapWrapper>();
+            builder.Services.TryAddTransient(typeof(IBootstrapWrapper<,>), typeof(BootstrapWrapper<,>));
 
             return builder;
         }

@@ -22,14 +22,14 @@ namespace Librame.Extensions.Data.Builders
     {
         internal static IDataBuilder AddAspects(this IDataBuilder builder)
         {
-            builder.Services.TryAddEnumerable(ServiceDescriptor.Scoped(typeof(ISaveChangesDbContextAccessorAspect<,,,,,,>),
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(ISaveChangesDbContextAccessorAspect<,,,,,,>),
                 typeof(DataAuditSaveChangesDbContextAccessorAspect<,,,,,,>)));
 
             builder.Services.TryAddEnumerable(new List<ServiceDescriptor>
             {
-                ServiceDescriptor.Scoped(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
+                ServiceDescriptor.Singleton(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
                     typeof(DataEntityMigrateDbContextAccessorAspect<,,,,,,>)),
-                ServiceDescriptor.Scoped(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
+                ServiceDescriptor.Singleton(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
                     typeof(DataMigrationMigrateDbContextAccessorAspect<,,,,,,>))
             });
 
