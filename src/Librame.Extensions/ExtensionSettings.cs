@@ -210,7 +210,7 @@ namespace Librame.Extensions
         /// <summary>
         /// 可空类型。
         /// </summary>
-        public static readonly Type NullableType
+        public static readonly Type NullableTypeDefinition
             = typeof(Nullable<>);
 
 

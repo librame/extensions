@@ -18,7 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -277,7 +276,7 @@ namespace Librame.Extensions.Data.Aspects
             entity.EntityName = entityType.ClrType.GetDisplayNameWithNamespace();
             entity.AssemblyName = entityType.ClrType.GetAssemblyDisplayName();
             entity.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
-            entity.CreatedTimeTicks = entity.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+            entity.CreatedTimeTicks = entity.CreatedTime.Ticks;
             entity.CreatedBy = GetType().GetGenericBodyName();
 
             if (entityType.ClrType.TryGetCustomAttribute(out DescriptionAttribute descr)

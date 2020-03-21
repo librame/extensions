@@ -18,11 +18,12 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Aspects
 {
-    using Accessors;
-    using Builders;
+    using Core;
     using Core.Services;
     using Core.Threads;
-    using Stores;
+    using Data.Accessors;
+    using Data.Builders;
+    using Data.Stores;
 
     /// <summary>
     /// 数据库上下文访问器截面基类。
@@ -194,5 +195,91 @@ namespace Librame.Extensions.Data.Aspects
 
         #endregion
 
+
+        /// <summary>
+        /// 比较优先级。
+        /// </summary>
+        /// <param name="other">给定的 <see cref="ISortable"/>。</param>
+        /// <returns>返回整数。</returns>
+        public virtual int CompareTo(ISortable other)
+            => Priority.CompareTo((float)other?.Priority);
+
+
+        /// <summary>
+        /// 优先级相等。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(object obj)
+            => obj is DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> sortable ? Priority == sortable?.Priority : false;
+
+
+        /// <summary>
+        /// 获取哈希码。
+        /// </summary>
+        /// <returns>返回整数。</returns>
+        public override int GetHashCode()
+            => Priority.GetHashCode();
+
+
+        /// <summary>
+        /// 相等比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator ==(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+            => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.Equals(right);
+
+        /// <summary>
+        /// 不等比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator !=(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+            => !(left == right);
+
+        /// <summary>
+        /// 小于比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator <(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+            => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+
+        /// <summary>
+        /// 小于等于比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator <=(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+            => ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+
+        /// <summary>
+        /// 大于比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator >(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+            => !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+
+        /// <summary>
+        /// 大于等于比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator >=(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+            => ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
     }
 }

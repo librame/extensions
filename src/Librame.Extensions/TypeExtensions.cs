@@ -84,6 +84,67 @@ namespace Librame.Extensions
 
 
         /// <summary>
+        /// 是否已实现某个接口类型。
+        /// </summary>
+        /// <typeparam name="TInterface">指定的接口类型（支持泛型定义类型）。</typeparam>
+        /// <param name="type">给定的当前类型。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedInterface<TInterface>(this Type type)
+            => type.IsImplementedInterface(typeof(TInterface), out _);
+
+        /// <summary>
+        /// 是否已实现某个接口类型。
+        /// </summary>
+        /// <typeparam name="TInterface">指定的接口类型（支持泛型定义类型）。</typeparam>
+        /// <param name="type">给定的当前类型。</param>
+        /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedInterface<TInterface>(this Type type, out Type resultType)
+            => type.IsImplementedInterface(typeof(TInterface), out resultType);
+
+        /// <summary>
+        /// 是否已实现某个接口类型。
+        /// </summary>
+        /// <param name="type">给定的当前类型。</param>
+        /// <param name="interfaceType">给定的接口类型（支持泛型定义类型）。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedInterface(this Type type, Type interfaceType)
+            => type.IsImplementedInterface(interfaceType, out _);
+
+        /// <summary>
+        /// 是否已实现某个接口类型。
+        /// </summary>
+        /// <param name="type">给定的当前类型。</param>
+        /// <param name="interfaceType">给定的接口类型（支持泛型定义类型）。</param>
+        /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedInterface(this Type type, Type interfaceType, out Type resultType)
+        {
+            type.NotNull(nameof(type));
+            interfaceType.NotNull(nameof(interfaceType));
+
+            var allInterfaceTypes = type.GetInterfaces();
+
+            // 如果判定的接口类型是泛型定义
+            if (interfaceType.IsGenericTypeDefinition)
+            {
+                resultType = allInterfaceTypes
+                    .Where(type => type.IsGenericType)
+                    .FirstOrDefault(type => type.GetGenericTypeDefinition() == interfaceType);
+
+                return resultType.IsNotNull();
+            }
+
+            resultType = allInterfaceTypes.FirstOrDefault(type => type == interfaceType);
+            return resultType.IsNotNull();
+        }
+
+
+        /// <summary>
         /// 获取所有字段集合（包括公开、非公开、实例、静态等）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
@@ -246,11 +307,22 @@ namespace Librame.Extensions
         /// <param name="action">给定的注册动作。</param>
         /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
         /// <returns>返回已调用的类型集合数。</returns>
+        /// <returns>返回已调用的类型集合数。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static int InvokeTypes(this Assembly assembly,
             Action<Type> action, Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
         {
             assembly.NotNull(nameof(assembly));
-            return assembly.YieldEnumerable().InvokeTypes(action, filterTypes);
+
+            var allTypes = assembly.GetExportedTypes();
+
+            if (filterTypes.IsNotNull())
+                allTypes = filterTypes.Invoke(allTypes).ToArray();
+
+            foreach (var type in allTypes)
+                action.Invoke(type);
+
+            return allTypes.Length;
         }
 
         /// <summary>
@@ -260,22 +332,52 @@ namespace Librame.Extensions
         /// <param name="action">给定的注册动作。</param>
         /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
         /// <returns>返回已调用的类型集合数。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "filterTypes")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static int InvokeTypes(this IEnumerable<Assembly> assemblies,
             Action<Type> action, Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
         {
-            assemblies.NotEmpty(nameof(assemblies));
             action.NotNull(nameof(action));
 
-            var allTypes = assemblies.SelectMany(a => a.ExportedTypes);
-
-            if (filterTypes.IsNotNull())
-                allTypes = filterTypes.Invoke(allTypes);
+            var allTypes = assemblies.ExportedTypes(filterTypes);
 
             foreach (var type in allTypes)
                 action.Invoke(type);
 
-            return allTypes.Count();
+            return allTypes.Count;
+        }
+
+
+        /// <summary>
+        /// 导出类型列表。
+        /// </summary>
+        /// <param name="assemblies">给定的 <see cref="IEnumerable{Assembly}"/>。</param>
+        /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
+        /// <returns>返回 <see cref="IReadOnlyList{Type}"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static IReadOnlyList<Type> ExportedTypes(this IEnumerable<Assembly> assemblies,
+            Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
+        {
+            assemblies.NotEmpty(nameof(assemblies));
+
+            var allTypes = new List<Type>();
+
+            foreach (var assembly in assemblies)
+            {
+                try
+                {
+                    // 解决不支持的程序集抛出“System.NotSupportedException: 动态程序集中不支持已调用的成员。”的异常
+                    allTypes.AddRange(assembly.GetExportedTypes());
+                }
+                catch (NotSupportedException)
+                {
+                    continue;
+                }
+            }
+
+            if (filterTypes.IsNotNull())
+                allTypes = filterTypes.Invoke(allTypes).ToList();
+
+            return allTypes;
         }
 
     }

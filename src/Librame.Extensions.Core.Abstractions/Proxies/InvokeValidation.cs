@@ -25,7 +25,7 @@ namespace Librame.Extensions.Core.Proxies
     /// </summary>
     public class InvokeValidation : IInvokeValidation
     {
-        private static readonly Type _baseAttributeType
+        private static readonly Type _attributeType
             = typeof(ValidationAttribute);
 
 
@@ -51,7 +51,7 @@ namespace Librame.Extensions.Core.Proxies
             memberInfo.NotNull(nameof(memberInfo));
 
             var attributeDatas = memberInfo.CustomAttributes.Where(attrib
-                => attrib.AttributeType.IsAssignableToBaseType(_baseAttributeType)).ToList();
+                => attrib.AttributeType.IsAssignableToBaseType(_attributeType)).ToList();
 
             if (attributeDatas.Count > 0)
             {

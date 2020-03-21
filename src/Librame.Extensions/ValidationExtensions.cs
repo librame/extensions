@@ -272,7 +272,7 @@ namespace Librame.Extensions
             // 如可空泛型 int?，则 GenericTypeDefinition() 为 Nullable<T>
             return type.IsNotNull()
                 && type.IsGenericType
-                && type.GetGenericTypeDefinition() == ExtensionSettings.NullableType;
+                && type.GetGenericTypeDefinition() == ExtensionSettings.NullableTypeDefinition;
         }
 
         /// <summary>

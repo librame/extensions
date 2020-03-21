@@ -13,7 +13,6 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
 namespace Librame.Extensions.Data.Stores
 {
@@ -192,7 +191,7 @@ namespace Librame.Extensions.Data.Stores
 
                 tenant.Id = GetTenantId<TGenId>();
                 tenant.UpdatedTime = tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult();
-                tenant.UpdatedTimeTicks = tenant.CreatedTimeTicks = tenant.UpdatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+                tenant.UpdatedTimeTicks = tenant.CreatedTimeTicks = tenant.UpdatedTime.Ticks;
                 tenant.UpdatedBy = tenant.CreatedBy = GetType().GetDisplayName();
 
                 stores.TryCreate(tenant);

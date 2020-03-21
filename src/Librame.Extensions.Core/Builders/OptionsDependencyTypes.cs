@@ -25,59 +25,59 @@ namespace Librame.Extensions.Core.Builders
         /// <summary>
         /// <see cref="IDependency"/> 类型。
         /// </summary>
-        public static readonly Type BaseDependencyType
+        public static readonly Type DependencyType
             = typeof(IDependency);
 
 
         /// <summary>
-        /// <see cref="IOptions{TOptions}"/> 类型。
+        /// <see cref="IOptions{TOptions}"/> 类型定义。
         /// </summary>
-        public static readonly Type BaseOptionsType
+        public static readonly Type OptionsTypeDefinition
             = typeof(IOptions<>);
 
         /// <summary>
-        /// <see cref="IConfigureOptions{TOptions}"/> 类型。
+        /// <see cref="IConfigureOptions{TOptions}"/> 类型定义。
         /// </summary>
-        public static readonly Type BaseConfigureOptionsType
+        public static readonly Type ConfigureOptionsTypeDefinition
             = typeof(IConfigureOptions<>);
 
         /// <summary>
-        /// <see cref="IOptionsChangeTokenSource{TOptions}"/> 类型。
+        /// <see cref="IOptionsChangeTokenSource{TOptions}"/> 类型定义。
         /// </summary>
-        public static readonly Type BaseOptionsChangeTokenSourceType
+        public static readonly Type OptionsChangeTokenSourceTypeDefinition
             = typeof(IOptionsChangeTokenSource<>);
 
 
         /// <summary>
-        /// <see cref="ConfigurationChangeTokenSource{TOptions}"/> 类型。
+        /// <see cref="ConfigurationChangeTokenSource{TOptions}"/> 类型定义。
         /// </summary>
-        public static readonly Type ConfigurationChangeTokenSourceType
+        public static readonly Type ConfigurationChangeTokenSourceTypeDefinition
             = typeof(ConfigurationChangeTokenSource<>);
 
         /// <summary>
-        /// <see cref="NamedConfigureFromConfigurationOptions{TOptions}"/> 类型。
+        /// <see cref="NamedConfigureFromConfigurationOptions{TOptions}"/> 类型定义。
         /// </summary>
-        public static readonly Type NamedConfigureFromConfigurationOptionsType
+        public static readonly Type NamedConfigureFromConfigurationOptionsTypeDefinition
             = typeof(NamedConfigureFromConfigurationOptions<>);
 
 
         /// <summary>
-        /// <see cref="ConfigureNamedOptions{TOptions}"/> 类型。
+        /// <see cref="ConfigureNamedOptions{TOptions}"/> 类型定义。
         /// </summary>
-        public static readonly Type ConfigureNamedOptionsType
+        public static readonly Type ConfigureNamedOptionsTypeDefinition
             = typeof(ConfigureNamedOptions<>);
 
 
         /// <summary>
-        /// <see cref="IPostConfigureOptions{TOptions}"/> 类型。
+        /// <see cref="IPostConfigureOptions{TOptions}"/> 类型定义。
         /// </summary>
-        public static readonly Type BasePostConfigureOptionsType
+        public static readonly Type BasePostConfigureOptionsTypeDefinition
             = typeof(IPostConfigureOptions<>);
 
         /// <summary>
-        /// <see cref="PostConfigureOptions{TOptions}"/> 类型。
+        /// <see cref="PostConfigureOptions{TOptions}"/> 类型定义。
         /// </summary>
-        public static readonly Type PostConfigureOptionsType
+        public static readonly Type PostConfigureOptionsTypeDefinition
             = typeof(PostConfigureOptions<>);
     }
 }

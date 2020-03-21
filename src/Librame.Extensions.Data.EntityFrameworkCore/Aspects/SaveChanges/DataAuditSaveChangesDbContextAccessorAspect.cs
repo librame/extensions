@@ -224,7 +224,7 @@ namespace Librame.Extensions.Data.Aspects
                     cancellationToken).ConfigureAndResult();
             }
 
-            audit.CreatedTimeTicks = audit.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+            audit.CreatedTimeTicks = audit.CreatedTime.Ticks;
 
             return new KeyValuePair<TAudit, List<TAuditProperty>>(audit, auditProperties);
         }

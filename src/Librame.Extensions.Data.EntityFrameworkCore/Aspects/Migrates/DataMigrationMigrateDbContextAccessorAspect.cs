@@ -15,7 +15,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -152,7 +151,7 @@ namespace Librame.Extensions.Data.Aspects
             migration.ModelBody = modelSnapshot.Body;
             migration.ModelHash = modelSnapshot.Hash;
             migration.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
-            migration.CreatedTimeTicks = migration.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+            migration.CreatedTimeTicks = migration.CreatedTime.Ticks;
             migration.CreatedBy = GetType().GetGenericBodyName();
 
             return migration;

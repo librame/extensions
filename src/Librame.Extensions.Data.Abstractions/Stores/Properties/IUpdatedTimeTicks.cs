@@ -23,6 +23,6 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 更新时间周期数。
         /// </summary>
-        string UpdatedTimeTicks { get; set; }
+        long UpdatedTimeTicks { get; set; }
     }
 }

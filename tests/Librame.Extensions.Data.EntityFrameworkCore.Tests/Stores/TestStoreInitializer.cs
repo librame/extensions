@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace Librame.Extensions.Data.Tests
@@ -55,7 +54,7 @@ namespace Librame.Extensions.Data.Tests
 
                 _categories.ForEach(category =>
                 {
-                    category.CreatedTimeTicks = category.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+                    category.CreatedTimeTicks = category.CreatedTime.Ticks;
                 });
 
                 accessor.Categories.AddRange(_categories);
@@ -85,7 +84,7 @@ namespace Librame.Extensions.Data.Tests
                         CreatedBy = GetType().GetDisplayName()
                     };
 
-                    article.CreatedTimeTicks = article.CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+                    article.CreatedTimeTicks = article.CreatedTime.Ticks;
 
                     articles.Add(article);
                 }

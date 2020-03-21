@@ -17,7 +17,8 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network.Requesters
 {
-    using Services;
+    using Core;
+    using Network.Services;
 
     /// <summary>
     /// URI 请求程序基类。
@@ -116,5 +117,86 @@ namespace Librame.Extensions.Network.Requesters
         public virtual Task<Stream> GetResponseStreamAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
             => throw new NotImplementedException();
+
+
+        /// <summary>
+        /// 比较优先级。
+        /// </summary>
+        /// <param name="other">给定的 <see cref="ISortable"/>。</param>
+        /// <returns>返回整数。</returns>
+        public virtual int CompareTo(ISortable other)
+            => Priority.CompareTo((float)other?.Priority);
+
+
+        /// <summary>
+        /// 优先级相等。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(object obj)
+            => obj is UriRequesterBase sortable ? Priority == sortable?.Priority : false;
+
+
+        /// <summary>
+        /// 获取哈希码。
+        /// </summary>
+        /// <returns>返回整数。</returns>
+        public override int GetHashCode()
+            => Priority.GetHashCode();
+
+
+        /// <summary>
+        /// 相等比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <param name="right">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator ==(UriRequesterBase left, UriRequesterBase right)
+            => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.Equals(right);
+
+        /// <summary>
+        /// 不等比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <param name="right">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator !=(UriRequesterBase left, UriRequesterBase right)
+            => !(left == right);
+
+        /// <summary>
+        /// 小于比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <param name="right">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator <(UriRequesterBase left, UriRequesterBase right)
+            => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+
+        /// <summary>
+        /// 小于等于比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <param name="right">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator <=(UriRequesterBase left, UriRequesterBase right)
+            => ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+
+        /// <summary>
+        /// 大于比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <param name="right">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator >(UriRequesterBase left, UriRequesterBase right)
+            => !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+
+        /// <summary>
+        /// 大于等于比较。
+        /// </summary>
+        /// <param name="left">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <param name="right">给定的 <see cref="UriRequesterBase"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool operator >=(UriRequesterBase left, UriRequesterBase right)
+            => ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
     }
 }

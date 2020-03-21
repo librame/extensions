@@ -10,15 +10,17 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 可排序接口。
     /// </summary>
-    public interface ISortable
+    public interface ISortable : IComparable<ISortable>
     {
         /// <summary>
-        /// 服务优先级（数值越小越优先）。
+        /// 排序优先级（数值越小越优先）。
         /// </summary>
         float Priority { get; set; }
     }

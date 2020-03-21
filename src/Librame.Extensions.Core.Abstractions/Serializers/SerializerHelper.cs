@@ -23,19 +23,8 @@ namespace Librame.Extensions.Core.Serializers
     /// </summary>
     public static class SerializerHelper
     {
-        private static List<ISerializer> _serializers = InitializeSerializers();
-
-        private static List<ISerializer> InitializeSerializers()
-        {
-            var baseType = typeof(ISerializer);
-
-            return AssemblyUtility.CurrentAssembliesWithoutSystem
-                .SelectMany(a => a.ExportedTypes)
-                .Where(t => baseType.IsAssignableFromTargetType(t) && t.IsConcreteType())
-                .Select(t => t.EnsureCreate<ISerializer>())
-                .ToList();
-        }
-
+        private static readonly IReadOnlyList<ISerializer> _serializers
+            = AssemblyUtility.CreateInstancesByCurrentExportedTypesWithoutSystem<ISerializer>();
 
         private static Func<ISerializer, bool> GetPredicate(Type sourceType, Type targetType)
             => s => s.SourceType == sourceType && s.TargetType == targetType;

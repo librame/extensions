@@ -10,14 +10,12 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Core
 {
     /// <summary>
     /// 抽象可排序。
     /// </summary>
-    public class AbstractSortable : ISortable, IComparable<ISortable>
+    public class AbstractSortable : ISortable
     {
         /// <summary>
         /// 默认优先级。

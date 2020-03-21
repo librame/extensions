@@ -1,11 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Librame.Extensions.Tests
 {
     public class TypeExtensionsTests
     {
-        class TestClass
+        interface ITestA<T>
+        {
+            void TestMethod();
+        }
+
+        interface ITestB : ITestA<string>
+        {
+        }
+
+        class TestClass : ITestB
         {
             static string _field1 = null;
             string _field2 = null;
@@ -30,8 +41,17 @@ namespace Librame.Extensions.Tests
             var compare = typeof(TestClass).EnsureCreate<TestClass>();
 
             Assert.True(source.PropertyValuesEquals(compare));
-
             Assert.True(source.YieldEnumerable().SequencePropertyValuesEquals(compare.YieldEnumerable()));
+        }
+
+
+        [Fact]
+        public void IsImplementedInterfaceTest()
+        {
+            Assert.True(typeof(TestClass).IsImplementedInterface<ITestB>());
+            Assert.True(typeof(ITestB).IsImplementedInterface<ITestA<string>>());
+            Assert.True(typeof(TestClass).IsImplementedInterface(typeof(ITestA<>), out Type genericType));
+            Assert.True(genericType.GetGenericArguments().Single() == typeof(string));
         }
 
 

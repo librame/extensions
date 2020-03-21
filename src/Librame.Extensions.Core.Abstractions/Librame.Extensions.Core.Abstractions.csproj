@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.4.1.11</Version>
+    <Version>7.4.1.12</Version>
     <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based .NET Standard and Microsoft.Extensions packages on common framework.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based .NET Standard and Microsoft.Extensions packages on common framework.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.4.1.11</AssemblyVersion>
-    <FileVersion>7.4.1066.17415</FileVersion>
+    <AssemblyVersion>7.4.1.12</AssemblyVersion>
+    <FileVersion>7.4.1072.17415</FileVersion>
     <RootNamespace>Librame.Extensions.Core</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
@@ -39,7 +39,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.4.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.5.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

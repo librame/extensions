@@ -158,7 +158,7 @@ namespace Librame.Extensions.Core.Builders
             // 获取所有依赖属性集合
             var properties = typeof(TDependency).GetProperties().Where(p =>
             {
-                return p.PropertyType.IsAssignableToBaseType(OptionsDependencyTypes.BaseDependencyType)
+                return p.PropertyType.IsAssignableToBaseType(OptionsDependencyTypes.DependencyType)
                     && p.PropertyType.IsGenericType;
             });
 
@@ -228,11 +228,11 @@ namespace Librame.Extensions.Core.Builders
             // services.AddSingleton<IOptionsChangeTokenSource<TOptions>>(new ConfigurationChangeTokenSource<TOptions>(name, config));
             // services.AddSingleton<IConfigureOptions<TOptions>>(new NamedConfigureFromConfigurationOptions<TOptions>(name, config, configureBinder));
 
-            var baseSourceType = OptionsDependencyTypes.BaseOptionsChangeTokenSourceType.MakeGenericType(propertyOptionsType);
-            var baseOptionsType = OptionsDependencyTypes.BaseConfigureOptionsType.MakeGenericType(propertyOptionsType);
+            var baseSourceType = OptionsDependencyTypes.OptionsChangeTokenSourceTypeDefinition.MakeGenericType(propertyOptionsType);
+            var baseOptionsType = OptionsDependencyTypes.ConfigureOptionsTypeDefinition.MakeGenericType(propertyOptionsType);
 
-            var configSourceType = OptionsDependencyTypes.ConfigurationChangeTokenSourceType.MakeGenericType(propertyOptionsType);
-            var configOptionsType = OptionsDependencyTypes.NamedConfigureFromConfigurationOptionsType.MakeGenericType(propertyOptionsType);
+            var configSourceType = OptionsDependencyTypes.ConfigurationChangeTokenSourceTypeDefinition.MakeGenericType(propertyOptionsType);
+            var configOptionsType = OptionsDependencyTypes.NamedConfigureFromConfigurationOptionsTypeDefinition.MakeGenericType(propertyOptionsType);
 
             var configSource = configSourceType.EnsureCreateObject(BaseOptions.DefaultName, propertyOptionsConfiguration);
             var configOptions = configOptionsType.EnsureCreateObject(BaseOptions.DefaultName, propertyOptionsConfiguration);

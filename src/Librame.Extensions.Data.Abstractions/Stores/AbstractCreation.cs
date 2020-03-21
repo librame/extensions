@@ -13,7 +13,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
 
 namespace Librame.Extensions.Data.Stores
 {
@@ -33,7 +32,7 @@ namespace Librame.Extensions.Data.Stores
         public AbstractCreation()
         {
             CreatedTime = DataDefaults.UtcNowOffset;
-            CreatedTimeTicks = CreatedTime.Ticks.ToString(CultureInfo.InvariantCulture);
+            CreatedTimeTicks = CreatedTime.Ticks;
         }
 
 
@@ -41,7 +40,7 @@ namespace Librame.Extensions.Data.Stores
         /// 创建时间周期数。
         /// </summary>
         [Display(Name = nameof(CreatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
-        public virtual string CreatedTimeTicks { get; set; }
+        public virtual long CreatedTimeTicks { get; set; }
     }
 
 

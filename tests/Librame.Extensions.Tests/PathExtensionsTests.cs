@@ -53,6 +53,14 @@ namespace Librame.Extensions.Tests
             Assert.Equal(result, basePath.CombinePath("/filename.ext"));
             Assert.Equal(result, basePath.CombinePath("./filename.ext"));
             Assert.Equal(result, @$"{basePath}\1\2".CombinePath("../../filename.ext"));
+
+            Assert.Equal(result, basePath.CombinePath("./filename.ext"));
+            Assert.Equal(result, basePath.CombinePath("/filename.ext"));
+
+            // Test Linux Environment
+            Assert.Equal("/app/filename.ext", "/app".CombinePath("filename.ext"));
+            Assert.Equal("/app/123/filename.ext", @"/app\123".CombinePath("filename.ext"));
+            Assert.Equal("/app/123/filename.ext", "/app".CombinePath(@"\123\filename.ext"));
         }
 
 

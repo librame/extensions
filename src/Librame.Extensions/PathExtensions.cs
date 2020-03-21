@@ -135,9 +135,6 @@ namespace Librame.Extensions
         /// <summary>
         /// 合并路径。
         /// </summary>
-        /// <exception cref="ArgumentException">
-        /// Invalid base path '{0}'.
-        /// </exception>
         /// <param name="basePath">给定的基础路径。</param>
         /// <param name="relativePath">给定要附加的相对路径。</param>
         /// <returns>返回路径字符串。</returns>
@@ -150,102 +147,75 @@ namespace Librame.Extensions
             var altSeparatorIndex = basePath.CompatibleIndexOf(ExtensionSettings.AltDirectorySeparatorChar);
             var separatorIndex = basePath.CompatibleIndexOf(ExtensionSettings.DirectorySeparatorChar);
 
-            // 正反向分隔符不能同时存在（或不存在）于基础路径中
-            if (altSeparatorIndex >= 0 && separatorIndex >= 0 || altSeparatorIndex < 0 && separatorIndex < 0)
-                throw new ArgumentException(InternalResource.ArgumentExceptionBasePathFormat.Format(basePath));
+            //// 正反向分隔符不能同时存在（或不存在）于基础路径中
+            //if (altSeparatorIndex >= 0 && separatorIndex >= 0 || altSeparatorIndex < 0 && separatorIndex < 0)
+            //    throw new ArgumentException(InternalResource.ArgumentExceptionBasePathFormat.Format(basePath));
 
-            var basePathSeparator = altSeparatorIndex > 0
+            // 如果基础路径无分隔符
+            if (altSeparatorIndex < 0 && separatorIndex < 0)
+                return $"{basePath}{relativePath}";
+
+            // 如果基础路径同时包含两种分隔符
+            if (altSeparatorIndex >= 0 && separatorIndex >= 0)
+            {
+                // 则以最靠前的分隔符为基准，替换掉后面的其他分隔符
+                if (altSeparatorIndex < separatorIndex)
+                {
+                    basePath = basePath.Replace(ExtensionSettings.DirectorySeparatorChar,
+                        ExtensionSettings.AltDirectorySeparatorChar);
+                }
+                else
+                {
+                    basePath = basePath.Replace(ExtensionSettings.AltDirectorySeparatorChar,
+                        ExtensionSettings.DirectorySeparatorChar);
+                }
+            }
+
+            var basePathSeparator = altSeparatorIndex >= 0
                 ? ExtensionSettings.AltDirectorySeparatorChar
                 : ExtensionSettings.DirectorySeparatorChar;
 
-            // RelativePath: filename.ext
-            if (!relativePath.CompatibleContains(ExtensionSettings.AltDirectorySeparatorChar)
-                && !relativePath.CompatibleContains(ExtensionSettings.DirectorySeparatorChar))
-                return $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath}";
-
-            // RelativePath: ../ or ..\
-            if (basePath.TryCombineParentPath(relativePath, basePathSeparator, out string resultPath))
-                return resultPath;
-
-            // RelativePath: ./ or .\, / or \
-            if (basePath.TryCombineSiblingPath(relativePath, basePathSeparator, out resultPath))
-                return resultPath;
-
-            return $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath}";
+            return CombineRelativePath(basePath, relativePath, basePathSeparator);
         }
 
-        private static bool TryCombineParentPath(this string basePath, string relativePath, char basePathSeparator, out string resultPath)
+        private static string CombineRelativePath(this string basePath, string relativePath, char basePathSeparator)
         {
-            var parentMark = "..";
+            var reverseSeparator = basePathSeparator == ExtensionSettings.AltDirectorySeparatorChar
+                ? ExtensionSettings.DirectorySeparatorChar
+                : ExtensionSettings.AltDirectorySeparatorChar;
 
-            // RelativePath: ../
-            var altSeparatorMark = $"{parentMark}{ExtensionSettings.AltDirectorySeparatorChar}";
-            if (relativePath.StartsWith(altSeparatorMark, StringComparison.OrdinalIgnoreCase))
+            // 尝试替换相对路径中的反向分隔符为基础路径分隔符
+            if (relativePath.CompatibleContains(reverseSeparator))
+                relativePath = relativePath.Replace(reverseSeparator, basePathSeparator);
+
+            // RelativePath: ../ or ..\
+            var parentSeparator = $"..{basePathSeparator}";
+            if (relativePath.StartsWith(parentSeparator, StringComparison.OrdinalIgnoreCase))
             {
-                var parent = BackToParentPath(new DirectoryInfo(basePath), relativePath, altSeparatorMark);
-                resultPath = $"{parent.Info.FullName.EnsureTrailing(basePathSeparator)}{parent.RelativePath}";
-                return true;
+                var (info, _relativePath) = BackToParentPath(new DirectoryInfo(basePath), relativePath, parentSeparator);
+                return $"{info.FullName.EnsureTrailing(basePathSeparator)}{_relativePath}";
             }
 
-            // RelativePath: ..\
-            var separatorMark = $"{parentMark}{ExtensionSettings.DirectorySeparatorChar}";
-            if (relativePath.StartsWith(separatorMark, StringComparison.OrdinalIgnoreCase))
-            {
-                var parent = BackToParentPath(new DirectoryInfo(basePath), relativePath, separatorMark);
-                resultPath = $"{parent.Info.FullName.EnsureTrailing(basePathSeparator)}{parent.RelativePath}";
-                return true;
-            }
+            // RelativePath: ./ or .\
+            var siblingSeparator = $".{basePathSeparator}";
+            if (relativePath.StartsWith(siblingSeparator, StringComparison.OrdinalIgnoreCase))
+                return $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(siblingSeparator)}";
 
-            resultPath = null;
-            return false;
+            // RelativePath: / or \
+            if (relativePath.CompatibleStartsWith(basePathSeparator))
+                return $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(basePathSeparator)}";
+
+            return $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath}";
 
             // BackToParentPath
-            (DirectoryInfo Info, string RelativePath) BackToParentPath(DirectoryInfo info, string relativePath, string currentSeparatorMark)
+            (DirectoryInfo info, string relativePath) BackToParentPath(DirectoryInfo info, string relativePath, string parentSeparator)
             {
-                if (!relativePath.StartsWith(currentSeparatorMark, StringComparison.OrdinalIgnoreCase))
+                if (!relativePath.StartsWith(parentSeparator, StringComparison.OrdinalIgnoreCase))
                     return (info, relativePath);
 
                 // 链式返回（按层递进查找）
-                return BackToParentPath(info.Parent, relativePath.TrimStart(currentSeparatorMark, loops: false), currentSeparatorMark);
+                return BackToParentPath(info.Parent, relativePath.TrimStart(parentSeparator, loops: false), parentSeparator);
             }
-        }
-
-        private static bool TryCombineSiblingPath(this string basePath, string relativePath, char basePathSeparator, out string resultPath)
-        {
-            var siblingMark = ".";
-
-            // RelativePath: ./
-            var altSeparatorMark = $"{siblingMark}{ExtensionSettings.AltDirectorySeparatorChar}";
-            if (relativePath.StartsWith(altSeparatorMark, StringComparison.OrdinalIgnoreCase))
-            {
-                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(altSeparatorMark)}";
-                return true;
-            }
-
-            // RelativePath: .\
-            var separatorMark = $"{siblingMark}{ExtensionSettings.DirectorySeparatorChar}";
-            if (relativePath.StartsWith(separatorMark, StringComparison.OrdinalIgnoreCase))
-            {
-                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(separatorMark)}";
-                return true;
-            }
-
-            // RelativePath: /
-            if (relativePath.CompatibleStartsWith(ExtensionSettings.AltDirectorySeparatorChar))
-            {
-                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(ExtensionSettings.AltDirectorySeparatorChar)}";
-                return true;
-            }
-
-            // RelativePath: \
-            if (relativePath.CompatibleStartsWith(ExtensionSettings.DirectorySeparatorChar))
-            {
-                resultPath = $"{basePath.EnsureTrailing(basePathSeparator)}{relativePath.TrimStart(ExtensionSettings.DirectorySeparatorChar)}";
-                return true;
-            }
-
-            resultPath = null;
-            return false;
         }
 
         #endregion
