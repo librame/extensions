@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Xunit;
 
 namespace Librame.Extensions.Tests
@@ -6,36 +7,29 @@ namespace Librame.Extensions.Tests
     public class DateTimeExtensionsTests
     {
         [Fact]
-        public void AsFileNameTest()
+        public void RepeatabilityTest()
         {
-            var extension = ".txt";
-            var current = DateTime.Now.AsFileName(extension);
+            var times = new DateTime[100];
             for (var i = 0; i < 100; i++)
             {
-                var next = DateTime.Now.AsFileName(extension);
-                Assert.NotEqual(current, next);
-                current = next;
-            }
-        }
-
-        [Fact]
-        public void AsCombFileTimeTest()
-        {
-            var current = DateTime.Now.AsCombFileTime();
-            for (var i = 0; i < 100; i++)
-            {
-                var next = DateTime.Now.AsCombFileTime();
-                Assert.NotEqual(current, next);
-                current = next;
+                times[i] = DateTime.Now;
             }
 
-            current = DateTimeOffset.Now.AsCombFileTime(hasDatePart: false);
+            // Ticks 精度会出现重复
+            var compares = times.Select(t => t.Ticks).Distinct().ToArray();
+            Assert.NotEqual(times.Length, compares.Length);
+
+            // ToFileTime() 精度会出现重复
+            compares = times.Select(t => t.ToFileTime()).Distinct().ToArray();
+            Assert.NotEqual(times.Length, compares.Length);
+
+            compares = new long[100];
             for (var i = 0; i < 100; i++)
             {
-                var next = DateTimeOffset.Now.AsCombFileTime(hasDatePart: false);
-                Assert.NotEqual(current, next);
-                current = next;
+                compares[i] = DateTime.Now.ToFileTime();
             }
+            // ToFileTime() 精度不会出现重复
+            Assert.Equal(compares.Length, compares.Distinct().Count());
         }
 
         [Fact]

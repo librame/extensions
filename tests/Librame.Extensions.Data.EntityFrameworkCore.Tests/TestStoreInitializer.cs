@@ -8,19 +8,27 @@ namespace Librame.Extensions.Data.Tests
     using Models;
     using Stores;
 
-    public class TestStoreInitializer : StoreInitializer<TestStoreIdentifier>
+    public class TestStoreInitializer : GuidStoreInitializer
     {
-        private IList<Category> _categories;
+        private readonly string _categoryName
+            = typeof(Category<int, Guid>).GetGenericBodyName();
+        private readonly string _articleName
+            = typeof(Article<Guid, int>).GetGenericBodyName();
+
+        private readonly string _createdBy;
+
+        private IList<Category<int, Guid>> _categories;
 
 
-        public TestStoreInitializer(IStoreIdentifier identifier, ILoggerFactory loggerFactory)
+        public TestStoreInitializer(IStoreIdentifier<Guid> identifier, ILoggerFactory loggerFactory)
             : base(identifier, loggerFactory)
         {
+            _createdBy = EntityPopulator.FormatTypeName(GetType());
         }
 
 
-        protected override void InitializeCore<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-            (StoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> stores)
+        protected override void InitializeCore<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TIncremId>
+            (IStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, Guid, TIncremId> stores)
         {
             base.InitializeCore(stores);
 
@@ -36,19 +44,19 @@ namespace Librame.Extensions.Data.Tests
         {
             if (!accessor.Categories.Any())
             {
-                _categories = new List<Category>
+                _categories = new List<Category<int, Guid>>
                 {
-                    new Category
+                    new Category<int, Guid>
                     {
-                        Name = $"First {nameof(Category)}",
+                        Name = $"First {_categoryName}",
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetDisplayName()
+                        CreatedBy = _createdBy
                     },
-                    new Category
+                    new Category<int, Guid>
                     {
-                        Name = $"Last {nameof(Category)}",
+                        Name = $"Last {_categoryName}",
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetDisplayName()
+                        CreatedBy = _createdBy
                     }
                 };
 
@@ -70,15 +78,16 @@ namespace Librame.Extensions.Data.Tests
         {
             if (!stores.Categories.Any())
             {
-                var articles = new List<Article>();
+                var articles = new List<Article<Guid, int>>();
+                var identifier = Identifier as TestStoreIdentifier;
 
                 for (int i = 0; i < 100; i++)
                 {
-                    var article = new Article
+                    var article = new Article<Guid, int>
                     {
-                        Id = Identifier.GetArticleIdAsync().ConfigureAndResult(),
-                        Title = $"{nameof(Article)} {i.FormatString(3)}",
-                        Descr = $"{nameof(Article.Descr)} {i.FormatString(3)}",
+                        Id = identifier.GetArticleIdAsync().ConfigureAndResult(),
+                        Title = $"{_articleName} {i.FormatString(3)}",
+                        Descr = $"Descr {i.FormatString(3)}",
                         Category = (i < 50) ? _categories.First() : _categories.Last(),
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
                         CreatedBy = GetType().GetDisplayName()

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace Librame.Models
 {
@@ -7,7 +8,9 @@ namespace Librame.Models
 
     [Description("文章")]
     [ShardingTable]
-    public class Article : AbstractEntityCreation<string>
+    public class Article<TGenId, TIncremId> : AbstractEntityCreation<TGenId>
+        where TIncremId : IEquatable<TIncremId>
+        where TGenId : IEquatable<TGenId>
     {
         public string Title { get; set; }
 
@@ -15,12 +18,10 @@ namespace Librame.Models
 
         public int CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        public Category<TIncremId, TGenId> Category { get; set; }
 
 
         public override string ToString()
-        {
-            return $"{nameof(Title)}={Title},{nameof(Id)}={Id},{nameof(CreatedBy)}={CreatedBy},{nameof(CreatedTime)}={CreatedTime}";
-        }
+            => $"{nameof(Title)}={Title},{nameof(Id)}={Id},{nameof(CategoryId)}={CategoryId}";
     }
 }

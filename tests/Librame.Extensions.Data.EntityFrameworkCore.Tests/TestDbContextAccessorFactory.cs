@@ -1,13 +1,13 @@
 ﻿namespace Librame.Extensions.Data.Tests
 {
-    using Accessors;
+    //using Accessors;
 
-    public class TestDbContextAccessorFactory : DbContextAccessorFactory<TestDbContextAccessor>
-    {
-        public TestDbContextAccessorFactory()
-            : base(TestServiceProvider.Current)
-        {
-        }
+    //public class TestDbContextAccessorFactory : DbContextAccessorFactory<TestDbContextAccessor>
+    //{
+    //    public TestDbContextAccessorFactory()
+    //        : base(TestServiceProvider.Current)
+    //    {
+    //    }
 
-    }
+    //}
 }

@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core.Threads
     using Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-    internal class MemoryLocker : AbstractDisposable, IMemoryLocker
+    internal class MemoryLocker : IMemoryLocker
     {
         private SemaphoreSlim _locker;
 
@@ -97,7 +97,7 @@ namespace Librame.Extensions.Core.Threads
         }
 
 
-        protected override void DisposeCore()
+        public void Dispose()
             => _locker.Dispose();
     }
 }

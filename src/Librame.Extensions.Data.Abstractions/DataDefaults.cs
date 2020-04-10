@@ -43,21 +43,5 @@ namespace Librame.Extensions.Data
         /// </summary>
         public static readonly string EmptyCombGuid
             = Guid.Empty.AsCombGuid(UtcNowOffset).ToString();
-
-
-        ///// <summary>
-        ///// 新标识（默认为当前时间戳）。
-        ///// </summary>
-        ///// <returns>返回字符串。</returns>
-        //public static string NewCombGuid()
-        //    => NewCombGuid(UtcNowOffset);
-
-        /// <summary>
-        /// 新标识。
-        /// </summary>
-        /// <param name="timestamp">给定的时间戳。</param>
-        /// <returns>返回字符串。</returns>
-        public static string NewCombGuid(DateTimeOffset timestamp)
-            => Guid.NewGuid().AsCombGuid(timestamp).ToString();
     }
 }

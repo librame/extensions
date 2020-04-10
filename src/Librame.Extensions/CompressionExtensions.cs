@@ -31,7 +31,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="originalBuffer">给定的原生字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalBuffer")]
         public static byte[] RtlCompress(this byte[] originalBuffer)
         {
             originalBuffer.NotEmpty(nameof(originalBuffer));
@@ -59,7 +59,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="compressedBuffer">给定的已压缩字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "compressedBuffer")]
         public static byte[] RtlDecompress(this byte[] compressedBuffer)
         {
             compressedBuffer.NotEmpty(nameof(compressedBuffer));

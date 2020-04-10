@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core.Builders
 {
@@ -23,17 +24,33 @@ namespace Librame.Extensions.Core.Builders
     public abstract class AbstractExtensionBuilderDependency<TOptions> : OptionsDependency<TOptions>, IExtensionBuilderDependency
         where TOptions : class, IExtensionBuilderOptions
     {
-        private readonly static string _currentDirectory
-            = Environment.CurrentDirectory.WithoutDevelopmentRelativePath();
-
-
         /// <summary>
         /// 构造一个 <see cref="AbstractExtensionBuilderDependency{TBuilderOptions}"/>。
         /// </summary>
         /// <param name="name">给定的依赖名称。</param>
-        public AbstractExtensionBuilderDependency(string name)
+        /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "parentDependency")]
+        protected AbstractExtensionBuilderDependency(string name, IExtensionBuilderDependency parentDependency = null)
             : base(name)
         {
+            if (parentDependency.IsNotNull())
+            {
+                BaseDirectory = parentDependency.BaseDirectory;
+                ConfigDirectory = parentDependency.ConfigDirectory;
+                ExportDirectory = parentDependency.ExportDirectory;
+
+                ConfigurationRoot = parentDependency.ConfigurationRoot;
+
+                if (ConfigurationRoot.IsNotNull())
+                    Configuration = ConfigurationRoot.GetSection(Name);
+            }
+            else
+            {
+                var currentDirectory = Environment.CurrentDirectory.WithoutDevelopmentRelativePath();
+                BaseDirectory = currentDirectory;
+                ConfigDirectory = currentDirectory;
+                ExportDirectory = currentDirectory;
+            }
         }
 
 
@@ -41,18 +58,15 @@ namespace Librame.Extensions.Core.Builders
         /// 基础目录。
         /// </summary>
         public string BaseDirectory { get; set; }
-            = _currentDirectory;
 
         /// <summary>
         /// 配置目录。
         /// </summary>
         public string ConfigDirectory { get; set; }
-            = _currentDirectory;
 
         /// <summary>
         /// 导出目录。
         /// </summary>
         public string ExportDirectory { get; set; }
-            = _currentDirectory;
     }
 }

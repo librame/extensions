@@ -29,7 +29,7 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个 <see cref="AbstractCreation{TId}"/>。
         /// </summary>
-        public AbstractCreation()
+        protected AbstractCreation()
         {
             CreatedTime = DataDefaults.UtcNowOffset;
             CreatedTimeTicks = CreatedTime.Ticks;

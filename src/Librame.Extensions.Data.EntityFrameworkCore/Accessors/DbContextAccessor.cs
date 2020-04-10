@@ -27,7 +27,11 @@ namespace Librame.Extensions.Data.Accessors
     /// <summary>
     /// 数据库上下文访问器。
     /// </summary>
-    public class DbContextAccessor : DbContextAccessor<DataAudit<string>, DataAuditProperty<int, string>, DataEntity<string>, DataMigration<string>, DataTenant<string>, string, int>, IDbContextAccessor
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+    public class DbContextAccessor<TGenId, TIncremId> : DbContextAccessor<DataAudit<TGenId>, DataAuditProperty<TIncremId, TGenId>, DataEntity<TGenId>, DataMigration<TGenId>, DataTenant<TGenId>, TGenId, TIncremId>, IDbContextAccessor<TGenId, TIncremId>
+        where TGenId : IEquatable<TGenId>
+        where TIncremId : IEquatable<TIncremId>
     {
         /// <summary>
         /// 构造一个数据库上下文访问器。
@@ -50,8 +54,8 @@ namespace Librame.Extensions.Data.Accessors
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    public class DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> : DbContextAccessorBase, IDbContextAccessorFlag
-        , IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
+    public class DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+        : DbContextAccessorBase, IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
         where TAudit : DataAudit<TGenId>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId>
@@ -107,7 +111,7 @@ namespace Librame.Extensions.Data.Accessors
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ConfigureDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>(BuilderOptions);
+            modelBuilder.ConfigureDataStoreHub(this);
         }
 
 

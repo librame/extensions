@@ -10,6 +10,8 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Data.Builders
 {
     using Core.Builders;
@@ -19,5 +21,9 @@ namespace Librame.Extensions.Data.Builders
     /// </summary>
     public interface IDataBuilder : IExtensionBuilder
     {
+        /// <summary>
+        /// 数据库设计时类型。
+        /// </summary>
+        Type DatabaseDesignTimeType { get; }
     }
 }

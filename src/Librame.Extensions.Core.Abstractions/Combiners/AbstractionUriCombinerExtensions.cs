@@ -217,13 +217,13 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="newSchemeFactory">给定的新协议字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static UriCombiner NewScheme(this UriCombiner combiner, Func<string, string> newSchemeFactory)
+        public static UriCombiner WithScheme(this UriCombiner combiner, Func<string, string> newSchemeFactory)
         {
             combiner.NotNull(nameof(combiner));
             newSchemeFactory.NotNull(nameof(newSchemeFactory));
 
             var newScheme = newSchemeFactory.Invoke(combiner.Scheme);
-            return combiner.NewScheme(newScheme);
+            return combiner.WithScheme(newScheme);
         }
 
         /// <summary>
@@ -233,13 +233,13 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="newHostFactory">给定可能包含端口号的新主机字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static UriCombiner NewHost(this UriCombiner combiner, Func<string, string> newHostFactory)
+        public static UriCombiner WithHost(this UriCombiner combiner, Func<string, string> newHostFactory)
         {
             combiner.NotNull(nameof(combiner));
             newHostFactory.NotNull(nameof(newHostFactory));
 
             var newHost = newHostFactory.Invoke(combiner.Host);
-            return combiner.NewHost(newHost);
+            return combiner.WithHost(newHost);
         }
 
         /// <summary>
@@ -249,13 +249,13 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="newPathFactory">给定以 / 开始的新路径字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static UriCombiner NewPath(this UriCombiner combiner, Func<string, string> newPathFactory)
+        public static UriCombiner WithPath(this UriCombiner combiner, Func<string, string> newPathFactory)
         {
             combiner.NotNull(nameof(combiner));
             newPathFactory.NotNull(nameof(newPathFactory));
 
             var newPath = newPathFactory.Invoke(combiner.Path);
-            return combiner.NewPath(newPath);
+            return combiner.WithPath(newPath);
         }
 
         /// <summary>
@@ -265,13 +265,13 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="newQueryFactory">给定以 ? 开始的新查询字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static UriCombiner NewQuery(this UriCombiner combiner, Func<string, string> newQueryFactory)
+        public static UriCombiner WithQuery(this UriCombiner combiner, Func<string, string> newQueryFactory)
         {
             combiner.NotNull(nameof(combiner));
             newQueryFactory.NotNull(nameof(newQueryFactory));
 
             var newQuery = newQueryFactory.Invoke(combiner.Query);
-            return combiner.NewQuery(newQuery);
+            return combiner.WithQuery(newQuery);
         }
 
         /// <summary>
@@ -281,13 +281,13 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="newAnchorFactory">给定以 # 开始的新锚点字符串工厂方法。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static UriCombiner NewAnchor(this UriCombiner combiner, Func<string, string> newAnchorFactory)
+        public static UriCombiner WithAnchor(this UriCombiner combiner, Func<string, string> newAnchorFactory)
         {
             combiner.NotNull(nameof(combiner));
             newAnchorFactory.NotNull(nameof(newAnchorFactory));
 
             var newAnchor = newAnchorFactory.Invoke(combiner.Anchor);
-            return combiner.NewAnchor(newAnchor);
+            return combiner.WithAnchor(newAnchor);
         }
 
     }

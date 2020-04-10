@@ -12,7 +12,6 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Collections.Generic;
 
 namespace Librame.Extensions.Core.Builders
 {
@@ -22,11 +21,9 @@ namespace Librame.Extensions.Core.Builders
     {
         internal static ICoreBuilder AddMediators(this ICoreBuilder builder)
         {
-            builder.Services.TryAddEnumerable(new List<ServiceDescriptor>
-            {
-                ServiceDescriptor.Transient(typeof(IRequestPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>)),
-                ServiceDescriptor.Transient(typeof(IRequestPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>))
-            });
+            var behaviorType = typeof(IRequestPipelineBehavior<,>);
+            builder.Services.TryAddEnumerable(behaviorType, ServiceLifetime.Transient,
+                typeof(RequestPreProcessorBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
 
             builder.Services.TryAddTransient(typeof(IRequestHandlerWrapper<,>), typeof(RequestHandlerWrapper<,>));
             builder.Services.TryAddTransient(typeof(INotificationHandlerWrapper<>), typeof(NotificationHandlerWrapper<>));

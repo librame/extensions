@@ -1,106 +1,155 @@
-## Librame
+Librame.Extensions
+==================
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/librame/Librame/blob/master/LICENSE)
-[![Available on NuGet https://www.nuget.org/packages?q=Librame.Extensions.Core](https://img.shields.io/nuget/v/Librame.Extensions.Core.svg?style=flat-square)](https://www.nuget.org/packages?q=Librame.Extensions.Core)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/librame/extensions/blob/master/LICENSE)
+[![Available on NuGet https://www.nuget.org/packages?q=Librame.Extensions](https://img.shields.io/nuget/v/Librame.Extensions.svg?style=flat-square)](https://www.nuget.org/packages?q=Librame.Extensions)
 
-## Open Source
+## Get Started
 
-* Official releases are on [NuGet](https://www.nuget.org/packages?q=Librame).
+Librame.Extensions APIs can then be added to the project using the NuGet Package Manager. Official releases are on [NuGet](https://www.nuget.org/packages?q=Librame.Extensions).
 
 ## How to use
 
-| Extensions                   | .NET Standard 2.1  | .NET Framework 4.8     |
-|----------------------------  |------------------  |-------------------     |
-| Core                         | ✓                  | ✓                      |
-| Data.EntityFrameworkCore     | ✓                  | !                      |
-| Drawing.SkiaSharp            | ✓                  | ! Compiled to x86/x64  |
-| Encryption                   | ✓                  | ✓                      |
-| Network                      | ✓                  | ✓                      |
-| Network.DotNetty             | ✓                  | ✓                      |
-| Storage                      | ✓                  | ✓                      |
-
-**✓ Native, ! Compliant**
-
-    // Install-Package Microsoft.Extensions.DependencyInjection
+    // PM> Install-Package: Microsoft.Extensions.DependencyInjection
     var services = new ServiceCollection();
     
-    // Install-Package Librame.Extensions.Core
-    // Register Librame Entry
+    // PM> Install-Package: Librame.Extensions.Core
     services.AddLibrame();
     
     // Build ServiceProvider
     var serviceProvider = services.BuildServiceProvider();
-    ......
 
-### Librame.Extensions.Core
+| Extensions Series                                                                                         | .NET Standard 2.1  | .NET Framework 4.8     |
+|---------------------------------------------------------------------------------------------------------  |------------------  |----------------------  |
+| [Core](https://www.nuget.org/packages?q=Librame.Extensions.Core)                                          | ✓                  | ✓                      |
+| [Data.EntityFrameworkCore](https://www.nuget.org/packages?q=Librame.Extensions.Data.EntityFrameworkCore)  | ✓                  | !                      |
+| [Drawing.SkiaSharp](https://www.nuget.org/packages?q=Librame.Extensions.Drawing.SkiaSharp)                | ✓                  | ! Compiled to x86/x64  |
+| [Encryption](https://www.nuget.org/packages?q=Librame.Extensions.Encryption)                              | ✓                  | ✓                      |
+| [Network](https://www.nuget.org/packages?q=Librame.Extensions.Network)                                    | ✓                  | ✓                      |
+| [Network.DotNetty](https://www.nuget.org/packages?q=Librame.Extensions.Network.DotNetty)                  | ✓                  | ✓                      |
+| [Storage](https://www.nuget.org/packages?q=Librame.Extensions.Storage)                                    | ✓                  | ✓                      |
 
-## Install Extension
+**✓ Native, ! Compliant**
 
-    PM> Install-Package Librame.Extensions.Core
+## Librame.Extensions.Core
 
-## Register Extension
-
+    // PM> Install-Package: [Librame.Extensions.Core](https://www.nuget.org/packages?q=Librame.Extensions.Core)
     services.AddLibrame();
 
-## Test Extension
+### Test Combiners
 
-    // MediatR
-    var mediator = serviceProvider.GetRequiredService<IMediator>();
-    var response = await mediator.Send(new Ping { Message = "Ping" });
-    Assert.Contains("Ping Pong Ping", response.Message);
-    // Librame.Extensions.Core.Tests.RequestPostProcessorBehaviorTests
-    
-    // Localizers
-    var localizer = serviceProvider.GetRequiredService<IExpressionStringLocalizer<TestResource>>();
-    Assert.True(localizer[r => r.Name].ResourceNotFound);
-    // Librame.Extensions.Core.Tests.ExpressionStringLocalizerTests
-    
-    // Combiners
+    // Librame.Extensions.Core.Tests.UriCombinerTests
     var urlString = "https://1.2.3.4.developer.microsoft.com/en-us/fabric#/get-started";
     var uriCombiner = uriString.AsUriCombiner();
     Assert.Equal("https", uriCombiner.Scheme);
     Assert.Equal("developer.microsoft.com", uriCombiner.Host);
     Assert.Equal("/en-us/fabric", uriCombiner.Path);
-    ......
-    // Librame.Extensions.Core.Tests.UriCombinerTests
     
+    // Librame.Extensions.Core.Tests.DomainNameCombinerTests
     var domainCombiner = uriString.GetHost().AsDomainNameCombiner(); // uriCombiner.Host
     Assert.Equal("com", domainCombiner.Root);
     Assert.Equal("microsoft.com", domainCombiner.TopLevel);
     Assert.Equal("developer.microsoft.com", domainCombiner.SecondLevel);
-    ......
-    // Librame.Extensions.Core.Tests.DomainNameCombinerTests
-    
-    var path = @"c:\test\file.ext";
-    var filePathCombiner = path.AsFilePathCombiner();
-    Assert.Equal(@"c:\test", filePathCombiner.BasePath);
-    Assert.Equal("file.ext", filePathCombiner.FileNameString);
-    ......
-    // Librame.Extensions.Core.Tests.FilePathCombinerTests
-    
-    var fileNameCombiner = path.AsFileNameCombiner();
-    Assert.Equal("file", fileNameCombiner.BaseName);
-    Assert.Equal(".ext", fileNameCombiner.Extension);
-    ......
-    // Librame.Extensions.Core.Tests.FileNameCombinerTests
-    
-    // ServicesManager
-    // public interface ILetterService : IService {}
-    // services.AddSingleton<ILetterService, AService>();
-    // services.AddSingleton<ILetterService, BService>();
-    // services.AddSingleton<ILetterService, CService>();
-    
-    var letters = serviceProvider.GetRequiredService<IServiceManager<ILetterService>>();
-    Assert.NotEmpty(letters.Services) // IEnumerable<ILetterService>
-    Assert.NotNull(letters.Default) // default letters.Services.First()
-    
-    letters = serviceProvider.GetRequiredService<IServiceManager<ILetterService, CService>>();
-    Assert.NotEmpty(letters.Services) // IEnumerable<ILetterService>
-    Assert.NotNull(letters.Default) // default CService
 
-### Librame.Extensions.Data.EntityFrameworkCore
+### Test Localizers
 
-## Tested databases
+    // Librame.Extensions.Core.Tests.StringLocalizerTests
+    var localizer = serviceProvider.GetRequiredService<IStringLocalizer<TestResource>>();
+    Assert.True(localizer.GetString(r => r.Name).ResourceNotFound);
+
+### Test Mediators (MediatR)
+
+    // Librame.Extensions.Core.Tests.RequestPostProcessorBehaviorTests
+    var mediator = serviceProvider.GetRequiredService<IMediator>();
+    var response = await mediator.Send(new Ping { Message = "Ping" });
+    Assert.Contains("Ping Pong Ping", response.Message);
+
+## Librame.Extensions.Data.EntityFrameworkCore
+
+    // appsettings.json
+    {
+        // ConnectionStrings 1
+        "ConnectionStrings": {
+            // ex. SQLite
+            "DefaultConnectionString": "librame_data_default.db",
+            "WritingConnectionString": "librame_data_writing.db"
+        },
+        // ConnectionStrings 2
+        "DefaultTenant": {
+            // ex. MySQL
+            "Name": "DefaultTenant",
+            "Host": "localhost",
+            "DefaultConnectionString": "Server=localhost;Database=librame_data_default;User=root;Password=123456;",
+            "WritingConnectionString": "Server=localhost;Database=librame_data_writing;User=root;Password=123456;",
+            "WritingSeparation": true
+        },
+        "DataBuilderDependency": {
+            // DataBuilderOptions
+            "Options": {
+                // ConnectionStrings 3 // default
+                "DefaultTenant": {
+                    // ex. SQL Server
+                    "Name": "DefaultTenant",
+                    "Host": "localhost",
+                    "DefaultConnectionString": "Server=localhost;Database=librame_data_default;User=root;Password=123456;",
+                    "WritingConnectionString": "Server=localhost;Database=librame_data_writing;User=root;Password=123456;",
+                    "WritingSeparation": true
+                }
+            }
+        }
+    }
+    
+    // Configuration
+    //var root = new ConfigurationBuilder()
+    //.SetBasePath("BasePath")
+    //.AddJsonFile("appsettings.json")
+    //.Build();
+
+    // PM> Install-Package: [Librame.Extensions.Data.EntityFrameworkCore](https://www.nuget.org/packages?q=Librame.Extensions.Data.EntityFrameworkCore)
+    services.AddLibrame(dependency =>
+        {
+            // Default Support "appsettings.json"
+            //dependency.ConfigurationRoot = root;
+        })
+        .AddData(options =>
+        {
+            // Default Support DataBuilderDependency Section (ex. SQL Server)
+            
+            // Support ConnectionStrings Section (ex. SQLite)
+            //dependency.BindConnectionStrings(dataFile => dependency.BaseDirectory.CombinePath(dataFile));
+            
+            // Support DefaultTenant Section (ex. MySQL)
+            //dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
+        })
+        .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
+        {
+            // for SQL Server
+            // PM> Install-Package Microsoft.EntityFrameworkCore.SqlServer
+            optionsBuilder.UseSqlServer(tenant.DefaultConnectionString,
+                sqlServer => sqlServer.MigrationsAssembly("AssemblyName"));
+            
+            // for SQLite
+            // PM> Install-Package Microsoft.EntityFrameworkCore.Sqlite
+            //optionsBuilder.UseSqlite(tenant.DefaultConnectionString,
+                //sqlite => sqlite.MigrationsAssembly("AssemblyName"));
+            
+            // for MySQL
+            // PM> Install-Package Pomelo.EntityFrameworkCore.MySql
+            //optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
+            //{
+                //mySql.MigrationsAssembly("AssemblyName");
+                //mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
+            //});
+        })
+        // for SQL Server
+        .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
+        // for SQLite
+        //.AddDatabaseDesignTime<SqliteDesignTimeServices>()
+        // for MySQL
+        //.AddDatabaseDesignTime<MySqlDesignTimeServices>()
+        .AddStoreIdentifier<TestStoreIdentifier>()
+        //.AddStoreInitializer<TestStoreInitializer>()
+        .AddStoreHub<TestStoreHub>();
 
 | Database     | Multi-Tenancy  | WritingSeparation  | Migration  | Audit  | Entity/Table Management  |
 |------------  |--------------  |------------------  |----------  |------  |------------------------  |
@@ -108,40 +157,77 @@
 | SQLite       | ✓              | ✓                  | ✓          | ✓      | ✓                        |
 | MySQL        | ✓              | ✓                  | ✓          | ✓      | ✓                        |
 
-**SQLServer** used Microsoft.EntityFrameworkCore.SqlServer v3.0.0, [Tested in SQL Server 2016](https://raw.githubusercontent.com/librame/Librame/dev/examples/Librame.Extensions.Examples/Tested_in_SQLServer2016.png).
+**SQLServer** [test in SQL Server 2019](https://raw.githubusercontent.com/librame/Librame/dev/examples/Librame.Extensions.Examples/Tested_in_SQLServer2016.png).
 
-**SQLite** used Microsoft.EntityFrameworkCore.Sqlite v3.0.0, [Tested in SQLite](https://raw.githubusercontent.com/librame/Librame/dev/examples/Librame.Extensions.Examples/Tested_in_SQLite.png).
+**SQLite** [test in SQLite](https://raw.githubusercontent.com/librame/Librame/dev/examples/Librame.Extensions.Examples/Tested_in_SQLite.png).
 
-**MySQL** used Pomelo.EntityFrameworkCore.MySql v3.0.0-rc3.final, [Tested in MySQL 5.7](https://raw.githubusercontent.com/librame/Librame/dev/examples/Librame.Extensions.Examples/Tested_in_MySQL57.png).
+**MySQL** [test in MySQL 5.7](https://raw.githubusercontent.com/librame/Librame/dev/examples/Librame.Extensions.Examples/Tested_in_MySQL57.png).
 
-## Install Extension
+## Test StoreHub
 
-    PM> Install-Package Librame.Extensions.Data.EntityFrameworkCore
+    // Article
+    //[Description("Article")]
+    [ShardingTable]
+    public class Article : AbstractEntityCreation<string>
+    {
+        public string Title { get; set; }
+        public string Descr { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+    }
+    
+    // Category
+    //[Description("Category")]
+    public class Category : AbstractEntityCreation<int>
+    {
+        public string Name { get; set; }
 
-## Register Extension
-
-    services.AddLibrame()
-        .AddData(options =>
+        public IList<Article> Articles { get; set; }
+            = new List<Article>();
+    }
+    
+    // TestDbContextAccessor
+    public class TestDbContextAccessor : DbContextAccessor
+    {
+        public TestDbContextAccessor(DbContextOptions options)
+            : base(options)
         {
-            // Multi-Tenancy, Reading and writing separation
-            options.DefaultTenant.DefaultConnectionString = "default database connection string";
-            options.DefaultTenant.WritingConnectionString = "write database connection string";
-            options.DefaultTenant.WritingSeparation = true;
-        })
-        .AddAccessor<TestDbContextAccessor>((options, optionsBuilder) =>
+        }
+
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Article> Articles { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Install-Package Microsoft.EntityFrameworkCore.SqlServer
-            optionsBuilder.UseSqlServer(options.DefaultTenant.DefaultConnectionString,
-                sql => sql.MigrationsAssembly("AssemblyName"));
-        })
-        .AddDbDesignTime<SqlServerDesignTimeServices>()
-        .AddIdentifier<TestStoreIdentifier>()
-        //.AddInitializer<TestStoreInitializer>()
-        .AddStoreHub<TestStoreHub>();
+            base.OnModelCreating(modelBuilder);
 
-## Test Extension
+            modelBuilder.Entity<Category>(b =>
+            {
+                b.ToTable();
+                
+                b.HasKey(x => x.Id);
+                
+                b.Property(x => x.Id).ValueGeneratedOnAdd();
+                b.Property(x => x.Name).HasMaxLength(256).IsRequired();
 
-    // StoreHub
+                b.HasMany(x => x.Articles).WithOne(x => x.Category)
+                    .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Article>(b =>
+            {
+                // Sharding table by year (use [ShardingTable])
+                b.ToTable(descr => descr.ChangeDateOffsetSuffixByYear());
+
+                b.HasKey(x => x.Id);
+
+                b.Property(x => x.Id).HasMaxLength(256);
+                b.Property(x => x.Title).HasMaxLength(256).IsRequired();
+            });
+        }
+    }
+    
+    // TestStoreHub
     public class TestStoreHub : StoreHub<TestDbContextAccessor>
     {
         public TestStore(IStoreInitializer initializer, IAccessor accessor)
@@ -149,17 +235,11 @@
         {
         }
         
-        
         public IList<Category> GetCategories()
-        {
-            return Accessor.Categories.ToList();
-        }
+            => Accessor.Categories.ToList();
 
         public IPageable<Article> GetArticles()
-        {
-            return Accessor.Articles.AsDescendingPagingByIndex(1, 10);
-        }
-
+            => Accessor.Articles.AsDescendingPagingByIndex(1, 10);
 
         public TestStoreHub UseWriteDbConnection()
         {
@@ -174,63 +254,29 @@
         }
     }
     
-    // DbContextAccessor
-    public class TestDbContextAccessor : DbContextAccessor
-    {
-        public TestDbContextAccessor(DbContextOptions options)
-            : base(options)
-        {
-        }
-
-
-        public DbSet<Category> Categories { get; set; }
-
-        public DbSet<Article> Articles { get; set; }
-
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            ......
-        }
-    }
-    
-    // Test
-    using (var stores = serviceProvider.GetRequiredService<TestStoreHub>())
-    {
-        var categories = stores.GetCategories();
-        Assert.Empty(categories);
-
-        categories = stores.UseWriteDbConnection().GetCategories();
-        Assert.NotEmpty(categories);
-
-        var articles = stores.UseDefaultDbConnection().GetArticles();
-        Assert.Empty(articles);
-
-        articles = stores.UseWriteDbConnection().GetArticles();
-        Assert.True(articles.Total >= 0); // If enable sharding table, the articles of this table may be empty
-    }
-    ......
     // Librame.Extensions.Data.Tests.DbContextAccessorTests
+    var stores = serviceProvider.GetRequiredService<TestStoreHub>()
+    var categories = stores.GetCategories();
+    Assert.Empty(categories);
 
-### Librame.Extensions.Drawing.SkiaSharp
+    categories = stores.UseWriteDbConnection().GetCategories();
+    Assert.NotEmpty(categories);
 
-## Install Extension
+    var articles = stores.UseDefaultDbConnection().GetArticles();
+    Assert.Empty(articles);
 
-    PM> Install-Package Librame.Extensions.Drawing.SkiaSharp
+    articles = stores.UseWriteDbConnection().GetArticles();
+    Assert.True(articles.Total >= 0); // If enable sharding table, the articles of this table may be empty
 
-## Register Extension
+## Librame.Extensions.Drawing.SkiaSharp
 
+    // PM> Install-Package: [Librame.Extensions.Drawing.SkiaSharp](https://www.nuget.org/packages?q=Librame.Extensions.Drawing.SkiaSharp)
     services.AddLibrame()
-        .AddDrawing(dependency =>
-        {
-            dependency.BaseDirectory = ResourcesPath;
-        });
+        .AddDrawing();
 
-## Test Extension
+### Test CaptchaService
 
-    // Captcha
+    // Librame.Extensions.Drawing.Tests.CaptchaServiceTests
     var captchaService = serviceProvider.GetRequiredService<ICaptchaService>();
     var buffer = await captchaService.DrawBytesAsync("1234");
     Assert.NotNull(buffer);
@@ -238,9 +284,10 @@
     var saveFile = "captcha.png".AsFilePathCombiner("SavePath");
     var result = await captchaService.DrawFileAsync("1234", saveFile);
     Assert.True(result);
-    // Librame.Extensions.Drawing.Tests.CaptchaServiceTests
-    
-    // Scale
+
+### Test ScaleService
+
+    // Librame.Extensions.Drawing.Tests.ScaleServiceTests
     var scaleService = serviceProvider.GetRequiredService<IScaleService>();
     var imageFile = "test.jpg".AsFilePathCombiner("ImagePath");
     var result = scaleService.DrawFile(imageFile);
@@ -248,79 +295,89 @@
     
     var count = await scaleService.DrawFilesByDirectoryAsync("FolderPath");
     Assert.True(count > 0);
-    // Librame.Extensions.Drawing.Tests.ScaleServiceTests
-    
-    // Watermark
+
+### Test WatermarkService
+
+    // Librame.Extensions.Drawing.Tests.WatermarkServiceTests
     var watermarkService = serviceProvider.GetRequiredService<IWatermarkService>();
     var imageFile = "test.jpg".AsFilePathCombiner("ImagePath");
     var saveFile = imageFile.NewFileName("test-watermark.png");
     var result = await watermarkService.DrawFileAsync(imageFile, saveFile);
     Assert.True(result);
-    // Librame.Extensions.Drawing.Tests.WatermarkServiceTests
 
-### Librame.Extensions.Encryption
+## Librame.Extensions.Encryption
 
-## Install Extension
-
-    PM> Install-Package Librame.Extensions.Encryption
-
-## Register Extension
-
+    // PM> Install-Package: [Librame.Extensions.Encryption](https://www.nuget.org/packages?q=Librame.Extensions.Encryption)
     services.AddLibrame()
         .AddEncryption()
         .AddDeveloperGlobalSigningCredentials(); // AddSigningCredentials();
 
 ## Test Extension
 
+    // Librame.Extensions.Encryption.Tests.BufferExtensionsTests
     var str = "TestString";
     var plaintextBuffer = str.AsPlaintextBuffer(serviceProvider);
     
-    var hashString = plaintextBuffer
-        .Md5()
-        .Sha1()
-        .Sha256()
-        .Sha384()
-        .Sha512()
-        .HmacMd5()
-        .HmacSha1()
-        .HmacSha256()
-        .HmacSha384()
-        .HmacSha512()
-        .AsCiphertextString();
-
-    var plaintextBufferCopy = plaintextBuffer.Copy();
-    var ciphertextString = plaintextBufferCopy
-        .AsDes()
-        .AsTripleDes()
-        .AsAes()
-        .AsRsa()
-        .AsCiphertextString();
-    Assert.NotEmpty(ciphertextString);
-
-    var ciphertextBuffer = ciphertextString.AsCiphertextBuffer(serviceProvider)
-        .FromRsa()
-        .FromAes()
-        .FromTripleDes()
-        .FromDes();
+    plaintextBuffer
+        .UseHash((hash, buffer) =>
+        {
+            buffer = hash.Md5(buffer);
+            buffer = hash.Sha1(buffer);
+            buffer = hash.Sha256(buffer);
+            buffer = hash.Sha384(buffer);
+            return hash.Sha512(buffer);
+        })
+        .UseKeyedHash((keyedHash, buffer) =>
+        {
+            buffer = keyedHash.HmacMd5(buffer);
+            buffer = keyedHash.HmacSha1(buffer);
+            buffer = keyedHash.HmacSha256(buffer);
+            buffer = keyedHash.HmacSha384(buffer);
+            return keyedHash.HmacSha512(buffer);
+        });
     
-    Assert.True(plaintextBuffer.Equals(ciphertextBuffer));
-    Assert.Equal(hashString, ciphertextBuffer.AsCiphertextString());
-    // Librame.Extensions.Encryption.Tests.EncryptionBufferExtensionsTests
+    var hashString = plaintextBuffer.AsBase64String();
 
-### Librame.Extensions.Network
+    var algorithmBuffer = hashString.FromBase64StringAsAlgorithmBuffer(serviceProvider);
+    Assert.True(plaintextBuffer.Equals(algorithmBuffer));
 
-## Install Extension
+    algorithmBuffer
+        .UseSymmetric((symmetric, buffer) =>
+        {
+            buffer = symmetric.EncryptDes(buffer);
+            buffer = symmetric.EncryptTripleDes(buffer);
+            return symmetric.EncryptAes(buffer);
+        })
+        .UseRsa((rsa, buffer) =>
+        {
+            return rsa.Encrypt(buffer);
+        });
 
-    PM> Install-Package Librame.Extensions.Network
+    Assert.False(plaintextBuffer.Equals(algorithmBuffer));
 
-## Register Extension
+    algorithmBuffer
+        .UseRsa((rsa, buffer) =>
+        {
+            return rsa.Decrypt(buffer);
+        })
+        .UseSymmetric((symmetric, buffer) =>
+        {
+            buffer = symmetric.DecryptAes(buffer);
+            buffer = symmetric.DecryptTripleDes(buffer);
+            return symmetric.DecryptDes(buffer);
+        });
 
+    Assert.True(plaintextBuffer.Equals(algorithmBuffer));
+
+## Librame.Extensions.Network
+
+    // PM> Install-Package: [Librame.Extensions.Network](https://www.nuget.org/packages?q=Librame.Extensions.Network)
     services.AddLibrame()
         .AddNetwork();
 
 ## Test Extension
 
-    // Crawler
+    // Librame.Extensions.Network.Tests.CrawlerServiceTests
     var crawler = serviceProvider.GetRequiredService<ICrawlerService>();
     var content = await crawler.GetContentAsync("https://www.cnblogs.com");
     Assert.NotEmpty(content);
@@ -330,28 +387,21 @@
     
     var images = await crawler.GetImageHyperLinks("https://www.baidu.com");
     Assert.NotEmpty(images);
-    // Librame.Extensions.Network.Tests.CrawlerServiceTests
 
-    // Email
+    // Librame.Extensions.Network.Tests.EmailServiceTests
     var email = serviceProvider.GetRequiredService<IEmailService>();
     async email.SendAsync("receiver@domain.com",
         "Email Subject",
         "Email Body");
-    // Librame.Extensions.Network.Tests.EmailServiceTests
     
-    // Message
+    // Librame.Extensions.Network.Tests.SmsServiceTests
     var sms = serviceProvider.GetRequiredService<ISmsService>();
     var result = async sms.SendAsync("13012345678", "TestData: 123456");
     Assert.Empty(result);
 
-### Librame.Extensions.Network.DotNetty
+## Librame.Extensions.Network.DotNetty
 
-## Install Extension
-
-    PM> Install-Package Librame.Extensions.Network.DotNetty
-
-## Register Extension
-
+    // PM> Install-Package: [Librame.Extensions.Network.DotNetty](https://www.nuget.org/packages?q=Librame.Extensions.Network.DotNetty)
     var combiner = "dotnetty.com.pfx".AsFilePathCombiner("BasePath");
     services.AddLibrame(logging =>
     {
@@ -361,7 +411,7 @@
         logging.AddConsole(logger => logger.IncludeScopes = false);
         logging.AddFilter((str, level) => true);
     })
-    .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(combiner.ToString(), "password"))
+    .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(combiner, "password"))
     .AddNetwork().AddDotNetty();
     
     // Use DotNetty LoggerFactory
@@ -370,7 +420,7 @@
 
 ## Test Extension
 
-    // WebSocketServer Console
+    // Librame.Extensions.Network.DotNetty.WebSocket.Server
     var server = serviceProvider.GetRequiredService<IWebSocketServer>();
     server.StartAsync(async channel =>
     {
@@ -378,9 +428,8 @@
         await channel.CloseAsync();
     })
     .Wait();
-    // Librame.Extensions.Network.DotNetty.WebSocket.Server
     
-    // WebSocketClient Console
+    // Librame.Extensions.Network.DotNetty.WebSocket.Client
     var client = serviceProvider.GetRequiredService<IWebSocketClient>();
     client.StartAsync(async channel =>
     {
@@ -411,16 +460,10 @@
         await channel.CloseAsync();
     })
     .Wait();
-    // Librame.Extensions.Network.DotNetty.WebSocket.Client
 
-### Librame.Extensions.Storage
+## Librame.Extensions.Storage
 
-## Install Extension
-
-    PM> Install-Package Librame.Extensions.Storage
-
-## Register Extension
-
+    // PM> Install-Package: [Librame.Extensions.Storage](https://www.nuget.org/packages?q=Librame.Extensions.Storage)
     services.AddLibrame()
         .AddStorage(options =>
         {
@@ -429,7 +472,7 @@
 
 ## Test Extension
 
-    // FileService
+    // Librame.Extensions.Storage.Tests.FileServiceTests
     var service = serviceProvider.GetRequiredService<IFileService>();
     var fileInfo = await service.GetFileInfoAsync("Subpath");
     
@@ -445,9 +488,8 @@
         await service.WriteAsync(fileInfo, readStream);
     }
     Assert.Equal(File.ReadAllText("ReadFile"), File.ReadAllText(fileInfo.PhysicalPath));
-    // Librame.Extensions.Storage.Tests.FileServiceTests
     
-    // FileTransferService
+    // Librame.Extensions.Storage.Tests.FileTransferServiceTests
     var url = "https://www.domain.com/test.txt";
     var filePath = @"d:\test.txt";
     var fileTransfer = serviceProvider.GetRequiredService<IFileTransferService>();
@@ -456,9 +498,8 @@
     Assert.True(combiner.Exists());
     
     combiner = fileTransfer.UploadFileAsync(url, filePath);
-    // Librame.Extensions.Storage.Tests.FileTransferServiceTests
     
-    // FilePermissionService
+    // Librame.Extensions.Storage.Tests.FilePermissionServiceTests
     var permission = TestServiceProvider.Current.GetRequiredService<IFilePermissionService>();
 
     var accessToken = await service.GeAccessTokenAsync();
@@ -469,4 +510,3 @@
 
     var cookieValue = await service.GetCookieValueAsync();
     Assert.NotEmpty(cookieValue);
-    // Librame.Extensions.Storage.Tests.FilePermissionServiceTests

@@ -47,7 +47,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IEncryptionBuilder AddEncryption<TDependency>(this IExtensionBuilder parentBuilder,
             Action<TDependency> configureDependency = null,
             Func<IExtensionBuilder, TDependency, IEncryptionBuilder> builderFactory = null)
-            where TDependency : EncryptionBuilderDependency, new()
+            where TDependency : EncryptionBuilderDependency
         {
             // Configure Dependency
             var dependency = configureDependency.ConfigureDependency(parentBuilder);

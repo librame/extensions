@@ -29,7 +29,7 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个 <see cref="AbstractUpdation{TId}"/>。
         /// </summary>
-        public AbstractUpdation()
+        protected AbstractUpdation()
         {
             UpdatedTime = CreatedTime = DataDefaults.UtcNowOffset;
             UpdatedTimeTicks = CreatedTimeTicks = CreatedTime.Ticks;

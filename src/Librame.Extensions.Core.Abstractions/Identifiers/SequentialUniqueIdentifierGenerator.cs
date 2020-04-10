@@ -12,6 +12,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core.Identifiers
 {
@@ -44,19 +46,23 @@ namespace Librame.Extensions.Core.Identifiers
 
 
         /// <summary>
-        /// 生成标识符。
+        /// 异步生成标识符。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="isUtc">相对于协调世界时（可选；默认使用选项设置）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Guid"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "clock")]
-        public Guid Generate(IClockService clock)
+        public Task<Guid> GenerateAsync(IClockService clock, bool? isUtc = null,
+            CancellationToken cancellationToken = default)
         {
             clock.NotNull(nameof(clock));
 
-            return clock.Locker.WaitFactory(() =>
+            return clock.Locker.WaitFactoryAsync(async () =>
             {
-                var randomBytes = RandomUtility.GenerateNumber(10);
-                var timestampBytes = GetCurrentTimestamp(clock);
+                var timestampBytes = await GetCurrentTimestampAsync(clock, isUtc, cancellationToken)
+                    .ConfigureAndResultAsync();
+                var randomBytes = RandomUtility.GenerateByteArray(10);
                 var guidBytes = new byte[16];
 
                 switch (SequentialType)
@@ -85,11 +91,13 @@ namespace Librame.Extensions.Core.Identifiers
             });
         }
 
-        private static byte[] GetCurrentTimestamp(IClockService clock)
+        private static async Task<byte[]> GetCurrentTimestampAsync(IClockService clock, bool? isUtc = null,
+            CancellationToken cancellationToken = default)
         {
-            var timestamp = clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, true).ConfigureAndResult().Ticks / 10000L;
-            var buffer = BitConverter.GetBytes(timestamp);
+            var now = await clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc, cancellationToken)
+                .ConfigureAndResultAsync();
 
+            var buffer = BitConverter.GetBytes(now.Ticks / 10000L);
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(buffer);
 

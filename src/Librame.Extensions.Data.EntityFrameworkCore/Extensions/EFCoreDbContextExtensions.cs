@@ -11,7 +11,6 @@
 #endregion
 
 using Librame.Extensions;
-using Librame.Extensions.Data.Stores;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -27,7 +26,7 @@ namespace Microsoft.EntityFrameworkCore
         /// 并发更新。
         /// </summary>
         /// <typeparam name="TEntity">指定的实体类型。</typeparam>
-        /// <param name="dbContext">给定的 <see cref="IStoreHub"/>。</param>
+        /// <param name="dbContext">给定的 <see cref="DbContext"/>。</param>
         /// <param name="exception">给定的 <see cref="DbUpdateConcurrencyException"/>。</param>
         /// <param name="predicate">给定获取单条数据的断定方法。</param>
         /// <param name="updatePropertyName">给定要更新的属性名（可选；默认为空表示更新所有属性值）。</param>

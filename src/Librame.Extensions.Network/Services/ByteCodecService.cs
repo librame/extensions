@@ -23,15 +23,15 @@ namespace Librame.Extensions.Network.Services
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ByteCodecService : NetworkServiceBase, IByteCodecService
     {
-        private readonly ISymmetricService _symmetric;
-
-
         public ByteCodecService(ISymmetricService symmetric, IOptions<CoreBuilderOptions> coreOptions,
             IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
             : base(coreOptions, options, loggerFactory)
         {
-            _symmetric = symmetric.NotNull(nameof(symmetric));
+            Symmetric = symmetric.NotNull(nameof(symmetric));
         }
+
+
+        public ISymmetricService Symmetric { get; }
 
 
         public string DecodeStringFromBytes(byte[] buffer, bool enableCodec)
@@ -52,7 +52,7 @@ namespace Librame.Extensions.Network.Services
         public byte[] Decode(byte[] buffer, bool enableCodec)
         {
             if (enableCodec)
-                return _symmetric.DecryptAes(buffer);
+                return Symmetric.DecryptAes(buffer);
 
             return buffer;
         }
@@ -76,7 +76,7 @@ namespace Librame.Extensions.Network.Services
         public byte[] Encode(byte[] buffer, bool enableCodec)
         {
             if (enableCodec)
-                return _symmetric.EncryptAes(buffer);
+                return Symmetric.EncryptAes(buffer);
 
             return buffer;
         }

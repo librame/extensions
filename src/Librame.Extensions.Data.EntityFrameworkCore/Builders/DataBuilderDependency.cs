@@ -23,17 +23,22 @@ namespace Librame.Extensions.Data.Builders
     /// </summary>
     public class DataBuilderDependency : AbstractExtensionBuilderDependency<DataBuilderOptions>
     {
+        private const string ConnectionStringsSectionName = "ConnectionStrings";
+        private const string DefaultTenantSectionName = nameof(DataBuilderDependency.Options.DefaultTenant);
+
+
         /// <summary>
         /// 构造一个 <see cref="DataBuilderDependency"/>。
         /// </summary>
-        public DataBuilderDependency()
-            : base(nameof(DataBuilderDependency))
+        /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
+        public DataBuilderDependency(IExtensionBuilderDependency parentDependency = null)
+            : base(nameof(DataBuilderDependency), parentDependency)
         {
         }
 
 
         /// <summary>
-        /// 绑定配置根包含的连接字符串集合配置节点。
+        /// 绑定配置根包含的连接字符串集合配置节。
         /// </summary>
         /// <examples>
         /// JSON 根配置结构参考：
@@ -46,20 +51,19 @@ namespace Librame.Extensions.Data.Builders
         /// }
         /// </code>
         /// </examples>
-        /// <param name="configurationRoot">给定的 <see cref="IConfigurationRoot"/>。</param>
+        /// <exception cref="ArgumentNullException">
+        /// this.ConfigurationRoot is null.
+        /// </exception>
         /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "connectionStringsConfiguration")]
-        public DataBuilderDependency BindConnectionStrings(IConfigurationRoot configurationRoot,
-            Func<string, string> validateFactory = null)
+        public DataBuilderDependency BindConnectionStrings(Func<string, string> validateFactory = null)
         {
-            configurationRoot.NotNull(nameof(configurationRoot));
-
-            return BindConnectionStrings(configurationRoot.GetSection("ConnectionStrings"), validateFactory);
+            ConfigurationRoot.NotNull(nameof(ConfigurationRoot));
+            return BindConnectionStrings(ConfigurationRoot.GetSection(ConnectionStringsSectionName), validateFactory);
         }
 
         /// <summary>
-        /// 绑定连接字符串集合配置节点。
+        /// 绑定连接字符串集合配置节。
         /// </summary>
         /// <examples>
         /// JSON 配置节点结构参考：
@@ -70,24 +74,27 @@ namespace Librame.Extensions.Data.Builders
         /// }
         /// </code>
         /// </examples>
-        /// <param name="configurationSection">给定的连接字符串集合 <see cref="IConfigurationSection"/>。</param>
+        /// <exception cref="ArgumentNullException">
+        /// configuration is null.
+        /// </exception>
+        /// <param name="configuration">给定的连接字符串集合 <see cref="IConfiguration"/>。</param>
         /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "connectionStringsConfiguration")]
-        public DataBuilderDependency BindConnectionStrings(IConfigurationSection configurationSection,
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "configuration")]
+        public DataBuilderDependency BindConnectionStrings(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
-            configurationSection.NotNull(nameof(configurationSection));
+            configuration.NotNull(nameof(configuration));
 
-            UpdateDefaultConnectionString(configurationSection, validateFactory);
-            UpdateWritingConnectionString(configurationSection, validateFactory);
+            UpdateDefaultConnection(configuration, validateFactory);
+            UpdateWritingConnection(configuration, validateFactory);
 
             return this;
         }
 
 
         /// <summary>
-        /// 绑定默认租户配置对象。
+        /// 绑定默认租户配置节。
         /// </summary>
         /// <examples>
         /// JSON 配置节点结构参考：
@@ -101,29 +108,58 @@ namespace Librame.Extensions.Data.Builders
         /// }
         /// </code>
         /// </examples>
-        /// <param name="configurationSection">给定的默认租户 <see cref="IConfigurationSection"/>。</param>
+        /// <exception cref="ArgumentNullException">
+        /// this.ConfigurationRoot is null.
+        /// </exception>
         /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "defaultTenantConfiguration")]
-        public DataBuilderDependency BindDefaultTenant(IConfigurationSection configurationSection,
+        public DataBuilderDependency BindDefaultTenant(Func<string, string> validateFactory = null)
+        {
+            ConfigurationRoot.NotNull(nameof(ConfigurationRoot));
+            return BindDefaultTenant(ConfigurationRoot.GetSection(DefaultTenantSectionName), validateFactory);
+        }
+
+        /// <summary>
+        /// 绑定默认租户配置节。
+        /// </summary>
+        /// <examples>
+        /// JSON 配置节点结构参考：
+        /// <code>
+        /// "DefaultTenant": {
+        ///     "Name": "name",
+        ///     "Host": "host",
+        ///     "DefaultConnectionString": "default connection string",
+        ///     "WritingConnectionString": "writing connection string",
+        ///     "WritingSeparation": true // or false
+        /// }
+        /// </code>
+        /// </examples>
+        /// <exception cref="ArgumentNullException">
+        /// configuration is null.
+        /// </exception>
+        /// <param name="configuration">给定的默认租户 <see cref="IConfiguration"/>。</param>
+        /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
+        /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "configurationSection")]
+        public DataBuilderDependency BindDefaultTenant(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
-            configurationSection.NotNull(nameof(configurationSection));
+            configuration.NotNull(nameof(configuration));
 
-            UpdateDefaultConnectionString(configurationSection, validateFactory);
-            UpdateWritingConnectionString(configurationSection, validateFactory);
+            UpdateDefaultConnection(configuration, validateFactory);
+            UpdateWritingConnection(configuration, validateFactory);
 
-            var writingSeparation = configurationSection
+            var writingSeparation = configuration
                 .GetSection(nameof(Options.DefaultTenant.WritingSeparation))?.Value;
             if (writingSeparation.IsNotEmpty())
                 Options.DefaultTenant.WritingSeparation = bool.Parse(writingSeparation);
 
-            var name = configurationSection
+            var name = configuration
                 .GetSection(nameof(Options.DefaultTenant.Name))?.Value;
             if (name.IsNotEmpty())
                 Options.DefaultTenant.Name = name;
 
-            var host = configurationSection
+            var host = configuration
                 .GetSection(nameof(Options.DefaultTenant.Host))?.Value;
             if (host.IsNotEmpty())
                 Options.DefaultTenant.Host = host;
@@ -132,10 +168,10 @@ namespace Librame.Extensions.Data.Builders
         }
 
 
-        private void UpdateDefaultConnectionString(IConfiguration connectionStringsConfiguration,
+        private void UpdateDefaultConnection(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
-            var connectionString = connectionStringsConfiguration
+            var connectionString = configuration
                 .GetSection(nameof(Options.DefaultTenant.DefaultConnectionString))?.Value;
 
             if (connectionString.IsEmpty())
@@ -145,10 +181,10 @@ namespace Librame.Extensions.Data.Builders
                 .NotEmptyOrDefault(connectionString);
         }
 
-        private void UpdateWritingConnectionString(IConfiguration connectionStringsConfiguration,
+        private void UpdateWritingConnection(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
-            var connectionString = connectionStringsConfiguration
+            var connectionString = configuration
                 .GetSection(nameof(Options.DefaultTenant.WritingConnectionString))?.Value;
 
             if (connectionString.IsEmpty())

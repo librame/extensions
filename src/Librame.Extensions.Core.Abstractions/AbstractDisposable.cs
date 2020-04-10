@@ -15,7 +15,7 @@ using System;
 namespace Librame.Extensions.Core
 {
     /// <summary>
-    /// 抽象可处置对象。
+    /// 抽象可释放对象。
     /// </summary>
     public abstract class AbstractDisposable : IDisposable
     {
@@ -23,17 +23,47 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 如果已处置则抛出异常。
+        /// 构造一个 <see cref="AbstractDisposable"/>。
         /// </summary>
-        protected virtual void ThrowIfDisposed()
+        /// <param name="throwIfDisposed">如果已释放是否抛出异常（可选；默认不抛出异常）。</param>
+        /// <param name="messageAction">给定的消息动作（可选；如可绑定记录日志等操作）。</param>
+        public AbstractDisposable(bool throwIfDisposed = false,
+            Action<string> messageAction = null)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(GetType().Name);
+            ThrowIfDisposed = throwIfDisposed;
+            MessageAction = messageAction;
         }
 
 
         /// <summary>
-        /// 释放对象。
+        /// 析构可处置对象。
+        /// </summary>
+        ~AbstractDisposable()
+        {
+            Dispose(false);
+        }
+
+
+        /// <summary>
+        /// 如果已释放是否抛出异常。
+        /// </summary>
+        public bool ThrowIfDisposed { get; }
+
+        /// <summary>
+        /// 消息动作。
+        /// </summary>
+        public Action<string> MessageAction { get; set; }
+
+
+        /// <summary>
+        /// 释放类型。
+        /// </summary>
+        protected Type DisposeType
+            => GetType();
+
+
+        /// <summary>
+        /// 释放资源。
         /// </summary>
         public void Dispose()
         {
@@ -42,24 +72,40 @@ namespace Librame.Extensions.Core
         }
 
         /// <summary>
-        /// 释放对象。
+        /// 释放资源。
         /// </summary>
         /// <param name="disposing">是否立即释放。</param>
         protected virtual void Dispose(bool disposing)
         {
-            // 如果不释放或已释放
-            if (!disposing || _disposed)
-                return;
+            if (disposing && _disposed && ThrowIfDisposed)
+                throw new ObjectDisposedException(DisposeType.Name);
 
-            DisposeCore();
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    DisposeManaged();
+                    MessageAction?.Invoke("Dispose managed finish.");
+                }
 
-            if (disposing)
-                _disposed = disposing;
+                DisposeUnmanaged();
+                MessageAction?.Invoke("Dispose unmanaged finish.");
+            }
+
+            _disposed = true;
         }
 
+
         /// <summary>
-        /// 释放核心对象。
+        /// 释放托管资源。
         /// </summary>
-        protected abstract void DisposeCore();
+        protected abstract void DisposeManaged();
+
+        /// <summary>
+        /// 释放非托管资源。
+        /// </summary>
+        protected virtual void DisposeUnmanaged()
+        {
+        }
     }
 }

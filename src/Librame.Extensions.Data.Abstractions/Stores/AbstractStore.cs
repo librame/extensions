@@ -26,7 +26,7 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个 <see cref="AbstractStore"/>。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public AbstractStore(IAccessor accessor)
+        protected AbstractStore(IAccessor accessor)
         {
             Accessor = accessor.NotNull(nameof(accessor));
         }

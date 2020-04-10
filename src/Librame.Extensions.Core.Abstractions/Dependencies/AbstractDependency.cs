@@ -50,6 +50,13 @@ namespace Librame.Extensions.Core.Dependencies
         [System.Text.Json.Serialization.JsonIgnore]
         public IConfiguration Configuration { get; set; }
 
+        /// <summary>
+        /// 依赖配置根。
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IConfigurationRoot ConfigurationRoot { get; set; }
+
 
         /// <summary>
         /// 建立名称。

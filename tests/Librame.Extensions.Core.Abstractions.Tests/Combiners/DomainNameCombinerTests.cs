@@ -44,7 +44,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal("1.2.3.4.developer", onlyTwoLevels.Child);
             Assert.Equal("google.org", onlyTwoLevels.Parent);
 
-            Assert.NotEqual(combiner, combiner.NewDomainName("microsoft.com"));
+            Assert.NotEqual(combiner, combiner.WithDomainName("microsoft.com"));
 
             Assert.Throws<NotSupportedException>(() => "192.168.0.1".AsDomainNameCombiner());
         }

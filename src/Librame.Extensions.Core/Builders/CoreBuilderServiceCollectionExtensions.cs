@@ -71,7 +71,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.UsePreStarter();
 
             // Configure Dependency
-            var dependency = configureDependency.ConfigureDependencyRoot(services);
+            var dependency = configureDependency.ConfigureDependency(services);
             
             // Add Dependencies
             services

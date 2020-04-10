@@ -48,7 +48,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static INetworkBuilder AddNetwork<TDependency>(this IExtensionBuilder parentBuilder,
             Action<TDependency> configureDependency = null,
             Func<IExtensionBuilder, TDependency, INetworkBuilder> builderFactory = null)
-            where TDependency : NetworkBuilderDependency, new()
+            where TDependency : NetworkBuilderDependency
         {
             if (!parentBuilder.ContainsParentBuilder<IEncryptionBuilder>())
             {

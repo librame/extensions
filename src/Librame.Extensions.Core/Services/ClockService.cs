@@ -26,7 +26,7 @@ namespace Librame.Extensions.Core.Services
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ClockService : AbstractConcurrentService, IClockService
     {
-        private TimeSpan _clockRefluxOffsetSeconds;
+        private readonly TimeSpan _clockRefluxOffsetSeconds;
 
 
         public ClockService(IOptions<CoreBuilderOptions> options,
@@ -44,7 +44,7 @@ namespace Librame.Extensions.Core.Services
         public Task<DateTime> GetNowAsync(DateTime timestamp, bool? isUtc = null,
             CancellationToken cancellationToken = default)
         {
-            return Locker.WaitFactory(() =>
+            return Locker.WaitFactoryAsync(() =>
             {
                 if (!isUtc.HasValue)
                     isUtc = Options.IsUtcClock;
@@ -71,7 +71,7 @@ namespace Librame.Extensions.Core.Services
         public Task<DateTimeOffset> GetOffsetNowAsync(DateTimeOffset timestamp, bool? isUtc = null,
             CancellationToken cancellationToken = default)
         {
-            return Locker.WaitFactory(() =>
+            return Locker.WaitFactoryAsync(() =>
             {
                 if (!isUtc.HasValue)
                     isUtc = Options.IsUtcClock;

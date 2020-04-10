@@ -174,7 +174,7 @@ namespace Librame.Extensions.Core.Combiners
             => newLevelSegments.ForEach((str, i) => _allLevelSegments[i] = str);
 
 
-        #region Changes
+        #region Change
 
         /// <summary>
         /// 改变域名。
@@ -245,14 +245,14 @@ namespace Librame.Extensions.Core.Combiners
         #endregion
 
 
-        #region News
+        #region With
 
         /// <summary>
-        /// 通过指定的新域名与当前已有其他级别域名集合组合的方式新建域名。
+        /// 带有域名。
         /// </summary>
         /// <param name="newDomainName">给定的新域名（支持包括根、一级、二级、三级、多级等在内的所有域名）。</param>
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
-        public DomainNameCombiner NewDomainName(string newDomainName)
+        public DomainNameCombiner WithDomainName(string newDomainName)
         {
             var newLevelSegments = ParseAllLevelSegments(newDomainName);
 
@@ -263,11 +263,11 @@ namespace Librame.Extensions.Core.Combiners
         }
 
         /// <summary>
-        /// 新建根。
+        /// 带有根。
         /// </summary>
         /// <param name="newRoot">给定的根（如：com/org...）。</param>
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
-        public DomainNameCombiner NewRoot(string newRoot)
+        public DomainNameCombiner WithRoot(string newRoot)
         {
             newRoot.NotEmpty(nameof(newRoot));
 
@@ -278,11 +278,11 @@ namespace Librame.Extensions.Core.Combiners
         }
 
         /// <summary>
-        /// 新建顶级/一级片段。
+        /// 带有顶级/一级片段。
         /// </summary>
         /// <param name="newTopLevelSegment">给定的新顶级/一级片段（如：top.com/top.org... 中的 top）。</param>
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
-        public DomainNameCombiner NewTopLevelSegment(string newTopLevelSegment)
+        public DomainNameCombiner WithTopLevelSegment(string newTopLevelSegment)
         {
             newTopLevelSegment.NotEmpty(nameof(newTopLevelSegment));
 
@@ -293,11 +293,11 @@ namespace Librame.Extensions.Core.Combiners
         }
 
         /// <summary>
-        /// 新建二级片段。
+        /// 带有二级片段。
         /// </summary>
         /// <param name="newSecondLevelSegment">给定的二级片段（如：second.top.com/second.top.org... 中的 second）。</param>
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
-        public DomainNameCombiner NewSecondLevelSegment(string newSecondLevelSegment)
+        public DomainNameCombiner WithSecondLevelSegment(string newSecondLevelSegment)
         {
             newSecondLevelSegment.NotEmpty(nameof(newSecondLevelSegment));
 
@@ -308,11 +308,11 @@ namespace Librame.Extensions.Core.Combiners
         }
 
         /// <summary>
-        /// 新建三级片段。
+        /// 带有三级片段。
         /// </summary>
         /// <param name="newThirdLevelSegment">给定的三级片段（如：third.second.top.com/third.second.top.org... 中的 third）。</param>
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
-        public DomainNameCombiner NewThirdLevelSegment(string newThirdLevelSegment)
+        public DomainNameCombiner WithThirdLevelSegment(string newThirdLevelSegment)
         {
             newThirdLevelSegment.NotEmpty(nameof(newThirdLevelSegment));
 
@@ -323,11 +323,11 @@ namespace Librame.Extensions.Core.Combiners
         }
 
         /// <summary>
-        /// 新建其他级别片段集合（除三级外所有子级）。
+        /// 带有其他级别片段集合（除三级外所有子级）。
         /// </summary>
         /// <param name="newOtherLevelSegments">给定的新其他级别片段集合（除三级外所有子级）。</param>
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
-        public DomainNameCombiner NewOtherLevelSegments(params string[] newOtherLevelSegments)
+        public DomainNameCombiner WithOtherLevelSegments(params string[] newOtherLevelSegments)
         {
             newOtherLevelSegments.NotEmpty(nameof(newOtherLevelSegments));
 

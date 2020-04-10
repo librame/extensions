@@ -76,22 +76,22 @@ namespace Librame.Extensions.Core.Combiners
         /// <summary>
         /// 改变命名空间。
         /// </summary>
-        /// <param name="newBaseName">给定的新命名空间。</param>
+        /// <param name="newNamespace">给定的新命名空间。</param>
         /// <returns>返回 <see cref="TypeNameCombiner"/>。</returns>
-        public TypeNameCombiner ChangeBaseName(string newBaseName)
+        public TypeNameCombiner ChangeNamespace(string newNamespace)
         {
-            Namespace = newBaseName.NotEmpty(nameof(newBaseName));
+            Namespace = newNamespace.NotEmpty(nameof(newNamespace));
             return this;
         }
 
         /// <summary>
         /// 改变名称。
         /// </summary>
-        /// <param name="newExtension">给定的新名称。</param>
+        /// <param name="newName">给定的新名称。</param>
         /// <returns>返回 <see cref="TypeNameCombiner"/>。</returns>
-        public TypeNameCombiner ChangeExtension(string newExtension)
+        public TypeNameCombiner ChangeName(string newName)
         {
-            Name = newExtension.NotEmpty(nameof(newExtension));
+            Name = newName.NotEmpty(nameof(newName));
             return this;
         }
 
@@ -99,18 +99,18 @@ namespace Librame.Extensions.Core.Combiners
         /// <summary>
         /// 依据当前文件组合器的名称与指定的命名空间，新建一个 <see cref="TypeNameCombiner"/>。
         /// </summary>
-        /// <param name="newBaseName">给定的新命名空间。</param>
+        /// <param name="newNamespace">给定的新命名空间。</param>
         /// <returns>返回 <see cref="TypeNameCombiner"/>。</returns>
-        public TypeNameCombiner NewBaseName(string newBaseName)
-            => new TypeNameCombiner(newBaseName, Name);
+        public TypeNameCombiner WithNamespace(string newNamespace)
+            => new TypeNameCombiner(newNamespace, Name);
 
         /// <summary>
         /// 依据当前文件组合器的命名空间与指定的名称，新建一个 <see cref="TypeNameCombiner"/>。
         /// </summary>
-        /// <param name="newExtension">给定的新名称。</param>
+        /// <param name="newName">给定的新名称。</param>
         /// <returns>返回 <see cref="TypeNameCombiner"/>。</returns>
-        public TypeNameCombiner NewExtension(string newExtension)
-            => new TypeNameCombiner(Namespace, newExtension);
+        public TypeNameCombiner WithName(string newName)
+            => new TypeNameCombiner(Namespace, newName);
 
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="name">给定的名称。</param>
         /// <returns>返回布尔值。</returns>
-        public bool IsExtension(string name)
+        public bool IsName(string name)
             => Name.Equals(name, StringComparison.OrdinalIgnoreCase);
 
 

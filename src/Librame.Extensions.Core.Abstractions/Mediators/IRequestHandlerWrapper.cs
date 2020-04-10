@@ -39,7 +39,7 @@ namespace Librame.Extensions.Core.Mediators
 
 
     /// <summary>
-    /// 请求处理程序封装接口。
+    /// 请求处理程序封装接口（主要用作标记）。
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
     public interface IRequestHandlerWrapper

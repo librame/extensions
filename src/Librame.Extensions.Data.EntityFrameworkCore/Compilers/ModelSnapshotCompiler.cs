@@ -52,10 +52,11 @@ namespace Librame.Extensions.Data.Compilers
         /// 导出模型快照文件路径。
         /// </summary>
         /// <param name="accessorType">给定的访问器类型。</param>
+        /// <param name="designTimeType">给定的设计时类型。</param>
         /// <param name="basePath">给定的基础路径。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        public static FilePathCombiner ExportFilePath(Type accessorType, string basePath)
-            => new FilePathCombiner($"{accessorType.GetAssemblyDisplayName()}.ModelSnapshot{CSharpCompiler.FileExtension}").ChangeBasePathIfEmpty(basePath);
+        public static FilePathCombiner ExportFilePath(Type accessorType, Type designTimeType, string basePath)
+            => new FilePathCombiner($"{accessorType.GetDisplayName(true)}.{designTimeType.GetDisplayName(true)}.ModelSnapshot{CSharpCompiler.FileExtension}").ChangeBasePathIfEmpty(basePath);
 
 
         /// <summary>
@@ -98,7 +99,8 @@ namespace Librame.Extensions.Data.Compilers
                 typeName.Name, model);
 
             // 导出包含模型快照的程序集文件
-            var exportAssemblyPath = ExportFilePath(accessorType, dependencyOptions.ExportDirectory);
+            var builder = accessor.ServiceFactory.GetRequiredService<IDataBuilder>();
+            var exportAssemblyPath = ExportFilePath(accessorType, builder.DatabaseDesignTimeType, dependencyOptions.ExportDirectory);
             var references = GetMetadataReferences(options, accessorType);
 
             return CSharpCompiler.CompileInFile(exportAssemblyPath, references, sourceCode);

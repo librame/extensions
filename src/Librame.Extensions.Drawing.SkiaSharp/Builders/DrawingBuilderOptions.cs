@@ -11,7 +11,6 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace Librame.Extensions.Drawing.Builders
@@ -39,19 +38,24 @@ namespace Librame.Extensions.Drawing.Builders
         /// 图像文件扩展名集合（以英文逗号分隔）。
         /// </summary>
         public string ImageExtensions { get; set; }
-            = ".bmp,.heif,.heic,.jpg,.jpeg,.png,.webp";
+            = ".bmp,.heif,.heic,.jpg,.jpeg,.jfif,.png,.webp";
 
         /// <summary>
         /// 验证码选项。
         /// </summary>
-        public CaptchaOptions Captcha { get; set; }
+        public CaptchaOptions Captcha { get; }
             = new CaptchaOptions();
+
+        /// <summary>
+        /// 水印选项。
+        /// </summary>
+        public WatermarkOptions Watermark { get; }
+            = new WatermarkOptions();
 
         /// <summary>
         /// 缩放选项。
         /// </summary>
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public IList<ScaleOptions> Scales { get; set; }
+        public IReadOnlyList<ScaleOptions> Scales { get; set; }
             = new List<ScaleOptions>
             {
                 new ScaleOptions
@@ -67,12 +71,6 @@ namespace Librame.Extensions.Drawing.Builders
                     MaxSize = new Size(1000, 700)
                 }
             };
-
-        /// <summary>
-        /// 水印选项。
-        /// </summary>
-        public WatermarkOptions Watermark { get; set; }
-            = new WatermarkOptions();
     }
 
 
@@ -84,19 +82,19 @@ namespace Librame.Extensions.Drawing.Builders
         /// <summary>
         /// 颜色。
         /// </summary>
-        public ColorOptions Colors { get; set; }
+        public ColorOptions Colors { get; }
             = new ColorOptions();
 
         /// <summary>
         /// 字体。
         /// </summary>
-        public FontOptions Font { get; set; }
+        public FontOptions Font { get; }
             = new FontOptions { Size = 16 };
 
         /// <summary>
         /// 噪点。
         /// </summary>
-        public NoiseOptions Noise { get; set; }
+        public NoiseOptions Noise { get; }
             = new NoiseOptions();
     }
 
@@ -157,7 +155,7 @@ namespace Librame.Extensions.Drawing.Builders
         /// <summary>
         /// 颜色选项。
         /// </summary>
-        public ColorOptions Colors { get; set; }
+        public ColorOptions Colors { get; }
             = new ColorOptions
             {
                 ForeHex = "#ffffff",
@@ -167,7 +165,7 @@ namespace Librame.Extensions.Drawing.Builders
         /// <summary>
         /// 字体。
         /// </summary>
-        public FontOptions Font { get; set; }
+        public FontOptions Font { get; }
             = new FontOptions
             {
                 Size = 32

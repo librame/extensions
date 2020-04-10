@@ -27,7 +27,7 @@ namespace Librame.Extensions.Network.DotNetty
                     logging.AddConsole(logger => logger.IncludeScopes = false);
                     logging.AddFilter((str, level) => true);
                 })
-                .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(combiner.ToString(), "password"))
+                .AddEncryption().AddGlobalSigningCredentials(new X509Certificate2(combiner, "password"))
                 .AddNetwork().AddDotNetty();
 
                 // Use DotNetty LoggerFactory

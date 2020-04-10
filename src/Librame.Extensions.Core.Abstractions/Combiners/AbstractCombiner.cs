@@ -25,7 +25,7 @@ namespace Librame.Extensions.Core.Combiners
         /// 构造一个 <see cref="AbstractCombiner{TSource}"/>。
         /// </summary>
         /// <param name="source">给定的组合源。</param>
-        public AbstractCombiner(TSource source)
+        protected AbstractCombiner(TSource source)
         {
             Source = RawSource = source.NotNull(nameof(source));
         }

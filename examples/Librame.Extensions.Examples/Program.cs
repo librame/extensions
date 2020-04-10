@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Sqlite.Design.Internal;
-using Microsoft.Extensions.Configuration;
+//using Microsoft.EntityFrameworkCore.Sqlite.Design.Internal;
+//using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -23,18 +23,17 @@ namespace Librame.Extensions.Examples
             // Add NLog Configuration
             NLog.LogManager.LoadConfiguration("../../../nlog.config");
 
-            var basePath = AppContext.BaseDirectory.WithoutDevelopmentRelativePath();
-            var root = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .AddJsonFile("appsettings.json")
-                .Build();
+            //var basePath = AppContext.BaseDirectory.WithoutDevelopmentRelativePath();
+            //var root = new ConfigurationBuilder()
+            //    .SetBasePath(basePath)
+            //    .AddJsonFile("appsettings.json")
+            //    .Build();
 
             var services = new ServiceCollection();
 
             services.AddLibrame<ExampleCoreBuilderDependency>(dependency =>
             {
-                dependency.ConfigurationRoot = root;
-                //dependency.Configuration = root.GetSection(dependency.Name);
+                //dependency.ConfigurationRoot = root;
 
                 dependency.ConfigureLoggingBuilder = logging =>
                 {
@@ -48,29 +47,28 @@ namespace Librame.Extensions.Examples
             .AddData(dependency =>
             {
                 // for SQLite
-                dependency.BindConnectionStrings(root, fileName => basePath.CombinePath(fileName));
-
+                //dependency.BindConnectionStrings(dataFile => dependency.BaseDirectory.CombinePath(dataFile));
+                
                 // for MySQL
-                dependency.BindDefaultTenant(root.GetSection(nameof(dependency.Options.DefaultTenant)),
-                    MySqlConnectionStringHelper.Validate);
+                dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
             })
-            .AddAccessor<ExampleDbContextAccessor>((options, optionsBuilder) =>
+            .AddAccessor<ExampleDbContextAccessor>((tenant, optionsBuilder) =>
             {
                 // for SQLite
-                //optionsBuilder.UseSqlite(options.DefaultTenant.DefaultConnectionString,
-                //    sqlite => sqlite.MigrationsAssembly(typeof(Program).GetSimpleAssemblyName()));
+                //optionsBuilder.UseSqlite(tenant.DefaultConnectionString,
+                //    sqlite => sqlite.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
 
                 // for MySQL
-                optionsBuilder.UseMySql(options.DefaultTenant.DefaultConnectionString, mySql =>
+                optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
                 {
                     mySql.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName());
                     mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
                 });
             })
             // for SQLite
-            //.AddDbDesignTime<SqliteDesignTimeServices>()
+            //.AddDatabaseDesignTime<SqliteDesignTimeServices>()
             // for MySQL
-            .AddDbDesignTime<MySqlDesignTimeServices>()
+            .AddDatabaseDesignTime<MySqlDesignTimeServices>()
             .AddStoreIdentifier<ExampleStoreIdentifier>()
             .AddStoreInitializer<ExampleStoreInitializer>()
             .AddStoreHub<ExampleStoreHub>()

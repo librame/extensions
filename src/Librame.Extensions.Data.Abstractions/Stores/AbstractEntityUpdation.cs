@@ -29,7 +29,7 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个 <see cref="AbstractEntityUpdation{TId}"/>。
         /// </summary>
-        public AbstractEntityUpdation()
+        protected AbstractEntityUpdation()
         {
             UpdatedTime = CreatedTime = DataDefaults.UtcNowOffset;
             UpdatedTimeTicks = CreatedTimeTicks = CreatedTime.Ticks;
@@ -65,7 +65,7 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个 <see cref="AbstractEntityUpdation{TId, TCreatedBy, TCreatedTime}"/>。
         /// </summary>
-        public AbstractEntityUpdation()
+        protected AbstractEntityUpdation()
         {
             Rank = DataDefaults.Rank;
             Status = DataDefaults.Status;

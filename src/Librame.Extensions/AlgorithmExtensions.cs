@@ -12,7 +12,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Security.Cryptography;
@@ -27,58 +26,6 @@ namespace Librame.Extensions
     /// </summary>
     public static class AlgorithmExtensions
     {
-        /// <summary>
-        /// 随机字符串字典。
-        /// </summary>
-        /// <param name="number">给定要生成的随机字符串个数（如 100 个）。</param>
-        /// <param name="length">给定单个随机字符串的长度（可选；默认 8 位长度）。</param>
-        /// <param name="encodeFactory">给定单个随机字符串的编码工厂方法（可选；默认使用 MD5 编码）。</param>
-        /// <param name="hasSpecial">是否包含部分特殊符号（可选；默认不包含）。</param>
-        /// <returns>返回 <see cref="Dictionary{String, String}"/>。</returns>
-        public static Dictionary<string, string> RandomStrings(this int number, int length = 8,
-            Func<string, string> encodeFactory = null, bool hasSpecial = false)
-        {
-            if (encodeFactory.IsNull())
-                encodeFactory = s => s.Md5Base64String(Encoding.UTF8);
-
-            var pairs = new Dictionary<string, string>();
-            var chars = hasSpecial ? ExtensionSettings.AlgorithmChars : ExtensionSettings.AllLettersAndDigits;
-            var random = new Random((int)DateTime.Now.Ticks);
-
-            var offset = 0;
-            for (int j = 0; j < number + offset; j++)
-            {
-                var str = string.Empty;
-
-                for (int i = 0; i < length; i++)
-                {
-                    str += chars[random.Next(chars.Length)];
-                }
-
-                if (str.IsLetter())
-                {
-                    offset++;
-                    continue; // 如果全是字母则重新生成
-                }
-
-                if (str.IsDigit())
-                {
-                    offset++;
-                    continue; // 如果全是数字则重新生成
-                }
-
-                if (hasSpecial && (!str.HasAlgorithmSpecial() || str.IsAlgorithmSpecial()))
-                {
-                    offset++;
-                    continue; // 如果没有或全是特殊符号则重新生成
-                }
-
-                pairs.Add(str, encodeFactory.Invoke(str));
-            }
-
-            return pairs;
-        }
-
 
         #region Base and Hex
 
@@ -740,91 +687,91 @@ namespace Librame.Extensions
         #endregion
 
 
-        #region RSA
+        //#region RSA
 
-        /// <summary>
-        /// 转换为 RSA。
-        /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
-        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
-        /// <returns>返回字符串。</returns>
-        public static string AsRsaBase64String(this string str, Encoding encoding, RSAParameters parameters, RSAEncryptionPadding padding = null)
-            => str.FromEncodingString(encoding).AsRsa(parameters, padding).AsBase64String();
+        ///// <summary>
+        ///// 转换为 RSA。
+        ///// </summary>
+        ///// <param name="str">给定的字符串。</param>
+        ///// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
+        ///// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
+        ///// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
+        ///// <returns>返回字符串。</returns>
+        //public static string AsRsaBase64String(this string str, Encoding encoding, RSAParameters parameters, RSAEncryptionPadding padding = null)
+        //    => str.FromEncodingString(encoding).AsRsa(parameters, padding).AsBase64String();
 
-        /// <summary>
-        /// 还原 RSA。
-        /// </summary>
-        /// <param name="base64String">给定的 BASE64 字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
-        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
-        /// <returns>返回字符串。</returns>
-        public static string FromRsaBase64String(this string base64String, Encoding encoding, RSAParameters parameters, RSAEncryptionPadding padding = null)
-            => base64String.FromBase64String().FromRsa(parameters, padding).AsEncodingString(encoding);
-
-
-        /// <summary>
-        /// 转换为 RSA。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
-        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
-        /// <returns>返回字节数组。</returns>
-        public static byte[] AsRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
-            => RsaAlgorithm(buffer, parameters, padding, isEncrypt: true);
-
-        /// <summary>
-        /// 还原 RSA。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
-        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
-        /// <returns>返回字节数组。</returns>
-        public static byte[] FromRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
-            => RsaAlgorithm(buffer, parameters, padding, isEncrypt: false);
+        ///// <summary>
+        ///// 还原 RSA。
+        ///// </summary>
+        ///// <param name="base64String">给定的 BASE64 字符串。</param>
+        ///// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
+        ///// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
+        ///// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
+        ///// <returns>返回字符串。</returns>
+        //public static string FromRsaBase64String(this string base64String, Encoding encoding, RSAParameters parameters, RSAEncryptionPadding padding = null)
+        //    => base64String.FromBase64String().FromRsa(parameters, padding).AsEncodingString(encoding);
 
 
-        private static ConcurrentDictionary<string, RSA> _rsaAlgorithms
-            = new ConcurrentDictionary<string, RSA>();
+        ///// <summary>
+        ///// 转换为 RSA。
+        ///// </summary>
+        ///// <param name="buffer">给定的字节数组。</param>
+        ///// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
+        ///// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
+        ///// <returns>返回字节数组。</returns>
+        //public static byte[] AsRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
+        //    => RsaAlgorithm(buffer, parameters, padding, isEncrypt: true);
 
-        private static byte[] RsaAlgorithm(byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding, bool isEncrypt)
-        {
-            var algorithm = _rsaAlgorithms.GetOrAdd($"{ToRSAParametersString(parameters)}", name =>
-            {
-                var algo = RSA.Create();
-                algo.ImportParameters(parameters);
+        ///// <summary>
+        ///// 还原 RSA。
+        ///// </summary>
+        ///// <param name="buffer">给定的字节数组。</param>
+        ///// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
+        ///// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
+        ///// <returns>返回字节数组。</returns>
+        //public static byte[] FromRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
+        //    => RsaAlgorithm(buffer, parameters, padding, isEncrypt: false);
 
-                return algo;
-            });
 
-            if (isEncrypt)
-                return algorithm.Encrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
+        //private static ConcurrentDictionary<string, RSA> _rsaAlgorithms
+        //    = new ConcurrentDictionary<string, RSA>();
 
-            return algorithm.Decrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
-        }
+        //private static byte[] RsaAlgorithm(byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding, bool isEncrypt)
+        //{
+        //    var algorithm = _rsaAlgorithms.GetOrAdd($"{ToRSAParametersString(parameters)}", name =>
+        //    {
+        //        var algo = RSA.Create();
+        //        algo.ImportParameters(parameters);
 
-        private static string ToRSAParametersString(RSAParameters parameters)
-        {
-            var sb = new StringBuilder();
+        //        return algo;
+        //    });
 
-            sb.Append($"{nameof(RSAParameters.D)}={BytesToString(parameters.D)},");
-            sb.Append($"{nameof(RSAParameters.DP)}={BytesToString(parameters.DP)},");
-            sb.Append($"{nameof(RSAParameters.DQ)}={BytesToString(parameters.DQ)},");
-            sb.Append($"{nameof(RSAParameters.Exponent)}={BytesToString(parameters.Exponent)},");
-            sb.Append($"{nameof(RSAParameters.InverseQ)}={BytesToString(parameters.InverseQ)},");
-            sb.Append($"{nameof(RSAParameters.Modulus)}={BytesToString(parameters.Modulus)},");
-            sb.Append($"{nameof(RSAParameters.P)}={BytesToString(parameters.P)},");
-            sb.Append($"{nameof(RSAParameters.Q)}={BytesToString(parameters.Q)}");
+        //    if (isEncrypt)
+        //        return algorithm.Encrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
 
-            return sb.ToString();
+        //    return algorithm.Decrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
+        //}
 
-            string BytesToString(byte[] buffer)
-                => buffer.IsNotEmpty() ? buffer.AsBase64String() : string.Empty;
-        }
+        //private static string ToRSAParametersString(RSAParameters parameters)
+        //{
+        //    var sb = new StringBuilder();
 
-        #endregion
+        //    sb.Append($"{nameof(RSAParameters.D)}={BytesToString(parameters.D)},");
+        //    sb.Append($"{nameof(RSAParameters.DP)}={BytesToString(parameters.DP)},");
+        //    sb.Append($"{nameof(RSAParameters.DQ)}={BytesToString(parameters.DQ)},");
+        //    sb.Append($"{nameof(RSAParameters.Exponent)}={BytesToString(parameters.Exponent)},");
+        //    sb.Append($"{nameof(RSAParameters.InverseQ)}={BytesToString(parameters.InverseQ)},");
+        //    sb.Append($"{nameof(RSAParameters.Modulus)}={BytesToString(parameters.Modulus)},");
+        //    sb.Append($"{nameof(RSAParameters.P)}={BytesToString(parameters.P)},");
+        //    sb.Append($"{nameof(RSAParameters.Q)}={BytesToString(parameters.Q)}");
+
+        //    return sb.ToString();
+
+        //    string BytesToString(byte[] buffer)
+        //        => buffer.IsNotEmpty() ? buffer.AsBase64String() : string.Empty;
+        //}
+
+        //#endregion
 
     }
 }

@@ -10,6 +10,9 @@
 
 #endregion
 
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Librame.Extensions.Core.Identifiers
 {
     using Services;
@@ -21,10 +24,13 @@ namespace Librame.Extensions.Core.Identifiers
     public interface IIdentifierGenerator<TIdentifier>
     {
         /// <summary>
-        /// 生成标识符。
+        /// 异步生成标识符。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="isUtc">相对于协调世界时（可选；默认使用选项设置）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <typeparamref name="TIdentifier"/>。</returns>
-        TIdentifier Generate(IClockService clock);
+        Task<TIdentifier> GenerateAsync(IClockService clock, bool? isUtc = null,
+            CancellationToken cancellationToken = default);
     }
 }

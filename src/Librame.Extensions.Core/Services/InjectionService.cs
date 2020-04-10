@@ -27,8 +27,7 @@ namespace Librame.Extensions.Core.Services
             = new ConcurrentDictionary<Type, Action<object, IServiceProvider>>();
 
 
-        public InjectionService(IServiceProvider serviceProvider,
-            ILoggerFactory loggerFactory)
+        public InjectionService(IServiceProvider serviceProvider, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             ServiceProvider = serviceProvider.NotNull(nameof(serviceProvider));

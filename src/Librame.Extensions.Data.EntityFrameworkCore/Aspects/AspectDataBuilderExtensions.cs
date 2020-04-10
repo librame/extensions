@@ -11,8 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Collections.Generic;
 
 namespace Librame.Extensions.Data.Builders
 {
@@ -22,16 +20,14 @@ namespace Librame.Extensions.Data.Builders
     {
         internal static IDataBuilder AddAspects(this IDataBuilder builder)
         {
-            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton(typeof(ISaveChangesDbContextAccessorAspect<,,,,,,>),
-                typeof(DataAuditSaveChangesDbContextAccessorAspect<,,,,,,>)));
+            builder.Services.AddSingleton(typeof(DbContextAccessorAspectDependencies<>));
 
-            builder.Services.TryAddEnumerable(new List<ServiceDescriptor>
-            {
-                ServiceDescriptor.Singleton(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
-                    typeof(DataEntityMigrateDbContextAccessorAspect<,,,,,,>)),
-                ServiceDescriptor.Singleton(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
-                    typeof(DataMigrationMigrateDbContextAccessorAspect<,,,,,,>))
-            });
+            builder.Services.AddSingleton(typeof(ISaveChangesDbContextAccessorAspect<,,,,,,>),
+                typeof(DataAuditSaveChangesDbContextAccessorAspect<,,,,,,>));
+
+            var aspectType = typeof(IMigrateDbContextAccessorAspect<,,,,,,>);
+            builder.Services.AddSingleton(aspectType, typeof(DataEntityMigrateDbContextAccessorAspect<,,,,,,>));
+            builder.Services.AddSingleton(aspectType, typeof(DataMigrationMigrateDbContextAccessorAspect<,,,,,,>));
 
             return builder;
         }

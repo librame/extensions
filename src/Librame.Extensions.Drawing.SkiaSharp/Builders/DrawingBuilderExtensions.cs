@@ -47,7 +47,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IDrawingBuilder AddDrawing<TDependency>(this IExtensionBuilder parentBuilder,
             Action<TDependency> configureDependency = null,
             Func<IExtensionBuilder, TDependency, IDrawingBuilder> builderFactory = null)
-            where TDependency : DrawingBuilderDependency, new()
+            where TDependency : DrawingBuilderDependency
         {
             // Configure Dependency
             var dependency = configureDependency.ConfigureDependency(parentBuilder);

@@ -21,7 +21,7 @@ namespace Librame.Extensions.Drawing.Tests
         {
             // 5K 2.21MB
             var imageFile = "eso1004a.jpg".AsFilePathCombiner(TestServiceProvider.ResourcesPath);
-            var saveFile = imageFile.NewFileName("eso1004a-watermark.png");
+            var saveFile = imageFile.WithFileName("eso1004a-watermark.png");
             
             var succeed = await _drawing.DrawFileAsync(imageFile, saveFile).ConfigureAndResultAsync();
             Assert.True(succeed);

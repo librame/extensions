@@ -16,10 +16,9 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Aspects
 {
-    using Accessors;
     using Core.Services;
-    using Core.Threads;
-    using Stores;
+    using Data.Accessors;
+    using Data.Stores;
 
     /// <summary>
     /// 数据库上下文访问器截面接口。
@@ -41,20 +40,10 @@ namespace Librame.Extensions.Data.Aspects
         where TIncremId : IEquatable<TIncremId>
     {
         /// <summary>
-        /// 时钟服务。
+        /// 依赖集合。
         /// </summary>
-        IClockService Clock { get; }
-
-        /// <summary>
-        /// 标识符。
-        /// </summary>
-        IStoreIdentifier Identifier { get; }
-
-        /// <summary>
-        /// 锁定器。
-        /// </summary>
-        IMemoryLocker Locker { get; }
-
+        /// <value>返回 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</value>
+        DbContextAccessorAspectDependencies<TGenId> Dependencies { get; }
 
         /// <summary>
         /// 启用截面。

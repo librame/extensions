@@ -46,7 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
         public static INetworkBuilder AddDotNetty<TDependency>(this INetworkBuilder builder,
             Action<TDependency> configureDependency = null)
-            where TDependency : DotNettyDependency, new()
+            where TDependency : DotNettyDependency
         {
             builder.NotNull(nameof(builder));
 

@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Librame.Extensions.Data.Accessors
 {
@@ -20,7 +21,11 @@ namespace Librame.Extensions.Data.Accessors
     /// <summary>
     /// 数据库上下文访问器接口。
     /// </summary>
-    public interface IDbContextAccessor : IDbContextAccessor<DataAudit<string>, DataAuditProperty<int, string>, DataEntity<string>, DataMigration<string>, DataTenant<string>>
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+    public interface IDbContextAccessor<TGenId, TIncremId> : IDbContextAccessor<DataAudit<TGenId>, DataAuditProperty<TIncremId, TGenId>, DataEntity<TGenId>, DataMigration<TGenId>, DataTenant<TGenId>>
+        where TGenId : IEquatable<TGenId>
+        where TIncremId : IEquatable<TIncremId>
     {
     }
 

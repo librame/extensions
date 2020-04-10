@@ -21,7 +21,7 @@ namespace Librame.Extensions.Data.Accessors
     /// </summary>
     /// <typeparam name="TDbContextAccessor">指定的数据库上下文访问器类型。</typeparam>
     public class DbContextAccessorFactory<TDbContextAccessor> : IDesignTimeDbContextFactory<TDbContextAccessor>
-        where TDbContextAccessor : DbContextAccessor
+        where TDbContextAccessor : DbContextAccessorBase
     {
         private readonly IServiceProvider _serviceProvider;
 

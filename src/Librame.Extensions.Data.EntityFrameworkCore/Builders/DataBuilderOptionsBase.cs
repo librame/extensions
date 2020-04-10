@@ -19,7 +19,7 @@ namespace Librame.Extensions.Data.Builders
     /// <summary>
     /// 数据构建器选项基类。
     /// </summary>
-    public class DataBuilderOptionsBase : DataBuilderOptionsBase<TableNameSchemaOptions>
+    public class DataBuilderOptionsBase : DataBuilderOptionsBase<TableOptions>
     {
     }
 
@@ -27,9 +27,9 @@ namespace Librame.Extensions.Data.Builders
     /// <summary>
     /// 数据构建器选项基类。
     /// </summary>
-    /// <typeparam name="TTableNameSchemaOptions">指定的表名架构选项类型。</typeparam>
-    public class DataBuilderOptionsBase<TTableNameSchemaOptions> : DataBuilderOptionsBase<StoreOptions, TTableNameSchemaOptions>
-        where TTableNameSchemaOptions : TableNameSchemaOptions, new()
+    /// <typeparam name="TTableOptions">指定的表选项类型。</typeparam>
+    public class DataBuilderOptionsBase<TTableOptions> : DataBuilderOptionsBase<StoreOptions, TTableOptions>
+        where TTableOptions : TableOptions, new()
     {
     }
 
@@ -38,23 +38,23 @@ namespace Librame.Extensions.Data.Builders
     /// 数据构建器选项基类。
     /// </summary>
     /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
-    /// <typeparam name="TTableNameSchemaOptions">指定的表名架构选项类型。</typeparam>
-    public class DataBuilderOptionsBase<TStoreOptions, TTableNameSchemaOptions> : IExtensionBuilderOptions
+    /// <typeparam name="TTableOptions">指定的表名架构选项类型。</typeparam>
+    public class DataBuilderOptionsBase<TStoreOptions, TTableOptions> : IExtensionBuilderOptions
         where TStoreOptions : StoreOptions, new()
-        where TTableNameSchemaOptions : TableNameSchemaOptions, new()
+        where TTableOptions : TableOptions, new()
     {
         /// <summary>
         /// 存储选项。
         /// </summary>
         /// <value>返回 <typeparamref name="TStoreOptions"/>。</value>
-        public TStoreOptions Stores { get; set; }
+        public TStoreOptions Stores { get; }
             = new TStoreOptions();
 
         /// <summary>
-        /// 表名架构选项。
+        /// 表选项。
         /// </summary>
-        /// <value>返回 <typeparamref name="TTableNameSchemaOptions"/>。</value>
-        public TTableNameSchemaOptions Tables { get; set; }
-            = new TTableNameSchemaOptions();
+        /// <value>返回 <typeparamref name="TTableOptions"/>。</value>
+        public TTableOptions Tables { get; }
+            = new TTableOptions();
     }
 }

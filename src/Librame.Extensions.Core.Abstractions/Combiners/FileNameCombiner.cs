@@ -86,19 +86,19 @@ namespace Librame.Extensions.Core.Combiners
 
 
         /// <summary>
-        /// 依据当前文件组合器的扩展名与指定的基础名，新建一个 <see cref="FileNameCombiner"/>。
+        /// 带有基础名。
         /// </summary>
         /// <param name="newBaseName">给定的新基础名。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
-        public FileNameCombiner NewBaseName(string newBaseName)
+        public FileNameCombiner WithBaseName(string newBaseName)
             => new FileNameCombiner(newBaseName, Extension);
 
         /// <summary>
-        /// 依据当前文件组合器的基础名与指定的扩展名，新建一个 <see cref="FileNameCombiner"/>。
+        /// 带有扩展名。
         /// </summary>
         /// <param name="newExtension">给定的新扩展名。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
-        public FileNameCombiner NewExtension(string newExtension)
+        public FileNameCombiner WithExtension(string newExtension)
             => new FileNameCombiner(BaseName, newExtension);
 
 

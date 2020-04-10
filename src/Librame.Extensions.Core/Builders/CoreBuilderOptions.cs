@@ -38,6 +38,7 @@ namespace Librame.Extensions.Core.Builders
         /// 是 UTC 时钟。
         /// </summary>
         public bool IsUtcClock { get; set; }
+            = true;
 
         /// <summary>
         /// 线程数（默认为当前 CPU 线程数）。

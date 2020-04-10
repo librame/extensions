@@ -86,7 +86,7 @@ namespace Librame.Extensions
         /// <summary>
         /// 是否已实现某个接口类型。
         /// </summary>
-        /// <typeparam name="TInterface">指定的接口类型（支持泛型定义类型）。</typeparam>
+        /// <typeparam name="TInterface">指定的接口类型（支持泛型类型定义）。</typeparam>
         /// <param name="type">给定的当前类型。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
@@ -96,7 +96,7 @@ namespace Librame.Extensions
         /// <summary>
         /// 是否已实现某个接口类型。
         /// </summary>
-        /// <typeparam name="TInterface">指定的接口类型（支持泛型定义类型）。</typeparam>
+        /// <typeparam name="TInterface">指定的接口类型（支持泛型类型定义）。</typeparam>
         /// <param name="type">给定的当前类型。</param>
         /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
         /// <returns>返回布尔值。</returns>
@@ -108,7 +108,7 @@ namespace Librame.Extensions
         /// 是否已实现某个接口类型。
         /// </summary>
         /// <param name="type">给定的当前类型。</param>
-        /// <param name="interfaceType">给定的接口类型（支持泛型定义类型）。</param>
+        /// <param name="interfaceType">给定的接口类型（支持泛型类型定义）。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool IsImplementedInterface(this Type type, Type interfaceType)
@@ -118,7 +118,7 @@ namespace Librame.Extensions
         /// 是否已实现某个接口类型。
         /// </summary>
         /// <param name="type">给定的当前类型。</param>
-        /// <param name="interfaceType">给定的接口类型（支持泛型定义类型）。</param>
+        /// <param name="interfaceType">给定的接口类型（支持泛型类型定义）。</param>
         /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
@@ -187,15 +187,17 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的名称。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
         public static string GetGenericBodyName(this Type type)
         {
-            type.NotNull(nameof(type));
+            return GetOnlyName(type?.Name);
 
-            if (type.IsGenericType)
-                return type.Name.SplitPair('`').Key;
+            string GetOnlyName(string typeName)
+            {
+                if (typeName.CompatibleContains('`'))
+                    return typeName.SplitPair('`').Key;
 
-            return type.Name;
+                return typeName;
+            }
         }
 
 
@@ -234,24 +236,28 @@ namespace Librame.Extensions
         /// 获取显示名称（即 Type.Name。如：泛类型 IDictionary{string, IList{string}} 的名称为 IDictionary`2[String, IList`1[String]]）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
+        /// <param name="onlyGenericBodyName">仅有泛型主体名称，如果指定类型为泛型时可用（可选；默认 False。如 IDictionary`2[String, IList`1[String]] 的泛型主体名称为 IDictionary）。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetDisplayName(this Type type)
-            => type.GetDisplayString(t => t.Name);
+        public static string GetDisplayName(this Type type, bool onlyGenericBodyName = false)
+            => type.GetDisplayString(t => onlyGenericBodyName ? t.GetGenericBodyName() : t.Name);
 
         /// <summary>
         /// 获取带命名空间的显示名称（如：泛类型 IDictionary{string, IList{string}} 的名称为 System.Collections.Generic.IDictionary`2[System.String, System.Collections.Generic.IList`1[System.String]]）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
+        /// <param name="onlyGenericBodyName">仅有泛型主体名称，如果指定类型为泛型时可用（可选；默认 False。如 IDictionary`2[String, IList`1[String]] 的泛型主体名称为 IDictionary）。</param>
         /// <returns>返回字符串。</returns>
-        public static string GetDisplayNameWithNamespace(this Type type)
+        public static string GetDisplayNameWithNamespace(this Type type, bool onlyGenericBodyName = false)
         {
             return type.GetDisplayString(t =>
             {
+                var name = onlyGenericBodyName ? t.GetGenericBodyName() : t.Name;
+
                 if (!t.IsNested)
-                    return $"{t.Namespace}.{t.Name}";
+                    return $"{t.Namespace}.{name}";
 
                 // 支持嵌套类型：t.ReflectedType == t.DeclaringType
-                return $"{t.Namespace}.{t.ReflectedType.GetDisplayName()}+{t.Name}";
+                return $"{t.Namespace}.{t.ReflectedType.GetDisplayName()}+{name}";
             });
         }
 

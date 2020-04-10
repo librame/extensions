@@ -8,13 +8,27 @@ namespace Librame.Extensions.Core.Tests
     public class RandomUtilityTests
     {
         [Fact]
-        public void AllTest()
+        public void GenerateByteArrayTest()
         {
-            var buffer = RandomUtility.GenerateNumber(16);
+            var buffer = RandomUtility.GenerateByteArray(16);
             Assert.NotEmpty(buffer);
 
             var g = new Guid(buffer);
             Assert.NotEmpty(g.ToString());
+        }
+
+
+        [Fact]
+        public void RandomStringsTest()
+        {
+            var pairs = RandomUtility.GenerateStrings(20);
+            Assert.NotEmpty(pairs);
+
+            pairs = RandomUtility.GenerateStrings(20, hasSpecial: true);
+            foreach (var p in pairs)
+            {
+                Assert.True(p.Key.HasAlgorithmSpecial());
+            }
         }
 
     }

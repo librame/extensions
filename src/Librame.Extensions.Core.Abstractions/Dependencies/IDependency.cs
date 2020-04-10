@@ -36,5 +36,10 @@ namespace Librame.Extensions.Core.Dependencies
         /// 依赖配置。
         /// </summary>
         IConfiguration Configuration { get; set; }
+
+        /// <summary>
+        /// 依赖配置根。
+        /// </summary>
+        IConfigurationRoot ConfigurationRoot { get; set; }
     }
 }

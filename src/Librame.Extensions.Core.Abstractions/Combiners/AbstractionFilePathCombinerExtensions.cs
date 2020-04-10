@@ -151,8 +151,8 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="newBasePathFactory">给定的新基础路径工厂方法（输入参数为当前基础路径）。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
-        public static FilePathCombiner NewBasePath(this FilePathCombiner combiner, Func<string, string> newBasePathFactory)
-            => combiner.NotNull(nameof(combiner)).NewBasePath(newBasePathFactory?.Invoke(combiner.BasePath));
+        public static FilePathCombiner WithBasePath(this FilePathCombiner combiner, Func<string, string> newBasePathFactory)
+            => combiner.NotNull(nameof(combiner)).WithBasePath(newBasePathFactory?.Invoke(combiner.BasePath));
 
         /// <summary>
         /// 依据当前文件组合器的基础路径与指定的文件名，新建一个 <see cref="FilePathCombiner"/>。
@@ -161,8 +161,8 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
-        public static FilePathCombiner NewFileName(this FilePathCombiner combiner, Func<FileNameCombiner, string> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner)).NewFileName(newFileNameFactory?.Invoke(combiner.FileName));
+        public static FilePathCombiner WithFileName(this FilePathCombiner combiner, Func<FileNameCombiner, string> newFileNameFactory)
+            => combiner.NotNull(nameof(combiner)).WithFileName(newFileNameFactory?.Invoke(combiner.FileName));
 
         /// <summary>
         /// 依据当前文件组合器的基础路径与指定的文件名，新建一个 <see cref="FilePathCombiner"/>。
@@ -171,8 +171,8 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
-        public static FilePathCombiner NewFileName(this FilePathCombiner combiner, Func<FileNameCombiner, FileNameCombiner> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner)).NewFileName(newFileNameFactory?.Invoke(combiner.FileName));
+        public static FilePathCombiner WithFileName(this FilePathCombiner combiner, Func<FileNameCombiner, FileNameCombiner> newFileNameFactory)
+            => combiner.NotNull(nameof(combiner)).WithFileName(newFileNameFactory?.Invoke(combiner.FileName));
 
 
         /// <summary>

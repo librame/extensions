@@ -29,7 +29,7 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个 <see cref="AbstractEntity{TId}"/> 默认实例。
         /// </summary>
-        public AbstractEntity()
+        protected AbstractEntity()
         {
             Rank = DataDefaults.Rank;
             Status = DataDefaults.Status;

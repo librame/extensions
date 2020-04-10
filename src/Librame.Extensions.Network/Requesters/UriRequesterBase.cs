@@ -39,15 +39,15 @@ namespace Librame.Extensions.Network.Requesters
 
 
         /// <summary>
-        /// 服务优先级（数值越小越优先）。
-        /// </summary>
-        public float Priority { get; set; }
-
-        /// <summary>
         /// 字节编解码器。
         /// </summary>
         /// <value>返回 <see cref="IByteCodecService"/>。</value>
         public IByteCodecService ByteCodec { get; }
+
+        /// <summary>
+        /// 服务优先级（数值越小越优先）。
+        /// </summary>
+        public float Priority { get; set; }
 
 
         /// <summary>

@@ -12,8 +12,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -27,7 +25,6 @@ namespace Librame.Extensions.Data.Aspects
     using Core.Mediators;
     using Core.Services;
     using Data.Accessors;
-    using Data.Builders;
     using Data.Mediators;
     using Data.Schemas;
     using Data.Stores;
@@ -56,13 +53,9 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个数据审计保存变化访问器截面。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="IStoreIdentifier"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public DataAuditSaveChangesDbContextAccessorAspect(IClockService clock, IStoreIdentifier identifier,
-            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, identifier, options, loggerFactory, priority: 1)
+        /// <param name="dependencies">给定的 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</param>
+        public DataAuditSaveChangesDbContextAccessorAspect(DbContextAccessorAspectDependencies<TGenId> dependencies)
+            : base(dependencies, priority: 1)
         {
         }
 
@@ -160,7 +153,7 @@ namespace Librame.Extensions.Data.Aspects
             var audit = typeof(TAudit).EnsureCreate<TAudit>();
             audit.Id = GetAuditId(cancellationToken);
             audit.TableName = GetTableName(entry);
-            audit.EntityTypeName = entry.Metadata.ClrType.GetDisplayNameWithNamespace();
+            audit.EntityTypeName = EntityPopulator.FormatTypeName(entry.Metadata.ClrType);
             audit.State = (int)entry.State;
             audit.StateName = entry.State.ToString();
 
@@ -176,7 +169,7 @@ namespace Librame.Extensions.Data.Aspects
                 var auditProperty = typeof(TAuditProperty).EnsureCreate<TAuditProperty>();
                 auditProperty.AuditId = audit.Id;
                 auditProperty.PropertyName = property.Name;
-                auditProperty.PropertyTypeName = property.ClrType.GetDisplayNameWithNamespace();
+                auditProperty.PropertyTypeName = EntityPopulator.FormatTypeName(property.ClrType);
 
                 switch (entry.State)
                 {
@@ -220,7 +213,7 @@ namespace Librame.Extensions.Data.Aspects
             else
             {
                 // 使用当前时间
-                audit.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true,
+                audit.CreatedTime = Dependencies.Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true,
                     cancellationToken).ConfigureAndResult();
             }
 
@@ -235,10 +228,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <typeparamref name="TGenId"/>。</returns>
         protected virtual TGenId GetAuditId(CancellationToken cancellationToken)
-        {
-            var auditId = Identifier.GetAuditIdAsync().ConfigureAndResult();
-            return auditId.CastTo<string, TGenId>(nameof(auditId));
-        }
+            => Dependencies.Identifier.GetAuditIdAsync().ConfigureAndResult();
 
         /// <summary>
         /// 获取表名。
@@ -247,7 +237,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <returns>返回字符串。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "entry")]
         protected virtual string GetTableName(EntityEntry entry)
-            => new TableNameSchema(entry.Metadata.GetTableName(), entry.Metadata.GetSchema());
+            => new TableDescriptor(entry.Metadata.GetTableName(), entry.Metadata.GetSchema());
 
         /// <summary>
         /// 获取实体标识。
@@ -273,7 +263,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             if (dt.IsNull())
             {
-                return Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true,
+                return Dependencies.Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true,
                     cancellationToken).ConfigureAndResult();
             }
 

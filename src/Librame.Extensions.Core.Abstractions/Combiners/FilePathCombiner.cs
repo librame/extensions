@@ -126,7 +126,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="newBasePath">给定的新基础路径。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        public FilePathCombiner NewBasePath(string newBasePath)
+        public FilePathCombiner WithBasePath(string newBasePath)
             => new FilePathCombiner(FileName, newBasePath);
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="newFileName">给定的新文件名。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        public FilePathCombiner NewFileName(string newFileName)
+        public FilePathCombiner WithFileName(string newFileName)
             => new FilePathCombiner(newFileName, BasePath);
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="newFileName">给定的新 <see cref="FileNameCombiner"/>。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        public FilePathCombiner NewFileName(FileNameCombiner newFileName)
+        public FilePathCombiner WithFileName(FileNameCombiner newFileName)
             => new FilePathCombiner(newFileName, BasePath);
 
 

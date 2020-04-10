@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,7 +22,7 @@ namespace Librame.Extensions.Core.Builders
     /// <summary>
     /// 核心构建器依赖。
     /// </summary>
-    public class CoreBuilderDependency : AbstractExtensionBuilderDependency<CoreBuilderOptions>, IDependencyRoot
+    public class CoreBuilderDependency : AbstractExtensionBuilderDependency<CoreBuilderOptions>
     {
         /// <summary>
         /// 构造一个 <see cref="CoreBuilderDependency"/>。
@@ -32,14 +31,6 @@ namespace Librame.Extensions.Core.Builders
             : base(nameof(CoreBuilderDependency))
         {
         }
-
-
-        /// <summary>
-        /// 依赖配置根。
-        /// </summary>
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public IConfigurationRoot ConfigurationRoot { get; set; }
 
 
         /// <summary>

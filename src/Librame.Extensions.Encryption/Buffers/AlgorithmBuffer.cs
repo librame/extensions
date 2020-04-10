@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace Librame.Extensions.Encryption.Buffers
 {
-    internal class AlgorithmBuffer : IAlgorithmBuffer, IEquatable<AlgorithmBuffer>
+    internal class AlgorithmBuffer : IAlgorithmBuffer
     {
         private byte[] _buffer;
 
@@ -45,8 +45,16 @@ namespace Librame.Extensions.Encryption.Buffers
         }
 
 
-        public bool Equals(AlgorithmBuffer other)
+        private bool Equals(AlgorithmBuffer other)
             => _buffer.SequenceEqual(other?._buffer);
+
+        public bool Equals(IAlgorithmBuffer other)
+        {
+            if (other is AlgorithmBuffer buffer)
+                return Equals(buffer);
+
+            return _buffer.SequenceEqual(other.CurrentBuffer.ToArray());
+        }
 
         public override bool Equals(object obj)
             => obj is AlgorithmBuffer other ? Equals(other) : false;

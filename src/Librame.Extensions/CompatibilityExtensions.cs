@@ -33,6 +33,8 @@ namespace Librame.Extensions
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
         public static bool CompatibleContains(this string str, char value)
         {
+            str.NotNull(nameof(str));
+
             #if !NET48
                 return str.Contains(value, StringComparison.OrdinalIgnoreCase);
             #else
@@ -49,6 +51,8 @@ namespace Librame.Extensions
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
         public static bool CompatibleContains(this string str, string value)
         {
+            str.NotNull(nameof(str));
+
             #if !NET48
                 return str.Contains(value, StringComparison.OrdinalIgnoreCase);
             #else
@@ -65,6 +69,8 @@ namespace Librame.Extensions
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
         public static int CompatibleGetHashCode(this string str)
         {
+            str.NotNull(nameof(str));
+
             #if !NET48
                 return str.GetHashCode(StringComparison.OrdinalIgnoreCase);
             #else
@@ -82,6 +88,8 @@ namespace Librame.Extensions
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
         public static int CompatibleIndexOf(this string str, char value)
         {
+            str.NotNull(nameof(str));
+
             #if !NET48
                 return str.IndexOf(value, StringComparison.OrdinalIgnoreCase);
             #else
@@ -115,6 +123,8 @@ namespace Librame.Extensions
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
         public static bool CompatibleStartsWith(this string str, char value)
         {
+            str.NotNull(nameof(str));
+
             #if !NET48
                 return str.StartsWith(value);
             #else
@@ -147,6 +157,8 @@ namespace Librame.Extensions
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
         public static bool CompatibleEndsWith(this string str, char value)
         {
+            str.NotNull(nameof(str));
+
             #if !NET48
                 return str.EndsWith(value);
             #else
@@ -180,10 +192,32 @@ namespace Librame.Extensions
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
         public static string[] CompatibleSplit(this string str, string value)
         {
+            str.NotNull(nameof(str));
+
             #if !NET48
                 return str.Split(value);
             #else
                 return Regex.Split(str, Regex.Escape(value), RegexOptions.IgnoreCase);
+            #endif
+        }
+
+
+        /// <summary>
+        /// 替换。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="oldValue">给定的旧值。</param>
+        /// <param name="newValue">给定的新值。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
+        public static string CompatibleReplace(this string str, string oldValue, string newValue)
+        {
+            str.NotNull(nameof(str));
+
+            #if !NET48
+                return str.Replace(oldValue, newValue, StringComparison.OrdinalIgnoreCase);
+            #else
+                return str.Replace(oldValue, newValue);
             #endif
         }
 
@@ -200,24 +234,6 @@ namespace Librame.Extensions
                 return string.Join(separator, values);
             #else
                 return string.Join(separator.ToString(CultureInfo.InvariantCulture), values);
-            #endif
-        }
-
-
-        /// <summary>
-        /// 替换。
-        /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="oldValue">给定的旧值。</param>
-        /// <param name="newValue">给定的新值。</param>
-        /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
-        public static string CompatibleReplace(this string str, string oldValue, string newValue)
-        {
-            #if !NET48
-                return str.Replace(oldValue, newValue, StringComparison.OrdinalIgnoreCase);
-            #else
-                return str.Replace(oldValue, newValue);
             #endif
         }
 

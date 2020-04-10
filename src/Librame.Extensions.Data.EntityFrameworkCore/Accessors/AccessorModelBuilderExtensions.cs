@@ -16,8 +16,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data.Accessors
 {
-    using Builders;
-    using Schemas;
     using Stores;
 
     /// <summary>
@@ -36,10 +34,10 @@ namespace Librame.Extensions.Data.Accessors
         /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
+        /// <param name="accessor">给定的数据库上下文访问器。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void ConfigureDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-            (this ModelBuilder modelBuilder, DataBuilderOptions options)
+            (this ModelBuilder modelBuilder, DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> accessor)
             where TAudit : DataAudit<TGenId>
             where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
             where TEntity : DataEntity<TGenId>
@@ -49,124 +47,136 @@ namespace Librame.Extensions.Data.Accessors
             where TIncremId : IEquatable<TIncremId>
         {
             modelBuilder.NotNull(nameof(modelBuilder));
-            options.NotNull(nameof(options));
+            accessor.NotNull(nameof(accessor));
 
-            if (options.Tables.DefaultSchema.IsNotEmpty())
-                modelBuilder.HasDefaultSchema(options.Tables.DefaultSchema);
+            if (accessor.BuilderOptions.Tables.DefaultSchema.IsNotEmpty())
+                modelBuilder.HasDefaultSchema(accessor.BuilderOptions.Tables.DefaultSchema);
 
-            var mapRelationship = options.Stores?.MapRelationship ?? true;
-            var maxLength = options.Stores?.MaxLengthForProperties ?? 0;
+            var maxLength = accessor.BuilderOptions.Stores.MaxLengthForProperties;
 
             // 审计
             modelBuilder.Entity<TAudit>(b =>
             {
-                b.ToTable(options.Tables.AuditFactory);
-
+                b.ToTable(table =>
+                {
+                    table.Configure(accessor.BuilderOptions.Tables.Audit);
+                });
+                
                 b.HasKey(k => k.Id);
-
+                
                 b.HasIndex(i => new { i.EntityTypeName, i.State }).HasName();
 
-                b.Property(p => p.Id).HasMaxLength(256);
-                b.Property(p => p.EntityTypeName).HasMaxLength(256).IsRequired();
-                
                 if (maxLength > 0)
                 {
-                    b.Property(p => p.TableName).HasMaxLength(maxLength);
+                    b.Property(p => p.Id).HasMaxLength(maxLength);
                     b.Property(p => p.EntityId).HasMaxLength(maxLength);
+                    b.Property(p => p.TableName).HasMaxLength(maxLength);
                     b.Property(p => p.StateName).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
-                    b.Property(p => p.CreatedTimeTicks).HasMaxLength(maxLength);
+
+                    // 在 MySQL 中如果长度超出 255 会被转换为不能作为主键或唯一性约束 的 BLOB/TEXT 类型
+                    b.Property(p => p.EntityTypeName).HasMaxLength(maxLength).IsRequired();
                 }
             });
 
             // 审计属性
             modelBuilder.Entity<TAuditProperty>(b =>
             {
-                // 按年份季度分表
-                b.ToTable(descr => descr.ChangeDateOffsetSuffixByYearQuarter(),
-                    options.Tables.AuditPropertyFactory);
+                b.ToTable(table =>
+                {
+                    // 按年月分表
+                    table.AppendYearAndMonthSuffix(accessor.CurrentTimestamp)
+                        .Configure(accessor.BuilderOptions.Tables.AuditProperty);
+                });
 
                 b.HasKey(k => k.Id);
 
                 b.HasIndex(i => new { i.AuditId }).HasName();
 
-                b.Property(p => p.Id).HasMaxLength(256).ValueGeneratedOnAdd();
-                b.Property(p => p.AuditId).HasMaxLength(256).IsRequired();
+                b.Property(p => p.Id).ValueGeneratedOnAdd();
 
                 if (maxLength > 0)
                 {
+                    b.Property(p => p.AuditId).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.PropertyName).HasMaxLength(maxLength);
                     b.Property(p => p.PropertyTypeName).HasMaxLength(maxLength);
                 }
+
+                // MaxLength
+                b.Property(p => p.OldValue);
+                b.Property(p => p.NewValue);
             });
 
             // 实体
             modelBuilder.Entity<TEntity>(b =>
             {
-                b.ToTable(options.Tables.EntityFactory);
+                b.ToTable(table =>
+                {
+                    table.Configure(accessor.BuilderOptions.Tables.Entity);
+                });
 
                 b.HasKey(k => k.Id);
 
                 b.HasIndex(i => new { i.Schema, i.Name }).HasName().IsUnique();
 
-                b.Property(p => p.Id).HasMaxLength(256);
-                b.Property(p => p.Schema).HasMaxLength(256).IsRequired();
-                b.Property(p => p.Name).HasMaxLength(256).IsRequired();
-                b.Property(p => p.IsSharding).HasDefaultValue(false);
-
                 if (maxLength > 0)
                 {
+                    b.Property(p => p.Id).HasMaxLength(maxLength);
+                    b.Property(p => p.Schema).HasMaxLength(maxLength).IsRequired();
+                    b.Property(p => p.Name).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.EntityName).HasMaxLength(maxLength);
                     b.Property(p => p.AssemblyName).HasMaxLength(maxLength);
                     b.Property(p => p.Description).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
-                    b.Property(p => p.CreatedTimeTicks).HasMaxLength(maxLength);
                 }
+
+                b.Property(p => p.IsSharding).HasDefaultValue(false);
             });
 
             // 迁移
             modelBuilder.Entity<TMigration>(b =>
             {
-                b.ToTable(options.Tables.MigrationFactory);
+                b.ToTable(table =>
+                {
+                    table.Configure(accessor.BuilderOptions.Tables.Migration);
+                });
 
                 b.HasKey(k => k.Id);
 
                 // 不做唯一索引
                 b.HasIndex(i => i.ModelHash).HasName();
 
-                b.Property(p => p.Id).HasMaxLength(256);
-                b.Property(p => p.ModelHash).HasMaxLength(256).IsRequired();
-
                 if (maxLength > 0)
                 {
+                    b.Property(p => p.Id).HasMaxLength(maxLength);
+                    b.Property(p => p.ModelHash).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.AccessorName).HasMaxLength(maxLength);
                     b.Property(p => p.ModelSnapshotName).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
-                    b.Property(p => p.CreatedTimeTicks).HasMaxLength(maxLength);
                 }
             });
 
             // 租户
             modelBuilder.Entity<TTenant>(b =>
             {
-                b.ToTable(options.Tables.TenantFactory);
+                b.ToTable(table =>
+                {
+                    table.Configure(accessor.BuilderOptions.Tables.Tenant);
+                });
 
                 b.HasKey(k => k.Id);
 
                 b.HasIndex(i => new { i.Name, i.Host }).HasName().IsUnique();
 
-                b.Property(p => p.Id).HasMaxLength(256);
-                b.Property(p => p.Name).HasMaxLength(256).IsRequired();
-                b.Property(p => p.Host).HasMaxLength(256).IsRequired();
-
                 if (maxLength > 0)
                 {
+                    b.Property(p => p.Id).HasMaxLength(maxLength);
+                    b.Property(p => p.Name).HasMaxLength(maxLength).IsRequired();
+                    b.Property(p => p.Host).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.DefaultConnectionString).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.WritingConnectionString).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
-                    b.Property(p => p.CreatedTimeTicks).HasMaxLength(maxLength);
                     b.Property(p => p.UpdatedBy).HasMaxLength(maxLength);
-                    b.Property(p => p.UpdatedTimeTicks).HasMaxLength(maxLength);
                 }
             });
         }

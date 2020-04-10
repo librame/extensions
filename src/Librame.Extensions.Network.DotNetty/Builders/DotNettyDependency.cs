@@ -22,8 +22,9 @@ namespace Librame.Extensions.Network.Builders
         /// <summary>
         /// 构造一个 <see cref="DotNettyDependency"/>。
         /// </summary>
-        public DotNettyDependency()
-            : base(nameof(DotNettyDependency))
+        /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
+        public DotNettyDependency(IExtensionBuilderDependency parentDependency = null)
+            : base(nameof(DotNettyDependency), parentDependency)
         {
         }
 

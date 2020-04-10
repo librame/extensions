@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -22,20 +21,16 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network.Services
 {
-    using Core.Builders;
-    using Network.Builders;
-
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class EmailService : NetworkServiceBase, IEmailService
     {
         private readonly IByteCodecService _byteCodec;
 
 
-        public EmailService(IByteCodecService byteCodec, IOptions<CoreBuilderOptions> coreOptions,
-            IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(coreOptions, options, loggerFactory)
+        public EmailService(IByteCodecService byteCodec)
+            : base(byteCodec.CastTo<IByteCodecService, NetworkServiceBase>(nameof(byteCodec)))
         {
-            _byteCodec = byteCodec.NotNull(nameof(byteCodec));
+            _byteCodec = byteCodec;
 
             SendCompletedCallback = (sender, e) =>
             {

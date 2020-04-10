@@ -17,7 +17,6 @@ using System.ComponentModel.DataAnnotations;
 namespace Librame.Extensions.Data.Stores
 {
     using Resources;
-    using Schemas;
 
     /// <summary>
     /// 数据实体。
@@ -94,6 +93,6 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => new TableNameSchema(Name, Schema).ToString();
+            => new TableDescriptor(Name, Schema);
     }
 }

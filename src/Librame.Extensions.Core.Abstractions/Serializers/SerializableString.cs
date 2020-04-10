@@ -103,6 +103,14 @@ namespace Librame.Extensions.Core.Serializers
 
 
         /// <summary>
+        /// 转换为来源实例。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TSource"/>。</returns>
+        public TSource ToTSource()
+            => Source;
+
+
+        /// <summary>
         /// 是否相等。
         /// </summary>
         /// <param name="other">给定的 <see cref="SerializableString{TSource}"/>。</param>
@@ -155,10 +163,17 @@ namespace Librame.Extensions.Core.Serializers
 
 
         /// <summary>
+        /// 隐式转换为来源实例。
+        /// </summary>
+        /// <param name="serializable">给定的 <see cref="SerializableString{TSource}"/>。</param>
+        public static implicit operator TSource(SerializableString<TSource> serializable)
+            => serializable.NotNull(nameof(serializable)).ToTSource();
+
+        /// <summary>
         /// 隐式转换为字符串形式。
         /// </summary>
-        /// <param name="value">给定的 <see cref="SerializableString{TSource}"/>。</param>
-        public static implicit operator string(SerializableString<TSource> value)
-            => value?.ToString();
+        /// <param name="serializable">给定的 <see cref="SerializableString{TSource}"/>。</param>
+        public static implicit operator string(SerializableString<TSource> serializable)
+            => serializable?.ToString();
     }
 }

@@ -43,6 +43,11 @@ namespace Librame.Extensions.Data.Accessors
 
 
         /// <summary>
+        /// 当前时间戳。
+        /// </summary>
+        DateTimeOffset CurrentTimestamp { get; }
+
+        /// <summary>
         /// 当前类型。
         /// </summary>
         Type CurrentType { get; }

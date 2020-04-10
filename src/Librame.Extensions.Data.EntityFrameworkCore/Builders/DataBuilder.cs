@@ -11,6 +11,7 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Librame.Extensions.Data.Builders
 {
@@ -24,5 +25,7 @@ namespace Librame.Extensions.Data.Builders
             Services.AddSingleton<IDataBuilder>(this);
         }
 
+
+        public Type DatabaseDesignTimeType { get; internal set; }
     }
 }

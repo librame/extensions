@@ -49,7 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IDataBuilder AddData<TDependency>(this IExtensionBuilder parentBuilder,
             Action<TDependency> configureDependency = null,
             Func<IExtensionBuilder, TDependency, IDataBuilder> builderFactory = null)
-            where TDependency : DataBuilderDependency, new()
+            where TDependency : DataBuilderDependency
         {
             parentBuilder.NotNull(nameof(parentBuilder));
 
@@ -80,12 +80,16 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
-        public static IDataBuilder AddDbDesignTime<TDesignTime>(this IDataBuilder builder)
+        public static IDataBuilder AddDatabaseDesignTime<TDesignTime>(this IDataBuilder builder)
             where TDesignTime : class, IDesignTimeServices
         {
             builder.NotNull(nameof(builder));
 
             var designTimeType = typeof(TDesignTime);
+
+            if (builder is DataBuilder dataBuilder)
+                dataBuilder.DatabaseDesignTimeType = designTimeType;
+
             var designTime = designTimeType.EnsureCreate<TDesignTime>();
             designTime.ConfigureDesignTimeServices(builder.Services);
 

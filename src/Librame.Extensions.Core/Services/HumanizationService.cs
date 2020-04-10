@@ -39,7 +39,7 @@ namespace Librame.Extensions.Core.Services
 
         public Task<string> HumanizeAsync(DateTime dateTime, CancellationToken cancellationToken = default)
         {
-            return Locker.WaitFactory(() =>
+            return Locker.WaitFactoryAsync(() =>
             {
                 return cancellationToken.RunFactoryOrCancellationAsync(() =>
                 {
@@ -57,7 +57,7 @@ namespace Librame.Extensions.Core.Services
 
         public Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset, CancellationToken cancellationToken = default)
         {
-            return Locker.WaitFactory(() =>
+            return Locker.WaitFactoryAsync(() =>
             {
                 return cancellationToken.RunFactoryOrCancellationAsync(() =>
                 {

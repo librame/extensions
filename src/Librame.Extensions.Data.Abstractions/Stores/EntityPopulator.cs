@@ -33,6 +33,31 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
+        /// 格式化类型名称。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <returns>返回字符串。</returns>
+        public static string FormatTypeName<T>()
+            => FormatTypeName(typeof(T));
+
+        /// <summary>
+        /// 格式化类型名称。
+        /// </summary>
+        /// <param name="referenceType">给定的引用类型。</param>
+        /// <param name="viewMaxLength">查看的最大长度。</param>
+        /// <returns>返回字符串。</returns>
+        public static string FormatTypeName(Type referenceType, int viewMaxLength = 100)
+        {
+            var name = referenceType.GetDisplayNameWithNamespace();
+
+            if (name.Length > viewMaxLength)
+                name = $"{referenceType.GetGenericBodyName()}...";
+
+            return name;
+        }
+
+
+        /// <summary>
         /// 异步填充创建属性（此方法需确保创建者属性类型为字符串类型）。
         /// </summary>
         /// <typeparam name="TInvoke">指定的调用类型。</typeparam>
@@ -44,7 +69,7 @@ namespace Librame.Extensions.Data.Stores
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static Task<bool> PopulateCreationAsync<TInvoke>(IClockService clock, object entity,
             bool? isUtc = null, CancellationToken cancellationToken = default)
-            => PopulateCreationAsync(clock, entity, typeof(TInvoke).GetDisplayName(), isUtc, cancellationToken);
+            => PopulateCreationAsync(clock, entity, FormatTypeName<TInvoke>(), isUtc, cancellationToken);
 
         /// <summary>
         /// 异步填充创建属性。
@@ -116,7 +141,7 @@ namespace Librame.Extensions.Data.Stores
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static Task<bool> PopulateUpdationAsync<TInvoke>(IClockService clock, object entity,
             bool? isUtc = null, CancellationToken cancellationToken = default)
-            => PopulateUpdationAsync(clock, entity, typeof(TInvoke).GetDisplayName(), isUtc, cancellationToken);
+            => PopulateUpdationAsync(clock, entity, FormatTypeName<TInvoke>(), isUtc, cancellationToken);
 
         /// <summary>
         /// 异步填充更新属性。

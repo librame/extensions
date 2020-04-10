@@ -47,7 +47,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IStorageBuilder AddStorage<TDependency>(this IExtensionBuilder parentBuilder,
             Action<TDependency> configureDependency = null,
             Func<IExtensionBuilder, TDependency, IStorageBuilder> builderFactory = null)
-            where TDependency : StorageBuilderDependency, new()
+            where TDependency : StorageBuilderDependency
         {
             parentBuilder.NotNull(nameof(parentBuilder));
 

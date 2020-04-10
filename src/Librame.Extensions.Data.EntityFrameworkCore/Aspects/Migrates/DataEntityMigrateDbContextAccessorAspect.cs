@@ -12,8 +12,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +25,6 @@ namespace Librame.Extensions.Data.Aspects
     using Core.Mediators;
     using Core.Services;
     using Data.Accessors;
-    using Data.Builders;
     using Data.Mediators;
     using Data.Stores;
 
@@ -52,20 +49,19 @@ namespace Librame.Extensions.Data.Aspects
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
+        private readonly string _createdBy;
+
         private List<TEntity> _cache = new List<TEntity>();
 
 
         /// <summary>
         /// 构造一个数据实体迁移数据库上下文访问器截面。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="IStoreIdentifier"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public DataEntityMigrateDbContextAccessorAspect(IClockService clock, IStoreIdentifier identifier,
-            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, identifier, options, loggerFactory, priority: 2)
+        /// <param name="dependencies">给定的 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</param>
+        public DataEntityMigrateDbContextAccessorAspect(DbContextAccessorAspectDependencies<TGenId> dependencies)
+            : base(dependencies, priority: 2)
         {
+            _createdBy = EntityPopulator.FormatTypeName(GetType());
         }
 
 
@@ -100,8 +96,7 @@ namespace Librame.Extensions.Data.Aspects
             if (!dbContextAccessor.IsWritingRequest())
                 return;
 
-            EntityNotification<TEntity, TGenId> notification = null;
-
+            var notification = new EntityNotification<TEntity, TGenId>();
             var result = GetDifference(dbContextAccessor);
 
             if (result.Adds.IsNotEmpty())
@@ -110,8 +105,7 @@ namespace Librame.Extensions.Data.Aspects
                 _cache.AddRange(result.Adds);
 
                 RequireSaving = true;
-
-                notification = new EntityNotification<TEntity, TGenId> { Adds = result.Adds };
+                notification.Adds = result.Adds;
             }
 
             if (result.Updates.IsNotEmpty())
@@ -121,8 +115,7 @@ namespace Librame.Extensions.Data.Aspects
                 _cache.AddRange(result.Updates);
 
                 RequireSaving = true;
-
-                notification = new EntityNotification<TEntity, TGenId> { Updates = result.Updates };
+                notification.Updates = result.Updates;
             }
 
             if (result.Removes.IsNotEmpty())
@@ -131,14 +124,10 @@ namespace Librame.Extensions.Data.Aspects
                 result.Removes.ForEach(item => _cache.Remove(item));
 
                 RequireSaving = true;
-
-                if (notification.IsNull())
-                    notification = new EntityNotification<TEntity, TGenId> { Removes = result.Removes };
-                else
-                    notification.Removes = result.Removes;
+                notification.Removes = result.Removes;
             }
 
-            if (notification.IsNotNull())
+            if (RequireSaving)
             {
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 mediator.Publish(notification).ConfigureAndWait();
@@ -159,18 +148,26 @@ namespace Librame.Extensions.Data.Aspects
             if (!dbContextAccessor.IsWritingRequest())
                 return;
 
-            EntityNotification<TEntity, TGenId> notification = null;
-
+            var notification = new EntityNotification<TEntity, TGenId>();
             var result = GetDifference(dbContextAccessor, cancellationToken);
+
             if (result.Adds.IsNotEmpty())
             {
                 await dbContextAccessor.Entities.AddRangeAsync(result.Adds, cancellationToken).ConfigureAndWaitAsync();
                 _cache.AddRange(result.Adds);
 
                 RequireSaving = true;
+                notification.Adds = result.Adds;
+            }
 
-                if (notification.IsNull())
-                    notification = new EntityNotification<TEntity, TGenId> { Adds = result.Adds };
+            if (result.Updates.IsNotEmpty())
+            {
+                dbContextAccessor.Entities.UpdateRange(result.Updates);
+                result.Updates.ForEach(item => _cache.Remove(item));
+                _cache.AddRange(result.Updates);
+
+                RequireSaving = true;
+                notification.Updates = result.Updates;
             }
 
             if (result.Removes.IsNotEmpty())
@@ -179,14 +176,10 @@ namespace Librame.Extensions.Data.Aspects
                 result.Removes.ForEach(item => _cache.Remove(item));
 
                 RequireSaving = true;
-
-                if (notification.IsNull())
-                    notification = new EntityNotification<TEntity, TGenId> { Removes = result.Removes };
-                else
-                    notification.Removes = result.Removes;
+                notification.Removes = result.Removes;
             }
 
-            if (notification.IsNotNull())
+            if (RequireSaving)
             {
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 await mediator.Publish(notification).ConfigureAndWaitAsync();
@@ -275,9 +268,9 @@ namespace Librame.Extensions.Data.Aspects
             entity.Id = GetEntityId(cancellationToken);
             entity.EntityName = entityType.ClrType.GetDisplayNameWithNamespace();
             entity.AssemblyName = entityType.ClrType.GetAssemblyDisplayName();
-            entity.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
+            entity.CreatedTime = Dependencies.Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
             entity.CreatedTimeTicks = entity.CreatedTime.Ticks;
-            entity.CreatedBy = GetType().GetGenericBodyName();
+            entity.CreatedBy = _createdBy;
 
             if (entityType.ClrType.TryGetCustomAttribute(out DescriptionAttribute descr)
                 && descr.Description.IsNotEmpty())
@@ -305,10 +298,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <typeparamref name="TGenId"/>。</returns>
         protected virtual TGenId GetEntityId(CancellationToken cancellationToken)
-        {
-            var entityId = Identifier.GetEntityIdAsync(cancellationToken).ConfigureAndResult();
-            return entityId.CastTo<string, TGenId>(nameof(entityId));
-        }
+            => Dependencies.Identifier.GetEntityIdAsync(cancellationToken).ConfigureAndResult();
 
         /// <summary>
         /// 设置默认表名。

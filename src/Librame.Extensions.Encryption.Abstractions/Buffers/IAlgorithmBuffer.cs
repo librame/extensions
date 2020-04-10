@@ -17,7 +17,7 @@ namespace Librame.Extensions.Encryption.Buffers
     /// <summary>
     /// 算法缓冲区接口。
     /// </summary>
-    public interface IAlgorithmBuffer
+    public interface IAlgorithmBuffer : IEquatable<IAlgorithmBuffer>
     {
         /// <summary>
         /// 服务提供程序。

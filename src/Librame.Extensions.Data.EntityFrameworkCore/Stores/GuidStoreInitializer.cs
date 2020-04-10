@@ -11,23 +11,22 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Core.Services;
-
     /// <summary>
-    /// 存储标识符。
+    /// <see cref="Guid"/> 存储初始化器。
     /// </summary>
-    public class StoreIdentifier : AbstractStoreIdentifier
+    public class GuidStoreInitializer : AbstractStoreInitializer<Guid>
     {
         /// <summary>
-        /// 构造一个 <see cref="StoreIdentifier"/>。
+        /// 构造一个存储初始化器。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="identifier">给定的 <see cref="IStoreIdentifier{Guid}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public StoreIdentifier(IClockService clock, ILoggerFactory loggerFactory)
-            : base(clock, loggerFactory)
+        protected GuidStoreInitializer(IStoreIdentifier<Guid> identifier, ILoggerFactory loggerFactory)
+            : base(identifier, loggerFactory)
         {
         }
 

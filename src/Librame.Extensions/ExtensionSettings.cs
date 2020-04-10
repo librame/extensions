@@ -24,6 +24,12 @@ namespace Librame.Extensions
     public static class ExtensionSettings
     {
         /// <summary>
+        /// 锁定器。
+        /// </summary>
+        internal static readonly object Locker
+            = new object();
+
+        /// <summary>
         /// ntdll.dll 文件名。
         /// </summary>
         public const string NtDllFileName
@@ -139,21 +145,10 @@ namespace Librame.Extensions
             = typeof(DateTimeOffset);
 
         /// <summary>
-        /// 基础日期与时间。
+        /// 基础日期与时间（1900-01-01）。
         /// </summary>
         public static readonly DateTime BaseDateTime
             = new DateTime(1900, 1, 1);
-
-        #endregion
-
-
-        #region Object Extensions
-
-        /// <summary>
-        /// 锁定器。
-        /// </summary>
-        public static readonly object Locker
-            = new object();
 
         #endregion
 

@@ -22,8 +22,9 @@ namespace Librame.Extensions.Encryption.Builders
         /// <summary>
         /// 构造一个 <see cref="EncryptionBuilderDependency"/>。
         /// </summary>
-        public EncryptionBuilderDependency()
-            : base(nameof(EncryptionBuilderDependency))
+        /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
+        public EncryptionBuilderDependency(IExtensionBuilderDependency parentDependency = null)
+            : base(nameof(EncryptionBuilderDependency), parentDependency)
         {
         }
 

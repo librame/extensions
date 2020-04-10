@@ -19,8 +19,8 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal(combiner, combiner.ChangeBasePath(@"d:\123"));
             Assert.Equal(combiner, combiner.ChangeFileName("newfile.ext"));
 
-            Assert.NotEqual(combiner, combiner.NewBasePath(@"c:\test"));
-            Assert.NotEqual(combiner, combiner.NewFileName("file.ext"));
+            Assert.NotEqual(combiner, combiner.WithBasePath(@"c:\test"));
+            Assert.NotEqual(combiner, combiner.WithFileName("file.ext"));
         }
 
     }

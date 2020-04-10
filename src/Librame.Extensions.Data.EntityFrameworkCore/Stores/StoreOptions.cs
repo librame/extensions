@@ -24,15 +24,15 @@ namespace Librame.Extensions.Data.Stores
             = true;
 
         /// <summary>
-        /// 映射关系（默认启用映射）。
+        /// 映射关系（默认不启用）。
         /// </summary>
         public bool MapRelationship { get; set; }
-            = true;
+            = false;
 
         /// <summary>
-        /// 属性的最大长度（默认不设定）。
+        /// 属性集合的最大长度（默认为 250）。
         /// </summary>
         public int MaxLengthForProperties { get; set; }
-            = 0;
+            = 250;
     }
 }

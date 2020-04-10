@@ -12,6 +12,7 @@
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core.Services
 {
@@ -29,18 +30,29 @@ namespace Librame.Extensions.Core.Services
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractExtensionBuilderService(IOptions<TBuilderOptions> options, ILoggerFactory loggerFactory)
+        protected AbstractExtensionBuilderService(IOptions<TBuilderOptions> options, ILoggerFactory loggerFactory)
+            : this(options?.Value, loggerFactory)
+        {
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="AbstractExtensionBuilderService{TBuilderOptions}"/>。
+        /// </summary>
+        /// <param name="options">给定的 <typeparamref name="TBuilderOptions"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        protected AbstractExtensionBuilderService(TBuilderOptions options, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
-            Options = options.NotNull(nameof(options)).Value;
+            Options = options.NotNull(nameof(options));
         }
 
         /// <summary>
         /// 构造一个 <see cref="AbstractExtensionBuilderService{TBuilderOptions}"/>。
         /// </summary>
         /// <param name="builderService">给定的 <see cref="AbstractExtensionBuilderService{TBuilderOptions}"/>。</param>
-        public AbstractExtensionBuilderService(AbstractExtensionBuilderService<TBuilderOptions> builderService)
-            : base(builderService?.LoggerFactory)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builderService")]
+        protected AbstractExtensionBuilderService(AbstractExtensionBuilderService<TBuilderOptions> builderService)
+            : base(builderService)
         {
             Options = builderService.Options;
         }

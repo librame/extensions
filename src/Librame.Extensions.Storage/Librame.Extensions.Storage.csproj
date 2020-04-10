@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.4.1.13</Version>
+    <Version>7.4.1.14</Version>
     <Authors>Librame</Authors>
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Storage.Abstractions on .NET Standard extension implementation.</Description>
@@ -15,12 +15,12 @@
     <PackageIcon>Librame.png</PackageIcon>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Librame,Extensions,Storage,netstandard,netcore,net</PackageTags>
+    <PackageTags>librame,extensions,storage,netstandard,netcore,net,c#</PackageTags>
     <PackageReleaseNotes>Based Librame.Extensions.Storage.Abstractions on .NET Standard extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\Librame.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.4.1.13</AssemblyVersion>
-    <FileVersion>7.4.1075.17415</FileVersion>
+    <AssemblyOriginatorKeyFile>..\..\Librame.Extensions.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyVersion>7.4.1.14</AssemblyVersion>
+    <FileVersion>7.4.1077.17415</FileVersion>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 

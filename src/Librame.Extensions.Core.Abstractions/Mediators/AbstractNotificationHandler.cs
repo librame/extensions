@@ -27,7 +27,7 @@ namespace Librame.Extensions.Core.Mediators
         /// 构造一个 <see cref="AbstractNotificationHandler{TNotification}"/>。
         /// </summary>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractNotificationHandler(ILoggerFactory loggerFactory)
+        protected AbstractNotificationHandler(ILoggerFactory loggerFactory)
         {
             LoggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
         }

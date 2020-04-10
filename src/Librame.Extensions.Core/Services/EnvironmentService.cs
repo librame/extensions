@@ -32,7 +32,7 @@ namespace Librame.Extensions.Core.Services
 
         public Task<IEnvironmentInfo> GetEnvironmentInfoAsync(CancellationToken cancellationToken = default)
         {
-            return Locker.WaitFactory(() =>
+            return Locker.WaitFactoryAsync(() =>
             {
                 return cancellationToken.RunFactoryOrCancellationAsync(() =>
                 {

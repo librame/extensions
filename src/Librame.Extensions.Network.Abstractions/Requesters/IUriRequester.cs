@@ -18,10 +18,10 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Network.Requesters
 {
     using Core.Services;
-    using Services;
+    using Network.Services;
 
     /// <summary>
-    /// URI 请求程序接口。
+    /// URI 请求器接口。
     /// </summary>
     public interface IUriRequester : INetworkService, ISortableService
     {

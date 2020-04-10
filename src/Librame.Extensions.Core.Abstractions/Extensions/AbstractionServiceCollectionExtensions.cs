@@ -12,16 +12,78 @@
 
 using Librame.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    using Extensions;
+
     /// <summary>
     /// 抽象服务集合静态扩展。
     /// </summary>
     public static class AbstractionServiceCollectionExtensions
     {
+        /// <summary>
+        /// 尝试添加可枚举服务集合。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="implementationTypes">给定的实现类型集合。</param>
+        /// <param name="lifetime">给定的 <see cref="ServiceLifetime"/>（可选；默认为单例）。</param>
+        public static void TryAddEnumerable<TService>(this IServiceCollection services,
+            ServiceLifetime lifetime = ServiceLifetime.Singleton,
+            params Type[] implementationTypes)
+            => services.TryAddEnumerable(typeof(TService), implementationTypes, lifetime);
+
+        /// <summary>
+        /// 尝试添加可枚举服务集合。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="implementationTypes">给定的实现类型集合。</param>
+        /// <param name="lifetime">给定的 <see cref="ServiceLifetime"/>（可选；默认为单例）。</param>
+        public static void TryAddEnumerable<TService>(this IServiceCollection services,
+            IEnumerable<Type> implementationTypes,
+            ServiceLifetime lifetime = ServiceLifetime.Singleton)
+            => services.TryAddEnumerable(typeof(TService), implementationTypes, lifetime);
+
+        /// <summary>
+        /// 尝试添加可枚举服务集合。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="implementationTypes">给定的实现类型集合。</param>
+        /// <param name="lifetime">给定的 <see cref="ServiceLifetime"/>（可选；默认为单例）。</param>
+        public static void TryAddEnumerable(this IServiceCollection services, Type serviceType,
+            ServiceLifetime lifetime = ServiceLifetime.Singleton, params Type[] implementationTypes)
+            => services.TryAddEnumerable(serviceType, implementationTypes, lifetime);
+
+        /// <summary>
+        /// 尝试添加可枚举服务集合。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="implementationTypes">给定的实现类型集合。</param>
+        /// <param name="lifetime">给定的 <see cref="ServiceLifetime"/>（可选；默认为单例）。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "implementationTypes")]
+        public static void TryAddEnumerable(this IServiceCollection services,
+            Type serviceType, IEnumerable<Type> implementationTypes,
+            ServiceLifetime lifetime = ServiceLifetime.Singleton)
+        {
+            implementationTypes.NotEmpty(nameof(implementationTypes));
+
+            services.TryAddEnumerable(ToDescriptors());
+
+            // ToDescriptors
+            IEnumerable<ServiceDescriptor> ToDescriptors()
+            {
+                foreach (var implType in implementationTypes)
+                    yield return new ServiceDescriptor(serviceType, implType, lifetime);
+            }
+        }
+
 
         #region TryGet
 

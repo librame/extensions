@@ -110,7 +110,7 @@ namespace Librame.Extensions.Encryption
                 key = new RsaSecurityKey(rsa);
             }
 
-            var buffer = RandomUtility.GenerateNumber(16);
+            var buffer = RandomUtility.GenerateByteArray(16);
             key.KeyId = buffer.AsBase64String();
 
             return key;

@@ -31,7 +31,7 @@ namespace Librame.Extensions
         /// <param name="enumField">给定的枚举字段。</param>
         /// <returns>返回字符串。</returns>
         public static string AsEnumName<TEnum>(this TEnum enumField)
-            where TEnum : struct
+            where TEnum : Enum
             => Enum.GetName(typeof(TEnum), enumField);
 
 
@@ -44,7 +44,7 @@ namespace Librame.Extensions
         /// <param name="name">给定的字段名称。</param>
         /// <returns>返回枚举对象。</returns>
         public static TEnum AsEnum<TEnum>(this string name)
-            where TEnum : struct
+            where TEnum : Enum
             => (TEnum)Enum.Parse(typeof(TEnum), name);
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Librame.Extensions
         /// <param name="value">给定的常数值。</param>
         /// <returns>返回枚举对象。</returns>
         public static TEnum AsEnum<TEnum, TValue>(this TValue value)
-            where TEnum : struct
+            where TEnum : Enum
             => (TEnum)Enum.Parse(typeof(TEnum), value.ToString());
 
         /// <summary>
@@ -66,8 +66,8 @@ namespace Librame.Extensions
         /// <param name="input">给定的输入枚举字段。</param>
         /// <returns>返回输出枚举字段。</returns>
         public static TOutputEnum AsOutputEnumByName<TInputEnum, TOutputEnum>(this TInputEnum input)
-            where TInputEnum : struct
-            where TOutputEnum : struct
+            where TInputEnum : Enum
+            where TOutputEnum : Enum
             => input.AsEnumName().AsEnum<TOutputEnum>();
 
         #endregion
@@ -99,7 +99,7 @@ namespace Librame.Extensions
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "converter")]
         public static TResult AsEnumResult<TEnum, TResult>(this TEnum enumField,
             Func<FieldInfo, TResult> converter)
-            where TEnum : struct
+            where TEnum : Enum
         {
             converter.NotNull(nameof(converter));
 

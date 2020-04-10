@@ -18,25 +18,23 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Stores
 {
     using Core.Services;
-    using Core.Threads;
 
     /// <summary>
     /// 抽象存储标识符。
     /// </summary>
-    public abstract class AbstractStoreIdentifier : IStoreIdentifier
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    public abstract class AbstractStoreIdentifier<TGenId> : AbstractService, IStoreIdentifier<TGenId>
+        where TGenId : IEquatable<TGenId>
     {
-        private readonly ILoggerFactory _loggerFactory;
-
-
         /// <summary>
         /// 构造一个抽象存储标识符。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AbstractStoreIdentifier(IClockService clock, ILoggerFactory loggerFactory)
+        protected AbstractStoreIdentifier(IClockService clock, ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             Clock = clock.NotNull(nameof(clock));
-            _loggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
         }
 
 
@@ -47,91 +45,45 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 日志。
-        /// </summary>
-        protected ILogger Logger
-            => _loggerFactory.CreateLogger(GetType());
-
-
-        /// <summary>
-        /// 异步生成有顺序的标识。
+        /// 异步生成标识。
         /// </summary>
         /// <param name="idTraceName">标识跟踪名称。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含字符串的异步操作。</returns>
-        protected virtual async Task<string> GenerateCombGuidAsync(string idTraceName,
-            CancellationToken cancellationToken = default)
-        {
-            var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow,
-                isUtc: true, cancellationToken).ConfigureAndResultAsync();
-
-            return Clock.Locker.WaitFactory(() =>
-            {
-                return cancellationToken.RunFactoryOrCancellation(() =>
-                {
-                    var id = DataDefaults.NewCombGuid(timestamp);
-                    Logger.LogTrace($"Generate {idTraceName}: {id}");
-
-                    return id;
-                });
-            });
-        }
-
-        /// <summary>
-        /// 异步生成有顺序的标识。
-        /// </summary>
-        /// <param name="idTraceName">标识跟踪名称。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含字符串的异步操作。</returns>
-        protected virtual async Task<string> GenerateCombFileTimeAsync(string idTraceName,
-            CancellationToken cancellationToken = default)
-        {
-            var timestamp = await Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow,
-                isUtc: true, cancellationToken).ConfigureAndResultAsync();
-
-            return Clock.Locker.WaitFactory(() =>
-            {
-                return cancellationToken.RunFactoryOrCancellation(() =>
-                {
-                    var id = timestamp.AsCombFileTime();
-                    Logger.LogTrace($"Generate {idTraceName}: {id}");
-
-                    return id;
-                });
-            });
-        }
+        /// <returns>返回一个包含 <typeparamref name="TGenId"/> 的异步操作。</returns>
+        protected abstract Task<TGenId> GenerateIdAsync(string idTraceName,
+            CancellationToken cancellationToken = default);
 
 
         /// <summary>
         /// 异步获取审计标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含字符串的异步操作。</returns>
-        public virtual Task<string> GetAuditIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombFileTimeAsync("AuditId", cancellationToken);
+        /// <returns>返回一个包含 <typeparamref name="TGenId"/> 的异步操作。</returns>
+        public virtual Task<TGenId> GetAuditIdAsync(CancellationToken cancellationToken = default)
+            => GenerateIdAsync("AuditId", cancellationToken);
 
         /// <summary>
         /// 异步获取实体标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含字符串的异步操作。</returns>
-        public virtual Task<string> GetEntityIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombGuidAsync("EntityId", cancellationToken);
+        /// <returns>返回一个包含 <typeparamref name="TGenId"/> 的异步操作。</returns>
+        public virtual Task<TGenId> GetEntityIdAsync(CancellationToken cancellationToken = default)
+            => GenerateIdAsync("EntityId", cancellationToken);
 
         /// <summary>
         /// 异步获取迁移标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含字符串的异步操作。</returns>
-        public virtual Task<string> GetMigrationIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombGuidAsync("MigrationId", cancellationToken);
+        /// <returns>返回一个包含 <typeparamref name="TGenId"/> 的异步操作。</returns>
+        public virtual Task<TGenId> GetMigrationIdAsync(CancellationToken cancellationToken = default)
+            => GenerateIdAsync("MigrationId", cancellationToken);
 
         /// <summary>
         /// 异步获取租户标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含字符串的异步操作。</returns>
-        public virtual Task<string> GetTenantIdAsync(CancellationToken cancellationToken = default)
-            => GenerateCombGuidAsync("TenantId", cancellationToken);
+        /// <returns>返回一个包含 <typeparamref name="TGenId"/> 的异步操作。</returns>
+        public virtual Task<TGenId> GetTenantIdAsync(CancellationToken cancellationToken = default)
+            => GenerateIdAsync("TenantId", cancellationToken);
     }
 }

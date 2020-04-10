@@ -7,7 +7,7 @@ namespace Librame.Extensions.Examples
     using Data.Stores;
     using Core.Services;
 
-    public class ExampleStoreIdentifier : StoreIdentifier
+    public class ExampleStoreIdentifier : GuidStoreIdentifier
     {
         public ExampleStoreIdentifier(IClockService clock, ILoggerFactory loggerFactory)
             : base(clock, loggerFactory)

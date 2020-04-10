@@ -49,9 +49,6 @@ namespace Librame.Extensions.Core.Compilers
         {
             assemblyPath.NotNull(nameof(assemblyPath));
 
-            if (!assemblyPath.FileName.IsExtension(FileExtension))
-                throw new InvalidOperationException($"Only supported '{FileExtension}' file extension.");
-
             var syntaxTrees = sourceCodes.Select(s => SyntaxFactory.ParseSyntaxTree(s));
             var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
             var compilation = CSharpCompilation.Create(assemblyPath.FileName, syntaxTrees, references, compileOptions);

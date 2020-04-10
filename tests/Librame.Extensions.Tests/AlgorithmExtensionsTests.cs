@@ -17,20 +17,6 @@ namespace Librame.Extensions.Tests
             = RandomNumberGenerator.Create();
 
 
-        [Fact]
-        public void RandomStringsTest()
-        {
-            var pairs = 20.RandomStrings();
-            Assert.NotEmpty(pairs);
-
-            pairs = 20.RandomStrings(hasSpecial: true);
-            foreach (var p in pairs)
-            {
-                Assert.True(p.Key.HasAlgorithmSpecial());
-            }
-        }
-
-
         #region Base and Hex
 
         [Fact]
@@ -180,17 +166,17 @@ namespace Librame.Extensions.Tests
         #endregion
 
 
-        #region Asymmetric Algorithm : RSA
+        //#region Asymmetric Algorithm : RSA
 
-        [Fact]
-        public void RsaBase64StringTest()
-        {
-            var parameters = RSA.Create().ExportParameters(true);
-            var base64 = _rawString.AsRsaBase64String(_encoding, parameters);
-            Assert.Equal(_rawString, base64.FromRsaBase64String(_encoding, parameters));
-        }
+        //[Fact]
+        //public void RsaBase64StringTest()
+        //{
+        //    var parameters = RSA.Create().ExportParameters(true);
+        //    var base64 = _rawString.AsRsaBase64String(_encoding, parameters);
+        //    Assert.Equal(_rawString, base64.FromRsaBase64String(_encoding, parameters));
+        //}
 
-        #endregion
+        //#endregion
 
     }
 }

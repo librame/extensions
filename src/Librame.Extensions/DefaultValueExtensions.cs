@@ -25,15 +25,23 @@ namespace Librame.Extensions
     public static class DefaultValueExtensions
     {
         /// <summary>
+        /// 判定可空布尔值是否为真。
+        /// </summary>
+        /// <param name="nullable">给定的当前可空值。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsTrue(this bool? nullable)
+            => nullable.NotNullOrDefault();
+
+        /// <summary>
         /// 得到不为 NULL 或默认值。
         /// </summary>
         /// <typeparam name="TStruct">指定的值类型。</typeparam>
         /// <param name="nullable">给定的当前可空值。</param>
         /// <param name="default">给定的默认值（如果可空值为空，则返回此值）。</param>
-        /// <returns>返回存在值或默认值。</returns>
-        public static TStruct NotNullOrDefault<TStruct>(this TStruct? nullable, TStruct @default)
+        /// <returns>返回当前或默认 <typeparamref name="TStruct"/>。</returns>
+        public static TStruct NotNullOrDefault<TStruct>(this TStruct? nullable, TStruct @default = default)
             where TStruct : struct
-            => nullable.NotNullOrDefault(() => @default);
+            => nullable.HasValue ? nullable.Value : @default;
 
         /// <summary>
         /// 得到不为 NULL 或默认值。
@@ -41,7 +49,7 @@ namespace Librame.Extensions
         /// <typeparam name="TStruct">指定的值类型。</typeparam>
         /// <param name="nullable">给定的当前可空值。</param>
         /// <param name="defaultFactory">给定的默认值工厂方法（如果可空值为空，则调用此方法）。</param>
-        /// <returns>返回当前或默认值。</returns>
+        /// <returns>返回当前或默认 <typeparamref name="TStruct"/>。</returns>
         public static TStruct NotNullOrDefault<TStruct>(this TStruct? nullable, Func<TStruct> defaultFactory)
             where TStruct : struct
             => nullable.HasValue ? nullable.Value : (TStruct)defaultFactory?.Invoke();

@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,12 +45,23 @@ namespace Librame.Extensions.Data.Accessors
         /// 构造一个数据库上下文访问器基类。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "options")]
         protected DbContextAccessorBase(DbContextOptions options)
             : base(options)
         {
+            InitializeConnectionString(options);
+
             InitializeMigrate();
         }
 
+
+        private void InitializeConnectionString(DbContextOptions options)
+        {
+            var relationalOptionsExtensions
+                = options.Extensions.OfType<RelationalOptionsExtension>().FirstOrDefault();
+
+            _currentConnectionString = relationalOptionsExtensions?.ConnectionString;
+        }
 
         private void InitializeMigrate()
         {
@@ -98,6 +110,12 @@ namespace Librame.Extensions.Data.Accessors
 
 
         /// <summary>
+        /// 当前时间戳。
+        /// </summary>
+        public DateTimeOffset CurrentTimestamp
+            => this.GetService<IClockService>().GetOffsetNowAsync(DateTimeOffset.UtcNow).ConfigureAndResult();
+
+        /// <summary>
         /// 当前类型。
         /// </summary>
         public Type CurrentType
@@ -131,7 +149,8 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         /// <returns>返回布尔值。</returns>
         public virtual bool IsWritingRequest()
-            => !CurrentTenant.WritingSeparation || (CurrentTenant.WritingSeparation && IsCurrentConnectionString(CurrentTenant.WritingConnectionString));
+            => !CurrentTenant.WritingSeparation
+            || (CurrentTenant.WritingSeparation && IsCurrentConnectionString(CurrentTenant.WritingConnectionString));
 
 
         /// <summary>
@@ -144,12 +163,7 @@ namespace Librame.Extensions.Data.Accessors
             bool result;
             if (result = Database.EnsureCreated())
             {
-                if (dbConnection.IsNull())
-                    dbConnection = Database.GetDbConnection();
-
-                _currentConnectionString = dbConnection.ConnectionString;
                 Logger.LogInformation($"Database created: {_currentConnectionString}.");
-
                 BuilderOptions.DatabaseCreatedAction?.Invoke(this);
             }
             return result;
@@ -158,21 +172,14 @@ namespace Librame.Extensions.Data.Accessors
         /// <summary>
         /// 确保已创建数据库。
         /// </summary>
-        /// <param name="dbConnection">给定的 <see cref="DbConnection"/>（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否已创建的布尔值的异步操作。</returns>
-        protected virtual async Task<bool> EnsureDatabaseCreatedAsync(DbConnection dbConnection = null,
-            CancellationToken cancellationToken = default)
+        protected virtual async Task<bool> EnsureDatabaseCreatedAsync(CancellationToken cancellationToken = default)
         {
             bool result;
             if (result = await Database.EnsureCreatedAsync(cancellationToken).ConfigureAndResultAsync())
             {
-                if (dbConnection.IsNull())
-                    dbConnection = Database.GetDbConnection();
-
-                _currentConnectionString = dbConnection.ConnectionString;
                 Logger.LogInformation($"Database created: {_currentConnectionString}.");
-
                 BuilderOptions.DatabaseCreatedAction?.Invoke(this);
             }
             return result;
@@ -255,6 +262,7 @@ namespace Librame.Extensions.Data.Accessors
                 Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
                 return false;
             }
+
             _currentConnectionString = changeConnectionString;
 
             // 不使用尝试捕获异常锁，否则会中断异常后面的方法执行，不适合局部异常处理
@@ -346,6 +354,7 @@ namespace Librame.Extensions.Data.Accessors
                 Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
                 return false;
             }
+
             _currentConnectionString = changeConnectionString;
 
             // 不使用尝试捕获异常锁，否则会中断异常后面的方法执行，不适合局部异常处理
@@ -385,7 +394,7 @@ namespace Librame.Extensions.Data.Accessors
 
             // 先尝试创建数据库
             if (BuilderOptions.IsCreateDatabase)
-                await EnsureDatabaseCreatedAsync(connection, cancellationToken).ConfigureAndResultAsync();
+                await EnsureDatabaseCreatedAsync(cancellationToken).ConfigureAndResultAsync();
 
             if (connection.State != ConnectionState.Open)
             {

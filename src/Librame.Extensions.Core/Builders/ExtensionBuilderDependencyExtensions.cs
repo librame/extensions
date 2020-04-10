@@ -13,6 +13,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using BaseOptions = Microsoft.Extensions.Options.Options;
@@ -32,7 +33,7 @@ namespace Librame.Extensions.Core.Builders
         #region ConfigureDependency
 
         /// <summary>
-        /// 配置扩展构建器依赖（支持从文件加载初始配置）。
+        /// 配置扩展构建器依赖根（默认支持从 JSON 文件加载初始配置）。
         /// </summary>
         /// <example>
         /// appsettings.json 根配置结构参考：
@@ -57,18 +58,7 @@ namespace Librame.Extensions.Core.Builders
         ///             // LocalizationOptions
         ///             ......
         ///         },
-        ///         
-        ///         "MemoryCache":
-        ///         {
-        ///             // MemoryCacheOptions
-        ///             ......
-        ///         },
-        ///         
-        ///         "MemoryDistributedCache":
-        ///         {
-        ///             // MemoryDistributedCacheOptions
-        ///             ......
-        ///         },
+        ///         ......
         ///         
         ///         "Name": "CoreBuilderDependency",
         ///         "Type": { "Value": "Librame.Extensions.Core.CoreBuilderDependency, Librame.Extensions.Core" }
@@ -76,66 +66,87 @@ namespace Librame.Extensions.Core.Builders
         /// }
         /// </code>
         /// </example>
-        /// <typeparam name="TDependencyRoot">指定的扩展构建器依赖根类型。</typeparam>
+        /// <typeparam name="TDependency">指定的扩展构建器依赖入口类型。</typeparam>
         /// <param name="configureDependency">给定的配置依赖动作方法（可空）。</param>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <returns>返回 <typeparamref name="TDependencyRoot"/>。</returns>
-        public static TDependencyRoot ConfigureDependencyRoot<TDependencyRoot>(this Action<TDependencyRoot> configureDependency,
-            IServiceCollection services)
-            where TDependencyRoot : class, IExtensionBuilderDependency, IDependencyRoot
+        /// <param name="rootConfigFileName">给定的根配置文件名（可选；默认为“appsettings.json”）。</param>
+        /// <returns>返回 <typeparamref name="TDependency"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "services")]
+        public static TDependency ConfigureDependency<TDependency>(this Action<TDependency> configureDependency,
+            IServiceCollection services, string rootConfigFileName = "appsettings.json")
+            where TDependency : class, IExtensionBuilderDependency
         {
-            var dependency = configureDependency.ConfigureDependency(baseBuilder: null);
+            services.NotNull(nameof(services));
+
+            var dependency = typeof(TDependency).EnsureCreate<TDependency>();
+
+            // configureDependency: dependency => dependency.Configuration = ...;
+            configureDependency?.Invoke(dependency);
+
+            // 如果依赖配置根不存在，则尝试从配置文件加载
+            if (dependency.ConfigurationRoot.IsNull() && rootConfigFileName.IsNotEmpty())
+                UseDefaultConfigurationRoot();
+
+            // 获取当前依赖配置节
+            if (dependency.Configuration.IsNull() && dependency.ConfigurationRoot.IsNotNull())
+                dependency.Configuration = dependency.ConfigurationRoot.GetSection(dependency.Name);
+
             return dependency.RegisterDependency(services);
+
+            void UseDefaultConfigurationRoot()
+            {
+                var filePath = rootConfigFileName.AsFilePathCombiner(dependency.ConfigDirectory);
+                if (filePath.Exists())
+                {
+                    var root = new ConfigurationBuilder()
+                        .AddJsonFile(filePath) // default(optional: false, reloadOnChange: false)
+                        .Build();
+                    dependency.ConfigurationRoot = root;
+                }
+            }
         }
 
         /// <summary>
-        /// 配置依赖选项（支持从文件加载初始配置）。
+        /// 配置扩展构建器依赖（默认支持从基础扩展构建器的配置根加载初始配置）。
         /// </summary>
-        /// <typeparam name="TDependency">指定的选项依赖类型。</typeparam>
-        /// <param name="configureDependency">给定的配置动作（可空）。</param>
-        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>（可空）。</param>
-        /// <param name="initialDependency">给定的初始 <typeparamref name="TDependency"/>（可选；默认使用类型构造）。</param>
-        /// <param name="rootConfigFileName">给定的根配置文件名（可选；默认为“appsettings.json”）。</param>
+        /// <example>
+        /// appsettings.json 根配置结构参考：
+        /// <code>
+        /// {
+        ///     "XXXBuilderDependency":
+        ///     {
+        ///         "BaseDirectory": "/DirectoryPath",
+        ///         "ConfigDirectory": "/DirectoryPath",
+        ///         "ExportDirectory": "/DirectoryPath",
+        ///         
+        ///         "OptionsType": { "Value": "Librame.Extensions.XXX.Builders.XXXBuilderOptions, Librame.Extensions.XXX" }
+        ///         "Options": {
+        ///             //...
+        ///         },
+        ///         
+        ///         "Name": "XXXBuilderDependency",
+        ///         "Type": { "Value": "Librame.Extensions.XXX.XXXBuilderDependency, Librame.Extensions.XXX" }
+        ///     }
+        /// }
+        /// </code>
+        /// </example>
+        /// <typeparam name="TDependency">指定的扩展构建器依赖类型。</typeparam>
+        /// <param name="configureDependency">给定的配置依赖动作方法（可空）。</param>
+        /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
         /// <returns>返回 <typeparamref name="TDependency"/>。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseBuilder")]
         public static TDependency ConfigureDependency<TDependency>(this Action<TDependency> configureDependency,
-            IExtensionBuilder baseBuilder, TDependency initialDependency = null, string rootConfigFileName = "appsettings.json")
+            IExtensionBuilder baseBuilder)
             where TDependency : class, IExtensionBuilderDependency
         {
-            if (initialDependency == null)
-                initialDependency = typeof(TDependency).EnsureCreate<TDependency>();
+            baseBuilder.NotNull(nameof(baseBuilder));
+
+            var dependency = typeof(TDependency).EnsureCreate<TDependency>(baseBuilder.Dependency);
 
             // configureDependency: dependency => dependency.Configuration = ...;
-            configureDependency?.Invoke(initialDependency);
+            configureDependency?.Invoke(dependency);
 
-            initialDependency.BindConfiguration(rootConfigFileName);
-
-            if (baseBuilder.IsNotNull())
-                return initialDependency.RegisterDependency(baseBuilder.Services);
-
-            return initialDependency;
-        }
-
-        private static void BindConfiguration<TDependency>(this TDependency dependency, string rootConfigFileName)
-            where TDependency : class, IExtensionBuilderDependency
-        {
-            if (dependency is IDependencyRoot dependencyRoot)
-            {
-                if (dependencyRoot.ConfigurationRoot.IsNull())
-                {
-                    // 默认从根配置文件中读取配置
-                    var filePath = rootConfigFileName.AsFilePathCombiner(dependency.ConfigDirectory);
-                    if (filePath.Exists())
-                    {
-                        var root = new ConfigurationBuilder()
-                            .AddJsonFile(filePath) // default(optional: false, reloadOnChange: false)
-                            .Build();
-                        dependencyRoot.ConfigurationRoot = root;
-                    }
-                }
-
-                if (dependency.Configuration.IsNull() && dependencyRoot.ConfigurationRoot.IsNotNull())
-                    dependency.Configuration = dependencyRoot.ConfigurationRoot.GetSection(dependency.Name);
-            }
+            return dependency.RegisterDependency(baseBuilder.Services);
         }
 
         #endregion

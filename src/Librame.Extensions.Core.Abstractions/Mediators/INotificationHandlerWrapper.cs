@@ -38,7 +38,7 @@ namespace Librame.Extensions.Core.Mediators
 
 
     /// <summary>
-    /// 通知处理程序封装接口。
+    /// 通知处理程序封装接口（主要用作标记）。
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
     public interface INotificationHandlerWrapper

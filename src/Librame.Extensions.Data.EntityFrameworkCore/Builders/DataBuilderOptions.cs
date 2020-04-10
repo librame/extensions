@@ -13,11 +13,11 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data.Builders
 {
     using Core;
+    using Core.Identifiers;
     using Core.Threads;
     using Data.Accessors;
     using Data.Stores;
@@ -27,6 +27,13 @@ namespace Librame.Extensions.Data.Builders
     /// </summary>
     public class DataBuilderOptions : DataBuilderOptionsBase
     {
+        /// <summary>
+        /// 有序唯一标识符生成器方案（默认使用符合 SQL Server 规则的有序 <see cref="Guid"/>）。
+        /// </summary>
+        public SequentialUniqueIdentifierGenerator SUIDGenerator { get; set; }
+            = SequentialUniqueIdentifierGenerator.SqlServer;
+
+
         /// <summary>
         /// 是否创建数据库（如果数据库不存在；默认已启用）。
         /// </summary>
@@ -41,6 +48,7 @@ namespace Librame.Extensions.Data.Builders
         public Action<DbContextAccessorBase> DatabaseCreatedAction { get; set; }
             = accessor =>
             {
+                // 数据库创建成功后调用后置改变数据库连接动作
                 accessor.Locker.WaitAction(() => accessor.BuilderOptions.PostChangedDbConnectionAction?.Invoke(accessor));
             };
 
@@ -56,7 +64,7 @@ namespace Librame.Extensions.Data.Builders
                     accessor.Migrate();
             };
 
-
+        
         /// <summary>
         /// 启用审计（默认已启用）。
         /// </summary>
@@ -66,9 +74,8 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 审计实体状态数组（默认对实体的增加、修改、删除状态进行审核）。
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public EntityState[] AuditEntityStates { get; set; }
-            = new EntityState[] { EntityState.Added, EntityState.Modified, EntityState.Deleted };
+        public IReadOnlyList<EntityState> AuditEntityStates { get; set; }
+            = new List<EntityState> { EntityState.Added, EntityState.Modified, EntityState.Deleted };
 
 
         /// <summary>
@@ -121,10 +128,10 @@ namespace Librame.Extensions.Data.Builders
             = true;
 
         /// <summary>
-        /// 默认租户。
+        /// 默认租户（默认使用 <see cref="Guid"/> 生成式标识类型）。
         /// </summary>
         public ITenant DefaultTenant { get; set; }
-            = new DataTenant<string>
+            = new DataTenant<Guid>
             {
                 Name = "DefaultTenant",
                 Host = "localhost",

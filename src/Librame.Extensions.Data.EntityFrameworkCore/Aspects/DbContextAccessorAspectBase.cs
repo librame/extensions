@@ -10,8 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +18,6 @@ namespace Librame.Extensions.Data.Aspects
 {
     using Core;
     using Core.Services;
-    using Core.Threads;
     using Data.Accessors;
     using Data.Builders;
     using Data.Stores;
@@ -48,38 +45,21 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个数据库上下文访问器截面基类。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="IStoreIdentifier"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        /// <param name="dependencies">给定的 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</param>
         /// <param name="priority">给定的服务优先级（数值越小越优先）。</param>
-        protected DbContextAccessorAspectBase(IClockService clock, IStoreIdentifier identifier,
-            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory, float priority)
-            : base(options, loggerFactory)
+        protected DbContextAccessorAspectBase(DbContextAccessorAspectDependencies<TGenId> dependencies, float priority)
+            : base(dependencies)
         {
-            Clock = clock.NotNull(nameof(clock));
-            Identifier = identifier.NotNull(nameof(identifier));
-
+            Dependencies = dependencies;
             Priority = priority;
         }
 
 
         /// <summary>
-        /// 时钟服务。
+        /// 依赖集合。
         /// </summary>
-        public IClockService Clock { get; }
-
-        /// <summary>
-        /// 标识符。
-        /// </summary>
-        public IStoreIdentifier Identifier { get; }
-
-        /// <summary>
-        /// 锁定器。
-        /// </summary>
-        public IMemoryLocker Locker
-            => Clock.Locker;
-
+        /// <value>返回 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</value>
+        public DbContextAccessorAspectDependencies<TGenId> Dependencies { get; }
 
         /// <summary>
         /// 服务优先级（数值越小越优先）。

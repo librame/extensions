@@ -8,7 +8,7 @@ namespace Librame.Extensions.Examples
     using Data.Stores;
     using Models;
 
-    public class ExampleStoreInitializer : StoreInitializer<ExampleStoreIdentifier>
+    public class ExampleStoreInitializer : GuidStoreInitializer<ExampleStoreIdentifier>
     {
         private IList<Category> _categories;
 

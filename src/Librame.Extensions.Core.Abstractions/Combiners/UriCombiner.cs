@@ -192,7 +192,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="newScheme">给定的新协议。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
-        public UriCombiner NewScheme(string newScheme)
+        public UriCombiner WithScheme(string newScheme)
             => new UriCombiner(newScheme, Host, Path, Query, Anchor);
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="newHost">给定可能包含端口号的新主机。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
-        public UriCombiner NewHost(string newHost)
+        public UriCombiner WithHost(string newHost)
             => new UriCombiner(Scheme, newHost, Path, Query, Anchor);
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="newPath">给定以 / 开始的新路径。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
-        public UriCombiner NewPath(string newPath)
+        public UriCombiner WithPath(string newPath)
             => new UriCombiner(Scheme, Host, newPath, Query, Anchor);
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="newQuery">给定以 ? 开始的新查询。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
-        public UriCombiner NewQuery(string newQuery)
+        public UriCombiner WithQuery(string newQuery)
             => new UriCombiner(Scheme, Host, Path, newQuery, Anchor);
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="queriesAction">给定的改变查询参数集合动作（内部支持对参数值的特殊字符进行转码处理）。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "queriesAction")]
-        public UriCombiner NewQueries(Action<ConcurrentDictionary<string, string>> queriesAction)
+        public UriCombiner WithQueries(Action<ConcurrentDictionary<string, string>> queriesAction)
         {
             queriesAction.NotNull(nameof(queriesAction));
 
@@ -241,7 +241,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="newAnchor">给定以 # 开始的新锚点。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
-        public UriCombiner NewAnchor(string newAnchor)
+        public UriCombiner WithAnchor(string newAnchor)
             => new UriCombiner(Scheme, Host, Path, Query, newAnchor);
         
 

@@ -11,8 +11,6 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -23,7 +21,6 @@ namespace Librame.Extensions.Data.Aspects
     using Core.Mediators;
     using Core.Services;
     using Data.Accessors;
-    using Data.Builders;
     using Data.Compilers;
     using Data.Mediators;
     using Data.Stores;
@@ -52,13 +49,9 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个数据迁移迁移数据库上下文访问器截面。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identifier">给定的 <see cref="IStoreIdentifier"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public DataMigrationMigrateDbContextAccessorAspect(IClockService clock, IStoreIdentifier identifier,
-            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, identifier, options, loggerFactory, priority: 1) // 迁移优先级最高
+        /// <param name="dependencies">给定的 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</param>
+        public DataMigrationMigrateDbContextAccessorAspect(DbContextAccessorAspectDependencies<TGenId> dependencies)
+            : base(dependencies, priority: 1) // 迁移优先级最高
         {
         }
 
@@ -150,9 +143,9 @@ namespace Librame.Extensions.Data.Aspects
             migration.ModelSnapshotName = modelSnapshotTypeName;
             migration.ModelBody = modelSnapshot.Body;
             migration.ModelHash = modelSnapshot.Hash;
-            migration.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
+            migration.CreatedTime = Dependencies.Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
             migration.CreatedTimeTicks = migration.CreatedTime.Ticks;
-            migration.CreatedBy = GetType().GetGenericBodyName();
+            migration.CreatedBy = EntityPopulator.FormatTypeName(GetType());
 
             return migration;
         }
@@ -163,10 +156,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <typeparamref name="TGenId"/>。</returns>
         protected virtual TGenId GetMigrationId(CancellationToken cancellationToken)
-        {
-            var migrationId = Identifier.GetEntityIdAsync(cancellationToken).ConfigureAndResult();
-            return migrationId.CastTo<string, TGenId>(nameof(migrationId));
-        }
+            => Dependencies.Identifier.GetMigrationIdAsync().ConfigureAndResult();
 
     }
 }

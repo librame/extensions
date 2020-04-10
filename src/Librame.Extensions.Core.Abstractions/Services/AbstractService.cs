@@ -22,10 +22,19 @@ namespace Librame.Extensions.Core.Services
         /// <summary>
         /// 构造一个 <see cref="AbstractService"/>。
         /// </summary>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>（可选）。</param>
-        protected AbstractService(ILoggerFactory loggerFactory = null)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        protected AbstractService(ILoggerFactory loggerFactory)
         {
-            LoggerFactory = loggerFactory;
+            LoggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="AbstractService"/>。
+        /// </summary>
+        /// <param name="service">给定的 <see cref="AbstractService"/>。</param>
+        protected AbstractService(AbstractService service)
+        {
+            LoggerFactory = service.NotNull(nameof(service)).LoggerFactory;
         }
 
 
@@ -40,6 +49,6 @@ namespace Librame.Extensions.Core.Services
         /// </summary>
         /// <value>返回 <see cref="ILogger"/>。</value>
         protected virtual ILogger Logger
-            => LoggerFactory?.CreateLogger(GetType());
+            => LoggerFactory.CreateLogger(GetType());
     }
 }

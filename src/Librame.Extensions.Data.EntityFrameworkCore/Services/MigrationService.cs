@@ -383,8 +383,9 @@ namespace Librame.Extensions.Data.Services
             else
             {
                 // 从程序集文件
+                var builder = dbContextAccessor.ServiceFactory.GetRequiredService<IDataBuilder>();
                 var dependencyOptions = dbContextAccessor.ServiceFactory.GetRequiredService<DataBuilderDependency>();
-                var assemblyPath = ModelSnapshotCompiler.ExportFilePath(dbContextAccessor.CurrentType, dependencyOptions.ExportDirectory);
+                var assemblyPath = ModelSnapshotCompiler.ExportFilePath(dbContextAccessor.CurrentType, builder.DatabaseDesignTimeType, dependencyOptions.ExportDirectory);
                 if (assemblyPath.Exists())
                 {
                     var modelAssembly = Assembly.LoadFile(assemblyPath);
