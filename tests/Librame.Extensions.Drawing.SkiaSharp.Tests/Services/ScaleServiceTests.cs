@@ -4,15 +4,15 @@ using Xunit;
 namespace Librame.Extensions.Drawing.Tests
 {
     using Core.Combiners;
-    using Services;
+    using Drawing.Services;
 
     public class ScaleServiceTests
     {
-        private IScaleService _drawing = null;
+        private IScaleService _service = null;
 
         public ScaleServiceTests()
         {
-            _drawing = TestServiceProvider.Current.GetRequiredService<IScaleService>();
+            _service = TestServiceProvider.Current.GetRequiredService<IScaleService>();
         }
 
 
@@ -20,8 +20,8 @@ namespace Librame.Extensions.Drawing.Tests
         public void DrawScaleTest()
         {
             // 5K 2.21MB
-            var imageFile = "microsoft_edge.jpg".AsFilePathCombiner(TestServiceProvider.ResourcesPath);
-            var succeed = _drawing.DrawFile(imageFile);
+            var imageFile = "microsoft_edge.jpg".AsFilePathCombiner(_service.Dependency.ResourceDirectory);
+            var succeed = _service.DrawFile(imageFile);
             Assert.True(succeed);
         }
 
@@ -29,12 +29,12 @@ namespace Librame.Extensions.Drawing.Tests
         public async void DrawScalesByDirectoryTest()
         {
             // 5K 2.21MB
-            var directory = TestServiceProvider.ResourcesPath.CombinePath("pictures");
+            var directory = _service.Dependency.ResourceDirectory.CombinePath("pictures");
 
             // Clear
-            await _drawing.DeleteScalesByDirectoryAsync(directory).ConfigureAndResultAsync();
+            await _service.DeleteScalesByDirectoryAsync(directory).ConfigureAndResultAsync();
 
-            var count = await _drawing.DrawFilesByDirectoryAsync(directory).ConfigureAndResultAsync();
+            var count = await _service.DrawFilesByDirectoryAsync(directory).ConfigureAndResultAsync();
             Assert.True(count > 0);
         }
 

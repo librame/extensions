@@ -14,7 +14,7 @@ namespace Librame.Extensions.Drawing.Tests
                 services.AddLibrame()
                     .AddDrawing(dependency =>
                     {
-                        dependency.BaseDirectory = ResourcesPath;
+                        dependency.ResourceDirectory = dependency.BaseDirectory.CombinePath(@"..\..\resources");
                     });
 
                 return services.BuildServiceProvider();
@@ -23,10 +23,5 @@ namespace Librame.Extensions.Drawing.Tests
 
 
         public static IServiceProvider Current { get; }
-
-        public static string ResourcesPath
-        {
-            get { return AppContext.BaseDirectory.CombinePath(@"..\..\..\..\..\resources"); }
-        }
     }
 }

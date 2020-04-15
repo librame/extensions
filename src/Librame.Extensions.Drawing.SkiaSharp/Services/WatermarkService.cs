@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing.Services
 {
+    using Core.Builders;
     using Core.Combiners;
     using Core.Services;
     using Core.Utilities;
@@ -30,18 +31,21 @@ namespace Librame.Extensions.Drawing.Services
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class WatermarkService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IWatermarkService
     {
-        public WatermarkService(DrawingBuilderDependency dependency,
-            ILoggerFactory loggerFactory)
-            : base(dependency.Options, loggerFactory)
+        public WatermarkService(DrawingBuilderDependency dependency, ILoggerFactory loggerFactory)
+            : base(dependency?.Options, loggerFactory)
         {
+            Dependency = dependency;
+
             ImageFilePathCombiner = new FilePathCombiner(Options.Watermark.ImagePath);
-            ImageFilePathCombiner.ChangeBasePathIfEmpty(dependency.BaseDirectory);
+            ImageFilePathCombiner.ChangeBasePathIfEmpty(dependency.ResourceDirectory);
 
             FontFilePathCombiner = new FilePathCombiner(Options.Watermark.Font.FilePath);
-            FontFilePathCombiner.ChangeBasePathIfEmpty(dependency.BaseDirectory);
+            FontFilePathCombiner.ChangeBasePathIfEmpty(dependency.ResourceDirectory);
         }
 
-        
+
+        public IExtensionBuilderDependency Dependency { get; }
+
         public FilePathCombiner ImageFilePathCombiner { get; }
 
         public FilePathCombiner FontFilePathCombiner { get; }

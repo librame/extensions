@@ -16,12 +16,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing.Services
 {
-    using Core.Services;
-
     /// <summary>
     /// 水印服务接口。
     /// </summary>
-    public interface IWatermarkService : IService
+    public interface IWatermarkService : IDrawingService
     {
         /// <summary>
         /// 绘制水印文件。

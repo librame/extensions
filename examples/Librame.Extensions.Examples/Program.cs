@@ -40,7 +40,7 @@ namespace Librame.Extensions.Examples
             var builder = CreateBuilder()
                 .AddData(dependency =>
                 {
-                    dependency.Options.SUIDGenerator = SequentialUniqueIdentifierGenerator.MySQL;
+                    dependency.Options.IdentifierGenerator = SUIdentifierGenerator.MySQL;
 
                     // for MySQL
                     dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
@@ -89,7 +89,7 @@ namespace Librame.Extensions.Examples
             var builder = CreateBuilder()
                 .AddData(dependency =>
                 {
-                    dependency.Options.SUIDGenerator = new SequentialUniqueIdentifierGenerator(SequentialUniqueIdentifierType.AsString);
+                    dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLite;
 
                     // for SQLite
                     dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.BaseDirectory.CombinePath(dataFile));

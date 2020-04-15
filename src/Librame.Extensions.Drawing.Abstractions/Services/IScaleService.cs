@@ -21,7 +21,7 @@ namespace Librame.Extensions.Drawing.Services
     /// <summary>
     /// 缩放服务接口。
     /// </summary>
-    public interface IScaleService : IService
+    public interface IScaleService : IDrawingService
     {
         /// <summary>
         /// 时钟。

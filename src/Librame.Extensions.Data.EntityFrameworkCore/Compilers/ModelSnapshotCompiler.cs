@@ -53,18 +53,22 @@ namespace Librame.Extensions.Data.Compilers
         /// 导出模型快照文件路径。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="basePathFactory">给定基础路径的工厂方法（可选；默认为模型快照目录）。</param>
         /// <param name="extension">给定的扩展名（可选；默认为 <see cref="CSharpCompiler.FileExtension"/>）。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "accessor")]
-        public static FilePathCombiner CombineFilePath(IAccessor accessor, string extension = CSharpCompiler.FileExtension)
+        public static FilePathCombiner CombineFilePath(IAccessor accessor,
+            Func<DataBuilderDependency, string> basePathFactory = null,
+            string extension = CSharpCompiler.FileExtension)
         {
             accessor.NotNull(nameof(accessor));
             
             var dependency = accessor.ServiceFactory.GetRequiredService<DataBuilderDependency>();
-            var builder = accessor.ServiceFactory.GetRequiredService<IDataBuilder>();
+            var basePath = basePathFactory?.Invoke(dependency) ?? dependency.ModelSnapshotsDirectory;
 
+            var builder = accessor.ServiceFactory.GetRequiredService<IDataBuilder>();
             return CombineFilePath(accessor.CurrentType, builder.DatabaseDesignTimeType,
-                dependency.ModelSnapshotsDirectory, accessor.IsWritingConnectionString(), extension);
+                basePath, accessor.IsWritingConnectionString(), extension);
         }
 
         /// <summary>
@@ -72,17 +76,17 @@ namespace Librame.Extensions.Data.Compilers
         /// </summary>
         /// <param name="accessorType">给定的访问器类型。</param>
         /// <param name="designTimeType">给定的设计时类型。</param>
-        /// <param name="modelSnapshotsDirectory">给定的模型快照目录。</param>
+        /// <param name="basePath">给定的基础路径。</param>
         /// <param name="isWritingConnectionString">是写入连接字符串。</param>
         /// <param name="extension">给定的扩展名（可选；默认为 <see cref="CSharpCompiler.FileExtension"/>）。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
         public static FilePathCombiner CombineFilePath(Type accessorType, Type designTimeType,
-            string modelSnapshotsDirectory, bool isWritingConnectionString, string extension = CSharpCompiler.FileExtension)
+            string basePath, bool isWritingConnectionString, string extension = CSharpCompiler.FileExtension)
         {
             var fileName = isWritingConnectionString ? "WritingConnection" : "DefaultConnection";
             fileName = $"{accessorType.GetDisplayName(true)}.{designTimeType.GetDisplayName(true)}.{fileName}{extension}";
 
-            var filePath = new FilePathCombiner(fileName, modelSnapshotsDirectory);
+            var filePath = new FilePathCombiner(fileName, basePath);
             filePath.CreateDirectory();
 
             return filePath;

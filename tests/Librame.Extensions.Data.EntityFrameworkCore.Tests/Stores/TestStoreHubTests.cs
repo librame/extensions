@@ -24,7 +24,7 @@ namespace Librame.Extensions.Data.Tests
             services.AddLibrame()
                 .AddData(dependency =>
                 {
-                    dependency.Options.SUIDGenerator = SequentialUniqueIdentifierGenerator.MySQL;
+                    dependency.Options.IdentifierGenerator = SUIdentifierGenerator.MySQL;
 
                     dependency.Options.DefaultTenant.DefaultConnectionString
                         = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_default;user=root;password=123456");
@@ -73,8 +73,8 @@ namespace Librame.Extensions.Data.Tests
             services.AddLibrame()
                 .AddData(dependency =>
                 {
-                    // SqlServer (Default)
-                    //dependency.Options.SUIDGenerator = SequentialUniqueIdentifierGenerator.SqlServer;
+                    // SQLServer (Default)
+                    //dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLServer;
 
                     dependency.Options.DefaultTenant.DefaultConnectionString
                         = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
@@ -120,7 +120,7 @@ namespace Librame.Extensions.Data.Tests
             services.AddLibrame()
                 .AddData(dependency =>
                 {
-                    dependency.Options.SUIDGenerator = new SequentialUniqueIdentifierGenerator(SequentialUniqueIdentifierType.AsString);
+                    dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLite;
 
                     dependency.Options.DefaultTenant.DefaultConnectionString
                         = "Data Source=" + dependency.BaseDirectory.CombinePath("librame_data_default.db");

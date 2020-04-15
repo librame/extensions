@@ -10,33 +10,26 @@
 
 #endregion
 
-namespace Librame.Extensions.Core.Builders
+namespace Librame.Extensions.Core.Identifiers
 {
-    using Dependencies;
-
     /// <summary>
-    /// 扩展构建器依赖接口。
+    /// 有序唯一标识符类型（SequentialUniqueIdentifierType）。
     /// </summary>
-    public interface IExtensionBuilderDependency : IDependency
+    public enum SUIdentifierType
     {
         /// <summary>
-        /// 基础目录。
+        /// 作为二进制。
         /// </summary>
-        string BaseDirectory { get; set; }
+        AsBinary = 1,
 
         /// <summary>
-        /// 配置目录。
+        /// 作为字符串。
         /// </summary>
-        string ConfigDirectory { get; set; }
+        AsString = 2,
 
         /// <summary>
-        /// 报告目录。
+        /// 位于末尾。
         /// </summary>
-        string ReportDirectory { get; set; }
-
-        /// <summary>
-        /// 资源目录。
-        /// </summary>
-        string ResourceDirectory { get; set; }
+        AtEnd = 3
     }
 }

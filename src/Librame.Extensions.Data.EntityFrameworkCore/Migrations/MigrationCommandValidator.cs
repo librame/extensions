@@ -48,7 +48,7 @@ namespace Librame.Extensions.Data.Migrations
             options.NotNull(nameof(options));
             coreOptions.NotNull(nameof(coreOptions));
 
-            var filePath = ModelSnapshotCompiler.CombineFilePath(accessor, ".txt");
+            var filePath = ModelSnapshotCompiler.CombineFilePath(accessor, d => d.MigrationCommandsDirectory, ".txt");
             if (filePath.Exists())
             {
                 var json = filePath.ReadAllText(coreOptions.Encoding);

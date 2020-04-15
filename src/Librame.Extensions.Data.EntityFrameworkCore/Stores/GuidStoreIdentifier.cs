@@ -55,9 +55,9 @@ namespace Librame.Extensions.Data.Stores
         protected override async Task<Guid> GenerateIdAsync(string idTraceName,
             CancellationToken cancellationToken = default)
         {
-            _options.SUIDGenerator.NotNull(nameof(_options.SUIDGenerator));
+            _options.IdentifierGenerator.NotNull(nameof(_options.IdentifierGenerator));
 
-            var guid = await _options.SUIDGenerator.GenerateAsync(Clock, isUtc: true, cancellationToken)
+            var guid = await _options.IdentifierGenerator.GenerateAsync(Clock, isUtc: true, cancellationToken)
                 .ConfigureAndResultAsync();
             Logger.LogTrace($"Generate {idTraceName}: {guid}");
 

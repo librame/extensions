@@ -21,7 +21,7 @@ namespace Librame.Extensions.Network.Tests
         {
             Assert.ThrowsAsync<SocketException>(() =>
             {
-                return _service.SendAsync("receiver@domain.com",
+                return _service.SendAsync("receiver#domain.com",
                     "Email Subject",
                     "Email Body");
 

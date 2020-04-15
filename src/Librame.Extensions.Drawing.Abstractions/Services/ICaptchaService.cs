@@ -16,12 +16,10 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing.Services
 {
-    using Core.Services;
-
     /// <summary>
     /// 图画服务接口。
     /// </summary>
-    public interface ICaptchaService : IService
+    public interface ICaptchaService : IDrawingService
     {
         /// <summary>
         /// 绘制验证码文件。

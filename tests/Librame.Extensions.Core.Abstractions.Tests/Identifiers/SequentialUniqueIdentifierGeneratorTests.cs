@@ -11,11 +11,11 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public async void GenerateAsyncTest()
         {
-            var all = new Dictionary<Guid, SequentialUniqueIdentifierGenerator>();
+            var all = new Dictionary<Guid, SUIdentifierGenerator>();
             var clock = new TestClockService(new TestMemoryLocker(), new TestLoggerFactory());
 
             // MySQL
-            var generator = SequentialUniqueIdentifierGenerator.MySQL;
+            var generator = SUIdentifierGenerator.MySQL;
 
             var current = await generator.GenerateAsync(clock);
             all.Add(current, generator);
@@ -27,7 +27,7 @@ namespace Librame.Extensions.Core.Tests
             }
 
             // Oracle
-            generator = SequentialUniqueIdentifierGenerator.Oracle;
+            generator = SUIdentifierGenerator.Oracle;
 
             current = await generator.GenerateAsync(clock);
             all.Add(current, generator);
@@ -39,7 +39,7 @@ namespace Librame.Extensions.Core.Tests
             }
 
             // SQL Server
-            generator = SequentialUniqueIdentifierGenerator.SqlServer;
+            generator = SUIdentifierGenerator.SQLServer;
 
             current = await generator.GenerateAsync(clock);
             all.Add(current, generator);

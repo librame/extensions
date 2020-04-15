@@ -31,8 +31,8 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 有序唯一标识符生成器方案（默认使用符合 SQL Server 规则的有序 <see cref="Guid"/>）。
         /// </summary>
-        public SequentialUniqueIdentifierGenerator SUIDGenerator { get; set; }
-            = SequentialUniqueIdentifierGenerator.SqlServer;
+        public SUIdentifierGenerator IdentifierGenerator { get; set; }
+            = SUIdentifierGenerator.SQLServer;
         
         /// <summary>
         /// 默认选项扩展连接字符串工厂方法。

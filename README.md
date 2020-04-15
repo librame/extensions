@@ -10,10 +10,10 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
 
 ## How to use
 
-    // PM> Install-Package: Microsoft.Extensions.DependencyInjection
+    PM> Install-Package: Microsoft.Extensions.DependencyInjection
     var services = new ServiceCollection();
     
-    // PM> Install-Package: Librame.Extensions.Core
+    PM> Install-Package: Librame.Extensions.Core
     services.AddLibrame();
     
     // Build ServiceProvider
@@ -33,7 +33,8 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
 
 ## Librame.Extensions.Core
 
-    // PM> Install-Package: [Librame.Extensions.Core](https://www.nuget.org/packages?q=Librame.Extensions.Core)
+    PM> Install-Package: Librame.Extensions.Core
+    
     services.AddLibrame();
 
 ### Test Combiners
@@ -50,6 +51,8 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
     Assert.Equal("com", domainCombiner.Root);
     Assert.Equal("microsoft.com", domainCombiner.TopLevel);
     Assert.Equal("developer.microsoft.com", domainCombiner.SecondLevel);
+    
+    ...
 
 ### Test Localizers
 
@@ -105,7 +108,8 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
     //.AddJsonFile("appsettings.json")
     //.Build();
 
-    // PM> Install-Package: [Librame.Extensions.Data.EntityFrameworkCore](https://www.nuget.org/packages?q=Librame.Extensions.Data.EntityFrameworkCore)
+    PM> Install-Package: Librame.Extensions.Data.EntityFrameworkCore
+    
     services.AddLibrame(dependency =>
         {
             // Default Support "appsettings.json"
@@ -114,11 +118,15 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
         .AddData(options =>
         {
             // Default Support DataBuilderDependency Section (ex. SQL Server)
+            // dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLServer; (default)
             
             // Support ConnectionStrings Section (ex. SQLite)
-            //dependency.BindConnectionStrings(dataFile => dependency.BaseDirectory.CombinePath(dataFile));
+            //dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLite;
+            //dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.BaseDirectory.CombinePath(dataFile));
+            //dependency.Options.DefaultTenant.WritingSeparation = true; // ConnectionStrings Section is not support DefaultTenant section
             
             // Support DefaultTenant Section (ex. MySQL)
+            //dependency.Options.IdentifierGenerator = SUIdentifierGenerator.MySQL;
             //dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
         })
         .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
@@ -157,11 +165,11 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
 | SQLite       | ✓              | ✓                  | ✓          | ✓      | ✓                        |
 | MySQL        | ✓              | ✓                  | ✓          | ✓      | ✓                        |
 
-**SQLServer** [test in SQL Server 2019](https://raw.githubusercontent.com/librame/Librame/dev/examples/Librame.Extensions.Examples/Tested_in_SQLServer2016.png).
+**SQLServer** [test in SQL Server 2019](https://github.com/librame/extensions/raw/master/examples/Librame.Extensions.Examples/Tested_in_SQLServer2016.png).
 
-**SQLite** [test in SQLite](https://raw.githubusercontent.com/librame/Librame/dev/examples/Librame.Extensions.Examples/Tested_in_SQLite.png).
+**SQLite** [test in SQLite](https://github.com/librame/extensions/raw/master/examples/Librame.Extensions.Examples/Tested_in_SQLite.png).
 
-**MySQL** [test in MySQL 5.7](https://raw.githubusercontent.com/librame/Librame/dev/examples/Librame.Extensions.Examples/Tested_in_MySQL57.png).
+**MySQL** [test in MySQL 5.7](https://github.com/librame/extensions/raw/master/examples/Librame.Extensions.Examples/Tested_in_MySQL57.png).
 
 ## Test StoreHub
 
@@ -216,8 +224,11 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
 
             modelBuilder.Entity<Article>(b =>
             {
-                // Sharding table by year (use [ShardingTable])
-                b.ToTable(descr => descr.ChangeDateOffsetSuffixByYear());
+                b.ToTable(table =>
+                {
+                    // Sharding table by year (needs to add [ShardingTable] attribute on Article)
+                    table.AppendYearSuffix(CurrentTimestamp);
+                });
 
                 b.HasKey(x => x.Id);
 
@@ -254,7 +265,7 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
         }
     }
     
-    // Librame.Extensions.Data.Tests.DbContextAccessorTests
+    // Librame.Extensions.Data.Tests.TestStoreHubTests
     var stores = serviceProvider.GetRequiredService<TestStoreHub>()
     var categories = stores.GetCategories();
     Assert.Empty(categories);
@@ -266,11 +277,12 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
     Assert.Empty(articles);
 
     articles = stores.UseWriteDbConnection().GetArticles();
-    Assert.True(articles.Total >= 0); // If enable sharding table, the articles of this table may be empty
+    Assert.True(articles.Total >= 0); // If enable sharding table, the articles table may be empty
 
 ## Librame.Extensions.Drawing.SkiaSharp
 
-    // PM> Install-Package: [Librame.Extensions.Drawing.SkiaSharp](https://www.nuget.org/packages?q=Librame.Extensions.Drawing.SkiaSharp)
+    PM> Install-Package: Librame.Extensions.Drawing.SkiaSharp
+    
     services.AddLibrame()
         .AddDrawing();
 
@@ -307,7 +319,8 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
 
 ## Librame.Extensions.Encryption
 
-    // PM> Install-Package: [Librame.Extensions.Encryption](https://www.nuget.org/packages?q=Librame.Extensions.Encryption)
+    PM> Install-Package: Librame.Extensions.Encryption
+    
     services.AddLibrame()
         .AddEncryption()
         .AddDeveloperGlobalSigningCredentials(); // AddSigningCredentials();
@@ -371,7 +384,8 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
 
 ## Librame.Extensions.Network
 
-    // PM> Install-Package: [Librame.Extensions.Network](https://www.nuget.org/packages?q=Librame.Extensions.Network)
+    PM> Install-Package: Librame.Extensions.Network
+    
     services.AddLibrame()
         .AddNetwork();
 
@@ -401,7 +415,8 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
 
 ## Librame.Extensions.Network.DotNetty
 
-    // PM> Install-Package: [Librame.Extensions.Network.DotNetty](https://www.nuget.org/packages?q=Librame.Extensions.Network.DotNetty)
+    PM> Install-Package: Librame.Extensions.Network.DotNetty
+    
     var combiner = "dotnetty.com.pfx".AsFilePathCombiner("BasePath");
     services.AddLibrame(logging =>
     {
@@ -463,7 +478,8 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
 
 ## Librame.Extensions.Storage
 
-    // PM> Install-Package: [Librame.Extensions.Storage](https://www.nuget.org/packages?q=Librame.Extensions.Storage)
+    PM> Install-Package: Librame.Extensions.Storage
+    
     services.AddLibrame()
         .AddStorage(options =>
         {

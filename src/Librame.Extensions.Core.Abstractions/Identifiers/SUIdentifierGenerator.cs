@@ -22,18 +22,18 @@ namespace Librame.Extensions.Core.Identifiers
     using Utilities;
 
     /// <summary>
-    /// 有序唯一标识符生成器。
+    /// 有序唯一标识符生成器（SequentialUniqueIdentifierGenerator）。
     /// </summary>
     /// <remarks>
     /// 参考：https://mp.weixin.qq.com/s/C6xk42s-4SwyszJPTM0G6A。
     /// </remarks>
-    public class SequentialUniqueIdentifierGenerator : IIdentifierGenerator<Guid>
+    public class SUIdentifierGenerator : IIdentifierGenerator<Guid>
     {
         /// <summary>
-        /// 构造一个 <see cref="SequentialUniqueIdentifierGenerator"/>。
+        /// 构造一个 <see cref="SUIdentifierGenerator"/>。
         /// </summary>
-        /// <param name="sequentialType">给定的 <see cref="SequentialUniqueIdentifierType"/>。</param>
-        public SequentialUniqueIdentifierGenerator(SequentialUniqueIdentifierType sequentialType)
+        /// <param name="sequentialType">给定的 <see cref="SUIdentifierType"/>。</param>
+        public SUIdentifierGenerator(SUIdentifierType sequentialType)
         {
             SequentialType = sequentialType;
         }
@@ -42,7 +42,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// <summary>
         /// 有序类型。
         /// </summary>
-        public SequentialUniqueIdentifierType SequentialType { get; }
+        public SUIdentifierType SequentialType { get; }
 
 
         /// <summary>
@@ -67,21 +67,21 @@ namespace Librame.Extensions.Core.Identifiers
 
                 switch (SequentialType)
                 {
-                    case SequentialUniqueIdentifierType.AsString:
-                    case SequentialUniqueIdentifierType.AsBinary:
+                    case SUIdentifierType.AsString:
+                    case SUIdentifierType.AsBinary:
                         Buffer.BlockCopy(timestampBytes, 2, guidBytes, 0, 6);
                         Buffer.BlockCopy(randomBytes, 0, guidBytes, 6, 10);
 
                         // If formatting as a string, we have to reverse the order
                         // of the Data1 and Data2 blocks on little-endian systems.
-                        if (SequentialType == SequentialUniqueIdentifierType.AsString && BitConverter.IsLittleEndian)
+                        if (SequentialType == SUIdentifierType.AsString && BitConverter.IsLittleEndian)
                         {
                             Array.Reverse(guidBytes, 0, 4);
                             Array.Reverse(guidBytes, 4, 2);
                         }
                         break;
 
-                    case SequentialUniqueIdentifierType.AtEnd:
+                    case SUIdentifierType.AtEnd:
                         Buffer.BlockCopy(randomBytes, 0, guidBytes, 0, 10);
                         Buffer.BlockCopy(timestampBytes, 2, guidBytes, 10, 6);
                         break;
@@ -108,19 +108,25 @@ namespace Librame.Extensions.Core.Identifiers
         /// <summary>
         /// 支持 MySQL 排序类型的生成器（char(36)）。
         /// </summary>
-        public static readonly SequentialUniqueIdentifierGenerator MySQL
-            = new SequentialUniqueIdentifierGenerator(SequentialUniqueIdentifierType.AsString);
+        public static readonly SUIdentifierGenerator MySQL
+            = new SUIdentifierGenerator(SUIdentifierType.AsString);
 
         /// <summary>
         /// 支持 Oracle 排序类型的生成器（raw(16)）。
         /// </summary>
-        public static readonly SequentialUniqueIdentifierGenerator Oracle
-            = new SequentialUniqueIdentifierGenerator(SequentialUniqueIdentifierType.AsBinary);
+        public static readonly SUIdentifierGenerator Oracle
+            = new SUIdentifierGenerator(SUIdentifierType.AsBinary);
+
+        /// <summary>
+        /// 支持 SQLite 排序类型的生成器（text）。
+        /// </summary>
+        public static readonly SUIdentifierGenerator SQLite
+            = new SUIdentifierGenerator(SUIdentifierType.AsString);
 
         /// <summary>
         /// 支持 SQL Server 排序类型的生成器（uniqueidentifier）。
         /// </summary>
-        public static readonly SequentialUniqueIdentifierGenerator SqlServer
-            = new SequentialUniqueIdentifierGenerator(SequentialUniqueIdentifierType.AtEnd);
+        public static readonly SUIdentifierGenerator SQLServer
+            = new SUIdentifierGenerator(SUIdentifierType.AtEnd);
     }
 }

@@ -100,7 +100,7 @@ namespace Librame.Extensions.Core.Builders
             // UseDefaultConfigurationRoot
             void UseDefaultConfigurationRoot()
             {
-                var filePath = rootConfigFileName.AsFilePathCombiner(dependency.ConfigDirectory);
+                var filePath = rootConfigFileName.AsFilePathCombiner(dependency.BaseDirectory);
                 if (filePath.Exists())
                 {
                     var root = new ConfigurationBuilder()

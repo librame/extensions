@@ -37,7 +37,8 @@ namespace Librame.Extensions.Core.Builders
             {
                 BaseDirectory = parentDependency.BaseDirectory;
                 ConfigDirectory = parentDependency.ConfigDirectory;
-                ExportDirectory = parentDependency.ExportDirectory;
+                ReportDirectory = parentDependency.ReportDirectory;
+                ResourceDirectory = parentDependency.ResourceDirectory;
 
                 ConfigurationRoot = parentDependency.ConfigurationRoot;
 
@@ -48,8 +49,9 @@ namespace Librame.Extensions.Core.Builders
             {
                 var currentDirectory = Environment.CurrentDirectory.WithoutDevelopmentRelativePath();
                 BaseDirectory = currentDirectory;
-                ConfigDirectory = currentDirectory;
-                ExportDirectory = currentDirectory;
+                ConfigDirectory = currentDirectory.CombinePath("configs");
+                ReportDirectory = currentDirectory.CombinePath("reports");
+                ResourceDirectory = currentDirectory.CombinePath("resources");
             }
         }
 
@@ -65,8 +67,13 @@ namespace Librame.Extensions.Core.Builders
         public string ConfigDirectory { get; set; }
 
         /// <summary>
-        /// 导出目录。
+        /// 报告目录。
         /// </summary>
-        public string ExportDirectory { get; set; }
+        public string ReportDirectory { get; set; }
+
+        /// <summary>
+        /// 资源目录。
+        /// </summary>
+        public string ResourceDirectory { get; set; }
     }
 }

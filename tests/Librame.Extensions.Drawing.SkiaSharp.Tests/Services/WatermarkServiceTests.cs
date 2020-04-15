@@ -8,11 +8,11 @@ namespace Librame.Extensions.Drawing.Tests
 
     public class WatermarkServiceTests
     {
-        private IWatermarkService _drawing = null;
+        private IWatermarkService _service = null;
 
         public WatermarkServiceTests()
         {
-            _drawing = TestServiceProvider.Current.GetRequiredService<IWatermarkService>();
+            _service = TestServiceProvider.Current.GetRequiredService<IWatermarkService>();
         }
         
 
@@ -20,10 +20,10 @@ namespace Librame.Extensions.Drawing.Tests
         public async void DrawWatermarkTest()
         {
             // 5K 2.21MB
-            var imageFile = "microsoft_edge.jpg".AsFilePathCombiner(TestServiceProvider.ResourcesPath);
+            var imageFile = "microsoft_edge.jpg".AsFilePathCombiner(_service.Dependency.ResourceDirectory);
             var saveFile = imageFile.WithFileName("microsoft_edge-watermark.png");
             
-            var succeed = await _drawing.DrawFileAsync(imageFile, saveFile).ConfigureAndResultAsync();
+            var succeed = await _service.DrawFileAsync(imageFile, saveFile).ConfigureAndResultAsync();
             Assert.True(succeed);
         }
 

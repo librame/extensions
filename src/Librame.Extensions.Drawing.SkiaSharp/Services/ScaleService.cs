@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Drawing.Services
 {
+    using Core.Builders;
     using Core.Combiners;
     using Core.Services;
     using Drawing.Builders;
@@ -42,6 +43,9 @@ namespace Librame.Extensions.Drawing.Services
         public IClockService Clock { get; }
 
         public IWatermarkService Watermark { get; }
+
+        public IExtensionBuilderDependency Dependency
+            => Watermark.Dependency;
 
         public IReadOnlyList<string> ImageExtensions
             => Options.ImageExtensions.Split(',');

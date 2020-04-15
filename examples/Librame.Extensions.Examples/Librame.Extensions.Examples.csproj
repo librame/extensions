@@ -31,8 +31,4 @@
     <ProjectReference Include="..\..\src\Librame.Extensions.Encryption\Librame.Extensions.Encryption.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ModelSnapshots\" />
-  </ItemGroup>
-
 </Project>

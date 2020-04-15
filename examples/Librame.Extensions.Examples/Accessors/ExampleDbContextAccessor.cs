@@ -78,7 +78,7 @@ namespace Librame.Extensions.Examples
             {
                 b.ToTable(table =>
                 {
-                    // 使用年份进行分表（注：需要在 Article 做 [ShardingTable] 标识）
+                    // 使用年份进行分表（注：需要在文章中添加 [ShardingTable] 特性）
                     table.AppendYearSuffix(CurrentTimestamp);
                 });
 

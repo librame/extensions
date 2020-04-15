@@ -10,26 +10,22 @@
 
 #endregion
 
-namespace Librame.Extensions.Core.Identifiers
+namespace Librame.Extensions.Drawing.Services
 {
+    using Core.Builders;
+    using Core.Services;
+
     /// <summary>
-    /// 有序唯一标识符类型。
+    /// 图画服务接口。
     /// </summary>
-    public enum SequentialUniqueIdentifierType
+    public interface IDrawingService : IService
     {
         /// <summary>
-        /// 作为二进制。
+        /// 构建器依赖。
         /// </summary>
-        AsBinary = 1,
-
-        /// <summary>
-        /// 作为字符串。
-        /// </summary>
-        AsString = 2,
-
-        /// <summary>
-        /// 位于末尾。
-        /// </summary>
-        AtEnd = 3
+        /// <value>
+        /// 返回 <see cref="IExtensionBuilderDependency"/>。
+        /// </value>
+        IExtensionBuilderDependency Dependency { get; }
     }
 }
