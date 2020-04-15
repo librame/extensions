@@ -82,7 +82,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (Enabled && accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
                 PreprocessCore(dbContextAccessor);
         }
 
@@ -105,7 +105,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (Enabled && accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
                 return PreprocessCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.CompletedTask;
@@ -134,7 +134,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (Enabled && accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
                 PostprocessCore(dbContextAccessor);
         }
 
@@ -157,7 +157,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (Enabled && accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
                 return PostprocessCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.CompletedTask;

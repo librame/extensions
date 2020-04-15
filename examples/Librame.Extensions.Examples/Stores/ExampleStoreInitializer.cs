@@ -8,23 +8,32 @@ namespace Librame.Extensions.Examples
     using Data.Stores;
     using Models;
 
-    public class ExampleStoreInitializer : GuidStoreInitializer<ExampleStoreIdentifier>
+    public class ExampleStoreInitializer<TAccessor> : GuidStoreInitializer
+        where TAccessor : ExampleDbContextAccessorBase<Guid, int>
     {
-        private IList<Category> _categories;
+        private readonly string _categoryName
+            = typeof(Category<int, Guid>).GetGenericBodyName();
+        private readonly string _articleName
+            = typeof(Article<Guid, int>).GetGenericBodyName();
+
+        private readonly string _createdBy;
+
+        private IList<Category<int, Guid>> _categories;
 
 
-        public ExampleStoreInitializer(IStoreIdentifier identifier, ILoggerFactory loggerFactory)
+        public ExampleStoreInitializer(IStoreIdentifier<Guid> identifier, ILoggerFactory loggerFactory)
             : base(identifier, loggerFactory)
         {
+            _createdBy = EntityPopulator.FormatTypeName(GetType());
         }
 
 
-        protected override void InitializeCore<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-            (StoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> stores)
+        protected override void InitializeCore<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TIncremId>
+            (IStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, Guid, TIncremId> stores)
         {
             base.InitializeCore(stores);
 
-            if (stores.Accessor is ExampleDbContextAccessor dbContextAccessor)
+            if (stores.Accessor is TAccessor dbContextAccessor)
             {
                 InitializeCategories(dbContextAccessor);
 
@@ -32,23 +41,23 @@ namespace Librame.Extensions.Examples
             }
         }
 
-        private void InitializeCategories(ExampleDbContextAccessor accessor)
+        private void InitializeCategories(TAccessor accessor)
         {
             if (!accessor.Categories.Any())
             {
-                _categories = new List<Category>
+                _categories = new List<Category<int, Guid>>
                 {
-                    new Category
+                    new Category<int, Guid>
                     {
-                        Name = $"First {nameof(Category)}",
+                        Name = $"First {_categoryName}",
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetDisplayName()
+                        CreatedBy = _createdBy
                     },
-                    new Category
+                    new Category<int, Guid>
                     {
-                        Name = $"Last {nameof(Category)}",
+                        Name = $"Last {_categoryName}",
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
-                        CreatedBy = GetType().GetDisplayName()
+                        CreatedBy = _createdBy
                     }
                 };
 
@@ -66,20 +75,21 @@ namespace Librame.Extensions.Examples
             }
         }
 
-        private void InitializeArticles(ExampleDbContextAccessor stores)
+        private void InitializeArticles(TAccessor stores)
         {
             if (!stores.Categories.Any())
             {
-                var articles = new List<Article>();
+                var articles = new List<Article<Guid, int>>();
+                var identifier = Identifier as ExampleStoreIdentifier;
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 100; i++)
                 {
-                    var article = new Article
+                    var article = new Article<Guid, int>
                     {
-                        Id = Identifier.GetArticleIdAsync().ConfigureAndResult(),
-                        Title = $"{nameof(Article)} {i.FormatString(3)}",
-                        Descr = $"{nameof(Article.Descr)} {i.FormatString(3)}",
-                        Category = (i < 5) ? _categories.First() : _categories.Last(),
+                        Id = identifier.GetArticleIdAsync().ConfigureAndResult(),
+                        Title = $"{_articleName} {i.FormatString(3)}",
+                        Descr = $"Descr {i.FormatString(3)}",
+                        Category = (i < 50) ? _categories.First() : _categories.Last(),
                         CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
                         CreatedBy = GetType().GetDisplayName()
                     };

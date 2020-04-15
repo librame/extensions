@@ -41,6 +41,9 @@ namespace Librame.Extensions.Encryption.Services
 
         public ISigningCredentialsService SigningCredentials { get; }
 
+        public RSA Source
+            => _rsa.Value;
+
 
         public HashAlgorithmName SignHashAlgorithm { get; set; }
             = HashAlgorithmName.SHA256;

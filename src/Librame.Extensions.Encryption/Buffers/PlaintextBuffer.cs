@@ -37,7 +37,7 @@ namespace Librame.Extensions.Encryption.Buffers
         private static byte[] CreateBuffer(IServiceProvider services, string source, out Encoding encoding)
         {
             var options = services.GetRequiredService<IOptions<CoreBuilderOptions>>().Value;
-            encoding = options.Encoding.Source;
+            encoding = options.Encoding;
 
             return source.FromEncodingString(encoding);
         }

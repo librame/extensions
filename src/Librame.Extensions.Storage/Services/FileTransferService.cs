@@ -38,7 +38,7 @@ namespace Librame.Extensions.Storage.Services
         {
             _permissionService = permission;
 
-            Encoding = coreOptions.NotNull(nameof(coreOptions)).Value.Encoding.Source;
+            Encoding = coreOptions.NotNull(nameof(coreOptions)).Value.Encoding;
         }
 
 

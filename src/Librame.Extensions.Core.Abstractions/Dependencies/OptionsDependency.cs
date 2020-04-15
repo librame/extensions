@@ -15,6 +15,7 @@ using System;
 namespace Librame.Extensions.Core.Dependencies
 {
     using Builders;
+    using Options;
     using Resources;
     using Serializers;
 
@@ -51,7 +52,7 @@ namespace Librame.Extensions.Core.Dependencies
                 throw new ArgumentException(InternalResource.ArgumentExceptionNotSupportedConfigurationOfDependencyOptions);
 
             OptionsType = new SerializableString<Type>(optionsType);
-            Options = OptionsType.Source.EnsureCreate<TOptions>();
+            Options = ConsistencyOptionsPool.GetOrAdd<TOptions>();
             configureOptions?.Invoke(Options);
         }
 

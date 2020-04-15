@@ -61,10 +61,7 @@ namespace Librame.Extensions.Core.Options
         public TOptions Create(string name)
         {
             // 利用对象引用是唯一实例的特性，查找已创建的一致性选项实例
-            if (!ConsistencyOptionsPool.TryGet(out TOptions options))
-            {
-                options = new TOptions();
-            }
+            var options = ConsistencyOptionsPool.GetOrAdd<TOptions>();
 
             foreach (var setup in _setups)
             {

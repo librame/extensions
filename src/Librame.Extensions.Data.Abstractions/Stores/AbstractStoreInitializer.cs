@@ -84,10 +84,10 @@ namespace Librame.Extensions.Data.Stores
             stores.NotNull(nameof(stores));
 
             // 切换为写入数据连接
-            stores.Accessor.ChangeDbConnection(tenant => tenant.WritingConnectionString);
+            stores.Accessor.ChangeConnectionString(tenant => tenant.WritingConnectionString);
 
             // 如果未能成功切换，则直接直接退出
-            if (!stores.Accessor.IsWritingRequest())
+            if (!stores.Accessor.IsWritingConnectionString())
                 return;
 
             Clock.Locker.WaitAction(() =>
@@ -104,7 +104,7 @@ namespace Librame.Extensions.Data.Stores
             });
 
             // 还原为默认数据连接
-            stores.Accessor.ChangeDbConnection(tenant => tenant.DefaultConnectionString);
+            stores.Accessor.ChangeConnectionString(tenant => tenant.DefaultConnectionString);
         }
 
         /// <summary>

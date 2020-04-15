@@ -31,18 +31,26 @@ namespace Librame.Extensions.Drawing.Services
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ScaleService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IScaleService
     {
-        public ScaleService(IWatermarkService watermark)
+        public ScaleService(IClockService clock, IWatermarkService watermark)
             : base(watermark.CastTo<IWatermarkService, AbstractExtensionBuilderService<DrawingBuilderOptions>>(nameof(watermark)))
         {
+            Clock = clock.NotNull(nameof(clock));
             Watermark = watermark;
         }
 
 
+        public IClockService Clock { get; }
+
         public IWatermarkService Watermark { get; }
 
-        public string[] ImageExtensions => Options.ImageExtensions.Split(',');
+        public IReadOnlyList<string> ImageExtensions
+            => Options.ImageExtensions.Split(',');
 
-        public SKFilterQuality FilterQuality { get; set; } = SKFilterQuality.Medium;
+        public SKEncodedImageFormat CurrentImageFormat
+            => Options.ImageFormat.MatchEnum<ImageFormat, SKEncodedImageFormat>();
+
+        public SKFilterQuality FilterQuality { get; set; }
+            = SKFilterQuality.Medium;
 
 
         public Task<int> DeleteScalesByDirectoryAsync(string imageDirectory, CancellationToken cancellationToken = default)
@@ -116,7 +124,7 @@ namespace Librame.Extensions.Drawing.Services
         {
             if (Options.Scales.IsEmpty())
             {
-                Logger.LogWarning("Scale options is not found.");
+                Logger.LogWarning(InternalResource.ScaleOptionsIsEmpty);
                 return false;
             }
 
@@ -154,16 +162,18 @@ namespace Librame.Extensions.Drawing.Services
                             }
                         }
                         
-                        var skFormat = Options.ImageFormat.AsOutputEnumByName<ImageFormat, SKEncodedImageFormat>();
-
                         using (var img = SKImage.FromBitmap(bmp))
-                        using (var data = img.Encode(skFormat, Options.Quality))
+                        using (var data = img.Encode(CurrentImageFormat, Options.Quality))
                         {
                             if (data.IsNull())
                                 throw new InvalidOperationException(InternalResource.InvalidOperationExceptionUnsupportedImageFormat);
 
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
-                            var middleName = s.Suffix.NotEmptyOrDefault(() => DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture));
+                            var middleName = s.Suffix.NotEmptyOrDefault(() =>
+                            {
+                                return Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow).ConfigureAndResult()
+                                    .Ticks.ToString(CultureInfo.InvariantCulture);
+                            });
 
                             // 设定缩放保存路径
                             var scaleSavePath = savePathTemplate.NotEmptyOrDefault(imagePath);
@@ -218,7 +228,6 @@ namespace Librame.Extensions.Drawing.Services
 
             return new Size((int)zoomWidth, (int)zoomHeight);
         }
-
 
         private bool IsImageFile(string path)
         {

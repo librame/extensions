@@ -29,6 +29,14 @@ namespace Librame.Extensions.Encryption.Services
         /// </value>
         ISigningCredentialsService SigningCredentials { get; }
 
+        /// <summary>
+        /// RSA 源实例。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="RSA"/>。
+        /// </value>
+        RSA Source { get; }
+
 
         /// <summary>
         /// 签名散列算法。

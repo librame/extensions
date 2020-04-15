@@ -34,7 +34,14 @@ namespace Librame.Extensions.Data.Builders
         public DataBuilderDependency(IExtensionBuilderDependency parentDependency = null)
             : base(nameof(DataBuilderDependency), parentDependency)
         {
+            ModelSnapshotsDirectory = BaseDirectory.CombinePath("ModelSnapshots");
         }
+
+
+        /// <summary>
+        /// 模型快照目录。
+        /// </summary>
+        public string ModelSnapshotsDirectory { get; set; }
 
 
         /// <summary>
@@ -86,25 +93,27 @@ namespace Librame.Extensions.Data.Builders
         {
             configuration.NotNull(nameof(configuration));
 
-            UpdateDefaultConnection(configuration, validateFactory);
-            UpdateWritingConnection(configuration, validateFactory);
+            UpdateDefaultConnectionString(configuration, validateFactory);
+            UpdateWritingConnectionString(configuration, validateFactory);
 
             return this;
         }
 
 
         /// <summary>
-        /// 绑定默认租户配置节。
+        /// 绑定配置根包含的默认租户配置节。。
         /// </summary>
         /// <examples>
         /// JSON 配置节点结构参考：
         /// <code>
-        /// "DefaultTenant": {
-        ///     "Name": "name",
-        ///     "Host": "host",
-        ///     "DefaultConnectionString": "default connection string",
-        ///     "WritingConnectionString": "writing connection string",
-        ///     "WritingSeparation": true // or false
+        /// {
+        ///     "DefaultTenant": {
+        ///         "Name": "name",
+        ///         "Host": "host",
+        ///         "DefaultConnectionString": "default connection string",
+        ///         "WritingConnectionString": "writing connection string",
+        ///         "WritingSeparation": true // or false
+        ///     }
         /// }
         /// </code>
         /// </examples>
@@ -146,52 +155,38 @@ namespace Librame.Extensions.Data.Builders
         {
             configuration.NotNull(nameof(configuration));
 
-            UpdateDefaultConnection(configuration, validateFactory);
-            UpdateWritingConnection(configuration, validateFactory);
+            UpdateDefaultConnectionString(configuration, validateFactory);
+            UpdateWritingConnectionString(configuration, validateFactory);
 
-            var writingSeparation = configuration
-                .GetSection(nameof(Options.DefaultTenant.WritingSeparation))?.Value;
-            if (writingSeparation.IsNotEmpty())
-                Options.DefaultTenant.WritingSeparation = bool.Parse(writingSeparation);
+            Options.DefaultTenant.WritingSeparation
+                = configuration.GetValue(nameof(Options.DefaultTenant.WritingSeparation), defaultValue: false);
 
-            var name = configuration
-                .GetSection(nameof(Options.DefaultTenant.Name))?.Value;
-            if (name.IsNotEmpty())
-                Options.DefaultTenant.Name = name;
+            Options.DefaultTenant.Name
+                = configuration.GetValue(nameof(Options.DefaultTenant.Name), Options.DefaultTenant.Name);
 
-            var host = configuration
-                .GetSection(nameof(Options.DefaultTenant.Host))?.Value;
-            if (host.IsNotEmpty())
-                Options.DefaultTenant.Host = host;
+            Options.DefaultTenant.Host
+                = configuration.GetValue(nameof(Options.DefaultTenant.Host), Options.DefaultTenant.Host);
 
             return this;
         }
 
 
-        private void UpdateDefaultConnection(IConfiguration configuration,
+        private void UpdateDefaultConnectionString(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
-            var connectionString = configuration
-                .GetSection(nameof(Options.DefaultTenant.DefaultConnectionString))?.Value;
+            var connectionString = configuration.GetValue(nameof(Options.DefaultTenant.DefaultConnectionString),
+                Options.DefaultTenant.DefaultConnectionString);
 
-            if (connectionString.IsEmpty())
-                return;
-
-            Options.DefaultTenant.DefaultConnectionString = validateFactory?.Invoke(connectionString)
-                .NotEmptyOrDefault(connectionString);
+            Options.DefaultTenant.DefaultConnectionString = validateFactory?.Invoke(connectionString) ?? connectionString;
         }
 
-        private void UpdateWritingConnection(IConfiguration configuration,
+        private void UpdateWritingConnectionString(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
-            var connectionString = configuration
-                .GetSection(nameof(Options.DefaultTenant.WritingConnectionString))?.Value;
+            var connectionString = configuration.GetValue(nameof(Options.DefaultTenant.WritingConnectionString),
+                Options.DefaultTenant.WritingConnectionString);
 
-            if (connectionString.IsEmpty())
-                return;
-
-            Options.DefaultTenant.WritingConnectionString = validateFactory?.Invoke(connectionString)
-                .NotEmptyOrDefault(connectionString);
+            Options.DefaultTenant.WritingConnectionString = validateFactory?.Invoke(connectionString) ?? connectionString;
         }
 
     }

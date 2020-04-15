@@ -68,5 +68,14 @@ namespace Librame.Extensions.Drawing.Resources {
                 return ResourceManager.GetString("InvalidOperationExceptionUnsupportedImageFormat", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 Options.Scales is empty. 的本地化字符串。
+        /// </summary>
+        internal static string ScaleOptionsIsEmpty {
+            get {
+                return ResourceManager.GetString("ScaleOptionsIsEmpty", resourceCulture);
+            }
+        }
     }
 }

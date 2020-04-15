@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,8 +36,7 @@ namespace Librame.Extensions.Data.Accessors
     /// </summary>
     public class DbContextAccessorBase : DbContext, IAccessor
     {
-        private static ITenant _currentTenant = null;
-        private static string _currentConnectionString = null;
+        private bool _isSavingChanges = false;
 
 
         /// <summary>
@@ -49,23 +47,18 @@ namespace Librame.Extensions.Data.Accessors
         protected DbContextAccessorBase(DbContextOptions options)
             : base(options)
         {
-            InitializeConnectionString(options);
-
-            InitializeMigrate();
+            InitializeAccessorBase(options);
         }
 
 
-        private void InitializeConnectionString(DbContextOptions options)
+        private void InitializeAccessorBase(DbContextOptions options)
         {
-            var relationalOptionsExtensions
-                = options.Extensions.OfType<RelationalOptionsExtension>().FirstOrDefault();
+            // Database.GetDbConnection().ConnectionString 的信息不一定完整
+            CurrentConnectionString = BuilderOptions.OptionsExtensionConnectionStringFactory?.Invoke(options);
+            CurrentConnectionString.NotEmpty("BuilderOptions.OptionsExtensionConnectionStringFactory");
 
-            _currentConnectionString = relationalOptionsExtensions?.ConnectionString;
-        }
+            CurrentTenant = BuilderOptions.DefaultTenant.NotNull("BuilderOptions.DefaultTenant");
 
-        private void InitializeMigrate()
-        {
-            // 验证数据库是否存在
             if (BuilderOptions.IsCreateDatabase)
                 EnsureDatabaseCreated();
         }
@@ -125,30 +118,27 @@ namespace Librame.Extensions.Data.Accessors
         /// 当前租户。
         /// </summary>
         /// <value>返回 <see cref="ITenant"/>。</value>
-        public ITenant CurrentTenant
-            => _currentTenant.NotNullOrDefault(() => BuilderOptions.DefaultTenant);
+        public ITenant CurrentTenant { get; private set; }
 
         /// <summary>
         /// 当前数据库连接字符串。
         /// </summary>
-        public string CurrentConnectionString
-            => _currentConnectionString.NotEmptyOrDefault(() => Database.GetDbConnection().ConnectionString);
+        public string CurrentConnectionString { get; private set; }
 
 
         /// <summary>
-        /// 是否为当前数据连接字符串。
+        /// 是当前数据连接字符串。
         /// </summary>
         /// <param name="connectionString">给定的连接字符串。</param>
         /// <returns>返回布尔值。</returns>
         public virtual bool IsCurrentConnectionString(string connectionString)
             => CurrentConnectionString.Equals(connectionString, StringComparison.OrdinalIgnoreCase);
 
-
         /// <summary>
-        /// 是写入请求。
+        /// 是写入数据连接字符串（支持未启用读写分离）。
         /// </summary>
         /// <returns>返回布尔值。</returns>
-        public virtual bool IsWritingRequest()
+        public virtual bool IsWritingConnectionString()
             => !CurrentTenant.WritingSeparation
             || (CurrentTenant.WritingSeparation && IsCurrentConnectionString(CurrentTenant.WritingConnectionString));
 
@@ -163,8 +153,8 @@ namespace Librame.Extensions.Data.Accessors
             bool result;
             if (result = Database.EnsureCreated())
             {
-                Logger.LogInformation($"Database created: {_currentConnectionString}.");
-                BuilderOptions.DatabaseCreatedAction?.Invoke(this);
+                Logger.LogInformation($"Database created: {CurrentConnectionString}.");
+                BuilderOptions.PostDatabaseCreatedAction?.Invoke(this);
             }
             return result;
         }
@@ -179,8 +169,8 @@ namespace Librame.Extensions.Data.Accessors
             bool result;
             if (result = await Database.EnsureCreatedAsync(cancellationToken).ConfigureAndResultAsync())
             {
-                Logger.LogInformation($"Database created: {_currentConnectionString}.");
-                BuilderOptions.DatabaseCreatedAction?.Invoke(this);
+                Logger.LogInformation($"Database created: {CurrentConnectionString}.");
+                BuilderOptions.PostDatabaseCreatedAction?.Invoke(this);
             }
             return result;
         }
@@ -207,21 +197,180 @@ namespace Librame.Extensions.Data.Accessors
             => Database.ExecuteSqlRawAsync(sql, parameters, cancellationToken);
 
 
+        #region SaveChanges (WritingSeparation)
+
         /// <summary>
-        /// 迁移。
+        /// 基础保存更改。
         /// </summary>
-        public virtual void Migrate()
+        /// <returns>返回受影响的行数。</returns>
+        public int BaseSaveChanges()
+            => base.SaveChanges();
+
+        /// <summary>
+        /// 基础保存更改。
+        /// </summary>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <returns>返回受影响的行数。</returns>
+        public int BaseSaveChanges(bool acceptAllChangesOnSuccess)
+            => base.SaveChanges(acceptAllChangesOnSuccess);
+
+        /// <summary>
+        /// 基础异步保存更改。
+        /// </summary>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含受影响行数的异步操作。</returns>
+        public Task<int> BaseSaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+            => base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+
+        /// <summary>
+        /// 基础异步保存更改。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含受影响行数的异步操作。</returns>
+        public Task<int> BaseSaveChangesAsync(CancellationToken cancellationToken = default)
+            => base.SaveChangesAsync(cancellationToken);
+
+
+        /// <summary>
+        /// 重载保存更改。
+        /// </summary>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <returns>返回受影响的行数。</returns>
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
+            return Locker.WaitFactory(() =>
+            {
+                var count = 0;
+
+                if (_isSavingChanges)
+                    return count;
+
+                _isSavingChanges = true;
+
+                // 试着改变为写入数据库连接
+                var isChanged = ChangeConnectionString(tenant => tenant.WritingConnectionString);
+
+                // 调用保存更改核心
+                if (IsWritingConnectionString())
+                    count = SaveChangesCore(acceptAllChangesOnSuccess);
+
+                // 试着还原为默认数据库连接
+                if (isChanged)
+                    ChangeConnectionString(tenant => tenant.DefaultConnectionString);
+
+                _isSavingChanges = false;
+
+                return count;
+            });
         }
 
         /// <summary>
-        /// 异步迁移。
+        /// 保存更改核心。
+        /// </summary>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <returns>返回受影响的行数。</returns>
+        protected virtual int SaveChangesCore(bool acceptAllChangesOnSuccess)
+            => BaseSaveChanges(acceptAllChangesOnSuccess);
+
+        /// <summary>
+        /// 重载异步保存更改。
+        /// </summary>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含受影响行数的异步操作。</returns>
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+            CancellationToken cancellationToken = default)
+        {
+            return await Locker.WaitFactoryAsync(async () =>
+            {
+                var count = 0;
+
+                if (_isSavingChanges)
+                    return count;
+
+                _isSavingChanges = true;
+
+                // 试着改变为写入数据库连接
+                var isChanged = await ChangeConnectionStringAsync(tenant => tenant.WritingConnectionString, cancellationToken)
+                    .ConfigureAndResultAsync();
+
+                // 调用保存更改核心
+                if (IsWritingConnectionString())
+                    count = await SaveChangesCoreAsync(acceptAllChangesOnSuccess, cancellationToken).ConfigureAndResultAsync();
+
+                // 试着还原为默认数据库连接
+                if (isChanged)
+                {
+                    await ChangeConnectionStringAsync(tenant => tenant.DefaultConnectionString, cancellationToken: cancellationToken)
+                        .ConfigureAndResultAsync();
+                }
+
+                _isSavingChanges = false;
+
+                return count;
+            },
+            cancellationToken).ConfigureAndResultAsync();
+        }
+
+        /// <summary>
+        /// 异步保存更改核心。
+        /// </summary>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含受影响行数的异步操作。</returns>
+        protected virtual Task<int> SaveChangesCoreAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+            => BaseSaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+
+        #endregion
+
+
+        #region Migrate (MigrationEnabled)
+
+        /// <summary>
+        /// 迁移（如果选项已启用迁移，则调用迁移核心方法，反之则调用数据库默认迁移方法）。
+        /// </summary>
+        public virtual void Migrate()
+        {
+            if (BuilderOptions.MigrationEnabled)
+                Locker.WaitAction(MigrateCore);
+            else
+                Database.Migrate();
+        }
+
+        /// <summary>
+        /// 迁移核心。
+        /// </summary>
+        protected virtual void MigrateCore()
+        {
+        }
+
+
+        /// <summary>
+        /// 异步迁移（如果选项已启用迁移，则调用迁移核心方法，反之则调用数据库默认迁移方法）。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         public virtual Task MigrateAsync(CancellationToken cancellationToken = default)
+        {
+            if (BuilderOptions.MigrationEnabled)
+                return Locker.WaitActionAsync(() => MigrateCoreAsync(cancellationToken));
+            else
+                return Database.MigrateAsync(cancellationToken);
+        }
+
+        /// <summary>
+        /// 异步迁移核心。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        protected virtual Task MigrateCoreAsync(CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 
+        #endregion
+
+
+        #region ChangeConnectionString (TenantEnabled)
 
         /// <summary>
         /// 改变数据库链接。
@@ -229,58 +378,54 @@ namespace Librame.Extensions.Data.Accessors
         /// <param name="changeFactory">给定改变租户数据库连接的工厂方法。</param>
         /// <returns>返回是否切换的布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "changeFactory")]
-        public virtual bool ChangeDbConnection(Func<ITenant, string> changeFactory)
+        public virtual bool ChangeConnectionString(Func<ITenant, string> changeFactory)
         {
             changeFactory.NotNull(nameof(changeFactory));
 
-            var isSwitched = false;
-
-            // 如果启用多租户
-            if (BuilderOptions.TenantEnabled)
-            {
-                var switchTenant = GetSwitchTenant();
-                if (switchTenant.IsNotNull() && !switchTenant.Equals(CurrentTenant))
-                {
-                    _currentTenant = switchTenant;
-                    isSwitched = true;
-                    Logger.LogTrace(InternalResource.SwitchNewTenantFormat.Format(switchTenant.ToString()));
-                }
-            }
-
-            if (!isSwitched && !CurrentTenant.WritingSeparation)
-                return false;
-
-            var changeConnectionString = changeFactory.Invoke(CurrentTenant);
-            if (changeConnectionString.IsEmpty())
-            {
-                Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
-                return false;
-            }
-
-            if (IsCurrentConnectionString(changeConnectionString))
-            {
-                Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
-                return false;
-            }
-
-            _currentConnectionString = changeConnectionString;
-
             // 不使用尝试捕获异常锁，否则会中断异常后面的方法执行，不适合局部异常处理
-            return Locker.WaitFactory(ChangeDbConnectionCore);
-        }
+            return Locker.WaitFactory(() =>
+            {
+                var isSwitched = false;
 
-        /// <summary>
-        /// 获取切换的租户。
-        /// </summary>
-        /// <returns>返回 <see cref="ITenant"/>。</returns>
-        protected virtual ITenant GetSwitchTenant()
-            => null;
+                // 如果启用多租户
+                if (BuilderOptions.TenantEnabled)
+                {
+                    var switchTenant = SwitchTenant();
+                    if (switchTenant.IsNotNull() && !switchTenant.Equals(CurrentTenant))
+                    {
+                        CurrentTenant = switchTenant;
+                        isSwitched = true;
+                        Logger.LogTrace(InternalResource.SwitchNewTenantFormat.Format(switchTenant.ToString()));
+                    }
+                }
+
+                // 如果未进行租户切换且当前租户未启用读写分离，则退出
+                if (!isSwitched && !CurrentTenant.WritingSeparation)
+                    return false;
+
+                var changeConnectionString = changeFactory.Invoke(CurrentTenant);
+                if (changeConnectionString.IsEmpty())
+                {
+                    Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
+                    return false;
+                }
+                if (IsCurrentConnectionString(changeConnectionString))
+                {
+                    Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
+                    return false;
+                }
+
+                CurrentConnectionString = changeConnectionString;
+
+                return ChangeConnectionStringCore();
+            });
+        }
 
         /// <summary>
         /// 改变数据库连接核心。
         /// </summary>
         /// <returns>返回布尔值。</returns>
-        protected bool ChangeDbConnectionCore()
+        protected virtual bool ChangeConnectionStringCore()
         {
             var connection = Database.GetDbConnection();
             if (connection.State != ConnectionState.Closed)
@@ -289,11 +434,6 @@ namespace Librame.Extensions.Data.Accessors
                 Logger.LogTrace(InternalResource.CloseConnectionFormat.Format(connection.ConnectionString));
             }
 
-            // MYSql: System.InvalidOperationException
-            //  HResult = 0x80131509
-            //  Message = Cannot change connection string on a connection that has already been opened.
-            //  Source = MySqlConnector
-            // connection.ChangeDatabase(connectionString);
             connection.ConnectionString = CurrentConnectionString;
             Logger.LogInformation(InternalResource.ChangeNewConnectionFormat.Format(CurrentTenant.ToString(), CurrentConnectionString));
 
@@ -320,62 +460,56 @@ namespace Librame.Extensions.Data.Accessors
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否已切换的布尔值的异步操作。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "changeFactory")]
-        public virtual async Task<bool> ChangeDbConnectionAsync(Func<ITenant, string> changeFactory,
+        public virtual async Task<bool> ChangeConnectionStringAsync(Func<ITenant, string> changeFactory,
             CancellationToken cancellationToken = default)
         {
             changeFactory.NotNull(nameof(changeFactory));
 
-            var isSwitched = false;
-
-            // 如果启用多租户
-            if (BuilderOptions.TenantEnabled)
-            {
-                var switchTenant = await GetSwitchTenantAsync(cancellationToken).ConfigureAndResultAsync();
-                if (switchTenant.IsNotNull() && !switchTenant.Equals(CurrentTenant))
-                {
-                    _currentTenant = switchTenant;
-                    isSwitched = true;
-                    Logger.LogTrace(InternalResource.SwitchNewTenantFormat.Format(switchTenant.ToString()));
-                }
-            }
-
-            if (!isSwitched && !CurrentTenant.WritingSeparation)
-                return false;
-
-            var changeConnectionString = changeFactory.Invoke(CurrentTenant);
-            if (changeConnectionString.IsEmpty())
-            {
-                Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
-                return false;
-            }
-
-            if (IsCurrentConnectionString(changeConnectionString))
-            {
-                Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
-                return false;
-            }
-
-            _currentConnectionString = changeConnectionString;
-
             // 不使用尝试捕获异常锁，否则会中断异常后面的方法执行，不适合局部异常处理
-            return await Locker.WaitFactoryAsync(() => ChangeDbConnectionCoreAsync(cancellationToken),
-                cancellationToken).ConfigureAndResultAsync();
-        }
+            return await Locker.WaitFactoryAsync(async () =>
+            {
+                var isSwitched = false;
 
-        /// <summary>
-        /// 获取切换的租户。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回包含 <see cref="ITenant"/> 的异步操作。</returns>
-        protected virtual Task<ITenant> GetSwitchTenantAsync(CancellationToken cancellationToken = default)
-            => Task.FromResult((ITenant)null);
+                // 如果启用多租户
+                if (BuilderOptions.TenantEnabled)
+                {
+                    var switchTenant = await SwitchTenantAsync(cancellationToken).ConfigureAndResultAsync();
+                    if (switchTenant.IsNotNull() && !switchTenant.Equals(CurrentTenant))
+                    {
+                        CurrentTenant = switchTenant;
+                        isSwitched = true;
+                        Logger.LogTrace(InternalResource.SwitchNewTenantFormat.Format(switchTenant.ToString()));
+                    }
+                }
+
+                if (!isSwitched && !CurrentTenant.WritingSeparation)
+                    return false;
+
+                var changeConnectionString = changeFactory.Invoke(CurrentTenant);
+                if (changeConnectionString.IsEmpty())
+                {
+                    Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
+                    return false;
+                }
+                if (IsCurrentConnectionString(changeConnectionString))
+                {
+                    Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
+                    return false;
+                }
+
+                CurrentConnectionString = changeConnectionString;
+
+                return await ChangeConnectionStringCoreAsync(cancellationToken).ConfigureAndResultAsync();
+            },
+            cancellationToken).ConfigureAndResultAsync();
+        }
 
         /// <summary>
         /// 异步改变数据库连接核心。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回包含布尔值的异步操作。</returns>
-        protected virtual async Task<bool> ChangeDbConnectionCoreAsync(CancellationToken cancellationToken = default)
+        protected virtual async Task<bool> ChangeConnectionStringCoreAsync(CancellationToken cancellationToken = default)
         {
             var connection = Database.GetDbConnection();
             if (connection.State != ConnectionState.Closed)
@@ -384,11 +518,6 @@ namespace Librame.Extensions.Data.Accessors
                 Logger.LogTrace(InternalResource.CloseConnectionFormat.Format(connection.ConnectionString));
             }
 
-            // MYSql: System.InvalidOperationException
-            //  HResult = 0x80131509
-            //  Message = Cannot change connection string on a connection that has already been opened.
-            //  Source = MySqlConnector
-            // connection.ChangeDatabase(connectionString);
             connection.ConnectionString = CurrentConnectionString;
             Logger?.LogInformation(InternalResource.ChangeNewConnectionFormat.Format(CurrentTenant.ToString(), CurrentConnectionString));
 
@@ -406,6 +535,24 @@ namespace Librame.Extensions.Data.Accessors
             BuilderOptions.PostChangedDbConnectionAction?.Invoke(this);
             return true;
         }
+
+
+        /// <summary>
+        /// 切换租户。
+        /// </summary>
+        /// <returns>返回 <see cref="ITenant"/>。</returns>
+        protected virtual ITenant SwitchTenant()
+            => null;
+
+        /// <summary>
+        /// 切换租户。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回包含 <see cref="ITenant"/> 的异步操作。</returns>
+        protected virtual Task<ITenant> SwitchTenantAsync(CancellationToken cancellationToken = default)
+            => Task.FromResult((ITenant)null);
+
+        #endregion
 
     }
 }

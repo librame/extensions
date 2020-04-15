@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore.Sqlite.Design.Internal;
-//using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore.Sqlite.Design.Internal;
+using Microsoft.EntityFrameworkCore.SqlServer.Design.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -11,10 +11,8 @@ using System;
 namespace Librame.Extensions.Examples
 {
     using Core.Builders;
+    using Core.Identifiers;
     using Data.Builders;
-    using Encryption.Buffers;
-    using Encryption.Builders;
-    using Newtonsoft.Json;
 
     class Program
     {
@@ -23,6 +21,134 @@ namespace Librame.Extensions.Examples
             // Add NLog Configuration
             NLog.LogManager.LoadConfiguration("../../../nlog.config");
 
+            Console.WriteLine("Hello, Librame Pang!");
+            Console.WriteLine("Press any key to continue");
+            Console.ReadKey();
+
+            RunMySql();
+
+            RunSqlServer();
+
+            RunSqlite();
+
+            // Close NLog
+            NLog.LogManager.Shutdown();
+        }
+
+        static void RunMySql()
+        {
+            var builder = CreateBuilder()
+                .AddData(dependency =>
+                {
+                    dependency.Options.SUIDGenerator = SequentialUniqueIdentifierGenerator.MySQL;
+
+                    // for MySQL
+                    dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
+                })
+                .AddAccessor<MySqlExampleDbContextAccessor>((tenant, optionsBuilder) =>
+                {
+                    // for MySQL
+                    optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
+                    {
+                        mySql.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName());
+                        mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
+                    });
+                })
+                // for MySQL
+                .AddDatabaseDesignTime<MySqlDesignTimeServices>()
+                .AddStoreIdentifier<ExampleStoreIdentifier>()
+                .AddStoreInitializer<ExampleStoreInitializer<MySqlExampleDbContextAccessor>>()
+                .AddStoreHub<ExampleStoreHub<MySqlExampleDbContextAccessor>>();
+
+            var provider = builder.Services.BuildServiceProvider();
+            DisplayData<MySqlExampleDbContextAccessor>(provider, "MySql");
+        }
+
+        static void RunSqlServer()
+        {
+            var builder = CreateBuilder()
+                .AddData()
+                .AddAccessor<SqlServerExampleDbContextAccessor>((tenant, optionsBuilder) =>
+                {
+                    // for SqlServer
+                    optionsBuilder.UseSqlServer(tenant.DefaultConnectionString,
+                        sqlServer => sqlServer.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
+                })
+                // for SqlServer
+                .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
+                .AddStoreIdentifier<ExampleStoreIdentifier>()
+                .AddStoreInitializer<ExampleStoreInitializer<SqlServerExampleDbContextAccessor>>()
+                .AddStoreHub<ExampleStoreHub<SqlServerExampleDbContextAccessor>>();
+
+            var provider = builder.Services.BuildServiceProvider();
+            DisplayData<SqlServerExampleDbContextAccessor>(provider, "SqlServer");
+        }
+
+        static void RunSqlite()
+        {
+            var builder = CreateBuilder()
+                .AddData(dependency =>
+                {
+                    dependency.Options.SUIDGenerator = new SequentialUniqueIdentifierGenerator(SequentialUniqueIdentifierType.AsString);
+
+                    // for SQLite
+                    dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.BaseDirectory.CombinePath(dataFile));
+
+                    // ConnectionStrings 配置节点不支持 DefaultTenant 配置，须手动启用读写分离
+                    dependency.Options.DefaultTenant.WritingSeparation = true;
+                })
+                .AddAccessor<SqliteExampleDbContextAccessor>((tenant, optionsBuilder) =>
+                {
+                    // for SQLite
+                    optionsBuilder.UseSqlite(tenant.DefaultConnectionString,
+                        sqlite => sqlite.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
+                })
+                // for SQLite
+                .AddDatabaseDesignTime<SqliteDesignTimeServices>()
+                .AddStoreIdentifier<ExampleStoreIdentifier>()
+                .AddStoreInitializer<ExampleStoreInitializer<SqliteExampleDbContextAccessor>>()
+                .AddStoreHub<ExampleStoreHub<SqliteExampleDbContextAccessor>>();
+
+            var provider = builder.Services.BuildServiceProvider();
+            DisplayData<SqliteExampleDbContextAccessor>(provider, "Sqlite");
+        }
+
+        static void DisplayData<TAccessor>(IServiceProvider provider, string databaseName)
+            where TAccessor : ExampleDbContextAccessorBase<Guid, int>
+        {
+            Console.WriteLine($"Run {databaseName} database test:");
+
+            // Write Tenant
+            var tenant = provider.GetRequiredService<IOptions<DataBuilderOptions>>().Value.DefaultTenant;
+
+            Console.WriteLine($"Current tenant name: {tenant.Name}.");
+            Console.WriteLine($"Current tenant host: {tenant.Host}.");
+            Console.WriteLine($"Current tenant DefaultConnectionString: {tenant.DefaultConnectionString}.");
+            Console.WriteLine($"Current tenant WritingConnectionString: {tenant.WritingConnectionString}.");
+            Console.WriteLine($"Current tenant WritingSeparation: {tenant.WritingSeparation}.");
+
+            // Write Data
+            var stores = provider.GetRequiredService<ExampleStoreHub<TAccessor>>();
+
+            var categories = stores.GetCategories();
+            Console.WriteLine($"Default database categories is empty: {categories.IsEmpty()}.");
+
+            categories = stores.UseWriteDbConnection().GetCategories();
+            Console.WriteLine($"Writing database categories is empty: {categories.IsEmpty()}.");
+            categories.ForEach(category => Console.WriteLine(category));
+
+            var articles = stores.UseDefaultDbConnection().GetArticles();
+            Console.WriteLine($"Default database articles is empty: {articles.IsEmpty()}.");
+
+            articles = stores.UseWriteDbConnection().GetArticles();
+            Console.WriteLine($"Writing database articles is empty: {articles.IsEmpty()}."); // 如果已分表，则此表内容可能为空
+
+            Console.WriteLine("Press any key to continue");
+            Console.ReadKey();
+        }
+
+        static ICoreBuilder CreateBuilder()
+        {
             //var basePath = AppContext.BaseDirectory.WithoutDevelopmentRelativePath();
             //var root = new ConfigurationBuilder()
             //    .SetBasePath(basePath)
@@ -31,8 +157,9 @@ namespace Librame.Extensions.Examples
 
             var services = new ServiceCollection();
 
-            services.AddLibrame<ExampleCoreBuilderDependency>(dependency =>
+            return services.AddLibrame<ExampleCoreBuilderDependency>(dependency =>
             {
+                // appsettings.json (default)
                 //dependency.ConfigurationRoot = root;
 
                 dependency.ConfigureLoggingBuilder = logging =>
@@ -43,143 +170,7 @@ namespace Librame.Extensions.Examples
                     logging.AddConsole(logger => logger.IncludeScopes = false);
                     logging.AddFilter((str, level) => true);
                 };
-            })
-            .AddData(dependency =>
-            {
-                // for SQLite
-                //dependency.BindConnectionStrings(dataFile => dependency.BaseDirectory.CombinePath(dataFile));
-                
-                // for MySQL
-                dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
-            })
-            .AddAccessor<ExampleDbContextAccessor>((tenant, optionsBuilder) =>
-            {
-                // for SQLite
-                //optionsBuilder.UseSqlite(tenant.DefaultConnectionString,
-                //    sqlite => sqlite.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
-
-                // for MySQL
-                optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
-                {
-                    mySql.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName());
-                    mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
-                });
-            })
-            // for SQLite
-            //.AddDatabaseDesignTime<SqliteDesignTimeServices>()
-            // for MySQL
-            .AddDatabaseDesignTime<MySqlDesignTimeServices>()
-            .AddStoreIdentifier<ExampleStoreIdentifier>()
-            .AddStoreInitializer<ExampleStoreInitializer>()
-            .AddStoreHub<ExampleStoreHub>()
-            .AddEncryption()
-            .AddDeveloperGlobalSigningCredentials();
-            
-            var provider = services.BuildServiceProvider();
-            Console.WriteLine($"Export dependencies:");
-
-            var dependencies = provider.ExportDependencies(services);
-            var json = JsonConvert.SerializeObject(dependencies, Formatting.Indented);
-            Console.WriteLine(json);
-
-            RunHello(provider);
-
-            // for SQLite
-            //RunSqlite(provider);
-            // for MySQL
-            RunMySql(provider);
-
-            RunEncryption(provider);
-
-            // Close NLog
-            NLog.LogManager.Shutdown();
-        }
-
-        private static void RunHello(IServiceProvider provider)
-        {
-            var options = provider.GetRequiredService<IOptions<ExampleOptions>>().Value;
-            Console.WriteLine(options.Message);
-
-            var dataOptions = provider.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
-            dataOptions.MigrationAssemblyReferences.ForEach((refer, i) =>
-            {
-                Console.WriteLine($"AssemblyReference {i + 1}: {refer.Name}, IsItself: {refer.IsItself}");
             });
-
-            Console.WriteLine("Press any key to continue");
-            Console.ReadKey();
-        }
-
-        private static void RunSqlite(IServiceProvider provider)
-        {
-            Console.WriteLine("Run sqlite database test:");
-
-            var stores = provider.GetRequiredService<ExampleStoreHub>();
-
-            var categories = stores.GetCategories();
-            Console.WriteLine($"Default database categories is empty: {categories.IsEmpty()}.");
-
-            categories = stores.UseWriteDbConnection().GetCategories();
-            Console.WriteLine($"Writing database categories is empty: {categories.IsEmpty()}.");
-            categories.ForEach(category => Console.WriteLine(category));
-
-            var articles = stores.UseDefaultDbConnection().GetArticles();
-            Console.WriteLine($"Default database articles is empty: {articles.IsEmpty()}.");
-
-            articles = stores.UseWriteDbConnection().GetArticles();
-            Console.WriteLine($"Writing database articles is empty: {articles.IsEmpty()}."); // 如果已分表，则此表内容可能为空
-            if (articles.IsNotEmpty())
-                articles.ForEach(article => Console.WriteLine(article));
-
-            Console.WriteLine("Press any key to continue");
-            Console.ReadKey();
-        }
-
-        private static void RunMySql(IServiceProvider provider)
-        {
-            Console.WriteLine("Run mysql database test:");
-
-            var stores = provider.GetRequiredService<ExampleStoreHub>();
-
-            var categories = stores.GetCategories();
-            Console.WriteLine($"Default database categories is empty: {categories.IsEmpty()}.");
-
-            categories = stores.UseWriteDbConnection().GetCategories();
-            Console.WriteLine($"Writing database categories is empty: {categories.IsEmpty()}.");
-            categories.ForEach(category => Console.WriteLine(category));
-
-            var articles = stores.UseDefaultDbConnection().GetArticles();
-            Console.WriteLine($"Default database articles is empty: {articles.IsEmpty()}.");
-
-            articles = stores.UseWriteDbConnection().GetArticles();
-            Console.WriteLine($"Writing database articles is empty: {articles.IsEmpty()}."); // 如果已分表，则此表内容可能为空
-            if (articles.IsNotEmpty())
-                articles.ForEach(article => Console.WriteLine(article));
-
-            Console.WriteLine("Press any key to continue");
-            Console.ReadKey();
-        }
-
-        private static void RunEncryption(IServiceProvider provider)
-        {
-            Console.WriteLine("Run encryption test:");
-
-            Console.WriteLine("Please input some content:");
-
-            var content = Console.ReadLine();
-            if (content.IsWhiteSpace())
-            {
-                Console.WriteLine("Content is null, empty or white space.");
-                RunEncryption(provider);
-            }
-            
-            var plaintextBuffer = content.AsPlaintextBuffer(provider);
-            plaintextBuffer.UseHash((hash, buffer) => hash.Md5(buffer));
-
-            Console.WriteLine($"Content MD5: {plaintextBuffer.AsBase64String()}");
-
-            Console.WriteLine("Press any key to continue");
-            Console.ReadKey();
         }
 
     }

@@ -111,71 +111,76 @@ namespace Librame.Extensions.Data.Accessors
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.ConfigureDataStoreHub(this);
         }
 
 
+        #region SaveChangesCore (ISaveChangesDbContextAccessorAspect)
+
         /// <summary>
-        /// 重载保存更改。
+        /// 重载保存更改核心。
         /// </summary>
         /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
         /// <returns>返回受影响的行数。</returns>
-        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        protected override int SaveChangesCore(bool acceptAllChangesOnSuccess)
         {
-            // 改变为写入数据库连接
-            var isChanged = ChangeDbConnection(tenant => tenant.WritingConnectionString);
-
             var aspects = this.GetService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
-            // 前置处理保存变化
-            aspects.ForEach(aspect => aspect.Preprocess(this));
+            aspects.ForEach(aspect =>
+            {
+                if (aspect.Enabled)
+                    aspect.Preprocess(this); // 前置处理保存变化
+            });
 
-            // 保存变化
-            var count = base.SaveChanges(acceptAllChangesOnSuccess);
+            // 保存更改
+            var count = BaseSaveChanges(acceptAllChangesOnSuccess);
 
-            // 后置处理保存变化
-            aspects.ForEach(aspect => aspect.Postprocess(this));
-
-            // 还原为默认数据库连接
-            if (isChanged)
-                ChangeDbConnection(tenant => tenant.DefaultConnectionString);
+            aspects.ForEach(aspect =>
+            {
+                if (aspect.Enabled)
+                    aspect.Postprocess(this); // 后置处理保存变化
+            });
 
             return count;
         }
 
         /// <summary>
-        /// 重载异步保存更改。
+        /// 重载异步保存更改核心。
         /// </summary>
         /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
-        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        protected override async Task<int> SaveChangesCoreAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
-            // 改变为写入数据库连接
-            var isChanged = await ChangeDbConnectionAsync(tenant => tenant.WritingConnectionString, cancellationToken).ConfigureAndResultAsync();
-
             var aspects = this.GetService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
-            // 前置处理保存变化
-            aspects.ForEach(async aspect => await aspect.PreprocessAsync(this, cancellationToken).ConfigureAndWaitAsync());
+            aspects.ForEach(async aspect =>
+            {
+                if (aspect.Enabled)
+                    await aspect.PreprocessAsync(this, cancellationToken).ConfigureAndWaitAsync(); // 异步前置处理保存变化
+            });
 
-            // 保存变化
-            var count = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken).ConfigureAndResultAsync();
+            // 异步保存更改
+            var count = await BaseSaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken).ConfigureAndResultAsync();
 
-            // 后置处理保存变化
-            aspects.ForEach(async aspect => await aspect.PostprocessAsync(this, cancellationToken).ConfigureAndWaitAsync());
-
-            // 还原为默认数据库连接
-            if (isChanged)
-                await ChangeDbConnectionAsync(tenant => tenant.DefaultConnectionString, cancellationToken: cancellationToken).ConfigureAndResultAsync();
+            aspects.ForEach(async aspect =>
+            {
+                if (aspect.Enabled)
+                    await aspect.PostprocessAsync(this, cancellationToken).ConfigureAndWaitAsync(); // 异步后置处理保存变化
+            });
 
             return count;
         }
 
+        #endregion
+
+
+        #region MigrateCore (IMigrationService, Invoke IMigrateDbContextAccessorAspect)
 
         /// <summary>
         /// 迁移。
         /// </summary>
-        public override void Migrate()
+        protected override void MigrateCore()
         {
             var migration = this.GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             migration.Migrate(this);
@@ -186,18 +191,22 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        public override Task MigrateAsync(CancellationToken cancellationToken = default)
+        protected override Task MigrateCoreAsync(CancellationToken cancellationToken = default)
         {
             var migration = this.GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             return migration.MigrateAsync(this, cancellationToken);
         }
 
+        #endregion
+
+
+        #region SwitchTenant (ITenantService)
 
         /// <summary>
         /// 获取切换的租户。
         /// </summary>
         /// <returns>返回 <see cref="ITenant"/>。</returns>
-        protected override ITenant GetSwitchTenant()
+        protected override ITenant SwitchTenant()
         {
             var tenant = this.GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             return tenant.GetSwitchTenant(this);
@@ -208,11 +217,13 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回包含 <see cref="ITenant"/> 的异步操作。</returns>
-        protected override Task<ITenant> GetSwitchTenantAsync(CancellationToken cancellationToken = default)
+        protected override Task<ITenant> SwitchTenantAsync(CancellationToken cancellationToken = default)
         {
             var tenant = this.GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             return tenant.GetSwitchTenantAsync(this, cancellationToken);
         }
+
+        #endregion
 
     }
 }

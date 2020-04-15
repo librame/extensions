@@ -60,7 +60,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                 return;
             }
 
-            var message = packet.Content.ToString(_server.CoreOptions.Encoding.Source);
+            var message = packet.Content.ToString(_server.CoreOptions.Encoding);
             if (message != "QOTM?")
             {
                 return;

@@ -11,14 +11,15 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Librame.Extensions.Data.Builders
 {
     using Core;
     using Core.Identifiers;
-    using Core.Threads;
     using Data.Accessors;
     using Data.Stores;
 
@@ -32,39 +33,36 @@ namespace Librame.Extensions.Data.Builders
         /// </summary>
         public SequentialUniqueIdentifierGenerator SUIDGenerator { get; set; }
             = SequentialUniqueIdentifierGenerator.SqlServer;
-
+        
+        /// <summary>
+        /// 默认选项扩展连接字符串工厂方法。
+        /// </summary>
+        public Func<DbContextOptions, string> OptionsExtensionConnectionStringFactory { get; set; }
+            = options => options.Extensions.OfType<RelationalOptionsExtension>().First().ConnectionString;
 
         /// <summary>
-        /// 是否创建数据库（如果数据库不存在；默认已启用）。
+        /// 如果数据库不存在时，是否创建数据库（默认已启用）。
         /// </summary>
         public bool IsCreateDatabase { get; set; }
             = true;
 
         /// <summary>
-        /// 已创建数据库动作（默认调用 <see cref="PostChangedDbConnectionAction"/>）。
+        /// 创建数据库的后置动作（默认调用 <see cref="PostChangedDbConnectionAction"/>）。
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public Action<DbContextAccessorBase> DatabaseCreatedAction { get; set; }
-            = accessor =>
-            {
-                // 数据库创建成功后调用后置改变数据库连接动作
-                accessor.Locker.WaitAction(() => accessor.BuilderOptions.PostChangedDbConnectionAction?.Invoke(accessor));
-            };
+        public Action<DbContextAccessorBase> PostDatabaseCreatedAction { get; set; }
+            = accessor => accessor.BuilderOptions.PostChangedDbConnectionAction?.Invoke(accessor);
 
         /// <summary>
-        /// 后置改变数据库连接动作。
+        /// 改变数据库连接的后置动作（默认调用 <see cref="DbContextAccessorBase.Migrate()"/>）。
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public Action<DbContextAccessorBase> PostChangedDbConnectionAction { get; set; }
-            = accessor =>
-            {
-                if (accessor.BuilderOptions.MigrationEnabled)
-                    accessor.Migrate();
-            };
+            = accessor => accessor.Migrate();
 
-        
+
         /// <summary>
         /// 启用审计（默认已启用）。
         /// </summary>
@@ -109,16 +107,16 @@ namespace Librame.Extensions.Data.Builders
             };
 
         /// <summary>
-        /// 导出迁移程序集。
-        /// </summary>
-        public bool ExportMigrationAssembly { get; set; }
-            = true;
-
-        /// <summary>
         /// 导出迁移命令集合。
         /// </summary>
         public bool ExportMigrationCommands { get; set; }
             = true;
+
+        /// <summary>
+        /// 模型缓存过期秒数。
+        /// </summary>
+        public int ModelCacheExpirationSeconds { get; set; }
+            = 5;
 
 
         /// <summary>

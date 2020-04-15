@@ -120,4 +120,7 @@
   <data name="InvalidOperationExceptionUnsupportedImageFormat" xml:space="preserve">
     <value>不支持的图像格式 '{0}'。</value>
   </data>
+  <data name="ScaleOptionsIsEmpty" xml:space="preserve">
+    <value>Options.Scales 列表配置为空。</value>
+  </data>
 </root>

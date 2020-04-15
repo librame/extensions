@@ -6,7 +6,7 @@ namespace Librame.Extensions.Core.Tests
 {
     using Threads;
 
-    public class TestMemoryLocker : AbstractDisposable, IMemoryLocker
+    public class TestMemoryLocker : IMemoryLocker
     {
         private readonly SemaphoreSlim _locker
             = new SemaphoreSlim(Environment.ProcessorCount);
@@ -26,7 +26,7 @@ namespace Librame.Extensions.Core.Tests
         public Task WaitAsync(int? millisecondsTimeout = null, TimeSpan? timeout = null, CancellationToken? cancellationToken = null)
             => _locker.WaitAsync();
 
-        protected override void DisposeCore()
+        public void Dispose()
             => _locker.Dispose();
     }
 }

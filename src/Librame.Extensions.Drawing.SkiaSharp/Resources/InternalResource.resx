@@ -120,4 +120,7 @@
   <data name="InvalidOperationExceptionUnsupportedImageFormat" xml:space="preserve">
     <value>Unsupported image format '{0}'.</value>
   </data>
+  <data name="ScaleOptionsIsEmpty" xml:space="preserve">
+    <value>Options.Scales is empty.</value>
+  </data>
 </root>

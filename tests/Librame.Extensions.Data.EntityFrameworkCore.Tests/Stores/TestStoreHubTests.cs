@@ -17,28 +17,30 @@ namespace Librame.Extensions.Data.Tests
     public class TestStoreHubTests
     {
         [Fact]
-        public void SqlServerTest()
+        public void MySqlTest()
         {
             var services = new ServiceCollection();
 
             services.AddLibrame()
                 .AddData(dependency =>
                 {
-                    // Default: SqlServer
-                    //dependency.Options.SUIDGenerator = SequentialUniqueIdentifierGenerator.SqlServer;
+                    dependency.Options.SUIDGenerator = SequentialUniqueIdentifierGenerator.MySQL;
 
                     dependency.Options.DefaultTenant.DefaultConnectionString
-                        = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
+                        = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_default;user=root;password=123456");
                     dependency.Options.DefaultTenant.WritingConnectionString
-                        = "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True";
+                        = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_writing;user=root;password=123456");
                     dependency.Options.DefaultTenant.WritingSeparation = true;
                 })
                 .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
                 {
-                    optionsBuilder.UseSqlServer(tenant.DefaultConnectionString,
-                        sqlServer => sqlServer.MigrationsAssembly(typeof(TestStoreHubTests).GetAssemblyDisplayName()));
+                    optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
+                    {
+                        mySql.MigrationsAssembly(typeof(TestStoreHubTests).GetAssemblyDisplayName());
+                        mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
+                    });
                 })
-                .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
+                .AddDatabaseDesignTime<MySqlDesignTimeServices>()
                 .AddStoreHub<TestStoreHub>()
                 .AddStoreIdentifier<TestStoreIdentifier>()
                 .AddStoreInitializer<TestStoreInitializer>();
@@ -64,30 +66,28 @@ namespace Librame.Extensions.Data.Tests
 
 
         [Fact]
-        public void MySqlTest()
+        public void SqlServerTest()
         {
             var services = new ServiceCollection();
 
             services.AddLibrame()
                 .AddData(dependency =>
                 {
-                    dependency.Options.SUIDGenerator = SequentialUniqueIdentifierGenerator.MySQL;
+                    // SqlServer (Default)
+                    //dependency.Options.SUIDGenerator = SequentialUniqueIdentifierGenerator.SqlServer;
 
                     dependency.Options.DefaultTenant.DefaultConnectionString
-                        = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_default;user=root;password=123456;");
+                        = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
                     dependency.Options.DefaultTenant.WritingConnectionString
-                        = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_writing;user=root;password=123456;");
+                        = "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True";
                     dependency.Options.DefaultTenant.WritingSeparation = true;
                 })
                 .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
                 {
-                    optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
-                    {
-                        mySql.MigrationsAssembly(typeof(TestStoreHubTests).GetAssemblyDisplayName());
-                        mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
-                    });
+                    optionsBuilder.UseSqlServer(tenant.DefaultConnectionString,
+                        sqlServer => sqlServer.MigrationsAssembly(typeof(TestStoreHubTests).GetAssemblyDisplayName()));
                 })
-                .AddDatabaseDesignTime<MySqlDesignTimeServices>()
+                .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
                 .AddStoreHub<TestStoreHub>()
                 .AddStoreIdentifier<TestStoreIdentifier>()
                 .AddStoreInitializer<TestStoreInitializer>();

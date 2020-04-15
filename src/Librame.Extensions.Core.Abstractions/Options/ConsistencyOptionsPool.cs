@@ -52,6 +52,24 @@ namespace Librame.Extensions.Core.Options
 
 
         /// <summary>
+        /// 获取或添加选项。
+        /// </summary>
+        /// <typeparam name="TOptions">指定的选项类型。</typeparam>
+        /// <returns>返回 <typeparamref name="TOptions"/>。</returns>
+        public static TOptions GetOrAdd<TOptions>()
+            => (TOptions)_optionsPool.GetOrAdd(typeof(TOptions),
+                key => key.EnsureCreate<TOptions>());
+
+        /// <summary>
+        /// 获取或添加选项。
+        /// </summary>
+        /// <param name="optionsType">给定的选项类型。</param>
+        /// <returns>返回选项对象。</returns>
+        public static object GetOrAdd(Type optionsType)
+            => _optionsPool.GetOrAdd(optionsType, key => key.EnsureCreateObject());
+
+
+        /// <summary>
         /// 尝试获取选项。
         /// </summary>
         /// <typeparam name="TOptions">指定的选项类型。</typeparam>

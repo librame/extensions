@@ -55,13 +55,6 @@ namespace Librame.Extensions.Data.Services
 
 
         /// <summary>
-        /// 启用服务。
-        /// </summary>
-        public bool Enabled
-            => Options.TenantEnabled;
-
-
-        /// <summary>
         /// 获取切换的租户。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/>。</param>
@@ -70,7 +63,7 @@ namespace Librame.Extensions.Data.Services
         {
             accessor.NotNull(nameof(accessor));
 
-            if (Enabled && accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
                 return GetSwitchTenantCore(dbContextAccessor);
 
             return null;
@@ -101,7 +94,7 @@ namespace Librame.Extensions.Data.Services
         {
             accessor.NotNull(nameof(accessor));
 
-            if (Enabled && accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
                 return GetSwitchTenantCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.FromResult((ITenant)null);

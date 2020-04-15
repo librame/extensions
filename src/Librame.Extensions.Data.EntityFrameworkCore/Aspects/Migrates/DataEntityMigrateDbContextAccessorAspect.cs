@@ -66,9 +66,9 @@ namespace Librame.Extensions.Data.Aspects
 
 
         /// <summary>
-        /// 需要保存。
+        /// 需要保存更改。
         /// </summary>
-        public bool RequireSaving { get; set; }
+        public bool RequiredSaveChanges { get; set; }
 
 
         /// <summary>
@@ -92,10 +92,6 @@ namespace Librame.Extensions.Data.Aspects
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
         protected override void PostprocessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            // 注册实体需作写入请求限制
-            if (!dbContextAccessor.IsWritingRequest())
-                return;
-
             var notification = new EntityNotification<TEntity, TGenId>();
             var result = GetDifference(dbContextAccessor);
 
@@ -104,7 +100,7 @@ namespace Librame.Extensions.Data.Aspects
                 dbContextAccessor.Entities.AddRangeAsync(result.Adds);
                 _cache.AddRange(result.Adds);
 
-                RequireSaving = true;
+                RequiredSaveChanges = true;
                 notification.Adds = result.Adds;
             }
 
@@ -114,7 +110,7 @@ namespace Librame.Extensions.Data.Aspects
                 result.Updates.ForEach(item => _cache.Remove(item));
                 _cache.AddRange(result.Updates);
 
-                RequireSaving = true;
+                RequiredSaveChanges = true;
                 notification.Updates = result.Updates;
             }
 
@@ -123,11 +119,11 @@ namespace Librame.Extensions.Data.Aspects
                 dbContextAccessor.Entities.RemoveRange(result.Removes);
                 result.Removes.ForEach(item => _cache.Remove(item));
 
-                RequireSaving = true;
+                RequiredSaveChanges = true;
                 notification.Removes = result.Removes;
             }
 
-            if (RequireSaving)
+            if (RequiredSaveChanges)
             {
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 mediator.Publish(notification).ConfigureAndWait();
@@ -144,10 +140,6 @@ namespace Librame.Extensions.Data.Aspects
         protected override async Task PostprocessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            // 注册实体需作写入请求限制
-            if (!dbContextAccessor.IsWritingRequest())
-                return;
-
             var notification = new EntityNotification<TEntity, TGenId>();
             var result = GetDifference(dbContextAccessor, cancellationToken);
 
@@ -156,7 +148,7 @@ namespace Librame.Extensions.Data.Aspects
                 await dbContextAccessor.Entities.AddRangeAsync(result.Adds, cancellationToken).ConfigureAndWaitAsync();
                 _cache.AddRange(result.Adds);
 
-                RequireSaving = true;
+                RequiredSaveChanges = true;
                 notification.Adds = result.Adds;
             }
 
@@ -166,7 +158,7 @@ namespace Librame.Extensions.Data.Aspects
                 result.Updates.ForEach(item => _cache.Remove(item));
                 _cache.AddRange(result.Updates);
 
-                RequireSaving = true;
+                RequiredSaveChanges = true;
                 notification.Updates = result.Updates;
             }
 
@@ -175,11 +167,11 @@ namespace Librame.Extensions.Data.Aspects
                 dbContextAccessor.Entities.RemoveRange(result.Removes);
                 result.Removes.ForEach(item => _cache.Remove(item));
 
-                RequireSaving = true;
+                RequiredSaveChanges = true;
                 notification.Removes = result.Removes;
             }
 
-            if (RequireSaving)
+            if (RequiredSaveChanges)
             {
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 await mediator.Publish(notification).ConfigureAndWaitAsync();

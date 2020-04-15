@@ -37,8 +37,8 @@ namespace Librame.Extensions.Data.Aspects
         where TIncremId : IEquatable<TIncremId>
     {
         /// <summary>
-        /// 需要保存。
+        /// 需要保存更改。
         /// </summary>
-        bool RequireSaving { get; set; }
+        bool RequiredSaveChanges { get; set; }
     }
 }

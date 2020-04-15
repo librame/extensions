@@ -20,7 +20,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.Extensions.pfx</AssemblyOriginatorKeyFile>
     <AssemblyVersion>7.4.1.14</AssemblyVersion>
-    <FileVersion>7.4.1077.17415</FileVersion>
+    <FileVersion>7.4.1096.17415</FileVersion>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
@@ -38,7 +38,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net48'">
-    <PackageReference Include="System.Interactive.Async" Version="4.0.0" />
+    <PackageReference Include="System.Interactive.Async" Version="4.1.1" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -78,7 +78,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             if (message is IFullHttpResponse response)
             {
                 throw new InvalidOperationException(
-                    $"Unexpected FullHttpResponse (getStatus={response.Status}, content={response.Content.ToString(_client.CoreOptions.Encoding.Source)})");
+                    $"Unexpected FullHttpResponse (getStatus={response.Status}, content={response.Content.ToString(_client.CoreOptions.Encoding)})");
             }
 
             if (message is TextWebSocketFrame textFrame)

@@ -24,7 +24,7 @@ namespace Librame.Extensions.Data.Accessors
     /// <summary>
     /// 访问器接口。
     /// </summary>
-    public interface IAccessor : IDisposable
+    public interface IAccessor : ISaveChanges, IDisposable
     {
         /// <summary>
         /// 内部服务提供程序。
@@ -59,24 +59,23 @@ namespace Librame.Extensions.Data.Accessors
         ITenant CurrentTenant { get; }
 
         /// <summary>
-        /// 当前数据连接字符串。
+        /// 当前连接字符串。
         /// </summary>
         string CurrentConnectionString { get; }
 
 
         /// <summary>
-        /// 是否为当前数据连接字符串。
+        /// 是当前连接字符串。
         /// </summary>
         /// <param name="connectionString">给定的连接字符串。</param>
         /// <returns>返回布尔值。</returns>
         bool IsCurrentConnectionString(string connectionString);
 
-
         /// <summary>
-        /// 是写入请求。
+        /// 是写入连接字符串。
         /// </summary>
         /// <returns>返回布尔值。</returns>
-        bool IsWritingRequest();
+        bool IsWritingConnectionString();
 
 
         /// <summary>
@@ -98,28 +97,6 @@ namespace Librame.Extensions.Data.Accessors
 
 
         /// <summary>
-        /// 重载保存更改。
-        /// </summary>
-        /// <returns>返回受影响的行数。</returns>
-        int SaveChanges();
-
-        /// <summary>
-        /// 重载保存更改。
-        /// </summary>
-        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
-        /// <returns>返回受影响的行数。</returns>
-        int SaveChanges(bool acceptAllChangesOnSuccess);
-
-        /// <summary>
-        /// 重载异步保存更改。
-        /// </summary>
-        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含受影响行数的异步操作。</returns>
-        Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
-
-
-        /// <summary>
         /// 迁移。
         /// </summary>
         void Migrate();
@@ -133,19 +110,19 @@ namespace Librame.Extensions.Data.Accessors
 
 
         /// <summary>
-        /// 改变数据库链接。
+        /// 改变连接字符串。
         /// </summary>
         /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
-        /// <returns>返回是否切换的布尔值。</returns>
-        bool ChangeDbConnection(Func<ITenant, string> changeConnectionStringFactory);
+        /// <returns>返回已改变的布尔值。</returns>
+        bool ChangeConnectionString(Func<ITenant, string> changeConnectionStringFactory);
 
         /// <summary>
-        /// 异步改变数据库链接。
+        /// 异步改变连接字符串。
         /// </summary>
         /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含是否已切换的布尔值的异步操作。</returns>
-        Task<bool> ChangeDbConnectionAsync(Func<ITenant, string> changeConnectionStringFactory,
+        /// <returns>返回一个包含已改变的布尔值的异步操作。</returns>
+        Task<bool> ChangeConnectionStringAsync(Func<ITenant, string> changeConnectionStringFactory,
             CancellationToken cancellationToken = default);
     }
 }

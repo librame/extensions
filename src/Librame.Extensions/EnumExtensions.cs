@@ -25,19 +25,6 @@ namespace Librame.Extensions
     public static class EnumExtensions
     {
         /// <summary>
-        /// 转换为枚举字段名称。
-        /// </summary>
-        /// <typeparam name="TEnum">指定的枚举类型。</typeparam>
-        /// <param name="enumField">给定的枚举字段。</param>
-        /// <returns>返回字符串。</returns>
-        public static string AsEnumName<TEnum>(this TEnum enumField)
-            where TEnum : Enum
-            => Enum.GetName(typeof(TEnum), enumField);
-
-
-        #region AsEnum
-
-        /// <summary>
         /// 转换为特定枚举。
         /// </summary>
         /// <typeparam name="TEnum">指定的枚举类型。</typeparam>
@@ -51,29 +38,33 @@ namespace Librame.Extensions
         /// 转换为特定枚举。
         /// </summary>
         /// <typeparam name="TEnum">指定的枚举类型。</typeparam>
-        /// <typeparam name="TValue">指定的值类型。</typeparam>
-        /// <param name="value">给定的常数值。</param>
+        /// <typeparam name="TValue">指定的值类型（如：32 位整数类型、64 位整数类型等）。</typeparam>
+        /// <param name="value">给定的常数值（支持名称或数值）。</param>
         /// <returns>返回枚举对象。</returns>
         public static TEnum AsEnum<TEnum, TValue>(this TValue value)
             where TEnum : Enum
+            where TValue : struct
             => (TEnum)Enum.Parse(typeof(TEnum), value.ToString());
 
         /// <summary>
-        /// 将输入枚举字段转换为输出枚举字段（通过匹配枚举字段名称实现）。
+        /// 转换为枚举字段名称。
         /// </summary>
-        /// <typeparam name="TInputEnum">指定的输入枚举类型。</typeparam>
-        /// <typeparam name="TOutputEnum">指定的输出枚举类型。</typeparam>
-        /// <param name="input">给定的输入枚举字段。</param>
-        /// <returns>返回输出枚举字段。</returns>
-        public static TOutputEnum AsOutputEnumByName<TInputEnum, TOutputEnum>(this TInputEnum input)
-            where TInputEnum : Enum
-            where TOutputEnum : Enum
-            => input.AsEnumName().AsEnum<TOutputEnum>();
+        /// <typeparam name="TEnum">指定的枚举类型。</typeparam>
+        /// <param name="enumField">给定的枚举字段。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AsEnumName<TEnum>(this TEnum enumField)
+            where TEnum : Enum
+            => Enum.GetName(typeof(TEnum), enumField);
 
-        #endregion
-
-
-        #region AsEnumFields
+        /// <summary>
+        /// 转换为枚举字段常量值。
+        /// </summary>
+        /// <typeparam name="TEnum">指定的枚举类型。</typeparam>
+        /// <param name="enumField">给定的枚举字段。</param>
+        /// <returns>返回字符串。</returns>
+        public static object AsEnumValue<TEnum>(this TEnum enumField)
+            where TEnum : Enum
+            => typeof(TEnum).GetField(enumField.AsEnumName()).GetValue(null);
 
         /// <summary>
         /// 当作枚举字段集合。
@@ -82,8 +73,6 @@ namespace Librame.Extensions
         /// <returns>返回字段信息数组。</returns>
         public static FieldInfo[] AsEnumFields(this Type enumType)
             => enumType?.GetFields(BindingFlags.Static | BindingFlags.Public);
-
-        #endregion
 
 
         #region AsEnumResults
@@ -122,7 +111,8 @@ namespace Librame.Extensions
             converter.NotNull(nameof(converter));
 
             var fields = enumType.AsEnumFields();
-            if (fields.IsEmpty()) return Enumerable.Empty<TResult>();
+            if (fields.IsEmpty())
+                return Enumerable.Empty<TResult>();
 
             return fields.Select(field => converter.Invoke(field));
         }
@@ -152,12 +142,12 @@ namespace Librame.Extensions
         /// <summary>
         /// 当作枚举名称、常量值字典。
         /// </summary>
-        /// <typeparam name="TConst">指定的常量类型。</typeparam>
+        /// <typeparam name="TValue">指定的值类型（如：32 位整数类型、64 位整数类型等）。</typeparam>
         /// <param name="enumType">给定的枚举类型。</param>
         /// <returns>返回名称、常量值字典。</returns>
-        public static ConcurrentDictionary<string, TConst> AsEnumValuesDictionary<TConst>(this Type enumType)
-            where TConst : struct
-            => enumType.AsEnumDictionary(field => (TConst)field.GetValue(null));
+        public static ConcurrentDictionary<string, TValue> AsEnumValuesDictionary<TValue>(this Type enumType)
+            where TValue : struct
+            => enumType.AsEnumDictionary(field => (TValue)field.GetValue(null));
 
 
         /// <summary>
@@ -182,6 +172,37 @@ namespace Librame.Extensions
 
             return dict;
         }
+
+        #endregion
+
+
+        #region MatchEnum
+
+        /// <summary>
+        /// 匹配与输入枚举字段名称相同的输出枚举字段。
+        /// </summary>
+        /// <typeparam name="TInput">指定的输入枚举类型。</typeparam>
+        /// <typeparam name="TOutput">指定的输出枚举类型。</typeparam>
+        /// <param name="input">给定的输入枚举字段。</param>
+        /// <returns>返回输出枚举字段。</returns>
+        public static TOutput MatchEnum<TInput, TOutput>(this TInput input)
+            where TInput : Enum
+            where TOutput : Enum
+            => input.AsEnumName().AsEnum<TOutput>();
+
+        /// <summary>
+        /// 匹配与输入枚举字段常数值相同的输出枚举字段。
+        /// </summary>
+        /// <typeparam name="TInput">指定的输入枚举类型。</typeparam>
+        /// <typeparam name="TOutput">指定的输出枚举类型。</typeparam>
+        /// <typeparam name="TValue">指定的值类型（如：32 位整数类型、64 位整数类型等）。</typeparam>
+        /// <param name="input">给定的输入枚举字段。</param>
+        /// <returns>返回输出枚举字段。</returns>
+        public static TOutput MatchEnum<TInput, TOutput, TValue>(this TInput input)
+            where TInput : Enum
+            where TOutput : Enum
+            where TValue : struct
+            => ((TValue)input.AsEnumValue()).AsEnum<TOutput, TValue>();
 
         #endregion
 

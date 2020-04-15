@@ -10,12 +10,14 @@
 
 #endregion
 
+using SkiaSharp;
 using System.Collections.Generic;
 using System.Drawing;
 
 namespace Librame.Extensions.Drawing.Builders
 {
     using Core.Builders;
+    using Core.Serializers;
 
     /// <summary>
     /// 图画构建器选项。
@@ -150,7 +152,7 @@ namespace Librame.Extensions.Drawing.Builders
         /// 水印位置（负值表示反向）。
         /// </summary>
         public Point Location { get; set; }
-            = new Point(20, 5);
+            = new Point(30, 50);
 
         /// <summary>
         /// 颜色选项。
@@ -158,8 +160,8 @@ namespace Librame.Extensions.Drawing.Builders
         public ColorOptions Colors { get; }
             = new ColorOptions
             {
-                ForeHex = "#ffffff",
-                AlternateHex = "#ccffff"
+                Fore = new SerializableString<SKColor>(SKColorSettings.WatermarkForeColor),
+                Alternate = new SerializableString<SKColor>(SKColorSettings.WatermarkAlternateColor)
             };
 
         /// <summary>
@@ -181,26 +183,26 @@ namespace Librame.Extensions.Drawing.Builders
         /// <summary>
         /// 前景色。
         /// </summary>
-        public string ForeHex { get; set; }
-            = "#0066cc";
+        public SerializableString<SKColor> Fore { get; set; }
+            = new SerializableString<SKColor>(SKColorSettings.ForeColor);
 
         /// <summary>
         /// 交替色。
         /// </summary>
-        public string AlternateHex { get; set; }
-            = "#993366";
+        public SerializableString<SKColor> Alternate { get; set; }
+            = new SerializableString<SKColor>(SKColorSettings.ForeColor);
 
         /// <summary>
         /// 背景色。
         /// </summary>
-        public string BackgroundHex { get; set; }
-            = "#ccffff";
+        public SerializableString<SKColor> Background { get; set; }
+            = new SerializableString<SKColor>(SKColorSettings.ForeColor);
 
         /// <summary>
         /// 干扰色。
         /// </summary>
-        public string DisturbingHex { get; set; }
-            = "#99ccff";
+        public SerializableString<SKColor> Disturbing { get; set; }
+            = new SerializableString<SKColor>(SKColorSettings.ForeColor);
     }
 
 

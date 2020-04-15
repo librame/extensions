@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using SkiaSharp;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -24,6 +23,7 @@ namespace Librame.Extensions.Drawing.Services
 {
     using Core.Combiners;
     using Core.Services;
+    using Core.Utilities;
     using Drawing.Builders;
     using Drawing.Resources;
 
@@ -45,6 +45,9 @@ namespace Librame.Extensions.Drawing.Services
         public FilePathCombiner ImageFilePathCombiner { get; }
 
         public FilePathCombiner FontFilePathCombiner { get; }
+
+        public SKEncodedImageFormat CurrentImageFormat
+            => Options.ImageFormat.MatchEnum<ImageFormat, SKEncodedImageFormat>();
 
 
         public Task<bool> DrawFileAsync(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
@@ -109,9 +112,7 @@ namespace Librame.Extensions.Drawing.Services
         {
             Logger.LogDebug($"Watermark image file: {imagePath}");
             Logger.LogDebug($"Watermark mode: {mode.AsEnumName()}");
-            
-            var skFormat = Options.ImageFormat.AsOutputEnumByName<ImageFormat, SKEncodedImageFormat>();
-            
+
             using (var bmp = SKBitmap.Decode(imagePath))
             {
                 using (var canvas = new SKCanvas(bmp))
@@ -122,14 +123,12 @@ namespace Librame.Extensions.Drawing.Services
                 }
 
                 using (var img = SKImage.FromBitmap(bmp))
+                using (var data = img.Encode(CurrentImageFormat, Options.Quality))
                 {
-                    using (var data = img.Encode(skFormat, Options.Quality))
-                    {
-                        if (data.IsNull())
-                            throw new InvalidOperationException(InternalResource.InvalidOperationExceptionUnsupportedImageFormat);
+                    if (data.IsNull())
+                        throw new InvalidOperationException(InternalResource.InvalidOperationExceptionUnsupportedImageFormat);
 
-                        postAction.Invoke(data);
-                    }
+                    postAction.Invoke(data);
                 }
             }
         }
@@ -158,26 +157,26 @@ namespace Librame.Extensions.Drawing.Services
             // 如果使用随机坐标水印
             if (Options.Watermark.IsRandom)
             {
-                var random = new Random();
+                RandomUtility.Run(r =>
+                {
+                    if (isReverseX)
+                        startX = r.Next(startX, imageSize.Width - Math.Abs(startX));
+                    else
+                        startX = r.Next(startX, imageSize.Width / 2);
 
-                if (isReverseX)
-                    startX = random.Next(startX, imageSize.Width - Math.Abs(startX));
-                else
-                    startX = random.Next(startX, imageSize.Width / 2);
-
-                if (isReverseY)
-                    startY = random.Next(startY, imageSize.Height - Math.Abs(startY));
-                else
-                    startY = random.Next(startY, imageSize.Height / 2);
+                    if (isReverseY)
+                        startY = r.Next(startY, imageSize.Height - Math.Abs(startY));
+                    else
+                        startY = r.Next(startY, imageSize.Height / 2);
+                });
             }
             
             switch (mode)
             {
                 case WatermarkMode.Text:
                     {
-                        using (var foreFont = CreateFontPaint(Options.Watermark.Colors.ForeHex))
-                        using (var alterFont = string.IsNullOrEmpty(Options.Watermark.Colors.AlternateHex)
-                            ? foreFont : CreateFontPaint(Options.Watermark.Colors.AlternateHex))
+                        using (var foreFont = CreatePaint(Options.Watermark.Colors.Fore))
+                        using (var alternFont = CreatePaint(Options.Watermark.Colors.Alternate))
                         {
                             var text = Options.Watermark.Text;
 
@@ -192,7 +191,7 @@ namespace Librame.Extensions.Drawing.Services
 
                                 // 绘制文本水印
                                 canvas.DrawText(character, startX + (int)rect.Width, startY,
-                                    (i % 2 > 0 ? alterFont : foreFont));
+                                    i % 2 > 0 ? alternFont : foreFont);
 
                                 // 递增字符宽度
                                 startX += (int)rect.Width;
@@ -217,11 +216,11 @@ namespace Librame.Extensions.Drawing.Services
         }
         
 
-        private SKPaint CreateFontPaint(string colorHexString)
+        private SKPaint CreatePaint(SKColor color)
         {
             var paint = new SKPaint();
             paint.IsAntialias = true;
-            paint.Color = SKColor.Parse(colorHexString);
+            paint.Color = color;
             // paint.StrokeCap = SKStrokeCap.Round;
             paint.Typeface = SKTypeface.FromFile(FontFilePathCombiner.ToString());
             paint.TextSize = Options.Watermark.Font.Size;

@@ -1,40 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Librame.Extensions.Examples
 {
-    using Data.Accessors;
     using Data.Collections;
     using Data.Stores;
     using Models;
 
-    public class ExampleStoreHub : StoreHub<ExampleDbContextAccessor, ExampleStoreInitializer>
+    public class ExampleStoreHub<TAccessor> : StoreHub<Guid, int>
+        where TAccessor : ExampleDbContextAccessorBase<Guid, int>
     {
-        public ExampleStoreHub(IStoreInitializer initializer, IAccessor accessor)
+        private readonly TAccessor _currentAccessor;
+
+
+        public ExampleStoreHub(IStoreInitializer<Guid> initializer, TAccessor accessor)
             : base(initializer, accessor)
         {
+            _currentAccessor = accessor;
         }
 
 
-        public IList<Category> GetCategories()
-        {
-            return Accessor.Categories.ToList();
-        }
+        public IList<Category<int, Guid>> GetCategories()
+            => _currentAccessor.Categories.ToList();
 
-        public IPageable<Article> GetArticles()
-        {
-            return Accessor.Articles.AsDescendingPagingByIndex(1, 10);
-        }
+        public IPageable<Article<Guid, int>> GetArticles()
+            => _currentAccessor.Articles.AsDescendingPagingByIndex(1, 10);
 
-        public ExampleStoreHub UseWriteDbConnection()
+        public ExampleStoreHub<TAccessor> UseWriteDbConnection()
         {
-            Accessor.ChangeDbConnection(t => t.WritingConnectionString);
+            Accessor.ChangeConnectionString(t => t.WritingConnectionString);
             return this;
         }
 
-        public ExampleStoreHub UseDefaultDbConnection()
+        public ExampleStoreHub<TAccessor> UseDefaultDbConnection()
         {
-            Accessor.ChangeDbConnection(t => t.DefaultConnectionString);
+            Accessor.ChangeConnectionString(t => t.DefaultConnectionString);
             return this;
         }
 

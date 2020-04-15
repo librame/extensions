@@ -11,7 +11,6 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,6 +24,14 @@ namespace Librame.Extensions.Drawing.Services
     public interface IScaleService : IService
     {
         /// <summary>
+        /// 时钟。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="IClockService"/>。
+        /// </value>
+        IClockService Clock { get; }
+
+        /// <summary>
         /// 水印图画。
         /// </summary>
         /// <value>
@@ -35,8 +42,7 @@ namespace Librame.Extensions.Drawing.Services
         /// <summary>
         /// 图像文件扩展名集合。
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        string[] ImageExtensions { get; }
+        IReadOnlyList<string> ImageExtensions { get; }
 
 
         /// <summary>

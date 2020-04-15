@@ -46,6 +46,9 @@ namespace Librame.Extensions.Data.Aspects
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
+        private static readonly object _locker = new object();
+
+
         /// <summary>
         /// 构造一个数据迁移迁移数据库上下文访问器截面。
         /// </summary>
@@ -57,9 +60,9 @@ namespace Librame.Extensions.Data.Aspects
 
 
         /// <summary>
-        /// 需要保存。
+        /// 需要保存更改。
         /// </summary>
-        public bool RequireSaving { get; set; }
+        public bool RequiredSaveChanges { get; set; }
 
 
         /// <summary>
@@ -76,17 +79,13 @@ namespace Librame.Extensions.Data.Aspects
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
         protected override void PostprocessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            // 存储迁移数据需作写入请求限制
-            if (!dbContextAccessor.IsWritingRequest())
-                return;
-
             var currentMigration = GenerateMigration(dbContextAccessor);
             var lastMigration = dbContextAccessor.Migrations.FirstOrDefaultByMax(s => s.CreatedTimeTicks);
 
             if (lastMigration.IsNull() || !currentMigration.Equals(lastMigration))
             {
                 dbContextAccessor.Migrations.Add(currentMigration);
-                RequireSaving = true;
+                RequiredSaveChanges = true;
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = currentMigration }).ConfigureAndWait();
@@ -103,17 +102,13 @@ namespace Librame.Extensions.Data.Aspects
         protected override async Task PostprocessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            // 存储迁移数据需作写入请求限制
-            if (!dbContextAccessor.IsWritingRequest())
-                return;
-
             var currentMigration = GenerateMigration(dbContextAccessor, cancellationToken);
             var lastMigration = await dbContextAccessor.Migrations.FirstOrDefaultByMaxAsync(s => s.CreatedTimeTicks).ConfigureAndResultAsync();
 
             if (lastMigration.IsNull() || !currentMigration.Equals(lastMigration))
             {
                 await dbContextAccessor.Migrations.AddAsync(currentMigration, cancellationToken).ConfigureAndResultAsync();
-                RequireSaving = true;
+                RequiredSaveChanges = true;
 
                 var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
                 await mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = currentMigration }).ConfigureAndWaitAsync();
@@ -131,23 +126,24 @@ namespace Librame.Extensions.Data.Aspects
         protected virtual TMigration GenerateMigration(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.CurrentType);
+            lock (_locker)
+            {
+                var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.CurrentType);
+                var modelSnapshot = ModelSnapshotCompiler.CompileInMemory(dbContextAccessor,
+                    dbContextAccessor.Model, Options, modelSnapshotTypeName);
 
-            // 编译模型快照
-            var modelSnapshot = ModelSnapshotCompiler.CompileInMemory(dbContextAccessor,
-                dbContextAccessor.Model, Options, modelSnapshotTypeName);
+                var migration = typeof(TMigration).EnsureCreate<TMigration>();
+                migration.Id = GetMigrationId(cancellationToken);
+                migration.AccessorName = dbContextAccessor.CurrentType.GetDisplayNameWithNamespace();
+                migration.ModelSnapshotName = modelSnapshotTypeName;
+                migration.ModelBody = modelSnapshot.Body;
+                migration.ModelHash = modelSnapshot.Hash;
+                migration.CreatedTime = Dependencies.Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
+                migration.CreatedTimeTicks = migration.CreatedTime.Ticks;
+                migration.CreatedBy = EntityPopulator.FormatTypeName(GetType());
 
-            var migration = typeof(TMigration).EnsureCreate<TMigration>();
-            migration.Id = GetMigrationId(cancellationToken);
-            migration.AccessorName = dbContextAccessor.CurrentType.GetDisplayNameWithNamespace();
-            migration.ModelSnapshotName = modelSnapshotTypeName;
-            migration.ModelBody = modelSnapshot.Body;
-            migration.ModelHash = modelSnapshot.Hash;
-            migration.CreatedTime = Dependencies.Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
-            migration.CreatedTimeTicks = migration.CreatedTime.Ticks;
-            migration.CreatedBy = EntityPopulator.FormatTypeName(GetType());
-
-            return migration;
+                return migration;
+            }
         }
 
         /// <summary>

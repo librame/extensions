@@ -87,12 +87,17 @@ namespace Librame.Extensions.Core.Builders
             if (dependency.ConfigurationRoot.IsNull() && rootConfigFileName.IsNotEmpty())
                 UseDefaultConfigurationRoot();
 
-            // 获取当前依赖配置节
-            if (dependency.Configuration.IsNull() && dependency.ConfigurationRoot.IsNotNull())
-                dependency.Configuration = dependency.ConfigurationRoot.GetSection(dependency.Name);
+            // 如果配置节不存在，则默认尝试从配置根中获取
+            if (dependency.Configuration.IsNull())
+                dependency.Configuration = dependency.ConfigurationRoot?.GetSection(dependency.Name);
+
+            // Bind Configuration
+            if (dependency.Configuration.IsNotNull())
+                dependency.Configuration.Bind(dependency);
 
             return dependency.RegisterDependency(services);
 
+            // UseDefaultConfigurationRoot
             void UseDefaultConfigurationRoot()
             {
                 var filePath = rootConfigFileName.AsFilePathCombiner(dependency.ConfigDirectory);
@@ -142,6 +147,12 @@ namespace Librame.Extensions.Core.Builders
             baseBuilder.NotNull(nameof(baseBuilder));
 
             var dependency = typeof(TDependency).EnsureCreate<TDependency>(baseBuilder.Dependency);
+            dependency.ConfigurationRoot = baseBuilder.Dependency.ConfigurationRoot;
+            dependency.Configuration = dependency.ConfigurationRoot?.GetSection(dependency.Name);
+
+            // Bind Configuration
+            if (dependency.Configuration.IsNotNull())
+                dependency.Configuration.Bind(dependency);
 
             // configureDependency: dependency => dependency.Configuration = ...;
             configureDependency?.Invoke(dependency);
@@ -162,9 +173,7 @@ namespace Librame.Extensions.Core.Builders
             // 利用选项实例的引用唯一性，注册一致性依赖选项实例以便 ConsistencyOptionsFactory 调用
             // 如：CoreBuilderDependency 的 CoreBuilderOptions 选项
             var optionsPropertyName = nameof(OptionsDependency<TDependency>.Options);
-            var optionsProperty = typeof(TDependency).GetProperty(optionsPropertyName);
-            var options = optionsProperty.GetValue(dependency, index: null);
-            ConsistencyOptionsPool.AddOrUpdate(optionsProperty.PropertyType, options);
+            AddConsistencyOptions();
 
             // 获取所有依赖属性集合
             var properties = typeof(TDependency).GetProperties().Where(p =>
@@ -177,11 +186,8 @@ namespace Librame.Extensions.Core.Builders
             {
                 var propertyDependency = (IDependency)property.GetValue(dependency, index: null);
 
-                if (dependency.Configuration.IsNotNull() && propertyDependency.Configuration.IsNull())
-                {
-                    // 绑定可能存在的配置
-                    propertyDependency.Configuration = dependency.Configuration.GetSection(property.Name);
-                }
+                if (propertyDependency.Configuration.IsNull())
+                    propertyDependency.Configuration = dependency.Configuration?.GetSection(property.Name);
 
                 if (propertyDependency is IOptionsDependency propertyOptionsDependency)
                 {
@@ -191,6 +197,15 @@ namespace Librame.Extensions.Core.Builders
             }
 
             return dependency;
+
+            // AddConsistencyOptions
+            void AddConsistencyOptions()
+            {
+                var optionsProperty = typeof(TDependency).GetProperty(optionsPropertyName);
+                var options = optionsProperty.GetValue(dependency, index: null);
+
+                ConsistencyOptionsPool.AddOrUpdate(optionsProperty.PropertyType, options);
+            }
         }
 
         private static void RegisterPropertyOptionsDependency<TDependency>(IServiceCollection services,
@@ -200,9 +215,7 @@ namespace Librame.Extensions.Core.Builders
             // 利用选项实例的引用唯一性，注册一致性依赖属性选项实例以便 ConsistencyOptionsFactory 调用
             // 如：CoreBuilderDependency.Localization 的 LocalizationOptions 选项
             var propertyOptionsType = propertyOptionsDependency.OptionsType.Source;
-            var propertyOptions = property.PropertyType.GetProperty(optionsPropertyName)
-                .GetValue(propertyOptionsDependency, index: null);
-            ConsistencyOptionsPool.AddOrUpdate(propertyOptionsType, propertyOptions);
+            AddPropertyConsistencyOptions();
 
             // 如果需要注册依赖配置对象的选项配置节点
             //var propertyOptionsConfigurationRegistered = false;
@@ -231,6 +244,15 @@ namespace Librame.Extensions.Core.Builders
             ////if (!propertyOptionsDependency.AutoConfigureOptions && propertyOptionsDependency.AutoPostConfigureOptions)
             //if (propertyOptionsDependency.AutoPostConfigureOptions)
             //    RegisterPropertyPostConfigureOptions(services, propertyOptionsType, propertyConfigureOptionsAction);
+
+            // AddPropertyConsistencyOptions
+            void AddPropertyConsistencyOptions()
+            {
+                var propertyOptions = property.PropertyType.GetProperty(optionsPropertyName)
+                    .GetValue(propertyOptionsDependency, index: null);
+
+                ConsistencyOptionsPool.AddOrUpdate(propertyOptionsType, propertyOptions);
+            }
         }
 
         private static IServiceCollection RegisterPropertyOptionsConfiguration(IServiceCollection services,

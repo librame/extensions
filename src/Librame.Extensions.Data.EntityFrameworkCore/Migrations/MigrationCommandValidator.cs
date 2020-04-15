@@ -19,9 +19,9 @@ namespace Librame.Extensions.Data.Migrations
 {
     using Core.Builders;
     using Core.Combiners;
-    using Core.Services;
     using Data.Accessors;
     using Data.Builders;
+    using Data.Compilers;
 
     /// <summary>
     /// 迁移命令验证器。
@@ -44,17 +44,14 @@ namespace Librame.Extensions.Data.Migrations
         public static IEnumerable<MigrationCommand> Validate(IAccessor accessor, IEnumerable<MigrationCommand> commands,
             DataBuilderOptions options, CoreBuilderOptions coreOptions)
         {
-            accessor.NotNull(nameof(accessor));
             commands.NotNull(nameof(commands));
             options.NotNull(nameof(options));
             coreOptions.NotNull(nameof(coreOptions));
 
-            var dependency = accessor.ServiceFactory.GetService<DataBuilderDependency>();
-            var filePath = new FilePathCombiner($"{accessor.GetType().GetAssemblyDisplayName()}.ValidateMigrationCommands.txt")
-                .ChangeBasePathIfEmpty(dependency.ExportDirectory);
+            var filePath = ModelSnapshotCompiler.CombineFilePath(accessor, ".txt");
             if (filePath.Exists())
             {
-                var json = filePath.ReadAllText(coreOptions.Encoding.Source);
+                var json = filePath.ReadAllText(coreOptions.Encoding);
                 _cacheInfos = JsonConvert.DeserializeObject<List<MigrationCommandInfo>>(json);
             }
 
@@ -79,7 +76,7 @@ namespace Librame.Extensions.Data.Migrations
             if (options.ExportMigrationCommands)
             {
                 var json = JsonConvert.SerializeObject(_cacheInfos);
-                filePath.WriteAllText(json, coreOptions.Encoding.Source);
+                filePath.WriteAllText(json, coreOptions.Encoding);
             }
         }
 

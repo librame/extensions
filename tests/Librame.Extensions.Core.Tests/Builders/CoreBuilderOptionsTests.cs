@@ -24,8 +24,9 @@ namespace Librame.Extensions.Core.Tests
             Assert.NotEqual(options.Encoding.Value, encoding);
 
             // 依赖的选项实例同样发生了变化
-            var dependencyOptions = TestServiceProvider.Current.GetRequiredService<CoreBuilderDependency>();
-            Assert.Equal(options.Encoding.Value, dependencyOptions.Options.Encoding.Value);
+            var dependency = TestServiceProvider.Current.GetRequiredService<CoreBuilderDependency>();
+            Assert.True(ReferenceEquals(options, dependency.Options));
+            Assert.Equal(options.Encoding, dependency.Options.Encoding);
 
             // 序列化为 JSON 文件并保存
             var json = JsonConvert.SerializeObject(options);

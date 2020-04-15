@@ -79,20 +79,20 @@ Librame.Extensions APIs can then be added to the project using the NuGet Package
             // ex. MySQL
             "Name": "DefaultTenant",
             "Host": "localhost",
-            "DefaultConnectionString": "Server=localhost;Database=librame_data_default;User=root;Password=123456;",
-            "WritingConnectionString": "Server=localhost;Database=librame_data_writing;User=root;Password=123456;",
+            "DefaultConnectionString": "server=localhost;port=3306;database=librame_data_default;user=root;password=123456",
+            "WritingConnectionString": "server=localhost;port=3306;database=librame_data_writing;user=root;password=123456",
             "WritingSeparation": true
         },
         "DataBuilderDependency": {
             // DataBuilderOptions
             "Options": {
-                // ConnectionStrings 3 // default
+                // ConnectionStrings 3 (default)
                 "DefaultTenant": {
                     // ex. SQL Server
                     "Name": "DefaultTenant",
                     "Host": "localhost",
-                    "DefaultConnectionString": "Server=localhost;Database=librame_data_default;User=root;Password=123456;",
-                    "WritingConnectionString": "Server=localhost;Database=librame_data_writing;User=root;Password=123456;",
+                    "DefaultConnectionString": "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True",
+                    "WritingConnectionString": "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True",
                     "WritingSeparation": true
                 }
             }

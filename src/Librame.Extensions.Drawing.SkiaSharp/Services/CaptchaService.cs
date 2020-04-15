@@ -25,6 +25,7 @@ namespace Librame.Extensions.Drawing.Services
 {
     using Core.Combiners;
     using Core.Services;
+    using Core.Utilities;
     using Drawing.Builders;
     using Drawing.Resources;
 
@@ -41,6 +42,9 @@ namespace Librame.Extensions.Drawing.Services
 
 
         public FilePathCombiner FontFilePathCombiner { get; }
+
+        public SKEncodedImageFormat CurrentImageFormat
+            => Options.ImageFormat.MatchEnum<ImageFormat, SKEncodedImageFormat>();
 
 
         public Task<bool> DrawFileAsync(string captcha, string savePath, CancellationToken cancellationToken = default)
@@ -99,59 +103,48 @@ namespace Librame.Extensions.Drawing.Services
         {
             Logger.LogInformation($"Captcha text: {captcha}");
 
-            var colorOptions = Options.Captcha.Colors;
-            var bgColor = SKColor.Parse(colorOptions.BackgroundHex);
+            var colors = Options.Captcha.Colors;
 
             var sizeAndPoints = ComputeSizeAndPoints(captcha);
             var imageSize = sizeAndPoints.Size;
             var imageInfo = new SKImageInfo(imageSize.Width, imageSize.Height,
                 SKColorType.Bgra8888, SKAlphaType.Premul);
-            
-            var skFormat = Options.ImageFormat.AsOutputEnumByName<ImageFormat, SKEncodedImageFormat>();
 
             using (var bmp = new SKBitmap(imageInfo))
+            using (var canvas = new SKCanvas(bmp))
             {
-                using (var canvas = new SKCanvas(bmp))
+                // Clear
+                canvas.DrawColor(colors.Background);
+
+                // 绘制噪点
+                using (var noisePaint = CreateNoisePaint())
                 {
-                    // Clear
-                    canvas.DrawColor(bgColor);
+                    var points = CreateNoisePoints(imageSize);
+                    canvas.DrawPoints(SKPointMode.Points, points, noisePaint);
+                }
 
-                    // 绘制噪点
-                    using (var noiseFont = CreateNoiseFontPaint())
+                // 绘制验证码
+                using (var forePaint = CreatePaint(colors.Fore))
+                using (var alternPaint = CreatePaint(colors.Alternate))
+                {
+                    foreach (var p in sizeAndPoints.Points)
                     {
-                        var points = CreateNoisePoints(imageSize);
+                        var i = p.Key;
+                        var character = p.Value.Key;
+                        var point = p.Value.Value;
 
-                        canvas.DrawPoints(SKPointMode.Points, points, noiseFont);
+                        canvas.DrawText(character, point.X, point.Y,
+                            i % 2 > 0 ? alternPaint : forePaint);
                     }
+                }
 
-                    // 绘制验证码
-                    using (var foreFont = CreateFontPaint(colorOptions.ForeHex))
-                    {
-                        using (var alterFont = colorOptions.AlternateHex.IsEmpty()
-                            ? foreFont : CreateFontPaint(colorOptions.AlternateHex))
-                        {
-                            foreach (var p in sizeAndPoints.Points)
-                            {
-                                var i = p.Key;
-                                var character = p.Value.Key;
-                                var point = p.Value.Value;
+                using (var img = SKImage.FromBitmap(bmp))
+                using (var data = img.Encode(CurrentImageFormat, Options.Quality))
+                {
+                    if (data.IsNull())
+                        throw new InvalidOperationException(InternalResource.InvalidOperationExceptionUnsupportedImageFormat);
 
-                                canvas.DrawText(character, point.X, point.Y,
-                                    i % 2 > 0 ? alterFont : foreFont);
-                            }
-                        }
-                    }
-
-                    using (var img = SKImage.FromBitmap(bmp))
-                    {
-                        using (var data = img.Encode(skFormat, Options.Quality))
-                        {
-                            if (data.IsNull())
-                                throw new InvalidOperationException(InternalResource.InvalidOperationExceptionUnsupportedImageFormat);
-
-                            postAction.Invoke(data);
-                        }
-                    }
+                    postAction.Invoke(data);
                 }
             }
         }
@@ -162,7 +155,7 @@ namespace Librame.Extensions.Drawing.Services
             var points = new Dictionary<int, KeyValuePair<string, SKPoint>>();
             var size = new Size();
 
-            using (var foreFont = CreateFontPaint(Options.Captcha.Colors.ForeHex))
+            using (var foreFont = CreatePaint(Options.Captcha.Colors.Fore))
             {
                 var paddingHeight = (int)foreFont.TextSize;
                 var paddingWidth = paddingHeight / 2;
@@ -186,10 +179,12 @@ namespace Librame.Extensions.Drawing.Services
                     var point = new SKPoint();
 
                     // 随机变换其余字符坐标
-                    var random = new Random();
-                    point.X = random.Next(startX, charWidth + startX);
-                    point.Y = random.Next(startY, charHeight + startY);
-
+                    RandomUtility.Run(r =>
+                    {
+                        point.X = r.Next(startX, charWidth + startX);
+                        point.Y = r.Next(startY, charHeight + startY);
+                    });
+                    
                     // 附加为字符宽度加当前字符横坐标
                     startX = (int)point.X + charWidth + paddingWidth;
 
@@ -204,11 +199,11 @@ namespace Librame.Extensions.Drawing.Services
         }
 
 
-        private SKPaint CreateFontPaint(string colorHexString)
+        private SKPaint CreatePaint(SKColor color)
         {
             var paint = new SKPaint();
             paint.IsAntialias = true;
-            paint.Color = SKColor.Parse(colorHexString);
+            paint.Color = color;
             // paint.StrokeCap = SKStrokeCap.Round;
             paint.Typeface = SKTypeface.FromFile(FontFilePathCombiner.ToString());
             paint.TextSize = Options.Watermark.Font.Size;
@@ -216,21 +211,16 @@ namespace Librame.Extensions.Drawing.Services
             return paint;
         }
 
-
-        private SKPaint CreateNoiseFontPaint()
+        private SKPaint CreateNoisePaint()
         {
-            var colors = Options.Captcha.Colors;
-            var noises = Options.Captcha.Noise;
-
             var paint = new SKPaint();
             paint.IsAntialias = true;
-            paint.Color = SKColor.Parse(colors.DisturbingHex);
+            paint.Color = Options.Captcha.Colors.Disturbing;
             paint.StrokeCap = SKStrokeCap.Square;
-            paint.StrokeWidth = noises.Width;
+            paint.StrokeWidth = Options.Captcha.Noise.Width;
 
             return paint;
         }
-
 
         private SKPoint[] CreateNoisePoints(Size imageSize)
         {
@@ -243,12 +233,10 @@ namespace Librame.Extensions.Drawing.Services
             var yCount = imageSize.Height / noises.Space.Y + offset;
 
             for (int i = 0; i < xCount; i++)
+            for (int j = 0; j < yCount; j++)
             {
-                for (int j = 0; j < yCount; j++)
-                {
-                    var point = new SKPoint(i * noises.Space.X, j * noises.Space.Y);
-                    points.Add(point);
-                }
+                var point = new SKPoint(i * noises.Space.X, j * noises.Space.Y);
+                points.Add(point);
             }
 
             return points.ToArray();

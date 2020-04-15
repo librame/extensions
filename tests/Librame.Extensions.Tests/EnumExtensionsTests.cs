@@ -19,11 +19,7 @@ namespace Librame.Extensions.Tests
             var value = (int)field;
             var valueField = value.AsEnum<TestEnum, int>();
             Assert.Equal(field, valueField);
-        }
 
-        [Fact]
-        public void AsEnumFieldsTest()
-        {
             var fields = typeof(TestEnum).AsEnumFields();
             Assert.False(fields.IsEmpty());
         }
@@ -47,7 +43,20 @@ namespace Librame.Extensions.Tests
             var dict2 = typeof(TestEnum).AsEnumDictionary(f => f.GetCustomAttribute<DescriptionAttribute>());
             Assert.False(dict2.IsEmpty());
         }
+
+        [Fact]
+        public void MatchEnumTest()
+        {
+            var field = TestEnum.One;
+
+            var sameNameField = field.MatchEnum<TestEnum, TestSameNameEnum>();
+            Assert.Equal(TestSameNameEnum.One, sameNameField);
+
+            var sameValueField = field.MatchEnum<TestEnum, TestSameValueEnum, int>();
+            Assert.Equal(TestSameValueEnum.First, sameValueField);
+        }
     }
+
 
     public enum TestEnum
     {
@@ -56,5 +65,17 @@ namespace Librame.Extensions.Tests
 
         [Description("二")]
         Two = 2
+    }
+
+    public enum TestSameNameEnum
+    {
+        One = 0,
+        Two
+    }
+
+    public enum TestSameValueEnum
+    {
+        First = 1,
+        Second = 2
     }
 }

@@ -4,7 +4,7 @@ using Xunit;
 namespace Librame.Extensions.Drawing.Tests
 {
     using Core.Combiners;
-    using Services;
+    using Drawing.Services;
 
     public class WatermarkServiceTests
     {
@@ -20,8 +20,8 @@ namespace Librame.Extensions.Drawing.Tests
         public async void DrawWatermarkTest()
         {
             // 5K 2.21MB
-            var imageFile = "eso1004a.jpg".AsFilePathCombiner(TestServiceProvider.ResourcesPath);
-            var saveFile = imageFile.WithFileName("eso1004a-watermark.png");
+            var imageFile = "microsoft_edge.jpg".AsFilePathCombiner(TestServiceProvider.ResourcesPath);
+            var saveFile = imageFile.WithFileName("microsoft_edge-watermark.png");
             
             var succeed = await _drawing.DrawFileAsync(imageFile, saveFile).ConfigureAndResultAsync();
             Assert.True(succeed);

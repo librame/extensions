@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.3" />
@@ -28,6 +29,10 @@
     <ProjectReference Include="..\..\shared\Librame.Models\Librame.Models.csproj" />
     <ProjectReference Include="..\..\src\Librame.Extensions.Data.EntityFrameworkCore\Librame.Extensions.Data.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\Librame.Extensions.Encryption\Librame.Extensions.Encryption.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ModelSnapshots\" />
   </ItemGroup>
 
 </Project>
