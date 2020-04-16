@@ -26,7 +26,7 @@ Librame.Extensions APIs 可以使用 NuGet 包管理器添加到项目中。官�
 
 Librame.Extensions.Core (and Core.Abstractions)
 
-- [x] Identifiers: SequentialUniqueIdentifier, SnowflakeIdentifier (Core.Abstractions)
+- [x] Identifiers: 有序唯一标识符, 雪花标识符 (Core.Abstractions)
 - [x] Localizers (扩展支持 lambda 表达式)
 - [x] Mediators (基于 MediatR)
 - [x] Services: Clock, Humanization, Injection
