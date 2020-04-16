@@ -44,7 +44,7 @@ namespace Librame.Extensions.Storage.Services
         }
 
 
-        public Task<string> GeAccessTokenAsync(CancellationToken cancellationToken = default)
+        public Task<string> GetAccessTokenAsync(CancellationToken cancellationToken = default)
             => GenerateTokenAsync("access token", cancellationToken);
 
         public Task<string> GetAuthorizationCodeAsync(CancellationToken cancellationToken = default)

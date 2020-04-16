@@ -27,7 +27,7 @@ namespace Librame.Extensions.Storage.Services
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        Task<string> GeAccessTokenAsync(CancellationToken cancellationToken = default);
+        Task<string> GetAccessTokenAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 异步获取授权码。

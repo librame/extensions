@@ -179,7 +179,7 @@ namespace Librame.Extensions.Storage.Services
 
             if (UseAccessToken)
             {
-                var accessToken = await _permissionService.GeAccessTokenAsync(cancellationToken).ConfigureAndResultAsync();
+                var accessToken = await _permissionService.GetAccessTokenAsync(cancellationToken).ConfigureAndResultAsync();
                 hwr.Headers.Add("access_token", accessToken);
             }
 

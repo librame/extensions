@@ -13,7 +13,7 @@ namespace Librame.Extensions.Storage.Tests
         {
             var service = TestServiceProvider.Current.GetRequiredService<IFilePermissionService>();
 
-            var accessToken = await service.GeAccessTokenAsync().ConfigureAndResultAsync();
+            var accessToken = await service.GetAccessTokenAsync().ConfigureAndResultAsync();
             Assert.NotEmpty(accessToken);
 
             var authorizationCode = await service.GetAuthorizationCodeAsync().ConfigureAndResultAsync();
