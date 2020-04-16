@@ -294,8 +294,8 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
 | SQL Server   | ✓              | ✓                  | ✓          | ✓      | ✓                        |
 | SQLite       | ✓              | ✓                  | ✓          | ✓      | ✓                        |
 
-**MySQL** [tested on MySQL 5.7](https://github.com/librame/extensions/raw/master/examples/Librame.Extensions.Examples/Tested_in_MySQL57.png).
+**MySQL** [tested on MySQL 5.7](/examples/Librame.Extensions.Examples/Tested_in_MySQL57.png).
 
-**SQL Server** [tested on SQL Server 2019](https://github.com/librame/extensions/raw/master/examples/Librame.Extensions.Examples/Tested_in_SQLServer2019.png).
+**SQL Server** [tested on SQL Server 2019](/examples/Librame.Extensions.Examples/Tested_in_SQLServer2019.png).
 
-**SQLite** [tested on SQLite](https://github.com/librame/extensions/raw/master/examples/Librame.Extensions.Examples/Tested_in_SQLite.png).
+**SQLite** [tested on SQLite](/examples/Librame.Extensions.Examples/Tested_in_SQLite.png).

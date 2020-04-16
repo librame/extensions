@@ -8,7 +8,7 @@ Librame.Extensions 系列
 
 Librame.Extensions 是一个基于 .NET Standard/Framework 的基础工具系列库，主要包括核心、数据、图画、加密、网络、存储等方面。
 
-| 系列库                                       | .NET Standard 2.1  | .NET Framework 4.8     |
+| 库                                           | .NET Standard 2.1  | .NET Framework 4.8     |
 |--------------------------------------------  |------------------  |----------------------  |
 | Librame.Extensions.Core                      | ✓                  | ✓                      |
 | Librame.Extensions.Data.EntityFrameworkCore  | ✓                  | ! compatible           |
@@ -22,7 +22,7 @@ Librame.Extensions 是一个基于 .NET Standard/Framework 的基础工具系列
 
 Librame.Extensions APIs 可以使用 NuGet 包管理器添加到项目中。官方发布在 [NuGet](https://www.nuget.org/packages?q=Librame.Extensions) 上。
 
-## Features
+## 特点
 
 Librame.Extensions.Core (and Core.Abstractions)
 
@@ -60,13 +60,13 @@ Librame.Extensions.Storage (and Storage.Abstractions)
 - [x] Capacities: Binary, Decimal (Storage.Abstractions)
 - [x] Services: PhysicalStorageFile (Read/Write), FileTransfer (Download/Upload), FilePermission (AccessToken/AuthorizationCode/CookieValue)
 
-## How to use
+## 如何使用
 
 以 Librame.Extensions.Data.EntityFrameworkCore 为例：
 
     PM> Install-Package: Librame.Extensions.Data.EntityFrameworkCore
 
-### Configuration
+### 配置
 
     // appsettings.json
     {
@@ -110,7 +110,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
             //dependency.ConfigurationRoot = root;
         });
 
-### Use MySQL
+### 使用 MySQL
 
     PM> Install-Package: Pomelo.EntityFrameworkCore.MySql
 
@@ -133,7 +133,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
     .AddStoreHub<TestStoreHub>()
     .BuildServiceProvider();
 
-### Use SQL Server
+### 使用 SQL Server
 
     PM> Install-Package: Microsoft.EntityFrameworkCore.SqlServer
 
@@ -149,7 +149,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
-### Use SQLite
+### 使用 SQLite
 
     PM> Install-Package: Microsoft.EntityFrameworkCore.Sqlite
 
@@ -171,7 +171,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
     .AddStoreHub<TestStoreHub>()
     .BuildServiceProvider();
 
-### Create Models and Accessor
+### 创建模型与访问器
 
     [Description("文章")]
     [ShardingTable]
@@ -235,7 +235,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         }
     }
 
-### Create Stores
+### 创建存储
 
     public class TestStoreIdentifier : GuidStoreIdentifier
     {
@@ -286,7 +286,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
     articles = stores.UseWriteDbConnection().GetArticles();
     Assert.True(articles.Total >= 0); // 如果启用分片表，文章表可能为空。
 
-### Tested Database
+### 已测试的数据库
 
 | 数据库       | 多租户         | 写入分离           | 迁移       | 审计   | 实体/表管理              |
 |------------  |--------------  |------------------  |----------  |------  |------------------------  |
@@ -294,8 +294,8 @@ Librame.Extensions.Storage (and Storage.Abstractions)
 | SQL Server   | ✓              | ✓                  | ✓          | ✓      | ✓                        |
 | SQLite       | ✓              | ✓                  | ✓          | ✓      | ✓                        |
 
-**MySQL** [测试于 MySQL 5.7](https://github.com/librame/extensions/raw/master/examples/Librame.Extensions.Examples/Tested_in_MySQL57.png).
+**MySQL** [测试于 MySQL 5.7](/examples/Librame.Extensions.Examples/Tested_in_MySQL57.png).
 
-**SQL Server** [测试于 SQL Server 2019](https://github.com/librame/extensions/raw/master/examples/Librame.Extensions.Examples/Tested_in_SQLServer2019.png).
+**SQL Server** [测试于 SQL Server 2019](/examples/Librame.Extensions.Examples/Tested_in_SQLServer2019.png).
 
-**SQLite** [测试于 SQLite](https://github.com/librame/extensions/raw/master/examples/Librame.Extensions.Examples/Tested_in_SQLite.png).
+**SQLite** [测试于 SQLite](/examples/Librame.Extensions.Examples/Tested_in_SQLite.png).
