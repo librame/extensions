@@ -99,9 +99,9 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
     }
 
     //var root = new ConfigurationBuilder()
-    //.SetBasePath("BasePath")
-    //.AddJsonFile("appsettings.json")
-    //.Build();
+    //  .SetBasePath("BasePath")
+    //  .AddJsonFile("appsettings.json")
+    //  .Build();
 
     var builder = new ServiceCollection()
         .AddLibrame(dependency =>
@@ -114,30 +114,32 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
 
     PM> Install-Package: Pomelo.EntityFrameworkCore.MySql
 
-    var services = builder.AddData(dependency =>
-    {
-        dependency.Options.IdentifierGenerator = SUIdentifierGenerator.MySQL;
-        dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
-    })
-    .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
-    {
-        optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
+    var services = builder
+        .AddData(dependency =>
         {
-            mySql.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName());
-            mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
-        });
-    })
-    .AddDatabaseDesignTime<MySqlDesignTimeServices>()
-    .AddStoreIdentifier<TestStoreIdentifier>()
-    .AddStoreInitializer<TestStoreInitializer>()
-    .AddStoreHub<TestStoreHub>()
-    .BuildServiceProvider();
+            dependency.Options.IdentifierGenerator = SUIdentifierGenerator.MySQL;
+            dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
+        })
+        .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
+        {
+            optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
+            {
+                mySql.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName());
+                mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
+            });
+        })
+        .AddDatabaseDesignTime<MySqlDesignTimeServices>()
+        .AddStoreIdentifier<TestStoreIdentifier>()
+        //.AddStoreInitializer<TestStoreInitializer>()
+        .AddStoreHub<TestStoreHub>()
+        .BuildServiceProvider();
 
 ### Use SQL Server
 
     PM> Install-Package: Microsoft.EntityFrameworkCore.SqlServer
 
-    var services = builder.AddData()
+    var services = builder
+        .AddData()
         .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
         {
             optionsBuilder.UseSqlServer(tenant.DefaultConnectionString,
@@ -145,7 +147,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
         })
         .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
         .AddStoreIdentifier<TestStoreIdentifier>()
-        .AddStoreInitializer<TestStoreInitializer>()
+        //.AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
@@ -153,23 +155,24 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
 
     PM> Install-Package: Microsoft.EntityFrameworkCore.Sqlite
 
-    var services = builder.AddData(dependency =>
-    {
-        dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLite;
-        // ConnectionStrings Section is not support DefaultTenant.WritingSeparation
-        dependency.Options.DefaultTenant.WritingSeparation = true;
-        dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.BaseDirectory.CombinePath(dataFile));
-    })
-    .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
-    {
-        optionsBuilder.UseSqlite(tenant.DefaultConnectionString,
-            sqlite => sqlite.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
-    })
-    .AddDatabaseDesignTime<SqliteDesignTimeServices>()
-    .AddStoreIdentifier<TestStoreIdentifier>()
-    .AddStoreInitializer<TestStoreInitializer>()
-    .AddStoreHub<TestStoreHub>()
-    .BuildServiceProvider();
+    var services = builder
+        .AddData(dependency =>
+        {
+            dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLite;
+            // ConnectionStrings Section is not support DefaultTenant.WritingSeparation
+            dependency.Options.DefaultTenant.WritingSeparation = true;
+            dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.BaseDirectory.CombinePath(dataFile));
+        })
+        .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
+        {
+            optionsBuilder.UseSqlite(tenant.DefaultConnectionString,
+                sqlite => sqlite.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
+        })
+        .AddDatabaseDesignTime<SqliteDesignTimeServices>()
+        .AddStoreIdentifier<TestStoreIdentifier>()
+        //.AddStoreInitializer<TestStoreInitializer>()
+        .AddStoreHub<TestStoreHub>()
+        .BuildServiceProvider();
 
 ### Create Models and Accessor
 
@@ -239,7 +242,14 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
 
     public class TestStoreIdentifier : GuidStoreIdentifier
     {
-        // see tests/Librame.Extensions.Data.EntityFrameworkCore.Tests/TestStoreIdentifier.cs
+        public TestStoreIdentifier(IOptions<DataBuilderOptions> options,
+            IClockService clock, ILoggerFactory loggerFactory)
+            : base(options, clock, loggerFactory)
+        {
+        }
+        
+        public Task<Guid> GetArticleIdAsync(CancellationToken cancellationToken = default)
+            => GenerateIdAsync("ArticleId", cancellationToken);
     }
     
     public class TestStoreInitializer : GuidStoreInitializer
