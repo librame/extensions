@@ -31,7 +31,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         protected AbstractEntityCreation()
         {
-            CreatedTime = DataDefaults.UtcNowOffset;
+            CreatedTime = DataSettings.UtcNowOffset;
             CreatedTimeTicks = CreatedTime.Ticks;
         }
 
@@ -61,8 +61,8 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         protected AbstractEntityCreation()
         {
-            Rank = DataDefaults.Rank;
-            Status = DataDefaults.Status;
+            Rank = DataSettings.Rank;
+            Status = DataSettings.Status;
         }
     }
 

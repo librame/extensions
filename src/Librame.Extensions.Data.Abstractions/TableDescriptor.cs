@@ -163,7 +163,7 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is TableDescriptor other) ? Equals(other) : false;
+            => obj is TableDescriptor other && Equals(other);
 
 
         /// <summary>

@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Librame.Extensions.Core.Compilers
 {
@@ -34,6 +35,18 @@ namespace Librame.Extensions.Core.Compilers
         /// 使用 .dll 扩展名会导致读写抛出未授权异常。
         /// </remarks>
         public const string FileExtension = ".dat";
+
+
+        /// <summary>
+        /// 从文件中反编译为程序集。
+        /// </summary>
+        /// <param name="assemblyPath">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <returns>返回 <see cref="Assembly"/>。</returns>
+        public static Assembly DecompileFromFile(FilePathCombiner assemblyPath)
+        {
+            var buffer = File.ReadAllBytes(assemblyPath);
+            return Assembly.Load(buffer);
+        }
 
 
         /// <summary>

@@ -24,12 +24,6 @@ namespace Librame.Extensions
     public static class ExtensionSettings
     {
         /// <summary>
-        /// 锁定器。
-        /// </summary>
-        internal static readonly object Locker
-            = new object();
-
-        /// <summary>
         /// ntdll.dll 文件名。
         /// </summary>
         public const string NtDllFileName

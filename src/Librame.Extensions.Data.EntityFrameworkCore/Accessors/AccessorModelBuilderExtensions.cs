@@ -24,7 +24,7 @@ namespace Librame.Extensions.Data.Accessors
     public static class AccessorModelBuilderExtensions
     {
         /// <summary>
-        /// 配置数据存储中心。
+        /// 配置数据存储集合。
         /// </summary>
         /// <typeparam name="TAudit">指定的审计类型。</typeparam>
         /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
@@ -36,7 +36,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="accessor">给定的数据库上下文访问器。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static void ConfigureDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+        public static void ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
             (this ModelBuilder modelBuilder, DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> accessor)
             where TAudit : DataAudit<TGenId>
             where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
@@ -51,7 +51,7 @@ namespace Librame.Extensions.Data.Accessors
 
             if (accessor.BuilderOptions.Tables.DefaultSchema.IsNotEmpty())
                 modelBuilder.HasDefaultSchema(accessor.BuilderOptions.Tables.DefaultSchema);
-
+            
             var maxLength = accessor.BuilderOptions.Stores.MaxLengthForProperties;
 
             // 审计

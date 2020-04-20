@@ -106,18 +106,6 @@ namespace Librame.Extensions.Data.Builders
                 AssemblyReference.Load("System.Private.CoreLib")
             };
 
-        /// <summary>
-        /// 导出迁移命令集合。
-        /// </summary>
-        public bool ExportMigrationCommands { get; set; }
-            = true;
-
-        /// <summary>
-        /// 模型缓存过期秒数。
-        /// </summary>
-        public int ModelCacheExpirationSeconds { get; set; }
-            = 5;
-
 
         /// <summary>
         /// 数据租户（默认已启用）。

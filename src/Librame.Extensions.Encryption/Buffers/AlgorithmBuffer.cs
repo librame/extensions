@@ -57,7 +57,7 @@ namespace Librame.Extensions.Encryption.Buffers
         }
 
         public override bool Equals(object obj)
-            => obj is AlgorithmBuffer other ? Equals(other) : false;
+            => obj is AlgorithmBuffer other && Equals(other);
 
 
         public override int GetHashCode()

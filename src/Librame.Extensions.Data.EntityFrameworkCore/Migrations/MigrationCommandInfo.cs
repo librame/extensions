@@ -44,7 +44,7 @@ namespace Librame.Extensions.Data.Migrations
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is MigrationCommandInfo other) ? Equals(other) : false;
+            => obj is MigrationCommandInfo other && Equals(other);
 
 
         /// <summary>

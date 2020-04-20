@@ -15,17 +15,18 @@ namespace Librame.Extensions.Core.Tests
         {
         }
 
+        public DateTime GetNow(DateTime timestamp, bool? isUtc = null)
+            => DateTime.UtcNow;
 
         public Task<DateTime> GetNowAsync(DateTime timestamp, bool? isUtc = null,
             CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(DateTime.UtcNow);
-        }
+            => Task.FromResult(DateTime.UtcNow);
+
+        public DateTimeOffset GetOffsetNow(DateTimeOffset timestamp, bool? isUtc = null)
+            => DateTimeOffset.UtcNow;
 
         public Task<DateTimeOffset> GetOffsetNowAsync(DateTimeOffset timestamp, bool? isUtc = null,
             CancellationToken cancellationToken = default)
-        {
-            return Task.FromResult(DateTimeOffset.UtcNow);
-        }
+            => Task.FromResult(DateTimeOffset.UtcNow);
     }
 }

@@ -46,7 +46,7 @@ namespace Librame.Extensions.Data.Aspects
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
-        private static readonly object _locker = new object();
+        private readonly object _locker = new object();
 
 
         /// <summary>
@@ -77,7 +77,8 @@ namespace Librame.Extensions.Data.Aspects
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
-        protected override void PostprocessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+        protected override void PostProcessCore
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
             var currentMigration = GenerateMigration(dbContextAccessor);
             var lastMigration = dbContextAccessor.Migrations.FirstOrDefaultByMax(s => s.CreatedTimeTicks);
@@ -87,7 +88,7 @@ namespace Librame.Extensions.Data.Aspects
                 dbContextAccessor.Migrations.Add(currentMigration);
                 RequiredSaveChanges = true;
 
-                var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
+                var mediator = dbContextAccessor.GetService<IMediator>();
                 mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = currentMigration }).ConfigureAndWait();
             }
         }
@@ -99,7 +100,8 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
-        protected override async Task PostprocessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+        protected override async Task PostProcessCoreAsync
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
             var currentMigration = GenerateMigration(dbContextAccessor, cancellationToken);
@@ -110,7 +112,7 @@ namespace Librame.Extensions.Data.Aspects
                 await dbContextAccessor.Migrations.AddAsync(currentMigration, cancellationToken).ConfigureAndResultAsync();
                 RequiredSaveChanges = true;
 
-                var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
+                var mediator = dbContextAccessor.GetService<IMediator>();
                 await mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = currentMigration }).ConfigureAndWaitAsync();
             }
         }
@@ -123,7 +125,8 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <typeparamref name="TMigration"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
-        protected virtual TMigration GenerateMigration(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+        protected virtual TMigration GenerateMigration
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
             lock (_locker)

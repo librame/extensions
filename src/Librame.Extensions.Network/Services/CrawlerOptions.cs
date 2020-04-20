@@ -24,9 +24,9 @@ namespace Librame.Extensions.Network.Services
             = ".jpg,.jpeg,.png,.bmp";
 
         /// <summary>
-        /// 缓存过期秒数（默认 3600 秒后过期，即相同 URL 与提交数据在一小时内不会重复发起请求）。
+        /// 缓存过期秒数（默认 10 秒后过期）。
         /// </summary>
         public int CacheExpirationSeconds { get; set; }
-            = 3600;
+            = 10;
     }
 }

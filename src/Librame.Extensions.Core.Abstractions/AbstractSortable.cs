@@ -54,7 +54,7 @@ namespace Librame.Extensions.Core
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => obj is ISortable sortable ? Priority == sortable?.Priority : false;
+            => obj is ISortable sortable && Priority == sortable?.Priority;
 
 
         /// <summary>

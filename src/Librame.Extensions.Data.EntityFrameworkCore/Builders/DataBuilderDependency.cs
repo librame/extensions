@@ -34,7 +34,7 @@ namespace Librame.Extensions.Data.Builders
         public DataBuilderDependency(IExtensionBuilderDependency parentDependency = null)
             : base(nameof(DataBuilderDependency), parentDependency)
         {
-            MigrationCommandsDirectory = ReportDirectory.CombinePath("migration_commands");
+            MigrationCommandsDirectory = ConfigDirectory.CombinePath("migration_commands");
             ModelSnapshotsDirectory = ConfigDirectory.CombinePath("model_snapshots");
         }
 

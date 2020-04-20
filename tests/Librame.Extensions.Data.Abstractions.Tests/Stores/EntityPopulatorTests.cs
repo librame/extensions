@@ -37,8 +37,14 @@ namespace Librame.Extensions.Data.Tests
             public ILoggerFactory LoggerFactory
                 => throw new NotImplementedException();
 
+            public DateTime GetNow(DateTime timestamp, bool? isUtc = null)
+                => DateTime.UtcNow.AddHours(1);
+
             public Task<DateTime> GetNowAsync(DateTime timestamp, bool? isUtc = null, CancellationToken cancellationToken = default)
                 => Task.FromResult(DateTime.UtcNow.AddHours(1));
+
+            public DateTimeOffset GetOffsetNow(DateTimeOffset timestamp, bool? isUtc = null)
+                => DateTimeOffset.UtcNow.AddHours(1);
 
             public Task<DateTimeOffset> GetOffsetNowAsync(DateTimeOffset timestamp, bool? isUtc = null, CancellationToken cancellationToken = default)
                 => Task.FromResult(DateTimeOffset.UtcNow.AddHours(1));

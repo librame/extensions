@@ -10,11 +10,11 @@
 
 #endregion
 
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Core.Services;
     using Data.Accessors;
 
     /// <summary>
@@ -38,19 +38,26 @@ namespace Librame.Extensions.Data.Stores
         /// <value>返回 <see cref="IAccessor"/>。</value>
         public IAccessor Accessor { get; }
 
+        /// <summary>
+        /// 日志工厂。
+        /// </summary>
+        public ILoggerFactory LoggerFactory
+            => Accessor.LoggerFactory;
+
 
         /// <summary>
-        /// 内部服务提供程序。
+        /// 获取服务。
         /// </summary>
-        /// <value>返回 <see cref="IServiceProvider"/>。</value>
-        public IServiceProvider InternalServiceProvider
-            => Accessor.InternalServiceProvider;
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <returns>返回 <typeparamref name="TService"/>。</returns>
+        public virtual TService GetService<TService>()
+            => Accessor.GetService<TService>();
 
         /// <summary>
-        /// 服务工厂。
+        /// 获取服务提供程序。
         /// </summary>
-        /// <value>返回 <see cref="ServiceFactory"/>。</value>
-        public ServiceFactory ServiceFactory
-            => Accessor.ServiceFactory;
+        /// <returns>返回 <see cref="IServiceProvider"/>。</returns>
+        public virtual IServiceProvider GetServiceProvider()
+            => Accessor.GetServiceProvider();
     }
 }

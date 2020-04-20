@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Design;
 using Microsoft.EntityFrameworkCore.Sqlite.Design.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Design.Internal;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,9 +47,6 @@ namespace Librame.Extensions.Data.Tests
             var serviceProvider = services.BuildServiceProvider();
             var stores = serviceProvider.GetRequiredService<TestStoreHub>();
 
-            var dependencies = stores.ServiceFactory.GetService<MigrationsScaffolderDependencies>();
-            Assert.NotNull(dependencies);
-
             var categories = stores.GetCategories();
             Assert.Empty(categories);
 
@@ -95,9 +91,6 @@ namespace Librame.Extensions.Data.Tests
             var serviceProvider = services.BuildServiceProvider();
             var stores = serviceProvider.GetRequiredService<TestStoreHub>();
 
-            var dependencies = stores.ServiceFactory.GetService<MigrationsScaffolderDependencies>();
-            Assert.NotNull(dependencies);
-
             var categories = stores.GetCategories();
             Assert.Empty(categories);
 
@@ -140,9 +133,6 @@ namespace Librame.Extensions.Data.Tests
 
             var serviceProvider = services.BuildServiceProvider();
             var stores = serviceProvider.GetRequiredService<TestStoreHub>();
-
-            var dependencies = stores.ServiceFactory.GetService<MigrationsScaffolderDependencies>();
-            Assert.NotNull(dependencies);
 
             var categories = stores.GetCategories();
             Assert.Empty(categories);

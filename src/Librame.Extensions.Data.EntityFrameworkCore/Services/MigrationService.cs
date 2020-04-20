@@ -11,16 +11,12 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Update;
-using Microsoft.EntityFrameworkCore.Update.Internal;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -35,6 +31,7 @@ namespace Librame.Extensions.Data.Services
 {
     using Core.Builders;
     using Core.Combiners;
+    using Core.Compilers;
     using Core.Services;
     using Data.Accessors;
     using Data.Aspects;
@@ -63,12 +60,13 @@ namespace Librame.Extensions.Data.Services
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
-        private static readonly object _locker = new object();
+        private readonly object _locker = new object();
 
         private readonly IMemoryCache _memoryCache;
         private readonly CoreBuilderOptions _coreOptions;
 
         private bool _requiredCompileAssembly = false;
+        private FilePathCombiner _persistenceAssemblyPath = null;
 
 
         /// <summary>
@@ -95,6 +93,9 @@ namespace Librame.Extensions.Data.Services
                 {
                     ModelSnapshotCompiler.CompileInFile(dbContextAccessor, dbContextAccessor.Model, Options);
                     _requiredCompileAssembly = false;
+
+                    // 移除程序集缓存
+                    _memoryCache.Remove(_persistenceAssemblyPath);
                 }
             }
         }
@@ -119,11 +120,14 @@ namespace Librame.Extensions.Data.Services
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
         protected virtual void MigrateCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            var lastModel = ResolveLastModel(dbContextAccessor);
+            _persistenceAssemblyPath = ModelSnapshotCompiler.CombineFilePath(dbContextAccessor);
+
+            var lastModel = ResolvePersistenceModel(dbContextAccessor);
             if (lastModel.IsNotNull())
             {
                 // 对比差异
-                var differences = GetDifferences(dbContextAccessor.InternalServiceProvider, lastModel, dbContextAccessor.Model);
+                var modelDiffer = dbContextAccessor.GetService<IMigrationsModelDiffer>();
+                var differences = modelDiffer.GetDifferences(lastModel, dbContextAccessor.Model);
                 if (differences.IsNotEmpty())
                 {
                     // 差异迁移
@@ -170,11 +174,14 @@ namespace Librame.Extensions.Data.Services
         protected virtual async Task MigrateCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var lastModel = ResolveLastModel(dbContextAccessor);
+            _persistenceAssemblyPath = ModelSnapshotCompiler.CombineFilePath(dbContextAccessor);
+
+            var lastModel = ResolvePersistenceModel(dbContextAccessor);
             if (lastModel.IsNotNull())
             {
                 // 对比差异
-                var differences = GetDifferences(dbContextAccessor.InternalServiceProvider, lastModel, dbContextAccessor.Model);
+                var modelDiffer = dbContextAccessor.GetService<IMigrationsModelDiffer>();
+                var differences = modelDiffer.GetDifferences(lastModel, dbContextAccessor.Model);
                 if (differences.IsNotEmpty())
                 {
                     await MigrateAspectServicesAsync(dbContextAccessor, () =>
@@ -216,13 +223,13 @@ namespace Librame.Extensions.Data.Services
             // 数据迁移仅支持写入
             if (dbContextAccessor.IsWritingConnectionString())
             {
-                aspects = dbContextAccessor.ServiceFactory.GetRequiredService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit,
+                aspects = dbContextAccessor.GetService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit,
                     TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
 
                 aspects.ForEach(aspect =>
                 {
                     if (aspect.Enabled)
-                        aspect.Preprocess(dbContextAccessor); // 前置处理数据迁移
+                        aspect.PreProcess(dbContextAccessor); // 前置处理数据迁移
                 });
             }
 
@@ -234,7 +241,7 @@ namespace Librame.Extensions.Data.Services
                 aspects.ForEach(aspect =>
                 {
                     if (aspect.Enabled)
-                        aspect.Postprocess(dbContextAccessor); // 后置处理数据迁移
+                        aspect.PostProcess(dbContextAccessor); // 后置处理数据迁移
                 });
 
                 // 如果需要保存更改
@@ -262,13 +269,13 @@ namespace Librame.Extensions.Data.Services
             // 数据迁移仅支持写入
             if (dbContextAccessor.IsWritingConnectionString())
             {
-                aspects = dbContextAccessor.ServiceFactory.GetRequiredService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit,
+                aspects = dbContextAccessor.GetService<IServicesManager<IMigrateDbContextAccessorAspect<TAudit,
                     TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
 
                 aspects.ForEach(async aspect =>
                 {
                     if (aspect.Enabled)
-                        await aspect.PreprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync(); // 前置处理数据迁移
+                        await aspect.PreProcessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync(); // 前置处理数据迁移
                 });
             }
 
@@ -280,7 +287,7 @@ namespace Librame.Extensions.Data.Services
                 aspects.ForEach(async aspect =>
                 {
                     if (aspect.Enabled)
-                        await aspect.PostprocessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync(); // 后置处理数据迁移
+                        await aspect.PostProcessAsync(dbContextAccessor, cancellationToken).ConfigureAndWaitAsync(); // 后置处理数据迁移
                 });
 
                 // 如果需要保存更改
@@ -313,83 +320,74 @@ namespace Librame.Extensions.Data.Services
             //var historyRepository = dbContextAccessor.GetService<IHistoryRepository>();
             //var insertCommand = rawSqlCommandBuilder.Build(historyRepository.GetInsertScript(new HistoryRow(migration.GetId(), ProductInfo.GetVersion())));
 
-            // 生成操作差异的迁移命令列表
-            var differenceCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
-            //.Concat(new[] { new MigrationCommand(insertCommand, _currentContext.Context, _commandLogger) })
-
-            // 验证需要执行的迁移命令集合
-            var executeCommands = MigrationCommandValidator.Validate(dbContextAccessor, differenceCommands, Options, _coreOptions);
-            if (executeCommands.IsNotEmpty())
+            lock (_locker)
             {
-                migrationCommandExecutor.ExecuteNonQuery(executeCommands, connection);
-                _requiredCompileAssembly = true;
+                // 生成操作差异的迁移命令列表
+                var differenceCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
+                //.Concat(new[] { new MigrationCommand(insertCommand, _currentContext.Context, _commandLogger) })
+
+                // 过滤需要执行的迁移命令集合（为防止命令执行过程中出错）
+                var executeCommands = MigrationCommandFiltrator.Filter(_memoryCache,
+                    dbContextAccessor, differenceCommands, Options, _coreOptions);
+                if (executeCommands.Count > 0)
+                {
+                    migrationCommandExecutor.ExecuteNonQuery(executeCommands, connection);
+                    _requiredCompileAssembly = true;
+
+                    MigrationCommandFiltrator.Save(_memoryCache, dbContextAccessor, _coreOptions);
+                }
             }
         }
 
         /// <summary>
-        /// 获取差异迁移操作。
-        /// </summary>
-        /// <param name="internalServiceProvider">给定的 <see cref="IServiceProvider"/>。</param>
-        /// <param name="lastModel">给定的上一次 <see cref="IModel"/>。</param>
-        /// <param name="currentModel">给定的当前 <see cref="IModel"/>。</param>
-        /// <returns>返回 <see cref="IReadOnlyList{MigrationOperation}"/>。</returns>
-        protected virtual IReadOnlyList<MigrationOperation> GetDifferences(IServiceProvider internalServiceProvider, IModel lastModel, IModel currentModel)
-        {
-            var typeMappingSource = internalServiceProvider.GetRequiredService<IRelationalTypeMappingSource>();
-            var migrationsAnnotations = internalServiceProvider.GetRequiredService<IMigrationsAnnotationProvider>();
-            var changeDetector = internalServiceProvider.GetRequiredService<IChangeDetector>();
-            var updateAdapterFactory = internalServiceProvider.GetRequiredService<IUpdateAdapterFactory>();
-            var commandBatchPreparerDependencies = internalServiceProvider.GetRequiredService<CommandBatchPreparerDependencies>();
-
-            var modelDiffer = new ResetMigrationsModelDiffer(typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory,
-                commandBatchPreparerDependencies);
-
-            return modelDiffer.GetDifferences(lastModel, currentModel);
-        }
-
-        /// <summary>
-        /// 解析上一次模型。
+        /// 解析持久化模型。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <returns>返回 <see cref="IModel"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
-        protected IModel ResolveLastModel(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+        protected IModel ResolvePersistenceModel(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            var assemblyPath = ModelSnapshotCompiler.CombineFilePath(dbContextAccessor);
-
-            return _memoryCache.GetOrCreate(assemblyPath.FileName, entry =>
+            lock (_locker)
             {
-                entry.SetAbsoluteExpiration(TimeSpan.FromSeconds(Options.ModelCacheExpirationSeconds));
-
-                Type snapshotType = null;
-
-                if (assemblyPath.Exists())
+                return _memoryCache.GetOrCreate(GetCacheKey(), entry =>
                 {
-                    // 从生成的模型快照程序集文件中加载
-                    var modelAssembly = Assembly.LoadFile(assemblyPath);
-                    var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.CurrentType);
-                    snapshotType = modelAssembly.GetType(modelSnapshotTypeName, throwOnError: true, ignoreCase: false);
-                }
-                else //if (dbContextAccessor.IsWritingConnectionString())
-                {
-                    // 读写分离数据库可能会做主从同步，因此取消写入连接字符串限制
-                    var lastMigration = dbContextAccessor.Migrations.FirstOrDefaultByMax(s => s.CreatedTimeTicks);
-                    if (lastMigration.IsNotNull() && lastMigration.ModelBody.IsNotEmpty())
+                    Type snapshotType = null;
+
+                    if (_persistenceAssemblyPath.Exists())
                     {
-                        var buffer = ModelSnapshotCompiler.RestoreAssembly(lastMigration.ModelBody);
-                        var modelAssembly = Assembly.Load(buffer);
-                        snapshotType = modelAssembly.GetType(lastMigration.ModelSnapshotName, throwOnError: true, ignoreCase: false);
+                        // 从生成的模型快照程序集文件中加载
+                        var modelAssembly = CSharpCompiler.DecompileFromFile(_persistenceAssemblyPath);
+                        var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.CurrentType);
+                        snapshotType = modelAssembly.GetType(modelSnapshotTypeName, throwOnError: true, ignoreCase: false);
+                    }
+                    else //if (dbContextAccessor.IsWritingConnectionString())
+                    {
+                        // 启用写入分离后，数据库可能会主从同步，因此尝试从数据库获取迁移数据不作连接限制
+                        var lastMigration = dbContextAccessor.Migrations.FirstOrDefaultByMax(s => s.CreatedTimeTicks);
+                        if (lastMigration.IsNotNull() && lastMigration.ModelBody.IsNotEmpty())
+                        {
+                            var buffer = ModelSnapshotCompiler.RestoreAssembly(lastMigration.ModelBody);
+                            var modelAssembly = Assembly.Load(buffer);
+                            snapshotType = modelAssembly.GetType(lastMigration.ModelSnapshotName, throwOnError: true, ignoreCase: false);
+                        }
+
+                        _requiredCompileAssembly = true;
                     }
 
-                    _requiredCompileAssembly = true;
-                }
+                    if (snapshotType.IsNotNull())
+                        return snapshotType.EnsureCreate<ModelSnapshot>().Model;
 
-                if (snapshotType.IsNotNull())
-                    return snapshotType.EnsureCreate<ModelSnapshot>().Model;
-
-                return null;
-            });
+                    return null;
+                });
+            }
         }
+
+        /// <summary>
+        /// 获取缓存键。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        protected string GetCacheKey()
+            => $"{nameof(MigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>)}:{_persistenceAssemblyPath}";
 
         #endregion
 

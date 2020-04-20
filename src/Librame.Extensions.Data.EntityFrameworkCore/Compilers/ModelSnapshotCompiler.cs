@@ -27,7 +27,6 @@ namespace Librame.Extensions.Data.Compilers
     using Core.Compilers;
     using Core.Builders;
     using Core.Combiners;
-    using Core.Services;
     using Data.Accessors;
     using Data.Builders;
 
@@ -63,10 +62,10 @@ namespace Librame.Extensions.Data.Compilers
         {
             accessor.NotNull(nameof(accessor));
             
-            var dependency = accessor.ServiceFactory.GetRequiredService<DataBuilderDependency>();
+            var dependency = accessor.GetService<DataBuilderDependency>();
             var basePath = basePathFactory?.Invoke(dependency) ?? dependency.ModelSnapshotsDirectory;
 
-            var builder = accessor.ServiceFactory.GetRequiredService<IDataBuilder>();
+            var builder = accessor.GetService<IDataBuilder>();
             return CombineFilePath(accessor.CurrentType, builder.DatabaseDesignTimeType,
                 basePath, accessor.IsWritingConnectionString(), extension);
         }
@@ -126,7 +125,7 @@ namespace Librame.Extensions.Data.Compilers
             var accessorType = accessor.GetType();
             var typeName = GenerateTypeName(accessorType);
 
-            var generator = accessor.ServiceFactory.GetRequiredService<IMigrationsCodeGenerator>();
+            var generator = accessor.GetService<IMigrationsCodeGenerator>();
             var sourceCode = generator.GenerateSnapshot(typeName.Namespace, accessorType,
                 typeName.Name, model);
 
@@ -153,8 +152,8 @@ namespace Librame.Extensions.Data.Compilers
             model.NotNull(nameof(model));
             typeName.NotNull(nameof(typeName));
 
-            var generator = accessor.ServiceFactory.GetRequiredService<IMigrationsCodeGenerator>();
-            var coreOptions = accessor.ServiceFactory.GetRequiredService<IOptions<CoreBuilderOptions>>().Value;
+            var generator = accessor.GetService<IMigrationsCodeGenerator>();
+            var coreOptions = accessor.GetService<IOptions<CoreBuilderOptions>>().Value;
 
             var sourceCode = generator.GenerateSnapshot(typeName.Namespace, accessor.CurrentType,
                 typeName.Name, model);

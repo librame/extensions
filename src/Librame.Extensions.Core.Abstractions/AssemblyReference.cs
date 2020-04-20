@@ -95,7 +95,7 @@ namespace Librame.Extensions.Core
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回的布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is AssemblyReference other) ? Equals(other) : false;
+            => obj is AssemblyReference other && Equals(other);
 
 
         /// <summary>

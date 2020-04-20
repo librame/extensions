@@ -15,9 +15,9 @@ using System;
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 数据默认值集合。
+    /// 数据首选项集合。
     /// </summary>
-    public static class DataDefaults
+    public static class DataSettings
     {
         /// <summary>
         /// 默认排序。

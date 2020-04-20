@@ -13,12 +13,10 @@
 using Librame.Extensions;
 using Librame.Extensions.Data.Accessors;
 using Librame.Extensions.Data.Builders;
+using Librame.Extensions.Data.Migrations;
 using Librame.Extensions.Data.Stores;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
@@ -33,22 +31,6 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         private static readonly Type _dbContextAccessorTypeDefinition
             = typeof(IDbContextAccessor<,,,,>);
-
-
-        internal static IDataBuilder AddAccessors(this IDataBuilder builder)
-        {
-            builder.Services.AddTransient(sp => sp.GetRequiredService<ICurrentDbContext>().Context.GetService<IDatabaseProvider>());
-            builder.Services.AddTransient(sp => sp.GetRequiredService<ICurrentDbContext>().Context.GetService<IDbContextOptions>());
-            builder.Services.AddTransient(sp => sp.GetRequiredService<ICurrentDbContext>().Context.GetService<IHistoryRepository>());
-            builder.Services.AddTransient(sp => sp.GetRequiredService<ICurrentDbContext>().Context.GetService<IMigrationsAssembly>());
-            builder.Services.AddTransient(sp => sp.GetRequiredService<ICurrentDbContext>().Context.GetService<IMigrationsIdGenerator>());
-            builder.Services.AddTransient(sp => sp.GetRequiredService<ICurrentDbContext>().Context.GetService<IMigrationsModelDiffer>());
-            builder.Services.AddTransient(sp => sp.GetRequiredService<ICurrentDbContext>().Context.GetService<IMigrator>());
-            builder.Services.AddTransient(sp => sp.GetRequiredService<ICurrentDbContext>().Context.GetService<IRelationalTypeMappingSource>());
-            builder.Services.AddTransient(sp => sp.GetRequiredService<ICurrentDbContext>().Context.GetService<IModel>());
-
-            return builder;
-        }
 
 
         /// <summary>
@@ -87,56 +69,43 @@ namespace Microsoft.Extensions.DependencyInjection
 
             if (poolSize > 0)
             {
-                builder.Services.AddDbContextPool<TAccessor, TImplementation>((sp, ob) =>
+                builder.Services.AddDbContextPool<TAccessor, TImplementation>((sp, optionsBuilder) =>
                 {
                     var options = sp.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
-                    setupAction.Invoke(options.DefaultTenant, ob);
+                    setupAction.Invoke(options.DefaultTenant, optionsBuilder);
+
+                    optionsBuilder.ReplaceServices();
                 },
                 poolSize);
             }
             else
             {
-                builder.Services.AddDbContext<TAccessor, TImplementation>((sp, ob) =>
+                builder.Services.AddDbContext<TAccessor, TImplementation>((sp, optionsBuilder) =>
                 {
                     var options = sp.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
-                    setupAction.Invoke(options.DefaultTenant, ob);
+                    setupAction.Invoke(options.DefaultTenant, optionsBuilder);
+
+                    optionsBuilder.ReplaceServices();
                 });
             }
 
             builder.Services.TryAddScoped(sp => (TImplementation)sp.GetRequiredService<TAccessor>());
 
-            builder.Services.AddTransient(sp => sp.GetRequiredService<TImplementation>().GetService<ICurrentDbContext>());
-            //builder.AddAccessorDesignTimeServices<TImplementation>();
-
             return builder;
         }
 
 
-        ///// <summary>
-        ///// 添加访问器设计时服务集合。
-        ///// </summary>
-        ///// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-        ///// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
-        ///// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        //[SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
-        //public static IDataBuilder AddAccessorDesignTimeServices<TAccessor>(this IDataBuilder builder)
-        //    where TAccessor : DbContext, IAccessor
-        //{
-        //    builder.NotNull(nameof(builder));
+        /// <summary>
+        /// 替换默认服务集合（<see cref="DbContext.OnConfiguring(DbContextOptionsBuilder)"/> 配置不支持 <see cref="EntityFrameworkServiceCollectionExtensions.AddDbContextPool{TContext}(IServiceCollection, Action{DbContextOptionsBuilder}, int)"/> 的替换模式）。
+        /// </summary>
+        /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
+        private static void ReplaceServices(this DbContextOptionsBuilder optionsBuilder)
+        {
+            // 在使用自定义迁移服务时，利用模型缓存键工厂使模型缓存失效后重新映射表名来达到分表的方法同样会变成重命名及修改的迁移操作而导致失败。
+            //optionsBuilder.ReplaceService<IModelCacheKeyFactory, DbContextAccessorModelCacheKeyFactory>();
 
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<ICurrentDbContext>());
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<IDatabaseProvider>());
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<IDbContextOptions>());
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<IHistoryRepository>());
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<IMigrationsAssembly>());
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<IMigrationsIdGenerator>());
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<IMigrationsModelDiffer>());
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<IMigrator>());
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<IRelationalTypeMappingSource>());
-        //    builder.Services.AddTransient(sp => sp.GetRequiredService<TAccessor>().GetService<IModel>());
-
-        //    return builder;
-        //}
+            optionsBuilder.ReplaceService<IMigrationsModelDiffer, ShardingMigrationsModelDiffer>();
+        }
 
     }
 }

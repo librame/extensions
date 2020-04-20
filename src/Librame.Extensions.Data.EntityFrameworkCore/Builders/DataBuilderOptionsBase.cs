@@ -13,7 +13,6 @@
 namespace Librame.Extensions.Data.Builders
 {
     using Core.Builders;
-    using Data.Schemas;
     using Data.Stores;
 
     /// <summary>

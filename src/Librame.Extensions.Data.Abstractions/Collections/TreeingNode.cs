@@ -212,7 +212,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="obj">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is TreeingNode<T, TId> other) ? Equals(other) : false;
+            => obj is TreeingNode<T, TId> other && Equals(other);
 
 
         /// <summary>

@@ -89,7 +89,7 @@ namespace Librame.Extensions.Data
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is OperationError other) ? Equals(other) : false;
+            => obj is OperationError other && Equals(other);
 
 
         /// <summary>

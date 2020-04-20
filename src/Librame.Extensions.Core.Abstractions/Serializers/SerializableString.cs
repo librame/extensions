@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core.Serializers
     /// <typeparam name="TSource">指定的来源类型。</typeparam>
     public class SerializableString<TSource> : IEquatable<SerializableString<TSource>>
     {
-        private static readonly object _locker = new object();
+        private readonly object _locker = new object();
         private string _value;
 
 
@@ -124,7 +124,7 @@ namespace Librame.Extensions.Core.Serializers
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => obj is SerializableString<TSource> other ? Equals(other) : false;
+            => obj is SerializableString<TSource> other && Equals(other);
 
 
         /// <summary>

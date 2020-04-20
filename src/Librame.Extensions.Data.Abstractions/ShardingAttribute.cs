@@ -10,24 +10,15 @@
 
 #endregion
 
-using System.ComponentModel;
+using System;
 
 namespace Librame.Extensions.Data
 {
     /// <summary>
-    /// 分表模式。
+    /// 分表特性（如果在实体中标记此特性，则表示在模型迁移中，当检测到表映射的名称发生差异时，默认视为分表迁移操作）。
     /// </summary>
-    [Description("数据模式")]
-    public enum ShardingTableMode
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class ShardingAttribute : Attribute
     {
-        /// <summary>
-        /// 创建分表（表示当检测到表名差异时，默认创建分表）。
-        /// </summary>
-        Create,
-
-        /// <summary>
-        /// 更新分表（表示当检测到表名差异时，默认重命名分表，即不分表）。
-        /// </summary>
-        Rename
     }
 }

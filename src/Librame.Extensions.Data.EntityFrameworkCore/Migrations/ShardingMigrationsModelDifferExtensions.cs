@@ -17,7 +17,7 @@ using System.Reflection;
 
 namespace Librame.Extensions.Data.Migrations
 {
-    static class ResetMigrationsModelDifferExtensions
+    static class ShardingMigrationsModelDifferExtensions
     {
         /// <summary>
         ///     This API supports the Entity Framework Core infrastructure and is not intended to be used

@@ -10,35 +10,20 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Data.Stores
 {
-    using Core.Services;
-    using Data.Accessors;
+    using Accessors;
+    using Services;
 
     /// <summary>
     /// 存储接口。
     /// </summary>
-    public interface IStore
+    public interface IStore : IInfrastructureService
     {
         /// <summary>
         /// 访问器。
         /// </summary>
         /// <value>返回 <see cref="IAccessor"/>。</value>
         IAccessor Accessor { get; }
-
-
-        /// <summary>
-        /// 内部服务提供程序。
-        /// </summary>
-        /// <value>返回 <see cref="IServiceProvider"/>。</value>
-        IServiceProvider InternalServiceProvider { get; }
-
-        /// <summary>
-        /// 服务工厂。
-        /// </summary>
-        /// <value>返回 <see cref="ServiceFactory"/>。</value>
-        ServiceFactory ServiceFactory { get; }
     }
 }

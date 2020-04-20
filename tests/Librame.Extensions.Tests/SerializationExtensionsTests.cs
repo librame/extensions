@@ -30,7 +30,7 @@ namespace Librame.Extensions.Tests
                 => UtcNow == other?.UtcNow && None == other?.None;
 
             public override bool Equals(object obj)
-                => obj is TestSerialization other ? Equals(other) : false;
+                => obj is TestSerialization other && Equals(other);
 
             public override int GetHashCode()
                 => UtcNow.GetHashCode() ^ None.GetHashCode();

@@ -32,11 +32,19 @@ namespace Librame.Extensions.Data.Mediators
         }
 
 
-        public override Task HandleAsync(EntityNotification<TEntity, TGenId> notification, CancellationToken cancellationToken = default)
+        public override Task HandleAsync(EntityNotification<TEntity, TGenId> notification,
+            CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                Logger.LogInformation($"{notification.Adds.Count} Entities have been registed.");
+                if (notification.Adds.IsNotEmpty())
+                    Logger.LogInformation($"{notification.Adds.Count} entities added.");
+
+                if (notification.Updates.IsNotEmpty())
+                    Logger.LogInformation($"{notification.Updates.Count} entities updated.");
+
+                if (notification.Removes.IsNotEmpty())
+                    Logger.LogInformation($"{notification.Removes.Count} entities removed.");
 
                 return Task.CompletedTask;
             });

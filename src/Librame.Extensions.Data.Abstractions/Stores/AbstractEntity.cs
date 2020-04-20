@@ -31,8 +31,8 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         protected AbstractEntity()
         {
-            Rank = DataDefaults.Rank;
-            Status = DataDefaults.Status;
+            Rank = DataSettings.Rank;
+            Status = DataSettings.Status;
         }
     }
 

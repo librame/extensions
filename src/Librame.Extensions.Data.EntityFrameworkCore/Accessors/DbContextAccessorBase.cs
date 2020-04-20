@@ -12,7 +12,6 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -58,42 +57,37 @@ namespace Librame.Extensions.Data.Accessors
             CurrentConnectionString.NotEmpty("BuilderOptions.OptionsExtensionConnectionStringFactory");
 
             CurrentTenant = BuilderOptions.DefaultTenant.NotNull("BuilderOptions.DefaultTenant");
-
+            
             if (BuilderOptions.IsCreateDatabase)
                 EnsureDatabaseCreated();
         }
 
 
         /// <summary>
-        /// 内部服务提供程序。
+        /// 时钟服务。
         /// </summary>
-        public IServiceProvider InternalServiceProvider
-            => this.GetInfrastructure();
+        public IClockService Clock
+            => GetService<IClockService>();
 
         /// <summary>
-        /// 服务工厂。
+        /// 日志工厂。
         /// </summary>
-        public ServiceFactory ServiceFactory
-            => this.GetService<ServiceFactory>();
+        public ILoggerFactory LoggerFactory
+            => GetService<ILoggerFactory>();
 
         /// <summary>
         /// 内存锁定器。
         /// </summary>
         public IMemoryLocker Locker
-            => this.GetService<IMemoryLocker>();
+            => GetService<IMemoryLocker>();
 
 
         /// <summary>
         /// 构建器选项。
         /// </summary>
         public DataBuilderOptions BuilderOptions
-            => this.GetService<IOptions<DataBuilderOptions>>().Value;
+            => GetService<IOptions<DataBuilderOptions>>().Value;
 
-        /// <summary>
-        /// 日志工厂。
-        /// </summary>
-        public ILoggerFactory LoggerFactory
-            => this.GetService<ILoggerFactory>();
 
         /// <summary>
         /// 日志。
@@ -106,7 +100,7 @@ namespace Librame.Extensions.Data.Accessors
         /// 当前时间戳。
         /// </summary>
         public DateTimeOffset CurrentTimestamp
-            => this.GetService<IClockService>().GetOffsetNowAsync(DateTimeOffset.UtcNow).ConfigureAndResult();
+            => Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow).ConfigureAndResult();
 
         /// <summary>
         /// 当前类型。
@@ -141,6 +135,22 @@ namespace Librame.Extensions.Data.Accessors
         public virtual bool IsWritingConnectionString()
             => !CurrentTenant.WritingSeparation
             || (CurrentTenant.WritingSeparation && IsCurrentConnectionString(CurrentTenant.WritingConnectionString));
+
+
+        /// <summary>
+        /// 获取服务。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <returns>返回 <typeparamref name="TService"/>。</returns>
+        public virtual TService GetService<TService>()
+            => AccessorExtensions.GetService<TService>(this);
+
+        /// <summary>
+        /// 获取服务提供程序。
+        /// </summary>
+        /// <returns>返回 <see cref="IServiceProvider"/>。</returns>
+        public virtual IServiceProvider GetServiceProvider()
+            => AccessorExtensions.GetInfrastructure(this);
 
 
         /// <summary>

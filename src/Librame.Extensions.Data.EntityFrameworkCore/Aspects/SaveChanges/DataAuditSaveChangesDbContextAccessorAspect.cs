@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Aspects
 {
     using Core.Mediators;
-    using Core.Services;
     using Data.Accessors;
     using Data.Mediators;
     using Data.Stores;
@@ -49,6 +48,9 @@ namespace Librame.Extensions.Data.Aspects
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
+        private readonly object _locker = new object();
+
+
         /// <summary>
         /// 构造一个数据审计保存变化访问器截面。
         /// </summary>
@@ -71,9 +73,10 @@ namespace Librame.Extensions.Data.Aspects
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
-        protected override void PreprocessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+        protected override void PreProcessCore
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            var dictionary = GetAuditPropertiesDictionary(dbContextAccessor.ChangeTracker, default);
+            var dictionary = GetAuditPropertiesDictionary(dbContextAccessor.ChangeTracker);
             if (dictionary.IsNotEmpty())
             {
                 dbContextAccessor.Audits.AddRange(dictionary.Keys);
@@ -81,7 +84,7 @@ namespace Librame.Extensions.Data.Aspects
                 foreach (var properties in dictionary.Values)
                     dbContextAccessor.AuditProperties.AddRange(properties);
 
-                var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
+                var mediator = dbContextAccessor.GetService<IMediator>();
                 mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary)).ConfigureAndWait();
             }
         }
@@ -93,7 +96,8 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
-        protected override async Task PreprocessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+        protected override async Task PreProcessCoreAsync
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
             var dictionary = GetAuditPropertiesDictionary(dbContextAccessor.ChangeTracker, cancellationToken);
@@ -104,7 +108,7 @@ namespace Librame.Extensions.Data.Aspects
                 foreach (var properties in dictionary.Values)
                     await dbContextAccessor.AuditProperties.AddRangeAsync(properties, cancellationToken).ConfigureAndWaitAsync();
 
-                var mediator = dbContextAccessor.ServiceFactory.GetRequiredService<IMediator>();
+                var mediator = dbContextAccessor.GetService<IMediator>();
                 await mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary)).ConfigureAndWaitAsync();
             }
         }
@@ -118,25 +122,27 @@ namespace Librame.Extensions.Data.Aspects
         /// <returns>返回字典集合。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "changeTracker")]
         protected virtual IDictionary<TAudit, List<TAuditProperty>> GetAuditPropertiesDictionary
-            (ChangeTracker changeTracker, CancellationToken cancellationToken)
+            (ChangeTracker changeTracker, CancellationToken cancellationToken = default)
         {
-            var entityStates = Options.AuditEntityStates;
-
-            // 得到变化的实体集合
-            var entityEntries = changeTracker.Entries()
-                .Where(m => m.Entity.IsNotNull() && entityStates.Contains(m.State)).ToList();
-
-            var dictionary = new Dictionary<TAudit, List<TAuditProperty>>();
-            foreach (var entry in entityEntries)
+            lock (_locker)
             {
-                if (entry.Metadata.ClrType.IsDefined<NotAuditedAttribute>())
-                    continue; // 如果不审计，则忽略
+                var entityStates = Options.AuditEntityStates;
 
-                var pair = GetAuditProperties(entry, cancellationToken);
-                dictionary.Add(pair.Key, pair.Value);
+                // 得到需要审计的实体集合
+                var entityEntries = changeTracker.Entries()
+                    .Where(m => m.Entity.IsNotNull()
+                        && !m.Metadata.ClrType.IsDefined<NotAuditedAttribute>()
+                        && entityStates.Contains(m.State)).ToList();
+
+                var dictionary = new Dictionary<TAudit, List<TAuditProperty>>();
+                foreach (var entry in entityEntries)
+                {
+                    var pair = GetAuditProperties(entry, cancellationToken);
+                    dictionary.Add(pair.Key, pair.Value);
+                }
+
+                return dictionary;
             }
-
-            return dictionary;
         }
 
         /// <summary>
@@ -159,7 +165,7 @@ namespace Librame.Extensions.Data.Aspects
             var auditProperties = new List<TAuditProperty>();
             foreach (var property in entry.CurrentValues.Properties)
             {
-                if (property.IsConcurrencyToken)
+                if (property.IsConcurrencyToken || property.ClrType.IsDefined<NotAuditedAttribute>())
                     continue;
 
                 if (property.IsPrimaryKey())

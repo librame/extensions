@@ -62,7 +62,7 @@ namespace Librame.Extensions.Data.Tests
                 b.ToTable(table =>
                 {
                     // 使用年份进行分表（注：需要在 Article 做 [ShardingTable] 标识）
-                    table.AppendYearSuffix(CurrentTimestamp);
+                    table.AppendYearSuffix(CurrentTimestamp.AddYears(1));
                 });
 
                 b.HasKey(x => x.Id);

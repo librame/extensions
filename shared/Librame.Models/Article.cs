@@ -7,7 +7,7 @@ namespace Librame.Models
     using Extensions.Data.Stores;
 
     [Description("文章")]
-    [ShardingTable]
+    [Sharding]
     public class Article<TGenId, TIncremId> : AbstractEntityCreation<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TGenId : IEquatable<TGenId>

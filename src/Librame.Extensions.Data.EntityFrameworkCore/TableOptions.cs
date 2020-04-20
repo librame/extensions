@@ -12,7 +12,7 @@
 
 using System;
 
-namespace Librame.Extensions.Data.Schemas
+namespace Librame.Extensions.Data
 {
     /// <summary>
     /// 表名选项。
@@ -28,7 +28,7 @@ namespace Librame.Extensions.Data.Schemas
         /// 默认连接符。
         /// </summary>
         public string DefaultConnector { get; set; }
-
+        
 
         /// <summary>
         /// 审计表描述符配置动作。

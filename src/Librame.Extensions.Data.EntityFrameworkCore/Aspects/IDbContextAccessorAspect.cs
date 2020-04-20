@@ -55,7 +55,7 @@ namespace Librame.Extensions.Data.Aspects
         /// 前置处理。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/>。</param>
-        void Preprocess(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor);
+        void PreProcess(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor);
 
         /// <summary>
         /// 异步前置处理。
@@ -63,14 +63,14 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="accessor">给定的 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个异步操作。</returns>
-        Task PreprocessAsync(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor, CancellationToken cancellationToken = default);
+        Task PreProcessAsync(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor, CancellationToken cancellationToken = default);
 
 
         /// <summary>
         /// 后置处理。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/>。</param>
-        void Postprocess(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor);
+        void PostProcess(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor);
 
         /// <summary>
         /// 异步后置处理。
@@ -78,6 +78,6 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="accessor">给定的 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个异步操作。</returns>
-        Task PostprocessAsync(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor, CancellationToken cancellationToken = default);
+        Task PostProcessAsync(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor, CancellationToken cancellationToken = default);
     }
 }

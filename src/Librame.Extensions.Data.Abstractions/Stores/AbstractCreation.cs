@@ -31,7 +31,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         protected AbstractCreation()
         {
-            CreatedTime = DataDefaults.UtcNowOffset;
+            CreatedTime = DataSettings.UtcNowOffset;
             CreatedTimeTicks = CreatedTime.Ticks;
         }
 

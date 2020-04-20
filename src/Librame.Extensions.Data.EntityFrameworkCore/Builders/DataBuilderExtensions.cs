@@ -66,7 +66,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Configure Builder
             return dataBuilder
-                .AddAccessors()
+                //.AddAccessors()
                 .AddAspects()
                 .AddMediators()
                 .AddServices()

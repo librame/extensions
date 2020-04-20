@@ -58,7 +58,7 @@ namespace Librame.Extensions.Network.Requesters
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is RequestParameters other) ? Equals(other) : false;
+            => obj is RequestParameters other && Equals(other);
 
 
         /// <summary>

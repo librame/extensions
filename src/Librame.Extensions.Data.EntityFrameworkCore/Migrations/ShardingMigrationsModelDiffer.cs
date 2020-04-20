@@ -1,5 +1,14 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿#region License
+
+/* **************************************************************************************
+ * Copyright (c) Librame Pang All rights reserved.
+ * 
+ * http://librame.net
+ * 
+ * You must not remove this notice, or any other, from this software.
+ * **************************************************************************************/
+
+#endregion
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -14,7 +23,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.EntityFrameworkCore.Update.Internal;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,54 +34,75 @@ using System.Reflection;
 namespace Librame.Extensions.Data.Migrations
 {
     /// <summary>
-    ///     <para>
-    ///         This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///         the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///         any release. You should only use it directly in your code with extreme caution and knowing that
-    ///         doing so can result in application failures when updating to a new Entity Framework Core release.
-    ///     </para>
-    ///     <para>
-    ///         The service lifetime is <see cref="ServiceLifetime.Scoped"/>. This means that each
-    ///         <see cref="DbContext"/> instance will use its own instance of this service.
-    ///         The implementation may depend on other services registered with any lifetime.
-    ///         The implementation does not need to be thread-safe.
-    ///     </para>
+    /// 分表迁移模型差异。
     /// </summary>
-    public class ResetMigrationsModelDiffer : IMigrationsModelDiffer
+    [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.")]
+    public class ShardingMigrationsModelDiffer : IMigrationsModelDiffer
     {
-        private static readonly Type[] _dropOperationTypes = { typeof(DropIndexOperation), typeof(DropPrimaryKeyOperation), typeof(DropSequenceOperation), typeof(DropUniqueConstraintOperation), typeof(DropCheckConstraintOperation) };
+        private static readonly Type[] _dropOperationTypes =
+        {
+            typeof(DropIndexOperation),
+            typeof(DropPrimaryKeyOperation),
+            typeof(DropSequenceOperation),
+            typeof(DropUniqueConstraintOperation),
+            typeof(DropCheckConstraintOperation)
+        };
 
-        private static readonly Type[] _alterOperationTypes = { typeof(AddPrimaryKeyOperation), typeof(AddUniqueConstraintOperation), typeof(AlterSequenceOperation) };
+        private static readonly Type[] _alterOperationTypes =
+        {
+            typeof(AddPrimaryKeyOperation),
+            typeof(AddUniqueConstraintOperation),
+            typeof(AlterSequenceOperation)
+        };
 
-        private static readonly Type[] _renameOperationTypes = { typeof(RenameColumnOperation), typeof(RenameIndexOperation), typeof(RenameSequenceOperation) };
+        private static readonly Type[] _renameOperationTypes =
+        {
+            typeof(RenameColumnOperation),
+            typeof(RenameIndexOperation),
+            typeof(RenameSequenceOperation)
+        };
 
-        private static readonly Type[] _columnOperationTypes = { typeof(AddColumnOperation), typeof(AlterColumnOperation) };
+        private static readonly Type[] _columnOperationTypes =
+        {
+            typeof(AddColumnOperation),
+            typeof(AlterColumnOperation)
+        };
 
-        private static readonly Type[] _constraintOperationTypes = { typeof(AddForeignKeyOperation), typeof(CreateIndexOperation) };
+        private static readonly Type[] _constraintOperationTypes =
+        {
+            typeof(AddForeignKeyOperation),
+            typeof(CreateIndexOperation)
+        };
 
         private IUpdateAdapter _sourceUpdateAdapter;
         private IUpdateAdapter _targetUpdateAdapter;
-        private readonly List<SharedTableEntryMap<EntryMapping>> _sharedTableEntryMaps = new List<SharedTableEntryMap<EntryMapping>>();
+
+        private readonly List<SharedTableEntryMap<EntryMapping>> _sharedTableEntryMaps
+            = new List<SharedTableEntryMap<EntryMapping>>();
+
 
         /// <summary>
-        ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-        ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-        ///     any release. You should only use it directly in your code with extreme caution and knowing that
-        ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+        /// 构造一个 <see cref="ShardingMigrationsModelDiffer"/>。
         /// </summary>
-        public ResetMigrationsModelDiffer(
-            [NotNull] IRelationalTypeMappingSource typeMappingSource,
-            [NotNull] IMigrationsAnnotationProvider migrationsAnnotations,
-            [NotNull] IChangeDetector changeDetector,
-            [NotNull] IUpdateAdapterFactory updateAdapterFactory,
-            [NotNull] CommandBatchPreparerDependencies commandBatchPreparerDependencies)
+        /// <param name="typeMappingSource">给定的 <see cref="IRelationalTypeMappingSource"/>。</param>
+        /// <param name="migrationsAnnotations">给定的 <see cref="IMigrationsAnnotationProvider"/>。</param>
+        /// <param name="changeDetector">给定的 <see cref="IChangeDetector"/>。</param>
+        /// <param name="updateAdapterFactory">给定的 <see cref="IUpdateAdapterFactory"/>。</param>
+        /// <param name="commandBatchPreparerDependencies">给定的 <see cref="CommandBatchPreparerDependencies"/>。</param>
+        public ShardingMigrationsModelDiffer(
+            IRelationalTypeMappingSource typeMappingSource,
+            IMigrationsAnnotationProvider migrationsAnnotations,
+            IChangeDetector changeDetector,
+            IUpdateAdapterFactory updateAdapterFactory,
+            CommandBatchPreparerDependencies commandBatchPreparerDependencies)
         {
-            TypeMappingSource = typeMappingSource;
-            MigrationsAnnotations = migrationsAnnotations;
-            ChangeDetector = changeDetector;
-            UpdateAdapterFactory = updateAdapterFactory;
-            CommandBatchPreparerDependencies = commandBatchPreparerDependencies;
+            TypeMappingSource = typeMappingSource.NotNull(nameof(typeMappingSource));
+            MigrationsAnnotations = migrationsAnnotations.NotNull(nameof(migrationsAnnotations));
+            ChangeDetector = changeDetector.NotNull(nameof(changeDetector));
+            UpdateAdapterFactory = updateAdapterFactory.NotNull(nameof(updateAdapterFactory));
+            CommandBatchPreparerDependencies = commandBatchPreparerDependencies.NotNull(nameof(commandBatchPreparerDependencies));
         }
+
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -136,16 +165,20 @@ namespace Librame.Extensions.Data.Migrations
             return Sort(Diff(source, target, diffContext), diffContext);
         }
 
+
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
         ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IReadOnlyList<MigrationOperation> Sort(
             [NotNull] IEnumerable<MigrationOperation> operations,
             [NotNull] DiffContext diffContext)
         {
+            operations.NotNull(nameof(operations));
+
             var dropForeignKeyOperations = new List<MigrationOperation>();
             var dropOperations = new List<MigrationOperation>();
             var dropColumnOperations = new List<MigrationOperation>();
@@ -246,7 +279,7 @@ namespace Librame.Extensions.Data.Migrations
                     sourceDataOperations.Add(operation);
                 }
                 else if (type == typeof(InsertDataOperation)
-                         || type == typeof(UpdateDataOperation))
+                    || type == typeof(UpdateDataOperation))
                 {
                     targetDataOperations.Add(operation);
                 }
@@ -271,7 +304,7 @@ namespace Librame.Extensions.Data.Migrations
 
                     var principalCreateTableOperation = createTableOperations.FirstOrDefault(
                         o => o.Name == addForeignKeyOperation.PrincipalTable
-                             && o.Schema == addForeignKeyOperation.PrincipalSchema);
+                            && o.Schema == addForeignKeyOperation.PrincipalSchema);
                     if (principalCreateTableOperation != null)
                     {
                         createTableGraph.AddEdge(principalCreateTableOperation, createTableOperation, addForeignKeyOperation);
@@ -348,7 +381,6 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual IEnumerable<MigrationOperation> Diff(
             IModel source,
             IModel target,
@@ -359,7 +391,7 @@ namespace Librame.Extensions.Data.Migrations
             var schemaOperations = source != null && target != null
                 ? DiffAnnotations(source, target)
                     .Concat(Diff(GetSchemas(source), GetSchemas(target), diffContext))
-                    .Concat(Diff(diffContext.GetSourceTables(), diffContext.GetTargetTables(), diffContext))
+                    .Concat(Diff(diffContext?.GetSourceTables(), diffContext.GetTargetTables(), diffContext))
                     .Concat(Diff(source.GetSequences(), target.GetSequences(), diffContext))
                     .Concat(
                         Diff(
@@ -425,7 +457,7 @@ namespace Librame.Extensions.Data.Migrations
         protected virtual IEnumerable<MigrationOperation> Add([NotNull] IModel target, [NotNull] DiffContext diffContext)
             => DiffAnnotations(null, target)
                 .Concat(GetSchemas(target).SelectMany(t => Add(t, diffContext)))
-                .Concat(diffContext.GetTargetTables().SelectMany(t => Add(t, diffContext)))
+                .Concat(diffContext?.GetTargetTables().SelectMany(t => Add(t, diffContext)))
                 .Concat(target.GetSequences().SelectMany(t => Add(t, diffContext)))
                 .Concat(diffContext.GetTargetTables().SelectMany(t => t.GetForeignKeys()).SelectMany(k => Add(k, diffContext)));
 
@@ -437,7 +469,7 @@ namespace Librame.Extensions.Data.Migrations
         /// </summary>
         protected virtual IEnumerable<MigrationOperation> Remove([NotNull] IModel source, [NotNull] DiffContext diffContext)
             => DiffAnnotations(source, null)
-                .Concat(diffContext.GetSourceTables().SelectMany(t => Remove(t, diffContext)))
+                .Concat(diffContext?.GetSourceTables().SelectMany(t => Remove(t, diffContext)))
                 .Concat(source.GetSequences().SelectMany(t => Remove(t, diffContext)));
 
         #endregion
@@ -450,7 +482,8 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        protected virtual IEnumerable<MigrationOperation> Diff([NotNull] IEnumerable<string> source, [NotNull] IEnumerable<string> target, [NotNull] DiffContext diffContext)
+        protected virtual IEnumerable<MigrationOperation> Diff(
+            [NotNull] IEnumerable<string> source, [NotNull] IEnumerable<string> target, [NotNull] DiffContext diffContext)
             => DiffCollection(
                 source,
                 target,
@@ -466,7 +499,8 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        protected virtual IEnumerable<MigrationOperation> Diff([NotNull] string source, [NotNull] string target, [NotNull] DiffContext diffContext)
+        protected virtual IEnumerable<MigrationOperation> Diff(
+            [NotNull] string source, [NotNull] string target, [NotNull] DiffContext diffContext)
             => Enumerable.Empty<MigrationOperation>();
 
         /// <summary>
@@ -477,10 +511,7 @@ namespace Librame.Extensions.Data.Migrations
         /// </summary>
         protected virtual IEnumerable<MigrationOperation> Add([NotNull] string target, [NotNull] DiffContext diffContext)
         {
-            yield return new EnsureSchemaOperation
-            {
-                Name = target
-            };
+            yield return new EnsureSchemaOperation { Name = target };
         }
 
         /// <summary>
@@ -514,13 +545,13 @@ namespace Librame.Extensions.Data.Migrations
                 Add,
                 Remove,
                 (s, t, c) => string.Equals(
-                                 s.Schema,
-                                 t.Schema,
-                                 StringComparison.OrdinalIgnoreCase)
-                             && string.Equals(
-                                 s.Name,
-                                 t.Name,
-                                 StringComparison.OrdinalIgnoreCase),
+                        s.Schema,
+                        t.Schema,
+                        StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(
+                        s.Name,
+                        t.Name,
+                        StringComparison.OrdinalIgnoreCase),
                 (s, t, c) => string.Equals(
                     s.Name,
                     t.Name,
@@ -531,17 +562,22 @@ namespace Librame.Extensions.Data.Migrations
                         te =>
                             string.Equals(se.Name, te.Name, StringComparison.OrdinalIgnoreCase))));
 
+
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
         ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Diff(
             [NotNull] TableMapping source,
             [NotNull] TableMapping target,
             [NotNull] DiffContext diffContext)
         {
+            source.NotNull(nameof(source));
+            target.NotNull(nameof(target));
+
             if (source.Schema != target.Schema
                 || source.Name != target.Name)
             {
@@ -566,10 +602,7 @@ namespace Librame.Extensions.Data.Migrations
                     Name = target.Name,
                     Schema = target.Schema,
                     Comment = target.GetComment(),
-                    OldTable =
-                    {
-                        Comment = source.GetComment()
-                    }
+                    OldTable = { Comment = source.GetComment() }
                 };
 
                 alterTableOperation.AddAnnotations(targetMigrationsAnnotations);
@@ -597,9 +630,12 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Add(
             [NotNull] TableMapping target, [NotNull] DiffContext diffContext)
         {
+            target.NotNull(nameof(target));
+
             var entityType = target.EntityTypes[0];
             var createTableOperation = new CreateTableOperation
             {
@@ -616,6 +652,7 @@ namespace Librame.Extensions.Data.Migrations
             {
                 createTableOperation.PrimaryKey = Add(primaryKey, diffContext).Cast<AddPrimaryKeyOperation>().Single();
             }
+
             createTableOperation.UniqueConstraints.AddRange(
                 target.GetKeys().Where(k => !k.IsPrimaryKey()).SelectMany(k => Add(k, diffContext))
                     .Cast<AddUniqueConstraintOperation>());
@@ -642,14 +679,14 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Remove(
             [NotNull] TableMapping source, [NotNull] DiffContext diffContext)
         {
-            var operation = new DropTableOperation
-            {
-                Schema = source.Schema,
-                Name = source.Name
-            };
+            source.NotNull(nameof(source));
+            diffContext.NotNull(nameof(diffContext));
+
+            var operation = new DropTableOperation { Schema = source.Schema, Name = source.Name };
             operation.AddAnnotations(MigrationsAnnotations.ForRemove(source.EntityTypes[0]));
 
             diffContext.AddDrop(source, operation);
@@ -704,10 +741,7 @@ namespace Librame.Extensions.Data.Migrations
                     }
 
                     groups.Add(
-                        clrProperty, new List<IProperty>
-                        {
-                            property
-                        });
+                        clrProperty, new List<IProperty> { property });
                 }
 
                 var clrType = clrProperty.DeclaringType;
@@ -726,12 +760,14 @@ namespace Librame.Extensions.Data.Migrations
             foreach (var definingForeignKey in entityType.GetDeclaredReferencingForeignKeys()
                 .Where(
                     fk => fk.DeclaringEntityType.GetRootType() != entityType.GetRootType()
-                          && fk.DeclaringEntityType.GetTableName() == entityType.GetTableName()
-                          && fk == fk.DeclaringEntityType
-                              .FindForeignKey(
-                                  fk.DeclaringEntityType.FindPrimaryKey().Properties,
-                                  entityType.FindPrimaryKey(),
-                                  entityType)))
+                        && fk.DeclaringEntityType.GetTableName() == entityType.GetTableName()
+                        && fk.DeclaringEntityType.GetSchema() == entityType.GetSchema()
+                        && fk
+                        == fk.DeclaringEntityType
+                            .FindForeignKey(
+                                fk.DeclaringEntityType.FindPrimaryKey().Properties,
+                                entityType.FindPrimaryKey(),
+                                entityType)))
             {
                 var clrProperty = definingForeignKey.PrincipalToDependent?.PropertyInfo;
                 var properties = GetSortedProperties(definingForeignKey.DeclaringEntityType).ToList();
@@ -830,10 +866,10 @@ namespace Librame.Extensions.Data.Migrations
                     t.GetColumnName(),
                     StringComparison.OrdinalIgnoreCase),
                 (s, t, c) => string.Equals(s.Name, t.Name, StringComparison.OrdinalIgnoreCase)
-                             && EntityTypePathEquals(s.DeclaringEntityType, t.DeclaringEntityType, c),
+                    && EntityTypePathEquals(s.DeclaringEntityType, t.DeclaringEntityType, c),
                 (s, t, c) => string.Equals(s.Name, t.Name, StringComparison.OrdinalIgnoreCase),
                 (s, t, c) => EntityTypePathEquals(s.DeclaringEntityType, t.DeclaringEntityType, c)
-                             && PropertyStructureEquals(s, t),
+                    && PropertyStructureEquals(s, t),
                 (s, t, c) => PropertyStructureEquals(s, t));
 
         private bool PropertyStructureEquals(IProperty source, IProperty target)
@@ -872,10 +908,10 @@ namespace Librame.Extensions.Data.Migrations
             var nextSource = source.DefiningEntityType ?? source.BaseType;
             var nextTarget = target.DefiningEntityType ?? target.BaseType;
             return nextSource == null
-                   || !sourceTable.EntityTypes.Contains(nextSource)
-                   || nextTarget == null
-                   || !targetTable.EntityTypes.Contains(nextTarget)
-                   || EntityTypePathEquals(nextSource, nextTarget, diffContext);
+                || !sourceTable.EntityTypes.Contains(nextSource)
+                || nextTarget == null
+                || !targetTable.EntityTypes.Contains(nextTarget)
+                || EntityTypePathEquals(nextSource, nextTarget, diffContext);
         }
 
         private static string GetDefiningNavigationName(IEntityType entityType)
@@ -906,8 +942,12 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        protected virtual IEnumerable<MigrationOperation> Diff([NotNull] IProperty source, [NotNull] IProperty target, [NotNull] DiffContext diffContext)
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        protected virtual IEnumerable<MigrationOperation> Diff(
+            [NotNull] IProperty source, [NotNull] IProperty target, [NotNull] DiffContext diffContext)
         {
+            target.NotNull(nameof(target));
+
             var targetEntityType = target.DeclaringEntityType.GetRootType();
 
             if (source.GetColumnName() != target.GetColumnName())
@@ -925,9 +965,9 @@ namespace Librame.Extensions.Data.Migrations
             var targetTypeMapping = TypeMappingSource.GetMapping(target);
 
             var sourceColumnType = source.GetColumnType()
-                                   ?? sourceTypeMapping.StoreType;
+                ?? sourceTypeMapping.StoreType;
             var targetColumnType = target.GetColumnType()
-                                   ?? targetTypeMapping.StoreType;
+                ?? targetTypeMapping.StoreType;
 
             var sourceMigrationsAnnotations = MigrationsAnnotations.For(source).ToList();
             var targetMigrationsAnnotations = MigrationsAnnotations.For(target).ToList();
@@ -946,8 +986,8 @@ namespace Librame.Extensions.Data.Migrations
                 || HasDifferences(sourceMigrationsAnnotations, targetMigrationsAnnotations))
             {
                 var isDestructiveChange = isNullableChanged && isSourceColumnNullable
-                                          // TODO: Detect type narrowing
-                                          || columnTypeChanged;
+                    // TODO: Detect type narrowing
+                    || columnTypeChanged;
 
                 var alterColumnOperation = new AlterColumnOperation
                 {
@@ -975,11 +1015,15 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        [SuppressMessage("Naming", "CA1716:标识符不应与关键字匹配")]
         protected virtual IEnumerable<MigrationOperation> Add(
             [NotNull] IProperty target,
             [NotNull] DiffContext diffContext,
             bool inline = false)
         {
+            target.NotNull(nameof(target));
+
             var targetEntityType = target.DeclaringEntityType.GetRootType();
 
             var operation = new AddColumnOperation
@@ -1002,8 +1046,11 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Remove([NotNull] IProperty source, [NotNull] DiffContext diffContext)
         {
+            source.NotNull(nameof(source));
+
             var sourceEntityType = source.DeclaringEntityType.GetRootType();
 
             var operation = new DropColumnOperation
@@ -1027,22 +1074,22 @@ namespace Librame.Extensions.Data.Migrations
         {
             columnOperation.ClrType
                 = (typeMapping.Converter?.ProviderClrType
-                   ?? typeMapping.ClrType).UnwrapNullableType();
+                    ?? typeMapping.ClrType).UnwrapNullableType();
 
             columnOperation.ColumnType = property.GetConfiguredColumnType();
             columnOperation.MaxLength = property.GetMaxLength();
             columnOperation.IsUnicode = property.IsUnicode();
             columnOperation.IsFixedLength = property.IsFixedLength();
             columnOperation.IsRowVersion = property.ClrType == typeof(byte[])
-                                           && property.IsConcurrencyToken
-                                           && property.ValueGenerated == ValueGenerated.OnAddOrUpdate;
+                && property.IsConcurrencyToken
+                && property.ValueGenerated == ValueGenerated.OnAddOrUpdate;
             columnOperation.IsNullable = isNullable;
 
             var defaultValue = GetDefaultValue(property);
             columnOperation.DefaultValue = (defaultValue == DBNull.Value ? null : defaultValue)
-                                           ?? (inline || isNullable
-                                               ? null
-                                               : GetDefaultValue(columnOperation.ClrType));
+                ?? (inline || isNullable
+                    ? null
+                    : GetDefaultValue(columnOperation.ClrType));
 
             columnOperation.DefaultValueSql = property.GetDefaultValueSql();
             columnOperation.ComputedColumnSql = property.GetComputedColumnSql();
@@ -1072,10 +1119,10 @@ namespace Librame.Extensions.Data.Migrations
                 Add,
                 Remove,
                 (s, t, c) => s.GetName() == t.GetName()
-                             && s.Properties.Select(p => p.GetColumnName()).SequenceEqual(
-                                 t.Properties.Select(p => c.FindSource(p)?.GetColumnName()))
-                             && s.IsPrimaryKey() == t.IsPrimaryKey()
-                             && !HasDifferences(MigrationsAnnotations.For(s), MigrationsAnnotations.For(t)));
+                    && s.Properties.Select(p => p.GetColumnName()).SequenceEqual(
+                        t.Properties.Select(p => c.FindSource(p)?.GetColumnName()))
+                    && s.IsPrimaryKey() == t.IsPrimaryKey()
+                    && !HasDifferences(MigrationsAnnotations.For(s), MigrationsAnnotations.For(t)));
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -1095,8 +1142,11 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Add([NotNull] IKey target, [NotNull] DiffContext diffContext)
         {
+            target.NotNull(nameof(target));
+
             var targetEntityType = target.DeclaringEntityType.GetRootType();
             var columns = GetColumns(target.Properties);
 
@@ -1133,10 +1183,13 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Remove(
             [NotNull] IKey source,
             [NotNull] DiffContext diffContext)
         {
+            source.NotNull(nameof(source));
+
             var sourceEntityType = source.DeclaringEntityType.GetRootType();
 
             MigrationOperation operation;
@@ -1186,14 +1239,14 @@ namespace Librame.Extensions.Data.Migrations
                 Add,
                 Remove,
                 (s, t, c) => s.GetConstraintName() == t.GetConstraintName()
-                             && s.Properties.Select(p => p.GetColumnName()).SequenceEqual(
-                                 t.Properties.Select(p => c.FindSource(p)?.GetColumnName()))
-                             && c.FindSourceTable(s.PrincipalEntityType)
-                             == c.FindSource(c.FindTargetTable(t.PrincipalEntityType))
-                             && s.PrincipalKey.Properties.Select(p => p.GetColumnName()).SequenceEqual(
-                                 t.PrincipalKey.Properties.Select(p => c.FindSource(p)?.GetColumnName()))
-                             && ToReferentialAction(s.DeleteBehavior) == ToReferentialAction(t.DeleteBehavior)
-                             && !HasDifferences(MigrationsAnnotations.For(s), MigrationsAnnotations.For(t)));
+                    && s.Properties.Select(p => p.GetColumnName()).SequenceEqual(
+                        t.Properties.Select(p => c.FindSource(p)?.GetColumnName()))
+                    && c.FindSourceTable(s.PrincipalEntityType)
+                    == c.FindSource(c.FindTargetTable(t.PrincipalEntityType))
+                    && s.PrincipalKey.Properties.Select(p => p.GetColumnName()).SequenceEqual(
+                        t.PrincipalKey.Properties.Select(p => c.FindSource(p)?.GetColumnName()))
+                    && ToReferentialAction(s.DeleteBehavior) == ToReferentialAction(t.DeleteBehavior)
+                    && !HasDifferences(MigrationsAnnotations.For(s), MigrationsAnnotations.For(t)));
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -1211,8 +1264,12 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Add([NotNull] IForeignKey target, [NotNull] DiffContext diffContext)
         {
+            target.NotNull(nameof(target));
+            diffContext.NotNull(nameof(diffContext));
+
             var targetEntityType = target.DeclaringEntityType.GetRootType();
             var targetPrincipalEntityType = target.PrincipalEntityType.GetRootType();
 
@@ -1246,8 +1303,12 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Remove([NotNull] IForeignKey source, [NotNull] DiffContext diffContext)
         {
+            source.NotNull(nameof(source));
+            diffContext.NotNull(nameof(diffContext));
+
             var declaringRootEntityType = source.DeclaringEntityType.GetRootType();
 
             var dropTableOperation = diffContext.FindDrop(declaringRootEntityType);
@@ -1287,18 +1348,18 @@ namespace Librame.Extensions.Data.Migrations
                 Add,
                 Remove,
                 (s, t, c) => string.Equals(
-                                 s.GetName(),
-                                 t.GetName(),
-                                 StringComparison.OrdinalIgnoreCase)
-                             && IndexStructureEquals(s, t, c),
+                        s.GetName(),
+                        t.GetName(),
+                        StringComparison.OrdinalIgnoreCase)
+                    && IndexStructureEquals(s, t, c),
                 (s, t, c) => IndexStructureEquals(s, t, c));
 
         private bool IndexStructureEquals(IIndex source, IIndex target, DiffContext diffContext)
             => source.IsUnique == target.IsUnique
-               && source.GetFilter() == target.GetFilter()
-               && !HasDifferences(MigrationsAnnotations.For(source), MigrationsAnnotations.For(target))
-               && source.Properties.Select(p => p.GetColumnName()).SequenceEqual(
-                   target.Properties.Select(p => diffContext.FindSource(p)?.GetColumnName()));
+                && source.GetFilter() == target.GetFilter()
+                && !HasDifferences(MigrationsAnnotations.For(source), MigrationsAnnotations.For(target))
+                && source.Properties.Select(p => p.GetColumnName()).SequenceEqual(
+                    target.Properties.Select(p => diffContext.FindSource(p)?.GetColumnName()));
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -1306,11 +1367,14 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Diff(
             [NotNull] IIndex source,
             [NotNull] IIndex target,
             [NotNull] DiffContext diffContext)
         {
+            target.NotNull(nameof(target));
+
             var targetEntityType = target.DeclaringEntityType.GetRootType();
             var sourceName = source.GetName();
             var targetName = target.GetName();
@@ -1333,10 +1397,13 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Add(
             [NotNull] IIndex target,
             [NotNull] DiffContext diffContext)
         {
+            target.NotNull(nameof(target));
+
             var targetEntityType = target.DeclaringEntityType.GetRootType();
 
             var operation = new CreateIndexOperation
@@ -1359,8 +1426,11 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Remove([NotNull] IIndex source, [NotNull] DiffContext diffContext)
         {
+            source.NotNull(nameof(source));
+
             var sourceEntityType = source.DeclaringEntityType.GetRootType();
 
             var operation = new DropIndexOperation
@@ -1396,8 +1466,8 @@ namespace Librame.Extensions.Data.Migrations
                 Add,
                 Remove,
                 (s, t, c) => c.FindSourceTable(s.EntityType) == c.FindSource(c.FindTargetTable(t.EntityType))
-                             && string.Equals(s.Name, t.Name, StringComparison.OrdinalIgnoreCase)
-                             && string.Equals(s.Sql, t.Sql, StringComparison.OrdinalIgnoreCase));
+                    && string.Equals(s.Name, t.Name, StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(s.Sql, t.Sql, StringComparison.OrdinalIgnoreCase));
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -1415,8 +1485,11 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Add([NotNull] ICheckConstraint target, [NotNull] DiffContext diffContext)
         {
+            target.NotNull(nameof(target));
+
             var targetEntityType = target.EntityType.GetRootType();
 
             var operation = new CreateCheckConstraintOperation
@@ -1439,8 +1512,11 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Remove([NotNull] ICheckConstraint source, [NotNull] DiffContext diffContext)
         {
+            source.NotNull(nameof(source));
+
             var sourceEntityType = source.EntityType.GetRootType();
 
             var operation = new DropCheckConstraintOperation
@@ -1476,10 +1552,10 @@ namespace Librame.Extensions.Data.Migrations
                 Add,
                 Remove,
                 (s, t, c) => string.Equals(s.Schema, t.Schema, StringComparison.OrdinalIgnoreCase)
-                             && string.Equals(s.Name, t.Name, StringComparison.OrdinalIgnoreCase)
-                             && s.ClrType == t.ClrType,
+                    && string.Equals(s.Name, t.Name, StringComparison.OrdinalIgnoreCase)
+                    && s.ClrType == t.ClrType,
                 (s, t, c) => string.Equals(s.Name, t.Name, StringComparison.OrdinalIgnoreCase)
-                             && s.ClrType == t.ClrType);
+                    && s.ClrType == t.ClrType);
 
         /// <summary>
         ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -1487,8 +1563,13 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        protected virtual IEnumerable<MigrationOperation> Diff([NotNull] ISequence source, [NotNull] ISequence target, [NotNull] DiffContext diffContext)
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        protected virtual IEnumerable<MigrationOperation> Diff(
+            [NotNull] ISequence source, [NotNull] ISequence target, [NotNull] DiffContext diffContext)
         {
+            source.NotNull(nameof(source));
+            target.NotNull(nameof(target));
+
             if (source.Schema != target.Schema
                 || source.Name != target.Name)
             {
@@ -1520,11 +1601,7 @@ namespace Librame.Extensions.Data.Migrations
                 || source.IsCyclic != target.IsCyclic
                 || HasDifferences(sourceMigrationsAnnotations, targetMigrationsAnnotations))
             {
-                var alterSequenceOperation = new AlterSequenceOperation
-                {
-                    Schema = target.Schema,
-                    Name = target.Name
-                };
+                var alterSequenceOperation = new AlterSequenceOperation { Schema = target.Schema, Name = target.Name };
                 Initialize(alterSequenceOperation, target, targetMigrationsAnnotations);
 
                 Initialize(alterSequenceOperation.OldSequence, source, sourceMigrationsAnnotations);
@@ -1539,8 +1616,11 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Add([NotNull] ISequence target, [NotNull] DiffContext diffContext)
         {
+            target.NotNull(nameof(target));
+
             var operation = new CreateSequenceOperation
             {
                 Schema = target.Schema,
@@ -1558,13 +1638,12 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual IEnumerable<MigrationOperation> Remove([NotNull] ISequence source, [NotNull] DiffContext diffContext)
         {
-            var operation = new DropSequenceOperation
-            {
-                Schema = source.Schema,
-                Name = source.Name
-            };
+            source.NotNull(nameof(source));
+
+            var operation = new DropSequenceOperation { Schema = source.Schema, Name = source.Name };
             operation.AddAnnotations(MigrationsAnnotations.ForRemove(source));
 
             yield return operation;
@@ -1633,6 +1712,8 @@ namespace Librame.Extensions.Data.Migrations
                     var entry = _sourceUpdateAdapter
                         .CreateEntry(sourceSeed, sourceEntityType);
 
+                    // Mark as added first to generate missing values
+                    // Issue #15289
                     entry.EntityState = EntityState.Added;
                     entry.EntityState = EntityState.Unchanged;
                 }
@@ -1645,11 +1726,16 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual void DiffData(
             [NotNull] TableMapping source,
             [NotNull] TableMapping target,
             [NotNull] DiffContext diffContext)
         {
+            source.NotNull(nameof(source));
+            target.NotNull(nameof(target));
+            diffContext.NotNull(nameof(diffContext));
+
             var targetTableEntryMappingMap = SharedTableEntryMap<List<IUpdateEntry>>.CreateSharedTableEntryMapFactory(
                     target.EntityTypes,
                     _targetUpdateAdapter,
@@ -1744,21 +1830,11 @@ namespace Librame.Extensions.Data.Migrations
                         {
                             var (sourceProperty, sourceConverter, targetConverter) = keyPropertiesMap[i];
                             var sourceValue = sourceEntry.GetCurrentValue(sourceProperty);
-                            if (targetKey.Properties[i].ClrType != sourceProperty.ClrType)
-                            {
-                                if (sourceConverter != null)
-                                {
-                                    targetKeyValues[i] = sourceConverter.ConvertToProvider(sourceValue);
-                                }
-                                else
-                                {
-                                    targetKeyValues[i] = targetConverter.ConvertFromProvider(sourceValue);
-                                }
-                            }
-                            else
-                            {
-                                targetKeyValues[i] = sourceValue;
-                            }
+                            targetKeyValues[i] = targetKey.Properties[i].ClrType != sourceProperty.ClrType
+                                ? sourceConverter != null
+                                    ? sourceConverter.ConvertToProvider(sourceValue)
+                                    : targetConverter.ConvertFromProvider(sourceValue)
+                                : sourceValue;
                         }
 
                         var entry = _targetUpdateAdapter.TryGetEntry(targetKey, targetKeyValues);
@@ -1778,7 +1854,7 @@ namespace Librame.Extensions.Data.Migrations
                             {
                                 if (targetProperty.GetAfterSaveBehavior() == PropertySaveBehavior.Save)
                                 {
-                                    targetEntry.SetOriginalValue(targetProperty, targetProperty.ClrType.EnsureCreateObject());
+                                    targetEntry.SetOriginalValue(targetProperty, targetProperty.ClrType.GetDefaultValue());
                                 }
                             }
 
@@ -1796,21 +1872,21 @@ namespace Librame.Extensions.Data.Migrations
                         {
                             var sourceProperty = diffContext.FindSource(targetProperty);
                             if (sourceProperty == null
-                                || !sourceEntityType.GetProperties().Contains(sourceProperty))
+                                || !sourceEntityType.GetProperties().Contains(sourceProperty)
+                                || targetProperty.ValueGenerated != ValueGenerated.Never)
                             {
                                 continue;
                             }
 
                             var sourceValue = sourceEntry.GetCurrentValue(sourceProperty);
                             var targetValue = entry.GetCurrentValue(targetProperty);
-                            var comparer = targetProperty.GetValueComparer() ??
-                                           sourceProperty.GetValueComparer() ??
-                                           targetProperty.FindTypeMapping()?.Comparer ??
-                                           sourceProperty.FindTypeMapping()?.Comparer;
+                            var comparer = targetProperty.GetValueComparer()
+                                ?? sourceProperty.GetValueComparer()
+                                ?? targetProperty.FindTypeMapping()?.Comparer ?? sourceProperty.FindTypeMapping()?.Comparer;
 
                             var modelValuesChanged
                                 = sourceProperty.ClrType.UnwrapNullableType() == targetProperty.ClrType.UnwrapNullableType()
-                                  && comparer?.Equals(sourceValue, targetValue) == false;
+                                && comparer?.Equals(sourceValue, targetValue) == false;
 
                             if (!modelValuesChanged)
                             {
@@ -1826,9 +1902,18 @@ namespace Librame.Extensions.Data.Migrations
                                     : targetConverter.ConvertToProvider(targetValue);
 
                                 var convertedType = sourceConverter?.ProviderClrType
-                                                    ?? targetConverter?.ProviderClrType;
+                                    ?? targetConverter?.ProviderClrType;
 
-                                var storeValuesChanged = convertedSourceValue?.GetType().UnwrapNullableType() != convertedTargetValue?.GetType().UnwrapNullableType();
+                                if (convertedType != null
+                                    && !convertedType.IsNullableType())
+                                {
+                                    var defaultValue = convertedType.GetDefaultValue();
+                                    convertedSourceValue ??= defaultValue;
+                                    convertedTargetValue ??= defaultValue;
+                                }
+
+                                var storeValuesChanged = convertedSourceValue?.GetType().UnwrapNullableType()
+                                    != convertedTargetValue?.GetType().UnwrapNullableType();
 
                                 if (!storeValuesChanged
                                     && convertedType != null)
@@ -1836,7 +1921,7 @@ namespace Librame.Extensions.Data.Migrations
                                     comparer = TypeMappingSource.FindMapping(convertedType)?.Comparer;
 
                                     storeValuesChanged = !comparer?.Equals(convertedSourceValue, convertedTargetValue)
-                                                         ?? !Equals(convertedSourceValue, convertedTargetValue);
+                                        ?? !Equals(convertedSourceValue, convertedTargetValue);
                                 }
 
                                 if (!storeValuesChanged)
@@ -1955,10 +2040,13 @@ namespace Librame.Extensions.Data.Migrations
                             {
                                 if (batchInsertOperation.Table == c.TableName
                                     && batchInsertOperation.Schema == c.Schema
-                                    && batchInsertOperation.Columns.SequenceEqual(c.ColumnModifications.Select(col => col.ColumnName)))
+                                    && batchInsertOperation.Columns.SequenceEqual(
+                                        c.ColumnModifications.Where(col => col.IsKey || col.IsWrite).Select(col => col.ColumnName)))
                                 {
                                     batchInsertOperation.Values =
-                                        AddToMultidimensionalArray(c.ColumnModifications.Select(GetValue).ToList(), batchInsertOperation.Values);
+                                        AddToMultidimensionalArray(
+                                            c.ColumnModifications.Where(col => col.IsKey || col.IsWrite).Select(GetValue).ToList(),
+                                            batchInsertOperation.Values);
                                     continue;
                                 }
 
@@ -1969,7 +2057,8 @@ namespace Librame.Extensions.Data.Migrations
                             {
                                 Schema = c.Schema,
                                 Table = c.TableName,
-                                Columns = c.ColumnModifications.Where(col => col.IsKey || col.IsWrite).Select(col => col.ColumnName).ToArray(),
+                                Columns = c.ColumnModifications.Where(col => col.IsKey || col.IsWrite).Select(col => col.ColumnName)
+                                    .ToArray(),
                                 Values = ToMultidimensionalArray(
                                     c.ColumnModifications.Where(col => col.IsKey || col.IsWrite).Select(GetValue).ToList())
                             };
@@ -2027,9 +2116,12 @@ namespace Librame.Extensions.Data.Migrations
         private object GetValue(ColumnModification columnModification)
         {
             var converter = GetValueConverter(columnModification.Property);
+            var value = columnModification.UseCurrentValueParameter
+                ? columnModification.Value
+                : columnModification.OriginalValue;
             return converter != null
-                ? converter.ConvertToProvider(columnModification.Value)
-                : columnModification.Value;
+                ? converter.ConvertToProvider(value)
+                : value;
         }
 
         #endregion
@@ -2116,13 +2208,17 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual bool HasDifferences([NotNull] IEnumerable<IAnnotation> source, [NotNull] IEnumerable<IAnnotation> target)
         {
+            source.NotNull(nameof(source));
+
             var unmatched = new List<IAnnotation>(target);
 
             foreach (var annotation in source)
             {
-                var index = unmatched.FindIndex(a => a.Name == annotation.Name && StructuralComparisons.StructuralEqualityComparer.Equals(a.Value, annotation.Value));
+                var index = unmatched.FindIndex(
+                    a => a.Name == annotation.Name && StructuralComparisons.StructuralEqualityComparer.Equals(a.Value, annotation.Value));
                 if (index == -1)
                 {
                     return true;
@@ -2152,12 +2248,13 @@ namespace Librame.Extensions.Data.Migrations
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         protected virtual object GetDefaultValue([NotNull] Type type)
             => type == typeof(string)
                 ? string.Empty
                 : type.IsArray
                     ? Array.CreateInstance(type.GetElementType(), 0)
-                    : type.UnwrapNullableType().EnsureCreateObject();
+                    : type.UnwrapNullableType().GetDefaultValue();
 
         private object GetDefaultValue(IProperty property)
         {
@@ -2187,6 +2284,7 @@ namespace Librame.Extensions.Data.Migrations
             }
         }
 
+        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组")]
         private static object[,] ToMultidimensionalArray(IReadOnlyList<object> values)
         {
             var result = new object[1, values.Count];
@@ -2198,6 +2296,7 @@ namespace Librame.Extensions.Data.Migrations
             return result;
         }
 
+        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组")]
         private static object[,] AddToMultidimensionalArray(IReadOnlyList<object> values, object[,] array)
         {
             var width = array.GetLength(0);
@@ -2226,11 +2325,9 @@ namespace Librame.Extensions.Data.Migrations
             public bool RecreateRow { get; set; }
         }
 
+
         /// <summary>
-        ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-        ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-        ///     any release. You should only use it directly in your code with extreme caution and knowing that
-        ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+        /// 差异上下文。
         /// </summary>
         protected class DiffContext
         {
@@ -2255,12 +2352,13 @@ namespace Librame.Extensions.Data.Migrations
             private readonly IDictionary<DropTableOperation, TableMapping> _removedTables
                 = new Dictionary<DropTableOperation, TableMapping>();
 
+
             /// <summary>
-            ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-            ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-            ///     any release. You should only use it directly in your code with extreme caution and knowing that
-            ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+            /// 构造一个 <see cref="DiffContext"/>。
             /// </summary>
+            /// <param name="source">给定的来源 <see cref="IModel"/>。</param>
+            /// <param name="target">给定的目标 <see cref="IModel"/>。</param>
+            [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "Support sharding table.")]
             public DiffContext(IModel source, IModel target)
             {
                 if (source != null)
@@ -2289,20 +2387,17 @@ namespace Librame.Extensions.Data.Migrations
 
                 if (source != null && target != null)
                 {
-                    // Sharding
-                    var tempSourceTables = new List<TableMapping>(_sourceTables);
+                    var shardingSourceTables = new List<TableMapping>(_sourceTables);
 
-                    // _sourceEntitiesMap > type.ClrType is null
-                    var targetEntityTypes = _targetEntitiesMap.Keys.Where(type =>
-                    {
-                        return type.ClrType.TryGetCustomAttribute(out ShardingTableAttribute attribute)
-                            && attribute.Mode == ShardingTableMode.Create;
-                    });
-                    
+                    // 从目标实体集合映射中筛选出标记分表的实体类型
+                    var targetEntityTypes = _targetEntitiesMap.Keys.Where(type
+                        => type.ClrType.TryGetCustomAttribute(out ShardingAttribute attribute));
+
                     foreach (var targetEntityType in targetEntityTypes)
                     {
+                        // 查找来源中的同实体名称是否存在
                         var sourceEntityType = _sourceEntitiesMap.Keys
-                            .FirstOrDefault(key => key.Name == targetEntityType.Name);
+                            .FirstOrDefault(type => type.Name == targetEntityType.Name);
                         if (sourceEntityType == null)
                             continue;
 
@@ -2311,12 +2406,13 @@ namespace Librame.Extensions.Data.Migrations
 
                         if (!sourceMap.Name.Equals(targetMap.Name, StringComparison.OrdinalIgnoreCase))
                         {
+                            // 从来源中移除实体类型与映射
                             _sourceEntitiesMap.Remove(sourceEntityType);
-                            tempSourceTables.Remove(sourceMap);
+                            shardingSourceTables.Remove(sourceMap);
                         }
                     }
 
-                    _sourceTables = tempSourceTables.AsReadOnlyList();
+                    _sourceTables = shardingSourceTables.AsReadOnlyList();
                 }
             }
 
@@ -2344,11 +2440,8 @@ namespace Librame.Extensions.Data.Migrations
             /// </summary>
             public virtual void AddMapping<T>([NotNull] T source, [NotNull] T target)
             {
-                if (!_targetToSource.ContainsKey(target))
-                    _targetToSource.Add(target, source);
-
-                if (!_sourceToTarget.ContainsKey(source))
-                    _sourceToTarget.Add(source, target);
+                _targetToSource.Add(target, source);
+                _sourceToTarget.Add(source, target);
             }
 
             /// <summary>
@@ -2360,12 +2453,15 @@ namespace Librame.Extensions.Data.Migrations
             public virtual void AddCreate([NotNull] IEntityType target, [NotNull] CreateTableOperation operation)
                 => _createTableOperations.Add(target, operation);
 
+
             /// <summary>
             ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
             ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
             ///     any release. You should only use it directly in your code with extreme caution and knowing that
             ///     doing so can result in application failures when updating to a new Entity Framework Core release.
             /// </summary>
+            [SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+            [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.")]
             public virtual void AddDrop([NotNull] TableMapping source, [NotNull] DropTableOperation operation)
             {
                 foreach (var sourceEntityType in source.EntityTypes)
@@ -2404,10 +2500,14 @@ namespace Librame.Extensions.Data.Migrations
             ///     any release. You should only use it directly in your code with extreme caution and knowing that
             ///     doing so can result in application failures when updating to a new Entity Framework Core release.
             /// </summary>
-            public virtual T FindSource<T>([NotNull] T target)
-                => _targetToSource.TryGetValue(target, out var source)
-                    ? (T)source
-                    : default;
+            public virtual T FindSource<T>(T target)
+                where T : class
+                => target == null
+                    ? null
+                    : _targetToSource.TryGetValue(target, out var source)
+                        ? (T)source
+                        : null;
+
 
             /// <summary>
             ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -2415,6 +2515,8 @@ namespace Librame.Extensions.Data.Migrations
             ///     any release. You should only use it directly in your code with extreme caution and knowing that
             ///     doing so can result in application failures when updating to a new Entity Framework Core release.
             /// </summary>
+            [SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+            [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.")]
             public virtual IProperty FindSource([NotNull] IProperty target)
             {
                 var source = FindSource<IProperty>(target);
@@ -2445,10 +2547,13 @@ namespace Librame.Extensions.Data.Migrations
             ///     any release. You should only use it directly in your code with extreme caution and knowing that
             ///     doing so can result in application failures when updating to a new Entity Framework Core release.
             /// </summary>
-            public virtual T FindTarget<T>([NotNull] T source)
-                => _sourceToTarget.TryGetValue(source, out var target)
-                    ? (T)target
-                    : default;
+            public virtual T FindTarget<T>(T source)
+                where T : class
+                => source == null
+                    ? null
+                    : _sourceToTarget.TryGetValue(source, out var target)
+                        ? (T)target
+                        : null;
 
             /// <summary>
             ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -2483,5 +2588,6 @@ namespace Librame.Extensions.Data.Migrations
                     ? source
                     : null;
         }
+
     }
 }

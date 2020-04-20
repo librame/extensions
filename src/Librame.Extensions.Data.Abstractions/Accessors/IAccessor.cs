@@ -20,21 +20,17 @@ namespace Librame.Extensions.Data.Accessors
     using Core.Services;
     using Core.Threads;
     using Data.Stores;
+    using Data.Services;
 
     /// <summary>
     /// 访问器接口。
     /// </summary>
-    public interface IAccessor : ISaveChanges, IDisposable
+    public interface IAccessor : ISaveChanges, IInfrastructureService, IDisposable
     {
         /// <summary>
-        /// 内部服务提供程序。
+        /// 时钟服务。
         /// </summary>
-        IServiceProvider InternalServiceProvider { get; }
-
-        /// <summary>
-        /// 服务工厂。
-        /// </summary>
-        ServiceFactory ServiceFactory { get; }
+        IClockService Clock { get; }
 
         /// <summary>
         /// 内存锁定器。

@@ -280,11 +280,19 @@ namespace Librame.Extensions.Core.Combiners
 
 
         /// <summary>
+        /// 转换为 URI。
+        /// </summary>
+        /// <returns>返回 <see cref="Uri"/>。</returns>
+        public Uri ToUri()
+            => Source;
+
+
+        /// <summary>
         /// 是否相等（忽略大小写）。
         /// </summary>
         /// <param name="other">给定的域名。</param>
         /// <returns>返回布尔值。</returns>
-        public override bool Equals(Uri other)
+        public override bool Equals(Uri other) // 使用 Source.Equals(other.Source) 在修改锚点参数时会不能正确比较
             => Source.ToString().Equals(other?.ToString(), StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
@@ -293,7 +301,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => (obj is UriCombiner other) ? Equals(other.Source) : false;
+            => obj is UriCombiner other && Equals(other);
 
 
         /// <summary>
@@ -337,6 +345,13 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
         public static implicit operator string(UriCombiner combiner)
             => combiner?.ToString();
+
+        /// <summary>
+        /// 隐式转换为 URI。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="UriCombiner"/>。</param>
+        public static implicit operator Uri(UriCombiner combiner)
+            => combiner?.ToUri();
 
 
         /// <summary>
@@ -415,5 +430,6 @@ namespace Librame.Extensions.Core.Combiners
 
             return Uri.EscapeUriString(sb.ToString());
         }
+
     }
 }

@@ -102,18 +102,14 @@ namespace Librame.Extensions.Data.Accessors
         public DbSet<TTenant> Tenants { get; set; }
 
         #endregion
-
+        
 
         /// <summary>
         /// 开始模型创建。
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.ConfigureDataStoreHub(this);
-        }
+            => modelBuilder.ConfigureDataStores(this);
 
 
         #region SaveChangesCore (ISaveChangesDbContextAccessorAspect)
@@ -129,7 +125,7 @@ namespace Librame.Extensions.Data.Accessors
             aspects.ForEach(aspect =>
             {
                 if (aspect.Enabled)
-                    aspect.Preprocess(this); // 前置处理保存变化
+                    aspect.PreProcess(this); // 前置处理保存变化
             });
 
             // 保存更改
@@ -138,7 +134,7 @@ namespace Librame.Extensions.Data.Accessors
             aspects.ForEach(aspect =>
             {
                 if (aspect.Enabled)
-                    aspect.Postprocess(this); // 后置处理保存变化
+                    aspect.PostProcess(this); // 后置处理保存变化
             });
 
             return count;
@@ -157,7 +153,7 @@ namespace Librame.Extensions.Data.Accessors
             aspects.ForEach(async aspect =>
             {
                 if (aspect.Enabled)
-                    await aspect.PreprocessAsync(this, cancellationToken).ConfigureAndWaitAsync(); // 异步前置处理保存变化
+                    await aspect.PreProcessAsync(this, cancellationToken).ConfigureAndWaitAsync(); // 异步前置处理保存变化
             });
 
             // 异步保存更改
@@ -166,7 +162,7 @@ namespace Librame.Extensions.Data.Accessors
             aspects.ForEach(async aspect =>
             {
                 if (aspect.Enabled)
-                    await aspect.PostprocessAsync(this, cancellationToken).ConfigureAndWaitAsync(); // 异步后置处理保存变化
+                    await aspect.PostProcessAsync(this, cancellationToken).ConfigureAndWaitAsync(); // 异步后置处理保存变化
             });
 
             return count;

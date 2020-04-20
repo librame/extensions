@@ -27,27 +27,10 @@ namespace Librame.Extensions
     /// </summary>
     public static class ObjectExtensions
     {
-        /// <summary>
-        /// 确保单例。
-        /// </summary>
-        /// <typeparam name="TSingleton">指定的单例类型。</typeparam>
-        /// <param name="singleton">给定的当前单例。</param>
-        /// <param name="buildFactory">用于构建单例的工厂方法。</param>
-        /// <returns>返回单例。</returns>
-        public static TSingleton EnsureSingleton<TSingleton>(this TSingleton singleton, Func<TSingleton> buildFactory)
-            where TSingleton : class
-        {
-            if (singleton.IsNull())
-            {
-                lock (ExtensionSettings.Locker)
-                {
-                    if (singleton.IsNull())
-                        singleton = buildFactory?.Invoke();
-                }
-            }
+        private static readonly object _locker = new object();
 
-            return singleton.NotNull(nameof(singleton));
-        }
+        private static ConcurrentDictionary<string, Func<object[], object>> _createFactories
+            = new ConcurrentDictionary<string, Func<object[], object>>();
 
 
         #region EnsureCreate
@@ -85,9 +68,6 @@ namespace Librame.Extensions
             return factory.Invoke();
         }
 
-
-        private static ConcurrentDictionary<string, Func<object[], object>> _createFactories
-            = new ConcurrentDictionary<string, Func<object[], object>>();
 
         /// <summary>
         /// 利用当前对象为构造函数的参数来确保构造实例。
@@ -174,6 +154,8 @@ namespace Librame.Extensions
                 return list.ToArray();
             }
         }
+
+        #endregion
 
 
         /// <summary>
@@ -310,7 +292,28 @@ namespace Librame.Extensions
             }
         }
 
-        #endregion
+
+        /// <summary>
+        /// 确保单例。
+        /// </summary>
+        /// <typeparam name="TSingleton">指定的单例类型。</typeparam>
+        /// <param name="singleton">给定的当前单例。</param>
+        /// <param name="buildFactory">用于构建单例的工厂方法。</param>
+        /// <returns>返回单例。</returns>
+        public static TSingleton EnsureSingleton<TSingleton>(this TSingleton singleton, Func<TSingleton> buildFactory)
+            where TSingleton : class
+        {
+            if (singleton.IsNull())
+            {
+                lock (_locker)
+                {
+                    if (singleton.IsNull())
+                        singleton = buildFactory?.Invoke();
+                }
+            }
+
+            return singleton.NotNull(nameof(singleton));
+        }
 
     }
 }
