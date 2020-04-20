@@ -296,3 +296,5 @@ __pycache__/
 *.dll
 *.dat
 logs/
+/tests/Librame.Extensions.Data.EntityFrameworkCore.Tests/configs
+/examples/Librame.Extensions.Examples/configs

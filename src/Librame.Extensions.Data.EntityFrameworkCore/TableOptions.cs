@@ -28,6 +28,12 @@ namespace Librame.Extensions.Data
         /// 默认连接符。
         /// </summary>
         public string DefaultConnector { get; set; }
+
+        /// <summary>
+        /// 使用 Data 前缀（默认使用）。
+        /// </summary>
+        public bool UseDataPrefix { get; set; }
+            = true;
         
 
         /// <summary>

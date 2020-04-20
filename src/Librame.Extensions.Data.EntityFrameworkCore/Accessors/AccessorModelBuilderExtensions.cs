@@ -53,12 +53,16 @@ namespace Librame.Extensions.Data.Accessors
                 modelBuilder.HasDefaultSchema(accessor.BuilderOptions.Tables.DefaultSchema);
             
             var maxLength = accessor.BuilderOptions.Stores.MaxLengthForProperties;
+            var useDataPrefix = accessor.BuilderOptions.Tables.UseDataPrefix;
 
             // 审计
             modelBuilder.Entity<TAudit>(b =>
             {
                 b.ToTable(table =>
                 {
+                    if (useDataPrefix)
+                        table.InsertDataPrefix();
+
                     table.Configure(accessor.BuilderOptions.Tables.Audit);
                 });
                 
@@ -84,6 +88,9 @@ namespace Librame.Extensions.Data.Accessors
             {
                 b.ToTable(table =>
                 {
+                    if (useDataPrefix)
+                        table.InsertDataPrefix();
+
                     // 按年月分表
                     table.AppendYearAndMonthSuffix(accessor.CurrentTimestamp)
                         .Configure(accessor.BuilderOptions.Tables.AuditProperty);
@@ -112,6 +119,9 @@ namespace Librame.Extensions.Data.Accessors
             {
                 b.ToTable(table =>
                 {
+                    if (useDataPrefix)
+                        table.InsertDataPrefix();
+
                     table.Configure(accessor.BuilderOptions.Tables.Entity);
                 });
 
@@ -138,6 +148,9 @@ namespace Librame.Extensions.Data.Accessors
             {
                 b.ToTable(table =>
                 {
+                    if (useDataPrefix)
+                        table.InsertDataPrefix();
+
                     table.Configure(accessor.BuilderOptions.Tables.Migration);
                 });
 
@@ -161,6 +174,9 @@ namespace Librame.Extensions.Data.Accessors
             {
                 b.ToTable(table =>
                 {
+                    if (useDataPrefix)
+                        table.InsertDataPrefix();
+
                     table.Configure(accessor.BuilderOptions.Tables.Tenant);
                 });
 
