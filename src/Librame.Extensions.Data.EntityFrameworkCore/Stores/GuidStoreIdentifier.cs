@@ -47,7 +47,7 @@ namespace Librame.Extensions.Data.Stores
         /// 异步生成标识。
         /// </summary>
         /// <exception cref="ArgumentNullException">
-        /// DataBuilderOptions.SUIDGenerator is null.
+        /// DataBuilderOptions.IdentifierGenerator is null.
         /// </exception>
         /// <param name="idTraceName">标识跟踪名称。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
