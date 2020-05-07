@@ -31,7 +31,7 @@ namespace Librame.Extensions.Core.Localizers
         /// 构造一个字典字符串定位器。
         /// </summary>
         /// <param name="factory">给定的 <see cref="IDictionaryStringLocalizerFactory"/>。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "factory")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public DictionaryStringLocalizer(IDictionaryStringLocalizerFactory factory)
         {
             factory.NotNull(nameof(factory));

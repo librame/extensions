@@ -27,7 +27,7 @@ namespace Librame.Extensions.Core.Localizers
         /// </summary>
         /// <param name="resourceBaseType">给定的资源基础类型。</param>
         /// <param name="resourceAssembly">给定资源程序集（可选；默认为资源基础类型所在的程序集）。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "resourceBaseType")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public ResourceDictionaryManager(Type resourceBaseType, Assembly resourceAssembly = null)
         {
             ResourceBaseType = resourceBaseType.NotNull(nameof(resourceBaseType));

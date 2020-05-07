@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Librame.Extensions.Core.Starters
 {
     /// <summary>
-    /// 预启动器接口。
+    /// 表示可自动注册的预启动器接口。如果不需要自动注册，请在实现类型中标记 <see cref="NonRegisteredAttribute"/>。
     /// </summary>
     public interface IPreStarter : ISortable
     {

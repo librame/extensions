@@ -33,7 +33,7 @@ namespace Librame.Extensions.Data.Tests
         {
             base.OnModelCreating(modelBuilder);
 
-            var maxLength = BuilderOptions.Stores.MaxLengthForProperties;
+            var maxLength = Dependency.Options.Stores.MaxLengthForProperties;
 
             modelBuilder.Entity<Category<TIncremId, TGenId>>(b =>
             {
@@ -50,7 +50,7 @@ namespace Librame.Extensions.Data.Tests
                 }
 
                 // 关联
-                if (BuilderOptions.Stores.MapRelationship)
+                if (Dependency.Options.Stores.MapRelationship)
                 {
                     b.HasMany(x => x.Articles).WithOne(x => x.Category)
                         .IsRequired().OnDelete(DeleteBehavior.Cascade);

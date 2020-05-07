@@ -106,7 +106,7 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void FileExistsTest()
         {
-            var fileName = Path.Combine(Directory.GetCurrentDirectory().ToString(), "nofile.txt");
+            var fileName = "nofile.txt".CombineCurrentDirectory();
             Assert.Throws<FileNotFoundException>(() =>
             {
                 return fileName.FileExists();
@@ -117,7 +117,7 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void DirectoryExistsTest()
         {
-            var dirName = Path.Combine(Directory.GetCurrentDirectory().ToString(), "nodirectory");
+            var dirName = "nodirectory".CombineCurrentDirectory();
             Assert.Throws<DirectoryNotFoundException>(() =>
             {
                 return dirName.DirectoryExists();

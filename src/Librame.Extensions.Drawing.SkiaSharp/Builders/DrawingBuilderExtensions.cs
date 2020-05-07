@@ -43,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建图画构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDrawingBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "parentBuilder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IDrawingBuilder AddDrawing<TDependency>(this IExtensionBuilder parentBuilder,
             Action<TDependency> configureDependency = null,
             Func<IExtensionBuilder, TDependency, IDrawingBuilder> builderFactory = null)

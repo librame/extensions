@@ -32,7 +32,7 @@ namespace Librame.Extensions.Core.Starters
         {
             services.NotNull(nameof(services));
 
-            var preStarters = AssemblyUtility.CreateInstancesByCurrentExportedTypesWithoutSystem<IPreStarter>();
+            var preStarters = AssemblyUtility.CurrentExportedInstancesWithoutSystem<IPreStarter>();
             foreach (var preStarter in preStarters)
             {
                 preStarter.Start(services);

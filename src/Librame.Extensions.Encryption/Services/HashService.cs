@@ -31,18 +31,18 @@ namespace Librame.Extensions.Encryption.Services
 
 
         public byte[] Md5(byte[] buffer, bool isSigned = false)
-            => buffer.Md5(Rsa.Source, Rsa.SignaturePadding);
+            => buffer.Md5(isSigned, Rsa.Source, Rsa.SignaturePadding);
 
         public byte[] Sha1(byte[] buffer, bool isSigned = false)
-            => buffer.Sha1(Rsa.Source, Rsa.SignaturePadding);
+            => buffer.Sha1(isSigned, Rsa.Source, Rsa.SignaturePadding);
 
         public byte[] Sha256(byte[] buffer, bool isSigned = false)
-            => buffer.Sha256(Rsa.Source, Rsa.SignaturePadding);
+            => buffer.Sha256(isSigned, Rsa.Source, Rsa.SignaturePadding);
 
         public byte[] Sha384(byte[] buffer, bool isSigned = false)
-            => buffer.Sha384(Rsa.Source, Rsa.SignaturePadding);
+            => buffer.Sha384(isSigned, Rsa.Source, Rsa.SignaturePadding);
 
         public byte[] Sha512(byte[] buffer, bool isSigned = false)
-            => buffer.Sha512(Rsa.Source, Rsa.SignaturePadding);
+            => buffer.Sha512(isSigned, Rsa.Source, Rsa.SignaturePadding);
     }
 }

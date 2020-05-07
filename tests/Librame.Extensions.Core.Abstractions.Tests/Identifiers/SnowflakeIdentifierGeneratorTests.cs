@@ -9,7 +9,7 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public async void GenerateAsyncTest()
         {
-            var clock = new TestClockService(new TestMemoryLocker(), new TestLoggerFactory());
+            var clock = new TestClockService(new TestLoggerFactory());
             var generator = SnowflakeIdentifierGenerator.Default;
 
             var current = await generator.GenerateAsync(clock);

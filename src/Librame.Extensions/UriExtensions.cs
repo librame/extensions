@@ -32,7 +32,7 @@ namespace Librame.Extensions
         /// </example>
         /// <param name="path">给定的路径。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "path")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool IsAbsoluteVirtualPath(this string path)
         {
             path.NotEmpty(nameof(path));
@@ -45,7 +45,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static bool IsAbsoluteUri(this string absoluteUriString)
             => absoluteUriString.IsAbsoluteUri(out _);
 
@@ -55,7 +55,7 @@ namespace Librame.Extensions
         /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <param name="result">输出 <see cref="Uri"/>。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static bool IsAbsoluteUri(this string absoluteUriString, out Uri result)
             => Uri.TryCreate(absoluteUriString, UriKind.Absolute, out result);
 
@@ -68,7 +68,7 @@ namespace Librame.Extensions
         /// </exception>
         /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <returns>返回 <see cref="Uri"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static Uri AsAbsoluteUri(this string absoluteUriString)
         {
             if (!absoluteUriString.IsAbsoluteUri(out Uri result))
@@ -93,7 +93,7 @@ namespace Librame.Extensions
         /// <param name="absoluteUri">给定的 <see cref="Uri"/>。</param>
         /// <param name="host">给定的 DNS 主机名或 IP 地址及端口号（如：localhost:80）。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "absoluteUri")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool SameHost(this Uri absoluteUri, string host)
             => absoluteUri.NotNull(nameof(absoluteUri)).Authority.Equals(host, StringComparison.OrdinalIgnoreCase);
 
@@ -103,7 +103,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static string GetHost(this string absoluteUriString)
             => absoluteUriString.GetHost(out _);
 
@@ -113,7 +113,7 @@ namespace Librame.Extensions
         /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <param name="result">输出可能存在的 <see cref="Uri"/>。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static string GetHost(this string absoluteUriString, out Uri result)
             => absoluteUriString.IsAbsoluteUri(out result) ? result.Authority : absoluteUriString;
 
@@ -123,7 +123,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="pathOrUri">给定的路径或 URI。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "pathOrUri")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static string GetPath(this string pathOrUri)
             => pathOrUri.GetPath(out _);
 
@@ -133,8 +133,8 @@ namespace Librame.Extensions
         /// <param name="pathOrUri">给定的路径或 URI。</param>
         /// <param name="result">输出可能存在的 <see cref="Uri"/>。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "pathOrUri")]
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pathOrUri")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string GetPath(this string pathOrUri, out Uri result)
         {
             if (pathOrUri.IsAbsoluteUri(out result))
@@ -152,7 +152,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static string GetQuery(this string absoluteUriString)
             => absoluteUriString.GetQuery(out _);
 
@@ -162,7 +162,7 @@ namespace Librame.Extensions
         /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
         /// <param name="result">输出可能存在的 <see cref="Uri"/>。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "absoluteUriString")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static string GetQuery(this string absoluteUriString, out Uri result)
             => absoluteUriString.IsAbsoluteUri(out result) ? result.Query : absoluteUriString;
 
@@ -191,7 +191,7 @@ namespace Librame.Extensions
         /// <param name="baseUriString">给定的基础 URI 字符串。</param>
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "relativeUri")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings")]
         public static string CombineUriToString(this string baseUriString, string relativeUri)
             => baseUriString.CombineUri(relativeUri).ToString();
@@ -202,7 +202,7 @@ namespace Librame.Extensions
         /// <param name="baseUri">给定的基础 URI。</param>
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "relativeUri")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static string CombineUriToString(this Uri baseUri, string relativeUri)
             => baseUri.CombineUri(relativeUri).ToString();
 
@@ -213,7 +213,7 @@ namespace Librame.Extensions
         /// <param name="baseUriString">给定的基础 URI 字符串。</param>
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回 <see cref="Uri"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "relativeUri")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static Uri CombineUri(this string baseUriString, string relativeUri)
             => new Uri(baseUriString).CombineUri(relativeUri);
 
@@ -223,7 +223,7 @@ namespace Librame.Extensions
         /// <param name="baseUri">给定的基础 URI。</param>
         /// <param name="relativeUri">给定的相对 URI。</param>
         /// <returns>返回 <see cref="Uri"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "relativeUri")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static Uri CombineUri(this Uri baseUri, string relativeUri)
             => new Uri(baseUri, relativeUri);
 
@@ -251,7 +251,7 @@ namespace Librame.Extensions
         /// <param name="ip">给定的 IP。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsLocalIPv6(this string ip)
-            => ip.IsIPv6(out IPAddress address) && IPAddress.IPv6Loopback.Equals(address);
+            => ip.IsIPv6(out IPAddress result) && result.IsIPv6Loopback();
 
         /// <summary>
         /// 是本机 IPv4 地址。
@@ -259,15 +259,39 @@ namespace Librame.Extensions
         /// <param name="ip">给定的 IP。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsLocalIPv4(this string ip)
-            => ip.IsIPv4(out IPAddress address) && IPAddress.Loopback.Equals(address);
+            => ip.IsIPv4(out IPAddress result) && result.IsIPv4Loopback();
 
         /// <summary>
-        /// 是本机 IP 地址。
+        /// 是环回地址。
         /// </summary>
         /// <param name="ip">给定的 IP。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsLocalIPAddress(this string ip)
-            => ip.IsIPAddress(out IPAddress address) && IPAddress.IsLoopback(address);
+        public static bool IsLoopbackIPAddress(this string ip)
+            => ip.IsIPAddress(out IPAddress result) && result.IsLoopback();
+
+        /// <summary>
+        /// 是 IPv6 环回地址。
+        /// </summary>
+        /// <param name="address">给定的 <see cref="IPAddress"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPv6Loopback(this IPAddress address)
+            => IPAddress.IPv6Loopback.Equals(address);
+
+        /// <summary>
+        /// 是 IPv4 环回地址。
+        /// </summary>
+        /// <param name="address">给定的 <see cref="IPAddress"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPv4Loopback(this IPAddress address)
+            => IPAddress.Loopback.Equals(address);
+
+        /// <summary>
+        /// 是环回地址。
+        /// </summary>
+        /// <param name="address">给定的 <see cref="IPAddress"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsLoopback(this IPAddress address)
+            => IPAddress.IsLoopback(address);
 
 
         /// <summary>
@@ -282,10 +306,10 @@ namespace Librame.Extensions
         /// 是 IPv6 地址。
         /// </summary>
         /// <param name="ip">给定的 IP。</param>
-        /// <param name="address">输出 <see cref="IPAddress"/>。</param>
+        /// <param name="result">输出 <see cref="IPAddress"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsIPv6(this string ip, out IPAddress address)
-            => ip.IsIPAddress(out address) && address.AddressFamily == AddressFamily.InterNetworkV6;
+        public static bool IsIPv6(this string ip, out IPAddress result)
+            => ip.IsIPAddress(out result) && result.IsIPv6();
 
 
         /// <summary>
@@ -300,10 +324,26 @@ namespace Librame.Extensions
         /// 是 IPv4 地址。
         /// </summary>
         /// <param name="ip">给定的 IP。</param>
-        /// <param name="address">输出 <see cref="IPAddress"/>。</param>
+        /// <param name="result">输出 <see cref="IPAddress"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsIPv4(this string ip, out IPAddress address)
-            => ip.IsIPAddress(out address) && address.AddressFamily == AddressFamily.InterNetwork;
+        public static bool IsIPv4(this string ip, out IPAddress result)
+            => ip.IsIPAddress(out result) && result.IsIPv4();
+
+        /// <summary>
+        /// 是 IPv4 地址。
+        /// </summary>
+        /// <param name="address">给定的 <see cref="IPAddress"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPv4(this IPAddress address)
+            => address?.AddressFamily == AddressFamily.InterNetwork;
+
+        /// <summary>
+        /// 是 IPv6 地址。
+        /// </summary>
+        /// <param name="address">给定的 <see cref="IPAddress"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsIPv6(this IPAddress address)
+            => address?.AddressFamily == AddressFamily.InterNetworkV6;
 
 
         /// <summary>
@@ -318,10 +358,10 @@ namespace Librame.Extensions
         /// 是 IP 地址。
         /// </summary>
         /// <param name="ip">给定的 IP。</param>
-        /// <param name="address">输出 <see cref="IPAddress"/>。</param>
+        /// <param name="result">输出 <see cref="IPAddress"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool IsIPAddress(this string ip, out IPAddress address)
-            => IPAddress.TryParse(ip, out address);
+        public static bool IsIPAddress(this string ip, out IPAddress result)
+            => IPAddress.TryParse(ip, out result);
 
         #endregion
 

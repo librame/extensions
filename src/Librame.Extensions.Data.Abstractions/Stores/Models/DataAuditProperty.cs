@@ -24,8 +24,8 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TAuditId">指定的审计标识类型。</typeparam>
     [Description("数据审计属性")]
-    [NotAudited]
-    [Sharding]
+    [NonAudited]
+    [Shardable]
     public class DataAuditProperty<TIncremId, TAuditId> : AbstractId<TIncremId>
         where TIncremId : IEquatable<TIncremId>
         where TAuditId : IEquatable<TAuditId>

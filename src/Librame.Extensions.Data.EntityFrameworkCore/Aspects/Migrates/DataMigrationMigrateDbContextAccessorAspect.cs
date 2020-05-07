@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Aspects
 {
     using Core.Mediators;
-    using Core.Services;
     using Data.Accessors;
     using Data.Compilers;
     using Data.Mediators;
@@ -46,9 +45,6 @@ namespace Librame.Extensions.Data.Aspects
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
-        private readonly object _locker = new object();
-
-
         /// <summary>
         /// 构造一个数据迁移迁移数据库上下文访问器截面。
         /// </summary>
@@ -76,7 +72,7 @@ namespace Librame.Extensions.Data.Aspects
         /// 后置处理核心。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected override void PostProcessCore
             (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
@@ -99,7 +95,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected override async Task PostProcessCoreAsync
             (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
@@ -124,38 +120,33 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <typeparamref name="TMigration"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual TMigration GenerateMigration
             (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            lock (_locker)
+            var createdTime = Dependencies.Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).ConfigureAndResult();
+            var id = Dependencies.Identifier.GetMigrationIdAsync(cancellationToken).ConfigureAndResult();
+
+            return ExtensionSettings.Current.RunLockerResult(() =>
             {
                 var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.CurrentType);
                 var modelSnapshot = ModelSnapshotCompiler.CompileInMemory(dbContextAccessor,
                     dbContextAccessor.Model, Options, modelSnapshotTypeName);
 
                 var migration = typeof(TMigration).EnsureCreate<TMigration>();
-                migration.Id = GetMigrationId(cancellationToken);
+                migration.Id = id;
                 migration.AccessorName = dbContextAccessor.CurrentType.GetDisplayNameWithNamespace();
                 migration.ModelSnapshotName = modelSnapshotTypeName;
                 migration.ModelBody = modelSnapshot.Body;
                 migration.ModelHash = modelSnapshot.Hash;
-                migration.CreatedTime = Dependencies.Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true, cancellationToken).ConfigureAndResult();
+                migration.CreatedTime = createdTime;
                 migration.CreatedTimeTicks = migration.CreatedTime.Ticks;
                 migration.CreatedBy = EntityPopulator.FormatTypeName(GetType());
 
                 return migration;
-            }
+            });
         }
-
-        /// <summary>
-        /// 获取迁移标识。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回 <typeparamref name="TGenId"/>。</returns>
-        protected virtual TGenId GetMigrationId(CancellationToken cancellationToken)
-            => Dependencies.Identifier.GetMigrationIdAsync().ConfigureAndResult();
 
     }
 }

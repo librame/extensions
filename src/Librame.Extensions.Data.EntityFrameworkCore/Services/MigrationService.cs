@@ -18,7 +18,6 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -60,8 +59,6 @@ namespace Librame.Extensions.Data.Services
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
     {
-        private readonly object _locker = new object();
-
         private readonly IMemoryCache _memoryCache;
         private readonly CoreBuilderOptions _coreOptions;
 
@@ -73,30 +70,29 @@ namespace Librame.Extensions.Data.Services
         /// 构造一个迁移服务。
         /// </summary>
         /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
-        /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
+        /// <param name="dependency">给定的 <see cref="DataBuilderDependency"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public MigrationService(IMemoryCache memoryCache, IOptions<CoreBuilderOptions> coreOptions,
-            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+        public MigrationService(IMemoryCache memoryCache, DataBuilderDependency dependency,
+            ILoggerFactory loggerFactory)
+            : base(dependency?.Options, loggerFactory)
         {
             _memoryCache = memoryCache.NotNull(nameof(memoryCache));
-            _coreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
+            _coreOptions = dependency.GetRequiredParentDependency<CoreBuilderDependency>().Options;
         }
 
 
         private void CompileAssembly(DbContextAccessorBase dbContextAccessor)
         {
-            lock (_locker)
+            if (_requiredCompileAssembly)
             {
-                if (_requiredCompileAssembly)
+                ExtensionSettings.Current.RunLocker(() =>
                 {
                     ModelSnapshotCompiler.CompileInFile(dbContextAccessor, dbContextAccessor.Model, Options);
                     _requiredCompileAssembly = false;
 
                     // 移除程序集缓存
                     _memoryCache.Remove(_persistenceAssemblyPath);
-                }
+                });
             }
         }
 
@@ -117,7 +113,7 @@ namespace Librame.Extensions.Data.Services
         /// 迁移核心。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual void MigrateCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
             _persistenceAssemblyPath = ModelSnapshotCompiler.CombineFilePath(dbContextAccessor);
@@ -170,7 +166,7 @@ namespace Librame.Extensions.Data.Services
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual async Task MigrateCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
@@ -214,7 +210,7 @@ namespace Librame.Extensions.Data.Services
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <param name="migrateAction">给定的迁移动作。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual void MigrateAspectServices(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             Action migrateAction)
         {
@@ -260,7 +256,7 @@ namespace Librame.Extensions.Data.Services
         /// <param name="migrateAction">给定的迁移动作。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual async Task MigrateAspectServicesAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             Action migrateAction, CancellationToken cancellationToken = default)
         {
@@ -309,7 +305,7 @@ namespace Librame.Extensions.Data.Services
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <param name="operationDifferences">给定的迁移操作差异集合。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual void MigrateDifference(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             IReadOnlyList<MigrationOperation> operationDifferences)
         {
@@ -320,7 +316,7 @@ namespace Librame.Extensions.Data.Services
             //var historyRepository = dbContextAccessor.GetService<IHistoryRepository>();
             //var insertCommand = rawSqlCommandBuilder.Build(historyRepository.GetInsertScript(new HistoryRow(migration.GetId(), ProductInfo.GetVersion())));
 
-            lock (_locker)
+            ExtensionSettings.Current.RunLocker(() =>
             {
                 // 生成操作差异的迁移命令列表
                 var differenceCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
@@ -336,7 +332,7 @@ namespace Librame.Extensions.Data.Services
 
                     MigrationCommandFiltrator.Save(_memoryCache, dbContextAccessor, _coreOptions);
                 }
-            }
+            });
         }
 
         /// <summary>
@@ -344,10 +340,10 @@ namespace Librame.Extensions.Data.Services
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
         /// <returns>返回 <see cref="IModel"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbContextAccessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected IModel ResolvePersistenceModel(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            lock (_locker)
+            return ExtensionSettings.Current.RunLockerResult(() =>
             {
                 return _memoryCache.GetOrCreate(GetCacheKey(), entry =>
                 {
@@ -379,7 +375,7 @@ namespace Librame.Extensions.Data.Services
 
                     return null;
                 });
-            }
+            });
         }
 
         /// <summary>

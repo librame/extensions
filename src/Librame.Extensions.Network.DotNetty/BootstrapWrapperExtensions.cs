@@ -34,7 +34,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="channelHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IBootstrapWrapper"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IBootstrapWrapper AddDiscardHandler<TChannelHandler>(this IBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler channelHandler)
             where TChannelHandler : IChannelHandler
@@ -56,7 +56,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="channelHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IBootstrapWrapper"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IBootstrapWrapper AddEchoHandler<TChannelHandler>(this IBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler channelHandler)
             where TChannelHandler : IChannelHandler
@@ -81,7 +81,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="channelHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IBootstrapWrapper"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IBootstrapWrapper AddFactorialHandler<TChannelHandler>(this IBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler channelHandler)
             where TChannelHandler : IChannelHandler
@@ -104,7 +104,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="wrapper">给定的 <see cref="IBootstrapWrapper"/>。</param>
         /// <param name="channelHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IBootstrapWrapper"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IBootstrapWrapper AddQuoteOfTheMomentHandler<TChannelHandler>(this IBootstrapWrapper wrapper,
             TChannelHandler channelHandler)
             where TChannelHandler : IChannelHandler
@@ -125,7 +125,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="channelHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IBootstrapWrapper"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IBootstrapWrapper AddSecureChatHandler<TChannelHandler>(this IBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler channelHandler)
             where TChannelHandler : IChannelHandler
@@ -149,7 +149,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="channelHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IBootstrapWrapper"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IBootstrapWrapper AddTelnetHandler<TChannelHandler>(this IBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler channelHandler)
             where TChannelHandler : IChannelHandler
@@ -173,7 +173,7 @@ namespace Librame.Extensions.Network.DotNetty
         /// <param name="tlsCertificate">给定的 <see cref="X509Certificate2"/>。</param>
         /// <param name="channelHandler">给定的 <see cref="IChannelHandler"/>。</param>
         /// <returns>返回 <see cref="IBootstrapWrapper"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "wrapper")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IBootstrapWrapper AddWebSocketHandler<TChannelHandler>(this IBootstrapWrapper wrapper,
             X509Certificate2 tlsCertificate, TChannelHandler channelHandler)
             where TChannelHandler : IChannelHandler

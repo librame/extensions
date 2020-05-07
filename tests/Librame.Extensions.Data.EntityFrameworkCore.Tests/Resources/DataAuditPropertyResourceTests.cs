@@ -22,7 +22,7 @@ namespace Librame.Extensions.Data.Tests
 
         private void RunTest(IStringLocalizer<DataAuditPropertyResource> localizer, string cultureName)
         {
-            CultureUtility.Register(new CultureInfo(cultureName));
+            CultureInfoUtility.Register(new CultureInfo(cultureName));
 
             var propertyName = localizer.GetString(r => r.PropertyName);
             Assert.False(propertyName.ResourceNotFound);

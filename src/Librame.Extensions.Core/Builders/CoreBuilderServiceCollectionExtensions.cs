@@ -91,8 +91,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddLocalizers()
                 .AddMediators()
                 .AddOptions()
-                .AddServices()
-                .AddThreads();
+                .AddServices();
         }
 
     }

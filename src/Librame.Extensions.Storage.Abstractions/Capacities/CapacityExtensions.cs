@@ -62,7 +62,7 @@ namespace Librame.Extensions
         /// <param name="fileSize">给定的文件大小。</param>
         /// <param name="info">给定的 <see cref="UnitDefinitionInfo"/>。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "info")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string FormatCapacity(this int fileSize, UnitDefinitionInfo info)
         {
             info.NotNull(nameof(info));
@@ -110,7 +110,7 @@ namespace Librame.Extensions
         /// <param name="fileSize">给定的文件大小。</param>
         /// <param name="info">给定的 <see cref="UnitDefinitionInfo"/>。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "info")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string FormatCapacity(this long fileSize, UnitDefinitionInfo info)
         {
             info.NotNull(nameof(info));

@@ -13,6 +13,7 @@ namespace Librame.Extensions.Tests
             Assert.True(method.IsDefined<FactAttribute>());
         }
 
+
         [Fact]
         public void GetCustomAttributeTest()
         {
@@ -20,6 +21,7 @@ namespace Librame.Extensions.Tests
             var fact = method.GetCustomAttribute<FactAttribute>();
             Assert.NotNull(fact);
         }
+
         [Test]
         [Test]
         [Fact]
@@ -30,6 +32,7 @@ namespace Librame.Extensions.Tests
             Assert.False(tests.IsEmpty());
         }
 
+
         [Fact]
         public void TryGetCustomAttributeTest()
         {
@@ -37,6 +40,7 @@ namespace Librame.Extensions.Tests
             Assert.True(method.TryGetCustomAttribute(out FactAttribute fact));
             Assert.NotNull(fact);
         }
+
         [Fact]
         public void TryGetCustomAttributesTest()
         {

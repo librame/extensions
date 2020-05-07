@@ -20,14 +20,14 @@ namespace Librame.Extensions.Network.DotNetty.Demo
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class TelnetClientHandler : SimpleChannelInboundHandler<string>
     {
-        private readonly ITelnetClient _client;
+        //private readonly ITelnetClient _client;
         private readonly ILogger _logger;
 
 
         public TelnetClientHandler(ITelnetClient client)
             : base()
         {
-            _client = client;
+            //_client = client;
             _logger = client.LoggerFactory.CreateLogger<TelnetClientHandler>();
         }
 

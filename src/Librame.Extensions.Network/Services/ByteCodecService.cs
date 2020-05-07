@@ -11,21 +11,19 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Network.Services
 {
-    using Core.Builders;
     using Encryption.Services;
     using Network.Builders;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ByteCodecService : NetworkServiceBase, IByteCodecService
     {
-        public ByteCodecService(ISymmetricService symmetric, IOptions<CoreBuilderOptions> coreOptions,
-            IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(coreOptions, options, loggerFactory)
+        public ByteCodecService(ISymmetricService symmetric,
+            NetworkBuilderDependency dependency, ILoggerFactory loggerFactory)
+            : base(dependency, loggerFactory)
         {
             Symmetric = symmetric.NotNull(nameof(symmetric));
         }

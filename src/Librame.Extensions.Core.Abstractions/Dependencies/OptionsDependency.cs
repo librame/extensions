@@ -49,7 +49,7 @@ namespace Librame.Extensions.Core.Dependencies
             : base(name)
         {
             if (optionsType.IsAssignableToBaseType(typeof(IExtensionBuilderDependency)))
-                throw new ArgumentException(InternalResource.ArgumentExceptionNotSupportedConfigurationOfDependencyOptions);
+                throw new ArgumentException(InternalResource.ArgumentExceptionNotSupportedConfigurationOfDependency);
 
             OptionsType = new SerializableString<Type>(optionsType);
             Options = ConsistencyOptionsPool.GetOrAdd<TOptions>();

@@ -19,29 +19,21 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Core.Services
 {
-    using Threads;
-
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-    internal class EnvironmentService : AbstractConcurrentService, IEnvironmentService
+    internal class EnvironmentService : AbstractService, IEnvironmentService
     {
-        public EnvironmentService(IMemoryLocker locker, ILoggerFactory loggerFactory)
-            : base(locker, loggerFactory)
+        public EnvironmentService(ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
         }
 
 
         public Task<IEnvironmentInfo> GetEnvironmentInfoAsync(CancellationToken cancellationToken = default)
         {
-            return Locker.WaitFactoryAsync(() =>
-            {
-                return cancellationToken.RunFactoryOrCancellationAsync(() =>
-                {
-                    IEnvironmentInfo info = new EnvironmentInfo();
-                    Logger.LogInformation($"Refresh environment info at {DateTimeOffset.Now.ToString(CultureInfo.CurrentCulture)}");
+            IEnvironmentInfo info = new EnvironmentInfo();
+            Logger.LogInformation($"Refresh environment info at {DateTimeOffset.Now.ToString(CultureInfo.CurrentCulture)}");
 
-                    return info;
-                });
-            });
+            return Task.FromResult(info);
         }
 
     }

@@ -29,7 +29,7 @@ namespace Librame.Extensions
         /// <typeparam name="TProperty">指定的属性类型。</typeparam>
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "propertyExpression")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string AsPropertyName<T, TProperty>(this Expression<Func<T, TProperty>> propertyExpression)
             where T : class
         {
@@ -310,7 +310,7 @@ namespace Librame.Extensions
         /// <param name="value">给定的参考值。</param>
         /// <param name="compareToFactory">给定的对比方法。</param>
         /// <returns>返回 Lambda 表达式。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "compareToFactory")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static Expression<Func<T, bool>> AsPropertyExpression<T, TExpression>(this string propertyName, Type propertyType,
             object value, Func<MemberExpression, ConstantExpression, TExpression> compareToFactory)
             where T : class

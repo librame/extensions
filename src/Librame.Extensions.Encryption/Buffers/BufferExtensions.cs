@@ -26,7 +26,7 @@ namespace Librame.Extensions.Encryption.Buffers
         /// <param name="source">给定的明文字符串。</param>
         /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
         /// <returns>返回 <see cref="IPlaintextBuffer"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IPlaintextBuffer AsPlaintextBuffer(this string source, IServiceProvider serviceProvider)
             => new PlaintextBuffer(serviceProvider, source);
 

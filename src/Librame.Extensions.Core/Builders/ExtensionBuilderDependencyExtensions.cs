@@ -71,7 +71,7 @@ namespace Librame.Extensions.Core.Builders
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="rootConfigFileName">给定的根配置文件名（可选；默认为“appsettings.json”）。</param>
         /// <returns>返回 <typeparamref name="TDependency"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "services")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static TDependency ConfigureDependency<TDependency>(this Action<TDependency> configureDependency,
             IServiceCollection services, string rootConfigFileName = "appsettings.json")
             where TDependency : class, IExtensionBuilderDependency
@@ -139,7 +139,7 @@ namespace Librame.Extensions.Core.Builders
         /// <param name="configureDependency">给定的配置依赖动作方法（可空）。</param>
         /// <param name="baseBuilder">给定的基础 <see cref="IExtensionBuilder"/>。</param>
         /// <returns>返回 <typeparamref name="TDependency"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "baseBuilder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static TDependency ConfigureDependency<TDependency>(this Action<TDependency> configureDependency,
             IExtensionBuilder baseBuilder)
             where TDependency : class, IExtensionBuilderDependency

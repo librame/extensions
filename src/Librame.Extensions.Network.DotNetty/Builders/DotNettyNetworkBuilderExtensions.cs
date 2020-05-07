@@ -43,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder">给定的 <see cref="INetworkBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static INetworkBuilder AddDotNetty<TDependency>(this INetworkBuilder builder,
             Action<TDependency> configureDependency = null)
             where TDependency : DotNettyDependency

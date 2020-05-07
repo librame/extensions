@@ -25,11 +25,11 @@ namespace Librame.Extensions.Core.Builders
         where TOptions : class, IExtensionBuilderOptions
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractExtensionBuilderDependency{TBuilderOptions}"/>。
+        /// 构造一个 <see cref="AbstractExtensionBuilderDependency{TOptions}"/>。
         /// </summary>
         /// <param name="name">给定的依赖名称。</param>
-        /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "parentDependency")]
+        /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected AbstractExtensionBuilderDependency(string name, IExtensionBuilderDependency parentDependency = null)
             : base(name)
         {
@@ -44,10 +44,13 @@ namespace Librame.Extensions.Core.Builders
 
                 if (ConfigurationRoot.IsNotNull())
                     Configuration = ConfigurationRoot.GetSection(Name);
+
+                ParentDependency = parentDependency;
             }
             else
             {
                 var currentDirectory = Environment.CurrentDirectory.WithoutDevelopmentRelativePath();
+
                 BaseDirectory = currentDirectory;
                 ConfigDirectory = currentDirectory.CombinePath("configs");
                 ReportDirectory = currentDirectory.CombinePath("reports");
@@ -55,6 +58,16 @@ namespace Librame.Extensions.Core.Builders
             }
         }
 
+
+        /// <summary>
+        /// 父级依赖。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="IExtensionBuilderDependency"/>。
+        /// </value>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IExtensionBuilderDependency ParentDependency { get; }
 
         /// <summary>
         /// 基础目录。

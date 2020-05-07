@@ -11,7 +11,6 @@
 #endregion
 
 using System;
-using System.IO;
 
 namespace Librame.Extensions.Core.Combiners
 {
@@ -23,24 +22,30 @@ namespace Librame.Extensions.Core.Combiners
         /// <summary>
         /// 构造一个 <see cref="FileNameCombiner"/>。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="fileName"/> is null or empty.
+        /// </exception>
         /// <param name="fileName">给定的文件名。</param>
         public FileNameCombiner(string fileName)
-            : base(Path.GetFileName(fileName))
+            : base(ParseParameters(fileName, out var baseName, out var extension))
         {
-            Extension = Path.GetExtension(fileName);
-            BaseName = RawSource.TrimEnd(Extension);
+            BaseName = baseName;
+            Extension = extension;
         }
 
         /// <summary>
         /// 构造一个 <see cref="FileNameCombiner"/>。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseName"/> is null or empty.
+        /// </exception>
         /// <param name="baseName">给定的基础名。</param>
         /// <param name="extension">给定的扩展名（可空）。</param>
         public FileNameCombiner(string baseName, string extension)
-            : base(CombineString(baseName, extension))
+            : base(CombineParameters(baseName, extension))
         {
-            Extension = extension;
             BaseName = baseName;
+            Extension = extension;
         }
 
 
@@ -59,12 +64,25 @@ namespace Librame.Extensions.Core.Combiners
         /// 重写源实例。
         /// </summary>
         public override string Source
-            => CombineString(BaseName, Extension);
+            => CombineParameters(BaseName, Extension);
 
+
+        #region Change
 
         /// <summary>
         /// 改变基础名。
         /// </summary>
+        /// <param name="newBaseNameFactory">给定的新基础名工厂方法（输入参数为当前基础名）。</param>
+        /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
+        public FileNameCombiner ChangeBaseName(Func<string, string> newBaseNameFactory)
+            => ChangeBaseName(newBaseNameFactory?.Invoke(BaseName));
+
+        /// <summary>
+        /// 改变基础名。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="newBaseName"/> is null or empty.
+        /// </exception>
         /// <param name="newBaseName">给定的新基础名。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
         public FileNameCombiner ChangeBaseName(string newBaseName)
@@ -73,6 +91,15 @@ namespace Librame.Extensions.Core.Combiners
             return this;
         }
 
+
+        /// <summary>
+        /// 改变扩展名。
+        /// </summary>
+        /// <param name="newExtensionFactory">给定的新扩展名工厂方法（输入参数为当前扩展名）。</param>
+        /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
+        public FileNameCombiner ChangeExtension(Func<string, string> newExtensionFactory)
+            => ChangeExtension(newExtensionFactory?.Invoke(Extension));
+
         /// <summary>
         /// 改变扩展名。
         /// </summary>
@@ -80,18 +107,42 @@ namespace Librame.Extensions.Core.Combiners
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
         public FileNameCombiner ChangeExtension(string newExtension)
         {
-            Extension = newExtension.NotEmpty(nameof(newExtension));
+            Extension = newExtension;
             return this;
         }
 
+        #endregion
+
+
+        #region With
 
         /// <summary>
         /// 带有基础名。
         /// </summary>
+        /// <param name="newBaseNameFactory">给定的新基础名工厂方法（输入参数为当前基础名）。</param>
+        /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
+        public FileNameCombiner WithBaseName(Func<string, string> newBaseNameFactory)
+            => WithBaseName(newBaseNameFactory?.Invoke(BaseName));
+
+        /// <summary>
+        /// 带有基础名。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="newBaseName"/> is null or empty.
+        /// </exception>
         /// <param name="newBaseName">给定的新基础名。</param>
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
         public FileNameCombiner WithBaseName(string newBaseName)
             => new FileNameCombiner(newBaseName, Extension);
+
+
+        /// <summary>
+        /// 带有扩展名。
+        /// </summary>
+        /// <param name="newExtensionFactory">给定的新扩展名工厂方法（输入参数为当前扩展名）。</param>
+        /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
+        public FileNameCombiner WithExtension(Func<string, string> newExtensionFactory)
+            => WithExtension(newExtensionFactory?.Invoke(Extension));
 
         /// <summary>
         /// 带有扩展名。
@@ -100,6 +151,8 @@ namespace Librame.Extensions.Core.Combiners
         /// <returns>返回 <see cref="FileNameCombiner"/>。</returns>
         public FileNameCombiner WithExtension(string newExtension)
             => new FileNameCombiner(BaseName, newExtension);
+
+        #endregion
 
 
         /// <summary>
@@ -171,16 +224,32 @@ namespace Librame.Extensions.Core.Combiners
             => combiner?.ToString();
 
 
-        /// <summary>
-        /// 组合字符串。
-        /// </summary>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="baseName"/> is null or empty.
-        /// </exception>
-        /// <param name="baseName">给定的基础名。</param>
-        /// <param name="extension">给定的扩展名（可选）。</param>
-        /// <returns>返回字符串。</returns>
-        public static string CombineString(string baseName, string extension = null)
+        private static string CombineParameters(string baseName, string extension = null)
             => baseName.NotEmpty(nameof(baseName)) + extension; // 存在不包含扩展名的文件名
+
+
+        private static string ParseParameters(string fileName,
+            out string baseName, out string extension)
+        {
+            (baseName, extension) = fileName.GetFileBaseNameAndExtension(out _);
+            return baseName + extension;
+        }
+
+
+        /// <summary>
+        /// 尝试解析组合器。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="fileName"/> is null or empty.
+        /// </exception>
+        /// <param name="fileName">给定的文件名。</param>
+        /// <param name="result">输出 <see cref="FileNameCombiner"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool TryParseCombiner(string fileName, out FileNameCombiner result)
+        {
+            result = new FileNameCombiner(fileName);
+            return result.BaseName.IsNotEmpty();
+        }
+
     }
 }

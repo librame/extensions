@@ -149,18 +149,18 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字段信息数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FieldInfo[] GetAllFields(this Type type)
-            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.CommonFlags);
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllFlags);
 
         /// <summary>
         /// 获取所有非静态字段集合（包括公开、非公开、实例等）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字段信息数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FieldInfo[] GetAllFieldsWithoutStatic(this Type type)
-            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.CommonFlagsWithoutStatic);
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllFlagsWithoutStatic);
 
 
         /// <summary>
@@ -168,18 +168,18 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字段信息数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static PropertyInfo[] GetAllProperties(this Type type)
-            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.CommonFlags);
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllFlags);
 
         /// <summary>
         /// 获取所有非静态属性集合（包括公开、非公开、实例等）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回字段信息数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static PropertyInfo[] GetAllPropertiesWithoutStatic(this Type type)
-            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.CommonFlagsWithoutStatic);
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllFlagsWithoutStatic);
 
 
         /// <summary>
@@ -267,7 +267,7 @@ namespace Librame.Extensions
         /// <param name="type">给定的类型。</param>
         /// <param name="factory">给定的类型字符串工厂方法。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "factory")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string GetDisplayString(this Type type, Func<Type, string> factory)
         {
             type.NotNull(nameof(type));
@@ -360,7 +360,7 @@ namespace Librame.Extensions
         /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IReadOnlyList{Type}"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static IReadOnlyList<Type> ExportedTypes(this IEnumerable<Assembly> assemblies,
+        public static List<Type> ExportedTypes(this IEnumerable<Assembly> assemblies,
             Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
         {
             assemblies.NotEmpty(nameof(assemblies));

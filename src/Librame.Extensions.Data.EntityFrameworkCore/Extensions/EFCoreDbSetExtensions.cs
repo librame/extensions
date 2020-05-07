@@ -34,7 +34,7 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="dbSet">给定的 <see cref="DbSet{TEntity}"/>。</param>
         /// <param name="lookupLocal">同时查找本地缓存（可选；默认查找）。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbSet")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool Exists<TEntity>(this DbSet<TEntity> dbSet, bool lookupLocal = true)
             where TEntity : class
         {
@@ -77,7 +77,7 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="lookupLocal">同时查找本地缓存（可选；默认查找）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "dbSet")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static Task<bool> ExistsAsync<TEntity>(this DbSet<TEntity> dbSet,
             bool lookupLocal = true, CancellationToken cancellationToken = default)
             where TEntity : class

@@ -19,19 +19,28 @@ using System.Threading;
 namespace Librame.Extensions.Core.Utilities
 {
     /// <summary>
-    /// 随机数实用工具。
+    /// <see cref="Random"/> 实用工具。
     /// </summary>
     public static class RandomUtility
     {
         private static int _seed
             = Environment.TickCount;
 
+        // 支持多线程，各线程维持独立的随机实例
         private static readonly ThreadLocal<Random> _random
             = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref _seed)));
 
+        // 支持多线程，各线程维持独立的随机数生成器实例
         private static readonly ThreadLocal<RandomNumberGenerator> _generator
             = new ThreadLocal<RandomNumberGenerator>(() => RandomNumberGenerator.Create());
 
+
+        /// <summary>
+        /// 运行伪随机数生成器。
+        /// </summary>
+        /// <param name="action">给定的动作。</param>
+        public static void Run(Action<Random> action)
+            => action.NotNull(nameof(action)).Invoke(_random.Value);
 
         /// <summary>
         /// 运行伪随机数生成器，并返回结果值。
@@ -42,13 +51,13 @@ namespace Librame.Extensions.Core.Utilities
         public static TValue Run<TValue>(Func<Random, TValue> valueFactory)
             => valueFactory.NotNull(nameof(valueFactory)).Invoke(_random.Value);
 
+
         /// <summary>
-        /// 运行伪随机数生成器。
+        /// 运行更具安全性的随机数生成器。
         /// </summary>
         /// <param name="action">给定的动作。</param>
-        public static void Run(Action<Random> action)
-            => action.NotNull(nameof(action)).Invoke(_random.Value);
-
+        public static void RunSecurity(Action<RandomNumberGenerator> action)
+            => action.NotNull(nameof(action)).Invoke(_generator.Value);
 
         /// <summary>
         /// 运行更具安全性的随机数生成器，并返回结果值。
@@ -58,13 +67,6 @@ namespace Librame.Extensions.Core.Utilities
         /// <returns>返回 <typeparamref name="TValue"/>。</returns>
         public static TValue RunSecurity<TValue>(Func<RandomNumberGenerator, TValue> valueFactory)
             => valueFactory.NotNull(nameof(valueFactory)).Invoke(_generator.Value);
-
-        /// <summary>
-        /// 运行更具安全性的随机数生成器。
-        /// </summary>
-        /// <param name="action">给定的动作。</param>
-        public static void RunSecurity(Action<RandomNumberGenerator> action)
-            => action.NotNull(nameof(action)).Invoke(_generator.Value);
 
 
         /// <summary>
@@ -99,7 +101,9 @@ namespace Librame.Extensions.Core.Utilities
                 encodeFactory = s => s.Md5Base64String(Encoding.UTF8);
 
             var pairs = new Dictionary<string, string>();
-            var chars = hasSpecial ? ExtensionSettings.AlgorithmChars : ExtensionSettings.AllLettersAndDigits;
+            var chars = hasSpecial
+                ? ExtensionSettings.Current.AlgorithmChars
+                : ExtensionSettings.Current.AllLettersAndDigits;
 
             Run(r =>
             {

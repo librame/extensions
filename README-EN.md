@@ -185,7 +185,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
         public int CategoryId { get; set; }
         public Category Category { get; set; }
     }
-    
+
     //[Description("Category")]
     public class Category : AbstractEntityCreation<int>
     {
@@ -194,7 +194,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
         public IList<Article> Articles { get; set; }
             = new List<Article>();
     }
-    
+
     public class TestDbContextAccessor : DbContextAccessor
     {
         public TestDbContextAccessor(DbContextOptions options)
@@ -251,7 +251,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
         public Task<Guid> GetArticleIdAsync(CancellationToken cancellationToken = default)
             => GenerateIdAsync("ArticleId", cancellationToken);
     }
-    
+
     public class TestStoreInitializer : GuidStoreInitializer
     {
         // see tests/Librame.Extensions.Data.EntityFrameworkCore.Tests/TestStoreInitializer.cs
@@ -263,7 +263,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
             : base(initializer, accessor)
         {
         }
-        
+
         public IList<Category> GetCategories()
             => Accessor.Categories.ToList();
 
@@ -282,7 +282,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
             return this;
         }
     }
-    
+
     var stores = services.GetRequiredService<TestStoreHub>()
     var categories = stores.GetCategories();
     Assert.Empty(categories);

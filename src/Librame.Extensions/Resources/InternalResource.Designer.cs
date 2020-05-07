@@ -167,5 +167,14 @@ namespace Librame.Extensions.Resources {
                 return ResourceManager.GetString("FormatExceptionBase32StringFormat", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 The lockers is depleted, please check the code or modify the MaxLockerCount ‘{0}’. 的本地化字符串。
+        /// </summary>
+        internal static string OverflowExceptionLockersFormat {
+            get {
+                return ResourceManager.GetString("OverflowExceptionLockersFormat", resourceCulture);
+            }
+        }
     }
 }

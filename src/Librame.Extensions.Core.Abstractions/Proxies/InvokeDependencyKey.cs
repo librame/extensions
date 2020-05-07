@@ -143,7 +143,7 @@ namespace Librame.Extensions.Core.Proxies
         /// </summary>
         /// <param name="methodInfo">给定的 <see cref="MethodInfo"/>。</param>
         /// <returns>返回 <see cref="IReadOnlyList{T}"/> 的 <see cref="InvokeDependencyKey"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "methodInfo")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IReadOnlyList<InvokeDependencyKey> ParseApproximateKeys(MethodInfo methodInfo)
         {
             methodInfo.NotNull(nameof(methodInfo));

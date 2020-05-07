@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core.Tests
 
         private void RunTest(IStringLocalizer<HumanizationResource> localizer, string cultureName)
         {
-            CultureUtility.Register(new CultureInfo(cultureName));
+            CultureInfoUtility.Register(new CultureInfo(cultureName));
 
             var minutesAgo = localizer.GetString(r => r.HumanizedMinutesAgo);
             Assert.False(minutesAgo.ResourceNotFound);

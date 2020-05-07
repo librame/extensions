@@ -13,7 +13,8 @@
 namespace Librame.Extensions.Encryption.Services
 {
     using Core.Services;
-    using KeyGenerators;
+    using Encryption.Generators;
+    using Encryption.Identifiers;
 
     /// <summary>
     /// 键控散列服务接口。
@@ -33,44 +34,44 @@ namespace Librame.Extensions.Encryption.Services
         /// 计算 HMACMD5。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] HmacMd5(byte[] buffer, KeyDescriptor descriptor = null);
+        byte[] HmacMd5(byte[] buffer, SecurityIdentifier identifier = null);
 
 
         /// <summary>
         /// 计算 HMACSHA1。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] HmacSha1(byte[] buffer, KeyDescriptor descriptor = null);
+        byte[] HmacSha1(byte[] buffer, SecurityIdentifier identifier = null);
 
 
         /// <summary>
         /// 计算 HMACSHA256。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] HmacSha256(byte[] buffer, KeyDescriptor descriptor = null);
+        byte[] HmacSha256(byte[] buffer, SecurityIdentifier identifier = null);
 
 
         /// <summary>
         /// 计算 HMACSHA384。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] HmacSha384(byte[] buffer, KeyDescriptor descriptor = null);
+        byte[] HmacSha384(byte[] buffer, SecurityIdentifier identifier = null);
 
 
         /// <summary>
         /// 计算 HMACSHA512。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="descriptor">给定的 <see cref="KeyDescriptor"/>（可选；默认使用选项配置）。</param>
+        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] HmacSha512(byte[] buffer, KeyDescriptor descriptor = null);
+        byte[] HmacSha512(byte[] buffer, SecurityIdentifier identifier = null);
     }
 }

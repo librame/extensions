@@ -42,7 +42,7 @@ namespace Librame.Extensions.Core.Builders
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <param name="assemblies">给定要查找的程序集数组。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static ICoreBuilder AddAutoRegistrationMediators(this ICoreBuilder builder,
             IEnumerable<Assembly> assemblies)
         {

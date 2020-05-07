@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 
@@ -26,6 +27,17 @@ namespace Librame.Extensions.Core.Combiners
     public class DomainNameCombiner : AbstractCombiner<string>
     {
         /// <summary>
+        /// 分隔符。
+        /// </summary>
+        public const char Separator = '.';
+
+        /// <summary>
+        /// 端口界定符。
+        /// </summary>
+        public const char PortDelimiter = ':';
+
+
+        /// <summary>
         /// 从根域名开始的顺序集合。
         /// </summary>
         private List<string> _allLevelSegments = null;
@@ -34,21 +46,24 @@ namespace Librame.Extensions.Core.Combiners
         /// <summary>
         /// 构造一个 <see cref="DomainNameCombiner"/>。
         /// </summary>
-        /// <param name="domainName">给定的域名。</param>
-        public DomainNameCombiner(string domainName)
-            : base(domainName)
+        /// <param name="host">给定的主机名（支持域名加端口形式）。</param>
+        public DomainNameCombiner(string host)
+            : base(host)
         {
-            _allLevelSegments = new List<string>(ParseAllLevelSegments(domainName));
+            _allLevelSegments = new List<string>(GetAllLevelSegments(host, out var port));
+            Port = port;
         }
 
         /// <summary>
         /// 构造一个 <see cref="DomainNameCombiner"/>。
         /// </summary>
         /// <param name="allLevelSegments">给定的所有级别片段列表。</param>
-        public DomainNameCombiner(List<string> allLevelSegments)
-            : base(CombineString(allLevelSegments))
+        /// <param name="port">给定的端口（可选）。</param>
+        public DomainNameCombiner(List<string> allLevelSegments, ushort? port = null)
+            : base(CombineParameters(allLevelSegments, port))
         {
             _allLevelSegments = allLevelSegments;
+            Port = port;
         }
 
 
@@ -118,10 +133,16 @@ namespace Librame.Extensions.Core.Combiners
 
 
         /// <summary>
+        /// 端口。
+        /// </summary>
+        public ushort? Port { get; private set; }
+
+
+        /// <summary>
         /// 重写源实例。
         /// </summary>
         public override string Source
-            => CombineString(_allLevelSegments);
+            => CombineParameters(_allLevelSegments, Port);
 
 
         /// <summary>
@@ -174,6 +195,15 @@ namespace Librame.Extensions.Core.Combiners
             => newLevelSegments.ForEach((str, i) => _allLevelSegments[i] = str);
 
 
+        /// <summary>
+        /// 复制一个当前实例。
+        /// </summary>
+        /// <param name="port">给定的端口（可选；默认使用当前端口）。</param>
+        /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
+        public DomainNameCombiner Copy(ushort? port = null)
+            => new DomainNameCombiner(new List<string>(_allLevelSegments), port ?? Port);
+
+
         #region Change
 
         /// <summary>
@@ -183,7 +213,9 @@ namespace Librame.Extensions.Core.Combiners
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner ChangeDomainName(string newDomainName)
         {
-            UpdateLevelSegments(ParseAllLevelSegments(newDomainName));
+            UpdateLevelSegments(GetAllLevelSegments(newDomainName, out var port));
+            Port = port;
+
             return this;
         }
 
@@ -242,6 +274,17 @@ namespace Librame.Extensions.Core.Combiners
             return this;
         }
 
+        /// <summary>
+        /// 改变端口。
+        /// </summary>
+        /// <param name="port">给定的端口（可选；如果为空表示清空端口）。</param>
+        /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
+        public DomainNameCombiner ChangePort(ushort? port = null)
+        {
+            Port = port; // 允许清空当前端口
+            return this;
+        }
+
         #endregion
 
 
@@ -254,12 +297,12 @@ namespace Librame.Extensions.Core.Combiners
         /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
         public DomainNameCombiner WithDomainName(string newDomainName)
         {
-            var newLevelSegments = ParseAllLevelSegments(newDomainName);
+            var newLevelSegments = GetAllLevelSegments(newDomainName, out var port);
 
-            var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
-            copyCombiner.UpdateLevelSegments(newLevelSegments);
-
-            return copyCombiner;
+            var newCombiner = Copy(port);
+            newCombiner.UpdateLevelSegments(newLevelSegments);
+            
+            return newCombiner;
         }
 
         /// <summary>
@@ -271,10 +314,10 @@ namespace Librame.Extensions.Core.Combiners
         {
             newRoot.NotEmpty(nameof(newRoot));
 
-            var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
-            copyCombiner.Root = newRoot;
+            var newCombiner = Copy();
+            newCombiner.Root = newRoot;
 
-            return copyCombiner;
+            return newCombiner;
         }
 
         /// <summary>
@@ -286,10 +329,10 @@ namespace Librame.Extensions.Core.Combiners
         {
             newTopLevelSegment.NotEmpty(nameof(newTopLevelSegment));
 
-            var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
-            copyCombiner.TopLevelSegment = newTopLevelSegment;
+            var newCombiner = Copy();
+            newCombiner.TopLevelSegment = newTopLevelSegment;
 
-            return copyCombiner;
+            return newCombiner;
         }
 
         /// <summary>
@@ -301,10 +344,10 @@ namespace Librame.Extensions.Core.Combiners
         {
             newSecondLevelSegment.NotEmpty(nameof(newSecondLevelSegment));
 
-            var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
-            copyCombiner.SecondLevelSegment = newSecondLevelSegment;
+            var newCombiner = Copy();
+            newCombiner.SecondLevelSegment = newSecondLevelSegment;
 
-            return copyCombiner;
+            return newCombiner;
         }
 
         /// <summary>
@@ -316,10 +359,10 @@ namespace Librame.Extensions.Core.Combiners
         {
             newThirdLevelSegment.NotEmpty(nameof(newThirdLevelSegment));
 
-            var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
-            copyCombiner.ThirdLevelSegment = newThirdLevelSegment;
+            var newCombiner = Copy();
+            newCombiner.ThirdLevelSegment = newThirdLevelSegment;
 
-            return copyCombiner;
+            return newCombiner;
         }
 
         /// <summary>
@@ -331,11 +374,19 @@ namespace Librame.Extensions.Core.Combiners
         {
             newOtherLevelSegments.NotEmpty(nameof(newOtherLevelSegments));
 
-            var copyCombiner = new DomainNameCombiner(new List<string>(_allLevelSegments));
-            copyCombiner.OtherLevelSegments = newOtherLevelSegments;
+            var newCombiner = Copy();
+            newCombiner.OtherLevelSegments = newOtherLevelSegments;
 
-            return copyCombiner;
+            return newCombiner;
         }
+
+        /// <summary>
+        /// 带有端口。
+        /// </summary>
+        /// <param name="port">给定的端口（可空）。</param>
+        /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
+        public DomainNameCombiner WithPort(ushort? port)
+            => Copy(port);
 
         #endregion
 
@@ -433,33 +484,21 @@ namespace Librame.Extensions.Core.Combiners
             => combiner?.ToString();
 
 
-        /// <summary>
-        /// 组合字符串。
-        /// </summary>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="segments"/> is null or empty.
-        /// </exception>
-        /// <param name="segments">给定的部分集合。</param>
-        /// <returns>返回字符串。</returns>
-        public static string CombineString(IEnumerable<string> segments)
-            => string.Join(".", segments.NotEmpty(nameof(segments)).Reverse());
-
-
-        /// <summary>
-        /// 尝试从主机解析包含所有级别片段从根开始的顺序集合（如：org/domain/...）。
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="domainName"/> is null or empty.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="domainName"/> IP address are not supported except loopback address.
-        /// </exception>
-        /// <param name="domainName">给定的域名。</param>
-        /// <returns>返回 <see cref="IEnumerable{String}"/>。</returns>
-        public static IEnumerable<string> ParseAllLevelSegments(string domainName)
+        private static string CombineParameters(IEnumerable<string> segments, ushort? port = null)
         {
-            if (!TryParseAllLevelSegmentsFromHost(domainName, out IEnumerable<string> allLevelSegments)
-                && allLevelSegments.IsNotNull() && !allLevelSegments.Any())
+            var domain = segments?.Reverse().CompatibleJoinString(Separator);
+
+            if (!port.HasValue)
+                return domain;
+
+            return $"{domain}{PortDelimiter}{port}";
+        }
+
+        private static IEnumerable<string> GetAllLevelSegments(string host, out ushort? port)
+        {
+            if (!TryParseParameters(host, out port,
+                out IEnumerable<string> allLevelSegments)
+                && allLevelSegments.IsEmpty())
             {
                 // 不支持除本机环回地址外的 IP 地址
                 throw new NotSupportedException(InternalResource.NotSupportedExceptionDomainName);
@@ -468,23 +507,23 @@ namespace Librame.Extensions.Core.Combiners
             return allLevelSegments;
         }
 
-        /// <summary>
-        /// 尝试从主机解析包含所有级别片段从根开始的顺序集合。
-        /// </summary>
-        /// <param name="host">给定的主机名。</param>
-        /// <param name="allLevelSegments">输出 <see cref="IEnumerable{String}"/>（如：org/domain/...）。</param>
-        /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "host")]
-        public static bool TryParseAllLevelSegmentsFromHost(string host, out IEnumerable<string> allLevelSegments)
+        internal static bool TryParseParameters(string host, out ushort? port,
+            out IEnumerable<string> allLevelSegments)
         {
+            port = null;
+
             if (host.IsEmpty())
             {
                 allLevelSegments = null;
                 return false;
             }
 
-            if (host.CompatibleContains(':'))
-                host = host.SplitPair(':').Key;
+            if (host.CompatibleContains(PortDelimiter))
+            {
+                var pair = host.SplitPair(PortDelimiter);
+                host = pair.Key;
+                port = ushort.Parse(pair.Value, CultureInfo.InvariantCulture);
+            }
 
             if (host.IsIPAddress(out IPAddress address))
             {
@@ -496,13 +535,38 @@ namespace Librame.Extensions.Core.Combiners
                 }
                 else
                 {
-                    allLevelSegments = Enumerable.Empty<string>();
+                    allLevelSegments = null;
                     return false;
                 }
             }
 
-            allLevelSegments = host.Split('.').Reverse();
+            // 反转为顺序
+            allLevelSegments = host.CompatibleSplit(Separator).Reverse();
             return true;
         }
+
+
+        /// <summary>
+        /// 尝试解析组合器。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="host"/> is null or empty.
+        /// </exception>
+        /// <param name="host">给定的主机。</param>
+        /// <param name="result">输出 <see cref="TypeNameCombiner"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static bool TryParseCombiner(string host, out DomainNameCombiner result)
+        {
+            if (TryParseParameters(host, out var port, out var allLevelSegments))
+            {
+                result = new DomainNameCombiner(allLevelSegments?.ToList(), port);
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
     }
 }

@@ -23,14 +23,14 @@ namespace Librame.Extensions
         /// 转换为有顺序的 GUID。
         /// </summary>
         /// <param name="g">给定的 <see cref="Guid"/>。</param>
-        /// <param name="timestamp">给定的时间戳（可选；默认不能小于等于 <see cref="ExtensionSettings.BaseDateTime"/>）。</param>
+        /// <param name="timestamp">给定的时间戳（可选；默认不能小于等于 <see cref="IExtensionContext.BaseDateTime"/>）。</param>
         /// <returns>返回 <see cref="Guid"/>。</returns>
         public static Guid AsCombGuid(this Guid g, DateTime? timestamp = null)
         {
             var buffer = g.ToByteArray();
 
             var stampDate = timestamp.NotNullOrDefault(DateTime.UtcNow);
-            var baseDate = ExtensionSettings.BaseDateTime;
+            var baseDate = ExtensionSettings.Current.BaseDateTime;
             stampDate.NotLesser(baseDate, nameof(timestamp), equals: true);
 
             // Get the days and milliseconds which will be used to build the byte string 
@@ -59,13 +59,13 @@ namespace Librame.Extensions
         /// 转换为有顺序的 GUID。
         /// </summary>
         /// <param name="g">给定的 <see cref="Guid"/>。</param>
-        /// <param name="timestamp">给定的时间戳（不能小于等于 <see cref="ExtensionSettings.BaseDateTime"/>）。</param>
+        /// <param name="timestamp">给定的时间戳（不能小于等于 <see cref="IExtensionContext.BaseDateTime"/>）。</param>
         /// <returns>返回 <see cref="Guid"/>。</returns>
         public static Guid AsCombGuid(this Guid g, DateTimeOffset timestamp)
         {
             var buffer = g.ToByteArray();
 
-            var baseDate = new DateTimeOffset(ExtensionSettings.BaseDateTime, timestamp.Offset);
+            var baseDate = new DateTimeOffset(ExtensionSettings.Current.BaseDateTime, timestamp.Offset);
             timestamp.NotLesser(baseDate, nameof(timestamp), equals: true);
 
             // Get the days and milliseconds which will be used to build the byte string 

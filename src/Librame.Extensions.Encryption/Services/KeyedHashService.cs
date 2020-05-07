@@ -10,136 +10,56 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption.Services
 {
     using Core.Services;
     using Encryption.Builders;
-    using Encryption.KeyGenerators;
+    using Encryption.Generators;
+    using Encryption.Identifiers;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class KeyedHashService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IKeyedHashService
     {
-        private readonly Lazy<HMACMD5> _hmacMd5;
-        private readonly Lazy<HMACSHA1> _hmacSha1;
-        private readonly Lazy<HMACSHA256> _hmacSha256;
-        private readonly Lazy<HMACSHA384> _hmacSha384;
-        private readonly Lazy<HMACSHA512> _hmacSha512;
-
-
-        [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
-        [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
         public KeyedHashService(IKeyGenerator keyGenerator)
             : base(keyGenerator.CastTo<IKeyGenerator, AbstractExtensionBuilderService<EncryptionBuilderOptions>>(nameof(keyGenerator)))
         {
             KeyGenerator = keyGenerator;
-
-            _hmacMd5 = new Lazy<HMACMD5>(() =>
-            {
-                var hmac = new HMACMD5();
-                hmac.Key = KeyGenerator.GetHmacMd5Key();
-                return hmac;
-            });
-
-            _hmacSha1 = new Lazy<HMACSHA1>(() =>
-            {
-                var hmac = new HMACSHA1();
-                hmac.Key = KeyGenerator.GetHmacSha1Key();
-                return hmac;
-            });
-
-            _hmacSha256 = new Lazy<HMACSHA256>(() =>
-            {
-                var hmac = new HMACSHA256();
-                hmac.Key = KeyGenerator.GetHmacSha256Key();
-                return hmac;
-            });
-
-            _hmacSha384 = new Lazy<HMACSHA384>(() =>
-            {
-                var hmac = new HMACSHA384();
-                hmac.Key = KeyGenerator.GetHmacSha384Key();
-                return hmac;
-            });
-
-            _hmacSha512 = new Lazy<HMACSHA512>(() =>
-            {
-                var hmac = new HMACSHA512();
-                hmac.Key = KeyGenerator.GetHmacSha512Key();
-                return hmac;
-            });
         }
 
 
         public IKeyGenerator KeyGenerator { get; }
 
 
-        private byte[] ComputeHash(byte[] buffer, HMAC hmac)
+        public byte[] HmacMd5(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            buffer = hmac.ComputeHash(buffer);
-            Logger.LogDebug($"Compute HMAC hash: {hmac.HashName}");
-
-            return buffer;
+            var key = KeyGenerator.GetHmacMd5Key(identifier);
+            return buffer.HmacMd5(key);
         }
 
-
-        public byte[] HmacMd5(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] HmacSha1(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetHmacMd5Key(descriptor);
-                _hmacMd5.Value.Key = key;
-            }
-
-            return ComputeHash(buffer, _hmacMd5.Value);
+            var key = KeyGenerator.GetHmacSha1Key(identifier);
+            return buffer.HmacSha1(key);
         }
 
-        public byte[] HmacSha1(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] HmacSha256(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetHmacSha1Key(descriptor);
-                _hmacSha1.Value.Key = key;
-            }
-
-            return ComputeHash(buffer, _hmacSha1.Value);
+            var key = KeyGenerator.GetHmacSha256Key(identifier);
+            return buffer.HmacSha256(key);
         }
 
-        public byte[] HmacSha256(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] HmacSha384(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetHmacSha256Key(descriptor);
-                _hmacSha256.Value.Key = key;
-            }
-
-            return ComputeHash(buffer, _hmacSha256.Value);
+            var key = KeyGenerator.GetHmacSha384Key(identifier);
+            return buffer.HmacSha384(key);
         }
 
-        public byte[] HmacSha384(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] HmacSha512(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetHmacSha384Key(descriptor);
-                _hmacSha384.Value.Key = key;
-            }
-
-            return ComputeHash(buffer, _hmacSha384.Value);
-        }
-
-        public byte[] HmacSha512(byte[] buffer, KeyDescriptor descriptor = null)
-        {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetHmacSha512Key(descriptor);
-                _hmacSha512.Value.Key = key;
-            }
-
-            return ComputeHash(buffer, _hmacSha512.Value);
+            var key = KeyGenerator.GetHmacSha512Key(identifier);
+            return buffer.HmacSha512(key);
         }
 
     }

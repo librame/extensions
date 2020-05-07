@@ -21,17 +21,16 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Core.Services
 {
     using Builders;
-    using Threads;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-    internal class ClockService : AbstractConcurrentService, IClockService
+    internal class ClockService : AbstractService, IClockService
     {
         private readonly TimeSpan _clockRefluxOffsetSeconds;
 
 
         public ClockService(IOptions<CoreBuilderOptions> options,
-            IMemoryLocker locker, ILoggerFactory loggerFactory)
-            : base(locker, loggerFactory)
+            ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             Options = options.NotNull(nameof(options)).Value;
             _clockRefluxOffsetSeconds = TimeSpan.FromSeconds(Options.ClockRefluxOffset);
@@ -41,73 +40,56 @@ namespace Librame.Extensions.Core.Services
         public CoreBuilderOptions Options { get; }
 
 
-        public DateTime GetNow(DateTime timestamp, bool? isUtc = null)
-            => Locker.WaitFactory(() => GetNowCore(timestamp, isUtc));
-
-        public Task<DateTime> GetNowAsync(DateTime timestamp, bool? isUtc = null,
-            CancellationToken cancellationToken = default)
-        {
-            return Locker.WaitFactoryAsync(() =>
-            {
-                return cancellationToken.RunFactoryOrCancellationAsync(()
-                    => GetNowCore(timestamp, isUtc));
-            });
-        }
-
-
-        public DateTimeOffset GetOffsetNow(DateTimeOffset timestamp, bool? isUtc = null)
-            => Locker.WaitFactory(() => GetOffsetNowCore(timestamp, isUtc));
-
-        public Task<DateTimeOffset> GetOffsetNowAsync(DateTimeOffset timestamp, bool? isUtc = null,
-            CancellationToken cancellationToken = default)
-        {
-            return Locker.WaitFactoryAsync(() =>
-            {
-                return cancellationToken.RunFactoryOrCancellationAsync(()
-                    => GetOffsetNowCore(timestamp, isUtc));
-            });
-        }
-
-
-        private DateTime GetNowCore(DateTime timestamp, bool? isUtc = null)
+        public DateTime GetNow(DateTime? timestamp = null, bool? isUtc = null)
         {
             if (!isUtc.HasValue)
                 isUtc = Options.IsUtcClock;
 
-            var now = isUtc.Value ? DateTime.UtcNow : DateTime.Now;
-            if (timestamp > now)
+            var localNow = isUtc.Value ? DateTime.UtcNow : DateTime.Now;
+
+            if (timestamp.HasValue && timestamp.Value > localNow)
             {
                 // 计算时间差并添加补偿以解决时钟回流
-                var offset = (timestamp - now).Add(_clockRefluxOffsetSeconds);
-                now.Add(offset);
+                var offset = (timestamp.Value - localNow).Add(_clockRefluxOffsetSeconds);
+                localNow.Add(offset);
 
                 Logger.LogWarning($"Suspected clock reflux, check if the local clock is synchronized (IsUTC: {isUtc}).");
-                Logger.LogTrace($"Clock reflux: {timestamp} is greater than {now} (IsUTC: {isUtc}).");
+                Logger.LogTrace($"Clock reflux: {timestamp} is greater than {localNow} (IsUTC: {isUtc}).");
             }
 
-            Logger.LogInformation($"Get DateTime: {now.ToString(CultureInfo.CurrentCulture)}");
-            return now;
+            Logger.LogInformation($"Get DateTime: {localNow.ToString(CultureInfo.CurrentCulture)}");
+            return localNow;
         }
 
-        private DateTimeOffset GetOffsetNowCore(DateTimeOffset timestamp, bool? isUtc = null)
+        public Task<DateTime> GetNowAsync(DateTime? timestamp = null, bool? isUtc = null,
+            CancellationToken cancellationToken = default)
+            => cancellationToken.RunFactoryOrCancellationAsync(() => GetNow(timestamp, isUtc));
+
+
+        public DateTimeOffset GetOffsetNow(DateTimeOffset? timestamp = null, bool? isUtc = null)
         {
             if (!isUtc.HasValue)
                 isUtc = Options.IsUtcClock;
 
-            var now = isUtc.Value ? DateTimeOffset.UtcNow : DateTimeOffset.Now;
-            if (timestamp > now)
+            var localNow = isUtc.Value ? DateTimeOffset.UtcNow : DateTimeOffset.Now;
+
+            if (timestamp.HasValue && timestamp.Value > localNow)
             {
                 // 计算时间差并添加补偿以解决时钟回流
-                var offset = (timestamp - now).Add(_clockRefluxOffsetSeconds);
-                now.Add(offset);
+                var offset = (timestamp.Value - localNow).Add(_clockRefluxOffsetSeconds);
+                localNow.Add(offset);
 
                 Logger.LogWarning($"Suspected clock reflux, check if the local clock is synchronized (IsUTC: {isUtc}).");
-                Logger.LogTrace($"Clock reflux: {timestamp} is greater than {now} (IsUTC: {isUtc}).");
+                Logger.LogTrace($"Clock reflux: {timestamp} is greater than {localNow} (IsUTC: {isUtc}).");
             }
 
-            Logger.LogInformation($"Get DateTimeOffset: {now.ToString(CultureInfo.CurrentCulture)}");
-            return now;
+            Logger.LogInformation($"Get DateTimeOffset: {localNow.ToString(CultureInfo.CurrentCulture)}");
+            return localNow;
         }
+
+        public Task<DateTimeOffset> GetOffsetNowAsync(DateTimeOffset? timestamp = null, bool? isUtc = null,
+            CancellationToken cancellationToken = default)
+            => cancellationToken.RunFactoryOrCancellationAsync(() => GetOffsetNow(timestamp, isUtc));
 
     }
 }

@@ -28,8 +28,6 @@ namespace Librame.Extensions.Network.Services
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class CrawlerService : NetworkServiceBase, ICrawlerService
     {
-        private readonly object _locker = new object();
-
         private readonly IMemoryCache _memoryCache;
         private readonly IServicesManager<IUriRequester, HttpClientRequester> _requesters;
 
@@ -140,18 +138,15 @@ namespace Librame.Extensions.Network.Services
         public Task<string> GetContentAsync(string url, string postData = null,
             CancellationToken cancellationToken = default)
         {
-            lock (_locker)
+            var key = $"url:{url}|postData:{postData}";
+
+            return _memoryCache.GetOrCreateAsync(key, entry =>
             {
-                var key = $"url:{url}|postData:{postData}";
+                entry.SetAbsoluteExpiration(TimeSpan.FromSeconds(Options.Crawler.CacheExpirationSeconds));
 
-                return _memoryCache.GetOrCreateAsync(key, entry =>
-                {
-                    entry.SetAbsoluteExpiration(TimeSpan.FromSeconds(Options.Crawler.CacheExpirationSeconds));
-
-                    return _requesters.DefaultService.GetResponseStringAsync(url, postData,
-                        cancellationToken: cancellationToken);
-                });
-            }
+                return _requesters.DefaultService.GetResponseStringAsync(url, postData,
+                    cancellationToken: cancellationToken);
+            });
         }
 
     }

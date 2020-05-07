@@ -33,7 +33,7 @@ namespace Microsoft.Extensions.Localization
         /// <param name="localizer">给定的 <see cref="IStringLocalizer{TResource}"/>。</param>
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <returns>返回 <see cref="LocalizedString"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "localizer")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static LocalizedString GetString<TResource, TProperty>(this IStringLocalizer<TResource> localizer,
             Expression<Func<TResource, TProperty>> propertyExpression)
             where TResource : class
@@ -53,7 +53,7 @@ namespace Microsoft.Extensions.Localization
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <param name="arguments">给定的参数数组。</param>
         /// <returns>返回 <see cref="LocalizedString"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "localizer")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static LocalizedString GetString<TResource, TProperty>(this IStringLocalizer<TResource> localizer,
             Expression<Func<TResource, TProperty>> propertyExpression, params object[] arguments)
             where TResource : class

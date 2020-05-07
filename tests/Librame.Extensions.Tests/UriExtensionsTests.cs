@@ -102,8 +102,8 @@ namespace Librame.Extensions.Tests
             Assert.True(ipv6.IsIPv6());
             Assert.True(ipv4.IsLocalIPv4());
             Assert.True(ipv6.IsLocalIPv6());
-            Assert.True(ipv4.IsLocalIPAddress());
-            Assert.True(ipv6.IsLocalIPAddress());
+            Assert.True(ipv4.IsLoopbackIPAddress());
+            Assert.True(ipv6.IsLoopbackIPAddress());
         }
 
     }

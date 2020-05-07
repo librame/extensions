@@ -23,23 +23,21 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void EnsureCreateTest()
         {
-            var test = typeof(TestClass).EnsureCreateObject();
+            var test = (TestClass)typeof(TestClass).EnsureCreateObject();
             Assert.NotNull(test);
 
-            var test1 = typeof(TestSubClass).EnsureCreate<TestClass>();
-            Assert.NotNull(test1);
+            var testSub = typeof(TestSubClass).EnsureCreate<TestSubClass>();
+            Assert.NotNull(testSub);
 
-            Assert.Equal((test as TestClass).Property3, test1.Property3);
+            Assert.Equal(test.Property3, testSub.Property3);
 
             // Change Property
-            test1.Property3 = nameof(EnsureCreateTest);
+            testSub.Property3 = nameof(EnsureCreateTest);
 
-            var testParameter = test1.EnsureConstruct<TestClassReference>();
-            // == DefaultExtensions.EnsureCreate<TestClassReference>();
-            // == typeof(TestParameterCreate).EnsureCreate<TestClassReference>(test1);
-            Assert.NotNull(testParameter);
+            var testSubReference = testSub.EnsureConstruct<TestSubClassReference>();
+            Assert.NotNull(testSubReference);
 
-            Assert.Equal(testParameter.TestClass.Property3, test1.Property3);
+            Assert.Equal(testSubReference.TestSub.Property3, testSub.Property3);
         }
 
 

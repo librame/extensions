@@ -5,7 +5,7 @@ using Xunit;
 namespace Librame.Extensions.Storage.Tests
 {
     using Core.Combiners;
-    using Services;
+    using Storage.Services;
 
     public class FileTransferServiceTests
     {
@@ -20,8 +20,9 @@ namespace Librame.Extensions.Storage.Tests
         [Fact]
         public async void DownloadFileAsync()
         {
-            var url = "https://mat1.gtimg.com/pingjs/ext2020/qqindex2018/dist/img/qq_logo_2x.png";
-            var filePath = @"d:\qq_logo.png";
+            var url = "https://www.baidu.com/img/baidu_jgylogo3.gif";
+            var filePath = @"d:\baidu_jgylogo3.gif";
+            File.Delete(filePath);
 
             var combiner = await _fileTransfer.DownloadFileAsync(url, filePath).ConfigureAndResultAsync();
             Assert.NotNull(combiner);

@@ -17,7 +17,6 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Data.Stores
 {
     using Core.Services;
-    using Core.Threads;
 
     /// <summary>
     /// 抽象存储初始化器。
@@ -71,7 +70,7 @@ namespace Librame.Extensions.Data.Stores
         /// <typeparam name="TTenant">指定的租户类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <param name="stores">给定的存储中心。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "stores")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public virtual void Initialize<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TIncremId>
             (IStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> stores)
             where TAudit : DataAudit<TGenId>
@@ -90,18 +89,15 @@ namespace Librame.Extensions.Data.Stores
             if (!stores.Accessor.IsWritingConnectionString())
                 return;
 
-            Clock.Locker.WaitAction(() =>
+            InitializeCore(stores);
+
+            if (RequiredSaveChanges)
             {
-                InitializeCore(stores);
+                stores.Accessor.SaveChanges();
 
-                if (RequiredSaveChanges)
-                {
-                    stores.Accessor.SaveChanges();
-
-                    RequiredSaveChanges = false;
-                    IsInitialized = true;
-                }
-            });
+                RequiredSaveChanges = false;
+                IsInitialized = true;
+            };
 
             // 还原为默认数据连接
             stores.Accessor.ChangeConnectionString(tenant => tenant.DefaultConnectionString);
@@ -137,7 +133,7 @@ namespace Librame.Extensions.Data.Stores
         /// <typeparam name="TTenant">指定的租户类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <param name="stores">给定的存储中心。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "stores")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual void InitializeTenants<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TIncremId>
             (IStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> stores)
             where TAudit : DataAudit<TGenId>
@@ -166,7 +162,7 @@ namespace Librame.Extensions.Data.Stores
 
                 tenant.Id = Identifier.GetTenantIdAsync().ConfigureAndResult();
 
-                tenant.UpdatedTime = tenant.CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true)
+                tenant.UpdatedTime = tenant.CreatedTime = Clock.GetOffsetNowAsync()
                     .ConfigureAndResult();
                 tenant.UpdatedTimeTicks = tenant.CreatedTimeTicks = tenant.UpdatedTime.Ticks;
                 tenant.UpdatedBy = tenant.CreatedBy = EntityPopulator.FormatTypeName(GetType());

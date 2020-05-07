@@ -5,6 +5,7 @@ using Xunit;
 namespace Librame.Extensions.Drawing.Tests
 {
     using Core.Combiners;
+    using Core.Utilities;
     using Drawing.Services;
 
     public class CaptchaServiceTests
@@ -25,7 +26,12 @@ namespace Librame.Extensions.Drawing.Tests
         [Fact]
         public async void DrawCaptchaBytesTest()
         {
-            var captcha = _captchas[new Random().Next(0, _captchas.Length)];
+            var captcha = string.Empty;
+            RandomUtility.Run(r =>
+            {
+                captcha = _captchas[r.Next(0, _captchas.Length)];
+            });
+
             var buffer = await _service.DrawBytesAsync(captcha).ConfigureAndResultAsync();
             Assert.NotNull(buffer);
         }
@@ -33,7 +39,12 @@ namespace Librame.Extensions.Drawing.Tests
         [Fact]
         public async void DrawCaptchaFileTest()
         {
-            var captcha = _captchas[new Random().Next(0, _captchas.Length)];
+            var captcha = string.Empty;
+            RandomUtility.Run(r =>
+            {
+                captcha = _captchas[r.Next(0, _captchas.Length)];
+            });
+
             var saveFile = "captcha.png".AsFilePathCombiner(_service.Dependency.ResourceDirectory);
             var result = await _service.DrawFileAsync(captcha, saveFile).ConfigureAndResultAsync();
             Assert.True(result);

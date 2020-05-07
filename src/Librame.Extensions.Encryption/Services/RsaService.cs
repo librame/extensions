@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
@@ -23,26 +22,19 @@ namespace Librame.Extensions.Encryption.Services
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class RsaService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, IRsaService
     {
-        private readonly Lazy<RSA> _rsa;
-
-
         public RsaService(ISigningCredentialsService signingCredentials)
             : base(signingCredentials.CastTo<ISigningCredentialsService, AbstractExtensionBuilderService<EncryptionBuilderOptions>>(nameof(signingCredentials)))
         {
-            SigningCredentials = signingCredentials;
+            var credentials = signingCredentials.GetSigningCredentials(Options.SigningCredentialsKey);
+            Source = credentials.ResolveRsa();
 
-            _rsa = new Lazy<RSA>(() =>
-            {
-                var credentials = SigningCredentials.GetSigningCredentials(Options.SigningCredentialsKey);
-                return credentials.ResolveRsa();
-            });
+            SigningCredentials = signingCredentials;
         }
 
 
         public ISigningCredentialsService SigningCredentials { get; }
 
-        public RSA Source
-            => _rsa.Value;
+        public RSA Source { get; }
 
 
         public HashAlgorithmName SignHashAlgorithm { get; set; }
@@ -56,23 +48,23 @@ namespace Librame.Extensions.Encryption.Services
 
 
         public byte[] SignData(byte[] buffer)
-            => _rsa.Value.SignData(buffer, SignHashAlgorithm, SignaturePadding);
+            => Source.SignData(buffer, SignHashAlgorithm, SignaturePadding);
 
         public byte[] SignHash(byte[] buffer)
-            => _rsa.Value.SignHash(buffer, SignHashAlgorithm, SignaturePadding);
+            => Source.SignHash(buffer, SignHashAlgorithm, SignaturePadding);
 
 
         public bool VerifyData(byte[] buffer, byte[] signedBuffer)
-            => _rsa.Value.VerifyData(buffer, signedBuffer, SignHashAlgorithm, SignaturePadding);
+            => Source.VerifyData(buffer, signedBuffer, SignHashAlgorithm, SignaturePadding);
 
         public bool VerifyHash(byte[] buffer, byte[] signedBuffer)
-            => _rsa.Value.VerifyHash(buffer, signedBuffer, SignHashAlgorithm, SignaturePadding);
+            => Source.VerifyHash(buffer, signedBuffer, SignHashAlgorithm, SignaturePadding);
 
 
         public byte[] Encrypt(byte[] buffer)
-            => _rsa.Value.Encrypt(buffer, EncryptionPadding);
+            => Source.Encrypt(buffer, EncryptionPadding);
 
         public byte[] Decrypt(byte[] buffer)
-            => _rsa.Value.Decrypt(buffer, EncryptionPadding);
+            => Source.Decrypt(buffer, EncryptionPadding);
     }
 }

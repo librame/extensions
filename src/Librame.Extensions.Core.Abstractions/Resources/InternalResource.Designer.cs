@@ -61,11 +61,20 @@ namespace Librame.Extensions.Core.Resources {
         }
         
         /// <summary>
-        ///   查找类似 Configuration of dependency options is not supported. 的本地化字符串。
+        ///   查找类似 Configuration of dependency is not supported. 的本地化字符串。
         /// </summary>
-        internal static string ArgumentExceptionNotSupportedConfigurationOfDependencyOptions {
+        internal static string ArgumentExceptionNotSupportedConfigurationOfDependency {
             get {
-                return ResourceManager.GetString("ArgumentExceptionNotSupportedConfigurationOfDependencyOptions", resourceCulture);
+                return ResourceManager.GetString("ArgumentExceptionNotSupportedConfigurationOfDependency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 There is only one current data segment. 的本地化字符串。
+        /// </summary>
+        internal static string InvalidOperationExceptionDataSegment {
+            get {
+                return ResourceManager.GetString("InvalidOperationExceptionDataSegment", resourceCulture);
             }
         }
         

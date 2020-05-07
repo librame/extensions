@@ -45,7 +45,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
         /// <param name="builderFactory">给定创建数据构建器的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "parentBuilder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IDataBuilder AddData<TDependency>(this IExtensionBuilder parentBuilder,
             Action<TDependency> configureDependency = null,
             Func<IExtensionBuilder, TDependency, IDataBuilder> builderFactory = null)
@@ -80,7 +80,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TDesignTime">指定的设计时类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IDataBuilder AddDatabaseDesignTime<TDesignTime>(this IDataBuilder builder)
             where TDesignTime : class, IDesignTimeServices
         {

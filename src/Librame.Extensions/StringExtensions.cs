@@ -35,7 +35,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的当前字符串。</param>
         /// <param name="value">给定要确保的字符。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string EnsureLeading(this string str, char value)
         {
             str.NotEmpty(nameof(str));
@@ -52,7 +52,7 @@ namespace Librame.Extensions
         /// <param name="value">给定要确保的字符串。</param>
         /// <param name="comparisonType">给定的 <see cref="StringComparison"/>（可选；默认忽略大小写）。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string EnsureLeading(this string str, string value,
             StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
@@ -70,7 +70,7 @@ namespace Librame.Extensions
         /// <param name="str">给定的当前字符串。</param>
         /// <param name="value">给定要确保的字符。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string EnsureTrailing(this string str, char value)
         {
             str.NotEmpty(nameof(str));
@@ -87,7 +87,7 @@ namespace Librame.Extensions
         /// <param name="value">给定要确保的字符串。</param>
         /// <param name="comparisonType">给定的 <see cref="StringComparison"/>（可选；默认忽略大小写）。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "str")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string EnsureTrailing(this string str, string value,
             StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
@@ -182,7 +182,7 @@ namespace Librame.Extensions
         /// <param name="word">给定的英文单词。</param>
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "word")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
         public static string AsPascalCasing(this string word, char separator)
         {
@@ -196,7 +196,7 @@ namespace Librame.Extensions
         /// <param name="word">给定的英文单词。</param>
         /// <param name="separator">给定的分隔符（可选）。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "word")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
         public static string AsPascalCasing(this string word, string separator = null)
         {
@@ -216,7 +216,7 @@ namespace Librame.Extensions
         /// </exception>
         /// <param name="words">给定的英文单词数组。</param>
         /// <returns>返回字符串数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "words")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
         public static string[] AsPascalCasing(this string[] words)
         {
@@ -239,7 +239,7 @@ namespace Librame.Extensions
         /// <param name="word">给定的英文单词。</param>
         /// <param name="separator">给定的分隔符。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "word")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
         public static string AsCamelCasing(this string word, char separator)
         {
@@ -253,7 +253,7 @@ namespace Librame.Extensions
         /// <param name="word">给定的英文单词。</param>
         /// <param name="separator">给定的分隔符（可选）。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "word")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
         public static string AsCamelCasing(this string word, string separator = null)
         {
@@ -273,7 +273,7 @@ namespace Librame.Extensions
         /// </exception>
         /// <param name="words">给定的英文单词（多个单词以空格区分）。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "words")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         [SuppressMessage("Microsoft.Design", "CA1308:NormalizeStringsToUppercase")]
         public static string[] AsCamelCasing(this string[] words)
         {
@@ -380,7 +380,7 @@ namespace Librame.Extensions
         /// <param name="pair">给定的键值对字符串。</param>
         /// <param name="separator">给定字符串包含的分隔符（可选；默认为等号）。</param>
         /// <returns>返回键值对。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pair")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static KeyValuePair<string, string> SplitPair(this string pair, char separator = '=')
         {
             pair.NotEmpty(nameof(pair));
@@ -405,7 +405,7 @@ namespace Librame.Extensions
         /// <param name="pair">给定的键值对字符串。</param>
         /// <param name="separator">给定字符串包含的分隔符。</param>
         /// <returns>返回键值对。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pair")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static KeyValuePair<string, string> SplitPair(this string pair, string separator)
         {
             pair.NotEmpty(nameof(pair));
@@ -431,7 +431,7 @@ namespace Librame.Extensions
         /// <param name="pair">给定的键值对字符串。</param>
         /// <param name="separator">给定字符串包含的分隔符（可选；默认为等号）。</param>
         /// <returns>返回键值对。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pair")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static KeyValuePair<string, string> SplitPairByLastIndexOf(this string pair, char separator = '=')
         {
             pair.NotEmpty(nameof(pair));
@@ -456,7 +456,7 @@ namespace Librame.Extensions
         /// <param name="pair">给定的键值对字符串。</param>
         /// <param name="separator">给定字符串包含的分隔符。</param>
         /// <returns>返回键值对。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "pair")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static KeyValuePair<string, string> SplitPairByLastIndexOf(this string pair, string separator)
         {
             pair.NotEmpty(nameof(pair));

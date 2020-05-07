@@ -72,8 +72,8 @@ namespace Librame.Extensions.Data.Accessors
 
 
         /// <summary>
-        /// 构建器选项。
+        /// 构建器依赖。
         /// </summary>
-        DataBuilderOptions BuilderOptions { get; }
+        DataBuilderDependency Dependency { get; }
     }
 }

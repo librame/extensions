@@ -101,7 +101,7 @@ namespace Librame.Extensions.Data
         /// <typeparam name="TException">指定的异常类型。</typeparam>
         /// <param name="taskFactory">给定的异步操作工厂方法。</param>
         /// <returns>返回一个包含 <see cref="OperationResult"/> 的异步操作。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "taskFactory")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static async Task<OperationResult> TryRunFactoryAsync<TException>(Func<Task> taskFactory)
             where TException : Exception
         {

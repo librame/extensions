@@ -27,7 +27,7 @@ namespace Librame.Extensions.Storage.Tests
             var subdir = Directory.CreateDirectory(Path.Combine(provider.Root, now.Ticks.ToString()));
 
             var file = Path.Combine(subdir.FullName, "test.txt");
-            var text = $"Now: {now.ToString()}";
+            var text = $"Now: {now}";
             File.WriteAllText(file, text);
 
             var contents = await _service.GetDirectoryContentsAsync(subdir.Name).ConfigureAndResultAsync();

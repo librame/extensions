@@ -10,10 +10,10 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Core.Serializers
 {
+    using Transformers;
+
     /// <summary>
     /// 序列化器接口。
     /// </summary>
@@ -38,18 +38,9 @@ namespace Librame.Extensions.Core.Serializers
 
 
     /// <summary>
-    /// 标记序列化器接口。
+    /// 表示可自动注册的序列化器接口。如果不需要自动注册，请在实现类型中标记 <see cref="NonRegisteredAttribute"/>。
     /// </summary>
-    public interface ISerializer
+    public interface ISerializer : ITransformer
     {
-        /// <summary>
-        /// 来源类型。
-        /// </summary>
-        Type SourceType { get; }
-
-        /// <summary>
-        /// 目标类型。
-        /// </summary>
-        Type TargetType { get; }
     }
 }

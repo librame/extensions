@@ -50,13 +50,13 @@ namespace Librame.Extensions.Examples
                     new Category<int, Guid>
                     {
                         Name = $"First {_categoryName}",
-                        CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
+                        CreatedTime = Clock.GetOffsetNowAsync().ConfigureAndResult(),
                         CreatedBy = _createdBy
                     },
                     new Category<int, Guid>
                     {
                         Name = $"Last {_categoryName}",
-                        CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
+                        CreatedTime = Clock.GetOffsetNowAsync().ConfigureAndResult(),
                         CreatedBy = _createdBy
                     }
                 };
@@ -90,7 +90,7 @@ namespace Librame.Extensions.Examples
                         Title = $"{_articleName} {i.FormatString(3)}",
                         Descr = $"Descr {i.FormatString(3)}",
                         Category = (i < 50) ? _categories.First() : _categories.Last(),
-                        CreatedTime = Clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc: true).ConfigureAndResult(),
+                        CreatedTime = Clock.GetOffsetNowAsync().ConfigureAndResult(),
                         CreatedBy = GetType().GetDisplayName()
                     };
 

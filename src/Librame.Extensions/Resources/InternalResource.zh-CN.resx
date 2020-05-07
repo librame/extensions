@@ -153,4 +153,7 @@
   <data name="FormatExceptionBase32StringFormat" xml:space="preserve">
     <value>无效的 BASE32 字符串格式 '{0}'。</value>
   </data>
+  <data name="OverflowExceptionLockersFormat" xml:space="preserve">
+    <value>锁定器已被耗尽，请检查代码或修改最大锁定器数量“{0}”。</value>
+  </data>
 </root>

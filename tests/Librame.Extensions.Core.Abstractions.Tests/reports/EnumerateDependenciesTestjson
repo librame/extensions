@@ -1,0 +1,34 @@
+{
+  "PublicBuilderDependency": {
+    "BaseDirectory": "D:\\Repositories\\extensions\\tests\\Librame.Extensions.Core.Abstractions.Tests",
+    "ConfigDirectory": "D:\\Repositories\\extensions\\tests\\Librame.Extensions.Core.Abstractions.Tests\\configs",
+    "ReportDirectory": "D:\\Repositories\\extensions\\tests\\Librame.Extensions.Core.Abstractions.Tests\\reports",
+    "ResourceDirectory": "D:\\Repositories\\extensions\\tests\\Librame.Extensions.Core.Abstractions.Tests\\resources",
+    "OptionsType": {
+      "Value": "Librame.Extensions.Core.Tests.PublicBuilderOptions, Librame.Extensions.Core.Abstractions.Tests"
+    },
+    "Options": {
+      "TestString": null
+    },
+    "Name": "PublicBuilderDependency",
+    "Type": {
+      "Value": "Librame.Extensions.Core.Tests.PublicBuilderDependency, Librame.Extensions.Core.Abstractions.Tests"
+    }
+  },
+  "InternalBuilderDependency": {
+    "BaseDirectory": "D:\\Repositories\\extensions\\tests\\Librame.Extensions.Core.Abstractions.Tests",
+    "ConfigDirectory": "D:\\Repositories\\extensions\\tests\\Librame.Extensions.Core.Abstractions.Tests\\configs",
+    "ReportDirectory": "D:\\Repositories\\extensions\\tests\\Librame.Extensions.Core.Abstractions.Tests\\reports",
+    "ResourceDirectory": "D:\\Repositories\\extensions\\tests\\Librame.Extensions.Core.Abstractions.Tests\\resources",
+    "OptionsType": {
+      "Value": "Librame.Extensions.Core.Tests.InternalBuilderOptions, Librame.Extensions.Core.Abstractions.Tests"
+    },
+    "Options": {
+      "TestString": null
+    },
+    "Name": "InternalBuilderDependency",
+    "Type": {
+      "Value": "Librame.Extensions.Core.Tests.InternalBuilderDependency, Librame.Extensions.Core.Abstractions.Tests"
+    }
+  }
+}

@@ -12,7 +12,6 @@
 
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -56,13 +55,10 @@ namespace Librame.Extensions.Data.Migrations
             coreOptions.NotNull(nameof(coreOptions));
 
             var filePath = GetFilePathCombiner(accessor);
-            var cacheInfos = memoryCache.GetOrCreate(GetCacheKey(filePath), key =>
+            var cacheInfos = memoryCache.GetOrCreate(GetCacheKey(filePath), entry =>
             {
                 if (filePath.Exists())
-                {
-                    var json = filePath.ReadAllText(coreOptions.Encoding);
-                    return JsonConvert.DeserializeObject<List<MigrationCommandInfo>>(json);
-                }
+                    return filePath.ReadJson<List<MigrationCommandInfo>>();
 
                 return new List<MigrationCommandInfo>();
             });
@@ -107,11 +103,7 @@ namespace Librame.Extensions.Data.Migrations
 
             var filePath = GetFilePathCombiner(accessor);
             var cacheInfos = memoryCache.Get<List<MigrationCommandInfo>>(GetCacheKey(filePath));
-            if (cacheInfos.IsNotNull())
-            {
-                var json = JsonConvert.SerializeObject(cacheInfos);
-                filePath.WriteAllText(json, options.Encoding);
-            }
+            filePath.WriteJson(cacheInfos, options.Encoding);
         }
 
     }

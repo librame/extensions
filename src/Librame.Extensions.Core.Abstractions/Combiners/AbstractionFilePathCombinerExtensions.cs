@@ -10,6 +10,7 @@
 
 #endregion
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -62,10 +63,10 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="filePaths">给定的文件路径数组。</param>
         /// <param name="basePath">给定的基础路径。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/> 数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "filePaths")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FilePathCombiner[] AsFilePathCombiners(this string[] filePaths, string basePath = null)
         {
-            filePaths.NotEmpty(nameof(filePaths));
+            filePaths.NotNull(nameof(filePaths));
 
             var combiners = new FilePathCombiner[filePaths.Length];
 
@@ -93,7 +94,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="combiners">给定的 <see cref="FilePathCombiner"/> 集合。</param>
         /// <returns>返回字符串集合。</returns>
         public static IEnumerable<string> ToStrings(this IEnumerable<FilePathCombiner> combiners)
-            => combiners.NotEmpty(nameof(combiners)).Select(combiner => combiner?.ToString());
+            => combiners.NotNull(nameof(combiners)).Select(combiner => combiner?.ToString());
 
 
         /// <summary>
@@ -102,10 +103,10 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="combiners">给定的 <see cref="FilePathCombiner"/> 集合。</param>
         /// <param name="newBasePath">给定的新基础路径。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/> 集合。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiners")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IEnumerable<FilePathCombiner> ChangeBasePath(this IEnumerable<FilePathCombiner> combiners, string newBasePath)
         {
-            combiners.NotEmpty(nameof(combiners));
+            combiners.NotNull(nameof(combiners));
 
             foreach (var combiner in combiners)
                 combiner?.ChangeBasePath(newBasePath);
@@ -113,67 +114,8 @@ namespace Librame.Extensions.Core.Combiners
             return combiners;
         }
 
-        /// <summary>
-        /// 改变基础路径。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
-        /// <param name="newBasePathFactory">给定的新基础路径工厂方法（输入参数为当前基础路径）。</param>
-        /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
-        public static FilePathCombiner ChangeBasePath(this FilePathCombiner combiner, Func<string, string> newBasePathFactory)
-            => combiner.NotNull(nameof(combiner)).ChangeBasePath(newBasePathFactory?.Invoke(combiner.BasePath));
 
-        /// <summary>
-        /// 改变文件名。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
-        /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
-        /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
-        public static FilePathCombiner ChangeFileName(this FilePathCombiner combiner, Func<FileNameCombiner, string> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner)).ChangeFileName(newFileNameFactory?.Invoke(combiner.FileName));
-
-        /// <summary>
-        /// 改变文件名。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
-        /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
-        /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
-        public static FilePathCombiner ChangeFileName(this FilePathCombiner combiner, Func<FileNameCombiner, FileNameCombiner> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner)).ChangeFileName(newFileNameFactory?.Invoke(combiner.FileName));
-
-
-        /// <summary>
-        /// 依据当前文件组合器的文件名与指定的基础路径，新建一个 <see cref="FilePathCombiner"/>。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
-        /// <param name="newBasePathFactory">给定的新基础路径工厂方法（输入参数为当前基础路径）。</param>
-        /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
-        public static FilePathCombiner WithBasePath(this FilePathCombiner combiner, Func<string, string> newBasePathFactory)
-            => combiner.NotNull(nameof(combiner)).WithBasePath(newBasePathFactory?.Invoke(combiner.BasePath));
-
-        /// <summary>
-        /// 依据当前文件组合器的基础路径与指定的文件名，新建一个 <see cref="FilePathCombiner"/>。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
-        /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
-        /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
-        public static FilePathCombiner WithFileName(this FilePathCombiner combiner, Func<FileNameCombiner, string> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner)).WithFileName(newFileNameFactory?.Invoke(combiner.FileName));
-
-        /// <summary>
-        /// 依据当前文件组合器的基础路径与指定的文件名，新建一个 <see cref="FilePathCombiner"/>。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
-        /// <param name="newFileNameFactory">给定的新文件名工厂方法。</param>
-        /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "combiner")]
-        public static FilePathCombiner WithFileName(this FilePathCombiner combiner, Func<FileNameCombiner, FileNameCombiner> newFileNameFactory)
-            => combiner.NotNull(nameof(combiner)).WithFileName(newFileNameFactory?.Invoke(combiner.FileName));
-
+        #region FileInfo and DirectoryInfo
 
         /// <summary>
         /// 转换为 <see cref="FileInfo"/>。
@@ -181,7 +123,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <returns>返回 <see cref="FileInfo"/>。</returns>
         public static FileInfo AsFileInfo(this FilePathCombiner combiner)
-            => new FileInfo(combiner?.ToString());
+            => new FileInfo(combiner);
 
         /// <summary>
         /// 将基础路径转换为 <see cref="DirectoryInfo"/>。
@@ -191,18 +133,14 @@ namespace Librame.Extensions.Core.Combiners
         public static DirectoryInfo AsDirectoryInfo(this FilePathCombiner combiner)
             => new DirectoryInfo(combiner?.BasePath);
 
+
         /// <summary>
         /// 创建基础路径的目录。
         /// </summary>
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <returns>返回 <see cref="DirectoryInfo"/>。</returns>
         public static DirectoryInfo CreateDirectory(this FilePathCombiner combiner)
-        {
-            var directoryInfo = combiner.AsDirectoryInfo();
-            directoryInfo.Create();
-
-            return directoryInfo;
-        }
+            => Directory.CreateDirectory(combiner?.BasePath);
 
 
         /// <summary>
@@ -210,19 +148,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         public static void Delete(this FilePathCombiner combiner)
-            => File.Delete(combiner?.ToString());
-
-        /// <summary>
-        /// 删除文件。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
-        /// <param name="fileInfo">给定的 <see cref="FileInfo"/>。</param>
-        public static void Delete(this FilePathCombiner combiner, out FileInfo fileInfo)
-        {
-            fileInfo = combiner.AsFileInfo();
-            fileInfo.Delete();
-        }
-
+            => File.Delete(combiner);
 
         /// <summary>
         /// 文件是否存在。
@@ -230,19 +156,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool Exists(this FilePathCombiner combiner)
-            => File.Exists(combiner?.ToString());
-
-        /// <summary>
-        /// 文件是否存在。
-        /// </summary>
-        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
-        /// <param name="fileInfo">给定的 <see cref="FileInfo"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool Exists(this FilePathCombiner combiner, out FileInfo fileInfo)
-        {
-            fileInfo = combiner.AsFileInfo();
-            return fileInfo.Exists;
-        }
+            => File.Exists(combiner);
 
 
         /// <summary>
@@ -250,18 +164,82 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         public static void DirectoryExists(this FilePathCombiner combiner)
-            => Directory.Delete(combiner?.ToString());
+            => Directory.Delete(combiner?.BasePath);
+
+        #endregion
+
+
+        #region Read and Write
 
         /// <summary>
-        /// 目录是否存在。
+        /// 读取所有字节数组。
         /// </summary>
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
-        /// <param name="directoryInfo">给定的 <see cref="DirectoryInfo"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool DirectoryExists(this FilePathCombiner combiner, out DirectoryInfo directoryInfo)
+        /// <returns>返回字节数组。</returns>
+        public static byte[] ReadAllBytes(this FilePathCombiner combiner)
+            => File.ReadAllBytes(combiner);
+
+        /// <summary>
+        /// 写入所有字节数组。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="bytes">给定的字节数组。</param>
+        public static void WriteAllBytes(this FilePathCombiner combiner, byte[] bytes)
+            => File.WriteAllBytes(combiner, bytes);
+
+
+        /// <summary>
+        /// 读取所有行集合。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        /// <returns>返回字符串数组。</returns>
+        public static string[] ReadAllLines(this FilePathCombiner combiner, Encoding encoding = null)
         {
-            directoryInfo = combiner.AsDirectoryInfo();
-            return directoryInfo.Exists;
+            if (encoding.IsNull())
+                return File.ReadAllLines(combiner);
+
+            return File.ReadAllLines(combiner, encoding);
+        }
+
+        /// <summary>
+        /// 写入所有行集合。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="contents">给定的行内容集合。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        /// <param name="autoCreateDirectory">自动创建目录（可选；默认启用）。</param>
+        public static void WriteAllLines(this FilePathCombiner combiner, IEnumerable<string> contents,
+            Encoding encoding = null, bool autoCreateDirectory = true)
+        {
+            if (autoCreateDirectory)
+                combiner.CreateDirectory();
+
+            if (encoding.IsNull())
+            {
+                File.WriteAllLines(combiner, contents);
+                return;
+            }
+
+            File.WriteAllLines(combiner, contents, encoding);
+        }
+
+        /// <summary>
+        /// 附加所有行集合。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="contents">给定的内容集合。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        public static void AppendAllLines(this FilePathCombiner combiner, IEnumerable<string> contents,
+            Encoding encoding = null)
+        {
+            if (encoding.IsNull())
+            {
+                File.AppendAllLines(combiner?.Source, contents);
+                return;
+            }
+
+            File.AppendAllLines(combiner?.Source, contents, encoding);
         }
 
 
@@ -272,7 +250,12 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
         /// <returns>返回字符串。</returns>
         public static string ReadAllText(this FilePathCombiner combiner, Encoding encoding = null)
-            => encoding.IsNull() ? File.ReadAllText(combiner?.Source) : File.ReadAllText(combiner?.Source, encoding);
+        {
+            if (encoding.IsNull())
+                return File.ReadAllText(combiner);
+
+            return File.ReadAllText(combiner, encoding);
+        }
 
         /// <summary>
         /// 写入所有文本。
@@ -280,15 +263,20 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="contents">给定的内容集合。</param>
         /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
-        public static void WriteAllText(this FilePathCombiner combiner, string contents, Encoding encoding = null)
+        /// <param name="autoCreateDirectory">自动创建目录（可选；默认启用）。</param>
+        public static void WriteAllText(this FilePathCombiner combiner, string contents,
+            Encoding encoding = null, bool autoCreateDirectory = true)
         {
+            if (autoCreateDirectory)
+                combiner.CreateDirectory();
+
             if (encoding.IsNull())
             {
-                File.WriteAllText(combiner?.Source, contents);
+                File.WriteAllText(combiner, contents);
                 return;
             }
 
-            File.WriteAllText(combiner?.Source, contents, encoding);
+            File.WriteAllText(combiner, contents, encoding);
         }
 
         /// <summary>
@@ -297,7 +285,8 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <param name="contents">给定的内容集合。</param>
         /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
-        public static void AppendAllText(this FilePathCombiner combiner, string contents, Encoding encoding = null)
+        public static void AppendAllText(this FilePathCombiner combiner, string contents,
+            Encoding encoding = null)
         {
             if (encoding.IsNull())
             {
@@ -307,6 +296,71 @@ namespace Librame.Extensions.Core.Combiners
 
             File.AppendAllText(combiner?.Source, contents, encoding);
         }
+
+        #endregion
+
+
+        #region ReadJson and WriteJson
+
+        /// <summary>
+        /// 读取 JSON。
+        /// </summary>
+        /// <typeparam name="T">指定的反序列化类型。</typeparam>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        /// <param name="settings">给定的 <see cref="JsonSerializerSettings"/>（可选）。</param>
+        /// <returns>返回反序列化对象。</returns>
+        public static T ReadJson<T>(this FilePathCombiner combiner, Encoding encoding = null,
+            JsonSerializerSettings settings = null)
+        {
+            var json = combiner.ReadAllText(encoding);
+            
+            if (settings.IsNull())
+                return JsonConvert.DeserializeObject<T>(json);
+
+            return JsonConvert.DeserializeObject<T>(json, settings);
+        }
+
+        /// <summary>
+        /// 读取 JSON。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="type">给定的反序列化对象类型。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        /// <param name="settings">给定的 <see cref="JsonSerializerSettings"/>（可选）。</param>
+        /// <returns>返回反序列化对象。</returns>
+        public static object ReadJson(this FilePathCombiner combiner, Type type, Encoding encoding = null,
+            JsonSerializerSettings settings = null)
+        {
+            var json = combiner.ReadAllText(encoding);
+
+            if (settings.IsNull())
+                return JsonConvert.DeserializeObject(json, type);
+
+            return JsonConvert.DeserializeObject(json, type, settings);
+        }
+
+
+        /// <summary>
+        /// 写入 JSON。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="value"></param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        /// <param name="formatting">给定的 <see cref="Formatting"/>。</param>
+        /// <param name="settings">给定的 <see cref="JsonSerializerSettings"/>（可选）。</param>
+        /// <param name="autoCreateDirectory">自动创建目录（可选；默认启用）。</param>
+        /// <returns>返回 JSON 字符串。</returns>
+        public static string WriteJson(this FilePathCombiner combiner, object value, Encoding encoding = null,
+            Formatting formatting = Formatting.Indented, JsonSerializerSettings settings = null, bool autoCreateDirectory = true)
+        {
+            var json = JsonConvert.SerializeObject(value, formatting, settings);
+            combiner.WriteAllText(json, encoding, autoCreateDirectory);
+
+            return json;
+        }
+
+        #endregion
 
     }
 }

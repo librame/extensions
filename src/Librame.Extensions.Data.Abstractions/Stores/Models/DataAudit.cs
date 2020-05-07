@@ -23,7 +23,7 @@ namespace Librame.Extensions.Data.Stores
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     [Description("数据审计")]
-    [NotAudited]
+    [NonAudited]
     public class DataAudit<TGenId> : AbstractCreation<TGenId>
         where TGenId : IEquatable<TGenId>
     {

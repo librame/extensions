@@ -21,16 +21,20 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network.Services
 {
+    using Core.Services;
+
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class EmailService : NetworkServiceBase, IEmailService
     {
         private readonly IByteCodecService _byteCodec;
+        private readonly IClockService _clock;
 
 
-        public EmailService(IByteCodecService byteCodec)
+        public EmailService(IByteCodecService byteCodec, IClockService clock)
             : base(byteCodec.CastTo<IByteCodecService, NetworkServiceBase>(nameof(byteCodec)))
         {
             _byteCodec = byteCodec;
+            _clock = clock;
 
             SendCompletedCallback = (sender, e) =>
             {
@@ -97,7 +101,9 @@ namespace Librame.Extensions.Network.Services
 
                     // SendAsync
                     await client.SendMailAsync(message).ConfigureAndWaitAsync();
-                    Logger.LogDebug($"Send mail.");
+
+                    var timestamp = await _clock.GetOffsetNowAsync().ConfigureAndResultAsync();
+                    Logger.LogDebug($"Successful send of mail at {timestamp}.");
                 }
             }
         }

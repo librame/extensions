@@ -14,7 +14,6 @@ using DotNetty.Codecs.Http;
 using DotNetty.Codecs.Http.WebSockets;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -24,7 +23,6 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Network.DotNetty.Demo
 {
-    using Core.Builders;
     using Encryption.Services;
     using Network.Builders;
 
@@ -35,9 +33,10 @@ namespace Librame.Extensions.Network.DotNetty.Demo
 
 
         public WebSocketClient(IBootstrapWrapperFactory wrapperFactory,
-            ISigningCredentialsService signingCredentials, IOptions<CoreBuilderOptions> coreOptions,
-            IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
-            : base(wrapperFactory, signingCredentials, coreOptions, options, loggerFactory)
+            ISigningCredentialsService signingCredentials,
+            DotNettyDependency dependency,
+            ILoggerFactory loggerFactory)
+            : base(wrapperFactory, signingCredentials, dependency, loggerFactory)
         {
             _clientOptions = Options.WebSocketClient;
         }

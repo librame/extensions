@@ -46,7 +46,7 @@ namespace Librame.Extensions
                 Arguments = arguments ?? string.Empty
             };
             startInfoAction?.Invoke(startInfo);
-
+            
             return Process.Start(startInfo);
         }
 

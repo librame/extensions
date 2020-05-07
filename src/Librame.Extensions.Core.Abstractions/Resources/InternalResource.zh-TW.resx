@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgumentExceptionNotSupportedConfigurationOfDependencyOptions" xml:space="preserve">
-    <value>不支持依賴選項的配置。</value>
+  <data name="ArgumentExceptionNotSupportedConfigurationOfDependency" xml:space="preserve">
+    <value>不支持依賴的配置。</value>
+  </data>
+  <data name="InvalidOperationExceptionDataSegment" xml:space="preserve">
+    <value>當前數據片段僅有一個。</value>
   </data>
   <data name="NotSupportedExceptionDomainName" xml:space="preserve">
     <value>不支持除回環地址以外的其餘 IP 地址。</value>

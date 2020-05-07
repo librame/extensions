@@ -67,7 +67,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="implementationTypes">给定的实现类型集合。</param>
         /// <param name="lifetime">给定的 <see cref="ServiceLifetime"/>（可选；默认为单例）。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "implementationTypes")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void TryAddEnumerable(this IServiceCollection services,
             Type serviceType, IEnumerable<Type> implementationTypes,
             ServiceLifetime lifetime = ServiceLifetime.Singleton)

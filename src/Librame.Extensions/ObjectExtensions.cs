@@ -27,9 +27,8 @@ namespace Librame.Extensions
     /// </summary>
     public static class ObjectExtensions
     {
-        private static readonly object _locker = new object();
-
-        private static ConcurrentDictionary<string, Func<object[], object>> _createFactories
+        // 放在 ExtensionContext 中时，在 net48 环境下总会提示内部解析异常的错误
+        internal static ConcurrentDictionary<string, Func<object[], object>> CreateFactories
             = new ConcurrentDictionary<string, Func<object[], object>>();
 
 
@@ -113,7 +112,7 @@ namespace Librame.Extensions
         /// <param name="type">给定的类型。</param>
         /// <param name="parameters">给定的参数对象数组。</param>
         /// <returns>返回实例对象。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static object EnsureCreateObject(this Type type, params object[] parameters)
         {
             type.NotNull(nameof(type));
@@ -127,27 +126,28 @@ namespace Librame.Extensions
                 key = string.Concat(key, "_", string.Concat(paramTypes.Select(t => t.Name)));
             }
 
-            var factory = _createFactories.GetOrAdd(key, k =>
+            var factory = CreateFactories.GetOrAdd(key, @params =>
             {
                 var constructorInfo = type.GetConstructor(paramTypes);
-                var paramsExtension = Expression.Parameter(typeof(object[]), "_parameters");
-                var arguments = BuildParameters(paramTypes, paramsExtension);
-                var newExpression = Expression.New(constructorInfo, arguments);
+                var argsExpression = Expression.Parameter(typeof(object[]), "args");
+                var paramExpressions = BuildParameterExpressions(argsExpression);
+                var newExpression = Expression.New(constructorInfo, paramExpressions);
 
-                return Expression.Lambda<Func<object[], object>>(newExpression, paramsExtension).Compile();
+                var result = Expression.Lambda<Func<object[], object>>(newExpression, argsExpression);
+                return result.Compile();
             });
 
             return factory.Invoke(parameters);
 
-            // 建立参数表达式数组
-            Expression[] BuildParameters(Type[] parameterTypes, ParameterExpression parameterExpression)
+            // BuildParameterExpressions
+            Expression[] BuildParameterExpressions(ParameterExpression argsExpression)
             {
                 var list = new List<Expression>();
 
-                for (int i = 0; i < parameterTypes.Length; i++)
+                for (int i = 0; i < paramTypes.Length; i++)
                 {
-                    var expression = Expression.ArrayIndex(parameterExpression, Expression.Constant(i));
-                    var targetExpression = Expression.Convert(expression, parameterTypes[i]);
+                    var expression = Expression.ArrayIndex(argsExpression, Expression.Constant(i));
+                    var targetExpression = Expression.Convert(expression, paramTypes[i]);
                     list.Add(targetExpression);
                 }
 
@@ -305,11 +305,11 @@ namespace Librame.Extensions
         {
             if (singleton.IsNull())
             {
-                lock (_locker)
+                ExtensionSettings.Current.RunLocker(() =>
                 {
                     if (singleton.IsNull())
                         singleton = buildFactory?.Invoke();
-                }
+                });
             }
 
             return singleton.NotNull(nameof(singleton));

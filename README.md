@@ -185,7 +185,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         public int CategoryId { get; set; }
         public Category Category { get; set; }
     }
-    
+
     [Description("分类")]
     public class Category : AbstractEntityCreation<int>
     {
@@ -194,7 +194,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         public IList<Article> Articles { get; set; }
             = new List<Article>();
     }
-    
+
     public class TestDbContextAccessor : DbContextAccessor
     {
         public TestDbContextAccessor(DbContextOptions options)
@@ -251,7 +251,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         public Task<Guid> GetArticleIdAsync(CancellationToken cancellationToken = default)
             => GenerateIdAsync("ArticleId", cancellationToken);
     }
-    
+
     public class TestStoreInitializer : GuidStoreInitializer
     {
         // 参见 tests/Librame.Extensions.Data.EntityFrameworkCore.Tests/TestStoreInitializer.cs
@@ -263,7 +263,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
             : base(initializer, accessor)
         {
         }
-        
+
         public IList<Category> GetCategories()
             => Accessor.Categories.ToList();
 
@@ -282,7 +282,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
             return this;
         }
     }
-    
+
     var stores = services.GetRequiredService<TestStoreHub>()
     var categories = stores.GetCategories();
     Assert.Empty(categories);

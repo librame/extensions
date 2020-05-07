@@ -26,6 +26,18 @@ namespace Librame.Extensions
     /// </summary>
     public static class AlgorithmExtensions
     {
+        internal static ConcurrentDictionary<HashAlgorithmName, HashAlgorithm> HashAlgorithms
+             = new ConcurrentDictionary<HashAlgorithmName, HashAlgorithm>();
+
+        internal static ConcurrentDictionary<string, HMAC> HmacAlgorithms
+             = new ConcurrentDictionary<string, HMAC>();
+
+        internal static ConcurrentDictionary<string, SymmetricAlgorithm> SymmetricAlgorithms
+             = new ConcurrentDictionary<string, SymmetricAlgorithm>();
+
+        internal static ConcurrentDictionary<string, AsymmetricAlgorithm> AsymmetricAlgorithms
+             = new ConcurrentDictionary<string, AsymmetricAlgorithm>();
+
 
         #region Base and Hex
 
@@ -34,10 +46,12 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="bytes">给定的字节数组。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "bytes")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string AsBase32String(this byte[] bytes)
         {
             bytes.NotEmpty(nameof(bytes));
+
+            var chars = ExtensionSettings.Current.Base32Chars;
 
             var sb = new StringBuilder();
             for (var offset = 0; offset < bytes.Length;)
@@ -45,14 +59,14 @@ namespace Librame.Extensions
                 var numCharsToOutput = GetNextGroup(bytes, ref offset,
                     out byte a, out byte b, out byte c, out byte d, out byte e, out byte f, out byte g, out byte h);
 
-                sb.Append((numCharsToOutput >= 1) ? ExtensionSettings.Base32Chars[a] : '=');
-                sb.Append((numCharsToOutput >= 2) ? ExtensionSettings.Base32Chars[b] : '=');
-                sb.Append((numCharsToOutput >= 3) ? ExtensionSettings.Base32Chars[c] : '=');
-                sb.Append((numCharsToOutput >= 4) ? ExtensionSettings.Base32Chars[d] : '=');
-                sb.Append((numCharsToOutput >= 5) ? ExtensionSettings.Base32Chars[e] : '=');
-                sb.Append((numCharsToOutput >= 6) ? ExtensionSettings.Base32Chars[f] : '=');
-                sb.Append((numCharsToOutput >= 7) ? ExtensionSettings.Base32Chars[g] : '=');
-                sb.Append((numCharsToOutput >= 8) ? ExtensionSettings.Base32Chars[h] : '=');
+                sb.Append((numCharsToOutput >= 1) ? chars[a] : '=');
+                sb.Append((numCharsToOutput >= 2) ? chars[b] : '=');
+                sb.Append((numCharsToOutput >= 3) ? chars[c] : '=');
+                sb.Append((numCharsToOutput >= 4) ? chars[d] : '=');
+                sb.Append((numCharsToOutput >= 5) ? chars[e] : '=');
+                sb.Append((numCharsToOutput >= 6) ? chars[f] : '=');
+                sb.Append((numCharsToOutput >= 7) ? chars[g] : '=');
+                sb.Append((numCharsToOutput >= 8) ? chars[h] : '=');
             }
 
             return sb.ToString();
@@ -96,7 +110,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="base32String">给定的 BASE32 字符串。</param>
         /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "base32String")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static byte[] FromBase32String(this string base32String)
         {
             base32String.NotEmpty(nameof(base32String));
@@ -108,6 +122,8 @@ namespace Librame.Extensions
             if (base32String.HasLower())
                 base32String = base32String.ToUpperInvariant();
 
+            var chars = ExtensionSettings.Current.Base32Chars;
+
             var bytes = new byte[base32String.Length * 5 / 8];
             var bitIndex = 0;
             var inputIndex = 0;
@@ -116,7 +132,7 @@ namespace Librame.Extensions
 
             while (outputIndex < bytes.Length)
             {
-                var byteIndex = ExtensionSettings.Base32Chars.CompatibleIndexOf(base32String[inputIndex]);
+                var byteIndex = chars.CompatibleIndexOf(base32String[inputIndex]);
                 if (byteIndex < 0)
                     throw new FormatException(InternalResource.FormatExceptionBase32StringFormat.Format(base32String));
 
@@ -157,10 +173,10 @@ namespace Librame.Extensions
         /// <summary>
         /// 还原 BASE64 字符串。
         /// </summary>
-        /// <param name="base64String">给定的 BASE64 字符串。</param>
+        /// <param name="base64">给定的 BASE64 字符串。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] FromBase64String(this string base64String)
-            => Convert.FromBase64String(base64String);
+        public static byte[] FromBase64String(this string base64)
+            => Convert.FromBase64String(base64);
 
 
         /// <summary>
@@ -179,7 +195,7 @@ namespace Librame.Extensions
         /// </exception>
         /// <param name="hexString">给定的 16 进制字符串。</param>
         /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "hexString")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static byte[] FromHexString(this string hexString)
         {
             hexString.NotEmpty(nameof(hexString));
@@ -206,46 +222,92 @@ namespace Librame.Extensions
         /// 计算 MD5。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string Md5Base64String(this string str, Encoding encoding)
+        public static string Md5Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Md5Base64String();
 
         /// <summary>
         /// 计算 SHA1。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string Sha1Base64String(this string str, Encoding encoding)
+        public static string Sha1Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha1Base64String();
 
         /// <summary>
         /// 计算 SHA256。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string Sha256Base64String(this string str, Encoding encoding)
+        public static string Sha256Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha256Base64String();
 
         /// <summary>
         /// 计算 SHA384。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string Sha384Base64String(this string str, Encoding encoding)
+        public static string Sha384Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha384Base64String();
 
         /// <summary>
         /// 计算 SHA512。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string Sha512Base64String(this string str, Encoding encoding)
+        public static string Sha512Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha512Base64String();
+
+
+        /// <summary>
+        /// 计算 MD5。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Md5HexString(this string str, Encoding encoding = null)
+            => str.FromEncodingString(encoding).Md5HexString();
+
+        /// <summary>
+        /// 计算 SHA1。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Sha1HexString(this string str, Encoding encoding = null)
+            => str.FromEncodingString(encoding).Sha1HexString();
+
+        /// <summary>
+        /// 计算 SHA256。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Sha256HexString(this string str, Encoding encoding = null)
+            => str.FromEncodingString(encoding).Sha256HexString();
+
+        /// <summary>
+        /// 计算 SHA384。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Sha384HexString(this string str, Encoding encoding = null)
+            => str.FromEncodingString(encoding).Sha384HexString();
+
+        /// <summary>
+        /// 计算 SHA512。
+        /// </summary>
+        /// <param name="str">给定的字符串。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Sha512HexString(this string str, Encoding encoding = null)
+            => str.FromEncodingString(encoding).Sha512HexString();
 
 
         /// <summary>
@@ -293,70 +355,132 @@ namespace Librame.Extensions
         /// 计算 MD5。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
-        /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
-        /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
-        public static byte[] Md5(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => Hash(buffer, HashAlgorithmName.MD5, rsa, padding);
+        /// <returns>返回字符串。</returns>
+        public static string Md5HexString(this byte[] buffer)
+            => buffer.Md5().AsHexString();
 
         /// <summary>
         /// 计算 SHA1。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
-        /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
-        /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
-        public static byte[] Sha1(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => Hash(buffer, HashAlgorithmName.SHA1, rsa, padding);
+        /// <returns>返回字符串。</returns>
+        public static string Sha1HexString(this byte[] buffer)
+            => buffer.Sha1().AsHexString();
 
         /// <summary>
         /// 计算 SHA256。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
-        /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
-        /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
-        public static byte[] Sha256(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => Hash(buffer, HashAlgorithmName.SHA256, rsa, padding);
+        /// <returns>返回字符串。</returns>
+        public static string Sha256HexString(this byte[] buffer)
+            => buffer.Sha256().AsHexString();
 
         /// <summary>
         /// 计算 SHA384。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
-        /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
-        /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
-        public static byte[] Sha384(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => Hash(buffer, HashAlgorithmName.SHA384, rsa, padding);
+        /// <returns>返回字符串。</returns>
+        public static string Sha384HexString(this byte[] buffer)
+            => buffer.Sha384().AsHexString();
 
         /// <summary>
         /// 计算 SHA512。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
+        /// <returns>返回字符串。</returns>
+        public static string Sha512HexString(this byte[] buffer)
+            => buffer.Sha512().AsHexString();
+
+
+        /// <summary>
+        /// 计算 MD5。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="isSigned">是否签名（可选；默认不签名）。</param>
         /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
         /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsa")]
-        public static byte[] Sha512(this byte[] buffer, RSA rsa = null, RSASignaturePadding padding = null)
-            => Hash(buffer, HashAlgorithmName.SHA512, rsa, padding);
+        public static byte[] Md5(this byte[] buffer, bool isSigned = false,
+            RSA rsa = null, RSASignaturePadding padding = null)
+            => buffer.ComputeHash(HashAlgorithmName.MD5, isSigned, rsa, padding);
 
+        /// <summary>
+        /// 计算 SHA1。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="isSigned">是否签名（可选；默认不签名）。</param>
+        /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
+        /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] Sha1(this byte[] buffer, bool isSigned = false,
+            RSA rsa = null, RSASignaturePadding padding = null)
+            => buffer.ComputeHash(HashAlgorithmName.SHA1, isSigned, rsa, padding);
 
-        private static ConcurrentDictionary<HashAlgorithmName, HashAlgorithm> _hashAlgorithms
-            = new ConcurrentDictionary<HashAlgorithmName, HashAlgorithm>();
+        /// <summary>
+        /// 计算 SHA256。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="isSigned">是否签名（可选；默认不签名）。</param>
+        /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
+        /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] Sha256(this byte[] buffer, bool isSigned = false,
+            RSA rsa = null, RSASignaturePadding padding = null)
+            => buffer.ComputeHash(HashAlgorithmName.SHA256, isSigned, rsa, padding);
 
-        private static byte[] Hash(byte[] buffer, HashAlgorithmName algorithmName, RSA rsa = null, RSASignaturePadding padding = null)
+        /// <summary>
+        /// 计算 SHA384。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="isSigned">是否签名（可选；默认不签名）。</param>
+        /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
+        /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] Sha384(this byte[] buffer, bool isSigned = false,
+            RSA rsa = null, RSASignaturePadding padding = null)
+            => buffer.ComputeHash(HashAlgorithmName.SHA384, isSigned, rsa, padding);
+
+        /// <summary>
+        /// 计算 SHA512。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="isSigned">是否签名（可选；默认不签名）。</param>
+        /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名）。</param>
+        /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] Sha512(this byte[] buffer, bool isSigned = false,
+            RSA rsa = null, RSASignaturePadding padding = null)
+            => buffer.ComputeHash(HashAlgorithmName.SHA512, isSigned, rsa, padding);
+
+        /// <summary>
+        /// 计算散列。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="name">给定的散列算法名称。</param>
+        /// <param name="isSigned">是否签名（可选；默认不签名）。</param>
+        /// <param name="rsa">给定的 <see cref="RSA"/>（可选；默认不签名，如果启用签名，则此参数不能为空）。</param>
+        /// <param name="padding">给定的 <see cref="RSASignaturePadding"/>（可选；如果启用签名，则默认使用 <see cref="RSASignaturePadding.Pkcs1"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static byte[] ComputeHash(this byte[] buffer, HashAlgorithmName name,
+            bool isSigned = false, RSA rsa = null, RSASignaturePadding padding = null)
         {
-            var algorithm = _hashAlgorithms.GetOrAdd(algorithmName, name => HashAlgorithm.Create(name.Name));
-            var hash = algorithm.ComputeHash(buffer);
+            var algo = HashAlgorithms.GetOrAdd(name,
+                key => HashAlgorithm.Create(key.Name));
 
-            if (rsa.IsNotNull())
-                hash = rsa.SignHash(hash, algorithmName, padding ?? RSASignaturePadding.Pkcs1);
+            return ExtensionSettings.Current.RunLockerResult(() =>
+            {
+                var hash = algo.ComputeHash(buffer);
 
-            return hash;
+                // 提供对服务调用的支持
+                if (isSigned)
+                {
+                    rsa.NotNull(nameof(rsa));
+                    hash = rsa.SignHash(hash, name, padding ?? RSASignaturePadding.Pkcs1);
+                }
+
+                return hash;
+            });
         }
 
         #endregion
@@ -367,161 +491,69 @@ namespace Librame.Extensions
         /// <summary>
         /// 计算 HMACMD5。
         /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacMd5Base64String(this string str, byte[] key, Encoding encoding)
-            => str.FromEncodingString(encoding).HmacMd5Base64String(key);
-
-        /// <summary>
-        /// 计算 HMACSHA1。
-        /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacSha1Base64String(this string str, byte[] key, Encoding encoding)
-            => str.FromEncodingString(encoding).HmacSha1Base64String(key);
-
-        /// <summary>
-        /// 计算 HMACSHA256。
-        /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacSha256Base64String(this string str, byte[] key, Encoding encoding)
-            => str.FromEncodingString(encoding).HmacSha256Base64String(key);
-
-        /// <summary>
-        /// 计算 HMACSHA384。
-        /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacSha384Base64String(this string str, byte[] key, Encoding encoding)
-            => str.FromEncodingString(encoding).HmacSha384Base64String(key);
-
-        /// <summary>
-        /// 计算 HMACSHA512。
-        /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacSha512Base64String(this string str, byte[] key, Encoding encoding)
-            => str.FromEncodingString(encoding).HmacSha512Base64String(key);
-
-
-        /// <summary>
-        /// 计算 HMACMD5。
-        /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacMd5Base64String(this byte[] buffer, byte[] key)
-            => buffer.HmacMd5(key).AsBase64String();
-
-        /// <summary>
-        /// 计算 HMACSHA1。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacSha1Base64String(this byte[] buffer, byte[] key)
-            => buffer.HmacSha1(key).AsBase64String();
-
-        /// <summary>
-        /// 计算 HMACSHA256。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacSha256Base64String(this byte[] buffer, byte[] key)
-            => buffer.HmacSha256(key).AsBase64String();
-
-        /// <summary>
-        /// 计算 HMACSHA384。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacSha384Base64String(this byte[] buffer, byte[] key)
-            => buffer.HmacSha384(key).AsBase64String();
-
-        /// <summary>
-        /// 计算 HMACSHA512。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字符串。</returns>
-        public static string HmacSha512Base64String(this byte[] buffer, byte[] key)
-            => buffer.HmacSha512(key).AsBase64String();
-
-
-        /// <summary>
-        /// 计算 HMACMD5。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacShortKey"/>）。</param>
         /// <returns>返回字节数组。</returns>
         [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
-        public static byte[] HmacMd5(this byte[] buffer, byte[] key)
-            => HmacHash(buffer, nameof(HMACMD5), key, () => new HMACMD5());
+        public static byte[] HmacMd5(this byte[] buffer, byte[] key = null)
+            => buffer.ComputeHmacHash<HMACMD5>(key ?? ExtensionSettings.Current.HmacShortKey.FromBase64String());
 
         /// <summary>
         /// 计算 HMACSHA1。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacShortKey"/>）。</param>
         /// <returns>返回字节数组。</returns>
         [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
-        public static byte[] HmacSha1(this byte[] buffer, byte[] key)
-            => HmacHash(buffer, nameof(HMACSHA1), key, () => new HMACSHA1());
+        public static byte[] HmacSha1(this byte[] buffer, byte[] key = null)
+            => buffer.ComputeHmacHash<HMACSHA1>(key ?? ExtensionSettings.Current.HmacShortKey.FromBase64String());
 
         /// <summary>
         /// 计算 HMACSHA256。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacShortKey"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] HmacSha256(this byte[] buffer, byte[] key)
-            => HmacHash(buffer, nameof(HMACSHA256), key, () => new HMACSHA256());
+        public static byte[] HmacSha256(this byte[] buffer, byte[] key = null)
+            => buffer.ComputeHmacHash<HMACSHA256>(key ?? ExtensionSettings.Current.HmacShortKey.FromBase64String());
 
         /// <summary>
         /// 计算 HMACSHA384。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacLongKey"/>）。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] HmacSha384(this byte[] buffer, byte[] key)
-            => HmacHash(buffer, nameof(HMACSHA384), key, () => new HMACSHA384());
+        public static byte[] HmacSha384(this byte[] buffer, byte[] key = null)
+            => buffer.ComputeHmacHash<HMACSHA384>(key ?? ExtensionSettings.Current.HmacLongKey.FromBase64String());
 
         /// <summary>
         /// 计算 HMACSHA512。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacLongKey"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] HmacSha512(this byte[] buffer, byte[] key = null)
+            => buffer.ComputeHmacHash<HMACSHA512>(key ?? ExtensionSettings.Current.HmacLongKey.FromBase64String());
+
+        /// <summary>
+        /// 计算 HMAC 散列。
+        /// </summary>
+        /// <typeparam name="THmac">指定的 HMAC 类型。</typeparam>
+        /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">给定的密钥。</param>
         /// <returns>返回字节数组。</returns>
-        public static byte[] HmacSha512(this byte[] buffer, byte[] key)
-            => HmacHash(buffer, nameof(HMACSHA512), key, () => new HMACSHA512());
-
-
-        private static ConcurrentDictionary<string, HMAC> _hmacAlgorithms
-            = new ConcurrentDictionary<string, HMAC>();
-
-        private static byte[] HmacHash(byte[] buffer, string algorithmName, byte[] key, Func<HMAC> factory)
+        public static byte[] ComputeHmacHash<THmac>(this byte[] buffer, byte[] key)
+            where THmac : HMAC
         {
-            var algorithm = _hmacAlgorithms.GetOrAdd($"N={algorithmName},K={key.AsBase64String()}", name =>
+            var algo = HmacAlgorithms.GetOrAdd(typeof(THmac).Name,
+                key => HMAC.Create(key));
+            
+            return ExtensionSettings.Current.RunLockerResult(() =>
             {
-                var algo = factory.NotNull(nameof(factory)).Invoke();
-                algo.Key = key;
-                return algo;
-            });
+                algo.Key = key.NotEmpty(nameof(key));
 
-            return algorithm.ComputeHash(buffer);
+                return algo.ComputeHash(buffer);
+            });
         }
 
         #endregion
@@ -532,246 +564,199 @@ namespace Librame.Extensions
         /// <summary>
         /// 转换为 AES。
         /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string AsAesBase64String(this string str, byte[] key, Encoding encoding)
-            => str.FromEncodingString(encoding).AsAes(key).AsBase64String();
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="buffer"/> is null or empty.
+        /// </exception>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.AesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.AesVector"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] AsAes(this byte[] buffer, byte[] key = null, byte[] iv = null)
+            => buffer.SymmetricTransform<Aes>(isEncrypt: true,
+                key ?? ExtensionSettings.Current.AesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Current.AesVector.FromBase64String());
 
         /// <summary>
         /// 还原 AES。
         /// </summary>
-        /// <param name="base64String">给定的 BASE64 字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string FromAesBase64String(this string base64String, byte[] key, Encoding encoding)
-            => base64String.FromBase64String().FromAes(key).AsEncodingString(encoding);
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="buffer"/> is null or empty.
+        /// </exception>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.AesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.AesVector"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] FromAes(this byte[] buffer, byte[] key = null, byte[] iv = null)
+            => buffer.SymmetricTransform<Aes>(isEncrypt: false,
+                key ?? ExtensionSettings.Current.AesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Current.AesVector.FromBase64String());
 
 
         /// <summary>
         /// 转换为 DES。
         /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string AsDesBase64String(this string str, byte[] key, Encoding encoding)
-            => str.FromEncodingString(encoding).AsDes(key).AsBase64String();
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="buffer"/> is null or empty.
+        /// </exception>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.DesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.DesVector"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Security", "CA5351:不要使用损坏的加密算法")]
+        public static byte[] AsDes(this byte[] buffer, byte[] key = null, byte[] iv = null)
+            => buffer.SymmetricTransform<DES>(isEncrypt: true,
+                key ?? ExtensionSettings.Current.DesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Current.DesVector.FromBase64String());
 
         /// <summary>
         /// 还原 DES。
         /// </summary>
-        /// <param name="base64String">给定的 BASE64 字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string FromDesBase64String(this string base64String, byte[] key, Encoding encoding)
-            => base64String.FromBase64String().FromDes(key).AsEncodingString(encoding);
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="buffer"/> is null or empty.
+        /// </exception>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.DesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.DesVector"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Security", "CA5351:不要使用损坏的加密算法")]
+        public static byte[] FromDes(this byte[] buffer, byte[] key = null, byte[] iv = null)
+            => buffer.SymmetricTransform<DES>(isEncrypt: false,
+                key ?? ExtensionSettings.Current.DesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Current.DesVector.FromBase64String());
 
 
         /// <summary>
         /// 转换为 TripleDES。
         /// </summary>
-        /// <param name="str">给定的字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string AsTripleDesBase64String(this string str, byte[] key, Encoding encoding)
-            => str.FromEncodingString(encoding).AsTripleDes(key).AsBase64String();
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="buffer"/> is null or empty.
+        /// </exception>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.TripleDesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.TripleDesVector"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Security", "CA5350:不要使用弱加密算法")]
+        public static byte[] AsTripleDes(this byte[] buffer, byte[] key = null, byte[] iv = null)
+            => buffer.SymmetricTransform<TripleDES>(isEncrypt: true,
+                key ?? ExtensionSettings.Current.TripleDesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Current.TripleDesVector.FromBase64String());
 
         /// <summary>
         /// 还原 TripleDES。
         /// </summary>
-        /// <param name="base64String">给定的 BASE64 字符串。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        /// <returns>返回字符串。</returns>
-        public static string FromTripleDesBase64String(this string base64String, byte[] key, Encoding encoding)
-            => base64String.FromBase64String().FromTripleDes(key).AsEncodingString(encoding);
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="buffer"/> is null or empty.
+        /// </exception>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.TripleDesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.TripleDesVector"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Security", "CA5350:不要使用弱加密算法")]
+        public static byte[] FromTripleDes(this byte[] buffer, byte[] key = null, byte[] iv = null)
+            => buffer.SymmetricTransform<TripleDES>(isEncrypt: false,
+                key ?? ExtensionSettings.Current.TripleDesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Current.TripleDesVector.FromBase64String());
 
 
         /// <summary>
-        /// 转换为 AES。
+        /// 对称变换。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="buffer"/> is null or empty.
+        /// </exception>
+        /// <typeparam name="TSym">指定的对称算法类型。</typeparam>
         /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="isEncrypt">是加密运算，反之则解密。</param>
         /// <param name="key">给定的密钥。</param>
+        /// <param name="iv">给定的向量。</param>
         /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
-        public static byte[] AsAes(this byte[] buffer, byte[] key)
-            => SymAlgorithm(buffer, key, nameof(Aes), isEncrypt: true, () => Aes.Create());
-
-        /// <summary>
-        /// 还原 AES。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
-        public static byte[] FromAes(this byte[] buffer, byte[] key)
-            => SymAlgorithm(buffer, key, nameof(Aes), isEncrypt: false, () => Aes.Create());
-
-
-        /// <summary>
-        /// 转换为 DES。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
-        [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
-        public static byte[] AsDes(this byte[] buffer, byte[] key)
-            => SymAlgorithm(buffer, key, nameof(DES), isEncrypt: true, () => DES.Create());
-
-        /// <summary>
-        /// 还原 DES。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
-        [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
-        public static byte[] FromDes(this byte[] buffer, byte[] key)
-            => SymAlgorithm(buffer, key, nameof(DES), isEncrypt: false, () => DES.Create());
-
-
-        /// <summary>
-        /// 转换为 TripleDES。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
-        [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
-        public static byte[] AsTripleDes(this byte[] buffer, byte[] key)
-            => SymAlgorithm(buffer, key, nameof(TripleDES), isEncrypt: true, () => TripleDES.Create());
-
-        /// <summary>
-        /// 还原 TripleDES。
-        /// </summary>
-        /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥。</param>
-        /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "buffer")]
-        [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
-        public static byte[] FromTripleDes(this byte[] buffer, byte[] key)
-            => SymAlgorithm(buffer, key, nameof(TripleDES), isEncrypt: false, () => TripleDES.Create());
-
-
-        private static ConcurrentDictionary<string, SymmetricAlgorithm> _symAlgorithms
-            = new ConcurrentDictionary<string, SymmetricAlgorithm>();
-
-        private static byte[] SymAlgorithm(byte[] buffer, byte[] key, string algorithmName, bool isEncrypt, Func<SymmetricAlgorithm> factory)
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static byte[] SymmetricTransform<TSym>(this byte[] buffer, bool isEncrypt, byte[] key, byte[] iv)
+            where TSym : SymmetricAlgorithm
         {
-            var algorithm = _symAlgorithms.GetOrAdd($"N={algorithmName},K={key.AsBase64String()}", name =>
+            buffer.NotEmpty(nameof(buffer));
+
+            var algo = SymmetricAlgorithms.GetOrAdd(typeof(TSym).Name,
+                key => SymmetricAlgorithm.Create(key));
+
+            return ExtensionSettings.Current.RunLockerResult(() =>
             {
-                var algo = factory.NotNull(nameof(factory)).Invoke();
-                algo.Key = key;
+                algo.Key = key.NotEmpty(nameof(key));
+                algo.IV = iv.NotEmpty(nameof(iv));
+
                 algo.Mode = CipherMode.ECB;
                 algo.Padding = PaddingMode.PKCS7;
 
-                return algo;
+                if (isEncrypt)
+                {
+                    var encryptor = algo.CreateEncryptor();
+                    return encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
+                }
+
+                var decryptor = algo.CreateDecryptor();
+                return decryptor.TransformFinalBlock(buffer, 0, buffer.Length);
             });
-
-            if (isEncrypt)
-            {
-                var encryptor = algorithm.CreateEncryptor();
-                return encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
-            }
-
-            var decryptor = algorithm.CreateDecryptor();
-            return decryptor.TransformFinalBlock(buffer, 0, buffer.Length);
         }
 
         #endregion
 
 
-        //#region RSA
+        #region AsymmetricAlgorithm
 
-        ///// <summary>
-        ///// 转换为 RSA。
-        ///// </summary>
-        ///// <param name="str">给定的字符串。</param>
-        ///// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        ///// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
-        ///// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
-        ///// <returns>返回字符串。</returns>
-        //public static string AsRsaBase64String(this string str, Encoding encoding, RSAParameters parameters, RSAEncryptionPadding padding = null)
-        //    => str.FromEncodingString(encoding).AsRsa(parameters, padding).AsBase64String();
+        /// <summary>
+        /// RSA 非对称加密。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
+        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] AsRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
+            => buffer.RsaEndecrypt(parameters, padding, isEncrypt: true);
 
-        ///// <summary>
-        ///// 还原 RSA。
-        ///// </summary>
-        ///// <param name="base64String">给定的 BASE64 字符串。</param>
-        ///// <param name="encoding">给定的 <see cref="Encoding"/>。</param>
-        ///// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
-        ///// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
-        ///// <returns>返回字符串。</returns>
-        //public static string FromRsaBase64String(this string base64String, Encoding encoding, RSAParameters parameters, RSAEncryptionPadding padding = null)
-        //    => base64String.FromBase64String().FromRsa(parameters, padding).AsEncodingString(encoding);
+        /// <summary>
+        /// RSA 非对称解密。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
+        /// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
+        /// <returns>返回字节数组。</returns>
+        public static byte[] FromRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
+            => buffer.RsaEndecrypt(parameters, padding, isEncrypt: false);
 
+        private static byte[] RsaEndecrypt(this byte[] buffer, RSAParameters parameters,
+            RSAEncryptionPadding padding = null, bool isEncrypt = default)
+        {
+            return AsymmetricEndecrypt<RSA>(rsa =>
+            {
+                rsa.ImportParameters(parameters);
 
-        ///// <summary>
-        ///// 转换为 RSA。
-        ///// </summary>
-        ///// <param name="buffer">给定的字节数组。</param>
-        ///// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
-        ///// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
-        ///// <returns>返回字节数组。</returns>
-        //public static byte[] AsRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
-        //    => RsaAlgorithm(buffer, parameters, padding, isEncrypt: true);
+                if (isEncrypt)
+                    return rsa.Encrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
 
-        ///// <summary>
-        ///// 还原 RSA。
-        ///// </summary>
-        ///// <param name="buffer">给定的字节数组。</param>
-        ///// <param name="parameters">给定的 <see cref="RSAParameters"/>。</param>
-        ///// <param name="padding">给定的 <see cref="RSAEncryptionPadding"/>（可选；默认使用 <see cref="RSAEncryptionPadding.Pkcs1"/>）。</param>
-        ///// <returns>返回字节数组。</returns>
-        //public static byte[] FromRsa(this byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding = null)
-        //    => RsaAlgorithm(buffer, parameters, padding, isEncrypt: false);
+                return rsa.Decrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
+            });
+        }
 
 
-        //private static ConcurrentDictionary<string, RSA> _rsaAlgorithms
-        //    = new ConcurrentDictionary<string, RSA>();
+        /// <summary>
+        /// 非对称加解密。
+        /// </summary>
+        /// <typeparam name="TAsym">指定的非对称算法类型。</typeparam>
+        /// <param name="endecryptFactory">给定的加解密工厂方法。</param>
+        /// <returns>返回字节数组。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static byte[] AsymmetricEndecrypt<TAsym>(Func<TAsym, byte[]> endecryptFactory)
+            where TAsym : AsymmetricAlgorithm
+        {
+            endecryptFactory.NotNull(nameof(endecryptFactory));
 
-        //private static byte[] RsaAlgorithm(byte[] buffer, RSAParameters parameters, RSAEncryptionPadding padding, bool isEncrypt)
-        //{
-        //    var algorithm = _rsaAlgorithms.GetOrAdd($"{ToRSAParametersString(parameters)}", name =>
-        //    {
-        //        var algo = RSA.Create();
-        //        algo.ImportParameters(parameters);
+            var algo = AsymmetricAlgorithms.GetOrAdd(typeof(TAsym).Name,
+                key => AsymmetricAlgorithm.Create(key));
 
-        //        return algo;
-        //    });
+            return ExtensionSettings.Current.RunLockerResult(() => endecryptFactory.Invoke(algo as TAsym));
+        }
 
-        //    if (isEncrypt)
-        //        return algorithm.Encrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
-
-        //    return algorithm.Decrypt(buffer, padding ?? RSAEncryptionPadding.Pkcs1);
-        //}
-
-        //private static string ToRSAParametersString(RSAParameters parameters)
-        //{
-        //    var sb = new StringBuilder();
-
-        //    sb.Append($"{nameof(RSAParameters.D)}={BytesToString(parameters.D)},");
-        //    sb.Append($"{nameof(RSAParameters.DP)}={BytesToString(parameters.DP)},");
-        //    sb.Append($"{nameof(RSAParameters.DQ)}={BytesToString(parameters.DQ)},");
-        //    sb.Append($"{nameof(RSAParameters.Exponent)}={BytesToString(parameters.Exponent)},");
-        //    sb.Append($"{nameof(RSAParameters.InverseQ)}={BytesToString(parameters.InverseQ)},");
-        //    sb.Append($"{nameof(RSAParameters.Modulus)}={BytesToString(parameters.Modulus)},");
-        //    sb.Append($"{nameof(RSAParameters.P)}={BytesToString(parameters.P)},");
-        //    sb.Append($"{nameof(RSAParameters.Q)}={BytesToString(parameters.Q)}");
-
-        //    return sb.ToString();
-
-        //    string BytesToString(byte[] buffer)
-        //        => buffer.IsNotEmpty() ? buffer.AsBase64String() : string.Empty;
-        //}
-
-        //#endregion
+        #endregion
 
     }
 }

@@ -11,8 +11,6 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -121,7 +119,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回受影响的行数。</returns>
         protected override int SaveChangesCore(bool acceptAllChangesOnSuccess)
         {
-            var aspects = this.GetService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
+            var aspects = GetService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
             aspects.ForEach(aspect =>
             {
                 if (aspect.Enabled)
@@ -149,7 +147,7 @@ namespace Librame.Extensions.Data.Accessors
         protected override async Task<int> SaveChangesCoreAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
-            var aspects = this.GetService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
+            var aspects = GetService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
             aspects.ForEach(async aspect =>
             {
                 if (aspect.Enabled)
@@ -178,7 +176,7 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         protected override void MigrateCore()
         {
-            var migration = this.GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
+            var migration = GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             migration.Migrate(this);
         }
 
@@ -189,7 +187,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回 <see cref="Task"/>。</returns>
         protected override Task MigrateCoreAsync(CancellationToken cancellationToken = default)
         {
-            var migration = this.GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
+            var migration = GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             return migration.MigrateAsync(this, cancellationToken);
         }
 
@@ -204,7 +202,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回 <see cref="ITenant"/>。</returns>
         protected override ITenant SwitchTenant()
         {
-            var tenant = this.GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
+            var tenant = GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             return tenant.GetSwitchTenant(this);
         }
 
@@ -215,7 +213,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回包含 <see cref="ITenant"/> 的异步操作。</returns>
         protected override Task<ITenant> SwitchTenantAsync(CancellationToken cancellationToken = default)
         {
-            var tenant = this.GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
+            var tenant = GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
             return tenant.GetSwitchTenantAsync(this, cancellationToken);
         }
 

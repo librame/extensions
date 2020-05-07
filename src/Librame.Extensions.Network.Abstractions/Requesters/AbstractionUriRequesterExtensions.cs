@@ -32,7 +32,7 @@ namespace Librame.Extensions.Network.Requesters
         /// <param name="parameters">给定的自定义参数（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字节数组的异步操作。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "url")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static Task<byte[]> GetResponseBytesAsync(this IUriRequester requester, string url, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
             => requester.NotNull(nameof(requester))
@@ -48,7 +48,7 @@ namespace Librame.Extensions.Network.Requesters
         /// <param name="parameters">给定的自定义参数（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含字符串的异步操作。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "url")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static Task<string> GetResponseStringAsync(this IUriRequester requester, string url, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
             => requester.NotNull(nameof(requester))
@@ -64,7 +64,7 @@ namespace Librame.Extensions.Network.Requesters
         /// <param name="parameters">给定的自定义参数（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="Stream"/> 的异步操作。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "url")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public static Task<Stream> GetResponseStreamAsync(this IUriRequester requester, string url, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
             => requester.NotNull(nameof(requester))

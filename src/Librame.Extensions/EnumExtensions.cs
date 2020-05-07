@@ -85,7 +85,7 @@ namespace Librame.Extensions
         /// <param name="enumField">给定的枚举项。</param>
         /// <param name="converter">给定的结果转换方法。</param>
         /// <returns>返回结果。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "converter")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static TResult AsEnumResult<TEnum, TResult>(this TEnum enumField,
             Func<FieldInfo, TResult> converter)
             where TEnum : Enum

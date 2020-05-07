@@ -153,4 +153,7 @@
   <data name="FormatExceptionBase32StringFormat" xml:space="preserve">
     <value>Invalid BASE32 string format '{0}'.</value>
   </data>
+  <data name="OverflowExceptionLockersFormat" xml:space="preserve">
+    <value>The lockers is depleted, please check the code or modify the MaxLockerCount ‘{0}’.</value>
+  </data>
 </root>

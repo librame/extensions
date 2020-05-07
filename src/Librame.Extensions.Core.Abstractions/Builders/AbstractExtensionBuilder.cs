@@ -43,8 +43,6 @@ namespace Librame.Extensions.Core.Builders
         {
             Dependency = dependency.NotNull(nameof(dependency));
             Services = services.NotNull(nameof(services));
-
-            ParentBuilder = null;
         }
 
 

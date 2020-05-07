@@ -10,110 +10,49 @@
 
 #endregion
 
-using Microsoft.Extensions.Logging;
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
 
 namespace Librame.Extensions.Encryption.Services
 {
     using Core.Services;
     using Encryption.Builders;
-    using Encryption.KeyGenerators;
+    using Encryption.Generators;
+    using Encryption.Identifiers;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class SymmetricService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISymmetricService
     {
-        private readonly Lazy<Aes> _aes;
-        private readonly Lazy<DES> _des;
-        private readonly Lazy<TripleDES> _3des;
-
-
         [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
         [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
-        public SymmetricService(IKeyGenerator keyGenerator)
+        public SymmetricService(IKeyGenerator keyGenerator, IVectorGenerator vectorGenerator)
             : base(keyGenerator.CastTo<IKeyGenerator, AbstractExtensionBuilderService<EncryptionBuilderOptions>>(nameof(keyGenerator)))
         {
             KeyGenerator = keyGenerator;
-
-            _aes = new Lazy<Aes>(() =>
-            {
-                var algo = Aes.Create();
-                algo.Key = KeyGenerator.GetAesKey();
-                InitializeAlgorithm(algo);
-                return algo;
-            });
-
-            _des = new Lazy<DES>(() =>
-            {
-                var algo = DES.Create();
-                algo.Key = KeyGenerator.GetDesKey();
-                InitializeAlgorithm(algo);
-                return algo;
-            });
-
-            _3des = new Lazy<TripleDES>(() =>
-            {
-                var algo = TripleDES.Create();
-                algo.Key = KeyGenerator.GetTripleDesKey();
-                InitializeAlgorithm(algo);
-                return algo;
-            });
-        }
-
-        private void InitializeAlgorithm(SymmetricAlgorithm algorithm)
-        {
-            algorithm.Mode = CipherMode.ECB;
-            algorithm.Padding = PaddingMode.PKCS7;
+            VectorGenerator = vectorGenerator;
         }
 
 
         public IKeyGenerator KeyGenerator { get; }
 
-
-        private byte[] Encrypt(SymmetricAlgorithm algorithm, byte[] buffer)
-        {
-            var encryptor = algorithm.CreateEncryptor();
-
-            buffer = encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
-            Logger.LogDebug($"Encrypt final block: {nameof(CipherMode)}={algorithm.Mode.ToString()}, {nameof(PaddingMode)}={algorithm.Padding.ToString()}");
-
-            return buffer;
-        }
-
-        private byte[] Decrypt(SymmetricAlgorithm algorithm, byte[] buffer)
-        {
-            var encryptor = algorithm.CreateDecryptor();
-
-            buffer = encryptor.TransformFinalBlock(buffer, 0, buffer.Length);
-            Logger.LogDebug($"Decrypt final block: {nameof(CipherMode)}={algorithm.Mode.ToString()}, {nameof(PaddingMode)}={algorithm.Padding.ToString()}");
-
-            return buffer;
-        }
+        public IVectorGenerator VectorGenerator { get; }
 
 
         #region AES
 
-        public byte[] EncryptAes(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] EncryptAes(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetAesKey(descriptor);
-                _aes.Value.Key = key;
-            }
+            var key = KeyGenerator.GetAesKey(identifier);
+            var vector = VectorGenerator.GetAesVector(key, identifier);
 
-            return Encrypt(_aes.Value, buffer);
+            return buffer.AsAes(key, vector);
         }
 
-        public byte[] DecryptAes(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] DecryptAes(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetAesKey(descriptor);
-                _aes.Value.Key = key;
-            }
+            var key = KeyGenerator.GetAesKey(identifier);
+            var vector = VectorGenerator.GetAesVector(key, identifier);
 
-            return Decrypt(_aes.Value, buffer);
+            return buffer.FromAes(key, vector);
         }
 
         #endregion
@@ -121,26 +60,20 @@ namespace Librame.Extensions.Encryption.Services
 
         #region DES
 
-        public byte[] EncryptDes(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] EncryptDes(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetDesKey(descriptor);
-                _des.Value.Key = key;
-            }
+            var key = KeyGenerator.GetDesKey(identifier);
+            var vector = VectorGenerator.GetDesVector(key, identifier);
 
-            return Encrypt(_des.Value, buffer);
+            return buffer.AsDes(key, vector);
         }
 
-        public byte[] DecryptDes(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] DecryptDes(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetDesKey(descriptor);
-                _des.Value.Key = key;
-            }
+            var key = KeyGenerator.GetDesKey(identifier);
+            var vector = VectorGenerator.GetDesVector(key, identifier);
 
-            return Decrypt(_des.Value, buffer);
+            return buffer.FromDes(key, vector);
         }
 
         #endregion
@@ -148,26 +81,20 @@ namespace Librame.Extensions.Encryption.Services
 
         #region TripleDES
 
-        public byte[] EncryptTripleDes(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] EncryptTripleDes(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetTripleDesKey(descriptor);
-                _3des.Value.Key = key;
-            }
+            var key = KeyGenerator.GetTripleDesKey(identifier);
+            var vector = VectorGenerator.GetTripleDesVector(key, identifier);
 
-            return Encrypt(_3des.Value, buffer);
+            return buffer.AsTripleDes(key, vector);
         }
 
-        public byte[] DecryptTripleDes(byte[] buffer, KeyDescriptor descriptor = null)
+        public byte[] DecryptTripleDes(byte[] buffer, SecurityIdentifier identifier = null)
         {
-            if (descriptor.IsNotNull())
-            {
-                var key = KeyGenerator.GetTripleDesKey(descriptor);
-                _3des.Value.Key = key;
-            }
+            var key = KeyGenerator.GetTripleDesKey(identifier);
+            var vector = VectorGenerator.GetTripleDesVector(key, identifier);
 
-            return Decrypt(_3des.Value, buffer);
+            return buffer.FromTripleDes(key, vector);
         }
 
         #endregion

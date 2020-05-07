@@ -22,7 +22,7 @@ namespace Librame.Extensions.Data.Tests
         
         private void RunTest(IStringLocalizer<DataMigrationResource> localizer, string cultureName)
         {
-            CultureUtility.Register(new CultureInfo(cultureName));
+            CultureInfoUtility.Register(new CultureInfo(cultureName));
 
             var accessorName = localizer.GetString(r => r.AccessorName);
             Assert.False(accessorName.ResourceNotFound);

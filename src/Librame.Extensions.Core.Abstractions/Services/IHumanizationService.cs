@@ -19,7 +19,7 @@ namespace Librame.Extensions.Core.Services
     /// <summary>
     /// 人性化服务接口。
     /// </summary>
-    public interface IHumanizationService : IConcurrentService
+    public interface IHumanizationService
     {
         /// <summary>
         /// 异步人性化。

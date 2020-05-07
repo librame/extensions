@@ -20,13 +20,13 @@ namespace Librame.Extensions.Tests
     }
 
 
-    public class TestClassReference
+    public class TestSubClassReference
     {
-        public TestClassReference(TestClass testClass)
+        public TestSubClassReference(TestSubClass testSub)
         {
-            TestClass = testClass;
+            TestSub = testSub;
         }
 
-        public TestClass TestClass { get; }
+        public TestSubClass TestSub { get; }
     }
 }

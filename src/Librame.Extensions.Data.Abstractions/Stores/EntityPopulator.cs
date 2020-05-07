@@ -63,13 +63,12 @@ namespace Librame.Extensions.Data.Stores
         /// <typeparam name="TInvoke">指定的调用类型。</typeparam>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="entity">给定的实体对象。</param>
-        /// <param name="isUtc">用于获取时间的相对于协调世界时请求（可选；默认使用选项设置）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static Task<bool> PopulateCreationAsync<TInvoke>(IClockService clock, object entity,
-            bool? isUtc = null, CancellationToken cancellationToken = default)
-            => PopulateCreationAsync(clock, entity, FormatTypeName<TInvoke>(), isUtc, cancellationToken);
+            CancellationToken cancellationToken = default)
+            => PopulateCreationAsync(clock, entity, FormatTypeName<TInvoke>(), cancellationToken);
 
         /// <summary>
         /// 异步填充创建属性。
@@ -77,12 +76,11 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="entity">给定的实体对象。</param>
         /// <param name="createdBy">给定的创建者对象。</param>
-        /// <param name="isUtc">用于获取时间的相对于协调世界时请求（可选；默认使用选项设置）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static async Task<bool> PopulateCreationAsync(IClockService clock, object entity, object createdBy,
-            bool? isUtc = null, CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
         {
             entity.NotNull(nameof(entity));
 
@@ -104,10 +102,10 @@ namespace Librame.Extensions.Data.Stores
             object createdTime = null;
 
             if (createdTimeType == typeof(DateTime))
-                createdTime = await clock.GetNowAsync(DateTime.Now, isUtc, cancellationToken).ConfigureAndResultAsync();
+                createdTime = await clock.GetNowAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
 
             if (createdTimeType == typeof(DateTimeOffset))
-                createdTime = await clock.GetOffsetNowAsync(DateTimeOffset.Now, isUtc, cancellationToken).ConfigureAndResultAsync();
+                createdTime = await clock.GetOffsetNowAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
 
             if (createdTime.IsNotNull())
             {
@@ -135,13 +133,12 @@ namespace Librame.Extensions.Data.Stores
         /// <typeparam name="TInvoke">指定的调用类型。</typeparam>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="entity">给定的实体对象。</param>
-        /// <param name="isUtc">用于获取时间的相对于协调世界时请求（可选；默认使用选项设置）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static Task<bool> PopulateUpdationAsync<TInvoke>(IClockService clock, object entity,
-            bool? isUtc = null, CancellationToken cancellationToken = default)
-            => PopulateUpdationAsync(clock, entity, FormatTypeName<TInvoke>(), isUtc, cancellationToken);
+            CancellationToken cancellationToken = default)
+            => PopulateUpdationAsync(clock, entity, FormatTypeName<TInvoke>(), cancellationToken);
 
         /// <summary>
         /// 异步填充更新属性。
@@ -149,12 +146,11 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="entity">给定的实体对象。</param>
         /// <param name="updatedBy">给定的更新者对象。</param>
-        /// <param name="isUtc">用于获取时间的相对于协调世界时请求（可选；默认使用选项设置）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static async Task<bool> PopulateUpdationAsync(IClockService clock, object entity, object updatedBy,
-            bool? isUtc = null, CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
         {
             entity.NotNull(nameof(entity));
 
@@ -180,10 +176,10 @@ namespace Librame.Extensions.Data.Stores
             object updatedTime = null;
 
             if (updatedTimeType == typeof(DateTime))
-                updatedTime = await clock.GetNowAsync(DateTime.Now, isUtc, cancellationToken).ConfigureAndResultAsync();
+                updatedTime = await clock.GetNowAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
 
             if (updatedTimeType == typeof(DateTimeOffset))
-                updatedTime = await clock.GetOffsetNowAsync(DateTimeOffset.Now, isUtc, cancellationToken).ConfigureAndResultAsync();
+                updatedTime = await clock.GetOffsetNowAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
 
             if (updatedTime.IsNotNull())
             {

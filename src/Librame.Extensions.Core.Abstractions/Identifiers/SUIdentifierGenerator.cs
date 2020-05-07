@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Core.Identifiers
 {
     using Services;
-    using Threads;
     using Utilities;
 
     /// <summary>
@@ -49,19 +48,19 @@ namespace Librame.Extensions.Core.Identifiers
         /// 异步生成标识符。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="isUtc">相对于协调世界时（可选；默认使用选项设置）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Guid"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "clock")]
-        public Task<Guid> GenerateAsync(IClockService clock, bool? isUtc = null,
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public async Task<Guid> GenerateAsync(IClockService clock,
             CancellationToken cancellationToken = default)
         {
             clock.NotNull(nameof(clock));
 
-            return clock.Locker.WaitFactoryAsync(async () =>
+            var timestampBytes = await GetCurrentTimestampAsync(clock, cancellationToken)
+                .ConfigureAndResultAsync();
+
+            return ExtensionSettings.Current.RunLockerResult(() =>
             {
-                var timestampBytes = await GetCurrentTimestampAsync(clock, isUtc, cancellationToken)
-                    .ConfigureAndResultAsync();
                 var randomBytes = RandomUtility.GenerateByteArray(10);
                 var guidBytes = new byte[16];
 
@@ -91,10 +90,10 @@ namespace Librame.Extensions.Core.Identifiers
             });
         }
 
-        private static async Task<byte[]> GetCurrentTimestampAsync(IClockService clock, bool? isUtc = null,
+        private static async Task<byte[]> GetCurrentTimestampAsync(IClockService clock,
             CancellationToken cancellationToken = default)
         {
-            var now = await clock.GetOffsetNowAsync(DateTimeOffset.UtcNow, isUtc, cancellationToken)
+            var now = await clock.GetOffsetNowAsync(cancellationToken: cancellationToken)
                 .ConfigureAndResultAsync();
 
             var buffer = BitConverter.GetBytes(now.Ticks / 10000L);

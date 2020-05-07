@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace Librame.Extensions.Network.Services
@@ -38,14 +37,12 @@ namespace Librame.Extensions.Network.Services
         /// <summary>
         /// 构造一个 <see cref="NetworkServiceBase"/>。
         /// </summary>
-        /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{NetworkBuilderOptions}"/>。</param>
+        /// <param name="dependency">给定的 <see cref="NetworkBuilderDependency"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected NetworkServiceBase(IOptions<CoreBuilderOptions> coreOptions,
-            IOptions<NetworkBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(options, loggerFactory)
+        protected NetworkServiceBase(NetworkBuilderDependency dependency, ILoggerFactory loggerFactory)
+            : base(dependency?.Options, loggerFactory)
         {
-            CoreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
+            CoreOptions = dependency.GetRequiredParentDependency<CoreBuilderDependency>().Options;
         }
 
 

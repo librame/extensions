@@ -17,6 +17,8 @@ using System.IO;
 
 namespace Librame.Extensions.Storage
 {
+    using Resources;
+
     /// <summary>
     /// 物理存储目录信息。
     /// </summary>
@@ -26,7 +28,7 @@ namespace Librame.Extensions.Storage
         /// 构造一个 <see cref="PhysicalStorageDirectoryInfo"/>。
         /// </summary>
         /// <param name="info">给定的 <see cref="DirectoryInfo"/>。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "info")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public PhysicalStorageDirectoryInfo(DirectoryInfo info)
         {
             info.NotNull(nameof(info));
@@ -43,7 +45,7 @@ namespace Librame.Extensions.Storage
         /// 构造一个 <see cref="PhysicalStorageDirectoryInfo"/>。
         /// </summary>
         /// <param name="info">给定的 <see cref="IFileInfo"/>。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "info")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public PhysicalStorageDirectoryInfo(IFileInfo info)
         {
             info.NotNull(nameof(info));
@@ -96,7 +98,7 @@ namespace Librame.Extensions.Storage
         /// </exception>
         /// <returns>没有返回。</returns>
         public Stream CreateReadStream()
-            => throw new InvalidOperationException("Cannot create a stream for a directory.");
+            => throw new InvalidOperationException(InternalResource.InvalidOperationExceptionCreateStream);
 
         /// <summary>
         /// 总是引发异常，因为目录上不支持写入流。
@@ -106,6 +108,6 @@ namespace Librame.Extensions.Storage
         /// </exception>
         /// <returns>没有返回。</returns>
         public Stream CreateWriteStream()
-            => throw new InvalidOperationException("Cannot create a stream for a directory.");
+            => throw new InvalidOperationException(InternalResource.InvalidOperationExceptionCreateStream);
     }
 }

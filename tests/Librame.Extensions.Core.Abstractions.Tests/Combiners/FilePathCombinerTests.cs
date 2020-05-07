@@ -12,7 +12,7 @@ namespace Librame.Extensions.Core.Tests
             var path = @"c:\test\file.ext";
 
             var combiner = path.AsFilePathCombiner();
-            Assert.Equal(@"c:\test", combiner.BasePath);
+            Assert.Equal(@"c:\test\", combiner.BasePath);
             Assert.Equal("file.ext", combiner.FileName);
             Assert.Equal(path, combiner.ToString());
 

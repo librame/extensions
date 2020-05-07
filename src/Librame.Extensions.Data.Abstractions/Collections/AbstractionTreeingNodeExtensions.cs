@@ -34,7 +34,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="nodes">给定的树形节点集合。</param>
         /// <param name="orderedFactory">给定的排序工厂方法（可选）。</param>
         /// <returns>返回无层级树形节点列表。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "nodes")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IList<TreeingNode<T, TId>> ExportNonstratifiedNodes<T, TId>(IEnumerable<TreeingNode<T, TId>> nodes,
             Func<IEnumerable<TreeingNode<T, TId>>, IOrderedEnumerable<TreeingNode<T, TId>>> orderedFactory = null)
             where T : IParentId<TId>

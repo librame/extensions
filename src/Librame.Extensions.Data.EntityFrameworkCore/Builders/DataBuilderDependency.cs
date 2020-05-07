@@ -23,8 +23,11 @@ namespace Librame.Extensions.Data.Builders
     /// </summary>
     public class DataBuilderDependency : AbstractExtensionBuilderDependency<DataBuilderOptions>
     {
-        private const string ConnectionStringsSectionName = "ConnectionStrings";
-        private const string DefaultTenantSectionName = nameof(DataBuilderDependency.Options.DefaultTenant);
+        private const string ConnectionStringsSectionName
+            = "ConnectionStrings";
+
+        private const string DefaultTenantSectionName
+            = nameof(DataBuilderOptions.DefaultTenant);
 
 
         /// <summary>
@@ -93,7 +96,7 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="configuration">给定的连接字符串集合 <see cref="IConfiguration"/>。</param>
         /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "configuration")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public DataBuilderDependency BindConnectionStrings(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
@@ -155,7 +158,7 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="configuration">给定的默认租户 <see cref="IConfiguration"/>。</param>
         /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "configurationSection")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public DataBuilderDependency BindDefaultTenant(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {

@@ -30,7 +30,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="credentials">给定的 <see cref="SigningCredentials"/>。</param>
         /// <param name="throwIfError">是否抛出异常（可选；默认抛出异常）。</param>
         /// <returns>返回 <see cref="RSA"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "credentials")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static RSA ResolveRsa(this SigningCredentials credentials, bool throwIfError = true)
         {
             credentials.NotNull(nameof(credentials));
@@ -64,7 +64,7 @@ namespace Microsoft.IdentityModel.Tokens
         /// <param name="credentials">给定的 <see cref="SigningCredentials"/>。</param>
         /// <param name="throwIfError">是否抛出异常（可选；默认抛出异常）。</param>
         /// <returns>返回 <see cref="X509Certificate2"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "credentials")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static X509Certificate2 ResolveCertificate(this SigningCredentials credentials, bool throwIfError = true)
         {
             credentials.NotNull(nameof(credentials));

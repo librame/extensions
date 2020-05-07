@@ -199,7 +199,7 @@ namespace Librame.Extensions.Data.Collections
         /// </summary>
         /// <param name="other">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "other")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public bool Equals(TreeingNode<T, TId> other)
         {
             other.NotNull(nameof(other));
@@ -235,7 +235,7 @@ namespace Librame.Extensions.Data.Collections
         /// </summary>
         /// <param name="toStringFactory">给定的转换方法。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "toStringFactory")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public string ToString(Func<TreeingNode<T, TId>, string> toStringFactory)
         {
             if (Children.IsEmpty())

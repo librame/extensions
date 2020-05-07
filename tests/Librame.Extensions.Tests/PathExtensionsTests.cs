@@ -31,10 +31,36 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void ChangeFileNameTest()
         {
-            var path = AppContext.BaseDirectory.CombinePath("test.txt");
+            var dir = AppContext.BaseDirectory;
+
+            var path = dir.CombinePath("test.txt");
             var changePath = path.ChangeFileName((baseName, ext) => $"change{ext}");
 
-            Assert.Equal(AppContext.BaseDirectory.CombinePath("change.txt"), changePath);
+            Assert.Equal(dir.CombinePath("change.txt"), changePath);
+        }
+
+
+        [Fact]
+        public void GetFileBaseNameAndExtensionTest()
+        {
+            var filePath = @"c:\temp\filename.ext";
+            (string baseName, string extension) = filePath.GetFileBaseNameAndExtension(out var basePath);
+            Assert.Equal("filename", baseName);
+            Assert.Equal(".ext", extension);
+            Assert.NotEmpty(basePath);
+        }
+
+
+        [Fact]
+        public void GetFileNameWithoutPathTest()
+        {
+            var filePath = @"c:\temp\filename.ext";
+            Assert.Equal("filename.ext", filePath.GetFileNameWithoutPath(out var basePath));
+            Assert.NotEmpty(basePath);
+
+            filePath = "/app/filename.ext";
+            Assert.Equal("filename.ext", filePath.GetFileNameWithoutPath(out basePath));
+            Assert.NotEmpty(basePath);
         }
 
 
@@ -78,7 +104,7 @@ namespace Librame.Extensions.Tests
         {
             var path = @"c:\temp\filename.jpg";
 
-            Assert.True(path.TryHasExtension(new string[] { ".jpg", ".png", "gif" }, out string extension));
+            Assert.True(path.TryGetExtension(new string[] { ".jpg", ".png", "gif" }, out string extension));
             Assert.Equal(".jpg", extension);
         }
 

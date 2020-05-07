@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Core.Identifiers
 {
     using Services;
-    using Threads;
 
     /// <summary>
     /// 雪花标识符生成器。
@@ -76,44 +75,43 @@ namespace Librame.Extensions.Core.Identifiers
         /// 异步生成标识符。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="isUtc">相对于协调世界时（可选；默认使用选项设置）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回长整数。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "clock")]
-        public Task<long> GenerateAsync(IClockService clock, bool? isUtc = null,
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public async Task<long> GenerateAsync(IClockService clock,
             CancellationToken cancellationToken = default)
         {
             clock.NotNull(nameof(clock));
-            
-            return clock.Locker.WaitFactoryAsync(async () =>
+
+            var timestamp = await GetTimestampAsync(clock, cancellationToken)
+                .ConfigureAndResultAsync();
+
+            if (_lastTimestamp == timestamp)
             {
-                var timestamp = await GetTimestampAsync(clock, isUtc, cancellationToken)
-                    .ConfigureAndResultAsync();
-
-                if (_lastTimestamp == timestamp)
+                // 同一微妙中生成ID
+                // 用&运算计算该微秒内产生的计数是否已经到达上限
+                _sequence = (_sequence + 1) & _sequenceMask;
+                if (_sequence == 0)
                 {
-                    // 同一微妙中生成ID
-                    // 用&运算计算该微秒内产生的计数是否已经到达上限
-                    _sequence = (_sequence + 1) & _sequenceMask;
-                    if (_sequence == 0)
-                    {
-                        timestamp = await GetNextTimestampAsync(clock, isUtc, cancellationToken)
-                            .ConfigureAndResultAsync();
-                    }
+                    timestamp = await GetNextTimestampAsync(clock, cancellationToken)
+                        .ConfigureAndResultAsync();
                 }
-                else
-                {
-                    // 不同微秒生成ID
-                    // 计数清0
-                    _sequence = 0;
-                }
+            }
+            else
+            {
+                // 不同微秒生成ID
+                // 计数清0
+                _sequence = 0;
+            }
 
-                if (timestamp < _lastTimestamp)
-                {
-                    // 如果当前时间戳比上一次生成ID时时间戳还小，抛出异常，因为不能保证现在生成的ID之前没有生成过
-                    throw new Exception($"Clock moved backwards. Refusing to generate id for {_lastTimestamp - timestamp} milliseconds");
-                }
+            if (timestamp < _lastTimestamp)
+            {
+                // 如果当前时间戳比上一次生成ID时时间戳还小，抛出异常，因为不能保证现在生成的ID之前没有生成过
+                throw new Exception($"Clock moved backwards. Refusing to generate id for {_lastTimestamp - timestamp} milliseconds");
+            }
 
+            return ExtensionSettings.Current.RunLockerResult(() =>
+            {
                 var nextId = (timestamp - _twepoch << _timestampLeftShift)
                     | (_dataCenterId << _dataCenterIdShift)
                     | (_machineId << _machineIdShift)
@@ -127,14 +125,14 @@ namespace Librame.Extensions.Core.Identifiers
         }
 
         private async Task<long> GetNextTimestampAsync(IClockService clock,
-            bool? isUtc = null, CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
         {
-            var timestamp = await GetTimestampAsync(clock, isUtc, cancellationToken)
+            var timestamp = await GetTimestampAsync(clock, cancellationToken)
                 .ConfigureAndResultAsync();
 
             while (timestamp <= _lastTimestamp)
             {
-                timestamp = await GetTimestampAsync(clock, isUtc, cancellationToken)
+                timestamp = await GetTimestampAsync(clock, cancellationToken)
                     .ConfigureAndResultAsync();
             }
 
@@ -142,14 +140,13 @@ namespace Librame.Extensions.Core.Identifiers
         }
 
         private static async Task<long> GetTimestampAsync(IClockService clock,
-            bool? isUtc = null, CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
         {
-            var timestamp = isUtc.IsTrue() ? DateTimeOffset.UtcNow : DateTimeOffset.Now;
-            var now = await clock.GetOffsetNowAsync(timestamp, isUtc, cancellationToken)
+            var offsetNow = await clock.GetOffsetNowAsync(cancellationToken: cancellationToken)
                 .ConfigureAndResultAsync();
 
-            var baseTime = new DateTimeOffset(ExtensionSettings.BaseDateTime, timestamp.Offset);
-            return (long)(now - baseTime).TotalMilliseconds;
+            var offsetBaseTime = new DateTimeOffset(ExtensionSettings.Current.BaseDateTime, offsetNow.Offset);
+            return (long)(offsetNow - offsetBaseTime).TotalMilliseconds;
         }
 
 

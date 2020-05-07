@@ -14,7 +14,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace Librame.Extensions
 {
@@ -46,14 +45,18 @@ namespace Librame.Extensions
 #pragma warning restore IDE0034 // Simplify 'default' expression
         };
 
+
         /// <summary>
         /// 确保默认值。
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回对象。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         public static object GetDefaultValue(this Type type)
         {
-            if (!type.GetTypeInfo().IsValueType)
+            type.NotNull(nameof(type));
+
+            if (!type.IsValueType)
                 return null;
 
             // A bit of perf code to avoid calling Activator.CreateInstance for common types and

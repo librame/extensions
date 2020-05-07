@@ -52,7 +52,7 @@ namespace Librame.Extensions
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="enumerable">给定的可枚举异步操作。</param>
         /// <returns>返回 <see cref="IAsyncEnumerable{T}"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "enumerable")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static async IAsyncEnumerable<T> AsAsyncEnumerable<T>(this IEnumerable<Task<T>> enumerable)
         {
             enumerable.NotNull(nameof(enumerable));
@@ -87,7 +87,7 @@ namespace Librame.Extensions
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="list">给定的 <see cref="IList{T}"/>。</param>
         /// <param name="value">给定的新增的值。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "list")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void AddIfNotContains<T>(this IList<T> list, T value)
         {
             list.NotNull(nameof(list));
@@ -374,7 +374,7 @@ namespace Librame.Extensions
         /// <param name="endFactory">给定要修剪末尾项的断定工厂方法。</param>
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "endFactory")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IEnumerable<T> TrimEnd<T>(this IEnumerable<T> items, Func<T, bool> endFactory, bool isLoop = true)
         {
             endFactory.NotNull(nameof(endFactory));
@@ -407,7 +407,7 @@ namespace Librame.Extensions
         /// <param name="startFactory">给定要修剪初始项的断定工厂方法。</param>
         /// <param name="isLoop">是否循环修剪末尾项（可选；默认循环修剪）。</param>
         /// <returns>返回 <see cref="IEnumerable{T}"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "startFactory")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IEnumerable<T> TrimStart<T>(this IEnumerable<T> items, Func<T, bool> startFactory, bool isLoop = true)
         {
             startFactory.NotNull(nameof(startFactory));

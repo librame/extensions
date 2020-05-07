@@ -61,6 +61,15 @@ namespace Librame.Extensions.Encryption.Resources {
         }
         
         /// <summary>
+        ///   查找类似 Both the option identifier and the identifier parameter are null. 的本地化字符串。
+        /// </summary>
+        internal static string ArgumentNullExceptionIdentifierBothNull {
+            get {
+                return ResourceManager.GetString("ArgumentNullExceptionIdentifierBothNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Signing key is not asymmetric. 的本地化字符串。
         /// </summary>
         internal static string InvalidOperationExceptionInvalidSigningKey {

@@ -35,7 +35,7 @@ namespace Librame.Extensions.Encryption.Builders
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <param name="credentials">给定的签名证书集合。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IEncryptionBuilder AddSigningCredentials(this IEncryptionBuilder builder,
             params KeyValuePair<string, SigningCredentials>[] credentials)
         {
@@ -89,7 +89,7 @@ namespace Librame.Extensions.Encryption.Builders
         /// <param name="builder">给定的 <see cref="IEncryptionBuilder"/>。</param>
         /// <param name="rsaKey">给定的 <see cref="RsaSecurityKey"/>。</param>
         /// <returns>返回 <see cref="IEncryptionBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "rsaKey")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IEncryptionBuilder AddGlobalSigningCredentials(this IEncryptionBuilder builder, RsaSecurityKey rsaKey)
         {
             rsaKey.NotNull(nameof(rsaKey));
@@ -111,8 +111,8 @@ namespace Librame.Extensions.Encryption.Builders
         public static IEncryptionBuilder AddDeveloperGlobalSigningCredentials(this IEncryptionBuilder builder,
             bool persistKey = true, string fileName = null)
         {
-            var rsaKey = RsaSecurityKeyLoader.LoadRsaSecurityKey(fileName, persistKey);
-            return builder.AddGlobalSigningCredentials(rsaKey);
+            var key = RsaSecurityKeyHelper.Load(fileName, persistKey);
+            return builder.AddGlobalSigningCredentials(key);
         }
 
     }

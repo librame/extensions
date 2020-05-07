@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core.Services
     /// <summary>
     /// 环境服务接口。
     /// </summary>
-    public interface IEnvironmentService : IConcurrentService, IService
+    public interface IEnvironmentService : IService
     {
         /// <summary>
         /// 异步获取环境信息。

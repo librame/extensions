@@ -21,9 +21,13 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void StartProcessTest()
         {
-            var cmd = "cmd.exe".StartProcess();
+            var cmd = "cmd.exe".StartProcess(startInfoAction: info =>
+            {
+                info.UseShellExecute = true;
+            });
             Assert.False(cmd.HasExited);
 
+            cmd.WaitForExit();
             cmd.Close();
         }
 

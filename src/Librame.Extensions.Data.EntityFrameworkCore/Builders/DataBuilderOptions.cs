@@ -52,7 +52,7 @@ namespace Librame.Extensions.Data.Builders
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public Action<DbContextAccessorBase> PostDatabaseCreatedAction { get; set; }
-            = accessor => accessor.BuilderOptions.PostChangedDbConnectionAction?.Invoke(accessor);
+            = accessor => accessor.Dependency.Options.PostChangedDbConnectionAction?.Invoke(accessor);
 
         /// <summary>
         /// 改变数据库连接的后置动作（默认调用 <see cref="DbContextAccessorBase.Migrate()"/>）。

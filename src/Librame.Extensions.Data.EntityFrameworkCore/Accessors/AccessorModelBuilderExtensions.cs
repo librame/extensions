@@ -49,21 +49,21 @@ namespace Librame.Extensions.Data.Accessors
             modelBuilder.NotNull(nameof(modelBuilder));
             accessor.NotNull(nameof(accessor));
 
-            if (accessor.BuilderOptions.Tables.DefaultSchema.IsNotEmpty())
-                modelBuilder.HasDefaultSchema(accessor.BuilderOptions.Tables.DefaultSchema);
-            
-            var maxLength = accessor.BuilderOptions.Stores.MaxLengthForProperties;
-            var useDataPrefix = accessor.BuilderOptions.Tables.UseDataPrefix;
+            var maxLength = accessor.Dependency.Options.Stores.MaxLengthForProperties;
+            var tables = accessor.Dependency.Options.Tables;
 
+            if (tables.DefaultSchema.IsNotEmpty())
+                modelBuilder.HasDefaultSchema(tables.DefaultSchema);
+            
             // 审计
             modelBuilder.Entity<TAudit>(b =>
             {
-                b.ToTable(table =>
+                b.ToTable(t =>
                 {
-                    if (useDataPrefix)
-                        table.InsertDataPrefix();
+                    if (tables.UseDataPrefix)
+                        t.InsertDataPrefix();
 
-                    table.Configure(accessor.BuilderOptions.Tables.Audit);
+                    t.Configure(tables.Audit);
                 });
                 
                 b.HasKey(k => k.Id);
@@ -86,14 +86,14 @@ namespace Librame.Extensions.Data.Accessors
             // 审计属性
             modelBuilder.Entity<TAuditProperty>(b =>
             {
-                b.ToTable(table =>
+                b.ToTable(t =>
                 {
-                    if (useDataPrefix)
-                        table.InsertDataPrefix();
+                    if (tables.UseDataPrefix)
+                        t.InsertDataPrefix();
 
                     // 按年月分表
-                    table.AppendYearAndMonthSuffix(accessor.CurrentTimestamp)
-                        .Configure(accessor.BuilderOptions.Tables.AuditProperty);
+                    t.AppendYearAndMonthSuffix(accessor.CurrentTimestamp)
+                        .Configure(tables.AuditProperty);
                 });
 
                 b.HasKey(k => k.Id);
@@ -117,12 +117,12 @@ namespace Librame.Extensions.Data.Accessors
             // 实体
             modelBuilder.Entity<TEntity>(b =>
             {
-                b.ToTable(table =>
+                b.ToTable(t =>
                 {
-                    if (useDataPrefix)
-                        table.InsertDataPrefix();
+                    if (tables.UseDataPrefix)
+                        t.InsertDataPrefix();
 
-                    table.Configure(accessor.BuilderOptions.Tables.Entity);
+                    t.Configure(tables.Entity);
                 });
 
                 b.HasKey(k => k.Id);
@@ -146,12 +146,12 @@ namespace Librame.Extensions.Data.Accessors
             // 迁移
             modelBuilder.Entity<TMigration>(b =>
             {
-                b.ToTable(table =>
+                b.ToTable(t =>
                 {
-                    if (useDataPrefix)
-                        table.InsertDataPrefix();
+                    if (tables.UseDataPrefix)
+                        t.InsertDataPrefix();
 
-                    table.Configure(accessor.BuilderOptions.Tables.Migration);
+                    t.Configure(tables.Migration);
                 });
 
                 b.HasKey(k => k.Id);
@@ -172,12 +172,12 @@ namespace Librame.Extensions.Data.Accessors
             // 租户
             modelBuilder.Entity<TTenant>(b =>
             {
-                b.ToTable(table =>
+                b.ToTable(t =>
                 {
-                    if (useDataPrefix)
-                        table.InsertDataPrefix();
+                    if (tables.UseDataPrefix)
+                        t.InsertDataPrefix();
 
-                    table.Configure(accessor.BuilderOptions.Tables.Tenant);
+                    t.Configure(tables.Tenant);
                 });
 
                 b.HasKey(k => k.Id);

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using Xunit;
 
@@ -36,8 +35,6 @@ namespace Librame.Extensions.Core.Tests
 
             var optionsDependency = provider.GetRequiredService<TestCoreBuilderDependency>();
             var options = provider.GetRequiredService<IOptions<TestOptions>>().Value;
-
-            var json = JsonConvert.SerializeObject(optionsDependency);
 
             Assert.Equal(message, options.Message);
         }

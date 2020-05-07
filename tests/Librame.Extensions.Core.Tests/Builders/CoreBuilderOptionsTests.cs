@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System.IO;
 using System.Text;
 using Xunit;
@@ -8,6 +7,7 @@ using Xunit;
 namespace Librame.Extensions.Core.Tests
 {
     using Builders;
+    using Combiners;
 
     public class CoreBuilderOptionsTests
     {
@@ -29,16 +29,15 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal(options.Encoding, dependency.Options.Encoding);
 
             // 序列化为 JSON 文件并保存
-            var json = JsonConvert.SerializeObject(options);
-            var fileName = Path.GetTempFileName();
-            File.WriteAllText(fileName, json);
+            var filePath = Path.GetTempFileName().AsFilePathCombiner();
+            filePath.WriteJson(options, options.Encoding);
 
             // 读取 JSON 文件并验证实例是否相同
-            json = File.ReadAllText(fileName);
-            var deserializeOptions = JsonConvert.DeserializeObject<CoreBuilderOptions>(json);
-            Assert.Equal(deserializeOptions.Encoding, options.Encoding);
+            var readOptions = filePath.ReadJson<CoreBuilderOptions>(options.Encoding);
+            Assert.Equal(readOptions.Encoding, options.Encoding);
 
-            File.Delete(fileName);
+            filePath.Delete();
         }
+
     }
 }

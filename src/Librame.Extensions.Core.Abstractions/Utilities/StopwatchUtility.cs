@@ -17,10 +17,14 @@ using System.Diagnostics;
 namespace Librame.Extensions.Core.Utilities
 {
     /// <summary>
-    /// 计时器实用工具。
+    /// <see cref="Stopwatch"/> 实用工具。
     /// </summary>
     public static class StopwatchUtility
     {
+        private static readonly Lazy<Stopwatch> _stopwatch
+            = new Lazy<Stopwatch>(() => Stopwatch.StartNew());
+
+
         /// <summary>
         /// 运行方法集合。
         /// </summary>
@@ -30,16 +34,17 @@ namespace Librame.Extensions.Core.Utilities
         {
             actions.NotEmpty(nameof(actions));
 
-            var stopwatch = Stopwatch.StartNew();
+            _stopwatch.Value.Reset();
+
             foreach (var action in actions)
             {
-                stopwatch.Start();
+                _stopwatch.Value.Start();
 
                 action.Invoke();
 
-                stopwatch.Stop();
+                _stopwatch.Value.Stop();
 
-                yield return stopwatch.Elapsed;
+                yield return _stopwatch.Value.Elapsed;
             }
         }
 

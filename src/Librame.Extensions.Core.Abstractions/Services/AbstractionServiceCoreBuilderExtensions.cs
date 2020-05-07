@@ -27,7 +27,7 @@ namespace Librame.Extensions.Core.Builders
     public static class AbstractionServiceCoreBuilderExtensions
     {
         /// <summary>
-        /// 添加当前线程应用域的程序集数组中已定义 <see cref="AutoRegistrationServiceAttribute"/> 特性的服务集合。
+        /// 添加 <see cref="AssemblyUtility.CurrentAssembliesWithoutSystem"/> 中所有已定义 <see cref="AutoRegisterableServiceAttribute"/> 特性的服务集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
@@ -35,7 +35,7 @@ namespace Librame.Extensions.Core.Builders
             => builder.AddAutoRegistrationServices(AssemblyUtility.CurrentAssembliesWithoutSystem);
 
         /// <summary>
-        /// 添加指定程序集数组中已定义 <see cref="AutoRegistrationServiceAttribute"/> 特性的服务集合。
+        /// 添加指定程序集集合中所有已定义 <see cref="AutoRegisterableServiceAttribute"/> 特性的服务集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <param name="assemblies">给定要查找的程序集数组。</param>
@@ -47,7 +47,7 @@ namespace Librame.Extensions.Core.Builders
             
             assemblies.InvokeTypes(type =>
             {
-                if (type.TryGetCustomAttribute(out AutoRegistrationServiceAttribute serviceAttribute))
+                if (type.TryGetCustomAttribute(out AutoRegisterableServiceAttribute serviceAttribute))
                 {
                     var serviceType = serviceAttribute.ServiceType;
 

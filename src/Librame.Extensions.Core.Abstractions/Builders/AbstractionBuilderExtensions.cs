@@ -10,11 +10,8 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace Librame.Extensions.Core.Builders
 {
@@ -23,6 +20,25 @@ namespace Librame.Extensions.Core.Builders
     /// </summary>
     public static class AbstractionBuilderExtensions
     {
+
+        #region Builders
+
+        /// <summary>
+        /// 获取必需的父级构建器。
+        /// </summary>
+        /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
+        /// <param name="dependency">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <returns>返回 <typeparamref name="TParentBuilder"/> 或抛出 <see cref="InvalidOperationException"/>。</returns>
+        public static TParentBuilder GetRequiredParentBuilder<TParentBuilder>
+            (this IExtensionBuilder dependency)
+            where TParentBuilder : class, IExtensionBuilder
+        {
+            if (!dependency.TryGetParentBuilder<TParentBuilder>(out var result))
+                throw new InvalidOperationException($"The builder is not contains parent builder '{typeof(TParentBuilder)}'.");
+
+            return result;
+        }
+
         /// <summary>
         /// 包含指定父级构建器类型的实例。
         /// </summary>
@@ -30,7 +46,7 @@ namespace Librame.Extensions.Core.Builders
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
         public static bool ContainsParentBuilder<TParentBuilder>(this IExtensionBuilder builder)
-            where TParentBuilder : IExtensionBuilder
+            where TParentBuilder : class, IExtensionBuilder
             => builder.TryGetParentBuilder<TParentBuilder>(out _);
 
         /// <summary>
@@ -38,124 +54,115 @@ namespace Librame.Extensions.Core.Builders
         /// </summary>
         /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="parentBuilder">输出父级 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="result">输出父级 <see cref="IExtensionBuilder"/>。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
         public static bool TryGetParentBuilder<TParentBuilder>(this IExtensionBuilder builder,
-            out TParentBuilder parentBuilder)
-            where TParentBuilder : IExtensionBuilder
+            out TParentBuilder result)
+            where TParentBuilder : class, IExtensionBuilder
         {
-            if (builder.IsNull())
+            // 仅查找父级
+            result = GetParentBuilder(builder?.ParentBuilder);
+            return result.IsNotNull();
+
+            // GetParentBuilder
+            TParentBuilder GetParentBuilder(IExtensionBuilder currentBuilder)
             {
-                parentBuilder = default;
-                return false;
-            }
+                if (currentBuilder.IsNull())
+                    return null;
 
-            if (builder.ParentBuilder is TParentBuilder _builder)
+                if (currentBuilder is TParentBuilder parentBuilder)
+                    return parentBuilder;
+
+                return GetParentBuilder(currentBuilder.ParentBuilder);
+            }
+        }
+
+        #endregion
+
+
+        #region Dependencies
+
+        /// <summary>
+        /// 获取必需的父级构建器依赖。
+        /// </summary>
+        /// <typeparam name="TParentDependency">指定的父级构建器依赖类型。</typeparam>
+        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <returns>返回 <typeparamref name="TParentDependency"/> 或抛出 <see cref="InvalidOperationException"/>。</returns>
+        public static TParentDependency GetRequiredParentDependency<TParentDependency>
+            (this IExtensionBuilderDependency dependency)
+            where TParentDependency : class, IExtensionBuilderDependency
+        {
+            if (!dependency.TryGetParentDependency<TParentDependency>(out var result))
+                throw new InvalidOperationException($"The dependency is not contains parent dependency '{typeof(TParentDependency)}'.");
+
+            return result;
+        }
+
+        /// <summary>
+        /// 包含指定父级构建器依赖类型的实例。
+        /// </summary>
+        /// <typeparam name="TParentDependency">指定的父级构建器类型。</typeparam>
+        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <returns>返回是否成功获取的布尔值。</returns>
+        public static bool ContainsParentDependency<TParentDependency>(this IExtensionBuilderDependency dependency)
+            where TParentDependency : class, IExtensionBuilderDependency
+            => dependency.TryGetParentDependency<TParentDependency>(out _);
+
+        /// <summary>
+        /// 尝试获取指定父级构建器依赖类型的实例。
+        /// </summary>
+        /// <typeparam name="TParentDependency">指定的父级构建器类型。</typeparam>
+        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <param name="result">输出父级 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <returns>返回是否成功获取的布尔值。</returns>
+        public static bool TryGetParentDependency<TParentDependency>(this IExtensionBuilderDependency dependency,
+            out TParentDependency result)
+            where TParentDependency : class, IExtensionBuilderDependency
+        {
+            // 仅查找父级
+            result = GetParentDependency(dependency?.ParentDependency);
+            return result.IsNotNull();
+
+            // GetParentDependency
+            TParentDependency GetParentDependency(IExtensionBuilderDependency currentDependency)
             {
-                parentBuilder = _builder;
-                return true;
+                if (currentDependency.IsNull())
+                    return null;
+
+                if (currentDependency is TParentDependency parentDependency)
+                    return parentDependency;
+
+                return GetParentDependency(currentDependency.ParentDependency);
             }
-
-            return builder.ParentBuilder.TryGetParentBuilder(out parentBuilder);
         }
 
 
-        #region ExportDependencies
-
         /// <summary>
-        /// 导出扩展构建器依赖集合。
+        /// 枚举当前以及所有父级依赖字典集合。
         /// </summary>
-        /// <param name="provider">给定的 <see cref="IServiceProvider"/>。</param>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <returns>返回 <see cref="Dictionary{String, IExtensionBuilderDependency}"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static Dictionary<string, IExtensionBuilderDependency> ExportDependencies(this IServiceProvider provider,
-            IServiceCollection services)
-        {
-            provider.NotNull(nameof(provider));
-            services.NotEmpty(nameof(services));
-
-            IExtensionBuilder lastBuilder = null;
-
-            var baseBuilderType = typeof(IExtensionBuilder);
-            foreach (var service in services.Reverse())
-            {
-                if (service.ServiceType.IsAssignableToBaseType(baseBuilderType))
-                {
-                    lastBuilder = (IExtensionBuilder)provider.GetService(service.ServiceType);
-                    break;
-                }
-            }
-
-            return lastBuilder.ExportDependencies();
-        }
-
-        /// <summary>
-        /// 导出扩展构建器依赖集合。
-        /// </summary>
-        /// <typeparam name="TLastBuilder">指定的末尾扩展构建器类型。</typeparam>
-        /// <param name="provider">给定的 <see cref="IServiceProvider"/>。</param>
-        /// <returns>返回 <see cref="Dictionary{String, IExtensionBuilderDependency}"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "provider")]
-        public static Dictionary<string, IExtensionBuilderDependency> ExportDependencies<TLastBuilder>(this IServiceProvider provider)
-            where TLastBuilder : IExtensionBuilder
-        {
-            provider.NotNull(nameof(provider));
-
-            var lastBuilder = provider.GetRequiredService<TLastBuilder>();
-            return lastBuilder.ExportDependencies();
-        }
-
-        /// <summary>
-        /// 导出扩展构建器依赖集合。
-        /// </summary>
-        /// <param name="provider">给定的 <see cref="IServiceProvider"/>。</param>
-        /// <param name="lastBuilderType">给定的末尾扩展构建器类型（需实现 <see cref="IExtensionBuilder"/>）。</param>
-        /// <returns>返回 <see cref="Dictionary{String, IExtensionBuilderDependency}"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "provider")]
-        public static Dictionary<string, IExtensionBuilderDependency> ExportDependencies(this IServiceProvider provider,
-            Type lastBuilderType)
-        {
-            provider.NotNull(nameof(provider));
-
-            if (!lastBuilderType.IsAssignableToBaseType(typeof(IExtensionBuilder)))
-                throw new ArgumentException($"Invalid last extension builder type '{lastBuilderType}', {nameof(IExtensionBuilder)} interface is not implemented.");
-
-            var lastBuilder = (IExtensionBuilder)provider.GetService(lastBuilderType);
-            return lastBuilder?.ExportDependencies();
-        }
-
-        /// <summary>
-        /// 导出扩展构建器依赖集合。
-        /// </summary>
-        /// <param name="lastBuilder">给定的末尾 <see cref="IExtensionBuilder"/>。</param>
-        /// <returns>返回 <see cref="Dictionary{String, IExtensionBuilderDependency}"/>。</returns>
-        public static Dictionary<string, IExtensionBuilderDependency> ExportDependencies(this IExtensionBuilder lastBuilder)
+        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <returns>返回字典集合。</returns>
+        public static Dictionary<string, IExtensionBuilderDependency> EnumerateDependencies
+            (this IExtensionBuilderDependency dependency)
         {
             var dependencies = new Dictionary<string, IExtensionBuilderDependency>();
 
-            PopulateDependencies(lastBuilder, dependencies);
+            AddParentDependency(dependency);
 
-            return dependencies.Reverse().ToDictionary(pair => pair.Key, pair => pair.Value);
+            return dependencies;
+
+            // AddParentDependency
+            void AddParentDependency(IExtensionBuilderDependency currentDependency)
+            {
+                if (currentDependency.IsNull())
+                    return;
+
+                dependencies.Add(currentDependency.Name, currentDependency);
+
+                // 链式添加父级依赖
+                AddParentDependency(currentDependency.ParentDependency);
+            }
         }
-
-        private static void PopulateDependencies(IExtensionBuilder builder,
-            Dictionary<string, IExtensionBuilderDependency> dependencies)
-        {
-            if (builder.IsNull())
-                return;
-
-            var key = GetDependencyKey(builder.Dependency);
-            if (key.IsNotEmpty() && !dependencies.ContainsKey(key))
-                dependencies.Add(key, builder.Dependency);
-            else
-                dependencies[key] = builder.Dependency;
-
-            PopulateDependencies(builder.ParentBuilder, dependencies);
-        }
-
-        private static string GetDependencyKey(IExtensionBuilderDependency dependency)
-            => dependency?.GetType().Name;
 
         #endregion
 

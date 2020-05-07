@@ -27,7 +27,7 @@ namespace Librame.Extensions.Core.Localizers
         /// 构造一个 <see cref="DictionaryStringLocalizer"/>。
         /// </summary>
         /// <param name="manager">给定的 <see cref="ResourceDictionaryManager"/>。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "manager")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public DictionaryStringLocalizer(ResourceDictionaryManager manager)
         {
             Manager = manager.NotNull(nameof(manager));

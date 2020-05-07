@@ -21,17 +21,16 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Core.Services
 {
     using Resources;
-    using Threads;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-    internal class HumanizationService : AbstractConcurrentService, IHumanizationService
+    internal class HumanizationService : AbstractService, IHumanizationService
     {
         private readonly IStringLocalizer<HumanizationResource> _localizer;
 
 
         public HumanizationService(IStringLocalizer<HumanizationResource> localizer,
-            IMemoryLocker locker, ILoggerFactory loggerFactory)
-            : base(locker, loggerFactory)
+            ILoggerFactory loggerFactory)
+            : base(loggerFactory)
         {
             _localizer = localizer.NotNull(nameof(localizer));
         }
@@ -39,37 +38,31 @@ namespace Librame.Extensions.Core.Services
 
         public Task<string> HumanizeAsync(DateTime dateTime, CancellationToken cancellationToken = default)
         {
-            return Locker.WaitFactoryAsync(() =>
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                return cancellationToken.RunFactoryOrCancellationAsync(() =>
+                var now = DateTime.Now;
+                if (now <= dateTime)
                 {
-                    var now = DateTime.Now;
-                    if (now <= dateTime)
-                    {
-                        Logger.LogWarning($"The {dateTime} is greater than {now}");
-                        return now.ToString(CultureInfo.CurrentCulture);
-                    }
+                    Logger.LogWarning($"The {dateTime} is greater than {now}");
+                    return now.ToString(CultureInfo.CurrentCulture);
+                }
 
-                    return HumanizeCore(now - dateTime);
-                });
+                return HumanizeCore(now - dateTime);
             });
         }
 
         public Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset, CancellationToken cancellationToken = default)
         {
-            return Locker.WaitFactoryAsync(() =>
+            return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
-                return cancellationToken.RunFactoryOrCancellationAsync(() =>
+                var now = DateTimeOffset.Now;
+                if (now <= dateTimeOffset)
                 {
-                    var now = DateTimeOffset.Now;
-                    if (now <= dateTimeOffset)
-                    {
-                        Logger.LogWarning($"The {dateTimeOffset} is greater than {now}");
-                        return now.ToString(CultureInfo.CurrentCulture);
-                    }
+                    Logger.LogWarning($"The {dateTimeOffset} is greater than {now}");
+                    return now.ToString(CultureInfo.CurrentCulture);
+                }
 
-                    return HumanizeCore(now - dateTimeOffset);
-                });
+                return HumanizeCore(now - dateTimeOffset);
             });
         }
 

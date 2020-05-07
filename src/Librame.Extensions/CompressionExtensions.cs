@@ -31,13 +31,14 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="originalBuffer">给定的原生字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalBuffer")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static byte[] RtlCompress(this byte[] originalBuffer)
         {
             originalBuffer.NotEmpty(nameof(originalBuffer));
 
             var outputBuffer = new byte[originalBuffer.Length * 6];
-            ushort compressionFormat = ExtensionSettings.CompressionFormatLZNT1 | ExtensionSettings.CompressionEngineMaximum;
+            var compressionFormat = (ushort)(ExtensionSettings.Current.CompressionFormatLZNT1
+                | ExtensionSettings.Current.CompressionEngineMaximum);
 
             var size = SafeNativeMethods.RtlGetCompressionWorkSpaceSize(compressionFormat, out uint dwSize, out _);
             if (size != 0) return null;
@@ -59,16 +60,16 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="compressedBuffer">给定的已压缩字节数组。</param>
         /// <returns>返回字节数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "compressedBuffer")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static byte[] RtlDecompress(this byte[] compressedBuffer)
         {
             compressedBuffer.NotEmpty(nameof(compressedBuffer));
 
             var outputBuffer = new byte[compressedBuffer.Length * 6];
-            var size = SafeNativeMethods.RtlGetCompressionWorkSpaceSize(ExtensionSettings.CompressionFormatLZNT1, out _, out _);
+            var size = SafeNativeMethods.RtlGetCompressionWorkSpaceSize(ExtensionSettings.Current.CompressionFormatLZNT1, out _, out _);
             if (size != 0) return null;
 
-            size = SafeNativeMethods.RtlDecompressBuffer(ExtensionSettings.CompressionFormatLZNT1, outputBuffer, outputBuffer.Length,
+            size = SafeNativeMethods.RtlDecompressBuffer(ExtensionSettings.Current.CompressionFormatLZNT1, outputBuffer, outputBuffer.Length,
                 compressedBuffer, compressedBuffer.Length, out uint dwRet);
             if (size != 0) return null;
 
@@ -84,15 +85,15 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="originalFileInfo">给定的原始 <see cref="FileInfo"/>。</param>
         /// <returns>返回原始或压缩的 <see cref="FileInfo"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalFileInfo")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FileInfo GZipCompress(this FileInfo originalFileInfo)
         {
             originalFileInfo.NotNull(nameof(originalFileInfo));
 
             if ((File.GetAttributes(originalFileInfo.FullName) & FileAttributes.Hidden)
-                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.GZipCompressedFileType, StringComparison.OrdinalIgnoreCase))
+                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.Current.GZipCompressedFileType, StringComparison.OrdinalIgnoreCase))
             {
-                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.GZipCompressedFileType;
+                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.Current.GZipCompressedFileType;
 
                 using (var originalStream = originalFileInfo.OpenRead())
                 using (var compressedStream = File.Create(compressedFilePath))
@@ -114,15 +115,19 @@ namespace Librame.Extensions
         /// </exception>
         /// <param name="compressedFileInfo">给定的已压缩 <see cref="FileInfo"/>。</param>
         /// <returns>返回解压缩的 <see cref="FileInfo"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "compressedFileInfo")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FileInfo GZipDecompress(this FileInfo compressedFileInfo)
         {
             compressedFileInfo.NotNull(nameof(compressedFileInfo));
 
-            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.GZipCompressedFileType, StringComparison.OrdinalIgnoreCase))
-                throw new FileLoadException(InternalResource.FileLoadExceptionUnsupportedCompressedFileTypeFormat.Format(compressedFileInfo.Extension, ExtensionSettings.GZipCompressedFileType));
+            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.Current.GZipCompressedFileType,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                throw new FileLoadException(InternalResource.FileLoadExceptionUnsupportedCompressedFileTypeFormat
+                    .Format(compressedFileInfo.Extension, ExtensionSettings.Current.GZipCompressedFileType));
+            }
 
-            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.GZipCompressedFileType);
+            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.Current.GZipCompressedFileType);
 
             using (var compressedStream = compressedFileInfo.OpenRead())
             using (var decompressedStream = File.Create(decompressedFilePath))
@@ -196,7 +201,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="originalStream">给定的原始流。</param>
         /// <param name="compressedStream">给定的已压缩流。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalStream")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void GZipCompress(this Stream originalStream, Stream compressedStream)
         {
             originalStream.NotNull(nameof(originalStream));
@@ -230,15 +235,15 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="originalFileInfo">给定的原始 <see cref="FileInfo"/>。</param>
         /// <returns>返回原始或压缩的 <see cref="FileInfo"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalFileInfo")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FileInfo DeflateCompress(this FileInfo originalFileInfo)
         {
             originalFileInfo.NotNull(nameof(originalFileInfo));
 
             if ((File.GetAttributes(originalFileInfo.FullName) & FileAttributes.Hidden)
-                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.DeflateCompressedFileType, StringComparison.OrdinalIgnoreCase))
+                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.Current.DeflateCompressedFileType, StringComparison.OrdinalIgnoreCase))
             {
-                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.DeflateCompressedFileType;
+                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.Current.DeflateCompressedFileType;
 
                 using (var originalStream = originalFileInfo.OpenRead())
                 using (var compressedStream = File.Create(compressedFilePath))
@@ -260,15 +265,19 @@ namespace Librame.Extensions
         /// </exception>
         /// <param name="compressedFileInfo">给定的已压缩 <see cref="FileInfo"/>。</param>
         /// <returns>返回解压缩的 <see cref="FileInfo"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "compressedFileInfo")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FileInfo DeflateDecompress(this FileInfo compressedFileInfo)
         {
             compressedFileInfo.NotNull(nameof(compressedFileInfo));
 
-            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.DeflateCompressedFileType, StringComparison.OrdinalIgnoreCase))
-                throw new FileLoadException(InternalResource.FileLoadExceptionUnsupportedCompressedFileTypeFormat.Format(compressedFileInfo.Extension, ExtensionSettings.DeflateCompressedFileType));
+            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.Current.DeflateCompressedFileType,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                throw new FileLoadException(InternalResource.FileLoadExceptionUnsupportedCompressedFileTypeFormat
+                    .Format(compressedFileInfo.Extension, ExtensionSettings.Current.DeflateCompressedFileType));
+            }
 
-            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.DeflateCompressedFileType);
+            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.Current.DeflateCompressedFileType);
 
             using (var compressedStream = compressedFileInfo.OpenRead())
             using (var decompressedStream = File.Create(decompressedFilePath))
@@ -342,7 +351,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="originalStream">给定的原始流。</param>
         /// <param name="compressedStream">给定的已压缩流。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "originalStream")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void DeflateCompress(this Stream originalStream, Stream compressedStream)
         {
             originalStream.NotNull(nameof(originalStream));

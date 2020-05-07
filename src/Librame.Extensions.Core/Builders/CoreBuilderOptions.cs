@@ -10,7 +10,6 @@
 
 #endregion
 
-using System;
 using System.Text;
 
 namespace Librame.Extensions.Core.Builders
@@ -39,11 +38,5 @@ namespace Librame.Extensions.Core.Builders
         /// </summary>
         public bool IsUtcClock { get; set; }
             = true;
-
-        /// <summary>
-        /// 线程数（默认为当前 CPU 线程数）。
-        /// </summary>
-        public int ThreadsCount { get; set; }
-            = Environment.ProcessorCount;
     }
 }

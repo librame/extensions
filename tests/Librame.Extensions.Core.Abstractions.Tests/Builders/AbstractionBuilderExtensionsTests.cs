@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
     using Builders;
+    using Combiners;
 
     public class AbstractionBuilderExtensionsTests
     {
@@ -15,7 +15,7 @@ namespace Librame.Extensions.Core.Tests
         {
             _builder = new ServiceCollection()
                 .AddInternal(new InternalBuilderDependency())
-                .AddPublic(new PublicBuilderDependency());
+                .AddPublic();
         }
 
 
@@ -25,7 +25,6 @@ namespace Librame.Extensions.Core.Tests
             var result = _builder.ContainsParentBuilder<ICoreBuilder>();
             Assert.False(result);
         }
-
 
         [Fact]
         public void TryGetParentBuilderTest()
@@ -48,29 +47,61 @@ namespace Librame.Extensions.Core.Tests
 
 
         [Fact]
-        public void ExportDependenciesTest()
+        public void ContainsParentDependencyTest()
         {
-            var provider = _builder.Services.BuildServiceProvider();
+            var result = _builder.Dependency.ContainsParentDependency<PublicBuilderDependency>();
+            Assert.False(result);
 
-            var dependencies = provider.ExportDependencies(_builder.Services);
+            result = _builder.Dependency.ContainsParentDependency<InternalBuilderDependency>();
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void TryGetParentDependencyTest()
+        {
+            Assert.NotNull(_builder.Dependency);
+
+            if (!_builder.Dependency.TryGetParentDependency(out PublicBuilderDependency @public))
+            {
+                // PublicTestDependency is not parent builder
+                Assert.Null(@public);
+            }
+
+            if (_builder.Dependency.TryGetParentDependency(out InternalBuilderDependency @internal))
+            {
+                Assert.NotNull(@internal);
+            }
+        }
+
+
+        [Fact]
+        public void EnumerateDependenciesTest()
+        {
+            // Last Dependency
+            var dependencies = _builder.Dependency.EnumerateDependencies();
             Assert.NotEmpty(dependencies);
 
-            //dependencies = provider.ExportDependencies(typeof(InternalTestBuilder));
-            //Assert.NotEmpty(dependencies);
+            var provider = _builder.Services.BuildServiceProvider();
+            var publicDependency = provider.GetRequiredService<PublicBuilderDependency>();
 
-            //dependencies = provider.ExportDependencies<PublicTestBuilder>();
-            //Assert.NotEmpty(dependencies);
+            var currentDependencies = publicDependency.EnumerateDependencies();
+            Assert.Equal(dependencies.Count, currentDependencies.Count);
 
-            var json = JsonConvert.SerializeObject(dependencies);
-            Assert.NotEmpty(json);
+            var internalDependency = provider.GetRequiredService<InternalBuilderDependency>();
+            currentDependencies = internalDependency.EnumerateDependencies();
+            Assert.True(dependencies.Count > currentDependencies.Count);
+
+            var filePath = $"{nameof(EnumerateDependenciesTest)}.json"
+                .AsFilePathCombiner(publicDependency.ReportDirectory);
+            filePath.WriteJson(dependencies);
         }
     }
 
 
     internal class InternalTestBuilder : AbstractExtensionBuilder, IExtensionBuilder
     {
-        public InternalTestBuilder(IServiceCollection services, IExtensionBuilderDependency dependencyOptions)
-            : base(services, dependencyOptions)
+        public InternalTestBuilder(IServiceCollection services, IExtensionBuilderDependency dependency)
+            : base(services, dependency)
         {
             Services.AddSingleton(this);
         }
@@ -78,8 +109,8 @@ namespace Librame.Extensions.Core.Tests
 
     public class PublicTestBuilder : AbstractExtensionBuilder, IExtensionBuilder
     {
-        public PublicTestBuilder(IExtensionBuilder builder, IExtensionBuilderDependency dependencyOptions)
-            : base(builder, dependencyOptions)
+        public PublicTestBuilder(IExtensionBuilder parentBuilder, IExtensionBuilderDependency dependency)
+            : base(parentBuilder, dependency)
         {
             Services.AddSingleton(this);
         }
@@ -95,8 +126,8 @@ namespace Librame.Extensions.Core.Tests
 
     public class PublicBuilderDependency : AbstractExtensionBuilderDependency<PublicBuilderOptions>
     {
-        public PublicBuilderDependency()
-            : base(nameof(PublicBuilderDependency))
+        public PublicBuilderDependency(IExtensionBuilderDependency parentDependency)
+            : base(nameof(PublicBuilderDependency), parentDependency)
         {
         }
     }
@@ -114,15 +145,26 @@ namespace Librame.Extensions.Core.Tests
     public static class TestBuilderExtensions
     {
         public static IExtensionBuilder AddInternal(this IServiceCollection services,
-            IExtensionBuilderDependency dependency)
+            InternalBuilderDependency dependency)
         {
-            return new InternalTestBuilder(services, dependency);
+            var builder = new InternalTestBuilder(services, dependency);
+
+            services.AddSingleton(builder);
+            services.AddSingleton(dependency);
+
+            return builder;
         }
 
-        public static IExtensionBuilder AddPublic(this IExtensionBuilder builder,
-            IExtensionBuilderDependency dependency)
+        public static IExtensionBuilder AddPublic(this IExtensionBuilder parentBuilder)
         {
-            return new PublicTestBuilder(builder, dependency);
+            var dependency = new PublicBuilderDependency(parentBuilder.Dependency);
+            var builder = new PublicTestBuilder(parentBuilder, dependency);
+
+            parentBuilder.Services.AddSingleton(builder);
+            parentBuilder.Services.AddSingleton(dependency);
+
+            return builder;
         }
+
     }
 }

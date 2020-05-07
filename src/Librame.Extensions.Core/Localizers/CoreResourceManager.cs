@@ -86,7 +86,7 @@ namespace Librame.Extensions.Core.Localizers
         /// <param name="tryParents">尝试查找父级资源（未实现）。</param>
         /// <returns>返回 <see cref="ResourceSet"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "culture")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected override ResourceSet InternalGetResourceSet(CultureInfo culture, bool createIfNotExists, bool tryParents)
         {
             // CultureInfo.InvariantCulture.Name is empty
@@ -125,7 +125,7 @@ namespace Librame.Extensions.Core.Localizers
         /// <param name="assembly">给定的程序集。</param>
         /// <returns>返回 <see cref="ResourceSet"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "assembly")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual ResourceSet GetAssemblyResourceSet(Assembly assembly)
         {
             var resourceName = assembly.GetManifestResourceNames()

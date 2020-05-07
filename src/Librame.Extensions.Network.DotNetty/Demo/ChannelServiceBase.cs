@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Librame.Extensions.Network.DotNetty.Demo
 {
@@ -30,18 +29,17 @@ namespace Librame.Extensions.Network.DotNetty.Demo
         /// </summary>
         /// <param name="wrapperFactory">给定的 <see cref="IBootstrapWrapperFactory"/>。</param>
         /// <param name="signingCredentials">给定的 <see cref="ISigningCredentialsService"/>。</param>
-        /// <param name="coreOptions">给定的 <see cref="IOptions{CoreBuilderOptions}"/>。</param>
-        /// <param name="options">给定的 <see cref="IOptions{DotNettyOptions}"/>。</param>
+        /// <param name="dependency">给定的 <see cref="DotNettyDependency"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public ChannelServiceBase(IBootstrapWrapperFactory wrapperFactory,
-            ISigningCredentialsService signingCredentials, IOptions<CoreBuilderOptions> coreOptions,
-            IOptions<DotNettyOptions> options, ILoggerFactory loggerFactory)
+            ISigningCredentialsService signingCredentials,
+            DotNettyDependency dependency,
+            ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             WrapperFactory = wrapperFactory.NotNull(nameof(wrapperFactory));
             SigningCredentials = signingCredentials.NotNull(nameof(signingCredentials));
-            CoreOptions = coreOptions.NotNull(nameof(coreOptions)).Value;
-            Options = options.NotNull(nameof(options)).Value;
+            Dependency = dependency.NotNull(nameof(dependency));
         }
 
 
@@ -62,15 +60,22 @@ namespace Librame.Extensions.Network.DotNetty.Demo
         public ISigningCredentialsService SigningCredentials { get; }
 
         /// <summary>
+        /// DotNetty 依赖。
+        /// </summary>
+        public DotNettyDependency Dependency { get; }
+
+        /// <summary>
         /// DotNetty 构建器选项。
         /// </summary>
         /// <value>返回 <see cref="DotNettyOptions"/>。</value>
-        public DotNettyOptions Options { get; }
+        public DotNettyOptions Options
+            => Dependency.Options;
 
         /// <summary>
         /// 核心构建器选项。
         /// </summary>
         /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
-        public CoreBuilderOptions CoreOptions { get; }
+        public CoreBuilderOptions CoreOptions
+            => Dependency.GetRequiredParentDependency<CoreBuilderDependency>().Options;
     }
 }

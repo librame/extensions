@@ -57,7 +57,7 @@ namespace Librame.Extensions.Data.Stores
         {
             _options.IdentifierGenerator.NotNull(nameof(_options.IdentifierGenerator));
 
-            var guid = await _options.IdentifierGenerator.GenerateAsync(Clock, isUtc: true, cancellationToken)
+            var guid = await _options.IdentifierGenerator.GenerateAsync(Clock, cancellationToken)
                 .ConfigureAndResultAsync();
             Logger.LogTrace($"Generate {idTraceName}: {guid}");
 

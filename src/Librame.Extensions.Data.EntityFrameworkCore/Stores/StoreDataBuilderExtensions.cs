@@ -47,7 +47,7 @@ namespace Librame.Extensions.Data.Builders
         /// <typeparam name="THub">指定实现 <see cref="IStoreHub{TGenId, TIncremId}"/> 或 <see cref="IStoreHub{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/> 接口的存储中心类型，推荐从 <see cref="StoreHub{TGenId, TIncremId}"/> 或 <see cref="StoreHub{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/> 派生。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IDataBuilder AddStoreHub<THub>(this IDataBuilder builder)
             where THub : class, IStoreHub
         {
@@ -86,7 +86,7 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="replaced">是否替换可能已注册的服务（可选；默认替换）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IDataBuilder AddStoreIdentifier<TIdentifier>(this IDataBuilder builder, bool replaced = true)
             where TIdentifier : class, IStoreIdentifier
         {
@@ -121,7 +121,7 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="replaced">是否替换可能已注册的服务（可选；默认替换）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IDataBuilder AddStoreInitializer<TInitializer>(this IDataBuilder builder, bool replaced = true)
             where TInitializer : class, IStoreInitializer
         {

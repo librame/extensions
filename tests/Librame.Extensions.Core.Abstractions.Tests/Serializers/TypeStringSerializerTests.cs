@@ -12,7 +12,7 @@ namespace Librame.Extensions.Core.Tests
         {
             var type = typeof(TypeStringSerializerTests);
 
-            var serializer = SerializerHelper.GetStringSerializer<Type>();
+            var serializer = SerializerManager.GetBySource<Type>();
 
             var value = serializer.Serialize(type);
             Assert.NotEmpty(value);

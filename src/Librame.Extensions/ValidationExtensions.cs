@@ -104,15 +104,11 @@ namespace Librame.Extensions
             if (sources.IsNull())
                 return true;
 
-            var i = 0;
-            foreach (var source in sources)
-            {
-                if (i > 0)
-                    break;
-                i++;
-            }
+            if (sources is ICollection collection)
+                return collection.Count < 1;
 
-            return i < 1;
+            var enumerator = sources.GetEnumerator();
+            return !enumerator.MoveNext();
         }
 
         /// <summary>
@@ -244,7 +240,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool IsConcreteType(this Type type)
             => type.IsNotNull() && !type.IsAbstract && !type.IsInterface;
 
@@ -253,7 +249,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool IsOpenGenericType(this Type type)
         {
             // 如泛型 List<string>，则 GenericTypeDefinition 为 List<T>，GenericParameters 为 string
@@ -266,7 +262,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="type">给定的类型。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "type")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static bool IsNullableType(this Type type)
         {
             // 如可空泛型 int?，则 GenericTypeDefinition() 为 Nullable<T>
@@ -431,7 +427,7 @@ namespace Librame.Extensions
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsAlgorithmSpecial(this char c)
-            => ExtensionSettings.AlgorithmSpecialSymbols.CompatibleContains(c);
+            => ExtensionSettings.Current.AlgorithmSpecialSymbols.CompatibleContains(c);
 
 
         /// <summary>

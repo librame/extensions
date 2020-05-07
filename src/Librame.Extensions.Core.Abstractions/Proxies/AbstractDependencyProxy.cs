@@ -74,7 +74,7 @@ namespace Librame.Extensions.Core.Proxies
         /// <param name="targetMethod">给定的 <see cref="MethodInfo"/>。</param>
         /// <param name="args">给定的参数数组。</param>
         /// <returns>返回调用结果。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "targetMethod")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
             var (preActionKeys, postActionKeys) = Dependency.FindKeys(targetMethod);
@@ -120,7 +120,7 @@ namespace Librame.Extensions.Core.Proxies
         /// <param name="preActionKeys">给定的前置 <see cref="IReadOnlyList{InvokeDependencyKey}"/>。</param>
         /// <param name="postActionKeys">给定的后置 <see cref="IReadOnlyList{InvokeDependencyKey}"/>。</param>
         /// <returns>返回 <see cref="MemberInfo"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "targetMethod")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual MemberInfo ExtractInvokeDependencyKeyMember(MethodInfo targetMethod,
             IReadOnlyList<InvokeDependencyKey> preActionKeys,
             IReadOnlyList<InvokeDependencyKey> postActionKeys)

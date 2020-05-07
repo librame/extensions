@@ -20,6 +20,14 @@ namespace Librame.Extensions.Core.Builders
     public interface IExtensionBuilderDependency : IDependency
     {
         /// <summary>
+        /// 父级构建器依赖。
+        /// </summary>
+        /// <value>
+        /// 返回 <see cref="IExtensionBuilderDependency"/>。
+        /// </value>
+        IExtensionBuilderDependency ParentDependency { get; }
+
+        /// <summary>
         /// 基础目录。
         /// </summary>
         string BaseDirectory { get; set; }

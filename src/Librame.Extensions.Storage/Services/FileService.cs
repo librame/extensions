@@ -25,6 +25,7 @@ namespace Librame.Extensions.Storage.Services
 {
     using Core.Services;
     using Storage.Builders;
+    using Storage.Resources;
 
     /// <summary>
     /// 文件服务。
@@ -57,10 +58,7 @@ namespace Librame.Extensions.Storage.Services
         private IStorageFileProvider GetFileProvider(Func<IEnumerable<IStorageFileProvider>, IStorageFileProvider> providerFactory = null)
         {
             if (Options.FileProviders.IsEmpty())
-            {
-                Logger.LogWarning($"Options.FileProviders is null or empty.");
-                return null;
-            }
+                throw new ArgumentNullException(InternalResource.ArgumentNullExceptionFileProvidersIsEmpty);
 
             // 倒序优先
             var providers = Options.FileProviders.Reverse();
@@ -131,7 +129,7 @@ namespace Librame.Extensions.Storage.Services
         /// </summary>
         /// <param name="fileInfo">给定的 <see cref="IStorageFileInfo"/>。</param>
         /// <returns>返回 <see cref="Task{String}"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "fileInfo")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public Task<string> ReadStringAsync(IStorageFileInfo fileInfo)
         {
             fileInfo.NotNull(nameof(fileInfo));
@@ -191,7 +189,7 @@ namespace Librame.Extensions.Storage.Services
         /// <param name="fileInfo">给定的 <see cref="IStorageFileInfo"/>。</param>
         /// <param name="content">给定的写入字符串。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "fileInfo")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public Task WriteStringAsync(IStorageFileInfo fileInfo, string content)
         {
             fileInfo.NotNull(nameof(fileInfo));

@@ -20,7 +20,6 @@ namespace Librame.Extensions.Core.Serializers
     /// <typeparam name="TSource">指定的来源类型。</typeparam>
     public class SerializableString<TSource> : IEquatable<SerializableString<TSource>>
     {
-        private readonly object _locker = new object();
         private string _value;
 
 
@@ -48,8 +47,8 @@ namespace Librame.Extensions.Core.Serializers
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public IStringSerializer<TSource> Serializer
-            => SerializerHelper.GetStringSerializer<TSource>();
+        public virtual IStringSerializer<TSource> Serializer
+            => SerializerManager.GetBySource<TSource>();
 
         /// <summary>
         /// 来源实例。
@@ -76,11 +75,11 @@ namespace Librame.Extensions.Core.Serializers
         /// <returns>返回 <see cref="SerializableString{TSource}"/>。</returns>
         public SerializableString<TSource> ChangeValue(string newValue)
         {
-            lock (_locker)
+            ExtensionSettings.Current.RunLocker(() =>
             {
                 Source = Serializer.Deserialize(newValue);
                 _value = newValue;
-            }
+            });
 
             return this;
         }
@@ -92,11 +91,11 @@ namespace Librame.Extensions.Core.Serializers
         /// <returns>返回 <see cref="SerializableString{TSource}"/>。</returns>
         public SerializableString<TSource> ChangeSource(TSource newSource)
         {
-            lock (_locker)
+            ExtensionSettings.Current.RunLocker(() =>
             {
                 _value = Serializer.Serialize(newSource);
                 Source = newSource;
-            }
+            });
             
             return this;
         }

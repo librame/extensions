@@ -54,7 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="setupAction">给定的 <see cref="Action{ITenant, DbContextOptionsBuilder}"/>。</param>
         /// <param name="poolSize">设置池保留的最大实例数（可选；默认为128，如果小于1，将使用 AddDbContext() 注册）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builder")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IDataBuilder AddAccessor<TAccessor, TImplementation>(this IDataBuilder builder,
             Action<ITenant, DbContextOptionsBuilder> setupAction, int poolSize = 128)
             where TAccessor : class, IAccessor

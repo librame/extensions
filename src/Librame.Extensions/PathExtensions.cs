@@ -41,11 +41,11 @@ namespace Librame.Extensions
     public static class PathExtensions
     {
         /// <summary>
-        /// 没有开发相对路径的路径。
+        /// 不带开发相对路径的路径。
         /// </summary>
         /// <param name="currentPath">给定的当前目录。</param>
         /// <returns>返回目录字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "currentPath")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string WithoutDevelopmentRelativePath(this string currentPath)
         {
             currentPath.NotEmpty(nameof(currentPath));
@@ -90,7 +90,7 @@ namespace Librame.Extensions
         /// <param name="directory">给定的 <see cref="DirectoryInfo"/>。</param>
         /// <param name="folderName">给定的目录名称。</param>
         /// <returns>返回 <see cref="DirectoryInfo"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "directory")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static DirectoryInfo Subdirectory(this DirectoryInfo directory, string folderName)
         {
             directory.NotNull(nameof(directory));
@@ -107,30 +107,88 @@ namespace Librame.Extensions
         /// Invalid file path '{0}'.
         /// </exception>
         /// <param name="filePath">给定的文件路径。</param>
-        /// <param name="newFileNameFactory">给定的新文件名方法；输入参数依次为文件基础名、文件扩展名（不存在则为 <see cref="string.Empty"/>）。</param>
+        /// <param name="newFileNameFactory">给定的新文件名方法；输入参数依次为文件基础名、文件扩展名（可空）。</param>
         /// <returns>返回路径。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "newFileNameFactory")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string ChangeFileName(this string filePath, Func<string, string, string> newFileNameFactory)
         {
             newFileNameFactory.NotNull(nameof(newFileNameFactory));
 
-            var fileName = Path.GetFileName(filePath);
-            if (string.IsNullOrEmpty(fileName))
+            (string baseName, string extension) = filePath.GetFileBaseNameAndExtension(out var basePath);
+
+            var newFileName = newFileNameFactory.Invoke(baseName, extension);
+
+            if (basePath.IsEmpty())
+                return newFileName;
+
+            return basePath.CombinePath(newFileName);
+        }
+
+        /// <summary>
+        /// 获取文件基础名与扩展名的元组。
+        /// </summary>
+        /// <param name="filePath">给定的文件路径。</param>
+        /// <param name="basePath">输出基础路径（可空）。</param>
+        /// <returns>返回一个包含基础名与扩展名（可空）的元组。</returns>
+        public static (string baseName, string extension) GetFileBaseNameAndExtension
+            (this string filePath, out string basePath)
+        {
+            var fileName = filePath.GetFileNameWithoutPath(out basePath);
+            if (fileName.IsEmpty())
                 throw new ArgumentException(InternalResource.ArgumentExceptionFilePathFormat.Format(filePath));
 
-            var basePath = Path.GetDirectoryName(filePath);
-            var extension = Path.GetExtension(filePath);
+            var separatorIndex = fileName.LastIndexOf('.');
+            return (fileName.Substring(0, separatorIndex), fileName.Substring(separatorIndex)); // 保留分隔符
+        }
 
-            // 文件扩展名可能为空
-            if (extension.IsEmpty())
-                return basePath.CombinePath(newFileNameFactory.Invoke(fileName, string.Empty));
+        /// <summary>
+        /// 获取不包含路径的文件名。
+        /// </summary>
+        /// <param name="filePath">给定的文件路径。</param>
+        /// <param name="basePath">输出基础路径（可空）。</param>
+        /// <returns>返回字符串。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static string GetFileNameWithoutPath(this string filePath, out string basePath)
+        {
+            filePath.NotEmpty(nameof(filePath));
 
-            var baseName = fileName.TrimEnd(extension, loops: false);
-            return basePath.CombinePath(newFileNameFactory.Invoke(baseName, extension));
+            var altSeparatorIndex = filePath.LastIndexOf(ExtensionSettings.AltDirectorySeparatorChar);
+            var separatorIndex = filePath.LastIndexOf(ExtensionSettings.DirectorySeparatorChar);
+
+            // 如果基础路径无分隔符
+            if (altSeparatorIndex < 0 && separatorIndex < 0)
+            {
+                basePath = null;
+                return filePath;
+            }
+
+            var index = separatorIndex >= 0
+                ? separatorIndex
+                : altSeparatorIndex;
+
+            basePath = filePath.Substring(0, index + 1); // 基础路径保留分隔符
+            return filePath.Substring(index + 1);
         }
 
 
         #region CombinePath
+
+        /// <summary>
+        /// 合并到当前目录。
+        /// </summary>
+        /// <param name="relativePath">给定要附加的相对路径。</param>
+        /// <param name="withoutDevelopmentRelativePath">不带开发相对路径的路径（可选；默认不带）。</param>
+        /// <returns>返回路径字符串。</returns>
+        public static string CombineCurrentDirectory(this string relativePath,
+            bool withoutDevelopmentRelativePath = true)
+        {
+            var directory = Directory.GetCurrentDirectory();
+
+            if (withoutDevelopmentRelativePath)
+                directory = directory.WithoutDevelopmentRelativePath();
+
+            return directory.CombinePath(relativePath);
+        }
 
         /// <summary>
         /// 合并路径。
@@ -138,7 +196,7 @@ namespace Librame.Extensions
         /// <param name="basePath">给定的基础路径。</param>
         /// <param name="relativePath">给定要附加的相对路径。</param>
         /// <returns>返回路径字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "basePath")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string CombinePath(this string basePath, string relativePath)
         {
             basePath.NotEmpty(nameof(basePath));
@@ -163,11 +221,13 @@ namespace Librame.Extensions
                 {
                     basePath = basePath.Replace(ExtensionSettings.DirectorySeparatorChar,
                         ExtensionSettings.AltDirectorySeparatorChar);
+                    separatorIndex = -1;
                 }
                 else
                 {
                     basePath = basePath.Replace(ExtensionSettings.AltDirectorySeparatorChar,
                         ExtensionSettings.DirectorySeparatorChar);
+                    altSeparatorIndex = -1;
                 }
             }
 
@@ -238,66 +298,67 @@ namespace Librame.Extensions
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="items">给定的元素集合。</param>
         /// <param name="extensions">给定的扩展名集合。</param>
-        /// <param name="hasExtensionFactory">给定具有扩展名的断定方法。</param>
+        /// <param name="validFactory">给定的验证工厂方法。</param>
         /// <returns>返回提取的集合。</returns>
         public static IEnumerable<T> ExtractHasExtension<T>(this IEnumerable<T> items, IEnumerable<string> extensions,
-            Func<T, string, bool> hasExtensionFactory)
-            => items.Where(item => item.TryHasExtension(extensions, hasExtensionFactory)).ToList();
+            Func<T, string, bool> validFactory)
+            => items.Where(item => item.TryGetExtension(extensions, validFactory)).ToList();
 
 
         /// <summary>
-        /// 尝试检测路径具备某扩展名。
+        /// 尝试获取路径中包含的扩展名。
         /// </summary>
         /// <param name="path">给定的路径。</param>
         /// <param name="extensions">给定的扩展名集合。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool TryHasExtension(this string path, IEnumerable<string> extensions)
-            => path.TryHasExtension(extensions, out _);
+        public static bool TryGetExtension(this string path, IEnumerable<string> extensions)
+            => path.TryGetExtension(extensions, out _);
 
         /// <summary>
-        /// 尝试检测路径具备某扩展名。
+        /// 尝试获取路径中包含的扩展名。
         /// </summary>
         /// <param name="path">给定的路径。</param>
         /// <param name="extensions">给定的扩展名集合。</param>
-        /// <param name="extension">输出具有的扩展名。</param>
+        /// <param name="result">输出具有的扩展名。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool TryHasExtension(this string path, IEnumerable<string> extensions, out string extension)
-            => path.TryHasExtension(extensions, (p, ext) => p.EndsWith(ext, StringComparison.OrdinalIgnoreCase), out extension);
+        public static bool TryGetExtension(this string path, IEnumerable<string> extensions, out string result)
+            => path.TryGetExtension(extensions, (p, ext) => p.EndsWith(ext, StringComparison.OrdinalIgnoreCase), out result);
 
 
         /// <summary>
-        /// 尝试检测元素具备某扩展名。
+        /// 尝试获取与验证工厂方法匹配的扩展名。
         /// </summary>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="item">给定的元素。</param>
         /// <param name="extensions">给定的扩展名集合。</param>
-        /// <param name="hasExtensionFactory">给定具有扩展名的断定方法。</param>
+        /// <param name="validFactory">给定的验证工厂方法。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool TryHasExtension<T>(this T item, IEnumerable<string> extensions,
-            Func<T, string, bool> hasExtensionFactory)
-            => item.TryHasExtension(extensions, hasExtensionFactory, out _);
+        public static bool TryGetExtension<T>(this T item, IEnumerable<string> extensions,
+            Func<T, string, bool> validFactory)
+            => item.TryGetExtension(extensions, validFactory, out _);
 
         /// <summary>
-        /// 尝试检测元素具备某扩展名。
+        /// 尝试获取与验证工厂方法匹配的扩展名。
         /// </summary>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="item">给定的元素。</param>
         /// <param name="extensions">给定的扩展名集合。</param>
-        /// <param name="hasExtensionFactory">给定具有扩展名的断定方法。</param>
-        /// <param name="extension">输出具有的扩展名。</param>
+        /// <param name="validFactory">给定的验证工厂方法。</param>
+        /// <param name="result">输出扩展名。</param>
         /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "extensions")]
-        public static bool TryHasExtension<T>(this T item, IEnumerable<string> extensions,
-            Func<T, string, bool> hasExtensionFactory, out string extension)
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool TryGetExtension<T>(this T item, IEnumerable<string> extensions,
+            Func<T, string, bool> validFactory, out string result)
         {
             extensions.NotNull(nameof(extensions));
+            validFactory.NotNull(nameof(validFactory));
 
-            extension = string.Empty;
-            foreach (var ext in extensions)
+            result = string.Empty;
+            foreach (var extension in extensions)
             {
-                if (hasExtensionFactory.Invoke(item, ext))
+                if (validFactory.Invoke(item, extension))
                 {
-                    extension = ext;
+                    result = extension;
                     return true;
                 }
             }

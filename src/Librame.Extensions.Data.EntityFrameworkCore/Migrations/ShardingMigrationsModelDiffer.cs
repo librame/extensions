@@ -2391,7 +2391,7 @@ namespace Librame.Extensions.Data.Migrations
 
                     // 从目标实体集合映射中筛选出标记分表的实体类型
                     var targetEntityTypes = _targetEntitiesMap.Keys.Where(type
-                        => type.ClrType.TryGetCustomAttribute(out ShardingAttribute attribute));
+                        => type.ClrType.TryGetCustomAttribute(out ShardableAttribute attribute));
 
                     foreach (var targetEntityType in targetEntityTypes)
                     {

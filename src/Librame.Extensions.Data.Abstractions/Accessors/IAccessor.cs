@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Accessors
 {
     using Core.Services;
-    using Core.Threads;
     using Data.Stores;
     using Data.Services;
 
@@ -31,11 +30,6 @@ namespace Librame.Extensions.Data.Accessors
         /// 时钟服务。
         /// </summary>
         IClockService Clock { get; }
-
-        /// <summary>
-        /// 内存锁定器。
-        /// </summary>
-        IMemoryLocker Locker { get; }
 
 
         /// <summary>

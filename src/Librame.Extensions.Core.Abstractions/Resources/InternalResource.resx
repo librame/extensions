@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgumentExceptionNotSupportedConfigurationOfDependencyOptions" xml:space="preserve">
-    <value>Configuration of dependency options is not supported.</value>
+  <data name="ArgumentExceptionNotSupportedConfigurationOfDependency" xml:space="preserve">
+    <value>Configuration of dependency is not supported.</value>
+  </data>
+  <data name="InvalidOperationExceptionDataSegment" xml:space="preserve">
+    <value>There is only one current data segment.</value>
   </data>
   <data name="NotSupportedExceptionDomainName" xml:space="preserve">
     <value>IP addresses other than loopback addresses are not supported.</value>

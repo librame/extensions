@@ -87,8 +87,11 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         private void InitializeInitializer()
         {
-            if (_dbContextAccessor.BuilderOptions.Stores.InitializationEnabled && !Initializer.IsInitialized)
+            if (_dbContextAccessor.Dependency.Options.Stores.InitializationEnabled
+                && !Initializer.IsInitialized)
+            {
                 Initializer.Initialize(this);
+            }
         }
 
 

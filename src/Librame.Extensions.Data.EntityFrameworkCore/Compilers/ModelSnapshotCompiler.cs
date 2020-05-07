@@ -45,7 +45,7 @@ namespace Librame.Extensions.Data.Compilers
         /// <param name="accessorType">给定的访问器类型。</param>
         /// <returns>返回 <see cref="TypeNameCombiner"/>。</returns>
         public static TypeNameCombiner GenerateTypeName(Type accessorType)
-            => new TypeNameCombiner(accessorType?.Namespace, $"{accessorType.GetGenericBodyName()}{nameof(ModelSnapshot)}");
+            => new TypeNameCombiner($"{accessorType.GetGenericBodyName()}{nameof(ModelSnapshot)}", accessorType?.Namespace);
 
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Librame.Extensions.Data.Compilers
         /// <param name="basePathFactory">给定基础路径的工厂方法（可选；默认为模型快照目录）。</param>
         /// <param name="extension">给定的扩展名（可选；默认为 <see cref="CSharpCompiler.FileExtension"/>）。</param>
         /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "accessor")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FilePathCombiner CombineFilePath(IAccessor accessor,
             Func<DataBuilderDependency, string> basePathFactory = null,
             string extension = CSharpCompiler.FileExtension)

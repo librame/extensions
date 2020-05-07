@@ -22,19 +22,12 @@ namespace Librame.Extensions.Drawing.Serializers
     public class SKColorStringSerializer : AbstractStringSerializer<SKColor>
     {
         /// <summary>
-        /// 反序列化字符串为字符编码。
+        /// 构造一个 <see cref="SKColorStringSerializer"/>。
         /// </summary>
-        /// <param name="target">给定的字符串。</param>
-        /// <returns>返回类型。</returns>
-        public override SKColor Deserialize(string target)
-            => SKColor.Parse(target);
+        public SKColorStringSerializer()
+            : base(f => f.ToString(), r => SKColor.Parse(r))
+        {
+        }
 
-        /// <summary>
-        /// 序列化字符编码为字符串。
-        /// </summary>
-        /// <param name="source">给定的类型。</param>
-        /// <returns>返回字符串。</returns>
-        public override string Serialize(SKColor source)
-            => source.ToString();
     }
 }

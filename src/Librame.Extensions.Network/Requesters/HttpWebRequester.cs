@@ -57,7 +57,7 @@ namespace Librame.Extensions.Network.Requesters
             {
                 var opts = Options.Requester;
 
-                request = WebRequest.CreateHttp(uri.ToString());
+                request = WebRequest.CreateHttp(uri);
                 request.Timeout = (int)opts.Timeout.TotalMilliseconds;
                 request.UserAgent = opts.UserAgent;
 

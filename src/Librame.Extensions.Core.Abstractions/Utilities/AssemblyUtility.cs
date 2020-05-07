@@ -18,7 +18,7 @@ using System.Reflection;
 namespace Librame.Extensions.Core.Utilities
 {
     /// <summary>
-    /// 程序集实用工具。
+    /// <see cref="Assembly"/> 实用工具。
     /// </summary>
     public static class AssemblyUtility
     {
@@ -44,14 +44,14 @@ namespace Librame.Extensions.Core.Utilities
         /// <summary>
         /// 当前程序集列表。
         /// </summary>
-        public static IReadOnlyList<Assembly> CurrentAssemblies { get; }
-            = AppDomain.CurrentDomain.GetAssemblies();
+        public static IReadOnlyList<Assembly> CurrentAssemblies
+            => InitializeAssemblies();
 
         /// <summary>
         /// 当前除系统外的第三方程序集列表。
         /// </summary>
-        public static IReadOnlyList<Assembly> CurrentAssembliesWithoutSystem { get; }
-            = CurrentAssemblies.Where(NotSystemAssembly).AsReadOnlyList();
+        public static IReadOnlyList<Assembly> CurrentAssembliesWithoutSystem
+            => InitializeAssembliesWithoutSystem();
 
 
         /// <summary>
@@ -65,13 +65,28 @@ namespace Librame.Extensions.Core.Utilities
         /// 创建当前除系统外的第三方程序集包含的所有公共类型的实例列表。
         /// </summary>
         /// <typeparam name="TExported">指定的公共类型。</typeparam>
+        /// <param name="filterNonRegisteredAttribute">过滤已标记 <see cref="NonRegisteredAttribute"/> 的类型（可选；默认启用）。</param>
         /// <returns>返回 <see cref="IReadOnlyList{TExported}"/>。</returns>
-        public static IReadOnlyList<TExported> CreateInstancesByCurrentExportedTypesWithoutSystem<TExported>()
+        public static List<TExported> CurrentExportedInstancesWithoutSystem<TExported>
+            (bool filterNonRegisteredAttribute = true)
         {
             var baseType = typeof(TExported);
 
+            Func<Type, bool> predicate = null;
+            if (filterNonRegisteredAttribute)
+            {
+                predicate = t => baseType.IsAssignableFromTargetType(t)
+                    && t.IsConcreteType()
+                    && !t.IsDefined<NonRegisteredAttribute>();
+            }
+            else
+            {
+                predicate = t => baseType.IsAssignableFromTargetType(t)
+                    && t.IsConcreteType();
+            }
+
             var exporteds = CurrentExportedTypesWithoutSystem
-                .Where(t => baseType.IsAssignableFromTargetType(t) && t.IsConcreteType())
+                .Where(predicate)
                 .Select(t => t.EnsureCreate<TExported>())
                 .ToList();
 
@@ -82,15 +97,31 @@ namespace Librame.Extensions.Core.Utilities
         }
 
 
-        private static bool NotSystemAssembly(Assembly assembly)
+        private static Assembly[] InitializeAssemblies()
         {
-            foreach (var prefix in _systemAssemblyPrefixes)
+            return ExtensionSettings.Current.RunLockerResult(() =>
             {
-                if (assembly.FullName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-                    return false;
-            }
+                return AppDomain.CurrentDomain.GetAssemblies();
+            });
+        }
 
-            return true;
+        private static Assembly[] InitializeAssembliesWithoutSystem()
+        {
+            return ExtensionSettings.Current.RunLockerResult(() =>
+            {
+                return CurrentAssemblies.Where(NotSystemAssembly).ToArray();
+            });
+
+            bool NotSystemAssembly(Assembly assembly)
+            {
+                foreach (var prefix in _systemAssemblyPrefixes)
+                {
+                    if (assembly.FullName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                        return false;
+                }
+
+                return true;
+            }
         }
 
     }

@@ -59,7 +59,7 @@ namespace Librame.Extensions.Storage.Services
         public Action<long, long> ProgressAction { get; set; }
 
 
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "downloadUrl")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public async Task<FilePathCombiner> DownloadFileAsync(string downloadUrl, string savePath,
             CancellationToken cancellationToken = default)
         {
@@ -123,7 +123,7 @@ namespace Librame.Extensions.Storage.Services
         }
 
 
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "uploadUrl")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings")]
         public async Task<string> UploadFileAsync(string uploadUrl, string filePath,
             CancellationToken cancellationToken = default)
         {
@@ -169,7 +169,7 @@ namespace Librame.Extensions.Storage.Services
         {
             var opts = Options.FileTransfer;
 
-            var hwr = WebRequest.CreateHttp(url);
+            HttpWebRequest hwr = WebRequest.CreateHttp(url.AsAbsoluteUri());
             hwr.Timeout = opts.Timeout;
             hwr.UserAgent = opts.UserAgent;
             hwr.Method = method;

@@ -80,7 +80,7 @@ namespace Librame.Extensions.Core.Localizers
         /// </summary>
         /// <param name="resourceBaseType">给定的资源基础类型。</param>
         /// <returns>返回字符串。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "resourceBaseType")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string GenerateKey(Type resourceBaseType)
         {
             resourceBaseType.NotNull(nameof(resourceBaseType));

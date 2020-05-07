@@ -22,7 +22,7 @@ namespace Librame.Extensions.Data.Tests
 
         private void RunTest(IStringLocalizer<DataStatusResource> localizer, string cultureName)
         {
-            CultureUtility.Register(new CultureInfo(cultureName));
+            CultureInfoUtility.Register(new CultureInfo(cultureName));
 
             // Groups
             var globalGroup = localizer.GetString(r => r.GlobalGroup);

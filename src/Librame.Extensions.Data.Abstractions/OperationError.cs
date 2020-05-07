@@ -61,7 +61,7 @@ namespace Librame.Extensions.Data
         /// </summary>
         /// <param name="exception">给定的异常。</param>
         /// <returns>返回 <see cref="OperationError"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "exception")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static OperationError ToError(Exception exception)
         {
             exception.NotNull(nameof(exception));

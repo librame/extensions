@@ -62,7 +62,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="anchor">给定以 # 开始的锚点（可选）。</param>
         public UriCombiner(string scheme, string host,
             string path = null, string query = null, string anchor = null)
-            : base(CombineUri(scheme, host, path, query, anchor))
+            : base(CombineParameters(scheme, host, path, query, anchor))
         {
             Scheme = scheme;
             Host = host;
@@ -115,7 +115,7 @@ namespace Librame.Extensions.Core.Combiners
         /// 重写源实例。
         /// </summary>
         public override Uri Source
-            => CombineUri(Scheme, Host, Path, Query, Anchor);
+            => CombineParameters(Scheme, Host, Path, Query, Anchor);
 
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace Librame.Extensions.Core.Combiners
         /// </summary>
         /// <param name="queriesAction">给定的改变查询参数集合动作（内部支持对参数值的特殊字符进行转码处理）。</param>
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "queriesAction")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public UriCombiner WithQueries(Action<ConcurrentDictionary<string, string>> queriesAction)
         {
             queriesAction.NotNull(nameof(queriesAction));
@@ -243,23 +243,6 @@ namespace Librame.Extensions.Core.Combiners
         /// <returns>返回 <see cref="UriCombiner"/>。</returns>
         public UriCombiner WithAnchor(string newAnchor)
             => new UriCombiner(Scheme, Host, Path, Query, newAnchor);
-        
-
-        /// <summary>
-        /// 创建域名组合器。
-        /// </summary>
-        /// <param name="host">给定的主机。</param>
-        /// <returns>返回 <see cref="DomainNameCombiner"/>。</returns>
-        private static DomainNameCombiner CreateDomainNameCombiner(string host)
-        {
-            if (DomainNameCombiner.TryParseAllLevelSegmentsFromHost(host,
-                out IEnumerable<string> allLevelSegments))
-            {
-                return allLevelSegments.ToList().AsDomainNameCombiner();
-            }
-
-            return null;
-        }
 
 
         /// <summary>
@@ -354,25 +337,36 @@ namespace Librame.Extensions.Core.Combiners
             => combiner?.ToUri();
 
 
-        /// <summary>
-        /// 组合 URI。
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="scheme"/> or <paramref name="host"/> is null or empty.
-        /// </exception>
-        /// <param name="scheme">给定的协议。</param>
-        /// <param name="host">给定的主机。</param>
-        /// <param name="path">给定的路径（可选）。</param>
-        /// <param name="query">给定的查询（可选）。</param>
-        /// <param name="anchor">给定以 # 开始的锚点（可选）。</param>
-        /// <returns>返回 <see cref="Uri"/>。</returns>
-        public static Uri CombineUri(string scheme, string host,
+        private static DomainNameCombiner CreateDomainNameCombiner(string host)
+        {
+            if (DomainNameCombiner.TryParseCombiner(host, out var result))
+                return result;
+
+            return null;
+        }
+
+
+        private static Uri CombineParameters(string scheme, string host,
             string path = default, string query = default, string anchor = null)
         {
             scheme.NotEmpty(nameof(scheme));
             host.NotEmpty(nameof(host));
 
             return new Uri($"{scheme}{Uri.SchemeDelimiter}{host}{path}{query}{anchor}");
+        }
+
+
+        /// <summary>
+        /// 尝试解析组合器。
+        /// </summary>
+        /// <param name="absoluteUriString">给定的绝对 URI 字符串。</param>
+        /// <param name="result">输出 <see cref="UriCombiner"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Design", "CA1054:URI 参数不应为字符串")]
+        public static bool TryParseCombiner(string absoluteUriString, out UriCombiner result)
+        {
+            result = new UriCombiner(absoluteUriString);
+            return result.Host.IsNotEmpty() || result.Path.IsNotEmpty();
         }
 
 

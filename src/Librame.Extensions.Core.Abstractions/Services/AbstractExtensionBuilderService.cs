@@ -50,7 +50,7 @@ namespace Librame.Extensions.Core.Services
         /// 构造一个 <see cref="AbstractExtensionBuilderService{TBuilderOptions}"/>。
         /// </summary>
         /// <param name="builderService">给定的 <see cref="AbstractExtensionBuilderService{TBuilderOptions}"/>。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", MessageId = "builderService")]
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected AbstractExtensionBuilderService(AbstractExtensionBuilderService<TBuilderOptions> builderService)
             : base(builderService)
         {

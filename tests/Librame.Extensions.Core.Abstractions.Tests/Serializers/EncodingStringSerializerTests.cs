@@ -12,7 +12,7 @@ namespace Librame.Extensions.Core.Tests
         {
             var encoding = Encoding.UTF8;
 
-            var serializer = SerializerHelper.GetStringSerializer<Encoding>();
+            var serializer = SerializerManager.GetBySource<Encoding>();
 
             var value = serializer.Serialize(encoding);
             Assert.NotEmpty(value);

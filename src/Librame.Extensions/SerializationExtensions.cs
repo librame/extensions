@@ -10,7 +10,9 @@
 
 #endregion
 
+using System;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Librame.Extensions
 {
@@ -19,6 +21,10 @@ namespace Librame.Extensions
     /// </summary>
     public static class SerializationExtensions
     {
+        private static readonly Lazy<BinaryFormatter> _binaryFormatter
+            = new Lazy<BinaryFormatter>(() => new BinaryFormatter());
+
+
         /// <summary>
         /// 序列化二进制为字节数组。
         /// </summary>
@@ -53,7 +59,7 @@ namespace Librame.Extensions
         /// <param name="graph">给定的对象。</param>
         /// <param name="stream">给定的 <see cref="Stream"/>。</param>
         public static void SerializeBinary(this object graph, Stream stream)
-            => ExtensionSettings.BinaryFormatter.Value.Serialize(stream, graph);
+            => _binaryFormatter.Value.Serialize(stream, graph);
 
 
         /// <summary>
@@ -84,6 +90,6 @@ namespace Librame.Extensions
         /// <param name="stream">给定的 <see cref="Stream"/>。</param>
         /// <returns>返回对象。</returns>
         public static object DeserializeBinary(this Stream stream)
-            => ExtensionSettings.BinaryFormatter.Value.Deserialize(stream);
+            => _binaryFormatter.Value.Deserialize(stream);
     }
 }
