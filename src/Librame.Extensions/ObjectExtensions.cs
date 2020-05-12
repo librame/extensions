@@ -305,7 +305,7 @@ namespace Librame.Extensions
         {
             if (singleton.IsNull())
             {
-                ExtensionSettings.Current.RunLocker(() =>
+                ExtensionSettings.Preference.RunLocker(() =>
                 {
                     if (singleton.IsNull())
                         singleton = buildFactory?.Invoke();

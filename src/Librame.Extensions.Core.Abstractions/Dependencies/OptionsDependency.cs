@@ -52,7 +52,7 @@ namespace Librame.Extensions.Core.Dependencies
                 throw new ArgumentException(InternalResource.ArgumentExceptionNotSupportedConfigurationOfDependency);
 
             OptionsType = new SerializableString<Type>(optionsType);
-            Options = ConsistencyOptionsPool.GetOrAdd<TOptions>();
+            Options = ConsistencyOptionsCache.GetOrAdd<TOptions>();
             configureOptions?.Invoke(Options);
         }
 

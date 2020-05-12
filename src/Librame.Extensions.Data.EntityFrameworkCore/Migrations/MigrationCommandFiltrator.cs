@@ -29,7 +29,7 @@ namespace Librame.Extensions.Data.Migrations
     public static class MigrationCommandFiltrator
     {
         private static FilePathCombiner GetFilePathCombiner(IAccessor accessor)
-            => ModelSnapshotCompiler.CombineFilePath(accessor, d => d.MigrationCommandsDirectory, ".json");
+            => ModelSnapshotCompiler.CombineFilePath(accessor, d => d.MigrationsDirectory, ".json");
 
         private static string GetCacheKey(FilePathCombiner filePath)
             => $"{nameof(MigrationCommandFiltrator)}:{filePath}";
@@ -79,10 +79,12 @@ namespace Librame.Extensions.Data.Migrations
             // ToInfo
             MigrationCommandInfo ToInfo(MigrationCommand command)
             {
+                var tenant = accessor.CurrentTenant;
                 return new MigrationCommandInfo
                 {
                     Text = command.CommandText,
-                    ConnectionString = accessor.CurrentConnectionString
+                    // 为防止连接字符串信息泄露，此处仅用连接代称
+                    ConnectionString = $"Name={tenant?.Name};Host={tenant?.Host};ConnectionStringTag={accessor.GetCurrentConnectionStringTag()}"
                 };
             }
         }

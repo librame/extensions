@@ -102,8 +102,8 @@ namespace Librame.Extensions.Core.Utilities
 
             var pairs = new Dictionary<string, string>();
             var chars = hasSpecial
-                ? ExtensionSettings.Current.AlgorithmChars
-                : ExtensionSettings.Current.AllLettersAndDigits;
+                ? ExtensionSettings.Preference.AlgorithmChars
+                : ExtensionSettings.Preference.AllLettersAndDigits;
 
             Run(r =>
             {

@@ -51,7 +51,7 @@ namespace Librame.Extensions
         {
             bytes.NotEmpty(nameof(bytes));
 
-            var chars = ExtensionSettings.Current.Base32Chars;
+            var chars = ExtensionSettings.Preference.Base32Chars;
 
             var sb = new StringBuilder();
             for (var offset = 0; offset < bytes.Length;)
@@ -122,7 +122,7 @@ namespace Librame.Extensions
             if (base32String.HasLower())
                 base32String = base32String.ToUpperInvariant();
 
-            var chars = ExtensionSettings.Current.Base32Chars;
+            var chars = ExtensionSettings.Preference.Base32Chars;
 
             var bytes = new byte[base32String.Length * 5 / 8];
             var bitIndex = 0;
@@ -222,7 +222,7 @@ namespace Librame.Extensions
         /// 计算 MD5。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Md5Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Md5Base64String();
@@ -231,7 +231,7 @@ namespace Librame.Extensions
         /// 计算 SHA1。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha1Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha1Base64String();
@@ -240,7 +240,7 @@ namespace Librame.Extensions
         /// 计算 SHA256。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha256Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha256Base64String();
@@ -249,7 +249,7 @@ namespace Librame.Extensions
         /// 计算 SHA384。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha384Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha384Base64String();
@@ -258,7 +258,7 @@ namespace Librame.Extensions
         /// 计算 SHA512。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha512Base64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha512Base64String();
@@ -268,7 +268,7 @@ namespace Librame.Extensions
         /// 计算 MD5。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Md5HexString(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Md5HexString();
@@ -277,7 +277,7 @@ namespace Librame.Extensions
         /// 计算 SHA1。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha1HexString(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha1HexString();
@@ -286,7 +286,7 @@ namespace Librame.Extensions
         /// 计算 SHA256。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha256HexString(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha256HexString();
@@ -295,7 +295,7 @@ namespace Librame.Extensions
         /// 计算 SHA384。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha384HexString(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha384HexString();
@@ -304,7 +304,7 @@ namespace Librame.Extensions
         /// 计算 SHA512。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string Sha512HexString(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).Sha512HexString();
@@ -468,7 +468,7 @@ namespace Librame.Extensions
             var algo = HashAlgorithms.GetOrAdd(name,
                 key => HashAlgorithm.Create(key.Name));
 
-            return ExtensionSettings.Current.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLockerResult(() =>
             {
                 var hash = algo.ComputeHash(buffer);
 
@@ -492,48 +492,48 @@ namespace Librame.Extensions
         /// 计算 HMACMD5。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacShortKey"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.HmacShortKey"/>）。</param>
         /// <returns>返回字节数组。</returns>
         [SuppressMessage("Microsoft.Cryptography", "CA5351:DoNotUseBrokenCryptographicAlgorithms")]
         public static byte[] HmacMd5(this byte[] buffer, byte[] key = null)
-            => buffer.ComputeHmacHash<HMACMD5>(key ?? ExtensionSettings.Current.HmacShortKey.FromBase64String());
+            => buffer.ComputeHmacHash<HMACMD5>(key ?? ExtensionSettings.Preference.HmacShortKey.FromBase64String());
 
         /// <summary>
         /// 计算 HMACSHA1。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacShortKey"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.HmacShortKey"/>）。</param>
         /// <returns>返回字节数组。</returns>
         [SuppressMessage("Microsoft.Cryptography", "CA5350:DoNotUseWeakCryptographicAlgorithms")]
         public static byte[] HmacSha1(this byte[] buffer, byte[] key = null)
-            => buffer.ComputeHmacHash<HMACSHA1>(key ?? ExtensionSettings.Current.HmacShortKey.FromBase64String());
+            => buffer.ComputeHmacHash<HMACSHA1>(key ?? ExtensionSettings.Preference.HmacShortKey.FromBase64String());
 
         /// <summary>
         /// 计算 HMACSHA256。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacShortKey"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.HmacShortKey"/>）。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha256(this byte[] buffer, byte[] key = null)
-            => buffer.ComputeHmacHash<HMACSHA256>(key ?? ExtensionSettings.Current.HmacShortKey.FromBase64String());
+            => buffer.ComputeHmacHash<HMACSHA256>(key ?? ExtensionSettings.Preference.HmacShortKey.FromBase64String());
 
         /// <summary>
         /// 计算 HMACSHA384。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacLongKey"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.HmacLongKey"/>）。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha384(this byte[] buffer, byte[] key = null)
-            => buffer.ComputeHmacHash<HMACSHA384>(key ?? ExtensionSettings.Current.HmacLongKey.FromBase64String());
+            => buffer.ComputeHmacHash<HMACSHA384>(key ?? ExtensionSettings.Preference.HmacLongKey.FromBase64String());
 
         /// <summary>
         /// 计算 HMACSHA512。
         /// </summary>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.HmacLongKey"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.HmacLongKey"/>）。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] HmacSha512(this byte[] buffer, byte[] key = null)
-            => buffer.ComputeHmacHash<HMACSHA512>(key ?? ExtensionSettings.Current.HmacLongKey.FromBase64String());
+            => buffer.ComputeHmacHash<HMACSHA512>(key ?? ExtensionSettings.Preference.HmacLongKey.FromBase64String());
 
         /// <summary>
         /// 计算 HMAC 散列。
@@ -548,7 +548,7 @@ namespace Librame.Extensions
             var algo = HmacAlgorithms.GetOrAdd(typeof(THmac).Name,
                 key => HMAC.Create(key));
             
-            return ExtensionSettings.Current.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLockerResult(() =>
             {
                 algo.Key = key.NotEmpty(nameof(key));
 
@@ -568,13 +568,13 @@ namespace Librame.Extensions
         /// <paramref name="buffer"/> is null or empty.
         /// </exception>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.AesKey"/>）。</param>
-        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.AesVector"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.AesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionPreferenceSetting.AesVector"/>）。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] AsAes(this byte[] buffer, byte[] key = null, byte[] iv = null)
             => buffer.SymmetricTransform<Aes>(isEncrypt: true,
-                key ?? ExtensionSettings.Current.AesKey.FromBase64String(),
-                iv ?? ExtensionSettings.Current.AesVector.FromBase64String());
+                key ?? ExtensionSettings.Preference.AesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Preference.AesVector.FromBase64String());
 
         /// <summary>
         /// 还原 AES。
@@ -583,13 +583,13 @@ namespace Librame.Extensions
         /// <paramref name="buffer"/> is null or empty.
         /// </exception>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.AesKey"/>）。</param>
-        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.AesVector"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.AesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionPreferenceSetting.AesVector"/>）。</param>
         /// <returns>返回字节数组。</returns>
         public static byte[] FromAes(this byte[] buffer, byte[] key = null, byte[] iv = null)
             => buffer.SymmetricTransform<Aes>(isEncrypt: false,
-                key ?? ExtensionSettings.Current.AesKey.FromBase64String(),
-                iv ?? ExtensionSettings.Current.AesVector.FromBase64String());
+                key ?? ExtensionSettings.Preference.AesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Preference.AesVector.FromBase64String());
 
 
         /// <summary>
@@ -599,14 +599,14 @@ namespace Librame.Extensions
         /// <paramref name="buffer"/> is null or empty.
         /// </exception>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.DesKey"/>）。</param>
-        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.DesVector"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.DesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionPreferenceSetting.DesVector"/>）。</param>
         /// <returns>返回字节数组。</returns>
         [SuppressMessage("Security", "CA5351:不要使用损坏的加密算法")]
         public static byte[] AsDes(this byte[] buffer, byte[] key = null, byte[] iv = null)
             => buffer.SymmetricTransform<DES>(isEncrypt: true,
-                key ?? ExtensionSettings.Current.DesKey.FromBase64String(),
-                iv ?? ExtensionSettings.Current.DesVector.FromBase64String());
+                key ?? ExtensionSettings.Preference.DesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Preference.DesVector.FromBase64String());
 
         /// <summary>
         /// 还原 DES。
@@ -615,14 +615,14 @@ namespace Librame.Extensions
         /// <paramref name="buffer"/> is null or empty.
         /// </exception>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.DesKey"/>）。</param>
-        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.DesVector"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.DesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionPreferenceSetting.DesVector"/>）。</param>
         /// <returns>返回字节数组。</returns>
         [SuppressMessage("Security", "CA5351:不要使用损坏的加密算法")]
         public static byte[] FromDes(this byte[] buffer, byte[] key = null, byte[] iv = null)
             => buffer.SymmetricTransform<DES>(isEncrypt: false,
-                key ?? ExtensionSettings.Current.DesKey.FromBase64String(),
-                iv ?? ExtensionSettings.Current.DesVector.FromBase64String());
+                key ?? ExtensionSettings.Preference.DesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Preference.DesVector.FromBase64String());
 
 
         /// <summary>
@@ -632,14 +632,14 @@ namespace Librame.Extensions
         /// <paramref name="buffer"/> is null or empty.
         /// </exception>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.TripleDesKey"/>）。</param>
-        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.TripleDesVector"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.TripleDesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionPreferenceSetting.TripleDesVector"/>）。</param>
         /// <returns>返回字节数组。</returns>
         [SuppressMessage("Security", "CA5350:不要使用弱加密算法")]
         public static byte[] AsTripleDes(this byte[] buffer, byte[] key = null, byte[] iv = null)
             => buffer.SymmetricTransform<TripleDES>(isEncrypt: true,
-                key ?? ExtensionSettings.Current.TripleDesKey.FromBase64String(),
-                iv ?? ExtensionSettings.Current.TripleDesVector.FromBase64String());
+                key ?? ExtensionSettings.Preference.TripleDesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Preference.TripleDesVector.FromBase64String());
 
         /// <summary>
         /// 还原 TripleDES。
@@ -648,14 +648,14 @@ namespace Librame.Extensions
         /// <paramref name="buffer"/> is null or empty.
         /// </exception>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionContext.TripleDesKey"/>）。</param>
-        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionContext.TripleDesVector"/>）。</param>
+        /// <param name="key">给定的密钥（可选；默认使用 <see cref="IExtensionPreferenceSetting.TripleDesKey"/>）。</param>
+        /// <param name="iv">给定的向量（可选；默认使用 <see cref="IExtensionPreferenceSetting.TripleDesVector"/>）。</param>
         /// <returns>返回字节数组。</returns>
         [SuppressMessage("Security", "CA5350:不要使用弱加密算法")]
         public static byte[] FromTripleDes(this byte[] buffer, byte[] key = null, byte[] iv = null)
             => buffer.SymmetricTransform<TripleDES>(isEncrypt: false,
-                key ?? ExtensionSettings.Current.TripleDesKey.FromBase64String(),
-                iv ?? ExtensionSettings.Current.TripleDesVector.FromBase64String());
+                key ?? ExtensionSettings.Preference.TripleDesKey.FromBase64String(),
+                iv ?? ExtensionSettings.Preference.TripleDesVector.FromBase64String());
 
 
         /// <summary>
@@ -679,7 +679,7 @@ namespace Librame.Extensions
             var algo = SymmetricAlgorithms.GetOrAdd(typeof(TSym).Name,
                 key => SymmetricAlgorithm.Create(key));
 
-            return ExtensionSettings.Current.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLockerResult(() =>
             {
                 algo.Key = key.NotEmpty(nameof(key));
                 algo.IV = iv.NotEmpty(nameof(iv));
@@ -753,7 +753,7 @@ namespace Librame.Extensions
             var algo = AsymmetricAlgorithms.GetOrAdd(typeof(TAsym).Name,
                 key => AsymmetricAlgorithm.Create(key));
 
-            return ExtensionSettings.Current.RunLockerResult(() => endecryptFactory.Invoke(algo as TAsym));
+            return ExtensionSettings.Preference.RunLockerResult(() => endecryptFactory.Invoke(algo as TAsym));
         }
 
         #endregion

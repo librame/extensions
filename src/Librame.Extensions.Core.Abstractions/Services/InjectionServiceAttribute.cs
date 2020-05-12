@@ -17,8 +17,7 @@ namespace Librame.Extensions.Core.Services
     /// <summary>
     /// 注入服务特性。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property,
-        AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
     public class InjectionServiceAttribute : Attribute
     {
     }

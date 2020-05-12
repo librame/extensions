@@ -29,15 +29,6 @@ namespace Librame.Extensions.Core.Compilers
     public static class CSharpCompiler
     {
         /// <summary>
-        /// 编译的文件扩展名。
-        /// </summary>
-        /// <remarks>
-        /// 使用 .dll 扩展名会导致读写抛出未授权异常。
-        /// </remarks>
-        public const string FileExtension = ".dat";
-
-
-        /// <summary>
         /// 从文件中反编译为程序集。
         /// </summary>
         /// <param name="assemblyPath">给定的 <see cref="FilePathCombiner"/>。</param>

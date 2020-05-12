@@ -79,10 +79,10 @@ namespace Librame.Extensions.Data.Aspects
 
 
         /// <summary>
-        /// 启用截面。
+        /// 启用此截面。
         /// </summary>
         public override bool Enabled
-            => Options.EntityEnabled;
+            => Options.Stores.UseDataEntity;
 
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace Librame.Extensions.Data.Aspects
             var modelEntities = dbContextAccessor.Model.GetEntityTypes()
                 .Select(s => CreateEntity(s, cancellationToken)).ToList();
 
-            return ExtensionSettings.Current.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLockerResult(() =>
             {
                 var adds = new List<TEntity>();
                 var updates = new List<TEntity>();
@@ -255,7 +255,7 @@ namespace Librame.Extensions.Data.Aspects
             entity.Id = Dependencies.Identifier.GetEntityIdAsync(cancellationToken).ConfigureAndResult();
             entity.EntityName = entityType.ClrType.GetDisplayNameWithNamespace();
             entity.AssemblyName = entityType.ClrType.GetAssemblyDisplayName();
-            entity.CreatedTime = Dependencies.Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).ConfigureAndResult();
+            entity.CreatedTime = Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
             entity.CreatedTimeTicks = entity.CreatedTime.Ticks;
             entity.CreatedBy = _createdBy;
 

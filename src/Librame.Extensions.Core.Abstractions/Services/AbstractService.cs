@@ -14,6 +14,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Librame.Extensions.Core.Services
 {
+    using Loggers;
+
     /// <summary>
     /// 抽象服务。
     /// </summary>
@@ -22,10 +24,10 @@ namespace Librame.Extensions.Core.Services
         /// <summary>
         /// 构造一个 <see cref="AbstractService"/>。
         /// </summary>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractService(ILoggerFactory loggerFactory)
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>（可选；默认使用 <see cref="NoneLoggerFactory"/>）。</param>
+        protected AbstractService(ILoggerFactory loggerFactory = null)
         {
-            LoggerFactory = loggerFactory.NotNull(nameof(loggerFactory));
+            LoggerFactory = loggerFactory ?? NoneLoggerFactory.Default;
         }
 
         /// <summary>

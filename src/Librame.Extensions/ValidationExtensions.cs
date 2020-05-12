@@ -427,7 +427,7 @@ namespace Librame.Extensions
         /// <param name="c">给定的字符。</param>
         /// <returns>返回布尔值。</returns>
         public static bool IsAlgorithmSpecial(this char c)
-            => ExtensionSettings.Current.AlgorithmSpecialSymbols.CompatibleContains(c);
+            => ExtensionSettings.Preference.AlgorithmSpecialSymbols.CompatibleContains(c);
 
 
         /// <summary>

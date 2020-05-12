@@ -52,9 +52,9 @@ namespace Librame.Extensions.Core.Builders
                 var currentDirectory = Environment.CurrentDirectory.WithoutDevelopmentRelativePath();
 
                 BaseDirectory = currentDirectory;
-                ConfigDirectory = currentDirectory.CombinePath("configs");
-                ReportDirectory = currentDirectory.CombinePath("reports");
-                ResourceDirectory = currentDirectory.CombinePath("resources");
+                ConfigDirectory = currentDirectory.CombinePath(CoreSettings.Preference.ConfigsFolder);
+                ReportDirectory = currentDirectory.CombinePath(CoreSettings.Preference.ReportsFolder);
+                ResourceDirectory = currentDirectory.CombinePath(CoreSettings.Preference.ResourcesFolder);
             }
         }
 
@@ -70,22 +70,22 @@ namespace Librame.Extensions.Core.Builders
         public IExtensionBuilderDependency ParentDependency { get; }
 
         /// <summary>
-        /// 基础目录。
+        /// 基础目录（通常为根目录）。
         /// </summary>
         public string BaseDirectory { get; set; }
 
         /// <summary>
-        /// 配置目录。
+        /// 配置目录（用于存储功能配置的文件夹，通常为一级目录；子级目录可以此为基础路径与模块名+功能目录名为相对路径进行组合）。
         /// </summary>
         public string ConfigDirectory { get; set; }
 
         /// <summary>
-        /// 报告目录。
+        /// 报告目录（用于存储动态生成信息的文件夹，通常为一级目录；子级目录可以此为基础路径与模块名+功能目录名为相对路径进行组合）。
         /// </summary>
         public string ReportDirectory { get; set; }
 
         /// <summary>
-        /// 资源目录。
+        /// 资源目录（用于存储静态资源的文件夹，通常为一级目录；子级目录可以此为基础路径与模块名+功能目录名为相对路径进行组合）。
         /// </summary>
         public string ResourceDirectory { get; set; }
     }

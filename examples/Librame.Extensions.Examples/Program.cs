@@ -40,7 +40,7 @@ namespace Librame.Extensions.Examples
             var builder = CreateBuilder()
                 .AddData(dependency =>
                 {
-                    dependency.Options.IdentifierGenerator = SUIdentifierGenerator.MySQL;
+                    dependency.Options.IdentifierGenerator = CombIdentifierGenerator.MySQL;
 
                     // for MySQL
                     dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
@@ -89,10 +89,10 @@ namespace Librame.Extensions.Examples
             var builder = CreateBuilder()
                 .AddData(dependency =>
                 {
-                    dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLite;
+                    dependency.Options.IdentifierGenerator = CombIdentifierGenerator.SQLite;
 
                     // for SQLite
-                    dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.BaseDirectory.CombinePath(dataFile));
+                    dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.DatabasesDierctory.CombinePath(dataFile));
 
                     // ConnectionStrings 配置节点不支持 DefaultTenant 配置，须手动启用读写分离
                     dependency.Options.DefaultTenant.WritingSeparation = true;
@@ -123,6 +123,7 @@ namespace Librame.Extensions.Examples
 
             Console.WriteLine($"Current tenant name: {tenant.Name}.");
             Console.WriteLine($"Current tenant host: {tenant.Host}.");
+            Console.WriteLine($"Current tenant EncryptedConnectionStrings: {tenant.EncryptedConnectionStrings}.");
             Console.WriteLine($"Current tenant DefaultConnectionString: {tenant.DefaultConnectionString}.");
             Console.WriteLine($"Current tenant WritingConnectionString: {tenant.WritingConnectionString}.");
             Console.WriteLine($"Current tenant WritingSeparation: {tenant.WritingSeparation}.");

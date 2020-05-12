@@ -120,6 +120,9 @@
   <data name="DefaultConnectionString" xml:space="preserve">
     <value>默認數據庫連結字符串</value>
   </data>
+  <data name="EncryptedConnectionStrings" xml:space="preserve">
+    <value>加密連結字符串</value>
+  </data>
   <data name="Host" xml:space="preserve">
     <value>主機</value>
   </data>
@@ -127,7 +130,7 @@
     <value>名稱</value>
   </data>
   <data name="WriteConnectionSeparation" xml:space="preserve">
-    <value>寫入數據庫連結分離</value>
+    <value>寫入連結分離</value>
   </data>
   <data name="WriteConnectionString" xml:space="preserve">
     <value>寫入數據庫連結字符串</value>

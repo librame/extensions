@@ -37,24 +37,37 @@ namespace Librame.Extensions.Data.Builders
         public DataBuilderDependency(IExtensionBuilderDependency parentDependency = null)
             : base(nameof(DataBuilderDependency), parentDependency)
         {
-            MigrationCommandsDirectory = ConfigDirectory.CombinePath("migration_commands");
-            ModelSnapshotsDirectory = ConfigDirectory.CombinePath("model_snapshots");
+            CompilersDirectory = ConfigDirectory.CombinePath(DataSettings.Preference.CompilersFolder);
+            DatabasesDierctory = ConfigDirectory.CombinePath(DataSettings.Preference.DatabasesFolder);
+            MigrationsDirectory = ConfigDirectory.CombinePath(DataSettings.Preference.MigrationsFolder);
         }
 
 
         /// <summary>
-        /// 迁移命令目录。
+        /// 编译目录。
         /// </summary>
-        public string MigrationCommandsDirectory { get; set; }
+        public string CompilersDirectory { get; set; }
 
         /// <summary>
-        /// 模型快照目录。
+        /// 数据库目录。
         /// </summary>
-        public string ModelSnapshotsDirectory { get; set; }
+        public string DatabasesDierctory { get; set; }
+
+        /// <summary>
+        /// 迁移目录。
+        /// </summary>
+        public string MigrationsDirectory { get; set; }
 
 
         /// <summary>
-        /// 绑定配置根包含的连接字符串集合配置节。
+        /// 支持实体框架设计时服务（默认支持）。
+        /// </summary>
+        public bool SupportsEntityFrameworkDesignTimeServices { get; set; }
+            = true;
+
+
+        /// <summary>
+        /// 绑定配置根包含的连接字符串集合配置节（支持加密连接字符串）。
         /// </summary>
         /// <examples>
         /// JSON 根配置结构参考：
@@ -68,18 +81,18 @@ namespace Librame.Extensions.Data.Builders
         /// </code>
         /// </examples>
         /// <exception cref="ArgumentNullException">
-        /// this.ConfigurationRoot is null.
+        /// ConfigurationRoot is null.
         /// </exception>
         /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
-        public DataBuilderDependency BindConnectionStrings(Func<string, string> validateFactory = null)
+        public virtual DataBuilderDependency BindConnectionStrings(Func<string, string> validateFactory = null)
         {
             ConfigurationRoot.NotNull(nameof(ConfigurationRoot));
             return BindConnectionStrings(ConfigurationRoot.GetSection(ConnectionStringsSectionName), validateFactory);
         }
 
         /// <summary>
-        /// 绑定连接字符串集合配置节。
+        /// 绑定连接字符串集合配置节（支持加密连接字符串）。
         /// </summary>
         /// <examples>
         /// JSON 配置节点结构参考：
@@ -97,7 +110,7 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public DataBuilderDependency BindConnectionStrings(IConfiguration configuration,
+        public virtual DataBuilderDependency BindConnectionStrings(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
             configuration.NotNull(nameof(configuration));
@@ -110,7 +123,7 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
-        /// 绑定配置根包含的默认租户配置节。。
+        /// 绑定配置根包含的默认租户配置节（支持加密连接字符串）。
         /// </summary>
         /// <examples>
         /// JSON 配置节点结构参考：
@@ -131,14 +144,14 @@ namespace Librame.Extensions.Data.Builders
         /// </exception>
         /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
-        public DataBuilderDependency BindDefaultTenant(Func<string, string> validateFactory = null)
+        public virtual DataBuilderDependency BindDefaultTenant(Func<string, string> validateFactory = null)
         {
             ConfigurationRoot.NotNull(nameof(ConfigurationRoot));
             return BindDefaultTenant(ConfigurationRoot.GetSection(DefaultTenantSectionName), validateFactory);
         }
 
         /// <summary>
-        /// 绑定默认租户配置节。
+        /// 绑定默认租户配置节（支持加密连接字符串）。
         /// </summary>
         /// <examples>
         /// JSON 配置节点结构参考：
@@ -159,16 +172,10 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="validateFactory">给定用于验证连接字符串的工厂方法（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDependency"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public DataBuilderDependency BindDefaultTenant(IConfiguration configuration,
+        public virtual DataBuilderDependency BindDefaultTenant(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
             configuration.NotNull(nameof(configuration));
-
-            UpdateDefaultConnectionString(configuration, validateFactory);
-            UpdateWritingConnectionString(configuration, validateFactory);
-
-            Options.DefaultTenant.WritingSeparation
-                = configuration.GetValue(nameof(Options.DefaultTenant.WritingSeparation), defaultValue: false);
 
             Options.DefaultTenant.Name
                 = configuration.GetValue(nameof(Options.DefaultTenant.Name), Options.DefaultTenant.Name);
@@ -176,26 +183,74 @@ namespace Librame.Extensions.Data.Builders
             Options.DefaultTenant.Host
                 = configuration.GetValue(nameof(Options.DefaultTenant.Host), Options.DefaultTenant.Host);
 
+            Options.DefaultTenant.EncryptedConnectionStrings
+                = configuration.GetValue(nameof(Options.DefaultTenant.EncryptedConnectionStrings), defaultValue: false);
+
+            Options.DefaultTenant.WritingSeparation
+                = configuration.GetValue(nameof(Options.DefaultTenant.WritingSeparation), defaultValue: false);
+
+            UpdateDefaultConnectionString(configuration, validateFactory);
+            UpdateWritingConnectionString(configuration, validateFactory);
+
             return this;
         }
 
 
-        private void UpdateDefaultConnectionString(IConfiguration configuration,
+        /// <summary>
+        /// 更新默认连接字符串（支持加密连接字符串）。
+        /// </summary>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>。</param>
+        /// <param name="validateFactory">给定可验证字符串的工厂方法（可选）。</param>
+        protected virtual void UpdateDefaultConnectionString(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
             var connectionString = configuration.GetValue(nameof(Options.DefaultTenant.DefaultConnectionString),
                 Options.DefaultTenant.DefaultConnectionString);
 
+            if (Options.DefaultTenant.EncryptedConnectionStrings)
+                connectionString = DecryptConnectionString(connectionString);
+
             Options.DefaultTenant.DefaultConnectionString = validateFactory?.Invoke(connectionString) ?? connectionString;
         }
 
-        private void UpdateWritingConnectionString(IConfiguration configuration,
+        /// <summary>
+        /// 更新写入连接字符串（支持加密连接字符串）。
+        /// </summary>
+        /// <param name="configuration">给定的 <see cref="IConfiguration"/>。</param>
+        /// <param name="validateFactory">给定可验证字符串的工厂方法（可选）。</param>
+        protected virtual void UpdateWritingConnectionString(IConfiguration configuration,
             Func<string, string> validateFactory = null)
         {
             var connectionString = configuration.GetValue(nameof(Options.DefaultTenant.WritingConnectionString),
                 Options.DefaultTenant.WritingConnectionString);
 
+            if (Options.DefaultTenant.EncryptedConnectionStrings)
+                connectionString = DecryptConnectionString(connectionString);
+
             Options.DefaultTenant.WritingConnectionString = validateFactory?.Invoke(connectionString) ?? connectionString;
+        }
+
+
+        /// <summary>
+        /// 加密连接字符串。
+        /// </summary>
+        /// <param name="connectionString">给定的连接字符串。</param>
+        /// <returns>返回加密字符串。</returns>
+        public static string EncryptConnectionString(string connectionString)
+        {
+            var buffer = connectionString.FromEncodingString();
+            return buffer.AsAes().AsBase64String();
+        }
+
+        /// <summary>
+        /// 解密连接字符串。
+        /// </summary>
+        /// <param name="connectionString">给定的连接字符串。</param>
+        /// <returns>返回原始字符串。</returns>
+        public static string DecryptConnectionString(string connectionString)
+        {
+            var buffer = connectionString.FromBase64String();
+            return buffer.FromAes().AsEncodingString();
         }
 
     }

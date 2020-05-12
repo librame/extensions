@@ -16,7 +16,7 @@ namespace Librame.Extensions.Data.Stores
     /// 更新时间周期数接口。
     /// </summary>
     /// <remarks>
-    /// 主要用于解决日期与时间类型在不同数据库中 LINQ 查询的兼容性问题。
+    /// 主要用于解决 <see cref="System.DateTimeOffset"/> 在不同数据库中 LINQ 查询的兼容性问题。
     /// </remarks>
     public interface IUpdatedTimeTicks : ICreatedTimeTicks
     {

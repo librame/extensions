@@ -17,7 +17,7 @@ namespace Librame.Extensions.Core
     /// <summary>
     /// 未注册特性。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class NonRegisteredAttribute : Attribute
     {
     }

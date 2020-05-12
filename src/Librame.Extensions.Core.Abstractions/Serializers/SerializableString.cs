@@ -75,7 +75,7 @@ namespace Librame.Extensions.Core.Serializers
         /// <returns>返回 <see cref="SerializableString{TSource}"/>。</returns>
         public SerializableString<TSource> ChangeValue(string newValue)
         {
-            ExtensionSettings.Current.RunLocker(() =>
+            ExtensionSettings.Preference.RunLocker(() =>
             {
                 Source = Serializer.Deserialize(newValue);
                 _value = newValue;
@@ -91,7 +91,7 @@ namespace Librame.Extensions.Core.Serializers
         /// <returns>返回 <see cref="SerializableString{TSource}"/>。</returns>
         public SerializableString<TSource> ChangeSource(TSource newSource)
         {
-            ExtensionSettings.Current.RunLocker(() =>
+            ExtensionSettings.Preference.RunLocker(() =>
             {
                 _value = Serializer.Serialize(newSource);
                 Source = newSource;

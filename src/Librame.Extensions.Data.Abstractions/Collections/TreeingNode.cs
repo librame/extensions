@@ -17,21 +17,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Collections
 {
-    using Stores;
-
-    /// <summary>
-    /// 树形节点。
-    /// </summary>
-    /// <typeparam name="T">指定的树形元素类型。</typeparam>
-    [NotMapped]
-    public class TreeingNode<T> : TreeingNode<T, int>
-        where T : IParentId<int>
-    {
-    }
-
+    using Core.Identifiers;
+    using Data.Stores;
 
     /// <summary>
     /// 树形节点。
@@ -39,8 +31,8 @@ namespace Librame.Extensions.Data.Collections
     /// <typeparam name="T">指定的树形元素类型。</typeparam>
     /// <typeparam name="TId">指定的树形元素标识类型。</typeparam>
     [NotMapped]
-    public class TreeingNode<T, TId> : IParentId<TId>, IEquatable<TreeingNode<T, TId>>
-        where T : IParentId<TId>
+    public class TreeingNode<T, TId> : IParentIdentifier<TId>, IEquatable<TreeingNode<T, TId>>
+        where T : IParentIdentifier<TId>
         where TId : IEquatable<TId>
     {
         private IList<TreeingNode<T, TId>> _children = null;
@@ -77,8 +69,8 @@ namespace Librame.Extensions.Data.Collections
         {
             var properties = typeof(T).GetRuntimeProperties();
 
-            var id = nameof(IParentId<TId>.Id);
-            var parentId = nameof(IParentId<TId>.ParentId);
+            var id = nameof(IParentIdentifier<TId>.Id);
+            var parentId = nameof(IParentIdentifier<TId>.ParentId);
 
             foreach (var property in properties)
             {
@@ -151,11 +143,81 @@ namespace Librame.Extensions.Data.Collections
 
 
         /// <summary>
+        /// 获取标识。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task{TId}"/>。</returns>
+        public Task<TId> GetIdAsync(CancellationToken cancellationToken = default)
+            => cancellationToken.RunFactoryOrCancellationAsync(() => Id);
+
+        Task<object> IIdentifier.GetIdAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)Id);
+
+
+        /// <summary>
+        /// 获取父标识。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task{TId}"/>。</returns>
+        public Task<TId> GetParentIdAsync(CancellationToken cancellationToken = default)
+            => cancellationToken.RunFactoryOrCancellationAsync(() => ParentId);
+
+        Task<object> IParentIdentifier.GetParentIdAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)ParentId);
+
+
+        /// <summary>
+        /// 设置标识。
+        /// </summary>
+        /// <param name="id">给定的 <typeparamref name="TId"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        public virtual Task SetIdAsync(TId id, CancellationToken cancellationToken = default)
+            => cancellationToken.RunActionOrCancellationAsync(() => Id = id);
+
+        /// <summary>
+        /// 设置标识。
+        /// </summary>
+        /// <param name="obj">给定的标识对象。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        public virtual Task SetIdAsync(object obj, CancellationToken cancellationToken = default)
+        {
+            var id = obj.CastTo<object, TId>(nameof(obj));
+
+            return cancellationToken.RunActionOrCancellationAsync(() => Id = id);
+        }
+
+
+        /// <summary>
+        /// 设置父标识。
+        /// </summary>
+        /// <param name="parentId">给定的 <typeparamref name="TId"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        public virtual Task SetParentIdAsync(TId parentId, CancellationToken cancellationToken = default)
+            => cancellationToken.RunActionOrCancellationAsync(() => ParentId = parentId);
+
+        /// <summary>
+        /// 设置父标识。
+        /// </summary>
+        /// <param name="obj">给定的父标识对象。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        public virtual Task SetParentIdAsync(object obj, CancellationToken cancellationToken = default)
+        {
+            var parentId = obj.CastTo<object, TId>(nameof(obj));
+
+            return cancellationToken.RunActionOrCancellationAsync(() => ParentId = parentId);
+        }
+
+
+        /// <summary>
         /// 是否包含指定标识的子节点。
         /// </summary>
         /// <param name="childId">给定的子节点编号。</param>
         /// <returns>返回布尔值。</returns>
-        public bool ContainsChild(TId childId)
+        public virtual bool ContainsChild(TId childId)
             => ContainsChild(childId, out _);
 
         /// <summary>
@@ -164,7 +226,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="childId">给定的子节点信号。</param>
         /// <param name="child">输出当前子节点。</param>
         /// <returns>返回布尔值。</returns>
-        public bool ContainsChild(TId childId, out TreeingNode<T, TId> child)
+        public virtual bool ContainsChild(TId childId, out TreeingNode<T, TId> child)
         {
             child = GetChild(childId);
             return child.IsNotNull();
@@ -176,9 +238,11 @@ namespace Librame.Extensions.Data.Collections
         /// </summary>
         /// <param name="childId">给定的子节点编号。</param>
         /// <returns>返回当前子节点。</returns>
-        public TreeingNode<T, TId> GetChild(TId childId)
+        public virtual TreeingNode<T, TId> GetChild(TId childId)
         {
-            if (Children.IsEmpty()) return null;
+            if (Children.IsEmpty())
+                return null;
+
             return Children.FirstOrDefault(c => Id.Equals(childId));
         }
 
@@ -187,9 +251,11 @@ namespace Librame.Extensions.Data.Collections
         /// </summary>
         /// <param name="parentId">给定的父编号。</param>
         /// <returns>返回树形节点列表。</returns>
-        public IList<TreeingNode<T, TId>> GetParentChildren(TId parentId)
+        public virtual IList<TreeingNode<T, TId>> GetParentChildren(TId parentId)
         {
-            if (Children.IsEmpty()) return null;
+            if (Children.IsEmpty())
+                return null;
+
             return Children.Where(p => p.ParentId.Equals(parentId)).ToList();
         }
 
@@ -200,7 +266,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="other">给定的 <see cref="TreeingNode{T, TId}"/>。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public bool Equals(TreeingNode<T, TId> other)
+        public virtual bool Equals(TreeingNode<T, TId> other)
         {
             other.NotNull(nameof(other));
             return Id.Equals(other.Id) && ParentId.Equals(other.ParentId);
@@ -236,7 +302,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="toStringFactory">给定的转换方法。</param>
         /// <returns>返回字符串。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public string ToString(Func<TreeingNode<T, TId>, string> toStringFactory)
+        public virtual string ToString(Func<TreeingNode<T, TId>, string> toStringFactory)
         {
             if (Children.IsEmpty())
                 return string.Empty;
@@ -283,5 +349,6 @@ namespace Librame.Extensions.Data.Collections
         /// <returns>返回布尔值。</returns>
         public static bool operator !=(TreeingNode<T, TId> a, TreeingNode<T, TId> b)
             => !(a?.Equals(b)).Value;
+
     }
 }

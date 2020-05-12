@@ -102,7 +102,7 @@ namespace Librame.Extensions.Network.Services
                     // SendAsync
                     await client.SendMailAsync(message).ConfigureAndWaitAsync();
 
-                    var timestamp = await _clock.GetOffsetNowAsync().ConfigureAndResultAsync();
+                    var timestamp = await _clock.GetNowOffsetAsync().ConfigureAndResultAsync();
                     Logger.LogDebug($"Successful send of mail at {timestamp}.");
                 }
             }

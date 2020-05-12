@@ -49,13 +49,13 @@ namespace Librame.Extensions.Data.Tests
                     new Category<int, Guid>
                     {
                         Name = $"First {_categoryName}",
-                        CreatedTime = Clock.GetOffsetNowAsync().ConfigureAndResult(),
+                        CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
                         CreatedBy = _createdBy
                     },
                     new Category<int, Guid>
                     {
                         Name = $"Last {_categoryName}",
-                        CreatedTime = Clock.GetOffsetNowAsync().ConfigureAndResult(),
+                        CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
                         CreatedBy = _createdBy
                     }
                 };
@@ -89,7 +89,7 @@ namespace Librame.Extensions.Data.Tests
                         Title = $"{_articleName} {i.FormatString(3)}",
                         Descr = $"Descr {i.FormatString(3)}",
                         Category = (i < 50) ? _categories.First() : _categories.Last(),
-                        CreatedTime = Clock.GetOffsetNowAsync().ConfigureAndResult(),
+                        CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
                         CreatedBy = GetType().GetDisplayName()
                     };
 

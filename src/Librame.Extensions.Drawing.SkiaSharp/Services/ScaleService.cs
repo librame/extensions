@@ -144,7 +144,7 @@ namespace Librame.Extensions.Drawing.Services
                         continue;
 
                     // 计算等比例缩放尺寸
-                    var scaleSize = ScaleSize(imageSize, s.MaxSize);
+                    var scaleSize = ImageHelper.ScaleSize(imageSize, s.MaxSize);
                     var scaleInfo = new SKImageInfo(scaleSize.Width, scaleSize.Height,
                         srcBmp.Info.ColorType, srcBmp.Info.AlphaType);
 
@@ -175,7 +175,7 @@ namespace Librame.Extensions.Drawing.Services
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
                             var middleName = s.Suffix.NotEmptyOrDefault(() =>
                             {
-                                return Clock.GetOffsetNowAsync().ConfigureAndResult().Ticks.ToString(CultureInfo.InvariantCulture);
+                                return Clock.GetNowOffsetAsync().ConfigureAndResult().Ticks.ToString(CultureInfo.InvariantCulture);
                             });
 
                             // 设定缩放保存路径
@@ -199,38 +199,6 @@ namespace Librame.Extensions.Drawing.Services
             return true;
         }
 
-
-        private Size ScaleSize(Size rawSize, Size maxSize)
-        {
-            // 缩略图宽、高计算
-            double zoomWidth = rawSize.Width;
-            double zoomHeight = rawSize.Height;
-
-            // 宽大于高或宽等于高（横图或正方）
-            if (rawSize.Width > rawSize.Height || rawSize.Width == rawSize.Height)
-            {
-                // 如果宽大于模版
-                if (rawSize.Width > maxSize.Width)
-                {
-                    // 宽按模版，高按比例缩放
-                    zoomWidth = maxSize.Width;
-                    zoomHeight = zoomHeight * ((double)maxSize.Width / rawSize.Width);
-                }
-            }
-            // 高大于宽（竖图）
-            else
-            {
-                // 如果高大于模版
-                if (rawSize.Height > maxSize.Height)
-                {
-                    // 高按模版，宽按比例缩放
-                    zoomHeight = maxSize.Height;
-                    zoomWidth = zoomWidth * ((double)maxSize.Height / rawSize.Height);
-                }
-            }
-
-            return new Size((int)zoomWidth, (int)zoomHeight);
-        }
 
         private bool IsImageFile(string path)
         {

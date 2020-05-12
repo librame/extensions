@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data
     /// <summary>
     /// 非审计特性。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, Inherited = false)]
     public sealed class NonAuditedAttribute : Attribute
     {
     }

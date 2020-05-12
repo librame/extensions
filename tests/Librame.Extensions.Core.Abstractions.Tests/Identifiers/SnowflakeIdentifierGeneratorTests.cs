@@ -3,14 +3,15 @@ using Xunit;
 namespace Librame.Extensions.Core.Tests
 {
     using Identifiers;
+    using Services;
 
     public class SnowflakeIdentifierGeneratorTests
     {
         [Fact]
         public async void GenerateAsyncTest()
         {
-            var clock = new TestClockService(new TestLoggerFactory());
             var generator = SnowflakeIdentifierGenerator.Default;
+            var clock = LocalClockService.Default;
 
             var current = await generator.GenerateAsync(clock);
             for (var i = 0; i < 100; i++)

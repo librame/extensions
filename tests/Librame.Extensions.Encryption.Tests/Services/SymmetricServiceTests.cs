@@ -4,8 +4,8 @@ using Xunit;
 
 namespace Librame.Extensions.Encryption.Tests
 {
-    using Identifiers;
-    using Services;
+    using Core.Identifiers;
+    using Encryption.Services;
 
     public class SymmetricServiceTests
     {

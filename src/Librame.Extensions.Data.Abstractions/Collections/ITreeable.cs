@@ -24,7 +24,7 @@ namespace Librame.Extensions.Data.Collections
     /// <typeparam name="T">指定的树形元素类型。</typeparam>
     [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public interface ITreeable<T> : ITreeable<T, int>
-        where T : IParentId<int>
+        where T : IParentIdentifier<int>
     {
     }
 
@@ -36,7 +36,7 @@ namespace Librame.Extensions.Data.Collections
     /// <typeparam name="TId">指定的树形元素标识类型。</typeparam>
     [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public interface ITreeable<T, TId> : IEnumerable<TreeingNode<T, TId>>
-        where T : IParentId<TId>
+        where T : IParentIdentifier<TId>
         where TId : IEquatable<TId>
     {
         /// <summary>

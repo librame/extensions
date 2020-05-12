@@ -25,9 +25,9 @@ namespace Librame.Extensions.Core.Builders
             builder.Services.TryAddTransient(typeof(IServicesManager<,>), typeof(ServicesManager<,>));
             builder.Services.TryAddTransient(typeof(IServicesManager<>), typeof(ServicesManager<>));
 
-            builder.Services.TryAddTransient<IHumanizationService, HumanizationService>();
             builder.Services.TryAddTransient<IInjectionService, InjectionService>();
 
+            builder.Services.TryAddSingleton<IHumanizationService, HumanizationService>();
             builder.Services.TryAddSingleton<IClockService, ClockService>();
             builder.Services.TryAddSingleton<IEnvironmentService, EnvironmentService>();
 

@@ -95,5 +95,6 @@ namespace Librame.Extensions.Data.Collections
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
+
     }
 }

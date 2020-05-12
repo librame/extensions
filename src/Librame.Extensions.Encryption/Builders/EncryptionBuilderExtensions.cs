@@ -12,6 +12,7 @@
 
 using Librame.Extensions;
 using Librame.Extensions.Core.Builders;
+using Librame.Extensions.Core.Options;
 using Librame.Extensions.Encryption.Builders;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -49,8 +50,12 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IExtensionBuilder, TDependency, IEncryptionBuilder> builderFactory = null)
             where TDependency : EncryptionBuilderDependency
         {
-            // Configure Dependency
-            var dependency = configureDependency.ConfigureDependency(parentBuilder);
+            // Clear Options Cache
+            ConsistencyOptionsCache.TryRemove<EncryptionBuilderOptions>();
+
+            // Add Builder Dependency
+            var dependency = parentBuilder.AddBuilderDependency(out var dependencyType, configureDependency);
+            parentBuilder.Services.TryAddReferenceBuilderDependency<EncryptionBuilderDependency>(dependency, dependencyType);
 
             // Create Builder
             var encryptionBuilder = builderFactory.NotNullOrDefault(()

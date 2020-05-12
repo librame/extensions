@@ -16,6 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data.Accessors
 {
+    using Protectors;
     using Stores;
 
     /// <summary>
@@ -50,6 +51,7 @@ namespace Librame.Extensions.Data.Accessors
             accessor.NotNull(nameof(accessor));
 
             var maxLength = accessor.Dependency.Options.Stores.MaxLengthForProperties;
+            var protectPrivacyData = accessor.Dependency.Options.Stores.ProtectPrivacyData;
             var tables = accessor.Dependency.Options.Tables;
 
             if (tables.DefaultSchema.IsNotEmpty())
@@ -193,6 +195,12 @@ namespace Librame.Extensions.Data.Accessors
                     b.Property(p => p.WritingConnectionString).HasMaxLength(maxLength);
                     b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
                     b.Property(p => p.UpdatedBy).HasMaxLength(maxLength);
+                }
+
+                if (protectPrivacyData)
+                {
+                    var protector = accessor.GetService<IPrivacyDataProtector>();
+                    b.ConfigurePrivacyData(protector);
                 }
             });
         }

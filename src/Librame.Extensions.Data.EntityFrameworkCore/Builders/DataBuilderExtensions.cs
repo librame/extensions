@@ -13,6 +13,7 @@
 using Librame.Extensions;
 using Librame.Extensions.Core;
 using Librame.Extensions.Core.Builders;
+using Librame.Extensions.Core.Options;
 using Librame.Extensions.Data.Builders;
 using Microsoft.EntityFrameworkCore.Design;
 using System;
@@ -51,14 +52,19 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IExtensionBuilder, TDependency, IDataBuilder> builderFactory = null)
             where TDependency : DataBuilderDependency
         {
-            parentBuilder.NotNull(nameof(parentBuilder));
+            // Clear Options Cache
+            ConsistencyOptionsCache.TryRemove<DataBuilderOptions>();
 
-            // Configure Dependency
-            var dependency = configureDependency.ConfigureDependency(parentBuilder);
+            // Add Builder Dependency
+            var dependency = parentBuilder.AddBuilderDependency(out var dependencyType, configureDependency);
+            parentBuilder.Services.TryAddReferenceBuilderDependency<DataBuilderDependency>(dependency, dependencyType);
 
             // Add Dependencies
-            parentBuilder.Services
-                .AddEntityFrameworkDesignTimeServices();
+            if (dependency.SupportsEntityFrameworkDesignTimeServices)
+            {
+                parentBuilder.Services
+                    .AddEntityFrameworkDesignTimeServices();
+            }
 
             // Create Builder
             var dataBuilder = builderFactory.NotNullOrDefault(()
@@ -69,6 +75,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 //.AddAccessors()
                 .AddAspects()
                 .AddMediators()
+                .AddProtectors()
                 .AddServices()
                 .AddStores();
         }

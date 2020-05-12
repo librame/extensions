@@ -12,6 +12,7 @@
 
 using Librame.Extensions;
 using Librame.Extensions.Core.Builders;
+using Librame.Extensions.Core.Options;
 using Librame.Extensions.Encryption.Builders;
 using Librame.Extensions.Network.Builders;
 using System;
@@ -57,8 +58,12 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddDeveloperGlobalSigningCredentials();
             }
 
-            // Configure Dependency
-            var dependency = configureDependency.ConfigureDependency(parentBuilder);
+            // Clear Options Cache
+            ConsistencyOptionsCache.TryRemove<NetworkBuilderOptions>();
+
+            // Add Builder Dependency
+            var dependency = parentBuilder.AddBuilderDependency(out var dependencyType, configureDependency);
+            parentBuilder.Services.TryAddReferenceBuilderDependency<NetworkBuilderDependency>(dependency, dependencyType);
 
             // Add Dependencies
             parentBuilder.Services

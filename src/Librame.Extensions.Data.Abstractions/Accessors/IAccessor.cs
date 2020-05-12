@@ -67,6 +67,12 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回布尔值。</returns>
         bool IsWritingConnectionString();
 
+        /// <summary>
+        /// 获取当前数据连接字符串标签（用于表示当前是 <see cref="ITenant.DefaultConnectionString"/> 还是 <see cref="ITenant.WritingConnectionString"/>）。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        string GetCurrentConnectionStringTag();
+
 
         /// <summary>
         /// 执行 SQL 命令。

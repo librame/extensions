@@ -34,4 +34,8 @@
     <ProjectReference Include="..\..\src\Librame.Extensions.Data.EntityFrameworkCore\Librame.Extensions.Data.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="_configs\data_bases\" />
+  </ItemGroup>
+
 </Project>

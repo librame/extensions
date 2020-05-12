@@ -23,12 +23,12 @@ namespace Librame.Extensions.Data.Tests
             services.AddLibrame()
                 .AddData(dependency =>
                 {
-                    dependency.Options.IdentifierGenerator = SUIdentifierGenerator.MySQL;
+                    dependency.Options.IdentifierGenerator = CombIdentifierGenerator.MySQL;
 
                     dependency.Options.DefaultTenant.DefaultConnectionString
-                        = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_default;user=root;password=123456");
+                        = MySqlConnectionStringHelper.Validate("fcuc9SMDHqvxk/3Ras0Emo09N9OorPNvSS8aZtpKC2Jh+NwoaOFOVoz7p4VKkFNr8lQULoTL6G7aYprarg49SpGtu3JVS3x5e8iV1+Ik18sFqR4dP5kjm8fNuZPZtMOS");
                     dependency.Options.DefaultTenant.WritingConnectionString
-                        = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_writing;user=root;password=123456");
+                        = MySqlConnectionStringHelper.Validate("fcuc9SMDHqvxk/3Ras0Emo09N9OorPNvSS8aZtpKC2Jh+NwoaOFOVoz7p4VKkFNrOH9h2XeXJ984w4jHBRgKtJGtu3JVS3x5e8iV1+Ik18sFqR4dP5kjm8fNuZPZtMOS");
                     dependency.Options.DefaultTenant.WritingSeparation = true;
                 })
                 .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
@@ -70,7 +70,7 @@ namespace Librame.Extensions.Data.Tests
                 .AddData(dependency =>
                 {
                     // SQLServer (Default)
-                    //dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLServer;
+                    //dependency.Options.IdentifierGenerator = CombIdentifierGenerator.SQLServer;
 
                     dependency.Options.DefaultTenant.DefaultConnectionString
                         = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
@@ -113,12 +113,12 @@ namespace Librame.Extensions.Data.Tests
             services.AddLibrame()
                 .AddData(dependency =>
                 {
-                    dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLite;
+                    dependency.Options.IdentifierGenerator = CombIdentifierGenerator.SQLite;
 
                     dependency.Options.DefaultTenant.DefaultConnectionString
-                        = "Data Source=" + dependency.BaseDirectory.CombinePath("librame_data_default.db");
+                        = "Data Source=" + dependency.DatabasesDierctory.CombinePath("librame_data_default.db");
                     dependency.Options.DefaultTenant.WritingConnectionString
-                        = "Data Source=" + dependency.BaseDirectory.CombinePath("librame_data_writing.db");
+                        = "Data Source=" + dependency.DatabasesDierctory.CombinePath("librame_data_writing.db");
                     dependency.Options.DefaultTenant.WritingSeparation = true;
                 })
                 .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>

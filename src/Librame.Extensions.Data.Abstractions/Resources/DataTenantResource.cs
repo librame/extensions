@@ -45,8 +45,8 @@ namespace Librame.Extensions.Data.Resources
         public string WriteConnectionSeparation { get; set; }
 
         /// <summary>
-        /// 创建时间。
+        /// 加密连接字符串集合。
         /// </summary>
-        public string CreatedTime { get; set; }
+        public string EncryptedConnectionStrings { get; set; }
     }
 }

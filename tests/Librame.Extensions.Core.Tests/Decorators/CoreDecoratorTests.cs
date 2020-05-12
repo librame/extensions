@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace Librame.Extensions.Core.Tests
@@ -9,24 +8,10 @@ namespace Librame.Extensions.Core.Tests
 
     public class CoreDecoratorTests
     {
-        public class TestLoggerFactory : ILoggerFactory
-        {
-            public void AddProvider(ILoggerProvider provider)
-            {
-            }
-
-            public ILogger CreateLogger(string categoryName)
-                => null;
-
-            public void Dispose()
-            {
-            }
-        }
-
         public class TestService : AbstractService
         {
             public TestService()
-                : base(new TestLoggerFactory())
+                : base()
             {
             }
 

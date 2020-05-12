@@ -57,7 +57,7 @@ namespace Librame.Extensions
             str.NotNull(nameof(str));
 
             #if !NET48
-                return str.Contains(value, StringComparison.OrdinalIgnoreCase);
+                return str.Contains(value, StringComparison.InvariantCulture);
             #else
                 return str.Contains(value);
             #endif
@@ -75,7 +75,7 @@ namespace Librame.Extensions
             str.NotNull(nameof(str));
 
             #if !NET48
-                return str.Contains(value, StringComparison.OrdinalIgnoreCase);
+                return str.Contains(value, StringComparison.InvariantCulture);
             #else
                 return str.Contains(value);
             #endif
@@ -93,7 +93,7 @@ namespace Librame.Extensions
             str.NotNull(nameof(str));
 
             #if !NET48
-                return str.GetHashCode(StringComparison.OrdinalIgnoreCase);
+                return str.GetHashCode(StringComparison.Ordinal);
             #else
                 return str.GetHashCode();
             #endif
@@ -112,7 +112,7 @@ namespace Librame.Extensions
             str.NotNull(nameof(str));
 
             #if !NET48
-                return str.IndexOf(value, StringComparison.OrdinalIgnoreCase);
+                return str.IndexOf(value, StringComparison.InvariantCulture);
             #else
                 return str.IndexOf(value);
             #endif
@@ -150,9 +150,9 @@ namespace Librame.Extensions
 
             #if !NET48
                 return str.StartsWith(value);
-            #else
-                return str.StartsWith(value.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase);
-            #endif
+#else
+                return str.StartsWith(value.ToString(CultureInfo.InvariantCulture), StringComparison.InvariantCulture);
+#endif
         }
 
         ///// <summary>
@@ -165,9 +165,9 @@ namespace Librame.Extensions
         //public static bool CompatibleStartsWith(this string str, string value)
         //{
         //    #if !NET48
-        //        return str.StartsWith(value, StringComparison.OrdinalIgnoreCase);
+        //        return str.StartsWith(value, StringComparison.InvariantCulture);
         //    #else
-        //        return str.StartsWith(value, StringComparison.OrdinalIgnoreCase);
+        //        return str.StartsWith(value, StringComparison.InvariantCulture);
         //    #endif
         //}
 
@@ -184,9 +184,9 @@ namespace Librame.Extensions
 
             #if !NET48
                 return str.EndsWith(value);
-            #else
-                return str.EndsWith(value.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase);
-            #endif
+#else
+                return str.EndsWith(value.ToString(CultureInfo.InvariantCulture), StringComparison.InvariantCulture);
+#endif
         }
 
         ///// <summary>
@@ -199,9 +199,9 @@ namespace Librame.Extensions
         //public static bool CompatibleEndsWith(this string str, string value)
         //{
         //    #if !NET48
-        //        return str.EndsWith(value, StringComparison.OrdinalIgnoreCase);
+        //        return str.EndsWith(value, StringComparison.InvariantCulture);
         //    #else
-        //        return str.EndsWith(value, StringComparison.OrdinalIgnoreCase);
+        //        return str.EndsWith(value, StringComparison.InvariantCulture);
         //    #endif
         //}
 
@@ -256,7 +256,7 @@ namespace Librame.Extensions
             str.NotNull(nameof(str));
 
             #if !NET48
-                return str.Replace(oldValue, newValue, StringComparison.OrdinalIgnoreCase);
+                return str.Replace(oldValue, newValue, StringComparison.InvariantCulture);
             #else
                 return str.Replace(oldValue, newValue);
             #endif

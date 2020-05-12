@@ -21,41 +21,13 @@ namespace Librame.Extensions.Data.Collections
     using Stores;
 
     /// <summary>
-    /// 树形集合。
-    /// </summary>
-    /// <typeparam name="T">指定的树形元素类型。</typeparam>
-    [NotMapped]
-    public class TreeingCollection<T> : TreeingCollection<T, int>, ITreeable<T>
-        where T : IParentId<int>
-    {
-        /// <summary>
-        /// 构造一个 <see cref="TreeingCollection{T}"/>。
-        /// </summary>
-        /// <param name="items">给定的类型实例集合。</param>
-        public TreeingCollection(IEnumerable<T> items)
-            : base(items)
-        {
-        }
-
-        /// <summary>
-        /// 构造一个 <see cref="TreeingCollection{T}"/>。
-        /// </summary>
-        /// <param name="nodes">给定的节点列表。</param>
-        public TreeingCollection(IEnumerable<TreeingNode<T, int>> nodes)
-            : base(nodes)
-        {
-        }
-    }
-
-
-    /// <summary>
     /// 树形列表。
     /// </summary>
     /// <typeparam name="T">指定的树形元素类型。</typeparam>
     /// <typeparam name="TId">指定的树形元素标识类型。</typeparam>
     [NotMapped]
     public class TreeingCollection<T, TId> : ITreeable<T, TId>, IEnumerable<TreeingNode<T, TId>>
-        where T : IParentId<TId>
+        where T : IParentIdentifier<TId>
         where TId : IEquatable<TId>
     {
         private readonly IEnumerable<TreeingNode<T, TId>> _nodes;

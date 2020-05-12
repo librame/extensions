@@ -37,8 +37,8 @@ namespace Librame.Extensions
             originalBuffer.NotEmpty(nameof(originalBuffer));
 
             var outputBuffer = new byte[originalBuffer.Length * 6];
-            var compressionFormat = (ushort)(ExtensionSettings.Current.CompressionFormatLZNT1
-                | ExtensionSettings.Current.CompressionEngineMaximum);
+            var compressionFormat = (ushort)(ExtensionSettings.Preference.CompressionFormatLZNT1
+                | ExtensionSettings.Preference.CompressionEngineMaximum);
 
             var size = SafeNativeMethods.RtlGetCompressionWorkSpaceSize(compressionFormat, out uint dwSize, out _);
             if (size != 0) return null;
@@ -66,10 +66,10 @@ namespace Librame.Extensions
             compressedBuffer.NotEmpty(nameof(compressedBuffer));
 
             var outputBuffer = new byte[compressedBuffer.Length * 6];
-            var size = SafeNativeMethods.RtlGetCompressionWorkSpaceSize(ExtensionSettings.Current.CompressionFormatLZNT1, out _, out _);
+            var size = SafeNativeMethods.RtlGetCompressionWorkSpaceSize(ExtensionSettings.Preference.CompressionFormatLZNT1, out _, out _);
             if (size != 0) return null;
 
-            size = SafeNativeMethods.RtlDecompressBuffer(ExtensionSettings.Current.CompressionFormatLZNT1, outputBuffer, outputBuffer.Length,
+            size = SafeNativeMethods.RtlDecompressBuffer(ExtensionSettings.Preference.CompressionFormatLZNT1, outputBuffer, outputBuffer.Length,
                 compressedBuffer, compressedBuffer.Length, out uint dwRet);
             if (size != 0) return null;
 
@@ -91,9 +91,9 @@ namespace Librame.Extensions
             originalFileInfo.NotNull(nameof(originalFileInfo));
 
             if ((File.GetAttributes(originalFileInfo.FullName) & FileAttributes.Hidden)
-                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.Current.GZipCompressedFileType, StringComparison.OrdinalIgnoreCase))
+                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.Preference.GZipCompressedFileType, StringComparison.OrdinalIgnoreCase))
             {
-                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.Current.GZipCompressedFileType;
+                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.Preference.GZipCompressedFileType;
 
                 using (var originalStream = originalFileInfo.OpenRead())
                 using (var compressedStream = File.Create(compressedFilePath))
@@ -120,14 +120,14 @@ namespace Librame.Extensions
         {
             compressedFileInfo.NotNull(nameof(compressedFileInfo));
 
-            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.Current.GZipCompressedFileType,
+            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.Preference.GZipCompressedFileType,
                 StringComparison.OrdinalIgnoreCase))
             {
                 throw new FileLoadException(InternalResource.FileLoadExceptionUnsupportedCompressedFileTypeFormat
-                    .Format(compressedFileInfo.Extension, ExtensionSettings.Current.GZipCompressedFileType));
+                    .Format(compressedFileInfo.Extension, ExtensionSettings.Preference.GZipCompressedFileType));
             }
 
-            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.Current.GZipCompressedFileType);
+            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.Preference.GZipCompressedFileType);
 
             using (var compressedStream = compressedFileInfo.OpenRead())
             using (var decompressedStream = File.Create(decompressedFilePath))
@@ -241,9 +241,9 @@ namespace Librame.Extensions
             originalFileInfo.NotNull(nameof(originalFileInfo));
 
             if ((File.GetAttributes(originalFileInfo.FullName) & FileAttributes.Hidden)
-                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.Current.DeflateCompressedFileType, StringComparison.OrdinalIgnoreCase))
+                != FileAttributes.Hidden & !originalFileInfo.Extension.Equals(ExtensionSettings.Preference.DeflateCompressedFileType, StringComparison.OrdinalIgnoreCase))
             {
-                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.Current.DeflateCompressedFileType;
+                var compressedFilePath = originalFileInfo.FullName + ExtensionSettings.Preference.DeflateCompressedFileType;
 
                 using (var originalStream = originalFileInfo.OpenRead())
                 using (var compressedStream = File.Create(compressedFilePath))
@@ -270,14 +270,14 @@ namespace Librame.Extensions
         {
             compressedFileInfo.NotNull(nameof(compressedFileInfo));
 
-            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.Current.DeflateCompressedFileType,
+            if (!compressedFileInfo.Extension.Equals(ExtensionSettings.Preference.DeflateCompressedFileType,
                 StringComparison.OrdinalIgnoreCase))
             {
                 throw new FileLoadException(InternalResource.FileLoadExceptionUnsupportedCompressedFileTypeFormat
-                    .Format(compressedFileInfo.Extension, ExtensionSettings.Current.DeflateCompressedFileType));
+                    .Format(compressedFileInfo.Extension, ExtensionSettings.Preference.DeflateCompressedFileType));
             }
 
-            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.Current.DeflateCompressedFileType);
+            var decompressedFilePath = compressedFileInfo.FullName.TrimEnd(ExtensionSettings.Preference.DeflateCompressedFileType);
 
             using (var compressedStream = compressedFileInfo.OpenRead())
             using (var decompressedStream = File.Create(decompressedFilePath))

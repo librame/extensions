@@ -8,13 +8,9 @@ namespace Librame.Extensions.Data.Tests
 
     public class TreeingTests
     {
-        public class TestTreeing : IParentId<int>
+        public class TestTreeing : AbstractParentIdentifier<int>
         {
             public string Name { get; set; }
-
-            public int ParentId { get; set; }
-
-            public int Id { get; set; }
         }
 
 
@@ -38,8 +34,9 @@ namespace Librame.Extensions.Data.Tests
                 list.Add(test);
             }
 
-            var treeing = list.AsTreeing();
+            var treeing = list.AsTreeing<TestTreeing, int>();
             Assert.Equal(10, treeing.Count);
         }
+
     }
 }

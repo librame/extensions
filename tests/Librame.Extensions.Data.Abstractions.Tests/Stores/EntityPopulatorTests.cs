@@ -40,10 +40,10 @@ namespace Librame.Extensions.Data.Tests
                 CancellationToken cancellationToken = default)
                 => Task.FromResult(DateTime.UtcNow.AddHours(1));
 
-            public DateTimeOffset GetOffsetNow(DateTimeOffset? timestamp = null, bool? isUtc = null)
+            public DateTimeOffset GetNowOffset(DateTimeOffset? timestamp = null, bool? isUtc = null)
                 => DateTimeOffset.UtcNow.AddHours(1);
 
-            public Task<DateTimeOffset> GetOffsetNowAsync(DateTimeOffset? timestamp = null, bool? isUtc = null,
+            public Task<DateTimeOffset> GetNowOffsetAsync(DateTimeOffset? timestamp = null, bool? isUtc = null,
                 CancellationToken cancellationToken = default)
                 => Task.FromResult(DateTimeOffset.UtcNow.AddHours(1));
         }

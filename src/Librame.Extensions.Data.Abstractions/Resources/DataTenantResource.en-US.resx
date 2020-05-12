@@ -120,6 +120,9 @@
   <data name="DefaultConnectionString" xml:space="preserve">
     <value>Default database connection string</value>
   </data>
+  <data name="EncryptedConnectionStrings" xml:space="preserve">
+    <value>Encrypted connection strings</value>
+  </data>
   <data name="Host" xml:space="preserve">
     <value>Host</value>
   </data>

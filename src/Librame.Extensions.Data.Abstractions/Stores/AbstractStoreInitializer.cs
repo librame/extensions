@@ -162,7 +162,7 @@ namespace Librame.Extensions.Data.Stores
 
                 tenant.Id = Identifier.GetTenantIdAsync().ConfigureAndResult();
 
-                tenant.UpdatedTime = tenant.CreatedTime = Clock.GetOffsetNowAsync()
+                tenant.UpdatedTime = tenant.CreatedTime = Clock.GetNowOffsetAsync()
                     .ConfigureAndResult();
                 tenant.UpdatedTimeTicks = tenant.CreatedTimeTicks = tenant.UpdatedTime.Ticks;
                 tenant.UpdatedBy = tenant.CreatedBy = EntityPopulator.FormatTypeName(GetType());

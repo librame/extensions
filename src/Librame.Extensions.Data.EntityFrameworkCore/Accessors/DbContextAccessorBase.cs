@@ -56,7 +56,7 @@ namespace Librame.Extensions.Data.Accessors
 
             CurrentTenant = Dependency.Options.DefaultTenant.NotNull("BuilderOptions.DefaultTenant");
             
-            if (Dependency.Options.IsCreateDatabase)
+            if (Dependency.Options.SupportsCreateDatabase)
                 EnsureDatabaseCreated();
         }
 
@@ -91,7 +91,7 @@ namespace Librame.Extensions.Data.Accessors
         /// 当前时间戳。
         /// </summary>
         public DateTimeOffset CurrentTimestamp
-            => Clock.GetOffsetNowAsync().ConfigureAndResult();
+            => Clock.GetNowOffsetAsync().ConfigureAndResult();
 
         /// <summary>
         /// 当前类型。
@@ -126,6 +126,18 @@ namespace Librame.Extensions.Data.Accessors
         public virtual bool IsWritingConnectionString()
             => !CurrentTenant.WritingSeparation
             || (CurrentTenant.WritingSeparation && IsCurrentConnectionString(CurrentTenant.WritingConnectionString));
+
+        /// <summary>
+        /// 获取当前数据连接字符串标签。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        public virtual string GetCurrentConnectionStringTag()
+        {
+            if (CurrentTenant.WritingSeparation && IsCurrentConnectionString(CurrentTenant.WritingConnectionString))
+                return nameof(ITenant.WritingConnectionString);
+
+            return nameof(ITenant.DefaultConnectionString);
+        }
 
 
         /// <summary>
@@ -329,7 +341,7 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         public virtual void Migrate()
         {
-            if (Dependency.Options.MigrationEnabled)
+            if (Dependency.Options.Stores.UseDataMigration)
                 MigrateCore();
             else
                 Database.Migrate();
@@ -350,7 +362,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回 <see cref="Task"/>。</returns>
         public virtual Task MigrateAsync(CancellationToken cancellationToken = default)
         {
-            if (Dependency.Options.MigrationEnabled)
+            if (Dependency.Options.Stores.UseDataMigration)
                 return MigrateCoreAsync(cancellationToken);
             else
                 return Database.MigrateAsync(cancellationToken);
@@ -383,7 +395,7 @@ namespace Librame.Extensions.Data.Accessors
             var isSwitched = false;
 
             // 如果启用多租户
-            if (Dependency.Options.TenantEnabled)
+            if (Dependency.Options.Stores.UseDataTenant)
             {
                 var switchTenant = SwitchTenant();
                 if (switchTenant.IsNotNull() && !switchTenant.Equals(CurrentTenant))
@@ -432,7 +444,7 @@ namespace Librame.Extensions.Data.Accessors
             Logger.LogInformation(InternalResource.ChangeNewConnectionFormat.Format(CurrentTenant.ToString(), CurrentConnectionString));
 
             // 先尝试创建数据库
-            if (Dependency.Options.IsCreateDatabase)
+            if (Dependency.Options.SupportsCreateDatabase)
                 EnsureDatabaseCreated(connection);
 
             if (connection.State != ConnectionState.Open)
@@ -465,7 +477,7 @@ namespace Librame.Extensions.Data.Accessors
                 var isSwitched = false;
 
                 // 如果启用多租户
-                if (Dependency.Options.TenantEnabled)
+                if (Dependency.Options.Stores.UseDataTenant)
                 {
                     var switchTenant = await SwitchTenantAsync(cancellationToken).ConfigureAndResultAsync();
                     if (switchTenant.IsNotNull() && !switchTenant.Equals(CurrentTenant))
@@ -515,7 +527,7 @@ namespace Librame.Extensions.Data.Accessors
             Logger?.LogInformation(InternalResource.ChangeNewConnectionFormat.Format(CurrentTenant.ToString(), CurrentConnectionString));
 
             // 先尝试创建数据库
-            if (Dependency.Options.IsCreateDatabase)
+            if (Dependency.Options.SupportsCreateDatabase)
                 await EnsureDatabaseCreatedAsync(cancellationToken).ConfigureAndResultAsync();
 
             if (connection.State != ConnectionState.Open)

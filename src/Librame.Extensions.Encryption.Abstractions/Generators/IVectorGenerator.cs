@@ -12,8 +12,8 @@
 
 namespace Librame.Extensions.Encryption.Generators
 {
+    using Core.Identifiers;
     using Core.Services;
-    using Encryption.Identifiers;
 
     /// <summary>
     /// 向量生成器接口。

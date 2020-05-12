@@ -12,9 +12,9 @@
 
 namespace Librame.Extensions.Encryption.Services
 {
+    using Core.Identifiers;
     using Core.Services;
     using Encryption.Generators;
-    using Encryption.Identifiers;
 
     /// <summary>
     /// 键控散列服务接口。

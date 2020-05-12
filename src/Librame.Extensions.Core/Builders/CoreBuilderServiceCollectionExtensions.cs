@@ -12,6 +12,7 @@
 
 using Librame.Extensions;
 using Librame.Extensions.Core.Builders;
+using Librame.Extensions.Core.Options;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -70,8 +71,12 @@ namespace Microsoft.Extensions.DependencyInjection
             // Use PreStarter
             services.UsePreStarter();
 
-            // Configure Dependency
-            var dependency = configureDependency.ConfigureDependency(services);
+            // Clear Options Cache
+            ConsistencyOptionsCache.TryRemove<CoreBuilderOptions>();
+
+            // Add Builder Dependency
+            var dependency = services.AddBuilderDependencyRoot(out var dependencyType, configureDependency);
+            services.TryAddReferenceBuilderDependency<CoreBuilderDependency>(dependency, dependencyType);
             
             // Add Dependencies
             services
@@ -88,6 +93,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // Configure Builder
             return coreBuilder
                 .AddDecorators()
+                .AddIdentifiers()
                 .AddLocalizers()
                 .AddMediators()
                 .AddOptions()

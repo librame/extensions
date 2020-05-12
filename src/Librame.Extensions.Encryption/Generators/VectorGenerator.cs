@@ -18,9 +18,9 @@ using System.Linq;
 
 namespace Librame.Extensions.Encryption.Generators
 {
+    using Core.Identifiers;
     using Core.Services;
     using Encryption.Builders;
-    using Encryption.Identifiers;
     using Encryption.Resources;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]

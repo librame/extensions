@@ -7,6 +7,9 @@ namespace Librame.Extensions.Examples
     {
         public static string Validate(string connectionString)
         {
+            // BindDefaultTenant() 方法支持加密连接字符串，不需手动解密
+            //connectionString = DataBuilderDependency.DecryptConnectionString(connectionString);
+
             var csb = new MySqlConnectionStringBuilder(connectionString);
             if (csb.AllowUserVariables != true || csb.UseAffectedRows)
             {

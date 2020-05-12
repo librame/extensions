@@ -62,7 +62,7 @@ namespace Librame.Extensions.Data.Aspects
         /// 启用截面。
         /// </summary>
         public override bool Enabled
-            => Options.AuditEnabled;
+            => Options.Stores.UseDataAudit;
 
 
         /// <summary>
@@ -200,19 +200,19 @@ namespace Librame.Extensions.Data.Aspects
             if (entry.State == EntityState.Modified && entry.Entity is IUpdation updation)
             {
                 // 使用实体更新时间
-                audit.CreatedTime = ToDateTime(updation.GetCustomUpdatedTime(), cancellationToken);
-                audit.CreatedBy = ToBy(updation.GetCustomUpdatedBy());
+                audit.CreatedTime = ToDateTime(updation.GetCreatedTimeAsync(cancellationToken).ConfigureAndResult(), cancellationToken);
+                audit.CreatedBy = ToBy(updation.GetCreatedByAsync(cancellationToken).ConfigureAndResult());
             }
             else if (entry.Entity is ICreation creation)
             {
                 // 使用实体创建时间
-                audit.CreatedTime = ToDateTime(creation.GetCustomCreatedTime(), cancellationToken);
-                audit.CreatedBy = ToBy(creation.GetCustomCreatedBy());
+                audit.CreatedTime = ToDateTime(creation.GetCreatedTimeAsync(cancellationToken).ConfigureAndResult(), cancellationToken);
+                audit.CreatedBy = ToBy(creation.GetCreatedByAsync(cancellationToken).ConfigureAndResult());
             }
             else
             {
                 // 使用当前时间
-                audit.CreatedTime = Dependencies.Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).ConfigureAndResult();
+                audit.CreatedTime = Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
             }
 
             audit.CreatedTimeTicks = audit.CreatedTime.Ticks;
@@ -260,9 +260,7 @@ namespace Librame.Extensions.Data.Aspects
         protected virtual DateTimeOffset ToDateTime(object time, CancellationToken cancellationToken)
         {
             if (time.IsNull())
-            {
-                return Dependencies.Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).ConfigureAndResult();
-            }
+                return Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
 
             if (time is DateTimeOffset dateTimeOffset)
                 return dateTimeOffset;

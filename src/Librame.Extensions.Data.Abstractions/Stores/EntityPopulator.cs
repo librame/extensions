@@ -58,8 +58,40 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
+        /// 填充默认租户。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="defaultTenant"/> is null.
+        /// </exception>
+        /// <param name="defaultTenant">给定的 <see cref="ITenant"/>。</param>
+        /// <returns>返回 <see cref="ITenant"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static ITenant PopulateDefaultTenant(ITenant defaultTenant)
+        {
+            defaultTenant.NotNull(nameof(defaultTenant));
+
+            if (defaultTenant.Name.IsEmpty())
+                defaultTenant.Name = "DefaultTenant";
+
+            if (defaultTenant.Host.IsEmpty())
+                defaultTenant.Host = "localhost";
+
+            if (defaultTenant.DefaultConnectionString.IsEmpty())
+                defaultTenant.DefaultConnectionString = "librame_data_default";
+
+            if (defaultTenant.WritingConnectionString.IsEmpty())
+                defaultTenant.WritingConnectionString = "librame_data_writing";
+
+            return defaultTenant;
+        }
+
+
+        /// <summary>
         /// 异步填充创建属性（此方法需确保创建者属性类型为字符串类型）。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="entity"/> or <paramref name="clock"/> is null.
+        /// </exception>
         /// <typeparam name="TInvoke">指定的调用类型。</typeparam>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="entity">给定的实体对象。</param>
@@ -73,6 +105,9 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 异步填充创建属性。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="entity"/> or <paramref name="clock"/> is null.
+        /// </exception>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="entity">给定的实体对象。</param>
         /// <param name="createdBy">给定的创建者对象。</param>
@@ -105,7 +140,7 @@ namespace Librame.Extensions.Data.Stores
                 createdTime = await clock.GetNowAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
 
             if (createdTimeType == typeof(DateTimeOffset))
-                createdTime = await clock.GetOffsetNowAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
+                createdTime = await clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
 
             if (createdTime.IsNotNull())
             {
@@ -130,6 +165,9 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 异步填充更新属性（此方法需确保创建者属性类型为字符串类型）。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="entity"/> or <paramref name="clock"/> is null.
+        /// </exception>
         /// <typeparam name="TInvoke">指定的调用类型。</typeparam>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="entity">给定的实体对象。</param>
@@ -143,6 +181,9 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 异步填充更新属性。
         /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="entity"/> or <paramref name="clock"/> is null.
+        /// </exception>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="entity">给定的实体对象。</param>
         /// <param name="updatedBy">给定的更新者对象。</param>
@@ -179,7 +220,7 @@ namespace Librame.Extensions.Data.Stores
                 updatedTime = await clock.GetNowAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
 
             if (updatedTimeType == typeof(DateTimeOffset))
-                updatedTime = await clock.GetOffsetNowAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
+                updatedTime = await clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
 
             if (updatedTime.IsNotNull())
             {

@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data.Collections
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IList<TreeingNode<T, TId>> ExportNonstratifiedNodes<T, TId>(IEnumerable<TreeingNode<T, TId>> nodes,
             Func<IEnumerable<TreeingNode<T, TId>>, IOrderedEnumerable<TreeingNode<T, TId>>> orderedFactory = null)
-            where T : IParentId<TId>
+            where T : IParentIdentifier<TId>
             where TId : IEquatable<TId>
         {
             var nonstratifiedNodes = new List<TreeingNode<T, TId>>();
@@ -72,7 +72,7 @@ namespace Librame.Extensions.Data.Collections
         /// <returns>返回一个包含树形节点列表的异步操作。</returns>
         public static Task<IList<TreeingNode<T, TId>>> AsTreeingNodesAsync<T, TId>(this IEnumerable<T> items,
             CancellationToken cancellationToken = default)
-            where T : IParentId<TId>
+            where T : IParentIdentifier<TId>
             where TId : IEquatable<TId>
             => Task.Run(() => items.AsTreeingNodes<T, TId>(), cancellationToken);
 
@@ -84,7 +84,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="items">给定的类型实例集合。</param>
         /// <returns>返回树形节点列表。</returns>
         public static IList<TreeingNode<T, TId>> AsTreeingNodes<T, TId>(this IEnumerable<T> items)
-            where T : IParentId<TId>
+            where T : IParentIdentifier<TId>
             where TId : IEquatable<TId>
         {
             if (items.IsEmpty())
@@ -98,7 +98,7 @@ namespace Librame.Extensions.Data.Collections
 
         private static IList<TreeingNode<T, TId>> LookupNodes<T, TId>(IEnumerable<T> items,
             TId parentId, int depthLevel = 0)
-            where T : IParentId<TId>
+            where T : IParentIdentifier<TId>
             where TId : IEquatable<TId>
         {
             var nodes = new List<TreeingNode<T, TId>>();

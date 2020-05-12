@@ -12,6 +12,7 @@
 
 using Librame.Extensions;
 using Librame.Extensions.Core.Builders;
+using Librame.Extensions.Core.Options;
 using Librame.Extensions.Storage.Builders;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -49,10 +50,12 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IExtensionBuilder, TDependency, IStorageBuilder> builderFactory = null)
             where TDependency : StorageBuilderDependency
         {
-            parentBuilder.NotNull(nameof(parentBuilder));
+            // Clear Options Cache
+            ConsistencyOptionsCache.TryRemove<StorageBuilderOptions>();
 
-            // Configure Dependency
-            var dependency = configureDependency.ConfigureDependency(parentBuilder);
+            // Add Builder Dependency
+            var dependency = parentBuilder.AddBuilderDependency(out var dependencyType, configureDependency);
+            parentBuilder.Services.TryAddReferenceBuilderDependency<StorageBuilderDependency>(dependency, dependencyType);
 
             // Create Builder
             var storageBuilder = builderFactory.NotNullOrDefault(()

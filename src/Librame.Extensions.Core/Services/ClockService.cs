@@ -66,7 +66,7 @@ namespace Librame.Extensions.Core.Services
             => cancellationToken.RunFactoryOrCancellationAsync(() => GetNow(timestamp, isUtc));
 
 
-        public DateTimeOffset GetOffsetNow(DateTimeOffset? timestamp = null, bool? isUtc = null)
+        public DateTimeOffset GetNowOffset(DateTimeOffset? timestamp = null, bool? isUtc = null)
         {
             if (!isUtc.HasValue)
                 isUtc = Options.IsUtcClock;
@@ -87,9 +87,9 @@ namespace Librame.Extensions.Core.Services
             return localNow;
         }
 
-        public Task<DateTimeOffset> GetOffsetNowAsync(DateTimeOffset? timestamp = null, bool? isUtc = null,
+        public Task<DateTimeOffset> GetNowOffsetAsync(DateTimeOffset? timestamp = null, bool? isUtc = null,
             CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => GetOffsetNow(timestamp, isUtc));
+            => cancellationToken.RunFactoryOrCancellationAsync(() => GetNowOffset(timestamp, isUtc));
 
     }
 }

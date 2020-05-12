@@ -85,7 +85,7 @@ namespace Librame.Extensions.Data.Services
         {
             if (_requiredCompileAssembly)
             {
-                ExtensionSettings.Current.RunLocker(() =>
+                ExtensionSettings.Preference.RunLocker(() =>
                 {
                     ModelSnapshotCompiler.CompileInFile(dbContextAccessor, dbContextAccessor.Model, Options);
                     _requiredCompileAssembly = false;
@@ -316,7 +316,7 @@ namespace Librame.Extensions.Data.Services
             //var historyRepository = dbContextAccessor.GetService<IHistoryRepository>();
             //var insertCommand = rawSqlCommandBuilder.Build(historyRepository.GetInsertScript(new HistoryRow(migration.GetId(), ProductInfo.GetVersion())));
 
-            ExtensionSettings.Current.RunLocker(() =>
+            ExtensionSettings.Preference.RunLocker(() =>
             {
                 // 生成操作差异的迁移命令列表
                 var differenceCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
@@ -343,7 +343,7 @@ namespace Librame.Extensions.Data.Services
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected IModel ResolvePersistenceModel(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
         {
-            return ExtensionSettings.Current.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLockerResult(() =>
             {
                 return _memoryCache.GetOrCreate(GetCacheKey(), entry =>
                 {

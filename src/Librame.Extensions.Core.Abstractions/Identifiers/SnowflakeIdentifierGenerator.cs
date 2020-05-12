@@ -110,7 +110,7 @@ namespace Librame.Extensions.Core.Identifiers
                 throw new Exception($"Clock moved backwards. Refusing to generate id for {_lastTimestamp - timestamp} milliseconds");
             }
 
-            return ExtensionSettings.Current.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLockerResult(() =>
             {
                 var nextId = (timestamp - _twepoch << _timestampLeftShift)
                     | (_dataCenterId << _dataCenterIdShift)
@@ -142,10 +142,10 @@ namespace Librame.Extensions.Core.Identifiers
         private static async Task<long> GetTimestampAsync(IClockService clock,
             CancellationToken cancellationToken = default)
         {
-            var offsetNow = await clock.GetOffsetNowAsync(cancellationToken: cancellationToken)
+            var offsetNow = await clock.GetNowOffsetAsync(cancellationToken: cancellationToken)
                 .ConfigureAndResultAsync();
 
-            var offsetBaseTime = new DateTimeOffset(ExtensionSettings.Current.BaseDateTime, offsetNow.Offset);
+            var offsetBaseTime = new DateTimeOffset(ExtensionSettings.Preference.BaseDateTime, offsetNow.Offset);
             return (long)(offsetNow - offsetBaseTime).TotalMilliseconds;
         }
 

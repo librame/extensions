@@ -26,21 +26,11 @@ namespace Librame.Extensions.Data.Collections
         /// 转换为可树形集合。
         /// </summary>
         /// <typeparam name="T">列表中元素的类型。</typeparam>
-        /// <param name="items">给定的项集合。</param>
-        /// <returns>返回树形化接口。</returns>
-        public static ITreeable<T> AsTreeing<T>(this IEnumerable<T> items)
-            where T : IParentId<int>
-            => new TreeingCollection<T>(items);
-
-        /// <summary>
-        /// 转换为可树形集合。
-        /// </summary>
-        /// <typeparam name="T">列表中元素的类型。</typeparam>
         /// <typeparam name="TId">指定的主键类型。</typeparam>
         /// <param name="items">给定的项集合。</param>
         /// <returns>返回树形化接口。</returns>
         public static ITreeable<T, TId> AsTreeing<T, TId>(this IEnumerable<T> items)
-            where T : IParentId<TId>
+            where T : IParentIdentifier<TId>
             where TId : IEquatable<TId>
             => new TreeingCollection<T, TId>(items);
 

@@ -41,21 +41,21 @@ namespace Librame.Extensions
         /// 转换为字符编码的字符串。
         /// </summary>
         /// <param name="bytes">给定的字节数组。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static string AsEncodingString(this byte[] bytes, Encoding encoding = null)
-            => (encoding ?? ExtensionSettings.Current.DefaultEncoding).GetString(bytes);
+            => (encoding ?? ExtensionSettings.Preference.DefaultEncoding).GetString(bytes);
 
         /// <summary>
         /// 还原为字符编码的字节数组。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字节数组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static byte[] FromEncodingString(this string str, Encoding encoding = null)
-            => (encoding ?? ExtensionSettings.Current.DefaultEncoding).GetBytes(str);
+            => (encoding ?? ExtensionSettings.Preference.DefaultEncoding).GetBytes(str);
 
 
         #region Encoding Base and Hex
@@ -64,7 +64,7 @@ namespace Librame.Extensions
         /// 转换为经过字符编码的 BASE32 字符串。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string AsEncodingBase32String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).AsBase32String();
@@ -73,7 +73,7 @@ namespace Librame.Extensions
         /// 还原为经过字符编码的 BASE32 字符串。
         /// </summary>
         /// <param name="base32String">给定的 BASE32 字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string FromEncodingBase32String(this string base32String, Encoding encoding = null)
             => base32String.FromBase32String().AsEncodingString(encoding);
@@ -83,7 +83,7 @@ namespace Librame.Extensions
         /// 转换为经过字符编码的 BASE64 字符串。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string AsEncodingBase64String(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).AsBase64String();
@@ -92,7 +92,7 @@ namespace Librame.Extensions
         /// 还原为经过字符编码的 BASE64 字符串。
         /// </summary>
         /// <param name="base64String">给定的 BASE64 字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string FromEncodingBase64String(this string base64String, Encoding encoding = null)
             => base64String.FromBase64String().AsEncodingString(encoding);
@@ -102,7 +102,7 @@ namespace Librame.Extensions
         /// 转换为经过字符编码的 16 进制字符串。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string AsEncodingHexString(this string str, Encoding encoding = null)
             => str.FromEncodingString(encoding).AsHexString();
@@ -111,7 +111,7 @@ namespace Librame.Extensions
         /// 还原为经过字符编码的 16 进制字符串。
         /// </summary>
         /// <param name="hexString">给定的 16 进制字符串。</param>
-        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionContext.DefaultEncoding"/>）。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选；默认为 <see cref="IExtensionPreferenceSetting.DefaultEncoding"/>）。</param>
         /// <returns>返回字符串。</returns>
         public static string FromEncodingHexString(this string hexString, Encoding encoding = null)
             => hexString.FromHexString().AsEncodingString(encoding);

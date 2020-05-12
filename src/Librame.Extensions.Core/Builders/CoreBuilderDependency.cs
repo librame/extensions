@@ -30,6 +30,7 @@ namespace Librame.Extensions.Core.Builders
         public CoreBuilderDependency()
             : base(nameof(CoreBuilderDependency))
         {
+            IdentifiersDirectory = ConfigDirectory.CombinePath(CoreSettings.Preference.IdentifiersFolder);
         }
 
 
@@ -59,5 +60,11 @@ namespace Librame.Extensions.Core.Builders
         [System.Text.Json.Serialization.JsonIgnore]
         public Action<ILoggingBuilder> ConfigureLoggingBuilder { get; set; }
             = _ => { };
+
+
+        /// <summary>
+        /// 标识符目录。
+        /// </summary>
+        public string IdentifiersDirectory { get; set; }
     }
 }

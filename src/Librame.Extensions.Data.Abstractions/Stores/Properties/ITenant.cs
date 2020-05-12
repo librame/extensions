@@ -30,6 +30,11 @@ namespace Librame.Extensions.Data.Stores
         string Host { get; set; }
 
         /// <summary>
+        /// 加密连接字符串集合。
+        /// </summary>
+        bool EncryptedConnectionStrings { get; set; }
+
+        /// <summary>
         /// 默认连接字符串。
         /// </summary>
         string DefaultConnectionString { get; set; }

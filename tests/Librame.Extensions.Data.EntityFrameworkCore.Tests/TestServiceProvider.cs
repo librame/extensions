@@ -11,7 +11,9 @@ namespace Librame.Extensions.Data.Tests
             {
                 var services = new ServiceCollection();
 
-                services.AddLibrame();
+                // 此处不配置 EntityFrameworkCore，EFCore 由 TestStoreHubTests 单独配置
+                services.AddLibrame()
+                    .AddData(depend => depend.SupportsEntityFrameworkDesignTimeServices = false);
 
                 return services.BuildServiceProvider();
             });

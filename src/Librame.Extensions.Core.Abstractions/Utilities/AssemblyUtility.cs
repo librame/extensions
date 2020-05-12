@@ -22,25 +22,6 @@ namespace Librame.Extensions.Core.Utilities
     /// </summary>
     public static class AssemblyUtility
     {
-        private static readonly string[] _systemAssemblyPrefixes
-            = new string[]
-            {
-                "anonymously",
-                "microsoft",
-                "mscorlib",
-                "newtonsoft",
-                "netstandard",
-                "nuget",
-                "proxybuilder",
-                "runtime",
-                "sos",
-                "system",
-                "testhost",
-                "window",
-                "xunit"
-            };
-
-
         /// <summary>
         /// 当前程序集列表。
         /// </summary>
@@ -99,7 +80,7 @@ namespace Librame.Extensions.Core.Utilities
 
         private static Assembly[] InitializeAssemblies()
         {
-            return ExtensionSettings.Current.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLockerResult(() =>
             {
                 return AppDomain.CurrentDomain.GetAssemblies();
             });
@@ -107,14 +88,17 @@ namespace Librame.Extensions.Core.Utilities
 
         private static Assembly[] InitializeAssembliesWithoutSystem()
         {
-            return ExtensionSettings.Current.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLockerResult(() =>
             {
-                return CurrentAssemblies.Where(NotSystemAssembly).ToArray();
+                return CurrentAssemblies.Where(WithoutSystemAssembly).ToArray();
             });
 
-            bool NotSystemAssembly(Assembly assembly)
+            // WithoutSystemAssembly
+            bool WithoutSystemAssembly(Assembly assembly)
             {
-                foreach (var prefix in _systemAssemblyPrefixes)
+                var prefixes = CoreSettings.Preference.SystemAssemblyPrefixes;
+
+                foreach (var prefix in prefixes)
                 {
                     if (assembly.FullName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
                         return false;

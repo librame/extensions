@@ -38,7 +38,7 @@ namespace Librame.Extensions.Core.Transformers
         }
 
 
-        private Func<TTransformer, bool> GetPredicate(Type sourceType, Type targetType)
+        private static Func<TTransformer, bool> GetPredicate(Type sourceType, Type targetType)
             => s => s.SourceType == sourceType && s.TargetType == targetType;
 
 
@@ -141,7 +141,7 @@ namespace Librame.Extensions.Core.Transformers
 
             if (oldTransformer != newTransformer)
             {
-                return ExtensionSettings.Current.RunLockerResult(() =>
+                return ExtensionSettings.Preference.RunLockerResult(() =>
                 {
                     _transformers.Remove(oldTransformer);
                     _transformers.Add(newTransformer);

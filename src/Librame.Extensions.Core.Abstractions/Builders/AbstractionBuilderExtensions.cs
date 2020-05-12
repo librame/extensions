@@ -24,6 +24,44 @@ namespace Librame.Extensions.Core.Builders
         #region Builders
 
         /// <summary>
+        /// 获取必须的构建器依赖。
+        /// </summary>
+        /// <typeparam name="TDependency">指定的构建器依赖类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <returns>返回 <typeparamref name="TDependency"/>。</returns>
+        public static TDependency GetRequiredDependency<TDependency>(this IExtensionBuilder builder)
+            where TDependency : class, IExtensionBuilderDependency
+        {
+            if (!builder.TryGetDependency(out TDependency result))
+                throw new InvalidOperationException($"The builder's dependency '{builder.Dependency?.GetType()}' is not '{typeof(TDependency)}'.");
+
+            return result;
+        }
+
+        /// <summary>
+        /// 尝试获取指定类型的构建器依赖。
+        /// </summary>
+        /// <typeparam name="TDependency">指定的构建器依赖类型。</typeparam>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="result">输出 <typeparamref name="TDependency"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool TryGetDependency<TDependency>(this IExtensionBuilder builder, out TDependency result)
+            where TDependency : class, IExtensionBuilderDependency
+        {
+            builder.NotNull(nameof(builder));
+
+            if (builder?.Dependency is TDependency dependency)
+            {
+                result = dependency;
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+
+
+        /// <summary>
         /// 获取必需的父级构建器。
         /// </summary>
         /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>

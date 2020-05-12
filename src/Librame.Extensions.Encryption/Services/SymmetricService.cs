@@ -14,10 +14,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Encryption.Services
 {
+    using Core.Identifiers;
     using Core.Services;
     using Encryption.Builders;
     using Encryption.Generators;
-    using Encryption.Identifiers;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class SymmetricService : AbstractExtensionBuilderService<EncryptionBuilderOptions>, ISymmetricService

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Librame.Extensions.Examples
+﻿namespace Librame.Extensions.Examples
 {
     using Core.Builders;
     using Core.Dependencies;

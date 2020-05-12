@@ -62,10 +62,10 @@ namespace Librame.Extensions.Data.Aspects
 
 
         /// <summary>
-        /// 启用截面。
+        /// 启用此截面。
         /// </summary>
         public override bool Enabled
-            => Options.MigrationEnabled;
+            => Options.Stores.UseDataMigration;
 
 
         /// <summary>
@@ -125,10 +125,10 @@ namespace Librame.Extensions.Data.Aspects
             (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var createdTime = Dependencies.Clock.GetOffsetNowAsync(cancellationToken: cancellationToken).ConfigureAndResult();
+            var createdTime = Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
             var id = Dependencies.Identifier.GetMigrationIdAsync(cancellationToken).ConfigureAndResult();
 
-            return ExtensionSettings.Current.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLockerResult(() =>
             {
                 var modelSnapshotTypeName = ModelSnapshotCompiler.GenerateTypeName(dbContextAccessor.CurrentType);
                 var modelSnapshot = ModelSnapshotCompiler.CompileInMemory(dbContextAccessor,

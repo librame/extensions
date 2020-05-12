@@ -195,12 +195,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
         /// <returns>返回字符串数组。</returns>
         public static string[] ReadAllLines(this FilePathCombiner combiner, Encoding encoding = null)
-        {
-            if (encoding.IsNull())
-                return File.ReadAllLines(combiner);
-
-            return File.ReadAllLines(combiner, encoding);
-        }
+            => File.ReadAllLines(combiner, encoding ?? ExtensionSettings.Preference.DefaultEncoding);
 
         /// <summary>
         /// 写入所有行集合。
@@ -215,13 +210,7 @@ namespace Librame.Extensions.Core.Combiners
             if (autoCreateDirectory)
                 combiner.CreateDirectory();
 
-            if (encoding.IsNull())
-            {
-                File.WriteAllLines(combiner, contents);
-                return;
-            }
-
-            File.WriteAllLines(combiner, contents, encoding);
+            File.WriteAllLines(combiner, contents, encoding ?? ExtensionSettings.Preference.DefaultEncoding);
         }
 
         /// <summary>
@@ -232,15 +221,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
         public static void AppendAllLines(this FilePathCombiner combiner, IEnumerable<string> contents,
             Encoding encoding = null)
-        {
-            if (encoding.IsNull())
-            {
-                File.AppendAllLines(combiner?.Source, contents);
-                return;
-            }
-
-            File.AppendAllLines(combiner?.Source, contents, encoding);
-        }
+            => File.AppendAllLines(combiner?.Source, contents, encoding ?? ExtensionSettings.Preference.DefaultEncoding);
 
 
         /// <summary>
@@ -250,12 +231,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
         /// <returns>返回字符串。</returns>
         public static string ReadAllText(this FilePathCombiner combiner, Encoding encoding = null)
-        {
-            if (encoding.IsNull())
-                return File.ReadAllText(combiner);
-
-            return File.ReadAllText(combiner, encoding);
-        }
+            => File.ReadAllText(combiner, encoding ?? ExtensionSettings.Preference.DefaultEncoding);
 
         /// <summary>
         /// 写入所有文本。
@@ -270,13 +246,7 @@ namespace Librame.Extensions.Core.Combiners
             if (autoCreateDirectory)
                 combiner.CreateDirectory();
 
-            if (encoding.IsNull())
-            {
-                File.WriteAllText(combiner, contents);
-                return;
-            }
-
-            File.WriteAllText(combiner, contents, encoding);
+            File.WriteAllText(combiner, contents, encoding ?? ExtensionSettings.Preference.DefaultEncoding);
         }
 
         /// <summary>
@@ -287,15 +257,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
         public static void AppendAllText(this FilePathCombiner combiner, string contents,
             Encoding encoding = null)
-        {
-            if (encoding.IsNull())
-            {
-                File.AppendAllText(combiner?.Source, contents);
-                return;
-            }
-
-            File.AppendAllText(combiner?.Source, contents, encoding);
-        }
+            => File.AppendAllText(combiner?.Source, contents, encoding ?? ExtensionSettings.Preference.DefaultEncoding);
 
         #endregion
 
@@ -356,6 +318,118 @@ namespace Librame.Extensions.Core.Combiners
         {
             var json = JsonConvert.SerializeObject(value, formatting, settings);
             combiner.WriteAllText(json, encoding, autoCreateDirectory);
+
+            return json;
+        }
+
+        #endregion
+
+
+        #region ReadSecureJson and WriteSecureJson
+
+        /// <summary>
+        /// 读取安全 JSON。
+        /// </summary>
+        /// <typeparam name="T">指定的反序列化类型。</typeparam>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        /// <param name="settings">给定的 <see cref="JsonSerializerSettings"/>（可选）。</param>
+        /// <returns>返回反序列化对象。</returns>
+        public static T ReadSecureJson<T>(this FilePathCombiner combiner, Encoding encoding = null,
+            JsonSerializerSettings settings = null)
+        {
+            var json = combiner.ReadSecureString(encoding);
+
+            if (settings.IsNull())
+                return JsonConvert.DeserializeObject<T>(json);
+
+            return JsonConvert.DeserializeObject<T>(json, settings);
+        }
+
+        /// <summary>
+        /// 读取安全 JSON。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="type">给定的反序列化对象类型。</param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        /// <param name="settings">给定的 <see cref="JsonSerializerSettings"/>（可选）。</param>
+        /// <returns>返回反序列化对象。</returns>
+        public static object ReadSecureJson(this FilePathCombiner combiner, Type type, Encoding encoding = null,
+            JsonSerializerSettings settings = null)
+        {
+            var json = combiner.ReadSecureString(encoding);
+
+            if (settings.IsNull())
+                return JsonConvert.DeserializeObject(json, type);
+
+            return JsonConvert.DeserializeObject(json, type, settings);
+        }
+
+        private static string ReadSecureString(this FilePathCombiner combiner, Encoding encoding = null)
+        {
+            List<byte> buffer;
+
+            if (encoding.IsNull())
+                encoding = ExtensionSettings.Preference.DefaultEncoding;
+
+            using (var fs = File.OpenRead(combiner))
+            using (var br = new BinaryReader(fs, encoding))
+            {
+                if (fs.Length < int.MaxValue)
+                    buffer = new List<byte>((int)fs.Length);
+                else
+                    buffer = new List<byte>();
+
+                var chunk = new byte[1024];
+                int readCount;
+
+                do
+                {
+                    readCount = br.Read(chunk, 0, chunk.Length);
+                    if (readCount > 0)
+                    {
+                        if (readCount < chunk.Length)
+                            buffer.AddRange(chunk.Take(readCount));
+                        else
+                            buffer.AddRange(chunk);
+                    }
+                }
+                while (readCount > 0);
+            }
+
+            return buffer.ToArray().FromAes().AsEncodingString(encoding);
+        }
+
+
+        /// <summary>
+        /// 写入安全 JSON。
+        /// </summary>
+        /// <param name="combiner">给定的 <see cref="FilePathCombiner"/>。</param>
+        /// <param name="value"></param>
+        /// <param name="encoding">给定的 <see cref="Encoding"/>（可选）。</param>
+        /// <param name="settings">给定的 <see cref="JsonSerializerSettings"/>（可选）。</param>
+        /// <param name="autoCreateDirectory">自动创建目录（可选；默认启用）。</param>
+        /// <returns>返回 JSON 字符串。</returns>
+        public static string WriteSecureJson(this FilePathCombiner combiner, object value, Encoding encoding = null,
+            JsonSerializerSettings settings = null, bool autoCreateDirectory = true)
+        {
+            var json = JsonConvert.SerializeObject(value, settings);
+
+            if (autoCreateDirectory)
+                combiner.CreateDirectory();
+
+            if (combiner.Exists())
+                combiner.Delete(); // 防止混合现有文件内容
+
+            if (encoding.IsNull())
+                encoding = ExtensionSettings.Preference.DefaultEncoding;
+
+            using (var fs = File.OpenWrite(combiner))
+            using (var bw = new BinaryWriter(fs, encoding))
+            {
+                var buffer = json.FromEncodingString(encoding);
+                bw.Write(buffer.AsAes());
+            }
 
             return json;
         }

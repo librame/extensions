@@ -10,8 +10,8 @@
 
 #endregion
 
-using Librame.Extensions;
 using Librame.Extensions.Core.Builders;
+using Librame.Extensions.Core.Options;
 using Librame.Extensions.Encryption.Builders;
 using Librame.Extensions.Network.Builders;
 using Librame.Extensions.Network.DotNetty;
@@ -48,10 +48,12 @@ namespace Microsoft.Extensions.DependencyInjection
             Action<TDependency> configureDependency = null)
             where TDependency : DotNettyDependency
         {
-            builder.NotNull(nameof(builder));
+            // Clear Options Cache
+            ConsistencyOptionsCache.TryRemove<DotNettyOptions>();
 
-            // Configure Dependency
-            var dependency = configureDependency.ConfigureDependency(builder);
+            // Add Builder Dependency
+            var dependency = builder.AddBuilderDependency(out var dependencyType, configureDependency);
+            builder.Services.TryAddReferenceBuilderDependency<DotNettyDependency>(dependency, dependencyType);
 
             // Add Dependencies
             if (!builder.ContainsParentBuilder<IEncryptionBuilder>())

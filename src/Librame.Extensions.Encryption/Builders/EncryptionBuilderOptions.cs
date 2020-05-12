@@ -13,8 +13,8 @@
 namespace Librame.Extensions.Encryption.Builders
 {
     using Core.Builders;
+    using Core.Identifiers;
     using Core.Serializers;
-    using Encryption.Identifiers;
 
     /// <summary>
     /// 加密构建器选项。

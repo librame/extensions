@@ -12,7 +12,7 @@
 
 namespace Librame.Extensions.Encryption.Generators
 {
-    using Encryption.Identifiers;
+    using Core.Identifiers;
 
     /// <summary>
     /// 抽象密钥生成器静态扩展。

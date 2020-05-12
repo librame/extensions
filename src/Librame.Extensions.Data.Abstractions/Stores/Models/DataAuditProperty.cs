@@ -26,7 +26,7 @@ namespace Librame.Extensions.Data.Stores
     [Description("数据审计属性")]
     [NonAudited]
     [Shardable]
-    public class DataAuditProperty<TIncremId, TAuditId> : AbstractId<TIncremId>
+    public class DataAuditProperty<TIncremId, TAuditId> : AbstractIdentifier<TIncremId>
         where TIncremId : IEquatable<TIncremId>
         where TAuditId : IEquatable<TAuditId>
     {

@@ -25,7 +25,7 @@ namespace Librame.Extensions.Core.Builders
         /// 字符编码（默认为 UTF8）。
         /// </summary>
         public SerializableString<Encoding> Encoding { get; }
-            = new SerializableString<Encoding>(System.Text.Encoding.UTF8);
+            = new SerializableString<Encoding>(ExtensionSettings.Preference.DefaultEncoding);
 
         /// <summary>
         /// 解决时钟回流的偏移量（默认为 1）。
