@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Network.DotNetty.Demo
+namespace Librame.Extensions.Network.DotNetty.Options
 {
     /// <summary>
     /// 客户端选项。

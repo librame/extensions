@@ -18,9 +18,9 @@ using System.Linq.Expressions;
 namespace Microsoft.Extensions.Localization
 {
     /// <summary>
-    /// 抽象定位器静态扩展。
+    /// <see cref="IStringLocalizer{T}"/> 静态扩展。
     /// </summary>
-    public static class AbstractionLocalizerExtensions
+    public static class AbstractionStringLocalizerExtensions
     {
 
         #region IStringLocalizer

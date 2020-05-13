@@ -10,17 +10,23 @@
 
 #endregion
 
-namespace Librame.Extensions.Network.DotNetty.Demo
+namespace Librame.Extensions.Drawing.Options
 {
     /// <summary>
-    /// 析因客户端选项。
+    /// 字体选项。
     /// </summary>
-    public class FactorialClientOptions : ClientOptions
+    public class FontOptions
     {
         /// <summary>
-        /// 数量。
+        /// 字体文件组合器。
         /// </summary>
-        public int Count { get; set; }
-            = 100;
+        public string FilePath { get; set; }
+            = "font.ttf";
+
+        /// <summary>
+        /// 大小。
+        /// </summary>
+        public int Size { get; set; }
+            = 16;
     }
 }

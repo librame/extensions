@@ -14,10 +14,7 @@ using SkiaSharp;
 
 namespace Librame.Extensions.Drawing
 {
-    /// <summary>
-    /// <see cref="SKColor"/> 首选项。
-    /// </summary>
-    public static class SKColorSettings
+    internal static class SKColorThemes
     {
         /// <summary>
         /// 前景色。

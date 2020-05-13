@@ -12,7 +12,7 @@
 
 using System;
 
-namespace Librame.Extensions.Network.DotNetty.Demo
+namespace Librame.Extensions.Network.DotNetty.Options
 {
     using Encryption.Builders;
 

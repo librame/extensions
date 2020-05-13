@@ -15,7 +15,7 @@ namespace Librame.Extensions.Encryption.Generators
     using Core.Identifiers;
 
     /// <summary>
-    /// 抽象向量生成器静态扩展。
+    /// <see cref="IVectorGenerator"/> 静态扩展。
     /// </summary>
     public static class AbstractionVectorGeneratorExtensions
     {

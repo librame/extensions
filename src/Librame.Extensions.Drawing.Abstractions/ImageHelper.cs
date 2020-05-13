@@ -10,10 +10,13 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 
 namespace Librame.Extensions.Drawing
 {
+    using Core.Utilities;
+
     /// <summary>
     /// 图像助手。
     /// </summary>
@@ -55,6 +58,55 @@ namespace Librame.Extensions.Drawing
             }
 
             return new Size((int)zoomWidth, (int)zoomHeight);
+        }
+
+        /// <summary>
+        /// 计算图像坐标。
+        /// </summary>
+        /// <param name="imageSize">给定的图像。</param>
+        /// <param name="initialCoordinate">给定的初始化坐标。</param>
+        /// <param name="isRandomTransformation">是否随机变换坐标（可选；默认不随机变换）。</param>
+        /// <returns>返回 <see cref="Point"/>。</returns>
+        public static Point CalculateCoordinate(Size imageSize, Point initialCoordinate,
+            bool isRandomTransformation = false)
+        {
+            var startX = initialCoordinate.X;
+            var startY = initialCoordinate.Y;
+            
+            var isReverseX = false;
+            var isReverseY = false;
+
+            // 如果为负值，则表示反向
+            if (startX < 0)
+            {
+                startX = imageSize.Width / 2 - Math.Abs(startX);
+                isReverseX = true;
+            }
+
+            if (startY < 0)
+            {
+                startY = imageSize.Height / 2 - Math.Abs(startY);
+                isReverseY = true;
+            }
+
+            // 如果使用随机变换坐标
+            if (isRandomTransformation)
+            {
+                RandomUtility.Run(r =>
+                {
+                    if (isReverseX)
+                        startX = r.Next(startX, imageSize.Width - Math.Abs(startX));
+                    else
+                        startX = r.Next(startX, imageSize.Width / 2);
+
+                    if (isReverseY)
+                        startY = r.Next(startY, imageSize.Height - Math.Abs(startY));
+                    else
+                        startY = r.Next(startY, imageSize.Height / 2);
+                });
+            }
+
+            return new Point(startX, startY);
         }
 
     }

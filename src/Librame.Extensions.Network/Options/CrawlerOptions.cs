@@ -10,29 +10,23 @@
 
 #endregion
 
-namespace Librame.Extensions.Network.Services
+namespace Librame.Extensions.Network.Options
 {
     /// <summary>
-    /// 邮件选项。
+    /// 抓取器选项。
     /// </summary>
-    public class MailOptions
+    public class CrawlerOptions
     {
         /// <summary>
-        /// 启用编解码。
+        /// 图像文件扩展名集合（以英文逗号分隔）。
         /// </summary>
-        public bool EnableCodec { get; set; }
-            = false;
+        public string ImageExtensions { get; set; }
+            = ".jpg,.jpeg,.png,.bmp";
 
         /// <summary>
-        /// 邮箱地址。
+        /// 缓存过期秒数（默认 10 秒后过期）。
         /// </summary>
-        public string EmailAddress { get; set; }
-            = "myemail@contoso.com";
-
-        /// <summary>
-        /// 显示名称。
-        /// </summary>
-        public string DisplayName { get; set; }
-            = "MyEmail";
+        public int CacheExpirationSeconds { get; set; }
+            = 10;
     }
 }

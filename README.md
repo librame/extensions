@@ -79,8 +79,9 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         "DefaultTenant": {
             "Name": "DefaultTenant",
             "Host": "localhost",
-            "DefaultConnectionString": "server=localhost;port=3306;database=librame_data_default;user=root;password=123456",
-            "WritingConnectionString": "server=localhost;port=3306;database=librame_data_writing;user=root;password=123456",
+            "EncryptedConnectionStrings": true,
+            "DefaultConnectionString": "fcuc9SMDHqvxk/3Ras0Emo09N9OorPNvSS8aZtpKC2Jh+NwoaOFOVoz7p4VKkFNr8lQULoTL6G7aYprarg49SpGtu3JVS3x5e8iV1+Ik18sFqR4dP5kjm8fNuZPZtMOS",
+            "WritingConnectionString": "fcuc9SMDHqvxk/3Ras0Emo09N9OorPNvSS8aZtpKC2Jh+NwoaOFOVoz7p4VKkFNrOH9h2XeXJ984w4jHBRgKtJGtu3JVS3x5e8iV1+Ik18sFqR4dP5kjm8fNuZPZtMOS",
             "WritingSeparation": true
         },
         // 测试3: SQL Server (默认支持)
@@ -117,7 +118,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
     var services = builder
         .AddData(dependency =>
         {
-            dependency.Options.IdentifierGenerator = SUIdentifierGenerator.MySQL;
+            dependency.Options.IdentifierGenerator = CombIdentifierGenerator.MySQL;
             dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
         })
         .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
@@ -158,7 +159,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
     var services = builder
         .AddData(dependency =>
         {
-            dependency.Options.IdentifierGenerator = SUIdentifierGenerator.SQLite;
+            dependency.Options.IdentifierGenerator = CombIdentifierGenerator.SQLite;
             // ConnectionStrings Section is not support DefaultTenant.WritingSeparation
             dependency.Options.DefaultTenant.WritingSeparation = true;
             dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.BaseDirectory.CombinePath(dataFile));

@@ -27,7 +27,7 @@ namespace Librame.Extensions
     /// </summary>
     public static class ObjectExtensions
     {
-        // 放在 ExtensionContext 中时，在 net48 环境下总会提示内部解析异常的错误
+        // 放在 ExtensionContext 中时，在 net48 环境下可能会提示内部解析异常的错误
         internal static ConcurrentDictionary<string, Func<object[], object>> CreateFactories
             = new ConcurrentDictionary<string, Func<object[], object>>();
 

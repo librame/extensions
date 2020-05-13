@@ -10,7 +10,7 @@
 
 #endregion
 
-namespace Librame.Extensions.Storage.Services
+namespace Librame.Extensions.Storage.Options
 {
     /// <summary>
     /// 文件传输选项。

@@ -10,33 +10,29 @@
 
 #endregion
 
-using System.Net;
-
-namespace Librame.Extensions.Network.Services
+namespace Librame.Extensions.Drawing.Options
 {
     /// <summary>
-    /// SMTP 选项。
+    /// 验证码选项。
     /// </summary>
-    public class SmtpOptions
+    public class CaptchaOptions
     {
         /// <summary>
-        /// 服务器。
+        /// 颜色。
         /// </summary>
-        public string Server { get; set; }
-            = "smtp.contoso.com";
+        public ColorOptions Colors { get; }
+            = new ColorOptions();
 
         /// <summary>
-        /// 端口。
+        /// 字体。
         /// </summary>
-        public int Port { get; set; }
-            = 587;
+        public FontOptions Font { get; }
+            = new FontOptions { Size = 16 };
 
         /// <summary>
-        /// 网络凭据。
+        /// 噪点。
         /// </summary>
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public NetworkCredential Credential { get; set; }
-            = new NetworkCredential("LoginName", "LoginPass");
+        public NoiseOptions Noise { get; }
+            = new NoiseOptions();
     }
 }

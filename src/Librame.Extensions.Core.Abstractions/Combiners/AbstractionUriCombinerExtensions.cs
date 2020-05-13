@@ -17,7 +17,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
-    /// 抽象 URL 组合器静态扩展。
+    /// <see cref="UriCombiner"/> 静态扩展。
     /// </summary>
     public static class AbstractionUriCombinerExtensions
     {

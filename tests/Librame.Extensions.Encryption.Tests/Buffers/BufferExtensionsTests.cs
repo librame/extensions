@@ -3,6 +3,7 @@
 namespace Librame.Extensions.Encryption.Tests
 {
     using Buffers;
+    using Services;
 
     public class BufferExtensionsTests
     {

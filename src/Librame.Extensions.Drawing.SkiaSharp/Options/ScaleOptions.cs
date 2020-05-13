@@ -10,23 +10,30 @@
 
 #endregion
 
-namespace Librame.Extensions.Network.Services
+using System.Drawing;
+
+namespace Librame.Extensions.Drawing.Options
 {
     /// <summary>
-    /// 抓取器选项。
+    /// 缩放选项。
     /// </summary>
-    public class CrawlerOptions
+    public class ScaleOptions
     {
         /// <summary>
-        /// 图像文件扩展名集合（以英文逗号分隔）。
+        /// 文件名后缀。
         /// </summary>
-        public string ImageExtensions { get; set; }
-            = ".jpg,.jpeg,.png,.bmp";
+        public string Suffix { get; set; }
 
         /// <summary>
-        /// 缓存过期秒数（默认 10 秒后过期）。
+        /// 水印模式。
         /// </summary>
-        public int CacheExpirationSeconds { get; set; }
-            = 10;
+        public WatermarkMode Watermark { get; set; }
+            = WatermarkMode.None;
+
+        /// <summary>
+        /// 最大尺寸。
+        /// </summary>
+        public Size MaxSize { get; set; }
+            = new Size(100, 70);
     }
 }

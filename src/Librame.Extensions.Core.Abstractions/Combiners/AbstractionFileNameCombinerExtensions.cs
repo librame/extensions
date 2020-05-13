@@ -17,7 +17,7 @@ using System.Linq;
 namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
-    /// 抽象文件名组合器静态扩展。
+    /// <see cref="FileNameCombiner"/> 静态扩展。
     /// </summary>
     public static class AbstractionFileNameCombinerExtensions
     {

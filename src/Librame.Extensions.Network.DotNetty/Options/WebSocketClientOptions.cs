@@ -10,23 +10,17 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+namespace Librame.Extensions.Network.DotNetty.Options
 {
     /// <summary>
-    /// 数据首选项。
+    /// WebSocket 客户端。
     /// </summary>
-    public static class DataSettings
+    public class WebSocketClientOptions : ClientOptions
     {
-        private static IDataPreferenceSetting _preference;
-
         /// <summary>
-        /// 当前偏好设置。
+        /// 虚拟路径。
         /// </summary>
-        public static IDataPreferenceSetting Preference
-        {
-            get => _preference.EnsureSingleton(() => new DataPreferenceSetting());
-            set => _preference = value.NotNull(nameof(value));
-        }
-
+        public string VirtualPath { get; set; }
+            = "/websocket";
     }
 }

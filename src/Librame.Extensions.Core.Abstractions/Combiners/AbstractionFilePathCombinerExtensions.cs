@@ -21,7 +21,7 @@ using System.Text;
 namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
-    /// 抽象文件路径组合器静态扩展。
+    /// <see cref="FilePathCombiner"/> 静态扩展。
     /// </summary>
     public static class AbstractionFilePathCombinerExtensions
     {

@@ -24,7 +24,6 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Drawing.Services
 {
     using Core.Builders;
-    using Core.Combiners;
     using Core.Services;
     using Drawing.Builders;
     using Drawing.Resources;

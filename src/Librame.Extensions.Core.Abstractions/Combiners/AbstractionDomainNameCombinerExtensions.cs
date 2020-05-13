@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Core.Combiners
 {
     /// <summary>
-    /// 抽象域名组合器静态扩展。
+    /// <see cref="DomainNameCombiner"/> 静态扩展。
     /// </summary>
     public static class AbstractionDomainNameCombinerExtensions
     {

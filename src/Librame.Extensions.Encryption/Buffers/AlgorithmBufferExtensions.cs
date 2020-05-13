@@ -16,9 +16,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Encryption.Buffers
 {
     /// <summary>
-    /// 缓冲区静态扩展。
+    /// <see cref="IAlgorithmBuffer"/> 静态扩展。
     /// </summary>
-    public static class BufferExtensions
+    public static class AlgorithmBufferExtensions
     {
         /// <summary>
         /// 将明文来源转换为明文缓冲区。

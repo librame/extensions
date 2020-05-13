@@ -14,9 +14,7 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void SerializeTest()
         {
-            var provider = TestServiceProvider.Current;
-
-            var options = provider.GetRequiredService<IOptions<CoreBuilderOptions>>().Value;
+            var options = TestServiceProvider.Current.GetRequiredService<IOptions<CoreBuilderOptions>>().Value;
             var encoding = options.Encoding.Value;
 
             // Change Encoding
@@ -26,7 +24,7 @@ namespace Librame.Extensions.Core.Tests
             Assert.NotEqual(options.Encoding.Value, encoding);
 
             // 依赖的选项实例同样发生了变化
-            var dependency = provider.GetRequiredService<CoreBuilderDependency>();
+            var dependency = TestServiceProvider.Current.GetRequiredService<CoreBuilderDependency>();
             Assert.True(ReferenceEquals(options, dependency.Options));
             Assert.Equal(options.Encoding, dependency.Options.Encoding);
 

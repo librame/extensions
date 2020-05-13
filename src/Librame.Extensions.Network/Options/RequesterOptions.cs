@@ -13,7 +13,7 @@
 using Polly;
 using System;
 
-namespace Librame.Extensions.Network.Requesters
+namespace Librame.Extensions.Network.Options
 {
     /// <summary>
     /// 请求程序选项。

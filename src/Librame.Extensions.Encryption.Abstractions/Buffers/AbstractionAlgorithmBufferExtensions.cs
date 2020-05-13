@@ -19,9 +19,9 @@ namespace Librame.Extensions.Encryption.Buffers
     using Services;
 
     /// <summary>
-    /// 抽象缓冲区静态扩展。
+    /// <see cref="IAlgorithmBuffer"/> 静态扩展。
     /// </summary>
-    public static class AbstractionBufferExtensions
+    public static class AbstractionAlgorithmBufferExtensions
     {
         /// <summary>
         /// 使用散列服务。
@@ -118,5 +118,6 @@ namespace Librame.Extensions.Encryption.Buffers
 
             return algorithmBuffer;
         }
+
     }
 }

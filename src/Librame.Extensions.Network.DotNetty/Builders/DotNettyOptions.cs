@@ -13,7 +13,7 @@
 namespace Librame.Extensions.Network.Builders
 {
     using Core.Builders;
-    using DotNetty.Demo;
+    using DotNetty.Options;
 
     /// <summary>
     /// DotNetty 选项。

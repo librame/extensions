@@ -10,23 +10,29 @@
 
 #endregion
 
-namespace Librame.Extensions.Data
+using System.Drawing;
+
+namespace Librame.Extensions.Drawing.Options
 {
     /// <summary>
-    /// 数据首选项。
+    /// 背景噪点选项。
     /// </summary>
-    public static class DataSettings
+    public class NoiseOptions
     {
-        private static IDataPreferenceSetting _preference;
+        /// <summary>
+        /// 宽度。
+        /// </summary>
+        public int Width { get; set; }
+            = 2;
 
         /// <summary>
-        /// 当前偏好设置。
+        /// 间距。
         /// </summary>
-        public static IDataPreferenceSetting Preference
-        {
-            get => _preference.EnsureSingleton(() => new DataPreferenceSetting());
-            set => _preference = value.NotNull(nameof(value));
-        }
-
+        public PointF Space { get; set; }
+            = new PointF
+            {
+                X = 5,
+                Y = 5
+            };
     }
 }

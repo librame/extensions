@@ -21,6 +21,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
 {
     using Encryption.Services;
     using Network.Builders;
+    using Network.DotNetty.Options;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class QuoteOfTheMomentClient : ChannelServiceBase, IQuoteOfTheMomentClient

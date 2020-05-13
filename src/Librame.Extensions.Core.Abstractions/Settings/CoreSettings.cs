@@ -10,8 +10,6 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Core
 {
     /// <summary>
@@ -26,31 +24,8 @@ namespace Librame.Extensions.Core
         /// </summary>
         public static ICorePreferenceSetting Preference
         {
-            get
-            {
-                if (null == _preference)
-                {
-                    ExtensionSettings.Preference.RunLocker(() =>
-                    {
-                        if (null == _preference)
-                        {
-                            _preference = new CorePreferenceSetting();
-                        }
-                    });
-                }
-
-                return _preference;
-            }
-            set
-            {
-                if (null == value)
-                    throw new ArgumentNullException(nameof(value));
-
-                ExtensionSettings.Preference.RunLocker(() =>
-                {
-                    _preference = value;
-                });
-            }
+            get => _preference.EnsureSingleton(() => new CorePreferenceSetting());
+            set => _preference = value.NotNull(nameof(value));
         }
 
     }

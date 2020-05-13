@@ -16,13 +16,10 @@ using System.Collections.Generic;
 namespace Librame.Extensions.Core.Builders
 {
     /// <summary>
-    /// 抽象构建器静态扩展。
+    /// <see cref="IExtensionBuilderDependency"/> 静态扩展。
     /// </summary>
-    public static class AbstractionBuilderExtensions
+    public static class AbstractionExtensionBuilderDependencyExtensions
     {
-
-        #region Builders
-
         /// <summary>
         /// 获取必须的构建器依赖。
         /// </summary>
@@ -60,65 +57,6 @@ namespace Librame.Extensions.Core.Builders
             return false;
         }
 
-
-        /// <summary>
-        /// 获取必需的父级构建器。
-        /// </summary>
-        /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
-        /// <param name="dependency">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <returns>返回 <typeparamref name="TParentBuilder"/> 或抛出 <see cref="InvalidOperationException"/>。</returns>
-        public static TParentBuilder GetRequiredParentBuilder<TParentBuilder>
-            (this IExtensionBuilder dependency)
-            where TParentBuilder : class, IExtensionBuilder
-        {
-            if (!dependency.TryGetParentBuilder<TParentBuilder>(out var result))
-                throw new InvalidOperationException($"The builder is not contains parent builder '{typeof(TParentBuilder)}'.");
-
-            return result;
-        }
-
-        /// <summary>
-        /// 包含指定父级构建器类型的实例。
-        /// </summary>
-        /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool ContainsParentBuilder<TParentBuilder>(this IExtensionBuilder builder)
-            where TParentBuilder : class, IExtensionBuilder
-            => builder.TryGetParentBuilder<TParentBuilder>(out _);
-
-        /// <summary>
-        /// 尝试获取指定父级构建器类型的实例。
-        /// </summary>
-        /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="result">输出父级 <see cref="IExtensionBuilder"/>。</param>
-        /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGetParentBuilder<TParentBuilder>(this IExtensionBuilder builder,
-            out TParentBuilder result)
-            where TParentBuilder : class, IExtensionBuilder
-        {
-            // 仅查找父级
-            result = GetParentBuilder(builder?.ParentBuilder);
-            return result.IsNotNull();
-
-            // GetParentBuilder
-            TParentBuilder GetParentBuilder(IExtensionBuilder currentBuilder)
-            {
-                if (currentBuilder.IsNull())
-                    return null;
-
-                if (currentBuilder is TParentBuilder parentBuilder)
-                    return parentBuilder;
-
-                return GetParentBuilder(currentBuilder.ParentBuilder);
-            }
-        }
-
-        #endregion
-
-
-        #region Dependencies
 
         /// <summary>
         /// 获取必需的父级构建器依赖。
@@ -201,8 +139,6 @@ namespace Librame.Extensions.Core.Builders
                 AddParentDependency(currentDependency.ParentDependency);
             }
         }
-
-        #endregion
 
     }
 }

@@ -10,17 +10,17 @@
 
 #endregion
 
-namespace Librame.Extensions.Network.DotNetty.Demo
+namespace Librame.Extensions.Network.DotNetty.Options
 {
     /// <summary>
-    /// WebSocket 客户端。
+    /// 析因客户端选项。
     /// </summary>
-    public class WebSocketClientOptions : ClientOptions
+    public class FactorialClientOptions : ClientOptions
     {
         /// <summary>
-        /// 虚拟路径。
+        /// 数量。
         /// </summary>
-        public string VirtualPath { get; set; }
-            = "/websocket";
+        public int Count { get; set; }
+            = 100;
     }
 }

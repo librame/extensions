@@ -249,8 +249,16 @@ namespace Librame.Extensions.Data.Builders
         /// <returns>返回原始字符串。</returns>
         public static string DecryptConnectionString(string connectionString)
         {
-            var buffer = connectionString.FromBase64String();
-            return buffer.FromAes().AsEncodingString();
+            try
+            {
+                var buffer = connectionString.FromBase64String();
+                return buffer.FromAes().AsEncodingString();
+            }
+            catch (FormatException)
+            {
+                // 非加密格式直接返回
+                return connectionString;
+            }
         }
 
     }

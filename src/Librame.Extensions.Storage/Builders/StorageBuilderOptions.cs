@@ -15,7 +15,7 @@ using System.Collections.Generic;
 namespace Librame.Extensions.Storage.Builders
 {
     using Core.Builders;
-    using Storage.Services;
+    using Storage.Options;
 
     /// <summary>
     /// 存储构建器选项。

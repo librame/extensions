@@ -13,54 +13,36 @@
 namespace Librame.Extensions.Encryption.Services
 {
     using Core.Identifiers;
-    using Core.Services;
-    using Encryption.Generators;
 
     /// <summary>
-    /// 对称服务接口。
+    /// <see cref="ISymmetricService"/> 静态扩展。
     /// </summary>
-    public interface ISymmetricService : IService
+    public static class AbstractionSymmetricServiceExtensions
     {
-        /// <summary>
-        /// 密钥生成器。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="IKeyGenerator"/>。
-        /// </value>
-        IKeyGenerator KeyGenerator { get; }
-
-        /// <summary>
-        /// 向量生成器。
-        /// </summary>
-        /// <value>
-        /// 返回 <see cref="IVectorGenerator"/>。
-        /// </value>
-        IVectorGenerator VectorGenerator { get; }
-
 
         #region AES
 
         /// <summary>
         /// 加密 AES。
         /// </summary>
-        /// <param name="buffer">给定待加密的字节数组。</param>
-        /// <param name="key">输出密钥。</param>
-        /// <param name="vector">输出向量。</param>
+        /// <param name="service">给定的 <see cref="ISymmetricService"/>。</param>
+        /// <param name="buffer">给定的字节数组。</param>
         /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] EncryptAes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+        public static byte[] EncryptAes(this ISymmetricService service, byte[] buffer,
+            SecurityIdentifier identifier = null)
+            => service.NotNull(nameof(service)).EncryptAes(buffer, out _, out _, identifier);
 
         /// <summary>
         /// 解密 AES。
         /// </summary>
+        /// <param name="service">给定的 <see cref="ISymmetricService"/>。</param>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">输出密钥。</param>
-        /// <param name="vector">输出向量。</param>
         /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] DecryptAes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+        public static byte[] DecryptAes(this ISymmetricService service, byte[] buffer,
+            SecurityIdentifier identifier = null)
+            => service.NotNull(nameof(service)).DecryptAes(buffer, out _, out _, identifier);
 
         #endregion
 
@@ -70,24 +52,24 @@ namespace Librame.Extensions.Encryption.Services
         /// <summary>
         /// 加密 DES。
         /// </summary>
-        /// <param name="buffer">给定待加密的字节数组。</param>
-        /// <param name="key">输出密钥。</param>
-        /// <param name="vector">输出向量。</param>
+        /// <param name="service">给定的 <see cref="ISymmetricService"/>。</param>
+        /// <param name="buffer">给定的字节数组。</param>
         /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] EncryptDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+        public static byte[] EncryptDes(this ISymmetricService service, byte[] buffer,
+            SecurityIdentifier identifier = null)
+            => service.NotNull(nameof(service)).EncryptDes(buffer, out _, out _, identifier);
 
         /// <summary>
         /// 解密 DES。
         /// </summary>
+        /// <param name="service">给定的 <see cref="ISymmetricService"/>。</param>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">输出密钥。</param>
-        /// <param name="vector">输出向量。</param>
         /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] DecryptDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+        public static byte[] DecryptDes(this ISymmetricService service, byte[] buffer,
+            SecurityIdentifier identifier = null)
+            => service.NotNull(nameof(service)).DecryptDes(buffer, out _, out _, identifier);
 
         #endregion
 
@@ -97,24 +79,24 @@ namespace Librame.Extensions.Encryption.Services
         /// <summary>
         /// 加密 TripleDES。
         /// </summary>
-        /// <param name="buffer">给定待加密的字节数组。</param>
-        /// <param name="key">输出密钥。</param>
-        /// <param name="vector">输出向量。</param>
+        /// <param name="service">给定的 <see cref="ISymmetricService"/>。</param>
+        /// <param name="buffer">给定的字节数组。</param>
         /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] EncryptTripleDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+        public static byte[] EncryptTripleDes(this ISymmetricService service, byte[] buffer,
+            SecurityIdentifier identifier = null)
+            => service.NotNull(nameof(service)).EncryptTripleDes(buffer, out _, out _, identifier);
 
         /// <summary>
         /// 解密 TripleDES。
         /// </summary>
+        /// <param name="service">给定的 <see cref="ISymmetricService"/>。</param>
         /// <param name="buffer">给定的字节数组。</param>
-        /// <param name="key">输出密钥。</param>
-        /// <param name="vector">输出向量。</param>
         /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
-        byte[] DecryptTripleDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+        public static byte[] DecryptTripleDes(this ISymmetricService service, byte[] buffer,
+            SecurityIdentifier identifier = null)
+            => service.NotNull(nameof(service)).DecryptTripleDes(buffer, out _, out _, identifier);
 
         #endregion
 

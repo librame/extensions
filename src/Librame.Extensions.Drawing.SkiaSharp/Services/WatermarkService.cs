@@ -24,7 +24,6 @@ namespace Librame.Extensions.Drawing.Services
     using Core.Builders;
     using Core.Combiners;
     using Core.Services;
-    using Core.Utilities;
     using Drawing.Builders;
     using Drawing.Resources;
 
@@ -140,40 +139,8 @@ namespace Librame.Extensions.Drawing.Services
 
         internal void DrawCore(SKCanvas canvas, Size imageSize, WatermarkMode mode)
         {
-            var startX = Options.Watermark.Location.X;
-            var startY = Options.Watermark.Location.Y;
-            var isReverseX = false;
-            var isReverseY = false;
-
-            // 如果为负值，则表示反向
-            if (startX < 0)
-            {
-                startX = imageSize.Width / 2 - Math.Abs(startX);
-                isReverseX = true;
-            }
-
-            if (startY < 0)
-            {
-                startY = imageSize.Height / 2 - Math.Abs(startY);
-                isReverseY = true;
-            }
-
-            // 如果使用随机坐标水印
-            if (Options.Watermark.IsRandom)
-            {
-                RandomUtility.Run(r =>
-                {
-                    if (isReverseX)
-                        startX = r.Next(startX, imageSize.Width - Math.Abs(startX));
-                    else
-                        startX = r.Next(startX, imageSize.Width / 2);
-
-                    if (isReverseY)
-                        startY = r.Next(startY, imageSize.Height - Math.Abs(startY));
-                    else
-                        startY = r.Next(startY, imageSize.Height / 2);
-                });
-            }
+            var coordinate = ImageHelper.CalculateCoordinate(imageSize,
+                Options.Watermark.Location, Options.Watermark.IsRandom);
             
             switch (mode)
             {
@@ -194,11 +161,11 @@ namespace Librame.Extensions.Drawing.Services
                                 foreFont.MeasureText(character, ref rect);
 
                                 // 绘制文本水印
-                                canvas.DrawText(character, startX + (int)rect.Width, startY,
+                                canvas.DrawText(character, coordinate.X + (int)rect.Width, coordinate.Y,
                                     i % 2 > 0 ? alternFont : foreFont);
 
                                 // 递增字符宽度
-                                startX += (int)rect.Width;
+                                coordinate.X += (int)rect.Width;
                             }
                         }
                     }
@@ -209,7 +176,7 @@ namespace Librame.Extensions.Drawing.Services
                         using (var watermark = SKBitmap.Decode(ImageFilePathCombiner.ToString()))
                         {
                             // 绘制图像水印
-                            canvas.DrawBitmap(watermark, startX, startY);
+                            canvas.DrawBitmap(watermark, coordinate.X, coordinate.Y);
                         }
                     }
                     break;

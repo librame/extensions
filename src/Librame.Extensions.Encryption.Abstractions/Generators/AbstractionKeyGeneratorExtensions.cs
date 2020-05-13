@@ -15,7 +15,7 @@ namespace Librame.Extensions.Encryption.Generators
     using Core.Identifiers;
 
     /// <summary>
-    /// 抽象密钥生成器静态扩展。
+    /// <see cref="IKeyGenerator"/> 静态扩展。
     /// </summary>
     public static class AbstractionKeyGeneratorExtensions
     {

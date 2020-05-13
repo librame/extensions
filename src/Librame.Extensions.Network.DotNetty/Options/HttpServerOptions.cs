@@ -12,7 +12,7 @@
 
 using DotNetty.Common;
 
-namespace Librame.Extensions.Network.DotNetty.Demo
+namespace Librame.Extensions.Network.DotNetty.Options
 {
     /// <summary>
     /// HTTP 服务端选项。

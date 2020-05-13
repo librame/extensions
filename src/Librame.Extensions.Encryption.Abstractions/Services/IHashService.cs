@@ -36,7 +36,6 @@ namespace Librame.Extensions.Encryption.Services
         /// <returns>返回字节数组。</returns>
         byte[] Md5(byte[] buffer, bool isSigned = false);
 
-
         /// <summary>
         /// 计算 SHA1。
         /// </summary>
@@ -45,7 +44,6 @@ namespace Librame.Extensions.Encryption.Services
         /// <returns>返回字节数组。</returns>
         byte[] Sha1(byte[] buffer, bool isSigned = false);
 
-        
         /// <summary>
         /// 计算 SHA256。
         /// </summary>
@@ -54,7 +52,6 @@ namespace Librame.Extensions.Encryption.Services
         /// <returns>返回字节数组。</returns>
         byte[] Sha256(byte[] buffer, bool isSigned = false);
 
-        
         /// <summary>
         /// 计算 SHA384。
         /// </summary>
@@ -63,7 +60,6 @@ namespace Librame.Extensions.Encryption.Services
         /// <returns>返回字节数组。</returns>
         byte[] Sha384(byte[] buffer, bool isSigned = false);
 
-        
         /// <summary>
         /// 计算 SHA512。
         /// </summary>
