@@ -10,7 +10,7 @@
     <Company>librame.net</Company>
     <Description>Based Librame.Extensions.Data.Abstractions on EntityFrameworkCore extension implementation.</Description>
     <Copyright>Copyright © 2012-2020</Copyright>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/librame/Librame</PackageProjectUrl>
     <PackageIcon>Librame.png</PackageIcon>
     <RepositoryUrl>https://github.com/librame</RepositoryUrl>
