@@ -20,8 +20,8 @@ namespace Librame.Extensions.Core.Builders
     {
         internal static ICoreBuilder AddIdentifiers(this ICoreBuilder builder)
         {
-            builder.Services.TryAddScoped<ISecurityIdentifierKeyRing, SecurityIdentifierKeyRing>();
-            builder.Services.TryAddScoped<ISecurityIdentifierProtector, SecurityIdentifierProtector>();
+            builder.Services.TryAddSingleton<ISecurityIdentifierKeyRing, SecurityIdentifierKeyRing>();
+            builder.Services.TryAddSingleton<ISecurityIdentifierProtector, SecurityIdentifierProtector>();
 
             return builder;
         }
