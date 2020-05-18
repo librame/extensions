@@ -20,6 +20,6 @@ namespace Librame.Extensions.Data.Tests
 
 
         public Task<Guid> GetArticleIdAsync(CancellationToken cancellationToken = default)
-            => GenerateIdAsync("ArticleId", cancellationToken);
+            => GenerateGenericIdAsync("ArticleId", cancellationToken);
     }
 }

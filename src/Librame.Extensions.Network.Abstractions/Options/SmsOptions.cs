@@ -34,7 +34,7 @@ namespace Librame.Extensions.Network.Options
         /// <summary>
         /// 网关链接（传入参数依次为）。
         /// </summary>
-        public Func<SmsPlatformInfo, ShortMessageDescriptor, string> GetewayUrlFactory { get; set; }
+        public Func<SmsPlatformInfo, SmsDescriptor, string> GetewayUrlFactory { get; set; }
             = (info, descr) => $"https://sms.contoso.com/?id={info.AccountId}&key={info.AccountKey}&mobile={descr.Mobile}&text={descr.Text}";
     }
 }

@@ -20,8 +20,8 @@ namespace Librame.Extensions.Drawing.Options
         /// <summary>
         /// 颜色。
         /// </summary>
-        public ColorOptions Colors { get; }
-            = new ColorOptions();
+        public SKColorOptions Colors { get; }
+            = new SKColorOptions();
 
         /// <summary>
         /// 字体。
@@ -32,7 +32,7 @@ namespace Librame.Extensions.Drawing.Options
         /// <summary>
         /// 噪点。
         /// </summary>
-        public NoiseOptions Noise { get; }
-            = new NoiseOptions();
+        public BackgroundNoiseOptions Noise { get; }
+            = new BackgroundNoiseOptions();
     }
 }

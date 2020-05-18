@@ -32,19 +32,22 @@ namespace Librame.Extensions.Drawing.Services
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class CaptchaService : AbstractExtensionBuilderService<DrawingBuilderOptions>, ICaptchaService
     {
+        private readonly FilePathCombiner _fontFilePath;
+
+
         public CaptchaService(DrawingBuilderDependency dependency, ILoggerFactory loggerFactory)
             : base(dependency?.Options, loggerFactory)
         {
             Dependency = dependency;
 
-            FontFilePathCombiner = new FilePathCombiner(Options.Captcha.Font.FilePath);
-            FontFilePathCombiner.ChangeBasePathIfEmpty(dependency.ResourceDirectory);
+            _fontFilePath = Options.Captcha.Font.FilePath
+                .ChangeBasePathIfEmpty(dependency.ResourceDirectory);
         }
 
 
         public IExtensionBuilderDependency Dependency { get; }
 
-        public FilePathCombiner FontFilePathCombiner { get; }
+        
 
         public SKEncodedImageFormat CurrentImageFormat
             => Options.ImageFormat.MatchEnum<ImageFormat, SKEncodedImageFormat>();
@@ -208,7 +211,7 @@ namespace Librame.Extensions.Drawing.Services
             paint.IsAntialias = true;
             paint.Color = color;
             // paint.StrokeCap = SKStrokeCap.Round;
-            paint.Typeface = SKTypeface.FromFile(FontFilePathCombiner.ToString());
+            paint.Typeface = SKTypeface.FromFile(_fontFilePath);
             paint.TextSize = Options.Watermark.Font.Size;
 
             return paint;

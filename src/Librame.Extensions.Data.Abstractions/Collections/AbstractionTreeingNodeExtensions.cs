@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Collections
 {
-    using Stores;
+    using Core.Identifiers;
 
     /// <summary>
     /// 抽象树形节点静态扩展。

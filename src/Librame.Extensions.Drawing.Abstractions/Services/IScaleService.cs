@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Drawing.Services
 {
     using Core.Services;
+    using Drawing.Options;
 
     /// <summary>
     /// 缩放服务接口。
@@ -49,35 +50,40 @@ namespace Librame.Extensions.Drawing.Services
         /// 删除缩放方案集合图片。
         /// </summary>
         /// <param name="imageDirectory">给定的图像目录。</param>
+        /// <param name="scales">给定的 <see cref="IEnumerable{ScaleOptions}"/>（可选；默认使用选项配置缩放方案）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含删除张数的异步操作。</returns>
-        Task<int> DeleteScalesByDirectoryAsync(string imageDirectory, CancellationToken cancellationToken = default);
+        Task<int> DeleteScalesByDirectoryAsync(string imageDirectory, IEnumerable<ScaleOptions> scales = null,
+            CancellationToken cancellationToken = default);
 
 
         /// <summary>
         /// 绘制缩放文件集合。
         /// </summary>
         /// <param name="imageDirectory">给定的图像目录。</param>
+        /// <param name="scales">给定的 <see cref="IEnumerable{ScaleOptions}"/>（可选；默认使用选项配置缩放方案）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含处理张数的异步操作。</returns>
-        Task<int> DrawFilesByDirectoryAsync(string imageDirectory, CancellationToken cancellationToken = default);
-
+        Task<int> DrawFilesByDirectoryAsync(string imageDirectory, IEnumerable<ScaleOptions> scales = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 绘制缩放文件集合。
         /// </summary>
         /// <param name="imagePaths">给定的图像路径集合。</param>
+        /// <param name="scales">给定的 <see cref="IEnumerable{ScaleOptions}"/>（可选；默认使用选项配置缩放方案）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含处理张数的异步操作。</returns>
-        Task<int> DrawFilesAsync(IEnumerable<string> imagePaths, CancellationToken cancellationToken = default);
-
+        Task<int> DrawFilesAsync(IEnumerable<string> imagePaths, IEnumerable<ScaleOptions> scales = null,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 绘制缩放文件。
         /// </summary>
         /// <param name="imagePath">给定的图像路径。</param>
+        /// <param name="scales">给定的 <see cref="IEnumerable{ScaleOptions}"/>（可选；默认使用选项配置缩放方案）。</param>
         /// <param name="savePathTemplate">给定的保存路径模板（可选；默认同图像路径）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
-        bool DrawFile(string imagePath, string savePathTemplate = null);
+        bool DrawFile(string imagePath, IEnumerable<ScaleOptions> scales = null, string savePathTemplate = null);
     }
 }

@@ -29,19 +29,21 @@ namespace Librame.Extensions.Drawing.Services
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        Task<bool> DrawFileAsync(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default);
-
+        Task<bool> DrawFileAsync(string imagePath, string savePath,
+            WatermarkMode mode = WatermarkMode.Text,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 绘制水印流。
         /// </summary>
-        /// <param name="imagePath">给定的验证码。</param>
+        /// <param name="imagePath">给定的图像路径。</param>
         /// <param name="target">给定的目标流。</param>
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否成功的异步操作。</returns>
-        Task<bool> DrawStreamAsync(string imagePath, Stream target, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default);
-
+        Task<bool> DrawStreamAsync(string imagePath, Stream target,
+            WatermarkMode mode = WatermarkMode.Text,
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 绘制水印字节数组。
@@ -50,6 +52,7 @@ namespace Librame.Extensions.Drawing.Services
         /// <param name="mode">给定的水印模绘制式（可选；默认使用文本模式）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含图像字节数组的异步操作。</returns>
-        Task<byte[]> DrawBytesAsync(string imagePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default);
+        Task<byte[]> DrawBytesAsync(string imagePath, WatermarkMode mode = WatermarkMode.Text,
+            CancellationToken cancellationToken = default);
     }
 }

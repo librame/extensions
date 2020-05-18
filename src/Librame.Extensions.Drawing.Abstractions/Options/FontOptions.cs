@@ -10,29 +10,25 @@
 
 #endregion
 
-using System.Drawing;
-
 namespace Librame.Extensions.Drawing.Options
 {
+    using Core.Combiners;
+
     /// <summary>
-    /// 背景噪点选项。
+    /// 字体选项。
     /// </summary>
-    public class NoiseOptions
+    public class FontOptions
     {
         /// <summary>
-        /// 宽度。
+        /// 字体文件组合器。
         /// </summary>
-        public int Width { get; set; }
-            = 2;
+        public FilePathCombiner FilePath { get; set; }
+            = new FilePathCombiner("font.ttf");
 
         /// <summary>
-        /// 间距。
+        /// 大小。
         /// </summary>
-        public PointF Space { get; set; }
-            = new PointF
-            {
-                X = 5,
-                Y = 5
-            };
+        public int Size { get; set; }
+            = 16;
     }
 }

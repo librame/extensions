@@ -26,6 +26,7 @@ namespace Librame.Extensions.Drawing.Services
     using Core.Builders;
     using Core.Services;
     using Drawing.Builders;
+    using Drawing.Options;
     using Drawing.Resources;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
@@ -56,8 +57,12 @@ namespace Librame.Extensions.Drawing.Services
             = SKFilterQuality.Medium;
 
 
-        public Task<int> DeleteScalesByDirectoryAsync(string imageDirectory, CancellationToken cancellationToken = default)
+        public Task<int> DeleteScalesByDirectoryAsync(string imageDirectory, IEnumerable<ScaleOptions> scales = null,
+            CancellationToken cancellationToken = default)
         {
+            if (scales.IsNull())
+                scales = Options.Scales ?? throw new ArgumentNullException(InternalResource.ScaleOptionsIsEmpty);
+
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
                 var count = 0;
@@ -67,9 +72,9 @@ namespace Librame.Extensions.Drawing.Services
                 {
                     var fileName = Path.GetFileName(file);
 
-                    foreach (var scale in Options.Scales)
+                    foreach (var s in scales)
                     {
-                        if (fileName.CompatibleContains(scale.Suffix))
+                        if (fileName.CompatibleContains(s.Suffix))
                         {
                             File.Delete(file);
                             count++;
@@ -82,7 +87,8 @@ namespace Librame.Extensions.Drawing.Services
         }
 
 
-        public Task<int> DrawFilesByDirectoryAsync(string imageDirectory, CancellationToken cancellationToken = default)
+        public Task<int> DrawFilesByDirectoryAsync(string imageDirectory, IEnumerable<ScaleOptions> scales = null,
+            CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
@@ -93,7 +99,7 @@ namespace Librame.Extensions.Drawing.Services
                 {
                     if (IsImageFile(file))
                     {
-                        DrawFile(file, null);
+                        DrawFile(file, scales, savePathTemplate: null);
                         count++;
                     }
                 }
@@ -102,8 +108,8 @@ namespace Librame.Extensions.Drawing.Services
             });
         }
 
-
-        public Task<int> DrawFilesAsync(IEnumerable<string> imagePaths, CancellationToken cancellationToken = default)
+        public Task<int> DrawFilesAsync(IEnumerable<string> imagePaths, IEnumerable<ScaleOptions> scales = null,
+            CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
@@ -113,7 +119,7 @@ namespace Librame.Extensions.Drawing.Services
                 {
                     if (IsImageFile(file))
                     {
-                        DrawFile(file, null);
+                        DrawFile(file, scales, savePathTemplate: null);
                         count++;
                     }
                 }
@@ -122,21 +128,17 @@ namespace Librame.Extensions.Drawing.Services
             });
         }
 
-
-        public bool DrawFile(string imagePath, string savePathTemplate = null)
+        public bool DrawFile(string imagePath, IEnumerable<ScaleOptions> scales = null, string savePathTemplate = null)
         {
-            if (Options.Scales.IsEmpty())
-            {
-                Logger.LogWarning(InternalResource.ScaleOptionsIsEmpty);
-                return false;
-            }
+            if (scales.IsNull())
+                scales = Options.Scales ?? throw new ArgumentNullException(InternalResource.ScaleOptionsIsEmpty);
 
             using (var srcBmp = SKBitmap.Decode(imagePath))
             {
                 var imageSize = new Size(srcBmp.Width, srcBmp.Height);
 
                 // 循环缩放方案
-                foreach (var s in Options.Scales)
+                foreach (var s in scales)
                 {
                     // 如果源图尺寸小于缩放尺寸，则跳过当前方案
                     if (imageSize.Width <= s.MaxSize.Width && imageSize.Height <= s.MaxSize.Height)

@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace Librame.Extensions.Data.Collections
 {
-    using Stores;
+    using Core.Identifiers;
 
     /// <summary>
     /// 树形列表。
@@ -41,6 +41,7 @@ namespace Librame.Extensions.Data.Collections
         {
             _nodes = items.AsTreeingNodes<T, TId>();
         }
+
         /// <summary>
         /// 构造一个 <see cref="TreeingCollection{T, TId}"/>。
         /// </summary>

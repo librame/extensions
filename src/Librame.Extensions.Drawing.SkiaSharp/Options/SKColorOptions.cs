@@ -17,9 +17,9 @@ namespace Librame.Extensions.Drawing.Options
     using Core.Serializers;
 
     /// <summary>
-    /// 颜色选项。
+    /// SK 颜色选项。
     /// </summary>
-    public class ColorOptions
+    public class SKColorOptions
     {
         /// <summary>
         /// 前景色。

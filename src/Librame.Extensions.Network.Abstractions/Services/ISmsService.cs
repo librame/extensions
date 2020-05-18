@@ -30,8 +30,8 @@ namespace Librame.Extensions.Network.Services
         /// <summary>
         /// 异步发送。
         /// </summary>
-        /// <param name="descriptors">给定的 <see cref="ShortMessageDescriptor"/> 数组。</param>
+        /// <param name="descriptors">给定的 <see cref="SmsDescriptor"/> 数组。</param>
         /// <returns>返回一个包含响应内容数组的异步操作。</returns>
-        Task<string[]> SendAsync(params ShortMessageDescriptor[] descriptors);
+        Task<string[]> SendAsync(params SmsDescriptor[] descriptors);
     }
 }

@@ -26,7 +26,8 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 存储标识符。
         /// </summary>
-        IStoreIdentifier<TGenId> Identifier { get; }
+        /// <value>返回 <see cref="IStoreIdentifier{TGenId}"/>。</value>
+        new IStoreIdentifier<TGenId> Identifier { get; }
 
 
         /// <summary>
@@ -56,8 +57,15 @@ namespace Librame.Extensions.Data.Stores
     public interface IStoreInitializer : IService
     {
         /// <summary>
+        /// 存储标识符。
+        /// </summary>
+        /// <value>返回 <see cref="IStoreIdentifier"/>。</value>
+        IStoreIdentifier Identifier { get; }
+
+        /// <summary>
         /// 时钟服务。
         /// </summary>
+        /// <value>返回 <see cref="IClockService"/>。</value>
         IClockService Clock { get; }
 
 

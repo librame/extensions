@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
@@ -25,162 +26,15 @@ namespace Librame.Extensions
     public static class TypeExtensions
     {
         /// <summary>
-        /// 序列元素属性值集合相等比较。
+        /// 解开可空类型。
         /// </summary>
-        /// <typeparam name="T">指定的类型。</typeparam>
-        /// <param name="sources">给定的源类型实例集合。</param>
-        /// <param name="compares">给定的比较类型实例集合。</param>
-        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为公共属性标记）。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool SequencePropertyValuesEquals<T>(this IEnumerable<T> sources, IEnumerable<T> compares,
-            BindingFlags bindingFlags = BindingFlags.Public)
-        {
-            sources.NotEmpty(nameof(sources));
-            compares.NotEmpty(nameof(compares));
-
-            var sequenceCount = sources.Count();
-            if (sequenceCount != compares.Count())
-                return false;
-
-            var propertyInfos = typeof(T).GetProperties(bindingFlags);
-            for (var i = 0; i < sequenceCount; i++)
-            {
-                var source = sources.ElementAt(i);
-                var compare = compares.ElementAt(i);
-
-                foreach (var info in propertyInfos)
-                {
-                    if (!info.GetValue(source).Equals(info.GetValue(compare)))
-                        return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// 属性值集合相等比较。
-        /// </summary>
-        /// <typeparam name="T">指定的类型。</typeparam>
-        /// <param name="source">给定的源类型实例。</param>
-        /// <param name="compare">给定的比较类型实例。</param>
-        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为公共属性标记）。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool PropertyValuesEquals<T>(this T source, T compare, BindingFlags bindingFlags = BindingFlags.Public)
-            where T : class
-        {
-            source.NotNull(nameof(source));
-            compare.NotNull(nameof(compare));
-
-            var propertyInfos = typeof(T).GetProperties(bindingFlags);
-            foreach (var info in propertyInfos)
-            {
-                if (!info.GetValue(source).Equals(info.GetValue(compare)))
-                    return false;
-            }
-
-            return true;
-        }
+        /// <param name="nullableType">给定的可空类型。</param>
+        /// <returns>返回基础类型或可空类型本身。</returns>
+        public static Type UnwrapNullableType(this Type nullableType)
+            => Nullable.GetUnderlyingType(nullableType) ?? nullableType;
 
 
-        /// <summary>
-        /// 是否已实现某个接口类型。
-        /// </summary>
-        /// <typeparam name="TInterface">指定的接口类型（支持泛型类型定义）。</typeparam>
-        /// <param name="type">给定的当前类型。</param>
-        /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static bool IsImplementedInterface<TInterface>(this Type type)
-            => type.IsImplementedInterface(typeof(TInterface), out _);
-
-        /// <summary>
-        /// 是否已实现某个接口类型。
-        /// </summary>
-        /// <typeparam name="TInterface">指定的接口类型（支持泛型类型定义）。</typeparam>
-        /// <param name="type">给定的当前类型。</param>
-        /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
-        /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static bool IsImplementedInterface<TInterface>(this Type type, out Type resultType)
-            => type.IsImplementedInterface(typeof(TInterface), out resultType);
-
-        /// <summary>
-        /// 是否已实现某个接口类型。
-        /// </summary>
-        /// <param name="type">给定的当前类型。</param>
-        /// <param name="interfaceType">给定的接口类型（支持泛型类型定义）。</param>
-        /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static bool IsImplementedInterface(this Type type, Type interfaceType)
-            => type.IsImplementedInterface(interfaceType, out _);
-
-        /// <summary>
-        /// 是否已实现某个接口类型。
-        /// </summary>
-        /// <param name="type">给定的当前类型。</param>
-        /// <param name="interfaceType">给定的接口类型（支持泛型类型定义）。</param>
-        /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
-        /// <returns>返回布尔值。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static bool IsImplementedInterface(this Type type, Type interfaceType, out Type resultType)
-        {
-            type.NotNull(nameof(type));
-            interfaceType.NotNull(nameof(interfaceType));
-
-            var allInterfaceTypes = type.GetInterfaces();
-
-            // 如果判定的接口类型是泛型定义
-            if (interfaceType.IsGenericTypeDefinition)
-            {
-                resultType = allInterfaceTypes
-                    .Where(type => type.IsGenericType)
-                    .FirstOrDefault(type => type.GetGenericTypeDefinition() == interfaceType);
-
-                return resultType.IsNotNull();
-            }
-
-            resultType = allInterfaceTypes.FirstOrDefault(type => type == interfaceType);
-            return resultType.IsNotNull();
-        }
-
-
-        /// <summary>
-        /// 获取所有字段集合（包括公开、非公开、实例、静态等）。
-        /// </summary>
-        /// <param name="type">给定的类型。</param>
-        /// <returns>返回字段信息数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static FieldInfo[] GetAllFields(this Type type)
-            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllFlags);
-
-        /// <summary>
-        /// 获取所有非静态字段集合（包括公开、非公开、实例等）。
-        /// </summary>
-        /// <param name="type">给定的类型。</param>
-        /// <returns>返回字段信息数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static FieldInfo[] GetAllFieldsWithoutStatic(this Type type)
-            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllFlagsWithoutStatic);
-
-
-        /// <summary>
-        /// 获取所有属性集合（包括公开、非公开、实例、静态等）。
-        /// </summary>
-        /// <param name="type">给定的类型。</param>
-        /// <returns>返回字段信息数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static PropertyInfo[] GetAllProperties(this Type type)
-            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllFlags);
-
-        /// <summary>
-        /// 获取所有非静态属性集合（包括公开、非公开、实例等）。
-        /// </summary>
-        /// <param name="type">给定的类型。</param>
-        /// <returns>返回字段信息数组。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static PropertyInfo[] GetAllPropertiesWithoutStatic(this Type type)
-            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllFlagsWithoutStatic);
-
+        #region GetDisplayName
 
         /// <summary>
         /// 获取泛型主体名称，普通类型直接返回类型名称（如：泛类型 IDictionary{string, IList{string}} 的主体名称为 IDictionary）。
@@ -200,8 +54,6 @@ namespace Librame.Extensions
             }
         }
 
-
-        #region GetDisplayName
 
         /// <summary>
         /// 获取显示名称（参考 <see cref="AssemblyName.Name"/>）。
@@ -297,14 +149,49 @@ namespace Librame.Extensions
         #endregion
 
 
-        /// <summary>
-        /// 解开可空类型。
-        /// </summary>
-        /// <param name="nullableType">给定的可空类型。</param>
-        /// <returns>返回基础类型或可空类型本身。</returns>
-        public static Type UnwrapNullableType(this Type nullableType)
-            => Nullable.GetUnderlyingType(nullableType) ?? nullableType;
+        #region GetMemberInfos
 
+        /// <summary>
+        /// 获取所有字段集合（包括公开、非公开、实例、静态等）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回字段信息数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static FieldInfo[] GetAllFields(this Type type)
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllFlags);
+
+        /// <summary>
+        /// 获取所有非静态字段集合（包括公开、非公开、实例等）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回字段信息数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static FieldInfo[] GetAllFieldsWithoutStatic(this Type type)
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllFlagsWithoutStatic);
+
+
+        /// <summary>
+        /// 获取所有属性集合（包括公开、非公开、实例、静态等）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回字段信息数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static PropertyInfo[] GetAllProperties(this Type type)
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllFlags);
+
+        /// <summary>
+        /// 获取所有非静态属性集合（包括公开、非公开、实例等）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回字段信息数组。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static PropertyInfo[] GetAllPropertiesWithoutStatic(this Type type)
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllFlagsWithoutStatic);
+
+        #endregion
+
+
+        #region InvokeTypes and ExportedTypes
 
         /// <summary>
         /// 调用类型集合。
@@ -385,6 +272,177 @@ namespace Librame.Extensions
 
             return allTypes;
         }
+
+        #endregion
+
+
+        #region IsImplementedInterface
+
+        /// <summary>
+        /// 是否已实现某个接口类型。
+        /// </summary>
+        /// <typeparam name="TInterface">指定的接口类型（支持泛型类型定义）。</typeparam>
+        /// <param name="type">给定的当前类型。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedInterface<TInterface>(this Type type)
+            => type.IsImplementedInterface(typeof(TInterface), out _);
+
+        /// <summary>
+        /// 是否已实现某个接口类型。
+        /// </summary>
+        /// <typeparam name="TInterface">指定的接口类型（支持泛型类型定义）。</typeparam>
+        /// <param name="type">给定的当前类型。</param>
+        /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedInterface<TInterface>(this Type type, out Type resultType)
+            => type.IsImplementedInterface(typeof(TInterface), out resultType);
+
+        /// <summary>
+        /// 是否已实现某个接口类型。
+        /// </summary>
+        /// <param name="type">给定的当前类型。</param>
+        /// <param name="interfaceType">给定的接口类型（支持泛型类型定义）。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedInterface(this Type type, Type interfaceType)
+            => type.IsImplementedInterface(interfaceType, out _);
+
+        /// <summary>
+        /// 是否已实现某个接口类型。
+        /// </summary>
+        /// <param name="type">给定的当前类型。</param>
+        /// <param name="interfaceType">给定的接口类型（支持泛型类型定义）。</param>
+        /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedInterface(this Type type, Type interfaceType, out Type resultType)
+        {
+            type.NotNull(nameof(type));
+            interfaceType.NotNull(nameof(interfaceType));
+
+            var allInterfaceTypes = type.GetInterfaces();
+
+            // 如果判定的接口类型是泛型定义
+            if (interfaceType.IsGenericTypeDefinition)
+            {
+                resultType = allInterfaceTypes
+                    .Where(type => type.IsGenericType)
+                    .FirstOrDefault(type => type.GetGenericTypeDefinition() == interfaceType);
+
+                return resultType.IsNotNull();
+            }
+
+            resultType = allInterfaceTypes.FirstOrDefault(type => type == interfaceType);
+            return resultType.IsNotNull();
+        }
+
+        #endregion
+
+
+        #region PropertyValuesEquals
+
+        /// <summary>
+        /// 序列元素属性值集合相等比较。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="sources">给定的源类型实例集合。</param>
+        /// <param name="compares">给定的比较类型实例集合。</param>
+        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为公共属性标记）。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool SequencePropertyValuesEquals<T>(this IEnumerable<T> sources, IEnumerable<T> compares,
+            BindingFlags bindingFlags = BindingFlags.Public)
+        {
+            sources.NotEmpty(nameof(sources));
+            compares.NotEmpty(nameof(compares));
+
+            var sequenceCount = sources.Count();
+            if (sequenceCount != compares.Count())
+                return false;
+
+            var propertyInfos = typeof(T).GetProperties(bindingFlags);
+            for (var i = 0; i < sequenceCount; i++)
+            {
+                var source = sources.ElementAt(i);
+                var compare = compares.ElementAt(i);
+
+                foreach (var info in propertyInfos)
+                {
+                    if (!info.GetValue(source).Equals(info.GetValue(compare)))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 属性值集合相等比较。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="source">给定的源类型实例。</param>
+        /// <param name="compare">给定的比较类型实例。</param>
+        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为公共属性标记）。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool PropertyValuesEquals<T>(this T source, T compare, BindingFlags bindingFlags = BindingFlags.Public)
+            where T : class
+        {
+            source.NotNull(nameof(source));
+            compare.NotNull(nameof(compare));
+
+            var propertyInfos = typeof(T).GetProperties(bindingFlags);
+            foreach (var info in propertyInfos)
+            {
+                if (!info.GetValue(source).Equals(info.GetValue(compare)))
+                    return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+
+        #region SetProperty
+
+        /// <summary>
+        /// 设置属性。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <typeparam name="TProperty">指定的属性类型。</typeparam>
+        /// <param name="element">给定的 <typeparamref name="T"/>。</param>
+        /// <param name="propertyExpression">给定的属性表达式。</param>
+        /// <param name="newProperty">给定的 <typeparamref name="TProperty"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public static T SetProperty<T, TProperty>(this T element,
+            Expression<Func<T, TProperty>> propertyExpression, TProperty newProperty)
+            where T : class
+            => element.SetProperty(propertyExpression.AsPropertyName(), newProperty);
+
+        /// <summary>
+        /// 设置属性。
+        /// </summary>
+        /// <typeparam name="T">指定的类型。</typeparam>
+        /// <param name="element">给定的 <typeparamref name="T"/>。</param>
+        /// <param name="propertyName">给定的属性名称。</param>
+        /// <param name="newPropertyValue">给定的新属性值。</param>
+        /// <returns>返回 <typeparamref name="T"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static T SetProperty<T>(this T element, string propertyName, object newPropertyValue)
+            where T : class
+        {
+            element.NotNull(nameof(element));
+
+            // 如果 T 为接口、抽象等类型，typeof(T) 方法获取的属性可能因没有定义 set 方法导致参数异常
+            var property = element.GetType().GetProperty(propertyName);
+            property.NotNull(nameof(property));
+
+            property.SetValue(element, newPropertyValue);
+            return element;
+        }
+
+        #endregion
 
     }
 }

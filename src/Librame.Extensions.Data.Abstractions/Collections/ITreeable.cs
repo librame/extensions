@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data.Collections
 {
-    using Stores;
+    using Core.Identifiers;
 
     /// <summary>
     /// 可树形接口。

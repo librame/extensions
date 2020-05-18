@@ -15,6 +15,7 @@ using System.Drawing;
 
 namespace Librame.Extensions.Drawing.Options
 {
+    using Core.Combiners;
     using Core.Serializers;
 
     /// <summary>
@@ -37,8 +38,8 @@ namespace Librame.Extensions.Drawing.Options
         /// <summary>
         /// 水印图片文件组合器。
         /// </summary>
-        public string ImagePath { get; set; }
-            = "watermark.png";
+        public FilePathCombiner ImagePath { get; set; }
+            = new FilePathCombiner("watermark.png");
 
         /// <summary>
         /// 水印位置（负值表示反向）。
@@ -49,8 +50,8 @@ namespace Librame.Extensions.Drawing.Options
         /// <summary>
         /// 颜色选项。
         /// </summary>
-        public ColorOptions Colors { get; }
-            = new ColorOptions
+        public SKColorOptions Colors { get; }
+            = new SKColorOptions
             {
                 Fore = new SerializableString<SKColor>(SKColorThemes.WatermarkForeColor),
                 Alternate = new SerializableString<SKColor>(SKColorThemes.WatermarkAlternateColor)

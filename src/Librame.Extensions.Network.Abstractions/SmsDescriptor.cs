@@ -13,16 +13,16 @@
 namespace Librame.Extensions.Network
 {
     /// <summary>
-    /// 短信描述符。
+    /// 短信服务描述符。
     /// </summary>
-    public class ShortMessageDescriptor
+    public class SmsDescriptor
     {
         /// <summary>
-        /// 构造一个 <see cref="ShortMessageDescriptor"/>。
+        /// 构造一个 <see cref="SmsDescriptor"/>。
         /// </summary>
         /// <param name="mobile">给定的手机。</param>
         /// <param name="text">给定的文本。</param>
-        public ShortMessageDescriptor(string mobile, string text)
+        public SmsDescriptor(string mobile, string text)
         {
             Mobile = mobile.NotEmpty(nameof(mobile));
             Text = text.NotEmpty(nameof(text));

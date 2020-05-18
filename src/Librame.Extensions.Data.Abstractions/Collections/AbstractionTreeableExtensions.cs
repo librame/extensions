@@ -15,7 +15,7 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Data.Collections
 {
-    using Stores;
+    using Core.Identifiers;
 
     /// <summary>
     /// 抽象可树形化静态扩展。
@@ -33,6 +33,5 @@ namespace Librame.Extensions.Data.Collections
             where T : IParentIdentifier<TId>
             where TId : IEquatable<TId>
             => new TreeingCollection<T, TId>(items);
-
     }
 }

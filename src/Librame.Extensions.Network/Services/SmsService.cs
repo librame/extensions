@@ -35,11 +35,11 @@ namespace Librame.Extensions.Network.Services
 
         public async Task<string> SendAsync(string mobile, string text)
         {
-            var list = await SendAsync(new ShortMessageDescriptor(mobile, text)).ConfigureAndResultAsync();
+            var list = await SendAsync(new SmsDescriptor(mobile, text)).ConfigureAndResultAsync();
             return list.First();
         }
 
-        public async Task<string[]> SendAsync(params ShortMessageDescriptor[] descriptors)
+        public async Task<string[]> SendAsync(params SmsDescriptor[] descriptors)
         {
             var parameters = new RequestParameters
             {

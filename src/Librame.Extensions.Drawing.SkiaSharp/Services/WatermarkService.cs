@@ -30,30 +30,31 @@ namespace Librame.Extensions.Drawing.Services
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class WatermarkService : AbstractExtensionBuilderService<DrawingBuilderOptions>, IWatermarkService
     {
+        private readonly FilePathCombiner _fontFilePath;
+        private readonly FilePathCombiner _watermarkImagePath;
+
+
         public WatermarkService(DrawingBuilderDependency dependency, ILoggerFactory loggerFactory)
             : base(dependency?.Options, loggerFactory)
         {
             Dependency = dependency;
 
-            ImageFilePathCombiner = new FilePathCombiner(Options.Watermark.ImagePath);
-            ImageFilePathCombiner.ChangeBasePathIfEmpty(dependency.ResourceDirectory);
+            _watermarkImagePath = Options.Watermark.ImagePath
+                .ChangeBasePathIfEmpty(dependency.ResourceDirectory);
 
-            FontFilePathCombiner = new FilePathCombiner(Options.Watermark.Font.FilePath);
-            FontFilePathCombiner.ChangeBasePathIfEmpty(dependency.ResourceDirectory);
+            _fontFilePath = Options.Watermark.Font.FilePath
+                .ChangeBasePathIfEmpty(dependency.ResourceDirectory);
         }
 
 
         public IExtensionBuilderDependency Dependency { get; }
 
-        public FilePathCombiner ImageFilePathCombiner { get; }
-
-        public FilePathCombiner FontFilePathCombiner { get; }
-
         public SKEncodedImageFormat CurrentImageFormat
             => Options.ImageFormat.MatchEnum<ImageFormat, SKEncodedImageFormat>();
 
 
-        public Task<bool> DrawFileAsync(string imagePath, string savePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
+        public Task<bool> DrawFileAsync(string imagePath, string savePath,
+            WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
@@ -75,7 +76,8 @@ namespace Librame.Extensions.Drawing.Services
         }
 
 
-        public Task<bool> DrawStreamAsync(string imagePath, Stream target, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
+        public Task<bool> DrawStreamAsync(string imagePath, Stream target,
+            WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
@@ -94,7 +96,8 @@ namespace Librame.Extensions.Drawing.Services
         }
 
 
-        public Task<byte[]> DrawBytesAsync(string imagePath, WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
+        public Task<byte[]> DrawBytesAsync(string imagePath, WatermarkMode mode = WatermarkMode.Text,
+            CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {
@@ -173,7 +176,7 @@ namespace Librame.Extensions.Drawing.Services
 
                 case WatermarkMode.Image:
                     {
-                        using (var watermark = SKBitmap.Decode(ImageFilePathCombiner.ToString()))
+                        using (var watermark = SKBitmap.Decode(_watermarkImagePath))
                         {
                             // 绘制图像水印
                             canvas.DrawBitmap(watermark, coordinate.X, coordinate.Y);
@@ -193,7 +196,7 @@ namespace Librame.Extensions.Drawing.Services
             paint.IsAntialias = true;
             paint.Color = color;
             // paint.StrokeCap = SKStrokeCap.Round;
-            paint.Typeface = SKTypeface.FromFile(FontFilePathCombiner.ToString());
+            paint.Typeface = SKTypeface.FromFile(_fontFilePath);
             paint.TextSize = Options.Watermark.Font.Size;
 
             return paint;

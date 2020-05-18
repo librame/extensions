@@ -40,11 +40,16 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 标识符。
         /// </summary>
+        /// <value>返回 <see cref="IStoreIdentifier{TGenId}"/>。</value>
         public IStoreIdentifier<TGenId> Identifier { get; }
+
+        IStoreIdentifier IStoreInitializer.Identifier
+            => Identifier;
 
         /// <summary>
         /// 时钟服务。
         /// </summary>
+        /// <value>返回 <see cref="IClockService"/>。</value>
         public IClockService Clock
             => Identifier.Clock;
 

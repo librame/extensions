@@ -13,8 +13,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Stores
 {
@@ -26,9 +24,6 @@ namespace Librame.Extensions.Data.Stores
     /// </summary>
     public class GuidStoreIdentifier : AbstractStoreIdentifier<Guid>
     {
-        private readonly DataBuilderOptions _options;
-
-
         /// <summary>
         /// 构造一个 <see cref="GuidStoreIdentifier"/>。
         /// </summary>
@@ -37,31 +32,8 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public GuidStoreIdentifier(IOptions<DataBuilderOptions> options,
             IClockService clock, ILoggerFactory loggerFactory)
-            : base(clock, loggerFactory)
+            : base(options?.Value.IdentifierGenerator, clock, loggerFactory)
         {
-            _options = options.NotNull(nameof(options)).Value;
-        }
-
-
-        /// <summary>
-        /// 异步生成标识。
-        /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// DataBuilderOptions.IdentifierGenerator is null.
-        /// </exception>
-        /// <param name="idTraceName">标识跟踪名称。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="Guid"/> 的异步操作。</returns>
-        protected override async Task<Guid> GenerateIdAsync(string idTraceName,
-            CancellationToken cancellationToken = default)
-        {
-            _options.IdentifierGenerator.NotNull(nameof(_options.IdentifierGenerator));
-
-            var guid = await _options.IdentifierGenerator.GenerateAsync(Clock, cancellationToken)
-                .ConfigureAndResultAsync();
-            Logger.LogTrace($"Generate {idTraceName}: {guid}");
-
-            return guid;
         }
 
     }
