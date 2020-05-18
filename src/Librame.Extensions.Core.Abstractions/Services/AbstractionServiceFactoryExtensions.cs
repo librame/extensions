@@ -17,7 +17,7 @@ namespace Librame.Extensions.Core.Services
     /// <summary>
     /// 服务工厂委托静态扩展。
     /// </summary>
-    public static class ServiceFactoryExtensions
+    public static class AbstractionServiceFactoryExtensions
     {
         /// <summary>
         /// 获取必需的服务。
