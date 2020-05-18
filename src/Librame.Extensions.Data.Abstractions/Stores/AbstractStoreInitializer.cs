@@ -28,30 +28,31 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个 <see cref="AbstractStoreInitializer{TGenId}"/>。
         /// </summary>
-        /// <param name="identifier">给定的 <see cref="IStoreIdentifier{TGenId}"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractStoreInitializer(IStoreIdentifier<TGenId> identifier, ILoggerFactory loggerFactory)
+        protected AbstractStoreInitializer(IStoreIdentifierGenerator<TGenId> identifierGenerator,
+            ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
-            Identifier = identifier.NotNull(nameof(identifier));
+            IdentifierGenerator = identifierGenerator.NotNull(nameof(identifierGenerator));
         }
 
 
         /// <summary>
-        /// 标识符。
+        /// 标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentifier{TGenId}"/>。</value>
-        public IStoreIdentifier<TGenId> Identifier { get; }
+        /// <value>返回 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</value>
+        public IStoreIdentifierGenerator<TGenId> IdentifierGenerator { get; }
 
-        IStoreIdentifier IStoreInitializer.Identifier
-            => Identifier;
+        IStoreIdentifierGenerator IStoreInitializer.IdentifierGenerator
+            => IdentifierGenerator;
 
         /// <summary>
         /// 时钟服务。
         /// </summary>
         /// <value>返回 <see cref="IClockService"/>。</value>
         public IClockService Clock
-            => Identifier.Clock;
+            => IdentifierGenerator.Clock;
 
 
         /// <summary>
@@ -165,7 +166,7 @@ namespace Librame.Extensions.Data.Stores
                     stores.Accessor.CurrentTenant.EnsurePopulate(tenant);
                 }
 
-                tenant.Id = Identifier.GetTenantIdAsync().ConfigureAndResult();
+                tenant.Id = IdentifierGenerator.GenerateTenantIdAsync().ConfigureAndResult();
 
                 tenant.UpdatedTime = tenant.CreatedTime = Clock.GetNowOffsetAsync()
                     .ConfigureAndResult();

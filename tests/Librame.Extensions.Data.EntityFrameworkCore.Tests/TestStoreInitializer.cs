@@ -20,8 +20,8 @@ namespace Librame.Extensions.Data.Tests
         private IList<Category<int, Guid>> _categories;
 
 
-        public TestStoreInitializer(IStoreIdentifier<Guid> identifier, ILoggerFactory loggerFactory)
-            : base(identifier, loggerFactory)
+        public TestStoreInitializer(IStoreIdentifierGenerator<Guid> identifierGenerator, ILoggerFactory loggerFactory)
+            : base(identifierGenerator, loggerFactory)
         {
             _createdBy = EntityPopulator.FormatTypeName(GetType());
         }
@@ -79,7 +79,7 @@ namespace Librame.Extensions.Data.Tests
             if (!stores.Categories.Any())
             {
                 var articles = new List<Article<Guid, int>>();
-                var identifier = Identifier as TestStoreIdentifier;
+                var identifier = IdentifierGenerator as TestGuidStoreIdentifierGenerator;
 
                 for (int i = 0; i < 100; i++)
                 {

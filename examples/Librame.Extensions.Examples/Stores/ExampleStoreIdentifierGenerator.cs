@@ -10,9 +10,9 @@ namespace Librame.Extensions.Examples
     using Data.Builders;
     using Data.Stores;
 
-    public class ExampleStoreIdentifier : GuidStoreIdentifier
+    public class ExampleStoreIdentifierGenerator : GuidStoreIdentifierGenerator
     {
-        public ExampleStoreIdentifier(IOptions<DataBuilderOptions> options,
+        public ExampleStoreIdentifierGenerator(IOptions<DataBuilderOptions> options,
             IClockService clock, ILoggerFactory loggerFactory)
             : base(options, clock, loggerFactory)
         {

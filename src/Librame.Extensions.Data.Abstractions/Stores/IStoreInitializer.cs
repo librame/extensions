@@ -24,10 +24,10 @@ namespace Librame.Extensions.Data.Stores
         where TGenId : IEquatable<TGenId>
     {
         /// <summary>
-        /// 存储标识符。
+        /// 存储标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentifier{TGenId}"/>。</value>
-        new IStoreIdentifier<TGenId> Identifier { get; }
+        /// <value>返回 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</value>
+        new IStoreIdentifierGenerator<TGenId> IdentifierGenerator { get; }
 
 
         /// <summary>
@@ -57,10 +57,10 @@ namespace Librame.Extensions.Data.Stores
     public interface IStoreInitializer : IService
     {
         /// <summary>
-        /// 存储标识符。
+        /// 存储标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentifier"/>。</value>
-        IStoreIdentifier Identifier { get; }
+        /// <value>返回 <see cref="IStoreIdentifierGenerator"/>。</value>
+        IStoreIdentifierGenerator IdentifierGenerator { get; }
 
         /// <summary>
         /// 时钟服务。

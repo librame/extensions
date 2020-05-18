@@ -20,17 +20,17 @@ namespace Librame.Extensions.Data.Stores
     using Data.Builders;
 
     /// <summary>
-    /// <see cref="Guid"/> 存储标识符。
+    /// <see cref="Guid"/> 存储标识符生成器。
     /// </summary>
-    public class GuidStoreIdentifier : AbstractStoreIdentifier<Guid>
+    public class GuidStoreIdentifierGenerator : AbstractStoreIdentifierGenerator<Guid>
     {
         /// <summary>
-        /// 构造一个 <see cref="GuidStoreIdentifier"/>。
+        /// 构造一个 <see cref="GuidStoreIdentifierGenerator"/>。
         /// </summary>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public GuidStoreIdentifier(IOptions<DataBuilderOptions> options,
+        public GuidStoreIdentifierGenerator(IOptions<DataBuilderOptions> options,
             IClockService clock, ILoggerFactory loggerFactory)
             : base(options?.Value.IdentifierGenerator, clock, loggerFactory)
         {

@@ -252,7 +252,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             var entity = typeof(TEntity).EnsureCreate<TEntity>();
 
-            entity.Id = Dependencies.Identifier.GetEntityIdAsync(cancellationToken).ConfigureAndResult();
+            entity.Id = Dependencies.IdentifierGenerator.GenerateEntityIdAsync(cancellationToken).ConfigureAndResult();
             entity.EntityName = entityType.ClrType.GetDisplayNameWithNamespace();
             entity.AssemblyName = entityType.ClrType.GetAssemblyDisplayName();
             entity.CreatedTime = Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();

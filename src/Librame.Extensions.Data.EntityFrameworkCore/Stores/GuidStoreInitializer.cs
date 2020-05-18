@@ -21,12 +21,12 @@ namespace Librame.Extensions.Data.Stores
     public class GuidStoreInitializer : AbstractStoreInitializer<Guid>
     {
         /// <summary>
-        /// 构造一个存储初始化器。
+        /// 构造一个 <see cref="GuidStoreInitializer"/>。
         /// </summary>
-        /// <param name="identifier">给定的 <see cref="IStoreIdentifier{Guid}"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{Guid}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected GuidStoreInitializer(IStoreIdentifier<Guid> identifier, ILoggerFactory loggerFactory)
-            : base(identifier, loggerFactory)
+        protected GuidStoreInitializer(IStoreIdentifierGenerator<Guid> identifierGenerator, ILoggerFactory loggerFactory)
+            : base(identifierGenerator, loggerFactory)
         {
         }
 

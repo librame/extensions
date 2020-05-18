@@ -226,7 +226,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <typeparamref name="TGenId"/>。</returns>
         protected virtual TGenId GetAuditId(CancellationToken cancellationToken)
-            => Dependencies.Identifier.GetAuditIdAsync().ConfigureAndResult();
+            => Dependencies.IdentifierGenerator.GenerateAuditIdAsync().ConfigureAndResult();
 
         /// <summary>
         /// 获取表名。

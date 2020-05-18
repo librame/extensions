@@ -21,8 +21,8 @@ namespace Librame.Extensions.Examples
         private IList<Category<int, Guid>> _categories;
 
 
-        public ExampleStoreInitializer(IStoreIdentifier<Guid> identifier, ILoggerFactory loggerFactory)
-            : base(identifier, loggerFactory)
+        public ExampleStoreInitializer(IStoreIdentifierGenerator<Guid> identifierGenerator, ILoggerFactory loggerFactory)
+            : base(identifierGenerator, loggerFactory)
         {
             _createdBy = EntityPopulator.FormatTypeName(GetType());
         }
@@ -80,7 +80,7 @@ namespace Librame.Extensions.Examples
             if (!stores.Categories.Any())
             {
                 var articles = new List<Article<Guid, int>>();
-                var identifier = Identifier as ExampleStoreIdentifier;
+                var identifier = IdentifierGenerator as ExampleStoreIdentifierGenerator;
 
                 for (int i = 0; i < 100; i++)
                 {

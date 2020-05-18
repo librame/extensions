@@ -126,7 +126,7 @@ namespace Librame.Extensions.Data.Aspects
             CancellationToken cancellationToken = default)
         {
             var createdTime = Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
-            var id = Dependencies.Identifier.GetMigrationIdAsync(cancellationToken).ConfigureAndResult();
+            var id = Dependencies.IdentifierGenerator.GenerateMigrationIdAsync(cancellationToken).ConfigureAndResult();
 
             return ExtensionSettings.Preference.RunLockerResult(() =>
             {

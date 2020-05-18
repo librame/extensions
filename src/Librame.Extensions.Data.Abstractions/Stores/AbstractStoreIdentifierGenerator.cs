@@ -21,19 +21,19 @@ namespace Librame.Extensions.Data.Stores
     using Core.Services;
 
     /// <summary>
-    /// 抽象存储标识符。
+    /// 抽象存储标识符生成器。
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    public abstract class AbstractStoreIdentifier<TGenId> : AbstractStoreIdentifier, IStoreIdentifier<TGenId>
+    public abstract class AbstractStoreIdentifierGenerator<TGenId> : AbstractStoreIdentifierGenerator, IStoreIdentifierGenerator<TGenId>
         where TGenId : IEquatable<TGenId>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractStoreIdentifier{TGenId}"/>。
+        /// 构造一个 <see cref="AbstractStoreIdentifierGenerator{TGenId}"/>。
         /// </summary>
         /// <param name="generator">给定的 <see cref="IIdentifierGenerator{TIdentifier}"/>。</param>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractStoreIdentifier(IIdentifierGenerator<TGenId> generator,
+        protected AbstractStoreIdentifierGenerator(IIdentifierGenerator<TGenId> generator,
             IClockService clock, ILoggerFactory loggerFactory)
             : base(clock, loggerFactory)
         {
@@ -45,7 +45,7 @@ namespace Librame.Extensions.Data.Stores
         /// 标识符生成器。
         /// </summary>
         /// <value>返回 <see cref="IIdentifierGenerator{TIdentifier}"/>。</value>
-        public IIdentifierGenerator<TGenId> Generator { get; }
+        protected IIdentifierGenerator<TGenId> Generator { get; }
 
 
         /// <summary>
@@ -82,50 +82,50 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 异步获取审计标识。
+        /// 异步生成审计标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TGenId"/> 的异步操作。</returns>
-        public new virtual Task<TGenId> GetAuditIdAsync(CancellationToken cancellationToken = default)
+        public new virtual Task<TGenId> GenerateAuditIdAsync(CancellationToken cancellationToken = default)
             => GenerateGenericIdAsync("AuditId", cancellationToken);
 
         /// <summary>
-        /// 异步获取实体标识。
+        /// 异步生成实体标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TGenId"/> 的异步操作。</returns>
-        public new virtual Task<TGenId> GetEntityIdAsync(CancellationToken cancellationToken = default)
+        public new virtual Task<TGenId> GenerateEntityIdAsync(CancellationToken cancellationToken = default)
             => GenerateGenericIdAsync("EntityId", cancellationToken);
 
         /// <summary>
-        /// 异步获取迁移标识。
+        /// 异步生成迁移标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TGenId"/> 的异步操作。</returns>
-        public new virtual Task<TGenId> GetMigrationIdAsync(CancellationToken cancellationToken = default)
+        public new virtual Task<TGenId> GenerateMigrationIdAsync(CancellationToken cancellationToken = default)
             => GenerateGenericIdAsync("MigrationId", cancellationToken);
 
         /// <summary>
-        /// 异步获取租户标识。
+        /// 异步生成租户标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TGenId"/> 的异步操作。</returns>
-        public new virtual Task<TGenId> GetTenantIdAsync(CancellationToken cancellationToken = default)
+        public new virtual Task<TGenId> GenerateTenantIdAsync(CancellationToken cancellationToken = default)
             => GenerateGenericIdAsync("TenantId", cancellationToken);
     }
 
 
     /// <summary>
-    /// 抽象存储标识符。
+    /// 抽象存储标识符生成器。
     /// </summary>
-    public abstract class AbstractStoreIdentifier : AbstractService, IStoreIdentifier
+    public abstract class AbstractStoreIdentifierGenerator : AbstractService, IStoreIdentifierGenerator
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractStoreIdentifier"/>。
+        /// 构造一个 <see cref="AbstractStoreIdentifierGenerator"/>。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractStoreIdentifier(IClockService clock, ILoggerFactory loggerFactory)
+        protected AbstractStoreIdentifierGenerator(IClockService clock, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             Clock = clock.NotNull(nameof(clock));
@@ -150,35 +150,35 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 异步获取审计标识。
+        /// 异步生成审计标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识对象的异步操作。</returns>
-        public virtual Task<object> GetAuditIdAsync(CancellationToken cancellationToken = default)
+        public virtual Task<object> GenerateAuditIdAsync(CancellationToken cancellationToken = default)
             => GenerateIdAsync("AuditId", cancellationToken);
 
         /// <summary>
-        /// 异步获取实体标识。
+        /// 异步生成实体标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识对象的异步操作。</returns>
-        public virtual Task<object> GetEntityIdAsync(CancellationToken cancellationToken = default)
+        public virtual Task<object> GenerateEntityIdAsync(CancellationToken cancellationToken = default)
             => GenerateIdAsync("EntityId", cancellationToken);
 
         /// <summary>
-        /// 异步获取迁移标识。
+        /// 异步生成迁移标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识对象的异步操作。</returns>
-        public virtual Task<object> GetMigrationIdAsync(CancellationToken cancellationToken = default)
+        public virtual Task<object> GenerateMigrationIdAsync(CancellationToken cancellationToken = default)
             => GenerateIdAsync("MigrationId", cancellationToken);
 
         /// <summary>
-        /// 异步获取租户标识。
+        /// 异步生成租户标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识对象的异步操作。</returns>
-        public virtual Task<object> GetTenantIdAsync(CancellationToken cancellationToken = default)
+        public virtual Task<object> GenerateTenantIdAsync(CancellationToken cancellationToken = default)
             => GenerateIdAsync("TenantId", cancellationToken);
     }
 }

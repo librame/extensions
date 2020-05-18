@@ -35,7 +35,7 @@ Librame.Extensions.Data.EntityFrameworkCore (and Data.Abstractions)
 
 - [x] Accessors (DbContextAccessor): multi-tenancy, writing separation, data migration, data audit, entity/table Management
 - [x] Collections: IPageable, ITreeable (Data.Abstractions)
-- [x] Stores: GuidStoreIdentifier, GuidStoreInitializer, StoreHub
+- [x] Stores: GuidStoreIdentifierGenerator, GuidStoreInitializer, StoreHub
 
 Librame.Extensions.Drawing.SkiaSharp (and Drawing.Abstractions)
 
@@ -130,7 +130,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
             });
         })
         .AddDatabaseDesignTime<MySqlDesignTimeServices>()
-        .AddStoreIdentifier<TestStoreIdentifier>()
+        .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
         //.AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
@@ -147,7 +147,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
                 sqlServer => sqlServer.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
         })
         .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
-        .AddStoreIdentifier<TestStoreIdentifier>()
+        .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
         //.AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
@@ -170,7 +170,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
                 sqlite => sqlite.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
         })
         .AddDatabaseDesignTime<SqliteDesignTimeServices>()
-        .AddStoreIdentifier<TestStoreIdentifier>()
+        .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
         //.AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
@@ -241,7 +241,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
 
 ### Create Stores
 
-    public class TestStoreIdentifier : GuidStoreIdentifier
+    public class TestGuidStoreIdentifierGenerator : GuidStoreIdentifierGenerator
     {
         public TestStoreIdentifier(IOptions<DataBuilderOptions> options,
             IClockService clock, ILoggerFactory loggerFactory)

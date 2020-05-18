@@ -56,7 +56,7 @@ namespace Librame.Extensions.Examples
                 })
                 // for MySQL
                 .AddDatabaseDesignTime<MySqlDesignTimeServices>()
-                .AddStoreIdentifier<ExampleStoreIdentifier>()
+                .AddStoreIdentifierGenerator<ExampleStoreIdentifierGenerator>()
                 .AddStoreInitializer<ExampleStoreInitializer<MySqlExampleDbContextAccessor>>()
                 .AddStoreHub<ExampleStoreHub<MySqlExampleDbContextAccessor>>();
 
@@ -76,7 +76,7 @@ namespace Librame.Extensions.Examples
                 })
                 // for SqlServer
                 .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
-                .AddStoreIdentifier<ExampleStoreIdentifier>()
+                .AddStoreIdentifierGenerator<ExampleStoreIdentifierGenerator>()
                 .AddStoreInitializer<ExampleStoreInitializer<SqlServerExampleDbContextAccessor>>()
                 .AddStoreHub<ExampleStoreHub<SqlServerExampleDbContextAccessor>>();
 
@@ -105,7 +105,7 @@ namespace Librame.Extensions.Examples
                 })
                 // for SQLite
                 .AddDatabaseDesignTime<SqliteDesignTimeServices>()
-                .AddStoreIdentifier<ExampleStoreIdentifier>()
+                .AddStoreIdentifierGenerator<ExampleStoreIdentifierGenerator>()
                 .AddStoreInitializer<ExampleStoreInitializer<SqliteExampleDbContextAccessor>>()
                 .AddStoreHub<ExampleStoreHub<SqliteExampleDbContextAccessor>>();
 

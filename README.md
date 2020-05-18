@@ -35,7 +35,7 @@ Librame.Extensions.Data.EntityFrameworkCore (and Data.Abstractions)
 
 - [x] Accessors (DbContextAccessor): 多租户, 写入分离, 迁移, 数据审计, 实体/表管理
 - [x] Collections: IPageable, ITreeable (Data.Abstractions)
-- [x] Stores: GuidStoreIdentifier, GuidStoreInitializer, StoreHub
+- [x] Stores: GuidStoreIdentifierGenerator, GuidStoreInitializer, StoreHub
 
 Librame.Extensions.Drawing.SkiaSharp (and Drawing.Abstractions)
 
@@ -130,7 +130,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
             });
         })
         .AddDatabaseDesignTime<MySqlDesignTimeServices>()
-        .AddStoreIdentifier<TestStoreIdentifier>()
+        .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
         //.AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
@@ -147,7 +147,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
                 sqlServer => sqlServer.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
         })
         .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
-        .AddStoreIdentifier<TestStoreIdentifier>()
+        .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
         //.AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
@@ -170,7 +170,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
                 sqlite => sqlite.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
         })
         .AddDatabaseDesignTime<SqliteDesignTimeServices>()
-        .AddStoreIdentifier<TestStoreIdentifier>()
+        .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
         //.AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
@@ -241,7 +241,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
 
 ### 创建存储
 
-    public class TestStoreIdentifier : GuidStoreIdentifier
+    public class TestGuidStoreIdentifierGenerator : GuidStoreIdentifierGenerator
     {
         public TestStoreIdentifier(IOptions<DataBuilderOptions> options,
             IClockService clock, ILoggerFactory loggerFactory)

@@ -34,7 +34,7 @@ namespace Librame.Extensions.Data.Builders
             builder.Services.TryAddScoped(typeof(IStoreHub<,>), typeof(StoreHub<,>));
             builder.Services.TryAddScoped(typeof(IStoreHub<,,,,,,>), typeof(StoreHub<,,,,,,>));
 
-            builder.AddStoreIdentifier<GuidStoreIdentifier>(replaced: false);
+            builder.AddStoreIdentifierGenerator<GuidStoreIdentifierGenerator>(replaced: false);
             builder.AddStoreInitializer<GuidStoreInitializer>(replaced: false);
 
             return builder;
@@ -80,35 +80,35 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
-        /// 添加存储标识符。
+        /// 添加存储标识符生成器。
         /// </summary>
-        /// <typeparam name="TIdentifier">指定实现 <see cref="IStoreIdentifier{TGenId}"/> 接口的存储标识符类型，推荐从 <see cref="AbstractStoreIdentifier{TGenId}"/> 派生。</typeparam>
+        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentifierGenerator{TGenId}"/> 接口的存储标识符类型，推荐从 <see cref="AbstractStoreIdentifierGenerator{TGenId}"/> 派生。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="replaced">是否替换可能已注册的服务（可选；默认替换）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static IDataBuilder AddStoreIdentifier<TIdentifier>(this IDataBuilder builder, bool replaced = true)
-            where TIdentifier : class, IStoreIdentifier
+        public static IDataBuilder AddStoreIdentifierGenerator<TGenerator>(this IDataBuilder builder, bool replaced = true)
+            where TGenerator : class, IStoreIdentifierGenerator
         {
             builder.NotNull(nameof(builder));
 
-            var identifierTypeDefinition = typeof(IStoreIdentifier<>);
-            var identifierType = typeof(TIdentifier);
+            var generatorTypeDefinition = typeof(IStoreIdentifierGenerator<>);
+            var generatorType = typeof(TGenerator);
 
-            if (identifierType.IsImplementedInterface(identifierTypeDefinition, out Type resultType))
+            if (generatorType.IsImplementedInterface(generatorTypeDefinition, out Type resultType))
             {
-                var identifierTypeGeneric = identifierTypeDefinition.MakeGenericType(resultType.GenericTypeArguments);
+                var generatorTypeGeneric = generatorTypeDefinition.MakeGenericType(resultType.GenericTypeArguments);
 
                 if (replaced)
-                    builder.Services.TryReplace(identifierTypeGeneric, identifierType);
+                    builder.Services.TryReplace(generatorTypeGeneric, generatorType);
                 else
-                    builder.Services.TryAddSingleton(identifierTypeGeneric, identifierType);
+                    builder.Services.TryAddSingleton(generatorTypeGeneric, generatorType);
 
-                builder.Services.TryAddSingleton(serviceProvider => (TIdentifier)serviceProvider.GetRequiredService(identifierTypeGeneric));
+                builder.Services.TryAddSingleton(serviceProvider => (TGenerator)serviceProvider.GetRequiredService(generatorTypeGeneric));
             }
             else
             {
-                throw new ArgumentException($"The store identifier type '{identifierType}' does not implement '{identifierTypeDefinition}' interface.");
+                throw new ArgumentException($"The store identifier type '{generatorType}' does not implement '{generatorTypeDefinition}' interface.");
             }
 
             return builder;
