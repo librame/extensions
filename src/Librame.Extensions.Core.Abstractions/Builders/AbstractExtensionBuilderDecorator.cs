@@ -60,8 +60,7 @@ namespace Librame.Extensions.Core.Builders
         /// <param name="serviceType">给定的服务类型。</param>
         /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
         public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
-        {
-        }
+            => ServiceCharacteristics.Singleton();
         
     }
 }
