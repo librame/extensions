@@ -87,17 +87,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddDistributedMemoryCache();
 
             // Create Builder
-            var coreBuilder = builderFactory.NotNullOrDefault(()
+            return builderFactory.NotNullOrDefault(()
                 => (s, d) => new CoreBuilder(s, d)).Invoke(services, dependency);
-
-            // Configure Builder
-            return coreBuilder
-                .AddDecorators()
-                .AddIdentifiers()
-                .AddLocalizers()
-                .AddMediators()
-                .AddOptions()
-                .AddServices();
         }
 
     }

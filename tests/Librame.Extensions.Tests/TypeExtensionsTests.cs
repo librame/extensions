@@ -180,7 +180,7 @@ namespace Librame.Extensions.Tests
 
             public bool InternalProperty { get; internal set; }
 
-            public DateTime PrivateProperty { get; set; }
+            public DateTime PrivateProperty { get; private set; }
         }
 
         public interface ITestSetProperty

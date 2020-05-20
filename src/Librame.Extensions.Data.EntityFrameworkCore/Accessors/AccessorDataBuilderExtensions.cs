@@ -16,7 +16,10 @@ using Librame.Extensions.Data.Builders;
 using Librame.Extensions.Data.Migrations;
 using Librame.Extensions.Data.Stores;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
@@ -90,6 +93,24 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             builder.Services.TryAddScoped(sp => (TImplementation)sp.GetRequiredService<TAccessor>());
+
+            return builder.AddDesignTimeServices<TImplementation>();
+        }
+
+
+        private static IDataBuilder AddDesignTimeServices<TDbContext>(this IDataBuilder builder)
+           where TDbContext : DbContext, IAccessor
+        {
+            builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<ICurrentDbContext>());
+            builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<IDatabaseProvider>());
+            builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<IDbContextOptions>());
+            builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<IHistoryRepository>());
+            builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<IMigrationsAssembly>());
+            builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<IMigrationsIdGenerator>());
+            builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<IMigrationsModelDiffer>());
+            builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<IMigrator>());
+            //builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<IRelationalTypeMappingSource>());
+            builder.Services.AddTransient(sp => sp.GetRequiredService<TDbContext>().GetService<IModel>());
 
             return builder;
         }

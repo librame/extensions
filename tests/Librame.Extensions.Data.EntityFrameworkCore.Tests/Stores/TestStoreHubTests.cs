@@ -11,7 +11,6 @@ namespace Librame.Extensions.Data.Tests
 {
     using Core.Identifiers;
     using Core.Services;
-    using Data.Builders;
 
     public class TestStoreHubTests
     {

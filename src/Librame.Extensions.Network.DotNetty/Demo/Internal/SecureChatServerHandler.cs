@@ -40,11 +40,11 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             var g = group;
             if (g.IsNull())
             {
-                lock (this)
+                ExtensionSettings.Preference.RunLocker(() =>
                 {
                     if (group.IsNull())
                         g = group = new DefaultChannelGroup(context.Executor);
-                }
+                });
             }
 
             var message = $"Welcome to {Dns.GetHostName()} secure chat server!\n";

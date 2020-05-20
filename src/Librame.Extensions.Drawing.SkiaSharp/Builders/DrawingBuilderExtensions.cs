@@ -58,12 +58,8 @@ namespace Microsoft.Extensions.DependencyInjection
             parentBuilder.Services.TryAddReferenceBuilderDependency<DrawingBuilderDependency>(dependency, dependencyType);
 
             // Create Builder
-            var drawingBuilder = builderFactory.NotNullOrDefault(()
+            return builderFactory.NotNullOrDefault(()
                 => (b, d) => new DrawingBuilder(b, d)).Invoke(parentBuilder, dependency);
-
-            // Configure Builder
-            return drawingBuilder
-                .AddServices();
         }
 
     }

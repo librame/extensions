@@ -26,13 +26,5 @@ namespace Librame.Extensions.Network.Builders
         /// 返回 <see cref="IExtensionBuilderDependency"/>。
         /// </value>
         IExtensionBuilderDependency DotNettyDependency { get; }
-
-
-        /// <summary>
-        /// 添加 DotNetty 依赖。
-        /// </summary>
-        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
-        /// <returns>返回 <see cref="INetworkBuilder"/>。</returns>
-        INetworkBuilder AddDotNettyDependency(IExtensionBuilderDependency dependency);
     }
 }

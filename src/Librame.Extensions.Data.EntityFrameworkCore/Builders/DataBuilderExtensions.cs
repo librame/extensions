@@ -67,17 +67,8 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             // Create Builder
-            var dataBuilder = builderFactory.NotNullOrDefault(()
+            return builderFactory.NotNullOrDefault(()
                 => (b, d) => new DataBuilder(b, d)).Invoke(parentBuilder, dependency);
-
-            // Configure Builder
-            return dataBuilder
-                //.AddAccessors()
-                .AddAspects()
-                .AddMediators()
-                .AddProtectors()
-                .AddServices()
-                .AddStores();
         }
 
 

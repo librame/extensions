@@ -1,0 +1,147 @@
+﻿#region License
+
+/* **************************************************************************************
+ * Copyright (c) Librame Pang All rights reserved.
+ * 
+ * http://librame.net
+ * 
+ * You must not remove this notice, or any other, from this software.
+ * **************************************************************************************/
+
+#endregion
+
+using System;
+using System.Collections.Generic;
+
+namespace Librame.Extensions.Core.Services
+{
+    /// <summary>
+    /// 服务特征注册器。
+    /// </summary>
+    public sealed class ServiceCharacteristicsRegister : IServiceCharacteristicsRegister
+    {
+        private IDictionary<Type, ServiceCharacteristics> _dictionary;
+
+
+        /// <summary>
+        /// 构造一个 <see cref="ServiceCharacteristicsRegister"/>。
+        /// </summary>
+        /// <param name="dictionary">给定的服务特征字典。</param>
+        public ServiceCharacteristicsRegister(IDictionary<Type, ServiceCharacteristics> dictionary)
+        {
+            _dictionary = dictionary.NotNull(nameof(dictionary));
+        }
+
+
+        /// <summary>
+        /// 添加或设置指定服务的特征。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="characteristics">给定的 <see cref="ServiceCharacteristics"/>。</param>
+        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        public ServiceCharacteristics AddOrSet<TService>(ServiceCharacteristics characteristics)
+            => AddOrSet(typeof(TService), characteristics);
+
+        /// <summary>
+        /// 添加或设置指定服务的特征。
+        /// </summary>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="characteristics">给定的 <see cref="ServiceCharacteristics"/>。</param>
+        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        public ServiceCharacteristics AddOrSet(Type serviceType, ServiceCharacteristics characteristics)
+        {
+            return ExtensionSettings.Preference.RunLockerResult(() =>
+            {
+                if (_dictionary.ContainsKey(serviceType))
+                    _dictionary[serviceType] = characteristics;
+                else
+                    _dictionary.Add(serviceType, characteristics);
+
+                return characteristics;
+            });
+        }
+
+
+        /// <summary>
+        /// 获取指定服务的特征或默认特征（如果服务类型的特征不存在，则默认为 <see cref="ServiceCharacteristics.Singleton(bool)"/>）。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        public ServiceCharacteristics GetOrDefault<TService>()
+            => GetOrDefault(typeof(TService));
+
+        /// <summary>
+        /// 获取指定服务的特征或默认特征（如果服务类型的特征不存在，则默认为 <see cref="ServiceCharacteristics.Singleton(bool)"/>）。
+        /// </summary>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        public ServiceCharacteristics GetOrDefault(Type serviceType)
+        {
+            TryGet(serviceType, out var result);
+            return result;
+        }
+
+
+        /// <summary>
+        /// 尝试添加指定服务的特征。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="characteristics">给定的 <see cref="ServiceCharacteristics"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool TryAdd<TService>(ServiceCharacteristics characteristics)
+            => TryAdd(typeof(TService), characteristics);
+
+        /// <summary>
+        /// 尝试添加指定服务的特征。
+        /// </summary>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="characteristics">给定的 <see cref="ServiceCharacteristics"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool TryAdd(Type serviceType, ServiceCharacteristics characteristics)
+        {
+            return ExtensionSettings.Preference.RunLockerResult(() =>
+            {
+                if (!_dictionary.ContainsKey(serviceType))
+                {
+                    _dictionary.Add(serviceType, characteristics);
+                    return true;
+                }
+
+                return false;
+            });
+        }
+
+
+        /// <summary>
+        /// 尝试获取指定服务的特征。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="result">输出 <see cref="ServiceCharacteristics"/>（如果服务类型的特征不存在，则默认为 <see cref="ServiceCharacteristics.Singleton(bool)"/>）。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool TryGet<TService>(out ServiceCharacteristics result)
+            => TryGet(typeof(TService), out result);
+
+        /// <summary>
+        /// 尝试获取指定服务的特征。
+        /// </summary>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="result">输出 <see cref="ServiceCharacteristics"/>（如果服务类型的特征不存在，则默认为 <see cref="ServiceCharacteristics.Singleton(bool)"/>）。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool TryGet(Type serviceType, out ServiceCharacteristics result)
+        {
+            foreach (var pair in _dictionary)
+            {
+                if (pair.Key == serviceType)
+                {
+                    result = pair.Value;
+                    return true;
+                }
+            }
+
+            // 默认单例
+            result = ServiceCharacteristics.Singleton();
+            return false;
+        }
+
+    }
+}

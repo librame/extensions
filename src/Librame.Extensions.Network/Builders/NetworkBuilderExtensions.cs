@@ -70,13 +70,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddHttpClient();
 
             // Create Builder
-            var networkBuilder = builderFactory.NotNullOrDefault(()
+            return builderFactory.NotNullOrDefault(()
                 => (b, d) => new NetworkBuilder(b, d)).Invoke(parentBuilder, dependency);
-
-            // Configure Builder
-            return networkBuilder
-                .AddRequesters()
-                .AddServices();
         }
 
     }

@@ -58,12 +58,8 @@ namespace Microsoft.Extensions.DependencyInjection
             parentBuilder.Services.TryAddReferenceBuilderDependency<StorageBuilderDependency>(dependency, dependencyType);
 
             // Create Builder
-            var storageBuilder = builderFactory.NotNullOrDefault(()
+            return builderFactory.NotNullOrDefault(()
                 => (b, d) => new StorageBuilder(b, d)).Invoke(parentBuilder, dependency);
-
-            // Configure Builder
-            return storageBuilder
-                .AddServices();
         }
 
     }

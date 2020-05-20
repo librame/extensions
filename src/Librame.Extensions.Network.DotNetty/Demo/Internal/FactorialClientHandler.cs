@@ -45,13 +45,14 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             SendNumbers();
         }
 
+        [SuppressMessage("Reliability", "CA2008:不要在未传递 TaskScheduler 的情况下创建任务")]
         protected override void ChannelRead0(IChannelHandlerContext context, BigInteger message)
         {
             _receivedMessages++;
 
             if (_receivedMessages == _client.Options.FactorialClient.Count)
             {
-                context.CloseAsync().ContinueWith(t => _answer.Add(message));
+                _ = context.CloseAsync().ContinueWith(t => _answer.Add(message));
             }
         }
 

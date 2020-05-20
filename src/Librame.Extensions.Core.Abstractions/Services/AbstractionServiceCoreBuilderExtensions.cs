@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -47,11 +46,11 @@ namespace Librame.Extensions.Core.Builders
             
             assemblies.InvokeTypes(type =>
             {
-                if (type.TryGetCustomAttribute(out AutoRegisterableServiceAttribute serviceAttribute))
+                if (type.TryGetCustomAttribute(out AutoRegisterableServiceAttribute result))
                 {
-                    var serviceType = serviceAttribute.ServiceType;
+                    var serviceType = result.ServiceType;
 
-                    if (serviceType.IsNull() && serviceAttribute.UseBaseTypeAsServiceType)
+                    if (serviceType.IsNull() && result.UseBaseTypeAsServiceType)
                     {
                         // 如果类型的基础类型为空或是接口，则基础类型返回 Object 类型
                         serviceType = type.BaseType != objectType ? type.BaseType
@@ -64,23 +63,7 @@ namespace Librame.Extensions.Core.Builders
                         serviceType = type;
                     }
 
-                    switch (serviceAttribute.Lifetime)
-                    {
-                        case ServiceLifetime.Singleton:
-                            builder.Services.TryAddSingleton(serviceType, type);
-                            break;
-
-                        case ServiceLifetime.Scoped:
-                            builder.Services.TryAddScoped(serviceType, type);
-                            break;
-
-                        case ServiceLifetime.Transient:
-                            builder.Services.TryAddTransient(serviceType, type);
-                            break;
-
-                        default:
-                            break;
-                    }
+                    builder.Services.AddByCharacteristics(serviceType, type, result.Characteristics);
                 }
             });
 

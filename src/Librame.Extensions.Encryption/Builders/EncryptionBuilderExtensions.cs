@@ -58,13 +58,8 @@ namespace Microsoft.Extensions.DependencyInjection
             parentBuilder.Services.TryAddReferenceBuilderDependency<EncryptionBuilderDependency>(dependency, dependencyType);
 
             // Create Builder
-            var encryptionBuilder = builderFactory.NotNullOrDefault(()
+            return builderFactory.NotNullOrDefault(()
                 => (b, d) => new EncryptionBuilder(b, d)).Invoke(parentBuilder, dependency);
-
-            // Configure Builder
-            return encryptionBuilder
-                .AddKeyGenerators()
-                .AddServices();
         }
 
     }

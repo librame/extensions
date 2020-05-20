@@ -147,6 +147,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             }
         }
 
+        [SuppressMessage("Reliability", "CA2008:不要在未传递 TaskScheduler 的情况下创建任务")]
         private void SendHttpResponse(IChannelHandlerContext context, IFullHttpRequest request, IFullHttpResponse response)
         {
             // Generate an error page if response getStatus code is not OK (200).
@@ -162,7 +163,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             var task = context.Channel.WriteAndFlushAsync(response);
             if (!HttpUtil.IsKeepAlive(request) || response.Status.Code != 200)
             {
-                task.ContinueWith((t, c) => ((IChannelHandlerContext)c).CloseAsync(),
+                _ = task.ContinueWith((t, c) => ((IChannelHandlerContext)c).CloseAsync(),
                     context, TaskContinuationOptions.ExecuteSynchronously);
             }
         }

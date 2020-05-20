@@ -5,6 +5,8 @@ namespace Librame.Extensions.Core.Tests
 {
     using Builders;
     using Combiners;
+    using Librame.Extensions.Core.Services;
+    using System;
 
     public class AbstractionBuilderExtensionsTests
     {
@@ -105,6 +107,11 @@ namespace Librame.Extensions.Core.Tests
         {
             Services.AddSingleton(this);
         }
+
+        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class PublicTestBuilder : AbstractExtensionBuilder, IExtensionBuilder
@@ -113,6 +120,11 @@ namespace Librame.Extensions.Core.Tests
             : base(parentBuilder, dependency)
         {
             Services.AddSingleton(this);
+        }
+
+        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
+        {
+            throw new NotImplementedException();
         }
     }
 

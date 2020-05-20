@@ -10,7 +10,6 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace Librame.Extensions.Core.Services
@@ -22,10 +21,9 @@ namespace Librame.Extensions.Core.Services
     public class AutoRegisterableServiceAttribute : Attribute
     {
         /// <summary>
-        /// 生命周期。
+        /// 服务特征。
         /// </summary>
-        public ServiceLifetime Lifetime { get; set; }
-            = ServiceLifetime.Singleton;
+        public ServiceCharacteristics Characteristics { get; set; }
 
         /// <summary>
         /// 服务类型。

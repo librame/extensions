@@ -11,10 +11,13 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Librame.Extensions.Drawing.Builders
 {
     using Core.Builders;
+    using Core.Services;
+    using Drawing.Services;
 
     internal class DrawingBuilder : AbstractExtensionBuilder, IDrawingBuilder
     {
@@ -22,6 +25,21 @@ namespace Librame.Extensions.Drawing.Builders
             : base(parentBuilder, dependency)
         {
             Services.AddSingleton<IDrawingBuilder>(this);
+
+            AddDrawingServices();
+        }
+
+
+        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
+            => DrawingBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
+
+
+        private void AddDrawingServices()
+        {
+            // Services
+            AddService<ICaptchaService, CaptchaService>();
+            AddService<IScaleService, ScaleService>();
+            AddService<IWatermarkService, WatermarkService>();
         }
 
     }

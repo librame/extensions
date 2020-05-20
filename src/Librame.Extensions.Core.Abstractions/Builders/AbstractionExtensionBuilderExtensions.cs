@@ -19,6 +19,9 @@ namespace Librame.Extensions.Core.Builders
     /// </summary>
     public static class AbstractionExtensionBuilderExtensions
     {
+
+        #region ParentBuilder
+
         /// <summary>
         /// 获取必需的父级构建器。
         /// </summary>
@@ -71,6 +74,8 @@ namespace Librame.Extensions.Core.Builders
                 return GetParentBuilder(currentBuilder.ParentBuilder);
             }
         }
+
+        #endregion
 
     }
 }

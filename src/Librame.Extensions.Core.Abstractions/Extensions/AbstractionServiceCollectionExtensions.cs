@@ -11,6 +11,7 @@
 #endregion
 
 using Librame.Extensions;
+using Librame.Extensions.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -25,17 +26,82 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class AbstractionServiceCollectionExtensions
     {
+
+        #region AddByCharacteristics
+
         /// <summary>
-        /// 尝试添加可枚举服务集合。
+        /// 通过特征添加服务。
         /// </summary>
-        /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="factory">给定的服务对象工厂方法。</param>
+        /// <param name="characteristics">给定的 <see cref="ServiceCharacteristics"/>。</param>
+        /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static IServiceCollection AddByCharacteristics(this IServiceCollection services,
+            Type serviceType, Func<IServiceProvider, object> factory, ServiceCharacteristics characteristics)
+        {
+            services.NotNull(nameof(services));
+
+            var descriptor = new ServiceDescriptor(serviceType, factory, characteristics.Lifetime);
+            return services.AddByCharacteristics(descriptor, characteristics);
+        }
+
+        /// <summary>
+        /// 通过特征添加服务。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="implementationType">给定的实现类型。</param>
+        /// <param name="characteristics">给定的 <see cref="ServiceCharacteristics"/>。</param>
+        /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static IServiceCollection AddByCharacteristics(this IServiceCollection services,
+            Type serviceType, Type implementationType, ServiceCharacteristics characteristics)
+        {
+            services.NotNull(nameof(services));
+            
+            var descriptor = new ServiceDescriptor(serviceType, implementationType, characteristics.Lifetime);
+            return services.AddByCharacteristics(descriptor, characteristics);
+        }
+
+        /// <summary>
+        /// 通过特征添加服务集合。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="implementationTypes">给定的实现类型集合。</param>
-        /// <param name="lifetime">给定的 <see cref="ServiceLifetime"/>（可选；默认为单例）。</param>
-        public static void TryAddEnumerable<TService>(this IServiceCollection services,
-            ServiceLifetime lifetime = ServiceLifetime.Singleton,
-            params Type[] implementationTypes)
-            => services.TryAddEnumerable(typeof(TService), implementationTypes, lifetime);
+        /// <param name="characteristics">给定的 <see cref="ServiceCharacteristics"/>。</param>
+        /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static IServiceCollection AddByCharacteristics(this IServiceCollection services,
+            Type serviceType, IEnumerable<Type> implementationTypes, ServiceCharacteristics characteristics)
+        {
+            services.NotNull(nameof(services));
+
+            foreach (var implType in implementationTypes)
+            {
+                var descriptor = new ServiceDescriptor(serviceType, implType, characteristics.Lifetime);
+                services.AddByCharacteristics(descriptor, characteristics);
+            }
+
+            return services;
+        }
+
+        private static IServiceCollection AddByCharacteristics(this IServiceCollection services,
+            ServiceDescriptor descriptor, ServiceCharacteristics characteristics)
+        {
+            if (characteristics.TryAdd && services.Contains(descriptor))
+                return services;
+
+            services.Add(descriptor);
+            return services;
+        }
+
+        #endregion
+
+
+        #region TryAddEnumerable
 
         /// <summary>
         /// 尝试添加可枚举服务集合。
@@ -48,17 +114,6 @@ namespace Microsoft.Extensions.DependencyInjection
             IEnumerable<Type> implementationTypes,
             ServiceLifetime lifetime = ServiceLifetime.Singleton)
             => services.TryAddEnumerable(typeof(TService), implementationTypes, lifetime);
-
-        /// <summary>
-        /// 尝试添加可枚举服务集合。
-        /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="serviceType">给定的服务类型。</param>
-        /// <param name="implementationTypes">给定的实现类型集合。</param>
-        /// <param name="lifetime">给定的 <see cref="ServiceLifetime"/>（可选；默认为单例）。</param>
-        public static void TryAddEnumerable(this IServiceCollection services, Type serviceType,
-            ServiceLifetime lifetime = ServiceLifetime.Singleton, params Type[] implementationTypes)
-            => services.TryAddEnumerable(serviceType, implementationTypes, lifetime);
 
         /// <summary>
         /// 尝试添加可枚举服务集合。
@@ -83,6 +138,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     yield return new ServiceDescriptor(serviceType, implType, lifetime);
             }
         }
+
+        #endregion
 
 
         #region TryGet

@@ -11,10 +11,14 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Librame.Extensions.Network.Builders
 {
     using Core.Builders;
+    using Core.Services;
+    using Network.Requesters;
+    using Network.Services;
 
     internal class NetworkBuilder : AbstractExtensionBuilder, INetworkBuilder
     {
@@ -22,16 +26,30 @@ namespace Librame.Extensions.Network.Builders
             : base(parentBuilder, dependency)
         {
             Services.AddSingleton<INetworkBuilder>(this);
+
+            AddNetworkServices();
         }
 
 
         public IExtensionBuilderDependency DotNettyDependency { get; private set; }
 
 
-        public INetworkBuilder AddDotNettyDependency(IExtensionBuilderDependency dependency)
+        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
+            => NetworkBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
+
+
+        private void AddNetworkServices()
         {
-            DotNettyDependency = dependency.NotNull(nameof(dependency));
-            return this;
+            // Requesters
+            AddServices(typeof(IUriRequester),
+                typeof(HttpClientRequester), typeof(HttpWebRequester));
+
+            // Services
+            AddService<IByteCodecService, ByteCodecService>();
+            AddService<ICrawlerService, CrawlerService>();
+            AddService<IEmailService, EmailService>();
+            AddService<ISmsService, SmsService>();
         }
+
     }
 }
