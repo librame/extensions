@@ -52,5 +52,16 @@ namespace Librame.Extensions.Core.Builders
         /// 源构建器。
         /// </summary>
         public TSource Source { get; }
+        
+        
+        /// <summary>
+        /// 获取指定服务类型的特征。
+        /// </summary>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
+        {
+        }
+        
     }
 }
