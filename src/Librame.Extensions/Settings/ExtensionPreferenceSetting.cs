@@ -71,7 +71,7 @@ namespace Librame.Extensions
         /// 获取锁定器。
         /// </summary>
         /// <returns>返回锁定器对象。</returns>
-        protected object GetLocker()
+        public object GetLocker()
             => GetLocker(out _);
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="index">输出索引。</param>
         /// <returns>返回锁定器对象。</returns>
-        protected object GetLocker(out int index)
+        public object GetLocker(out int index)
         {
             lock (ExtensionSettings.Locker)
             {

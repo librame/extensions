@@ -11,9 +11,12 @@
 #endregion
 
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Librame.Extensions.Core.Builders
 {
+    using Core.Services;
+
     /// <summary>
     /// 抽象扩展构建器装饰器。
     /// </summary>
@@ -22,7 +25,7 @@ namespace Librame.Extensions.Core.Builders
         where TSource : class
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
+        /// 构造一个 <see cref="AbstractExtensionBuilderDecorator{TSource}"/>。
         /// </summary>
         /// <param name="source">给定的装饰 <typeparamref name="TSource"/>。</param>
         /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
@@ -35,7 +38,7 @@ namespace Librame.Extensions.Core.Builders
         }
 
         /// <summary>
-        /// 构造一个 <see cref="AbstractExtensionBuilder"/>。
+        /// 构造一个 <see cref="AbstractExtensionBuilderDecorator{TSource}"/>。
         /// </summary>
         /// <param name="source">给定的装饰 <typeparamref name="TSource"/>。</param>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
@@ -52,13 +55,13 @@ namespace Librame.Extensions.Core.Builders
         /// 源构建器。
         /// </summary>
         public TSource Source { get; }
-        
-        
+
+
         /// <summary>
         /// 获取指定服务类型的特征。
         /// </summary>
         /// <param name="serviceType">给定的服务类型。</param>
-        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        /// <returns>默认返回 <see cref="ServiceCharacteristics.Singleton(bool)"/>。</returns>
         public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
             => ServiceCharacteristics.Singleton();
         

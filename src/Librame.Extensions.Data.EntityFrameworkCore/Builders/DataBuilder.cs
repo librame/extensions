@@ -126,11 +126,13 @@ namespace Librame.Extensions.Data.Builders
 
             if (generatorType.IsImplementedInterface(generatorTypeDefinition, out Type resultType))
             {
+                // 利用类型定义获取服务特征
+                var characteristics = GetServiceCharacteristics(generatorTypeDefinition);
                 // 使用泛型参数填充服务类型
                 var generatorTypeGeneric = generatorTypeDefinition.MakeGenericType(resultType.GenericTypeArguments);
 
                 if (!Services.TryReplace(generatorTypeGeneric, generatorType, throwIfNotFound: false))
-                    AddService(generatorTypeGeneric, generatorType);
+                    Services.AddByCharacteristics(generatorTypeGeneric, generatorType, characteristics);
 
                 AddService(sp => (TGenerator)sp.GetRequiredService(generatorTypeGeneric));
             }
@@ -155,11 +157,13 @@ namespace Librame.Extensions.Data.Builders
 
             if (initializerType.IsImplementedInterface(initializerTypeDefinition, out Type resultType))
             {
+                // 利用类型定义获取服务特征
+                var characteristics = GetServiceCharacteristics(initializerTypeDefinition);
                 // 使用泛型参数填充服务类型
                 var initializerTypeGeneric = initializerTypeDefinition.MakeGenericType(resultType.GenericTypeArguments);
 
                 if (!Services.TryReplace(initializerTypeGeneric, initializerType, throwIfNotFound: false))
-                    AddService(initializerTypeGeneric, initializerType);
+                    Services.AddByCharacteristics(initializerTypeGeneric, initializerType, characteristics);
 
                 AddService(sp => (TInitializer)sp.GetRequiredService(initializerTypeGeneric));
             }

@@ -36,6 +36,20 @@ namespace Librame.Extensions
 
 
         /// <summary>
+        /// 获取锁定器。
+        /// </summary>
+        /// <returns>返回锁定器对象。</returns>
+        object GetLocker();
+
+        /// <summary>
+        /// 获取锁定器。
+        /// </summary>
+        /// <param name="index">输出索引。</param>
+        /// <returns>返回锁定器对象。</returns>
+        object GetLocker(out int index);
+
+
+        /// <summary>
         /// 运行锁定器。
         /// </summary>
         /// <param name="action">给定的动作。</param>

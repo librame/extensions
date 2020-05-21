@@ -10,8 +10,12 @@
 
 #endregion
 
+using System;
+
 namespace Librame.Extensions.Core.Builders
 {
+    using Core.Services;
+
     /// <summary>
     /// 抽象扩展构建器适配器。
     /// </summary>
@@ -35,13 +39,13 @@ namespace Librame.Extensions.Core.Builders
         /// 适配构建器。
         /// </summary>
         public TAdaptionBuilder AdaptionBuilder { get; }
-        
-        
+
+
         /// <summary>
         /// 获取指定服务类型的特征。
         /// </summary>
         /// <param name="serviceType">给定的服务类型。</param>
-        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        /// <returns>默认返回 <see cref="ServiceCharacteristics.Singleton(bool)"/>。</returns>
         public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
             => ServiceCharacteristics.Singleton();
         

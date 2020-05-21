@@ -49,7 +49,7 @@ namespace Librame.Extensions.Core.Builders
 
 
         /// <summary>
-        /// 添加服务。
+        /// 添加服务（支持服务特征）。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="factory">给定的服务对象工厂方法。</param>
@@ -57,7 +57,7 @@ namespace Librame.Extensions.Core.Builders
         IExtensionBuilder AddService<TService>(Func<IServiceProvider, TService> factory);
 
         /// <summary>
-        /// 添加服务。
+        /// 添加服务（支持服务特征）。
         /// </summary>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="factory">给定的服务对象工厂方法。</param>
@@ -66,14 +66,14 @@ namespace Librame.Extensions.Core.Builders
 
 
         /// <summary>
-        /// 添加服务。
+        /// 添加服务（支持服务特征）。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
         IExtensionBuilder AddService<TService>();
 
         /// <summary>
-        /// 添加服务。
+        /// 添加服务（支持服务特征）。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <typeparam name="TImplementationType">指定的实现类型。</typeparam>
@@ -81,14 +81,14 @@ namespace Librame.Extensions.Core.Builders
         IExtensionBuilder AddService<TService, TImplementationType>();
 
         /// <summary>
-        /// 添加服务。
+        /// 添加服务（支持服务特征）。
         /// </summary>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
         IExtensionBuilder AddService(Type serviceType);
 
         /// <summary>
-        /// 添加服务。
+        /// 添加服务（支持服务特征）。
         /// </summary>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="implementationType">给定的实现类型。</param>
@@ -97,7 +97,7 @@ namespace Librame.Extensions.Core.Builders
 
 
         /// <summary>
-        /// 添加服务数组。
+        /// 添加服务数组（支持服务特征）。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="implementationTypes">给定的实现类型数组。</param>
@@ -105,7 +105,7 @@ namespace Librame.Extensions.Core.Builders
         IExtensionBuilder AddServices<TService>(params Type[] implementationTypes);
 
         /// <summary>
-        /// 添加服务集合。
+        /// 添加服务集合（支持服务特征）。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="implementationTypes">给定的实现类型集合。</param>
@@ -113,7 +113,7 @@ namespace Librame.Extensions.Core.Builders
         IExtensionBuilder AddServices<TService>(IEnumerable<Type> implementationTypes);
 
         /// <summary>
-        /// 添加服务数组。
+        /// 添加服务数组（支持服务特征）。
         /// </summary>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="implementationTypes">给定的实现类型数组。</param>
@@ -121,7 +121,7 @@ namespace Librame.Extensions.Core.Builders
         IExtensionBuilder AddServices(Type serviceType, params Type[] implementationTypes);
 
         /// <summary>
-        /// 添加服务集合。
+        /// 添加服务集合（支持服务特征）。
         /// </summary>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="implementationTypes">给定的实现类型集合。</param>
