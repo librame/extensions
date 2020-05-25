@@ -1,9 +1,9 @@
 ﻿#region License
 
 /* **************************************************************************************
- * Copyright (c) Librame Pang All rights reserved.
+ * Copyright (c) Librame Pong All rights reserved.
  * 
- * http://librame.net
+ * https://github.com/librame
  * 
  * You must not remove this notice, or any other, from this software.
  * **************************************************************************************/
@@ -21,6 +21,17 @@ namespace Librame.Extensions.Core.Combiners
     /// </summary>
     public class TypeNameCombiner : AbstractCombiner<string>
     {
+        /// <summary>
+        /// 连接符。
+        /// </summary>
+        public const char Connector = '.';
+
+        /// <summary>
+        /// 分隔符。
+        /// </summary>
+        public const char Separator = ',';
+
+
         /// <summary>
         /// 构造一个 <see cref="TypeNameCombiner"/>。
         /// </summary>
@@ -306,10 +317,10 @@ namespace Librame.Extensions.Core.Combiners
             name.NotEmpty(nameof(name));
 
             if (@namespace.IsNotEmpty())
-                name = $"{@namespace}.{name}";
+                name = $"{@namespace}{Connector}{name}";
 
             if (assembly.IsNotEmpty())
-                return $"{name}, {assembly}";
+                return $"{name}{Separator} {assembly}";
 
             return name;
         }
@@ -319,9 +330,9 @@ namespace Librame.Extensions.Core.Combiners
         {
             typeString.NotEmpty(nameof(typeString));
 
-            if (typeString.CompatibleContains(","))
+            if (typeString.CompatibleContains(Separator))
             {
-                var pair = typeString.SplitPair(',');
+                var pair = typeString.SplitPair(Separator);
 
                 typeString = pair.Key.Trim();
                 assembly = pair.Value.Trim();
@@ -331,7 +342,7 @@ namespace Librame.Extensions.Core.Combiners
                 assembly = null;
             }
 
-            var index = typeString.LastIndexOf('.');
+            var index = typeString.LastIndexOf(Connector);
             if (index > 0)
             {
                 @namespace = typeString.Substring(0, index);

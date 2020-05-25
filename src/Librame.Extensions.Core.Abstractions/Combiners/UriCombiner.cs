@@ -1,9 +1,9 @@
 ﻿#region License
 
 /* **************************************************************************************
- * Copyright (c) zwbwl All rights reserved.
+ * Copyright (c) Librame Pong All rights reserved.
  * 
- * http://51zwb.com
+ * https://github.com/librame
  * 
  * You must not remove this notice, or any other, from this software.
  * **************************************************************************************/
@@ -25,6 +25,32 @@ namespace Librame.Extensions.Core.Combiners
     /// </summary>
     public class UriCombiner : AbstractCombiner<Uri>
     {
+        /// <summary>
+        /// 锚点界定符。
+        /// </summary>
+        public const char AnchorDelimiter = '#';
+
+        /// <summary>
+        /// 路径分隔符。
+        /// </summary>
+        public const char PathSeparator = '/';
+
+        /// <summary>
+        /// 查询字符串界定符。
+        /// </summary>
+        public const char QueryStringDelimiter = '?';
+
+        /// <summary>
+        /// 查询字符串分隔符。
+        /// </summary>
+        public const char QueryStringSeparator = '&';
+
+        /// <summary>
+        /// 查询字符串键值对连接符。
+        /// </summary>
+        public const char QueryStringKeyValuePairConnector = '=';
+
+
         /// <summary>
         /// 构造一个 <see cref="UriCombiner"/>。
         /// </summary>
@@ -347,10 +373,19 @@ namespace Librame.Extensions.Core.Combiners
 
 
         private static Uri CombineParameters(string scheme, string host,
-            string path = default, string query = default, string anchor = null)
+            string path = null, string query = null, string anchor = null)
         {
             scheme.NotEmpty(nameof(scheme));
             host.NotEmpty(nameof(host));
+
+            if (path.IsNotEmpty())
+                path = path.EnsureLeading(PathSeparator);
+
+            if (query.IsNotEmpty())
+                query = query.EnsureLeading(QueryStringDelimiter);
+
+            if (anchor.IsNotEmpty())
+                anchor = anchor.EnsureLeading(AnchorDelimiter);
 
             return new Uri($"{scheme}{Uri.SchemeDelimiter}{host}{path}{query}{anchor}");
         }
@@ -382,11 +417,11 @@ namespace Librame.Extensions.Core.Combiners
             
             if (queryString.IsNotEmpty())
             {
-                queryString.TrimStart('?').Split('&').ForEach(segment =>
+                queryString.TrimStart(QueryStringDelimiter).Split(QueryStringSeparator).ForEach(segment =>
                 {
                     if (segment.IsNotEmpty())
                     {
-                        var pair = segment.SplitPair(); // "="
+                        var pair = segment.SplitPair(QueryStringKeyValuePairConnector);
                         var valueString = pair.Value;
 
                         if (valueString.IsNotEmpty())
@@ -404,22 +439,27 @@ namespace Librame.Extensions.Core.Combiners
         /// 将查询参数集合转换为查询字符串（内部支持对参数值的特殊字符进行转码处理）。
         /// </summary>
         /// <param name="queries">给定的查询参数集合。</param>
+        /// <param name="addStartsWithDelimiter">增加以界定符“?”开始的字符串（可选；默认增加）。</param>
         /// <returns>返回查询字符串。</returns>
-        public static string ToQuery(IEnumerable<KeyValuePair<string, string>> queries)
+        public static string ToQuery(IEnumerable<KeyValuePair<string, string>> queries,
+            bool addStartsWithDelimiter = true)
         {
-            var sb = new StringBuilder("?");
+            var sb = new StringBuilder();
+
+            if (addStartsWithDelimiter)
+                sb.Append(QueryStringDelimiter);
 
             var count = queries.Count();
             queries.ForEach((pair, i) =>
             {
                 sb.Append(pair.Key);
-                sb.Append("=");
+                sb.Append(QueryStringKeyValuePairConnector);
 
                 if (pair.Value.IsNotEmpty())
                     sb.Append(Uri.EscapeDataString(pair.Value));
 
                 if (i < count - 1)
-                    sb.Append("&");
+                    sb.Append(QueryStringSeparator);
             });
 
             return Uri.EscapeUriString(sb.ToString());

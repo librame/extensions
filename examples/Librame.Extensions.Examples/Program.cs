@@ -21,7 +21,7 @@ namespace Librame.Extensions.Examples
             // Add NLog Configuration
             NLog.LogManager.LoadConfiguration("../../../nlog.config");
 
-            Console.WriteLine("Hello, Librame Pang!");
+            Console.WriteLine("Hello, Librame Pong!");
             Console.WriteLine("Press any key to continue");
             Console.ReadKey();
 

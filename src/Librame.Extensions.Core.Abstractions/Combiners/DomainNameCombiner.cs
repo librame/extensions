@@ -1,9 +1,9 @@
 ﻿#region License
 
 /* **************************************************************************************
- * Copyright (c) zwbwl All rights reserved.
+ * Copyright (c) Librame Pong All rights reserved.
  * 
- * http://51zwb.com
+ * https://github.com/librame
  * 
  * You must not remove this notice, or any other, from this software.
  * **************************************************************************************/
@@ -117,19 +117,19 @@ namespace Librame.Extensions.Core.Combiners
         /// 顶级/一级域名（如：top.com/top.org...）。
         /// </summary>
         public string TopLevel
-            => TopLevelSegment.IsNotEmpty() ? $"{TopLevelSegment}.{Root}" : Root;
+            => TopLevelSegment.IsNotEmpty() ? $"{TopLevelSegment}{Separator}{Root}" : Root;
 
         /// <summary>
         /// 二级域名（如：second.top.com/second.top.org...）。
         /// </summary>
         public string SecondLevel
-            => SecondLevelSegment.IsNotEmpty() ? $"{SecondLevelSegment}.{TopLevel}" : TopLevel;
+            => SecondLevelSegment.IsNotEmpty() ? $"{SecondLevelSegment}{Separator}{TopLevel}" : TopLevel;
 
         /// <summary>
         /// 三级域名（如：third.second.top.com/third.second.top.org...）。
         /// </summary>
         public string ThirdLevel
-            => ThirdLevelSegment.IsNotEmpty() ? $"{ThirdLevelSegment}.{SecondLevel}" : SecondLevel;
+            => ThirdLevelSegment.IsNotEmpty() ? $"{ThirdLevelSegment}{Separator}{SecondLevel}" : SecondLevel;
 
 
         /// <summary>
