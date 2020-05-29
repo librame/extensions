@@ -24,7 +24,17 @@ namespace Librame.Extensions.Drawing.Builders
         /// </summary>
         /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
         public DrawingBuilderDependency(IExtensionBuilderDependency parentDependency = null)
-            : base(nameof(DrawingBuilderDependency), parentDependency)
+            : this(nameof(DrawingBuilderDependency), parentDependency)
+        {
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="DrawingBuilderDependency"/>。
+        /// </summary>
+        /// <param name="name">给定的名称。</param>
+        /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
+        protected DrawingBuilderDependency(string name, IExtensionBuilderDependency parentDependency = null)
+            : base(name, parentDependency)
         {
         }
 

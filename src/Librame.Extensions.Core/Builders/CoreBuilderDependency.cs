@@ -28,7 +28,16 @@ namespace Librame.Extensions.Core.Builders
         /// 构造一个 <see cref="CoreBuilderDependency"/>。
         /// </summary>
         public CoreBuilderDependency()
-            : base(nameof(CoreBuilderDependency))
+            : this(nameof(CoreBuilderDependency))
+        {
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="CoreBuilderDependency"/>。
+        /// </summary>
+        /// <param name="name">给定的名称。</param>
+        protected CoreBuilderDependency(string name)
+            : base(name)
         {
             IdentifiersDirectory = ConfigDirectory.CombinePath(CoreSettings.Preference.IdentifiersFolder);
         }

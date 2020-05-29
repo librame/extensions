@@ -35,7 +35,17 @@ namespace Librame.Extensions.Data.Builders
         /// </summary>
         /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
         public DataBuilderDependency(IExtensionBuilderDependency parentDependency = null)
-            : base(nameof(DataBuilderDependency), parentDependency)
+            : this(nameof(DataBuilderDependency), parentDependency)
+        {
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="DataBuilderDependency"/>。
+        /// </summary>
+        /// <param name="name">给定的名称。</param>
+        /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
+        protected DataBuilderDependency(string name, IExtensionBuilderDependency parentDependency = null)
+            : base(name, parentDependency)
         {
             CompilersDirectory = ConfigDirectory.CombinePath(DataSettings.Preference.CompilersFolder);
             DatabasesDierctory = ConfigDirectory.CombinePath(DataSettings.Preference.DatabasesFolder);

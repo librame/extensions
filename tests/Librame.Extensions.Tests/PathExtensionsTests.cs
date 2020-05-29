@@ -48,6 +48,18 @@ namespace Librame.Extensions.Tests
             Assert.Equal("filename", baseName);
             Assert.Equal(".ext", extension);
             Assert.NotEmpty(basePath);
+
+            var virtualPath = "/test/path";
+            (baseName, extension) = virtualPath.GetFileBaseNameAndExtension(out basePath);
+            Assert.Equal("path", baseName);
+            Assert.Equal(string.Empty, extension);
+            Assert.NotEmpty(basePath);
+
+            virtualPath = "/test/.path";
+            (baseName, extension) = virtualPath.GetFileBaseNameAndExtension(out basePath);
+            Assert.Equal(string.Empty, baseName);
+            Assert.Equal(".path", extension);
+            Assert.NotEmpty(basePath);
         }
 
 

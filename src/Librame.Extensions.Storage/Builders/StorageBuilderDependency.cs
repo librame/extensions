@@ -24,7 +24,17 @@ namespace Librame.Extensions.Storage.Builders
         /// </summary>
         /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
         public StorageBuilderDependency(IExtensionBuilderDependency parentDependency = null)
-            : base(nameof(StorageBuilderDependency), parentDependency)
+            : this(nameof(StorageBuilderDependency), parentDependency)
+        {
+        }
+
+        /// <summary>
+        /// 构造一个 <see cref="StorageBuilderDependency"/>。
+        /// </summary>
+        /// <param name="name">给定的名称。</param>
+        /// <param name="parentDependency">给定的父级 <see cref="IExtensionBuilderDependency"/>（可选）。</param>
+        protected StorageBuilderDependency(string name, IExtensionBuilderDependency parentDependency = null)
+            : base(name, parentDependency)
         {
         }
 

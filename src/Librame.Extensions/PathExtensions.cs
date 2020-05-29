@@ -137,8 +137,14 @@ namespace Librame.Extensions
             if (fileName.IsEmpty())
                 throw new ArgumentException(InternalResource.ArgumentExceptionFilePathFormat.Format(filePath));
 
-            var separatorIndex = fileName.LastIndexOf('.');
-            return (fileName.Substring(0, separatorIndex), fileName.Substring(separatorIndex)); // 保留分隔符
+            var index = fileName.LastIndexOf('.');
+
+            return index switch
+            {
+                -1 => (fileName, string.Empty),
+                0 => (string.Empty, fileName),
+                _ => (fileName.Substring(0, index), fileName.Substring(index)) // 保留分隔符
+            };
         }
 
         /// <summary>
