@@ -35,8 +35,7 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    public interface IStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> : IStoreHub,
+    public interface IStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId> : IStoreHub,
         IAuditStore<TAudit, TAuditProperty>, IEntityStore<TEntity>, IMigrationStore<TMigration>, ITenantStore<TTenant>
         where TAudit : class
         where TAuditProperty : class
@@ -44,7 +43,6 @@ namespace Librame.Extensions.Data.Stores
         where TMigration : class
         where TTenant : class
         where TGenId : IEquatable<TGenId>
-        where TIncremId : IEquatable<TIncremId>
     {
         /// <summary>
         /// 存储初始化器。
