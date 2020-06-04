@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task{TRank}"/>。</returns>
-        public Task<TRank> GetRankAsync(CancellationToken cancellationToken = default)
+        public virtual Task<TRank> GetRankAsync(CancellationToken cancellationToken = default)
             => cancellationToken.RunFactoryOrCancellationAsync(() => Rank);
 
         Task<object> IRank.GetRankAsync(CancellationToken cancellationToken)

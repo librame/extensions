@@ -41,7 +41,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task{TParentId}"/>。</returns>
-        public Task<TId> GetParentIdAsync(CancellationToken cancellationToken = default)
+        public virtual Task<TId> GetParentIdAsync(CancellationToken cancellationToken = default)
             => cancellationToken.RunFactoryOrCancellationAsync(() => ParentId);
 
         Task<object> IParentIdentifier.GetParentIdAsync(CancellationToken cancellationToken)

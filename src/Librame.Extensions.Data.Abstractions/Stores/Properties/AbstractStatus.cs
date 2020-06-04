@@ -37,7 +37,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task{TStatus}"/>。</returns>
-        public Task<TStatus> GetStatusAsync(CancellationToken cancellationToken = default)
+        public virtual Task<TStatus> GetStatusAsync(CancellationToken cancellationToken = default)
             => cancellationToken.RunFactoryOrCancellationAsync(() => Status);
 
         Task<object> IStatus.GetStatusAsync(CancellationToken cancellationToken)
