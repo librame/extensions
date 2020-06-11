@@ -131,7 +131,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
         })
         .AddDatabaseDesignTime<MySqlDesignTimeServices>()
         .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
-        //.AddStoreInitializer<TestStoreInitializer>()
+        .AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
@@ -148,7 +148,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
         })
         .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
         .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
-        //.AddStoreInitializer<TestStoreInitializer>()
+        .AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
@@ -171,7 +171,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
         })
         .AddDatabaseDesignTime<SqliteDesignTimeServices>()
         .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
-        //.AddStoreInitializer<TestStoreInitializer>()
+        .AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 

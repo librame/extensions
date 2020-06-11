@@ -131,7 +131,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         })
         .AddDatabaseDesignTime<MySqlDesignTimeServices>()
         .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
-        //.AddStoreInitializer<TestStoreInitializer>()
+        .AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
@@ -148,7 +148,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         })
         .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
         .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
-        //.AddStoreInitializer<TestStoreInitializer>()
+        .AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
@@ -171,7 +171,7 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         })
         .AddDatabaseDesignTime<SqliteDesignTimeServices>()
         .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
-        //.AddStoreInitializer<TestStoreInitializer>()
+        .AddStoreInitializer<TestStoreInitializer>()
         .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
