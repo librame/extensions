@@ -17,11 +17,11 @@ namespace Librame.Extensions.Data.Builders
 {
     using Core.Builders;
     using Core.Services;
-    using Data.Aspects;
+    using Data.Accessors;
     using Data.Mediators;
     using Data.Protectors;
-    using Data.Services;
     using Data.Stores;
+    using Data.ValueGenerators;
 
     internal class DataBuilder : AbstractExtensionBuilder, IDataBuilder
     {
@@ -30,148 +30,113 @@ namespace Librame.Extensions.Data.Builders
         {
             Services.AddSingleton<IDataBuilder>(this);
 
-            AddDataServices();
+            AddInternalServices();
         }
 
 
         public Type DatabaseDesignTimeType { get; internal set; }
+
+        public AccessorGenericTypeArguments GenericTypeArguments { get; internal set; }
 
 
         public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
             => DataBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
 
 
-        private void AddDataServices()
+        private void AddInternalServices()
         {
-            // Aspects
-            AddService(typeof(DbContextAccessorAspectDependencies<>));
-            AddServices(typeof(ISaveChangesDbContextAccessorAspect<,,,,,,>),
-                typeof(DataAuditSaveChangesDbContextAccessorAspect<,,,,,,>));
-            AddServices(typeof(IMigrateDbContextAccessorAspect<,,,,,,>),
-                typeof(DataEntityMigrateDbContextAccessorAspect<,,,,,,>),
-                typeof(DataMigrationMigrateDbContextAccessorAspect<,,,,,,>));
-
             // Mediators
             AddService(typeof(AuditNotificationHandler<,>));
-            AddService(typeof(EntityNotificationHandler<,>));
-            AddService(typeof(MigrationNotificationHandler<,>));
+            AddService(typeof(EntityNotificationHandler<>));
+            AddService(typeof(MigrationNotificationHandler<>));
 
             // Protectors
             AddService<IPrivacyDataProtector, PrivacyDataProtector>();
 
-            // Services
-            AddService(typeof(IMigrationService<,,,,,,>), typeof(MigrationService<,,,,,,>));
-            AddService(typeof(ITenantService<,,,,,,>), typeof(TenantService<,,,,,,>));
-
             // Stores
-            AddService(typeof(IStoreHub<,>), typeof(StoreHub<,>));
-            AddService(typeof(IStoreHub<,,,,,,>), typeof(StoreHub<,,,,,,>));
-            AddStoreIdentifierGenerator<GuidStoreIdentifierGenerator>();
-            AddStoreInitializer<GuidStoreInitializer>();
+            AddStoreIdentifierGenerator<GuidDataStoreIdentifierGenerator>();
+
+            // ValueGenerators
+            AddDefaultValueGenerator<GuidDefaultValueGenerator>();
         }
 
 
-        /// <summary>
-        /// 添加存储中心。
-        /// </summary>
-        /// <typeparam name="THub">指定实现 <see cref="IStoreHub{TGenId, TIncremId}"/> 或 <see cref="IStoreHub{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/> 接口的存储中心类型，推荐从 <see cref="StoreHub{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/> 中派生。</typeparam>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public virtual IDataBuilder AddStoreHub<THub>()
-            where THub : class, IStoreHub
+        public AccessorGenericTypeArguments FindGenericTypeArguments<TAccessor>()
+            => FindGenericTypeArguments(typeof(TAccessor));
+
+        public AccessorGenericTypeArguments FindGenericTypeArguments(Type accessorType)
+            => AccessorDataBuilderExtensions.GenericTypeArguments[accessorType];
+
+
+        public IDataBuilder AddGenericServiceByPopulateGenericTypeArguments(Type serviceType,
+            Type implementationTypeDefinition,
+            Func<Type, AccessorGenericTypeArguments, Type> populateServiceFactory = null,
+            Func<Type, AccessorGenericTypeArguments, Type> populateImplementationFactory = null,
+            bool addEnumerable = false, AccessorGenericTypeArguments genericTypeArguments = null)
         {
-            var hubTypeDefinition = typeof(IStoreHub<,>);
-            var hubType = typeof(THub);
+            if (false == implementationTypeDefinition?.IsGenericTypeDefinition)
+                throw new NotSupportedException($"The implementation type '{implementationTypeDefinition}' only support generic type definition.");
 
-            Type hubTypeGeneric = null;
-            if (hubType.IsImplementedInterface(hubTypeDefinition, out Type resultType))
+            if (!implementationTypeDefinition.IsImplementedInterface(serviceType, out var resultType))
+                throw new InvalidOperationException($"The type '{implementationTypeDefinition}' does not implement '{serviceType}' interface.");
+
+            var characteristics = GetServiceCharacteristics(serviceType);
+            if (serviceType.IsGenericTypeDefinition)
+                serviceType = PopulateGenericTypeArguments(serviceType, populateServiceFactory);
+
+            var implementationType = PopulateGenericTypeArguments(implementationTypeDefinition, populateImplementationFactory);
+
+            // 如果不添加为可枚举集合
+            if (!addEnumerable)
+                Services.TryReplaceAll(serviceType, implementationType, throwIfNotFound: false);
+
+            Services.AddByCharacteristics(serviceType, implementationType, characteristics);
+            return this;
+
+            // PopulateGenericTypeArguments
+            Type PopulateGenericTypeArguments(Type populateType,
+                Func<Type, AccessorGenericTypeArguments, Type> populateFactory = null)
             {
-                // 利用类型定义获取服务特征
-                var characteristics = GetServiceCharacteristics(hubTypeDefinition);
-                // 使用泛型参数填充服务类型
-                hubTypeGeneric = hubTypeDefinition.MakeGenericType(resultType.GenericTypeArguments);
-                Services.AddByCharacteristics(hubTypeGeneric, hubType, characteristics);
+                if (populateFactory.IsNull())
+                {
+                    populateFactory = (type, args) => type.MakeGenericType(
+                        args.AuditType,
+                        args.AuditPropertyType,
+                        args.EntityType,
+                        args.MigrationType,
+                        args.TenantType,
+                        args.GenIdType,
+                        args.IncremIdType,
+                        args.CreatedByType);
+                }
 
-                AddService(sp => (THub)sp.GetRequiredService(hubTypeGeneric));
+                genericTypeArguments = genericTypeArguments ?? GenericTypeArguments;
+                if (genericTypeArguments.IsNull())
+                    throw new InvalidOperationException($"Registration builder.AddAccessor().");
+
+                return populateFactory.Invoke(populateType, genericTypeArguments);
             }
+        }
 
-            var hubTypeFullDefinition = typeof(IStoreHub<,,,,,,>);
-            if (hubType.IsImplementedInterface(hubTypeFullDefinition, out resultType))
-            {
-                // 利用类型定义获取服务特征
-                var characteristics = GetServiceCharacteristics(hubTypeFullDefinition);
-                // 使用泛型参数填充服务类型
-                hubTypeGeneric = hubTypeFullDefinition.MakeGenericType(resultType.GenericTypeArguments);
-                Services.AddByCharacteristics(hubTypeGeneric, hubType, characteristics);
 
-                AddService(sp => (THub)sp.GetRequiredService(hubTypeGeneric));
-            }
+        public IDataBuilder AddDefaultValueGenerator<TGenerator>()
+            where TGenerator : IValueGeneratorIndication
+            => AddDefaultValueGenerator(typeof(TGenerator));
 
-            if (resultType.IsNull())
-                throw new ArgumentException($"The store hub type '{hubType}' does not implement '{hubTypeDefinition}' or '{hubTypeFullDefinition}' interface.");
-
+        public IDataBuilder AddDefaultValueGenerator(Type generatorType)
+        {
+            AddGenericService(typeof(IDefaultValueGenerator<>), generatorType);
             return this;
         }
 
 
-        /// <summary>
-        /// 添加存储标识符生成器。
-        /// </summary>
-        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentifierGenerator{TGenId}"/> 接口的存储标识符类型，推荐从 <see cref="AbstractStoreIdentifierGenerator{TGenId}"/> 派生。</typeparam>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public virtual IDataBuilder AddStoreIdentifierGenerator<TGenerator>()
-            where TGenerator : class, IStoreIdentifierGenerator
+        public IDataBuilder AddStoreIdentifierGenerator<TGenerator>()
+            where TGenerator : class, IStoreIdentifierGeneratorIndication
+            => AddStoreIdentifierGenerator(typeof(TGenerator));
+
+        public IDataBuilder AddStoreIdentifierGenerator(Type generatorType)
         {
-            var generatorTypeDefinition = typeof(IStoreIdentifierGenerator<>);
-            var generatorType = typeof(TGenerator);
-
-            if (generatorType.IsImplementedInterface(generatorTypeDefinition, out Type resultType))
-            {
-                // 利用类型定义获取服务特征
-                var characteristics = GetServiceCharacteristics(generatorTypeDefinition);
-                // 使用泛型参数填充服务类型
-                var generatorTypeGeneric = generatorTypeDefinition.MakeGenericType(resultType.GenericTypeArguments);
-
-                if (!Services.TryReplace(generatorTypeGeneric, generatorType, throwIfNotFound: false))
-                    Services.AddByCharacteristics(generatorTypeGeneric, generatorType, characteristics);
-
-                AddService(sp => (TGenerator)sp.GetRequiredService(generatorTypeGeneric));
-            }
-            else
-            {
-                throw new ArgumentException($"The store identifier type '{generatorType}' does not implement '{generatorTypeDefinition}' interface.");
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// 添加存储初始化器。
-        /// </summary>
-        /// <typeparam name="TInitializer">指定实现 <see cref="IStoreInitializer{TGenId}"/> 接口的存储初始化器类型，推荐从 <see cref="AbstractStoreInitializer{TGenId}"/> 派生。</typeparam>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        public virtual IDataBuilder AddStoreInitializer<TInitializer>()
-            where TInitializer : class, IStoreInitializer
-        {
-            var initializerTypeDefinition = typeof(IStoreInitializer<>);
-            var initializerType = typeof(TInitializer);
-
-            if (initializerType.IsImplementedInterface(initializerTypeDefinition, out Type resultType))
-            {
-                // 利用类型定义获取服务特征
-                var characteristics = GetServiceCharacteristics(initializerTypeDefinition);
-                // 使用泛型参数填充服务类型
-                var initializerTypeGeneric = initializerTypeDefinition.MakeGenericType(resultType.GenericTypeArguments);
-
-                if (!Services.TryReplace(initializerTypeGeneric, initializerType, throwIfNotFound: false))
-                    Services.AddByCharacteristics(initializerTypeGeneric, initializerType, characteristics);
-
-                AddService(sp => (TInitializer)sp.GetRequiredService(initializerTypeGeneric));
-            }
-            else
-            {
-                throw new ArgumentException($"The store initializer type '{initializerType}' does not implement '{initializerTypeDefinition}' interface.");
-            }
-
+            AddGenericService(typeof(IStoreIdentifierGenerator<>), generatorType);
             return this;
         }
 

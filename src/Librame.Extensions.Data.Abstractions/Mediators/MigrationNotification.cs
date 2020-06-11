@@ -10,21 +10,16 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Data.Mediators
 {
     using Core.Mediators;
-    using Data.Stores;
 
     /// <summary>
     /// 迁移通知。
     /// </summary>
     /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
-    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    public class MigrationNotification<TMigration, TGenId> : INotification
-        where TMigration : DataMigration<TGenId>
-        where TGenId : IEquatable<TGenId>
+    public class MigrationNotification<TMigration> : INotificationIndication
+        where TMigration : class
     {
         /// <summary>
         /// 迁移。

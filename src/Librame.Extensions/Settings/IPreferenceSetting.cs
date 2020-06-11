@@ -15,6 +15,19 @@ namespace Librame.Extensions
     /// <summary>
     /// 偏好设置接口。
     /// </summary>
+    /// <typeparam name="TOptions">指定的设置选项类型。</typeparam>
+    public interface IPreferenceSetting<TOptions> : IPreferenceSetting
+    {
+        /// <summary>
+        /// 设置选项。
+        /// </summary>
+        TOptions Options { get; }
+    }
+
+
+    /// <summary>
+    /// 偏好设置接口。
+    /// </summary>
     public interface IPreferenceSetting
     {
         /// <summary>

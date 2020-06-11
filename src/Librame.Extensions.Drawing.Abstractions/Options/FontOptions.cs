@@ -20,7 +20,7 @@ namespace Librame.Extensions.Drawing.Options
     public class FontOptions
     {
         /// <summary>
-        /// 字体文件组合器。
+        /// 字体文件路径。
         /// </summary>
         public FilePathCombiner FilePath { get; set; }
             = new FilePathCombiner("font.ttf");

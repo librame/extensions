@@ -26,7 +26,8 @@ namespace Librame.Extensions
     /// <summary>
     /// 扩展偏好设置。
     /// </summary>
-    public class ExtensionPreferenceSetting : AbstractPreferenceSetting, IExtensionPreferenceSetting
+    public class ExtensionPreferenceSetting : AbstractPreferenceSetting<ExtensionPreferenceSettingOptions>,
+        IExtensionPreferenceSetting
     {
         private readonly List<object> _lockers
             = new List<object>();
@@ -34,6 +35,16 @@ namespace Librame.Extensions
         // 禁止只读限制
         private Lazy<SpinLock> _spinLock
             = new Lazy<SpinLock>(() => new SpinLock());
+
+
+        /// <summary>
+        /// 构造一个 <see cref="ExtensionPreferenceSetting"/>。
+        /// </summary>
+        public ExtensionPreferenceSetting()
+            : base("librame_extensions.keys".CombineCurrentDirectory(),
+                  ExtensionPreferenceSettingOptions.GetDefaultOptions)
+        {
+        }
 
 
         /// <summary>
@@ -312,49 +323,49 @@ namespace Librame.Extensions
         /// HMAC 键控短密钥。
         /// </summary>
         public virtual string HmacShortKey
-            => "7Rka278mPkmw45a3gtsNWRka278mPkmw45a3gtsNWe0ZGtu/Jj5JsOOWt4LbDVntGRrbvyY+SbDjlreC2w1Z7Q==";
+            => Options.HmacShortKey;
 
         /// <summary>
         /// HMAC 键控长密钥。
         /// </summary>
         public virtual string HmacLongKey
-            => "7Rka278mPkmw45a3gtsNWRka278mPkmw45a3gtsNWe0ZGtu/Jj5JsOOWt4LbDVntGRrbvyY+SbDjlreC2w1Z7Rka278mPkmw45a3gtsNWe0ZGtu/Jj5JsOOWt4LbDVntGRrbvyY+SbDjlreC2w1Z7Rka278mPkmw45a3gtsNWe0=";
+            => Options.HmacLongKey;
 
         /// <summary>
         /// AES 密钥。
         /// </summary>
         public virtual string AesKey
-            => "JUmlxL8G806eU4R5eSU+mEmlxL8G806eU4R5eSU+mCU=";
+            => Options.AesKey;
 
         /// <summary>
         /// AES 向量。
         /// </summary>
         public virtual string AesVector
-            => "nk7zBr/EpUmYPiV5eYRTng==";
+            => Options.AesVector;
 
         /// <summary>
         /// DES 密钥。
         /// </summary>
         public virtual string DesKey
-            => "JUmlxL8G804=";
+            => Options.DesKey;
 
         /// <summary>
         /// DES 向量。
         /// </summary>
         public virtual string DesVector
-            => "mD4leXmEU54=";
+            => Options.DesVector;
 
         /// <summary>
         /// TripleDES 密钥。
         /// </summary>
         public virtual string TripleDesKey
-            => "JUmlxL8G806eU4R5eSU+mEmlxL8G806e";
+            => Options.TripleDesKey;
 
         /// <summary>
         /// TripleDES 向量。
         /// </summary>
         public virtual string TripleDesVector
-            => "mD4leXmEU54=";
+            => Options.TripleDesVector;
 
         #endregion
 
@@ -414,10 +425,10 @@ namespace Librame.Extensions
         #region Encoding Extensions
 
         /// <summary>
-        /// 默认字符编码（UTF-8）。
+        /// 默认字符编码 <see cref="ExtensionSettings.UTF8Encoding"/>。
         /// </summary>
         public virtual Encoding DefaultEncoding
-            => Encoding.UTF8;
+            => ExtensionSettings.UTF8Encoding;
 
         #endregion
 

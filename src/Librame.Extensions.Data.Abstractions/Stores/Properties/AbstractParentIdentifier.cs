@@ -37,37 +37,28 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 获取父标识。
+        /// 异步获取对象标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task{TParentId}"/>。</returns>
-        public virtual Task<TId> GetParentIdAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => ParentId);
-
-        Task<object> IParentIdentifier.GetParentIdAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)ParentId);
-
+        /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
+        public virtual ValueTask<object> GetObjectParentIdAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)ParentId);
 
         /// <summary>
-        /// 设置父标识。
+        /// 异步设置对象标识。
         /// </summary>
-        /// <param name="parentId">给定的 <typeparamref name="TId"/>。</param>
+        /// <param name="newParentId">给定的新对象标识。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetParentIdAsync(TId parentId, CancellationToken cancellationToken = default)
-            => cancellationToken.RunActionOrCancellationAsync(() => ParentId = parentId);
-
-        /// <summary>
-        /// 设置父标识。
-        /// </summary>
-        /// <param name="obj">给定的父标识对象。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetParentIdAsync(object obj, CancellationToken cancellationToken = default)
+        /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
+        public virtual ValueTask<object> SetObjectParentIdAsync(object newParentId, CancellationToken cancellationToken = default)
         {
-            var parentId = obj.CastTo<object, TId>(nameof(obj));
+            var realNewParentId = newParentId.CastTo<object, TId>(nameof(newParentId));
 
-            return cancellationToken.RunActionOrCancellationAsync(() => ParentId = parentId);
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                ParentId = realNewParentId;
+                return newParentId;
+            });
         }
 
     }

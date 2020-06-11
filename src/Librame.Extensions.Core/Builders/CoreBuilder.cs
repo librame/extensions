@@ -32,7 +32,7 @@ namespace Librame.Extensions.Core.Builders
             Services.AddSingleton<ICoreBuilder>(this);
             Services.AddSingleton(sp => (IExtensionBuilder)sp.GetRequiredService<ICoreBuilder>());
 
-            AddCoreServices();
+            AddInternalServices();
         }
 
 
@@ -40,7 +40,7 @@ namespace Librame.Extensions.Core.Builders
             => CoreBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
 
 
-        private void AddCoreServices()
+        private void AddInternalServices()
         {
             // Decorators
             AddService(typeof(IDecorator<,>), typeof(CoreDecorator<,>));
@@ -51,9 +51,10 @@ namespace Librame.Extensions.Core.Builders
             AddService<ISecurityIdentifierProtector, SecurityIdentifierProtector>();
 
             // Localizers
+            AddService(typeof(IEnhancedStringLocalizer<>), typeof(EnhancedStringLocalizer<>));
             AddService(typeof(IDictionaryStringLocalizer<>), typeof(DictionaryStringLocalizer<>));
             AddService<IDictionaryStringLocalizerFactory, CoreResourceDictionaryStringLocalizerFactory>();
-            Services.TryReplace<IStringLocalizerFactory, CoreResourceManagerStringLocalizerFactory>();
+            Services.TryReplaceAll<IStringLocalizerFactory, CoreResourceManagerStringLocalizerFactory>();
 
             // Mediators
             AddServices(typeof(IRequestPipelineBehavior<,>),
@@ -63,7 +64,7 @@ namespace Librame.Extensions.Core.Builders
             AddService<IMediator, ServiceFactoryMediator>();
 
             // Options
-            Services.TryReplace(typeof(IOptionsFactory<>), typeof(ConsistencyOptionsFactory<>));
+            Services.TryReplaceAll(typeof(IOptionsFactory<>), typeof(ConsistencyOptionsFactory<>));
 
             // Services
             AddService<ServiceFactory>(sp => sp.GetService);

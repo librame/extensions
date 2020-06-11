@@ -35,7 +35,8 @@ namespace Librame.Extensions.Core.Proxies
         /// <param name="source">给定的源实例（可选）。</param>
         /// <param name="dependency">给定的 <see cref="IInvokeDependency{TSource}"/>（可选）。</param>
         /// <param name="validation"></param>
-        protected AbstractDependencyProxy(TInterface source = null, IInvokeDependency<TInterface> dependency = null,
+        protected AbstractDependencyProxy(TInterface source = null,
+            IInvokeDependency<TInterface> dependency = null,
             IInvokeValidation validation = null)
         {
             if (source.IsNotNull())

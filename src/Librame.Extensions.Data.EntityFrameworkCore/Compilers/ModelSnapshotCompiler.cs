@@ -29,7 +29,6 @@ namespace Librame.Extensions.Data.Compilers
     using Core.Combiners;
     using Data.Accessors;
     using Data.Builders;
-    using System.Dynamic;
 
     /// <summary>
     /// 模型快照编译器。
@@ -63,7 +62,7 @@ namespace Librame.Extensions.Data.Compilers
             accessor.NotNull(nameof(accessor));
             
             var dependency = accessor.GetService<DataBuilderDependency>();
-            var basePath = basePathFactory?.Invoke(dependency) ?? dependency.CompilersDirectory;
+            var basePath = basePathFactory?.Invoke(dependency) ?? dependency.CompilersConfigDirectory;
 
             var builder = accessor.GetService<IDataBuilder>();
             return CombineFilePath(accessor.CurrentType, builder.DatabaseDesignTimeType,

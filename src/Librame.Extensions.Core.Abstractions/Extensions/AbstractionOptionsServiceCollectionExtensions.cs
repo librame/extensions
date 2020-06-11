@@ -49,8 +49,11 @@ namespace Microsoft.Extensions.DependencyInjection
 
             foreach (var serviceType in serviceTypes)
             {
-                if (services.TryGet(serviceType, out ServiceDescriptor serviceDescriptor))
-                    yield return serviceDescriptor;
+                if (services.TryGetAll(serviceType, out var descriptors))
+                {
+                    foreach (var descriptor in descriptors)
+                        yield return descriptor;
+                }
             }
         }
 
@@ -79,7 +82,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var serviceTypes = FindIConfigureOptions(configureOptionsType);
 
             foreach (var serviceType in serviceTypes)
-                services.TryReplace(serviceType, configureOptionsType);
+                services.TryReplaceAll(serviceType, configureOptionsType);
 
             return true;
         }
@@ -98,7 +101,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var serviceTypes = FindIConfigureOptions(configureOptionsInstance.GetType());
 
             foreach (var serviceType in serviceTypes)
-                services.TryReplace(serviceType, configureOptionsInstance);
+                services.TryReplaceAll(serviceType, configureOptionsInstance);
 
             return true;
         }
@@ -121,6 +124,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return serviceTypes;
 
+            // IsAction
             bool IsAction()
             {
                 return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Action<>);

@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.5.0.8</Version>
+    <Version>7.6.0.1</Version>
     <Authors>Librame Pong</Authors>
     <Company>https://github.com/librame</Company>
     <Description>Based Librame.Extensions.Core.Abstractions on Encryption extension package.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Core.Abstractions on Encryption extension package.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.Extensions.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.5.0.8</AssemblyVersion>
-    <FileVersion>7.5.1140.17415</FileVersion>
+    <AssemblyVersion>7.6.0.1</AssemblyVersion>
+    <FileVersion>7.6.1153.17415</FileVersion>
     <RootNamespace>Librame.Extensions.Encryption</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>

@@ -23,9 +23,9 @@ namespace Librame.Extensions.Core.Mediators
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class NotificationHandlerWrapper<TNotification> : INotificationHandlerWrapper<TNotification>
-        where TNotification : INotification
+        where TNotification : INotificationIndication
     {
-        public Task HandleAsync(INotification notification, ServiceFactory serviceFactory,
+        public Task HandleAsync(INotificationIndication notification, ServiceFactory serviceFactory,
             CancellationToken cancellationToken = default)
         {
             var handlers = serviceFactory.GetRequiredService<IEnumerable<INotificationHandler<TNotification>>>();

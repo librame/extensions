@@ -42,11 +42,21 @@ namespace Librame.Extensions.Data.Resources
         /// <summary>
         /// 写入分离。
         /// </summary>
-        public string WriteConnectionSeparation { get; set; }
+        public string WriteSeparation { get; set; }
 
         /// <summary>
         /// 加密连接字符串集合。
         /// </summary>
         public string EncryptedConnectionStrings { get; set; }
+
+        /// <summary>
+        /// 数据同步。
+        /// </summary>
+        public string DataSynchronization { get; set; }
+
+        /// <summary>
+        /// 结构同步。
+        /// </summary>
+        public string StructureSynchronization { get; set; }
     }
 }

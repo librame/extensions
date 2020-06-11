@@ -10,6 +10,8 @@
 
 #endregion
 
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +23,7 @@ namespace Librame.Extensions.Data.Aspects
     using Data.Accessors;
     using Data.Builders;
     using Data.Stores;
+    using Data.ValueGenerators;
 
     /// <summary>
     /// 数据库上下文访问器截面基类。
@@ -32,34 +35,61 @@ namespace Librame.Extensions.Data.Aspects
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    public class DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> : AbstractExtensionBuilderService<DataBuilderOptions>
-        , IDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        where TAudit : DataAudit<TGenId>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+    public class DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+        : AbstractExtensionBuilderService<DataBuilderOptions>, IAccessorAspect<TGenId, TCreatedBy>
+        where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId>
-        where TMigration : DataMigration<TGenId>
-        where TTenant : DataTenant<TGenId>
+        where TEntity : DataEntity<TGenId, TCreatedBy>
+        where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
         /// 构造一个数据库上下文访问器截面基类。
         /// </summary>
-        /// <param name="dependencies">给定的 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</param>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</param>
+        /// <param name="createdByGenerator">给定的 <see cref="IDefaultValueGenerator{TValue}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="priority">给定的服务优先级（数值越小越优先）。</param>
-        protected DbContextAccessorAspectBase(DbContextAccessorAspectDependencies<TGenId> dependencies, float priority)
-            : base(dependencies)
+        protected DbContextAccessorAspectBase(IClockService clock,
+            IStoreIdentifierGenerator<TGenId> identifierGenerator,
+            IDefaultValueGenerator<TCreatedBy> createdByGenerator,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory,
+            float priority)
+            : base(options, loggerFactory)
         {
-            Dependencies = dependencies;
+            Clock = clock.NotNull(nameof(clock));
+
+            IdentifierGenerator = identifierGenerator.CastTo<IStoreIdentifierGenerator<TGenId>,
+                IDataStoreIdentifierGenerator<TGenId>>(nameof(identifierGenerator));
+
+            CreatedByGenerator = createdByGenerator.NotNull(nameof(createdByGenerator));
+
             Priority = priority;
         }
 
 
         /// <summary>
-        /// 依赖集合。
+        /// 时钟服务。
         /// </summary>
-        /// <value>返回 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</value>
-        public DbContextAccessorAspectDependencies<TGenId> Dependencies { get; }
+        /// <value>返回 <see cref="IClockService"/>。</value>
+        public IClockService Clock { get; }
+
+        /// <summary>
+        /// 存储标识符生成器。
+        /// </summary>
+        /// <value>返回 <see cref="IDataStoreIdentifierGenerator{TGenId}"/>。</value>
+        public IDataStoreIdentifierGenerator<TGenId> IdentifierGenerator { get; }
+
+        /// <summary>
+        /// 创建者默认值生成器。
+        /// </summary>
+        public IDefaultValueGenerator<TCreatedBy> CreatedByGenerator { get; }
 
         /// <summary>
         /// 服务优先级（数值越小越优先）。
@@ -77,21 +107,21 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 前置处理。
         /// </summary>
-        /// <param name="accessor">给定的 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/>。</param>
-        public virtual void PreProcess(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor)
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        public virtual void PreProcess(IAccessor accessor)
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 PreProcessCore(dbContextAccessor);
         }
 
         /// <summary>
         /// 前置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         protected virtual void PreProcessCore
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
         }
 
@@ -99,16 +129,14 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 异步前置处理。
         /// </summary>
-        /// <param name="accessor">给定的 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/>。</param>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task PreProcessAsync
-            (IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor,
-            CancellationToken cancellationToken = default)
+        public virtual Task PreProcessAsync(IAccessor accessor, CancellationToken cancellationToken = default)
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 return PreProcessCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.CompletedTask;
@@ -117,11 +145,11 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 异步前置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         protected virtual Task PreProcessCoreAsync
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 
@@ -133,21 +161,21 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 后置处理。
         /// </summary>
-        /// <param name="accessor">给定的 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/>。</param>
-        public virtual void PostProcess(IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor)
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        public virtual void PostProcess(IAccessor accessor)
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 PostProcessCore(dbContextAccessor);
         }
 
         /// <summary>
         /// 后置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         protected virtual void PostProcessCore
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
         }
 
@@ -155,16 +183,14 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 异步后置处理。
         /// </summary>
-        /// <param name="accessor">给定的 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/>。</param>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task PostProcessAsync
-            (IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> accessor,
-            CancellationToken cancellationToken = default)
+        public virtual Task PostProcessAsync(IAccessor accessor, CancellationToken cancellationToken = default)
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 return PostProcessCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.CompletedTask;
@@ -173,11 +199,11 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 异步后置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         protected virtual Task PostProcessCoreAsync
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 
@@ -199,7 +225,8 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="obj">给定的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => obj is DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> sortable && Priority == sortable?.Priority;
+            => obj is DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> sortable
+            && Priority == sortable?.Priority;
 
 
         /// <summary>
@@ -213,61 +240,61 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 相等比较。
         /// </summary>
-        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="left">给定的数据库上下文访问器截面基类。</param>
+        /// <param name="right">给定的数据库上下文访问器截面基类。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator ==(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
-            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+        public static bool operator ==(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> right)
             => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.Equals(right);
 
         /// <summary>
         /// 不等比较。
         /// </summary>
-        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="left">给定的数据库上下文访问器截面基类。</param>
+        /// <param name="right">给定的数据库上下文访问器截面基类。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator !=(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
-            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+        public static bool operator !=(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> right)
             => !(left == right);
 
         /// <summary>
         /// 小于比较。
         /// </summary>
-        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="left">给定的数据库上下文访问器截面基类。</param>
+        /// <param name="right">给定的数据库上下文访问器截面基类。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator <(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
-            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+        public static bool operator <(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> right)
             => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
 
         /// <summary>
         /// 小于等于比较。
         /// </summary>
-        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="left">给定的数据库上下文访问器截面基类</param>
+        /// <param name="right">给定的数据库上下文访问器截面基类。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator <=(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
-            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+        public static bool operator <=(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> right)
             => ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
 
         /// <summary>
         /// 大于比较。
         /// </summary>
-        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="left">给定的数据库上下文访问器截面基类。</param>
+        /// <param name="right">给定的数据库上下文访问器截面基类。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator >(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
-            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+        public static bool operator >(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> right)
             => !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
 
         /// <summary>
         /// 大于等于比较。
         /// </summary>
-        /// <param name="left">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
-        /// <param name="right">给定的 <see cref="DbContextAccessorAspectBase{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="left">给定的数据库上下文访问器截面基类。</param>
+        /// <param name="right">给定的数据库上下文访问器截面基类。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool operator >=(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> left,
-            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> right)
+        public static bool operator >=(DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> left,
+            DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> right)
             => ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
     }
 }

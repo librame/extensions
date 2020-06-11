@@ -8,9 +8,10 @@ namespace Librame.Models
 
     [Description("文章")]
     [Shardable]
-    public class Article<TGenId, TIncremId> : AbstractEntityCreation<TGenId>
+    public class Article<TGenId, TIncremId, TCreatedBy> : AbstractIdentifierEntityCreation<TGenId, TCreatedBy>
         where TIncremId : IEquatable<TIncremId>
         where TGenId : IEquatable<TGenId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         public string Title { get; set; }
 
@@ -18,7 +19,7 @@ namespace Librame.Models
 
         public int CategoryId { get; set; }
 
-        public Category<TIncremId, TGenId> Category { get; set; }
+        public Category<TIncremId, TGenId, TCreatedBy> Category { get; set; }
 
 
         public override string ToString()

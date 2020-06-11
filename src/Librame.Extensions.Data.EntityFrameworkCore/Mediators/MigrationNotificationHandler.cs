@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,12 +18,10 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Mediators
 {
     using Core.Mediators;
-    using Data.Stores;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-    internal class MigrationNotificationHandler<TMigration, TGenId> : AbstractNotificationHandler<MigrationNotification<TMigration, TGenId>>
-        where TMigration : DataMigration<TGenId>
-        where TGenId : IEquatable<TGenId>
+    internal class MigrationNotificationHandler<TMigration> : AbstractNotificationHandler<MigrationNotification<TMigration>>
+        where TMigration : class
     {
         public MigrationNotificationHandler(ILoggerFactory loggerFactory)
             : base(loggerFactory)
@@ -32,7 +29,7 @@ namespace Librame.Extensions.Data.Mediators
         }
 
 
-        public override Task HandleAsync(MigrationNotification<TMigration, TGenId> notification, CancellationToken cancellationToken = default)
+        public override Task HandleAsync(MigrationNotification<TMigration> notification, CancellationToken cancellationToken = default)
         {
             return cancellationToken.RunFactoryOrCancellationAsync(() =>
             {

@@ -7,32 +7,33 @@ namespace Librame.Extensions.Data.Tests
 {
     using Models;
     using Stores;
+    using ValueGenerators;
 
-    public class TestStoreInitializer : GuidStoreInitializer
+    public class TestStoreInitializer : GuidDataStoreInitializer<int>
     {
         private readonly string _categoryName
-            = typeof(Category<int, Guid>).GetGenericBodyName();
+            = typeof(Category<int, Guid, Guid>).GetGenericBodyName();
         private readonly string _articleName
-            = typeof(Article<Guid, int>).GetGenericBodyName();
+            = typeof(Article<Guid, int, Guid>).GetGenericBodyName();
 
-        private readonly string _createdBy;
-
-        private IList<Category<int, Guid>> _categories;
+        private IList<Category<int, Guid, Guid>> _categories;
 
 
-        public TestStoreInitializer(IStoreIdentifierGenerator<Guid> identifierGenerator, ILoggerFactory loggerFactory)
-            : base(identifierGenerator, loggerFactory)
+        public TestStoreInitializer(IDefaultValueGenerator<Guid> createdByGenerator,
+            IStoreIdentifierGenerator<Guid> identifierGenerator,
+            ILoggerFactory loggerFactory)
+            : base(createdByGenerator, identifierGenerator, loggerFactory)
         {
-            _createdBy = EntityPopulator.FormatTypeName(GetType());
         }
 
 
-        protected override void InitializeCore<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TIncremId>
-            (IStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, Guid, TIncremId> stores)
+        protected override void InitializeData(IDataStoreHub<DataAudit<Guid, Guid>,
+            DataAuditProperty<int, Guid>, DataEntity<Guid, Guid>, DataMigration<Guid, Guid>,
+            DataTenant<Guid, Guid>, Guid> dataStores)
         {
-            base.InitializeCore(stores);
+            base.InitializeData(dataStores);
 
-            if (stores.Accessor is TestDbContextAccessor dbContextAccessor)
+            if (dataStores.Accessor is TestDbContextAccessor dbContextAccessor)
             {
                 InitializeCategories(dbContextAccessor);
 
@@ -44,19 +45,19 @@ namespace Librame.Extensions.Data.Tests
         {
             if (!accessor.Categories.Any())
             {
-                _categories = new List<Category<int, Guid>>
+                _categories = new List<Category<int, Guid, Guid>>
                 {
-                    new Category<int, Guid>
+                    new Category<int, Guid, Guid>
                     {
                         Name = $"First {_categoryName}",
                         CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
-                        CreatedBy = _createdBy
+                        CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult()
                     },
-                    new Category<int, Guid>
+                    new Category<int, Guid, Guid>
                     {
                         Name = $"Last {_categoryName}",
                         CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
-                        CreatedBy = _createdBy
+                        CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult()
                     }
                 };
 
@@ -78,19 +79,19 @@ namespace Librame.Extensions.Data.Tests
         {
             if (!stores.Categories.Any())
             {
-                var articles = new List<Article<Guid, int>>();
+                var articles = new List<Article<Guid, int, Guid>>();
                 var identifier = IdentifierGenerator as TestGuidStoreIdentifierGenerator;
 
                 for (int i = 0; i < 100; i++)
                 {
-                    var article = new Article<Guid, int>
+                    var article = new Article<Guid, int, Guid>
                     {
                         Id = identifier.GetArticleIdAsync().ConfigureAndResult(),
                         Title = $"{_articleName} {i.FormatString(3)}",
                         Descr = $"Descr {i.FormatString(3)}",
                         Category = (i < 50) ? _categories.First() : _categories.Last(),
                         CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
-                        CreatedBy = GetType().GetDisplayName()
+                        CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult()
                     };
 
                     article.CreatedTimeTicks = article.CreatedTime.Ticks;

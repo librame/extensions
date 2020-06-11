@@ -24,6 +24,7 @@ namespace Librame.Extensions.Core.Localizers
     /// <typeparam name="TResource">指定的资源类型。</typeparam>
     public class DictionaryStringLocalizer<TResource> : IDictionaryStringLocalizer<TResource>
     {
+        private readonly IDictionaryStringLocalizerFactory _factory;
         private IStringLocalizer _localizer;
 
 
@@ -34,7 +35,7 @@ namespace Librame.Extensions.Core.Localizers
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public DictionaryStringLocalizer(IDictionaryStringLocalizerFactory factory)
         {
-            factory.NotNull(nameof(factory));
+            _factory = factory.NotNull(nameof(factory));
             _localizer = factory.Create(typeof(TResource));
         }
 
@@ -66,13 +67,18 @@ namespace Librame.Extensions.Core.Localizers
             => _localizer.GetAllStrings(includeParentCultures);
 
 
-        /// <summary>
-        /// 带文化信息。
-        /// </summary>
-        /// <param name="culture">给定的 <see cref="CultureInfo"/>（可选；默认为 <see cref="CultureInfo.CurrentUICulture"/>）。</param>
-        /// <returns>返回 <see cref="IStringLocalizer"/>。</returns>
+        /// <inheritdoc />
         [Obsolete("This method is obsolete. Use `CurrentCulture` and `CurrentUICulture` instead.")]
         public IStringLocalizer WithCulture(CultureInfo culture)
             => _localizer.WithCulture(culture);
+
+
+        /// <summary>
+        /// 带有资源。
+        /// </summary>
+        /// <typeparam name="TNewResource">指定的新资源类型。</typeparam>
+        /// <returns>返回 <see cref="DictionaryStringLocalizer{TNewResource}"/>。</returns>
+        public IDictionaryStringLocalizer<TNewResource> WithResource<TNewResource>()
+            => new DictionaryStringLocalizer<TNewResource>(_factory);
     }
 }

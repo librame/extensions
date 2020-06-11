@@ -27,9 +27,14 @@ namespace Librame.Extensions.Data.Accessors
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    public class DbContextAccessor<TGenId, TIncremId> : DbContextAccessor<DataAudit<TGenId>, DataAuditProperty<TIncremId, TGenId>, DataEntity<TGenId>, DataMigration<TGenId>, DataTenant<TGenId>, TGenId, TIncremId>, IDbContextAccessor<TGenId, TIncremId>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+    public class DbContextAccessor<TGenId, TIncremId, TCreatedBy>
+        : DbContextAccessor<DataAudit<TGenId, TCreatedBy>, DataAuditProperty<TIncremId, TGenId>,
+            DataEntity<TGenId, TCreatedBy>, DataMigration<TGenId, TCreatedBy>, DataTenant<TGenId, TCreatedBy>,
+            TGenId, TIncremId, TCreatedBy>, IDbContextAccessor<TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
         /// 构造一个数据库上下文访问器。
@@ -52,15 +57,17 @@ namespace Librame.Extensions.Data.Accessors
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    public class DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+    public class DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
         : DbContextAccessorBase, IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
-        where TAudit : DataAudit<TGenId>
+        where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId>
-        where TMigration : DataMigration<TGenId>
-        where TTenant : DataTenant<TGenId>
+        where TEntity : DataEntity<TGenId, TCreatedBy>
+        where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
         /// 构造一个数据库上下文访问器。
@@ -119,7 +126,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回受影响的行数。</returns>
         protected override int SaveChangesCore(bool acceptAllChangesOnSuccess)
         {
-            var aspects = GetService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
+            var aspects = GetService<IServicesManager<ISaveChangesAccessorAspect<TGenId, TCreatedBy>>>();
             aspects.ForEach(aspect =>
             {
                 if (aspect.Enabled)
@@ -147,7 +154,7 @@ namespace Librame.Extensions.Data.Accessors
         protected override async Task<int> SaveChangesCoreAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
-            var aspects = GetService<IServicesManager<ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>>();
+            var aspects = GetService<IServicesManager<ISaveChangesAccessorAspect<TGenId, TCreatedBy>>>();
             aspects.ForEach(async aspect =>
             {
                 if (aspect.Enabled)
@@ -176,7 +183,7 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         protected override void MigrateCore()
         {
-            var migration = GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
+            var migration = GetService<IMigrationAccessorService>();
             migration.Migrate(this);
         }
 
@@ -187,7 +194,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回 <see cref="Task"/>。</returns>
         protected override Task MigrateCoreAsync(CancellationToken cancellationToken = default)
         {
-            var migration = GetService<IMigrationService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
+            var migration = GetService<IMigrationAccessorService>();
             return migration.MigrateAsync(this, cancellationToken);
         }
 
@@ -202,7 +209,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回 <see cref="ITenant"/>。</returns>
         protected override ITenant SwitchTenant()
         {
-            var tenant = GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
+            var tenant = GetService<IMultiTenantAccessorService>();
             return tenant.GetSwitchTenant(this);
         }
 
@@ -213,7 +220,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回包含 <see cref="ITenant"/> 的异步操作。</returns>
         protected override Task<ITenant> SwitchTenantAsync(CancellationToken cancellationToken = default)
         {
-            var tenant = GetService<ITenantService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>>();
+            var tenant = GetService<IMultiTenantAccessorService>();
             return tenant.GetSwitchTenantAsync(this, cancellationToken);
         }
 

@@ -67,8 +67,7 @@ namespace Librame.Extensions.Core.Services
         /// </summary>
         /// <returns>返回整数值。</returns>
         public override int GetHashCode()
-            => Lifetime.GetHashCode()
-            ^ TryAdd.GetHashCode();
+            => Lifetime.GetHashCode() ^ TryAdd.GetHashCode();
 
 
         /// <summary>

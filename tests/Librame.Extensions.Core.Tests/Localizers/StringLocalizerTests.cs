@@ -4,8 +4,6 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    using Resources;
-
     public class StringLocalizerTests
     {
         [Fact]
@@ -15,10 +13,5 @@ namespace Librame.Extensions.Core.Tests
             Assert.True(localizer.GetString(r => r.Name).ResourceNotFound);
         }
 
-    }
-
-    public class TestResource : IResource
-    {
-        public string Name { get; set; }
     }
 }

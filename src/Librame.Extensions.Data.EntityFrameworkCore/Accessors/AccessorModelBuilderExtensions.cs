@@ -34,18 +34,20 @@ namespace Librame.Extensions.Data.Accessors
         /// <typeparam name="TTenant">指定的租户类型。</typeparam>
         /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+        /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="accessor">给定的数据库上下文访问器。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static void ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-            (this ModelBuilder modelBuilder, DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> accessor)
-            where TAudit : DataAudit<TGenId>
+        public static void ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+            (this ModelBuilder modelBuilder, DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> accessor)
+            where TAudit : DataAudit<TGenId, TCreatedBy>
             where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-            where TEntity : DataEntity<TGenId>
-            where TMigration : DataMigration<TGenId>
-            where TTenant : DataTenant<TGenId>
+            where TEntity : DataEntity<TGenId, TCreatedBy>
+            where TMigration : DataMigration<TGenId, TCreatedBy>
+            where TTenant : DataTenant<TGenId, TCreatedBy>
             where TGenId : IEquatable<TGenId>
             where TIncremId : IEquatable<TIncremId>
+            where TCreatedBy : IEquatable<TCreatedBy>
         {
             modelBuilder.NotNull(nameof(modelBuilder));
             accessor.NotNull(nameof(accessor));
@@ -78,7 +80,6 @@ namespace Librame.Extensions.Data.Accessors
                     b.Property(p => p.EntityId).HasMaxLength(maxLength);
                     b.Property(p => p.TableName).HasMaxLength(maxLength);
                     b.Property(p => p.StateName).HasMaxLength(maxLength);
-                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
 
                     // 在 MySQL 中如果长度超出 255 会被转换为不能作为主键或唯一性约束 的 BLOB/TEXT 类型
                     b.Property(p => p.EntityTypeName).HasMaxLength(maxLength).IsRequired();
@@ -139,7 +140,6 @@ namespace Librame.Extensions.Data.Accessors
                     b.Property(p => p.EntityName).HasMaxLength(maxLength);
                     b.Property(p => p.AssemblyName).HasMaxLength(maxLength);
                     b.Property(p => p.Description).HasMaxLength(maxLength);
-                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
                 }
 
                 b.Property(p => p.IsSharding).HasDefaultValue(false);
@@ -167,7 +167,6 @@ namespace Librame.Extensions.Data.Accessors
                     b.Property(p => p.ModelHash).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.AccessorName).HasMaxLength(maxLength);
                     b.Property(p => p.ModelSnapshotName).HasMaxLength(maxLength);
-                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
                 }
             });
 
@@ -193,8 +192,6 @@ namespace Librame.Extensions.Data.Accessors
                     b.Property(p => p.Host).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.DefaultConnectionString).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.WritingConnectionString).HasMaxLength(maxLength);
-                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
-                    b.Property(p => p.UpdatedBy).HasMaxLength(maxLength);
                 }
 
                 if (protectPrivacyData)

@@ -6,7 +6,7 @@ using System.Globalization;
 namespace Librame.Extensions.Data.Tests
 {
     using Core.Utilities;
-    using Resources;
+    using Data.Resources;
 
     public class DataMigrationResourceTests
     {
@@ -24,17 +24,17 @@ namespace Librame.Extensions.Data.Tests
         {
             CultureInfoUtility.Register(new CultureInfo(cultureName));
 
-            var accessorName = localizer.GetString(r => r.AccessorName);
-            Assert.False(accessorName.ResourceNotFound);
+            var localized = localizer.GetString(r => r.AccessorName);
+            Assert.False(localized.ResourceNotFound);
 
-            var modelSnapshotName = localizer.GetString(r => r.ModelSnapshotName);
-            Assert.False(modelSnapshotName.ResourceNotFound);
+            localized = localizer.GetString(r => r.ModelSnapshotName);
+            Assert.False(localized.ResourceNotFound);
 
-            var modelHash = localizer.GetString(r => r.ModelHash);
-            Assert.False(modelHash.ResourceNotFound);
+            localized = localizer.GetString(r => r.ModelHash);
+            Assert.False(localized.ResourceNotFound);
 
-            var modelBody = localizer.GetString(r => r.ModelBody);
-            Assert.False(modelBody.ResourceNotFound);
+            localized = localizer.GetString(r => r.ModelBody);
+            Assert.False(localized.ResourceNotFound);
         }
 
     }

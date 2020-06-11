@@ -18,7 +18,7 @@ namespace Librame.Extensions.Core.Combiners
     /// 抽象组合器。
     /// </summary>
     /// <typeparam name="TSource">指定的源类型。</typeparam>
-    public abstract class AbstractCombiner<TSource> : ICombiner, IEquatable<TSource>
+    public abstract class AbstractCombiner<TSource> : IEquatable<TSource>
         where TSource : class
     {
         /// <summary>

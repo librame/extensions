@@ -77,6 +77,45 @@ namespace Librame.Extensions.Core.Builders
 
 
         /// <summary>
+        /// 添加泛型服务（适用于服务类型为泛型类型定义且实现类型已完全实现该泛型类型定义的服务类型）。
+        /// </summary>
+        /// <param name="serviceTypeDefinition">给定的服务类型定义。</param>
+        /// <param name="implementationType">给定的实现类型（不支持类型定义）。</param>
+        /// <param name="addEnumerable">添加为可枚举集合（可选；默认不是可枚举集合）。</param>
+        /// <param name="addImplementationTypeItself">添加实现类型服务自身（可选；默认不添加）。</param>
+        /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public virtual IExtensionBuilder AddGenericService(Type serviceTypeDefinition,
+            Type implementationType, bool addEnumerable = false, bool addImplementationTypeItself = false)
+        {
+            if (false == serviceTypeDefinition?.IsGenericTypeDefinition)
+                throw new NotSupportedException($"The service type '{serviceTypeDefinition}' only support generic type definition.");
+
+            if ((bool)implementationType?.IsGenericTypeDefinition)
+                throw new NotSupportedException($"The implementation type '{implementationType}' do not support generic type definition.");
+
+            if (!implementationType.IsImplementedInterface(serviceTypeDefinition, out var resultType))
+                throw new InvalidOperationException($"The type '{implementationType}' does not implement '{serviceTypeDefinition}' interface.");
+
+            // 使用已实现泛型类型定义的服务泛型类型参数数组来填充服务类型定义
+            var serviceType = serviceTypeDefinition.MakeGenericType(resultType.GenericTypeArguments);
+
+            // 如果不添加为可枚举集合
+            if (!addEnumerable)
+                Services.TryReplaceAll(serviceType, implementationType, throwIfNotFound: false);
+
+            var characteristics = GetServiceCharacteristics(serviceTypeDefinition);
+            Services.AddByCharacteristics(serviceType, implementationType, characteristics);
+
+            // 如果要添加现类型服务自身
+            if (addImplementationTypeItself)
+                AddService(implementationType, sp => sp.GetRequiredService(serviceType));
+
+            return this;
+        }
+
+
+        /// <summary>
         /// 添加服务（支持服务特征）。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>

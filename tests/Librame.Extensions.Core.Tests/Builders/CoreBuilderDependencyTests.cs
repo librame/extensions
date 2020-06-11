@@ -6,9 +6,6 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    using Builders;
-    using Dependencies;
-
     public class CoreBuilderDependencyTests
     {
         [Fact]
@@ -39,17 +36,5 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal(message, options.Message);
         }
 
-
-        public class TestCoreBuilderDependency : CoreBuilderDependency
-        {
-            public OptionsDependency<TestOptions> Test { get; }
-                = new OptionsDependency<TestOptions>();
-        }
-
-
-        public class TestOptions
-        {
-            public string Message { get; set; }
-        }
     }
 }

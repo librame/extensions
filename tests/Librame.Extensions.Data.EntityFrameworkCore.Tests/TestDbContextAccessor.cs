@@ -6,7 +6,7 @@ namespace Librame.Extensions.Data.Tests
     using Accessors;
     using Models;
 
-    public class TestDbContextAccessor : TestDbContextAccessor<Guid, int>
+    public class TestDbContextAccessor : TestDbContextAccessor<Guid, int, Guid>
     {
         public TestDbContextAccessor(DbContextOptions options)
             : base(options)
@@ -14,9 +14,10 @@ namespace Librame.Extensions.Data.Tests
         }
     }
 
-    public class TestDbContextAccessor<TGenId, TIncremId> : DbContextAccessor<TGenId, TIncremId>
+    public class TestDbContextAccessor<TGenId, TIncremId, TCreatedBy> : DbContextAccessor<TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         public TestDbContextAccessor(DbContextOptions options)
             : base(options)
@@ -24,9 +25,9 @@ namespace Librame.Extensions.Data.Tests
         }
 
 
-        public DbSet<Category<TIncremId, TGenId>> Categories { get; set; }
+        public DbSet<Category<TIncremId, TGenId, TCreatedBy>> Categories { get; set; }
 
-        public DbSet<Article<TGenId, TIncremId>> Articles { get; set; }
+        public DbSet<Article<TGenId, TIncremId, TCreatedBy>> Articles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,7 +36,7 @@ namespace Librame.Extensions.Data.Tests
 
             var maxLength = Dependency.Options.Stores.MaxLengthForProperties;
 
-            modelBuilder.Entity<Category<TIncremId, TGenId>>(b =>
+            modelBuilder.Entity<Category<TIncremId, TGenId, Guid>>(b =>
             {
                 b.ToTable();
 
@@ -57,7 +58,7 @@ namespace Librame.Extensions.Data.Tests
                 }
             });
 
-            modelBuilder.Entity<Article<TGenId, TIncremId>>(b =>
+            modelBuilder.Entity<Article<TGenId, TIncremId, Guid>>(b =>
             {
                 b.ToTable(table =>
                 {

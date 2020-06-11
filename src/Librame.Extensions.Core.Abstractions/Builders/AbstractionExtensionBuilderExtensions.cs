@@ -26,12 +26,12 @@ namespace Librame.Extensions.Core.Builders
         /// 获取必需的父级构建器。
         /// </summary>
         /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
-        /// <param name="dependency">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
         /// <returns>返回 <typeparamref name="TParentBuilder"/> 或抛出 <see cref="InvalidOperationException"/>。</returns>
-        public static TParentBuilder GetRequiredParentBuilder<TParentBuilder>(this IExtensionBuilder dependency)
+        public static TParentBuilder GetRequiredParentBuilder<TParentBuilder>(this IExtensionBuilder builder)
             where TParentBuilder : class, IExtensionBuilder
         {
-            if (!dependency.TryGetParentBuilder<TParentBuilder>(out var result))
+            if (!builder.TryGetParentBuilder<TParentBuilder>(out var result))
                 throw new InvalidOperationException($"The builder is not contains parent builder '{typeof(TParentBuilder)}'.");
 
             return result;

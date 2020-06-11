@@ -6,7 +6,7 @@ using System.Globalization;
 namespace Librame.Extensions.Data.Tests
 {
     using Core.Utilities;
-    using Resources;
+    using Data.Resources;
 
     public class DataEntityResourceTests
     {
@@ -24,20 +24,23 @@ namespace Librame.Extensions.Data.Tests
         {
             CultureInfoUtility.Register(new CultureInfo(cultureName));
 
-            var schema = localizer.GetString(r => r.Schema);
-            Assert.False(schema.ResourceNotFound);
+            var localized = localizer.GetString(r => r.Schema);
+            Assert.False(localized.ResourceNotFound);
 
-            var name = localizer.GetString(r => r.Name);
-            Assert.False(name.ResourceNotFound);
+            localized = localizer.GetString(r => r.Name);
+            Assert.False(localized.ResourceNotFound);
 
-            var description = localizer.GetString(r => r.Description);
-            Assert.False(description.ResourceNotFound);
+            localized = localizer.GetString(r => r.IsSharding);
+            Assert.False(localized.ResourceNotFound);
 
-            var entityName = localizer.GetString(r => r.EntityName);
-            Assert.False(entityName.ResourceNotFound);
+            localized = localizer.GetString(r => r.Description);
+            Assert.False(localized.ResourceNotFound);
 
-            var assemblyName = localizer.GetString(r => r.AssemblyName);
-            Assert.False(assemblyName.ResourceNotFound);
+            localized = localizer.GetString(r => r.EntityName);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.AssemblyName);
+            Assert.False(localized.ResourceNotFound);
         }
 
     }

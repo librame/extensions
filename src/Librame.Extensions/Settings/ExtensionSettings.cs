@@ -14,6 +14,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace Librame.Extensions
 {
@@ -67,6 +68,12 @@ namespace Librame.Extensions
         /// </summary>
         public static readonly int ProcessorCount
             = Environment.ProcessorCount;
+
+        /// <summary>
+        /// <see cref="Encoding.UTF8"/> 字符编码。
+        /// </summary>
+        public static readonly Encoding UTF8Encoding
+            = Encoding.UTF8;
 
 
         #region Compression Extensions

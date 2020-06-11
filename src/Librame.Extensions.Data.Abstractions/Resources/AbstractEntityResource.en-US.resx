@@ -150,8 +150,8 @@
   <data name="LockoutEnabled" xml:space="preserve">
     <value>Lockout enabled</value>
   </data>
-  <data name="LockoutEndTime" xml:space="preserve">
-    <value>Lockout end time</value>
+  <data name="LockoutEnd" xml:space="preserve">
+    <value>Lockout end</value>
   </data>
   <data name="ParentId" xml:space="preserve">
     <value>Parent id</value>
@@ -170,5 +170,41 @@
   </data>
   <data name="UpdatedTimeTicks" xml:space="preserve">
     <value>Updated time ticks</value>
+  </data>
+  <data name="CommentCount" xml:space="preserve">
+    <value>Comment count</value>
+  </data>
+  <data name="CommenterCount" xml:space="preserve">
+    <value>Commenter count</value>
+  </data>
+  <data name="FavoriteCount" xml:space="preserve">
+    <value>Favorite count</value>
+  </data>
+  <data name="ObjectorCount" xml:space="preserve">
+    <value>Objector count</value>
+  </data>
+  <data name="PublishedAs" xml:space="preserve">
+    <value>Published as</value>
+  </data>
+  <data name="PublishedBy" xml:space="preserve">
+    <value>Published by</value>
+  </data>
+  <data name="PublishedTime" xml:space="preserve">
+    <value>Published time</value>
+  </data>
+  <data name="PublishedTimeTicks" xml:space="preserve">
+    <value>Published time ticks</value>
+  </data>
+  <data name="RetweetCount" xml:space="preserve">
+    <value>Retweet count</value>
+  </data>
+  <data name="SupporterCount" xml:space="preserve">
+    <value>Supporter count</value>
+  </data>
+  <data name="VisitCount" xml:space="preserve">
+    <value>Visit count</value>
+  </data>
+  <data name="VisitorCount" xml:space="preserve">
+    <value>Visitor count</value>
   </data>
 </root>

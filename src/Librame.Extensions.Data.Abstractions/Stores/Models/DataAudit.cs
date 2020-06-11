@@ -22,10 +22,12 @@ namespace Librame.Extensions.Data.Stores
     /// 数据审计。
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据审计")]
     [NonAudited]
-    public class DataAudit<TGenId> : AbstractCreation<TGenId>
+    public class DataAudit<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
         /// 表名。

@@ -6,34 +6,34 @@ using System.Linq;
 namespace Librame.Extensions.Examples
 {
     using Data.Stores;
+    using Data.ValueGenerators;
     using Models;
 
-    public class ExampleStoreInitializer<TAccessor> : GuidStoreInitializer
-        where TAccessor : ExampleDbContextAccessorBase<Guid, int>
+    public class ExampleStoreInitializer<TAccessor> : GuidDataStoreInitializer<int>
+        where TAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
     {
         private readonly string _categoryName
-            = typeof(Category<int, Guid>).GetGenericBodyName();
+            = typeof(Category<int, Guid, Guid>).GetGenericBodyName();
         private readonly string _articleName
-            = typeof(Article<Guid, int>).GetGenericBodyName();
+            = typeof(Article<Guid, int, Guid>).GetGenericBodyName();
 
-        private readonly string _createdBy;
-
-        private IList<Category<int, Guid>> _categories;
+        private IList<Category<int, Guid, Guid>> _categories;
 
 
-        public ExampleStoreInitializer(IStoreIdentifierGenerator<Guid> identifierGenerator, ILoggerFactory loggerFactory)
-            : base(identifierGenerator, loggerFactory)
+        public ExampleStoreInitializer(IDefaultValueGenerator<Guid> createdByGenerator,
+            IStoreIdentifierGenerator<Guid> identifierGenerator, ILoggerFactory loggerFactory)
+            : base(createdByGenerator, identifierGenerator, loggerFactory)
         {
-            _createdBy = EntityPopulator.FormatTypeName(GetType());
         }
 
 
-        protected override void InitializeCore<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TIncremId>
-            (IStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, Guid, TIncremId> stores)
+        protected override void InitializeData(IDataStoreHub<DataAudit<Guid, Guid>,
+            DataAuditProperty<int, Guid>, DataEntity<Guid, Guid>, DataMigration<Guid, Guid>,
+            DataTenant<Guid, Guid>, Guid> dataStores)
         {
-            base.InitializeCore(stores);
+            base.InitializeData(dataStores);
 
-            if (stores.Accessor is TAccessor dbContextAccessor)
+            if (dataStores.Accessor is TAccessor dbContextAccessor)
             {
                 InitializeCategories(dbContextAccessor);
 
@@ -41,23 +41,24 @@ namespace Librame.Extensions.Examples
             }
         }
 
+
         private void InitializeCategories(TAccessor accessor)
         {
             if (!accessor.Categories.Any())
             {
-                _categories = new List<Category<int, Guid>>
+                _categories = new List<Category<int, Guid, Guid>>
                 {
-                    new Category<int, Guid>
+                    new Category<int, Guid, Guid>
                     {
                         Name = $"First {_categoryName}",
                         CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
-                        CreatedBy = _createdBy
+                        CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult()
                     },
-                    new Category<int, Guid>
+                    new Category<int, Guid, Guid>
                     {
                         Name = $"Last {_categoryName}",
                         CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
-                        CreatedBy = _createdBy
+                        CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult()
                     }
                 };
 
@@ -79,19 +80,19 @@ namespace Librame.Extensions.Examples
         {
             if (!stores.Categories.Any())
             {
-                var articles = new List<Article<Guid, int>>();
+                var articles = new List<Article<Guid, int, Guid>>();
                 var identifier = IdentifierGenerator as ExampleStoreIdentifierGenerator;
 
                 for (int i = 0; i < 100; i++)
                 {
-                    var article = new Article<Guid, int>
+                    var article = new Article<Guid, int, Guid>
                     {
                         Id = identifier.GetArticleIdAsync().ConfigureAndResult(),
                         Title = $"{_articleName} {i.FormatString(3)}",
                         Descr = $"Descr {i.FormatString(3)}",
                         Category = (i < 50) ? _categories.First() : _categories.Last(),
                         CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
-                        CreatedBy = GetType().GetDisplayName()
+                        CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult()
                     };
 
                     article.CreatedTimeTicks = article.CreatedTime.Ticks;

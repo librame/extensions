@@ -10,7 +10,6 @@
 
 #endregion
 
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +22,7 @@ namespace Librame.Extensions.Core.Mediators
     /// </summary>
     /// <typeparam name="TRequest">指定的请求类型。</typeparam>
     /// <typeparam name="TResponse">指定的响应类型。</typeparam>
-    public interface IRequestHandlerWrapper<in TRequest, TResponse> : IRequestHandlerWrapper
+    public interface IRequestHandlerWrapper<in TRequest, TResponse> : IRequestHandlerWrapperIndication
         where TRequest : IRequest<TResponse>
     {
         /// <summary>
@@ -35,14 +34,5 @@ namespace Librame.Extensions.Core.Mediators
         /// <returns>返回一个包含 <typeparamref name="TResponse"/> 异步操作。</returns>
         Task<TResponse> HandleAsync(IRequest<TResponse> request, ServiceFactory serviceFactory,
             CancellationToken cancellationToken = default);
-    }
-
-
-    /// <summary>
-    /// 请求处理程序封装接口（主要用作标记）。
-    /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
-    public interface IRequestHandlerWrapper
-    {
     }
 }

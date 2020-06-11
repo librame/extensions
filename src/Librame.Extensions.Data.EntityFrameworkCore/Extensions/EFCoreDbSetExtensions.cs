@@ -252,7 +252,7 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="entities">给定要删除的实体集合。</param>
         /// <returns>返回 <see cref="OperationResult"/>。</returns>
         public static OperationResult TryLogicDelete<TEntity>(this DbSet<TEntity> dbSet, params TEntity[] entities)
-            where TEntity : class, IStatus<DataStatus>
+            where TEntity : class, IState<DataStatus>
         {
             entities.ForEach(entity => entity.Status = DataStatus.Delete);
             return dbSet.TryUpdate(entities);

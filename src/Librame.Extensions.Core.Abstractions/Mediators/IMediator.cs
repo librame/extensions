@@ -52,18 +52,18 @@ namespace Librame.Extensions.Core.Mediators
         /// <summary>
         /// 异步向多个处理程序发送通知。
         /// </summary>
-        /// <param name="notification">给定的 <see cref="INotification"/>。</param>
+        /// <param name="notification">给定的 <see cref="INotificationIndication"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个异步操作。</returns>
         Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
-            where TNotification : INotification;
+            where TNotification : INotificationIndication;
 
         /// <summary>
         /// 异步向多个处理程序发送通知。
         /// </summary>
-        /// <param name="notification">给定的 <see cref="INotification"/>。</param>
+        /// <param name="notification">给定的 <see cref="INotificationIndication"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个异步操作。</returns>
-        Task Publish(INotification notification, CancellationToken cancellationToken = default);
+        Task Publish(INotificationIndication notification, CancellationToken cancellationToken = default);
     }
 }

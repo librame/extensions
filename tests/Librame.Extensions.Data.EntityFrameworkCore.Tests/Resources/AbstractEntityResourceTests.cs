@@ -6,7 +6,7 @@ using System.Globalization;
 namespace Librame.Extensions.Data.Tests
 {
     using Core.Utilities;
-    using Resources;
+    using Data.Resources;
 
     public class AbstractEntityResourceTests
     {
@@ -24,17 +24,98 @@ namespace Librame.Extensions.Data.Tests
         {
             CultureInfoUtility.Register(new CultureInfo(cultureName));
 
-            var id = localizer.GetString(r => r.Id);
-            Assert.False(id.ResourceNotFound);
+            // GlobalGroup
+            var localized = localizer.GetString(r => r.GlobalGroup);
+            Assert.False(localized.ResourceNotFound);
 
-            var tenantId = localizer.GetString(r => r.TenantId);
-            Assert.False(tenantId.ResourceNotFound);
+            localized = localizer.GetString(r => r.Id);
+            Assert.False(localized.ResourceNotFound);
 
-            var dataRank = localizer.GetString(r => r.Rank);
-            Assert.False(dataRank.ResourceNotFound);
+            localized = localizer.GetString(r => r.TenantId);
+            Assert.False(localized.ResourceNotFound);
 
-            var dataStatus = localizer.GetString(r => r.Status);
-            Assert.False(dataStatus.ResourceNotFound);
+            // DataGroup
+            localized = localizer.GetString(r => r.DataGroup);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.Rank);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.Status);
+            Assert.False(localized.ResourceNotFound);
+
+            // Properties
+            localized = localizer.GetString(r => r.ConcurrencyStamp);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.CreatedTime);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.CreatedTimeTicks);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.CreatedBy);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.UpdatedTime);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.UpdatedTimeTicks);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.UpdatedBy);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.PublishedTime);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.PublishedTimeTicks);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.PublishedBy);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.PublishedAs);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.IsDefaultValue);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.LockoutEnabled);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.LockoutEnd);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.ParentId);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.RowVersion);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.SupporterCount);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.ObjectorCount);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.FavoriteCount);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.RetweetCount);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.CommentCount);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.CommenterCount);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.VisitCount);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.VisitorCount);
+            Assert.False(localized.ResourceNotFound);
         }
 
     }

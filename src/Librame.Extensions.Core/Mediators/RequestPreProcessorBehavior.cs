@@ -19,7 +19,7 @@ namespace Librame.Extensions.Core.Mediators
 {
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class RequestPreProcessorBehavior<TRequest, TResponse> : IRequestPipelineBehavior<TRequest, TResponse>
-        where TRequest : IRequest
+        where TRequest : IRequestIndication
     {
         private readonly IEnumerable<IRequestPreProcessor<TRequest>> _preProcessors;
 

@@ -22,9 +22,6 @@ namespace Microsoft.Extensions.Localization
     /// </summary>
     public static class AbstractionStringLocalizerExtensions
     {
-
-        #region IStringLocalizer
-
         /// <summary>
         /// 获取字符串。
         /// </summary>
@@ -63,8 +60,6 @@ namespace Microsoft.Extensions.Localization
             var name = propertyExpression.AsPropertyName();
             return localizer[name, arguments];
         }
-
-        #endregion
 
     }
 }

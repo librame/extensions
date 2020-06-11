@@ -7,7 +7,7 @@ namespace Librame.Extensions.Examples
     using Data.Accessors;
     using Models;
 
-    public class MySqlExampleDbContextAccessor : ExampleDbContextAccessorBase<Guid, int>
+    public class MySqlExampleDbContextAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
     {
         public MySqlExampleDbContextAccessor(DbContextOptions options)
             : base(options)
@@ -15,7 +15,7 @@ namespace Librame.Extensions.Examples
         }
     }
 
-    public class SqlServerExampleDbContextAccessor : ExampleDbContextAccessorBase<Guid, int>
+    public class SqlServerExampleDbContextAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
     {
         public SqlServerExampleDbContextAccessor(DbContextOptions options)
             : base(options)
@@ -23,7 +23,7 @@ namespace Librame.Extensions.Examples
         }
     }
 
-    public class SqliteExampleDbContextAccessor : ExampleDbContextAccessorBase<Guid, int>
+    public class SqliteExampleDbContextAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
     {
         public SqliteExampleDbContextAccessor(DbContextOptions options)
             : base(options)
@@ -31,9 +31,10 @@ namespace Librame.Extensions.Examples
         }
     }
 
-    public class ExampleDbContextAccessorBase<TGenId, TIncremId> : DbContextAccessor<TGenId, TIncremId>
+    public class ExampleDbContextAccessorBase<TGenId, TIncremId, TCreatedBy> : DbContextAccessor<TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         protected ExampleDbContextAccessorBase(DbContextOptions options)
             : base(options)
@@ -41,9 +42,9 @@ namespace Librame.Extensions.Examples
         }
 
 
-        public DbSet<Category<TIncremId, TGenId>> Categories { get; set; }
+        public DbSet<Category<TIncremId, TGenId, TCreatedBy>> Categories { get; set; }
 
-        public DbSet<Article<TGenId, TIncremId>> Articles { get; set; }
+        public DbSet<Article<TGenId, TIncremId, TCreatedBy>> Articles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,7 +53,7 @@ namespace Librame.Extensions.Examples
 
             var maxLength = Dependency.Options.Stores.MaxLengthForProperties;
 
-            modelBuilder.Entity<Category<TIncremId, TGenId>>(b =>
+            modelBuilder.Entity<Category<TIncremId, TGenId, TCreatedBy>>(b =>
             {
                 b.ToTable();
 
@@ -74,7 +75,7 @@ namespace Librame.Extensions.Examples
                 }
             });
 
-            modelBuilder.Entity<Article<TGenId, TIncremId>>(b =>
+            modelBuilder.Entity<Article<TGenId, TIncremId, TCreatedBy>>(b =>
             {
                 b.ToTable(table =>
                 {

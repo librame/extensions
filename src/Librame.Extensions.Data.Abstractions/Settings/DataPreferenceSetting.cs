@@ -20,22 +20,28 @@ namespace Librame.Extensions.Data
     public class DataPreferenceSetting : AbstractPreferenceSetting, IDataPreferenceSetting
     {
         /// <summary>
-        /// 编译目录。
+        /// 编译文件夹。
         /// </summary>
         public virtual string CompilersFolder
             => "data_compilers";
 
         /// <summary>
-        /// 文件数据库目录。
+        /// 文件型数据库文件夹。
         /// </summary>
         public virtual string DatabasesFolder
             => "data_bases";
 
         /// <summary>
-        /// 迁移目录。
+        /// 迁移文件夹。
         /// </summary>
         public virtual string MigrationsFolder
             => "data_migrations";
+
+        /// <summary>
+        /// 初始化器文件夹。
+        /// </summary>
+        public virtual string InitializersFolder
+            => "data_initializers";
 
 
         /// <summary>
@@ -55,5 +61,11 @@ namespace Librame.Extensions.Data
         /// </summary>
         public virtual DataStatus DefaultStatus
             => DataStatus.Public;
+
+        /// <summary>
+        /// 查看按类型名称创建的最大长度（默认为 100，超过部分以省略号代替）。
+        /// </summary>
+        public virtual int ViewCreatedByTypeNameMaxLength
+            => 100;
     }
 }

@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core.Mediators
     /// </summary>
     /// <typeparam name="TNotification">指定的通知类型。</typeparam>
     public abstract class AbstractNotificationHandler<TNotification> : INotificationHandler<TNotification>
-        where TNotification : INotification
+        where TNotification : INotificationIndication
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractNotificationHandler{TNotification}"/>。

@@ -8,8 +8,8 @@ namespace Librame.Extensions.Examples
     using Data.Stores;
     using Models;
 
-    public class ExampleStoreHub<TAccessor> : StoreHub<Guid, int>
-        where TAccessor : ExampleDbContextAccessorBase<Guid, int>
+    public class ExampleStoreHub<TAccessor> : DataStoreHub<Guid, int, Guid>
+        where TAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
     {
         private readonly TAccessor _currentAccessor;
 
@@ -21,10 +21,10 @@ namespace Librame.Extensions.Examples
         }
 
 
-        public IList<Category<int, Guid>> GetCategories()
+        public IList<Category<int, Guid, Guid>> GetCategories()
             => _currentAccessor.Categories.ToList();
 
-        public IPageable<Article<Guid, int>> GetArticles()
+        public IPageable<Article<Guid, int, Guid>> GetArticles()
             => _currentAccessor.Articles.AsDescendingPagingByIndex(1, 10);
 
         public ExampleStoreHub<TAccessor> UseWriteDbConnection()

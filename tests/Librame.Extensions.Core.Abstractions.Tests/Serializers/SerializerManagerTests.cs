@@ -23,15 +23,5 @@ namespace Librame.Extensions.Core.Tests
             Assert.Equal(newSerializerType, serializer.GetType());
         }
 
-
-        [NonRegistered]
-        public class TestEncodingStringSerializer : AbstractStringSerializer<Encoding>
-        {
-            public TestEncodingStringSerializer()
-                : base(f => f.AsName(), r => r.FromEncodingName())
-            {
-            }
-        }
-
     }
 }

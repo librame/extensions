@@ -22,24 +22,35 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         internal static IServiceCollection UsePreStarter(this IServiceCollection services)
         {
+            if (services.TryGetAll<IPreStarterFactory>(out var descriptors))
+            {
+                descriptors.ForEach(descriptor =>
+                {
+                    var factory = InitializeFactory(descriptor);
+                    factory.Create(services);
+                });
+            }
+
+            return services;
+        }
+
+        private static IPreStarterFactory InitializeFactory(ServiceDescriptor descriptor)
+        {
             IPreStarterFactory factory = null;
 
-            if (services.TryGet<IPreStarterFactory>(out ServiceDescriptor descriptor))
+            if (descriptor.ImplementationInstance.IsNotNull())
             {
-                if (descriptor.ImplementationInstance.IsNotNull())
-                {
-                    factory = descriptor.ImplementationInstance as IPreStarterFactory;
-                }
-                else if (descriptor.ImplementationType.IsNotNull())
-                {
-                    factory = descriptor.ImplementationType.EnsureCreate<IPreStarterFactory>();
-                }
+                factory = descriptor.ImplementationInstance as IPreStarterFactory;
+            }
+            else if (descriptor.ImplementationType.IsNotNull())
+            {
+                factory = descriptor.ImplementationType.EnsureCreate<IPreStarterFactory>();
             }
 
             if (factory.IsNull())
                 factory = new PreStarterFactory();
 
-            return factory.Create(services);
+            return factory;
         }
 
 

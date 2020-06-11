@@ -62,7 +62,13 @@ namespace Librame.Extensions.Data.Accessors
         bool IsCurrentConnectionString(string connectionString);
 
         /// <summary>
-        /// 是写入连接字符串。
+        /// 是默认连接字符串（未启用读写分离也将被视为默认连接字符串）。
+        /// </summary>
+        /// <returns>返回布尔值。</returns>
+        bool IsDefaultConnectionString();
+
+        /// <summary>
+        /// 是写入连接字符串（未启用读写分离也将被视为写入连接字符串）。
         /// </summary>
         /// <returns>返回布尔值。</returns>
         bool IsWritingConnectionString();

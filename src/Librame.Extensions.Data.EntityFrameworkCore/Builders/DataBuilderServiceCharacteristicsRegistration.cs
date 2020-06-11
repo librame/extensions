@@ -21,6 +21,7 @@ namespace Librame.Extensions.Data.Builders
     using Data.Protectors;
     using Data.Services;
     using Data.Stores;
+    using Data.ValueGenerators;
 
     /// <summary>
     /// <see cref="IDataBuilder"/> 服务特征注册。
@@ -44,27 +45,28 @@ namespace Librame.Extensions.Data.Builders
             return new Dictionary<Type, ServiceCharacteristics>
             {
                 // Aspects
-                { typeof(DbContextAccessorAspectDependencies<>), ServiceCharacteristics.Singleton() },
-                { typeof(ISaveChangesDbContextAccessorAspect<,,,,,,>), ServiceCharacteristics.Singleton() },
-                { typeof(IMigrateDbContextAccessorAspect<,,,,,,>), ServiceCharacteristics.Singleton() },
+                { typeof(ISaveChangesAccessorAspect<,>), ServiceCharacteristics.Singleton() },
+                { typeof(IMigrateAccessorAspect<,>), ServiceCharacteristics.Singleton() },
                 
                 // Mediators
                 { typeof(AuditNotificationHandler<,>), ServiceCharacteristics.Transient() },
-                { typeof(EntityNotificationHandler<,>), ServiceCharacteristics.Transient() },
-                { typeof(MigrationNotificationHandler<,>), ServiceCharacteristics.Transient() },
+                { typeof(EntityNotificationHandler<>), ServiceCharacteristics.Transient() },
+                { typeof(MigrationNotificationHandler<>), ServiceCharacteristics.Transient() },
 
                 // Protectors
                 { typeof(IPrivacyDataProtector), ServiceCharacteristics.Singleton() },
 
                 // Services
-                { typeof(IMigrationService<,,,,,,>), ServiceCharacteristics.Singleton() },
-                { typeof(ITenantService<,,,,,,>), ServiceCharacteristics.Singleton() },
+                { typeof(IMigrationAccessorService), ServiceCharacteristics.Singleton() },
+                { typeof(IMultiTenantAccessorService), ServiceCharacteristics.Singleton() },
 
                 // Stores
-                { typeof(IStoreHub<,>), ServiceCharacteristics.Scoped() },
-                { typeof(IStoreHub<,,,,,,>), ServiceCharacteristics.Scoped() },
+                { typeof(IStoreHub<>), ServiceCharacteristics.Scoped() },
                 { typeof(IStoreIdentifierGenerator<>), ServiceCharacteristics.Singleton() },
-                { typeof(IStoreInitializer<>), ServiceCharacteristics.Scoped() }
+                { typeof(IStoreInitializer<>), ServiceCharacteristics.Scoped() },
+
+                // ValueGenerators
+                { typeof(IDefaultValueGenerator<>), ServiceCharacteristics.Singleton() }
             };
         }
 

@@ -29,7 +29,7 @@ namespace Librame.Extensions.Data.Migrations
     public static class MigrationCommandFiltrator
     {
         private static FilePathCombiner GetFilePathCombiner(IAccessor accessor)
-            => ModelSnapshotCompiler.CombineFilePath(accessor, d => d.MigrationsDirectory, ".json");
+            => ModelSnapshotCompiler.CombineFilePath(accessor, d => d.MigrationsConfigDirectory, ".json");
 
         private static string GetCacheKey(FilePathCombiner filePath)
             => $"{nameof(MigrationCommandFiltrator)}:{filePath}";

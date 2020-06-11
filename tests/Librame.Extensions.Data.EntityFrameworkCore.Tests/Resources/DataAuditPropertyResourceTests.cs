@@ -6,7 +6,7 @@ using System.Globalization;
 namespace Librame.Extensions.Data.Tests
 {
     using Core.Utilities;
-    using Resources;
+    using Data.Resources;
 
     public class DataAuditPropertyResourceTests
     {
@@ -24,23 +24,23 @@ namespace Librame.Extensions.Data.Tests
         {
             CultureInfoUtility.Register(new CultureInfo(cultureName));
 
-            var propertyName = localizer.GetString(r => r.PropertyName);
-            Assert.False(propertyName.ResourceNotFound);
+            var localized = localizer.GetString(r => r.Audit);
+            Assert.False(localized.ResourceNotFound);
 
-            var propertyTypeName = localizer.GetString(r => r.PropertyTypeName);
-            Assert.False(propertyTypeName.ResourceNotFound);
+            localized = localizer.GetString(r => r.AuditId);
+            Assert.False(localized.ResourceNotFound);
 
-            var oldValue = localizer.GetString(r => r.OldValue);
-            Assert.False(oldValue.ResourceNotFound);
+            localized = localizer.GetString(r => r.PropertyName);
+            Assert.False(localized.ResourceNotFound);
 
-            var newValue = localizer.GetString(r => r.NewValue);
-            Assert.False(newValue.ResourceNotFound);
+            localized = localizer.GetString(r => r.PropertyTypeName);
+            Assert.False(localized.ResourceNotFound);
 
-            var auditId = localizer.GetString(r => r.AuditId);
-            Assert.False(auditId.ResourceNotFound);
+            localized = localizer.GetString(r => r.OldValue);
+            Assert.False(localized.ResourceNotFound);
 
-            var audit = localizer.GetString(r => r.Audit);
-            Assert.False(audit.ResourceNotFound);
+            localized = localizer.GetString(r => r.NewValue);
+            Assert.False(localized.ResourceNotFound);
         }
 
     }

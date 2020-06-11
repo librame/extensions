@@ -20,6 +20,11 @@ namespace Librame.Extensions.Data.Resources
     public class DataAuditPropertyResource : IResource
     {
         /// <summary>
+        /// 审计。
+        /// </summary>
+        public string Audit { get; set; }
+
+        /// <summary>
         /// 审计标识。
         /// </summary>
         public string AuditId { get; set; }
@@ -43,10 +48,5 @@ namespace Librame.Extensions.Data.Resources
         /// 新值。
         /// </summary>
         public string NewValue { get; set; }
-
-        /// <summary>
-        /// 审计。
-        /// </summary>
-        public string Audit { get; set; }
     }
 }

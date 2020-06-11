@@ -9,7 +9,7 @@ namespace Librame.Extensions.Data.Tests
     using Models;
     using Stores;
 
-    public class TestStoreHub : StoreHub<Guid, int>
+    public class TestStoreHub : DataStoreHub<Guid, int, Guid>
     {
         private readonly TestDbContextAccessor _currentAccessor;
 
@@ -21,10 +21,10 @@ namespace Librame.Extensions.Data.Tests
         }
 
 
-        public IList<Category<int, Guid>> GetCategories()
+        public IList<Category<int, Guid, Guid>> GetCategories()
             => _currentAccessor.Categories.ToList();
 
-        public IPageable<Article<Guid, int>> GetArticles()
+        public IPageable<Article<Guid, int, Guid>> GetArticles()
             => _currentAccessor.Articles.AsDescendingPagingByIndex(1, 10);
 
         public TestStoreHub UseWriteDbConnection()

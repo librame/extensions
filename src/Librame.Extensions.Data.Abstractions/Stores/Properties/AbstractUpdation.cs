@@ -21,15 +21,18 @@ namespace Librame.Extensions.Data.Stores
     using Resources;
 
     /// <summary>
-    /// 抽象更新。
+    /// 抽象更新（继承自抽象创建）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
+    /// <typeparam name="TUpdatedBy">指定的更新者。</typeparam>
     [NotMapped]
-    public abstract class AbstractUpdation<TId> : AbstractUpdation<TId, string, DateTimeOffset>, IUpdatedTimeTicks
+    public abstract class AbstractUpdation<TId, TUpdatedBy> : AbstractUpdation<TId, TUpdatedBy, DateTimeOffset>,
+        IUpdation<TUpdatedBy>
         where TId : IEquatable<TId>
+        where TUpdatedBy : IEquatable<TUpdatedBy>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractUpdation{TId}"/>。
+        /// 构造一个 <see cref="AbstractUpdation{TId, TUpdatedBy}"/>。
         /// </summary>
         protected AbstractUpdation()
         {
@@ -49,17 +52,57 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         [Display(Name = nameof(UpdatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
         public virtual long UpdatedTimeTicks { get; set; }
+
+
+        /// <summary>
+        /// 异步设置创建时间。
+        /// </summary>
+        /// <param name="newCreatedTime">给定的新创建时间对象。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
+        public override ValueTask<object> SetObjectCreatedTimeAsync(object newCreatedTime,
+            CancellationToken cancellationToken = default)
+        {
+            var realNewCreatedTime = newCreatedTime.CastTo<object, DateTimeOffset>(nameof(newCreatedTime));
+
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                CreatedTime = realNewCreatedTime;
+                CreatedTimeTicks = CreatedTime.Ticks;
+                return newCreatedTime;
+            });
+        }
+
+        /// <summary>
+        /// 异步设置更新时间。
+        /// </summary>
+        /// <param name="newUpdatedTime">给定的新更新时间对象。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
+        public override ValueTask<object> SetObjectUpdatedTimeAsync(object newUpdatedTime, CancellationToken cancellationToken = default)
+        {
+            var realNewUpdatedTime = newUpdatedTime.CastTo<object, DateTimeOffset>(nameof(newUpdatedTime));
+
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                UpdatedTime = realNewUpdatedTime;
+                UpdatedTimeTicks = UpdatedTime.Ticks;
+                return newUpdatedTime;
+            });
+        }
+
     }
 
 
     /// <summary>
-    /// 抽象更新。
+    /// 抽象更新（继承自抽象创建）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TUpdatedBy">指定的更新者。</typeparam>
     /// <typeparam name="TUpdatedTime">指定的更新时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
     [NotMapped]
-    public abstract class AbstractUpdation<TId, TUpdatedBy, TUpdatedTime> : AbstractCreation<TId, TUpdatedBy, TUpdatedTime>, IUpdation<TUpdatedBy, TUpdatedTime>
+    public abstract class AbstractUpdation<TId, TUpdatedBy, TUpdatedTime> : AbstractCreation<TId, TUpdatedBy, TUpdatedTime>,
+        IUpdation<TUpdatedBy, TUpdatedTime>
         where TId : IEquatable<TId>
         where TUpdatedBy : IEquatable<TUpdatedBy>
         where TUpdatedTime : struct
@@ -78,70 +121,54 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 异步获取更新者。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TUpdatedBy"/> （兼容标识或字符串）的异步操作。</returns>
-        public virtual Task<TUpdatedBy> GetUpdatedByAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => UpdatedBy);
-
-        Task<object> IUpdation.GetUpdatedByAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)UpdatedBy);
-
-        /// <summary>
         /// 异步获取更新时间。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TUpdatedTime"/> （兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
-        public virtual Task<TUpdatedTime> GetUpdatedTimeAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => UpdatedTime);
+        /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
+        public virtual ValueTask<object> GetObjectUpdatedTimeAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)UpdatedTime);
 
-        Task<object> IUpdation.GetUpdatedTimeAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)UpdatedTime);
+        /// <summary>
+        /// 异步获取更新者。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含更新者（兼容标识或字符串）的异步操作。</returns>
+        public virtual ValueTask<object> GetObjectUpdatedByAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)UpdatedBy);
 
 
         /// <summary>
-        /// 异步设置更新者。
+        /// 异步设置更新时间。
         /// </summary>
-        /// <param name="updatedBy">给定的 <typeparamref name="TUpdatedBy"/>。</param>
+        /// <param name="newUpdatedTime">给定的新更新时间对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetUpdatedByAsync(TUpdatedBy updatedBy, CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => UpdatedBy = updatedBy);
-
-        /// <summary>
-        /// 异步设置更新者。
-        /// </summary>
-        /// <param name="obj">给定的更新者对象。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetUpdatedByAsync(object obj, CancellationToken cancellationToken = default)
+        /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
+        public virtual ValueTask<object> SetObjectUpdatedTimeAsync(object newUpdatedTime, CancellationToken cancellationToken = default)
         {
-            var updatedBy = obj.CastTo<object, TUpdatedBy>(nameof(obj));
+            var realNewUpdatedTime = newUpdatedTime.CastTo<object, TUpdatedTime>(nameof(newUpdatedTime));
 
-            return cancellationToken.RunActionOrCancellationAsync(() => UpdatedBy = updatedBy);
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                UpdatedTime = realNewUpdatedTime;
+                return newUpdatedTime;
+            });
         }
 
         /// <summary>
-        /// 异步设置更新时间。
+        /// 异步设置更新者。
         /// </summary>
-        /// <param name="updatedTime">给定的 <typeparamref name="TUpdatedTime"/>。</param>
+        /// <param name="newUpdatedBy">给定的新更新者对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetUpdatedTimeAsync(TUpdatedTime updatedTime, CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => UpdatedTime = updatedTime);
-
-        /// <summary>
-        /// 异步设置更新时间。
-        /// </summary>
-        /// <param name="obj">给定的更新时间对象。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetUpdatedTimeAsync(object obj, CancellationToken cancellationToken = default)
+        /// <returns>返回一个包含创建者（兼容标识或字符串）的异步操作。</returns>
+        public virtual ValueTask<object> SetObjectUpdatedByAsync(object newUpdatedBy, CancellationToken cancellationToken = default)
         {
-            var updatedTime = obj.CastTo<object, TUpdatedTime>(nameof(obj));
+            var realNewUpdatedBy = newUpdatedBy.CastTo<object, TUpdatedBy>(nameof(newUpdatedBy));
 
-            return cancellationToken.RunActionOrCancellationAsync(() => UpdatedTime = updatedTime);
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                UpdatedBy = realNewUpdatedBy;
+                return newUpdatedBy;
+            });
         }
 
     }

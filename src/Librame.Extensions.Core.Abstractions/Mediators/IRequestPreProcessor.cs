@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core.Mediators
     /// </summary>
     /// <typeparam name="TRequest">指定的请求类型。</typeparam>
     public interface IRequestPreProcessor<in TRequest>
-        where TRequest : IRequest
+        where TRequest : IRequestIndication
     {
         /// <summary>
         /// 异步执行。

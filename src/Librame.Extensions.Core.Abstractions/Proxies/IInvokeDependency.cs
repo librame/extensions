@@ -29,7 +29,8 @@ namespace Librame.Extensions.Core.Proxies
         /// </summary>
         /// <param name="methodInfo">给定的 <see cref="MethodInfo"/>。</param>
         /// <returns>返回包含前置与后置 <see cref="IReadOnlyList{DependencyActionKey}"/> 的元组。</returns>
-        (IReadOnlyList<InvokeDependencyKey> PreActionKeys, IReadOnlyList<InvokeDependencyKey> PostActionKeys) FindKeys(MethodInfo methodInfo);
+        (IReadOnlyList<InvokeDependencyKey> PreActionKeys, IReadOnlyList<InvokeDependencyKey> PostActionKeys)
+            FindKeys(MethodInfo methodInfo);
 
 
         #region AddActions

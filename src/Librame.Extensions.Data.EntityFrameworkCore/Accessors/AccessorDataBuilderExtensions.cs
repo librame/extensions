@@ -11,9 +11,12 @@
 #endregion
 
 using Librame.Extensions;
+using Librame.Extensions.Core.Identifiers;
 using Librame.Extensions.Data.Accessors;
+using Librame.Extensions.Data.Aspects;
 using Librame.Extensions.Data.Builders;
 using Librame.Extensions.Data.Migrations;
+using Librame.Extensions.Data.Services;
 using Librame.Extensions.Data.Stores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -23,6 +26,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -32,14 +36,14 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class AccessorDataBuilderExtensions
     {
-        private static readonly Type _dbContextAccessorTypeDefinition
-            = typeof(IDbContextAccessor<,,,,>);
+        internal static ConcurrentDictionary<Type, AccessorGenericTypeArguments> GenericTypeArguments
+             = new ConcurrentDictionary<Type, AccessorGenericTypeArguments>();
 
 
         /// <summary>
         /// 添加服务类型为 <see cref="IAccessor"/> 的数据库上下文访问器。
         /// </summary>
-        /// <typeparam name="TAccessor">指定派生自 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/> 的访问器类型。</typeparam>
+        /// <typeparam name="TAccessor">指定派生自 <see cref="DbContextAccessor{TGenId, TIncremId, TCreatedBy}"/> 的访问器类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="setupAction">给定的 <see cref="Action{DataBuilderOptions, DbContextOptionsBuilder}"/>。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
@@ -52,7 +56,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// 添加数据库上下文访问器。
         /// </summary>
         /// <typeparam name="TAccessor">指定派生自 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/> 的访问器类型。</typeparam>
-        /// <typeparam name="TImplementation">指定派生自 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/> 的访问器实现类型。</typeparam>
+        /// <typeparam name="TImplementation">指定派生自 <see cref="DbContextAccessor{TGenId, TIncremId, TCreatedBy}"/> 的访问器实现类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="setupAction">给定的 <see cref="Action{ITenant, DbContextOptionsBuilder}"/>。</param>
         /// <param name="poolSize">设置池保留的最大实例数（可选；默认为128，如果小于1，将使用 AddDbContext() 注册）。</param>
@@ -66,9 +70,9 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.NotNull(nameof(builder));
             setupAction.NotNull(nameof(setupAction));
 
-            var implAccessorType = typeof(TImplementation);
-            if (!implAccessorType.IsImplementedInterface(_dbContextAccessorTypeDefinition))
-                throw new ArgumentException($"The accessor type '{implAccessorType}' does not implement interface '{_dbContextAccessorTypeDefinition}'");
+            var genericTypesDescriptor = ValidAccessor(typeof(TImplementation));
+            if (genericTypesDescriptor.IsNotNull())
+                builder.SetProperty(p => p.GenericTypeArguments, genericTypesDescriptor);
 
             if (poolSize > 0)
             {
@@ -94,9 +98,76 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.TryAddScoped(sp => (TImplementation)sp.GetRequiredService<TAccessor>());
 
-            return builder.AddDesignTimeServices<TImplementation>();
+            return builder
+                .AddInternalAccessorServices()
+                .AddDesignTimeServices<TImplementation>();
         }
 
+        private static AccessorGenericTypeArguments ValidAccessor(Type accessorType)
+        {
+            var accessorTypeDefinition = typeof(IDbContextAccessor<,,,,>);
+
+            // 不强制实现数据类访问器
+            if (!accessorType.IsImplementedInterface(accessorTypeDefinition, out var resultType))
+                return null;
+
+            return GenericTypeArguments.GetOrAdd(accessorType, key =>
+            {
+                var arguments = new AccessorGenericTypeArguments
+                {
+                    AuditType = resultType.GenericTypeArguments[0],
+                    AuditPropertyType = resultType.GenericTypeArguments[1],
+                    EntityType = resultType.GenericTypeArguments[2],
+                    MigrationType = resultType.GenericTypeArguments[3],
+                    TenantType = resultType.GenericTypeArguments[4],
+                };
+
+                if (!accessorType.IsImplementedInterface(typeof(IDbContextAccessor<,,>), out resultType))
+                {
+                    var baseEntityType = arguments.TenantType
+                        ?? arguments.MigrationType
+                        ?? arguments.EntityType
+                        ?? arguments.AuditType;
+
+                    if (baseEntityType.IsImplementedInterface(typeof(IIdentifier<>), out resultType))
+                        arguments.GenIdType = resultType.GenericTypeArguments[0];
+
+                    if (baseEntityType.IsImplementedInterface(typeof(ICreation<,>), out resultType))
+                    {
+                        arguments.CreatedByType = resultType.GenericTypeArguments[0];
+                        arguments.CreatedTimeType = resultType.GenericTypeArguments[1];
+                    }
+
+                    if (arguments.AuditPropertyType.IsImplementedInterface(typeof(IIdentifier<>), out resultType))
+                        arguments.IncremIdType = resultType.GenericTypeArguments[0];
+                }
+                else
+                {
+                    arguments.GenIdType = resultType.GenericTypeArguments[0];
+                    arguments.IncremIdType = resultType.GenericTypeArguments[1];
+                    arguments.CreatedByType = resultType.GenericTypeArguments[2];
+
+                    if (arguments.TenantType.IsImplementedInterface(typeof(ICreation<,>), out resultType))
+                        arguments.CreatedTimeType = resultType.GenericTypeArguments[1];
+                }
+
+                return arguments;
+            });
+        }
+
+
+        private static IDataBuilder AddInternalAccessorServices(this IDataBuilder builder)
+        {
+            builder.AddMigrateAccessorAspect(typeof(DataEntityMigrateDbContextAccessorAspect<,,,,,,,>));
+            builder.AddMigrateAccessorAspect(typeof(DataMigrationMigrateDbContextAccessorAspect<,,,,,,,>));
+
+            builder.AddSaveChangesAccessorAspect(typeof(DataAuditSaveChangesDbContextAccessorAspect<,,,,,,,>));
+
+            builder.AddMigrationAccessorService(typeof(MigrationAccessorService<,,,,,,,>));
+            builder.AddMultiTenantAccessorService(typeof(MultiTenantAccessorService<,,,,,,,>));
+
+            return builder;
+        }
 
         private static IDataBuilder AddDesignTimeServices<TDbContext>(this IDataBuilder builder)
            where TDbContext : DbContext, IAccessor
@@ -124,7 +195,6 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             // 在使用自定义迁移服务时，利用模型缓存键工厂使模型缓存失效后重新映射表名来达到分表的方法同样会变成重命名及修改的迁移操作而导致失败。
             //optionsBuilder.ReplaceService<IModelCacheKeyFactory, DbContextAccessorModelCacheKeyFactory>();
-
             optionsBuilder.ReplaceService<IMigrationsModelDiffer, ShardingMigrationsModelDiffer>();
         }
 

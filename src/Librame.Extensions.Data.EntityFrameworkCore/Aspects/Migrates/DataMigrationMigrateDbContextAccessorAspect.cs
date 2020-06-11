@@ -11,6 +11,8 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -19,10 +21,13 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Aspects
 {
     using Core.Mediators;
+    using Core.Services;
     using Data.Accessors;
+    using Data.Builders;
     using Data.Compilers;
     using Data.Mediators;
     using Data.Stores;
+    using Data.ValueGenerators;
 
     /// <summary>
     /// 数据迁移迁移数据库上下文访问器截面。
@@ -34,23 +39,32 @@ namespace Librame.Extensions.Data.Aspects
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    public class DataMigrationMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        , IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        where TAudit : DataAudit<TGenId>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+    public class DataMigrationMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>,
+            IMigrateAccessorAspect<TGenId, TCreatedBy>
+        where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId>
-        where TMigration : DataMigration<TGenId>
-        where TTenant : DataTenant<TGenId>
+        where TEntity : DataEntity<TGenId, TCreatedBy>
+        where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
         /// 构造一个数据迁移迁移数据库上下文访问器截面。
         /// </summary>
-        /// <param name="dependencies">给定的 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</param>
-        public DataMigrationMigrateDbContextAccessorAspect(DbContextAccessorAspectDependencies<TGenId> dependencies)
-            : base(dependencies, priority: 1) // 迁移优先级最高
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</param>
+        /// <param name="createdByGenerator">给定的 <see cref="IDefaultValueGenerator{TValue}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public DataMigrationMigrateDbContextAccessorAspect(IClockService clock,
+            IStoreIdentifierGenerator<TGenId> identifierGenerator,
+            IDefaultValueGenerator<TCreatedBy> createdByGenerator,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(clock, identifierGenerator, createdByGenerator, options, loggerFactory, priority: 1) // 迁移优先级最高
         {
         }
 
@@ -71,10 +85,10 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 后置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected override void PostProcessCore
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
             var currentMigration = GenerateMigration(dbContextAccessor);
             var lastMigration = dbContextAccessor.Migrations.FirstOrDefaultByMax(s => s.CreatedTimeTicks);
@@ -85,19 +99,19 @@ namespace Librame.Extensions.Data.Aspects
                 RequiredSaveChanges = true;
 
                 var mediator = dbContextAccessor.GetService<IMediator>();
-                mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = currentMigration }).ConfigureAndWait();
+                mediator.Publish(new MigrationNotification<TMigration> { Migration = currentMigration }).ConfigureAndWait();
             }
         }
 
         /// <summary>
         /// 异步后置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected override async Task PostProcessCoreAsync
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
             var currentMigration = GenerateMigration(dbContextAccessor, cancellationToken);
@@ -109,7 +123,7 @@ namespace Librame.Extensions.Data.Aspects
                 RequiredSaveChanges = true;
 
                 var mediator = dbContextAccessor.GetService<IMediator>();
-                await mediator.Publish(new MigrationNotification<TMigration, TGenId> { Migration = currentMigration }).ConfigureAndWaitAsync();
+                await mediator.Publish(new MigrationNotification<TMigration> { Migration = currentMigration }).ConfigureAndWaitAsync();
             }
         }
 
@@ -117,16 +131,17 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 生成数据迁移。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <typeparamref name="TMigration"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual TMigration GenerateMigration
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var createdTime = Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
-            var id = Dependencies.IdentifierGenerator.GenerateMigrationIdAsync(cancellationToken).ConfigureAndResult();
+            var createdTime = Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
+            var createdBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult();
+            var id = IdentifierGenerator.GenerateMigrationIdAsync(cancellationToken).ConfigureAndResult();
 
             return ExtensionSettings.Preference.RunLockerResult(() =>
             {
@@ -142,7 +157,7 @@ namespace Librame.Extensions.Data.Aspects
                 migration.ModelHash = modelSnapshot.Hash;
                 migration.CreatedTime = createdTime;
                 migration.CreatedTimeTicks = migration.CreatedTime.Ticks;
-                migration.CreatedBy = EntityPopulator.FormatTypeName(GetType());
+                migration.CreatedBy = createdBy;
 
                 return migration;
             });

@@ -24,11 +24,11 @@ namespace Librame.Extensions.Core.Mediators
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class ServiceFactoryMediator : IMediator
     {
-        private static ConcurrentDictionary<Type, IRequestHandlerWrapper> _requestHandlers
-            = new ConcurrentDictionary<Type, IRequestHandlerWrapper>();
+        private static ConcurrentDictionary<Type, IRequestHandlerWrapperIndication> _requestHandlers
+            = new ConcurrentDictionary<Type, IRequestHandlerWrapperIndication>();
 
-        private static ConcurrentDictionary<Type, INotificationHandlerWrapper> _notificationHandlers
-            = new ConcurrentDictionary<Type, INotificationHandlerWrapper>();
+        private static ConcurrentDictionary<Type, INotificationHandlerWrapperIndication> _notificationHandlers
+            = new ConcurrentDictionary<Type, INotificationHandlerWrapperIndication>();
 
         private ServiceFactory _serviceFactory = null;
         private ILogger _logger = null;
@@ -61,7 +61,7 @@ namespace Librame.Extensions.Core.Mediators
             var handlerWrapperType = typeof(IRequestHandlerWrapper<,>).MakeGenericType(requestType, typeof(TResponse));
 
             var handlerWrapper = _requestHandlers.GetOrAdd(requestType,
-                type => (IRequestHandlerWrapper)_serviceFactory.GetRequiredService(handlerWrapperType));
+                type => (IRequestHandlerWrapperIndication)_serviceFactory.GetRequiredService(handlerWrapperType));
 
             //var method = handlerWrapperType.GetMethod("HandleAsync");
             //return (Task<TResponse>)method.Invoke(handlerWrapper, new object[]
@@ -77,15 +77,15 @@ namespace Librame.Extensions.Core.Mediators
         {
             notification.NotNull(nameof(notification));
 
-            if (notification is INotification _notification)
+            if (notification is INotificationIndication _notification)
                 return Publish(_notification, cancellationToken);
 
-            _logger.LogWarning($"{notification.GetType().GetDisplayNameWithNamespace()} does not implement {nameof(INotification)}");
+            _logger.LogWarning($"{notification.GetType().GetDisplayNameWithNamespace()} does not implement {nameof(INotificationIndication)}");
             return Task.CompletedTask;
         }
 
         public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
-            where TNotification : INotification
+            where TNotification : INotificationIndication
         {
             if (notification == null)
                 throw new ArgumentNullException(nameof(notification));
@@ -96,13 +96,13 @@ namespace Librame.Extensions.Core.Mediators
             return handlerWrapper.HandleAsync(notification, _serviceFactory, cancellationToken);
         }
 
-        public Task Publish(INotification notification, CancellationToken cancellationToken = default)
+        public Task Publish(INotificationIndication notification, CancellationToken cancellationToken = default)
         {
             var notificationType = notification.GetType();
             var handlerWrapperType = typeof(INotificationHandlerWrapper<>).MakeGenericType(notificationType);
 
             var handlerWrapper = _notificationHandlers.GetOrAdd(notificationType,
-                type => (INotificationHandlerWrapper)_serviceFactory.GetRequiredService(handlerWrapperType));
+                type => (INotificationHandlerWrapperIndication)_serviceFactory.GetRequiredService(handlerWrapperType));
 
             //var method = handlerWrapperType.GetMethod("HandleAsync");
             //return (Task)method.Invoke(handlerWrapper, new object[]

@@ -21,7 +21,7 @@ namespace Librame.Extensions.Data.Mediators
     /// </summary>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
-    public class AuditNotification<TAudit, TAuditProperty> : INotification
+    public class AuditNotification<TAudit, TAuditProperty> : INotificationIndication
         where TAudit : class
         where TAuditProperty : class
     {

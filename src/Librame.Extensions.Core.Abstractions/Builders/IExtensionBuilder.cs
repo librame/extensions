@@ -49,6 +49,18 @@ namespace Librame.Extensions.Core.Builders
 
 
         /// <summary>
+        /// 添加泛型服务（适用于服务类型为泛型类型定义且实现类型已完全实现该泛型类型定义的服务类型）。
+        /// </summary>
+        /// <param name="serviceTypeDefinition">给定的服务类型定义。</param>
+        /// <param name="implementationType">给定的实现类型（不支持类型定义）。</param>
+        /// <param name="addEnumerable">添加为可枚举集合（可选；默认不是可枚举集合）。</param>
+        /// <param name="addImplementationTypeItself">添加实现类型服务自身（可选；默认不添加）。</param>
+        /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
+        IExtensionBuilder AddGenericService(Type serviceTypeDefinition,
+            Type implementationType, bool addEnumerable = false, bool addImplementationTypeItself = false);
+
+
+        /// <summary>
         /// 添加服务（支持服务特征）。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>

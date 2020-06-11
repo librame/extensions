@@ -23,9 +23,11 @@ namespace Librame.Extensions.Data.Stores
     /// 数据迁移。
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据迁移")]
-    public class DataMigration<TGenId> : AbstractCreation<TGenId>, IEquatable<DataMigration<TGenId>>
+    public class DataMigration<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>, IEquatable<DataMigration<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
         /// 访问器类型名。
@@ -56,9 +58,9 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 唯一索引是否相等。
         /// </summary>
-        /// <param name="other">给定的其他 <see cref="DataMigration{TGenId}"/>。</param>
+        /// <param name="other">给定的其他 <see cref="DataMigration{TGenId, TCreatedBy}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(DataMigration<TGenId> other)
+        public bool Equals(DataMigration<TGenId, TCreatedBy> other)
             => ModelHash == other?.ModelHash;
 
         /// <summary>
@@ -67,7 +69,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => obj is DataMigration<TGenId> other && Equals(other);
+            => obj is DataMigration<TGenId, TCreatedBy> other && Equals(other);
 
 
         /// <summary>

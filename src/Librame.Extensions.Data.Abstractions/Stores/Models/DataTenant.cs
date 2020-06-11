@@ -22,9 +22,11 @@ namespace Librame.Extensions.Data.Stores
     /// 数据租户。
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据租户")]
-    public class DataTenant<TGenId> : AbstractEntityUpdation<TGenId>, ITenant, IRank<float>
+    public class DataTenant<TGenId, TCreatedBy> : AbstractIdentifierEntityCreation<TGenId, TCreatedBy>, ITenant
         where TGenId : IEquatable<TGenId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
         /// 构造一个数据租户。
@@ -84,6 +86,18 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         [Display(Name = nameof(WritingSeparation), ResourceType = typeof(DataTenantResource))]
         public virtual bool WritingSeparation { get; set; }
+
+        /// <summary>
+        /// 数据同步（默认不启用；此功能已禁用）。
+        /// </summary>
+        [Display(Name = nameof(DataSynchronization), ResourceType = typeof(DataTenantResource))]
+        public virtual bool DataSynchronization { get; set; }
+
+        /// <summary>
+        /// 结构同步（默认不启用）。
+        /// </summary>
+        [Display(Name = nameof(StructureSynchronization), ResourceType = typeof(DataTenantResource))]
+        public virtual bool StructureSynchronization { get; set; }
 
 
         /// <summary>

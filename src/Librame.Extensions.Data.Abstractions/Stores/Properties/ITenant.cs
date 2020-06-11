@@ -45,8 +45,18 @@ namespace Librame.Extensions.Data.Stores
         string WritingConnectionString { get; set; }
 
         /// <summary>
-        /// 写入分离（默认不启用）。
+        /// 写入分离（如果启用，所有数据将保存到写入连接）。
         /// </summary>
         bool WritingSeparation { get; set; }
+
+        /// <summary>
+        /// 数据同步（如果启用，默认与写入连接的数据互为镜像；此功能已禁用）。
+        /// </summary>
+        bool DataSynchronization { get; set; }
+
+        /// <summary>
+        /// 结构同步（如果启用，默认与写入连接的结构互为镜像）。
+        /// </summary>
+        bool StructureSynchronization { get; set; }
     }
 }

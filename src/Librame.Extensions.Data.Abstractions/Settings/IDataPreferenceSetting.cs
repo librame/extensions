@@ -20,19 +20,24 @@ namespace Librame.Extensions.Data
     public interface IDataPreferenceSetting : IPreferenceSetting
     {
         /// <summary>
-        /// 编译目录。
+        /// 编译文件夹。
         /// </summary>
         string CompilersFolder { get; }
 
         /// <summary>
-        /// 文件数据库目录。
+        /// 文件型数据库文件夹。
         /// </summary>
         string DatabasesFolder { get; }
 
         /// <summary>
-        /// 迁移目录。
+        /// 迁移文件夹。
         /// </summary>
         string MigrationsFolder { get; }
+
+        /// <summary>
+        /// 初始化器文件夹。
+        /// </summary>
+        string InitializersFolder { get; }
 
 
         /// <summary>
@@ -49,5 +54,10 @@ namespace Librame.Extensions.Data
         /// 默认状态。
         /// </summary>
         DataStatus DefaultStatus { get; }
+
+        /// <summary>
+        /// 查看按类型名称创建的最大长度。
+        /// </summary>
+        int ViewCreatedByTypeNameMaxLength { get; }
     }
 }

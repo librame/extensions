@@ -13,6 +13,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,9 +26,12 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Aspects
 {
     using Core.Mediators;
+    using Core.Services;
     using Data.Accessors;
+    using Data.Builders;
     using Data.Mediators;
     using Data.Stores;
+    using Data.ValueGenerators;
 
     /// <summary>
     /// 数据实体迁移数据库上下文访问器截面。
@@ -38,31 +43,34 @@ namespace Librame.Extensions.Data.Aspects
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    public class DataEntityMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        , IMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        where TAudit : DataAudit<TGenId>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+    public class DataEntityMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>,
+            IMigrateAccessorAspect<TGenId, TCreatedBy>
+        where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId>
-        where TMigration : DataMigration<TGenId>
-        where TTenant : DataTenant<TGenId>
+        where TEntity : DataEntity<TGenId, TCreatedBy>
+        where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
-        private readonly string _createdBy;
-
-
         /// <summary>
         /// 构造一个数据实体迁移数据库上下文访问器截面。
         /// </summary>
         /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
-        /// <param name="dependencies">给定的 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</param>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</param>
+        /// <param name="createdByGenerator">给定的 <see cref="IDefaultValueGenerator{TValue}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public DataEntityMigrateDbContextAccessorAspect(IMemoryCache memoryCache,
-            DbContextAccessorAspectDependencies<TGenId> dependencies)
-            : base(dependencies, priority: 2)
+            IClockService clock, IStoreIdentifierGenerator<TGenId> identifierGenerator,
+            IDefaultValueGenerator<TCreatedBy> createdByGenerator,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(clock, identifierGenerator, createdByGenerator, options, loggerFactory, priority: 2)
         {
-            _createdBy = EntityPopulator.FormatTypeName(GetType());
-
             MemoryCache = memoryCache.NotNull(nameof(memoryCache));
         }
 
@@ -88,12 +96,11 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 后置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected override void PostProcessCore
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+        protected override void PostProcessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
-            var notification = new EntityNotification<TEntity, TGenId>();
+            var notification = new EntityNotification<TEntity>();
             var result = GetDifference(dbContextAccessor);
 
             if (result.Adds.IsNotEmpty())
@@ -122,15 +129,14 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 异步后置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected override async Task PostProcessCoreAsync
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+        protected override async Task PostProcessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var notification = new EntityNotification<TEntity, TGenId>();
+            var notification = new EntityNotification<TEntity>();
             var result = GetDifference(dbContextAccessor, cancellationToken);
 
             if (result.Adds.IsNotEmpty())
@@ -160,12 +166,12 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 获取差异的数据实体。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回包含添加、更新以及删除的 <see cref="List{DataEntity}"/> 元组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual (List<TEntity> Adds, List<TEntity> Updates) GetDifference
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
             var cacheEntities = MemoryCache.GetOrCreate(GetCacheKey(dbContextAccessor),
@@ -252,12 +258,12 @@ namespace Librame.Extensions.Data.Aspects
         {
             var entity = typeof(TEntity).EnsureCreate<TEntity>();
 
-            entity.Id = Dependencies.IdentifierGenerator.GenerateEntityIdAsync(cancellationToken).ConfigureAndResult();
+            entity.Id = IdentifierGenerator.GenerateEntityIdAsync(cancellationToken).ConfigureAndResult();
             entity.EntityName = entityType.ClrType.GetDisplayNameWithNamespace();
             entity.AssemblyName = entityType.ClrType.GetAssemblyDisplayName();
-            entity.CreatedTime = Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
+            entity.CreatedTime = Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
             entity.CreatedTimeTicks = entity.CreatedTime.Ticks;
-            entity.CreatedBy = _createdBy;
+            entity.CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult();
 
             if (entityType.ClrType.TryGetCustomAttribute(out DescriptionAttribute descr)
                 && descr.Description.IsNotEmpty())
@@ -302,6 +308,6 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         /// <returns>返回字符串。</returns>
         protected virtual string GetCacheKey(DbContextAccessorBase accessor)
-            => $"{nameof(DataEntityMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>)}{accessor?.CurrentConnectionString}";
+            => $"{nameof(DataEntityMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>)}{accessor?.CurrentConnectionString}";
     }
 }

@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Collections
 {
     using Core.Identifiers;
-    using Data.Stores;
 
     /// <summary>
     /// 树形节点。
@@ -143,72 +142,61 @@ namespace Librame.Extensions.Data.Collections
 
 
         /// <summary>
-        /// 获取标识。
+        /// 标识类型。
         /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task{TId}"/>。</returns>
-        public Task<TId> GetIdAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => Id);
-
-        Task<object> IIdentifier.GetIdAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)Id);
+        public Type IdType
+            => typeof(TId);
 
 
         /// <summary>
-        /// 获取父标识。
+        /// 异步获取对象标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task{TId}"/>。</returns>
-        public Task<TId> GetParentIdAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => ParentId);
+        /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
+        public virtual ValueTask<object> GetObjectIdAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)Id);
 
-        Task<object> IParentIdentifier.GetParentIdAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)ParentId);
+        /// <summary>
+        /// 异步获取对象标识。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
+        public virtual ValueTask<object> GetObjectParentIdAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)ParentId);
 
 
         /// <summary>
-        /// 设置标识。
+        /// 异步设置对象标识。
         /// </summary>
-        /// <param name="id">给定的 <typeparamref name="TId"/>。</param>
+        /// <param name="newId">给定的新对象标识。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetIdAsync(TId id, CancellationToken cancellationToken = default)
-            => cancellationToken.RunActionOrCancellationAsync(() => Id = id);
-
-        /// <summary>
-        /// 设置标识。
-        /// </summary>
-        /// <param name="obj">给定的标识对象。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetIdAsync(object obj, CancellationToken cancellationToken = default)
+        /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
+        public virtual ValueTask<object> SetObjectIdAsync(object newId, CancellationToken cancellationToken = default)
         {
-            var id = obj.CastTo<object, TId>(nameof(obj));
+            var realNewId = newId.CastTo<object, TId>(nameof(newId));
 
-            return cancellationToken.RunActionOrCancellationAsync(() => Id = id);
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                Id = realNewId;
+                return newId;
+            });
         }
 
-
         /// <summary>
-        /// 设置父标识。
+        /// 异步设置对象标识。
         /// </summary>
-        /// <param name="parentId">给定的 <typeparamref name="TId"/>。</param>
+        /// <param name="newParentId">给定的新对象标识。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetParentIdAsync(TId parentId, CancellationToken cancellationToken = default)
-            => cancellationToken.RunActionOrCancellationAsync(() => ParentId = parentId);
-
-        /// <summary>
-        /// 设置父标识。
-        /// </summary>
-        /// <param name="obj">给定的父标识对象。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetParentIdAsync(object obj, CancellationToken cancellationToken = default)
+        /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
+        public virtual ValueTask<object> SetObjectParentIdAsync(object newParentId, CancellationToken cancellationToken = default)
         {
-            var parentId = obj.CastTo<object, TId>(nameof(obj));
+            var realNewParentId = newParentId.CastTo<object, TId>(nameof(newParentId));
 
-            return cancellationToken.RunActionOrCancellationAsync(() => ParentId = parentId);
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                ParentId = realNewParentId;
+                return newParentId;
+            });
         }
 
 

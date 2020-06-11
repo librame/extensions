@@ -22,9 +22,11 @@ namespace Librame.Extensions.Data.Stores
     /// 数据实体。
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据实体")]
-    public class DataEntity<TGenId> : AbstractCreation<TGenId>, IEquatable<DataEntity<TGenId>>
+    public class DataEntity<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>, IEquatable<DataEntity<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
         /// 架构。
@@ -66,9 +68,9 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 唯一索引是否相等。
         /// </summary>
-        /// <param name="other">给定的 <see cref="DataEntity{TGenId}"/>。</param>
+        /// <param name="other">给定的 <see cref="DataEntity{TGenId, TCreatedBy}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(DataEntity<TGenId> other)
+        public bool Equals(DataEntity<TGenId, TCreatedBy> other)
             => Schema == other?.Schema && Name == other?.Name;
 
         /// <summary>
@@ -77,7 +79,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="obj">给定要比较的对象。</param>
         /// <returns>返回布尔值。</returns>
         public override bool Equals(object obj)
-            => obj is DataEntity<TGenId> other && Equals(other);
+            => obj is DataEntity<TGenId, TCreatedBy> other && Equals(other);
 
 
         /// <summary>

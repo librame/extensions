@@ -12,10 +12,11 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,9 +24,12 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Aspects
 {
     using Core.Mediators;
+    using Core.Services;
     using Data.Accessors;
+    using Data.Builders;
     using Data.Mediators;
     using Data.Stores;
+    using Data.ValueGenerators;
 
     /// <summary>
     /// 数据审计保存变化访问器截面。
@@ -37,23 +41,32 @@ namespace Librame.Extensions.Data.Aspects
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    public class DataAuditSaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        , ISaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId>
-        where TAudit : DataAudit<TGenId>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+    public class DataAuditSaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>,
+            ISaveChangesAccessorAspect<TGenId, TCreatedBy>
+        where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId>
-        where TMigration : DataMigration<TGenId>
-        where TTenant : DataTenant<TGenId>
+        where TEntity : DataEntity<TGenId, TCreatedBy>
+        where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
         /// 构造一个数据审计保存变化访问器截面。
         /// </summary>
-        /// <param name="dependencies">给定的 <see cref="DbContextAccessorAspectDependencies{TGenId}"/>。</param>
-        public DataAuditSaveChangesDbContextAccessorAspect(DbContextAccessorAspectDependencies<TGenId> dependencies)
-            : base(dependencies, priority: 1)
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</param>
+        /// <param name="createdByGenerator">给定的 <see cref="IDefaultValueGenerator{TValue}"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public DataAuditSaveChangesDbContextAccessorAspect(IClockService clock,
+            IStoreIdentifierGenerator<TGenId> identifierGenerator,
+            IDefaultValueGenerator<TCreatedBy> createdByGenerator,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(clock, identifierGenerator, createdByGenerator, options, loggerFactory, priority: 1)
         {
         }
 
@@ -68,18 +81,34 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 前置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected override void PreProcessCore
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor)
+        protected override void PreProcessCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
-            var dictionary = GetAuditPropertiesDictionary(dbContextAccessor.ChangeTracker);
-            if (dictionary.IsNotEmpty())
+            var entityEntries = GetEntityEntries(dbContextAccessor.ChangeTracker);
+            if (entityEntries.IsEmpty())
+                return;
+
+            var dictionary = new Dictionary<TAudit, List<TAuditProperty>>();
+            foreach (var entry in entityEntries)
+            {
+                var pair = InitializeAuditPair(entry);
+
+                pair.Key.Id = IdentifierGenerator.GenerateAuditIdAsync().ConfigureAndResult();
+                pair.Value.ForEach(p => p.AuditId = pair.Key.Id);
+
+                PopulateAuditCreatedTime(entry, pair.Key);
+                PopulateAuditCreatedBy(entry, pair.Key);
+
+                dictionary.Add(pair.Key, pair.Value);
+            }
+
+            if (dictionary.Count > 0)
             {
                 dbContextAccessor.Audits.AddRange(dictionary.Keys);
 
-                foreach (var properties in dictionary.Values)
-                    dbContextAccessor.AuditProperties.AddRange(properties);
+                foreach (var value in dictionary.Values)
+                    dbContextAccessor.AuditProperties.AddRange(value);
 
                 var mediator = dbContextAccessor.GetService<IMediator>();
                 mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary)).ConfigureAndWait();
@@ -89,70 +118,254 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 异步前置处理核心。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId}"/>。</param>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected override async Task PreProcessCoreAsync
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId> dbContextAccessor,
+        protected override async Task PreProcessCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var dictionary = GetAuditPropertiesDictionary(dbContextAccessor.ChangeTracker, cancellationToken);
-            if (dictionary.IsNotEmpty())
-            {
-                await dbContextAccessor.Audits.AddRangeAsync(dictionary.Keys, cancellationToken).ConfigureAndWaitAsync();
-
-                foreach (var properties in dictionary.Values)
-                    await dbContextAccessor.AuditProperties.AddRangeAsync(properties, cancellationToken).ConfigureAndWaitAsync();
-
-                var mediator = dbContextAccessor.GetService<IMediator>();
-                await mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary)).ConfigureAndWaitAsync();
-            }
-        }
-
-
-        /// <summary>
-        /// 获取数据审计集合。
-        /// </summary>
-        /// <param name="changeTracker">给定的 <see cref="ChangeTracker"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回字典集合。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected virtual IDictionary<TAudit, List<TAuditProperty>> GetAuditPropertiesDictionary
-            (ChangeTracker changeTracker, CancellationToken cancellationToken = default)
-        {
-            var entityStates = Options.AuditEntityStates;
-
-            // 得到需要审计的实体集合
-            var entityEntries = changeTracker.Entries()
-                .Where(m => m.Entity.IsNotNull()
-                    && !m.Metadata.ClrType.IsDefined<NonAuditedAttribute>()
-                    && entityStates.Contains(m.State)).ToList();
+            var entityEntries = GetEntityEntries(dbContextAccessor.ChangeTracker);
+            if (entityEntries.IsEmpty())
+                return;
 
             var dictionary = new Dictionary<TAudit, List<TAuditProperty>>();
             foreach (var entry in entityEntries)
             {
-                var pair = GetAuditProperties(entry, cancellationToken);
+                var pair = InitializeAuditPair(entry);
+
+                pair.Key.Id = await IdentifierGenerator.GenerateAuditIdAsync(cancellationToken).ConfigureAndResultAsync();
+                pair.Value.ForEach(p => p.AuditId = pair.Key.Id);
+
+                await PopulateAuditCreatedTimeAsync(entry, pair.Key, cancellationToken).ConfigureAndWaitAsync();
+                await PopulateAuditCreatedByAsync(entry, pair.Key, cancellationToken).ConfigureAndWaitAsync();
+
                 dictionary.Add(pair.Key, pair.Value);
             }
 
-            return dictionary;
+            if (dictionary.Count > 0)
+            {
+                dbContextAccessor.Audits.AddRange(dictionary.Keys);
+
+                foreach (var value in dictionary.Values)
+                    dbContextAccessor.AuditProperties.AddRange(value);
+
+                var mediator = dbContextAccessor.GetService<IMediator>();
+                mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary)).ConfigureAndWait();
+            }
+        }
+
+
+        /// <summary>
+        /// 填充审计创建时间。
+        /// </summary>
+        /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
+        /// <param name="audit">给定的 <typeparamref name="TAudit"/>。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        protected virtual void PopulateAuditCreatedTime(EntityEntry entry, TAudit audit)
+        {
+            // 如果目标实体是更新
+            if (entry.State == EntityState.Modified)
+            {
+                if (entry.Entity is IUpdation<TCreatedBy> updation)
+                {
+                    var updatedTime = updation.GetUpdatedTimeAsync().ConfigureAndResult();
+                    audit.SetCreatedTimeAsync(updatedTime).ConfigureAndResult();
+                }
+                else if (entry.Entity is IObjectUpdation objectUpdation)
+                {
+                    var updatedTime = objectUpdation.GetObjectUpdatedTimeAsync().ConfigureAndResult();
+                    audit.SetObjectCreatedTimeAsync(updatedTime).ConfigureAndResult();
+                }
+                else
+                {
+                    audit.CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult();
+                }
+            }
+            else
+            {
+                if (entry.Entity is ICreation<TCreatedBy> creation)
+                {
+                    var createdTime = creation.GetCreatedTimeAsync().ConfigureAndResult();
+                    audit.SetCreatedTimeAsync(createdTime).ConfigureAndResult();
+                }
+                else if (entry.Entity is IObjectCreation objectCreation)
+                {
+                    var createdTime = objectCreation.GetObjectCreatedTimeAsync().ConfigureAndResult();
+                    audit.SetObjectCreatedTimeAsync(createdTime).ConfigureAndResult();
+                }
+                else
+                {
+                    audit.CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult();
+                }
+            }
+
+            audit.CreatedTimeTicks = audit.CreatedTime.Ticks;
         }
 
         /// <summary>
-        /// 获取审计属性集合。
+        /// 异步填充审计创建时间。
         /// </summary>
         /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回键值对。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected virtual KeyValuePair<TAudit, List<TAuditProperty>> GetAuditProperties
-            (EntityEntry entry, CancellationToken cancellationToken)
+        /// <param name="audit">给定的 <typeparamref name="TAudit"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个异步操作。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        protected virtual async Task PopulateAuditCreatedTimeAsync(EntityEntry entry, TAudit audit,
+            CancellationToken cancellationToken)
         {
-            var audit = typeof(TAudit).EnsureCreate<TAudit>();
-            audit.Id = GetAuditId(cancellationToken);
+            // 如果目标实体是更新
+            if (entry.State == EntityState.Modified)
+            {
+                if (entry.Entity is IUpdation<TCreatedBy> updation)
+                {
+                    var updatedTime = await updation.GetUpdatedTimeAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetCreatedTimeAsync(updatedTime, cancellationToken).ConfigureAndResultAsync();
+                }
+                else if (entry.Entity is IObjectUpdation objectUpdation)
+                {
+                    var updatedTime = await objectUpdation.GetObjectUpdatedTimeAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetObjectCreatedTimeAsync(updatedTime, cancellationToken).ConfigureAndResultAsync();
+                }
+                else
+                {
+                    audit.CreatedTime = await Clock.GetNowOffsetAsync(cancellationToken: cancellationToken)
+                        .ConfigureAndResultAsync();
+                }
+            }
+            else
+            {
+                if (entry.Entity is ICreation<TCreatedBy> creation)
+                {
+                    var createdTime = await creation.GetCreatedTimeAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetCreatedTimeAsync(createdTime, cancellationToken).ConfigureAndResultAsync();
+                }
+                else if (entry.Entity is IObjectCreation objectCreation)
+                {
+                    var createdTime = await objectCreation.GetObjectCreatedTimeAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetObjectCreatedTimeAsync(createdTime, cancellationToken).ConfigureAndResultAsync();
+                }
+                else
+                {
+                    audit.CreatedTime = await Clock.GetNowOffsetAsync(cancellationToken: cancellationToken)
+                        .ConfigureAndResultAsync();
+                }
+            }
+
+            audit.CreatedTimeTicks = audit.CreatedTime.Ticks;
+        }
+
+
+        /// <summary>
+        /// 填充审计创建者。
+        /// </summary>
+        /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
+        /// <param name="audit">给定的 <typeparamref name="TAudit"/>。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        protected virtual void PopulateAuditCreatedBy(EntityEntry entry, TAudit audit)
+        {
+            // 如果目标实体是更新
+            if (entry.State == EntityState.Modified)
+            {
+                if (entry.Entity is IUpdation<TCreatedBy> updation)
+                {
+                    var updatedBy = updation.GetUpdatedByAsync().ConfigureAndResult();
+                    audit.SetCreatedByAsync(updatedBy).ConfigureAndResult();
+                }
+                else if (entry.Entity is IObjectUpdation objectUpdation)
+                {
+                    var updatedBy = objectUpdation.GetObjectUpdatedByAsync().ConfigureAndResult();
+                    audit.SetObjectCreatedByAsync(updatedBy).ConfigureAndResult();
+                }
+                else
+                {
+                    audit.CreatedBy = CreatedByGenerator.GetValueAsync(GetType())
+                        .ConfigureAndResult();
+                }
+            }
+            else
+            {
+                if (entry.Entity is ICreation<TCreatedBy> creation)
+                {
+                    var createdBy = creation.GetCreatedByAsync().ConfigureAndResult();
+                    audit.SetCreatedByAsync(createdBy).ConfigureAndResult();
+                }
+                else if (entry.Entity is IObjectCreation objectCreation)
+                {
+                    var createdBy = objectCreation.GetObjectCreatedByAsync().ConfigureAndResult();
+                    audit.SetObjectCreatedByAsync(createdBy).ConfigureAndResult();
+                }
+                else
+                {
+                    audit.CreatedBy = CreatedByGenerator.GetValueAsync(GetType())
+                        .ConfigureAndResult();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 异步填充审计创建时间。
+        /// </summary>
+        /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
+        /// <param name="audit">给定的 <typeparamref name="TAudit"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个异步操作。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        protected virtual async Task PopulateAuditCreatedByAsync(EntityEntry entry, TAudit audit,
+            CancellationToken cancellationToken)
+        {
+            // 如果目标实体是更新
+            if (entry.State == EntityState.Modified)
+            {
+                if (entry.Entity is IUpdation<TCreatedBy> updation)
+                {
+                    var updatedBy = await updation.GetUpdatedByAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetCreatedByAsync(updatedBy, cancellationToken).ConfigureAndResultAsync();
+                }
+                else if (entry.Entity is IObjectUpdation objectUpdation)
+                {
+                    var updatedBy = await objectUpdation.GetObjectUpdatedByAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetObjectCreatedByAsync(updatedBy, cancellationToken).ConfigureAndResultAsync();
+                }
+                else
+                {
+                    audit.CreatedBy = await CreatedByGenerator.GetValueAsync(GetType(), cancellationToken)
+                        .ConfigureAndResultAsync();
+                }
+            }
+            else
+            {
+                if (entry.Entity is ICreation<TCreatedBy> creation)
+                {
+                    var createdBy = await creation.GetCreatedByAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetCreatedByAsync(createdBy, cancellationToken).ConfigureAndResultAsync();
+                }
+                else if (entry.Entity is IObjectCreation objectCreation)
+                {
+                    var createdBy = await objectCreation.GetObjectCreatedByAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetObjectCreatedByAsync(createdBy, cancellationToken).ConfigureAndResultAsync();
+                }
+                else
+                {
+                    audit.CreatedBy = await CreatedByGenerator.GetValueAsync(GetType(), cancellationToken)
+                        .ConfigureAndResultAsync();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 初始化审计键值对。
+        /// </summary>
+        /// <param name="entry">给定的 <see cref="EntityEntry"/>。</param>
+        /// <returns>返回包含审计与审计属性列表的键值对。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        protected virtual KeyValuePair<TAudit, List<TAuditProperty>> InitializeAuditPair(EntityEntry entry)
+        {
+            var audit = CreateAudit();
+
             audit.TableName = GetTableName(entry);
-            audit.EntityTypeName = EntityPopulator.FormatTypeName(entry.Metadata.ClrType);
+            audit.EntityTypeName = StoreHelper.CreatedByTypeName(entry.Metadata.ClrType);
             audit.State = (int)entry.State;
             audit.StateName = entry.State.ToString();
 
@@ -165,10 +378,10 @@ namespace Librame.Extensions.Data.Aspects
                 if (property.IsPrimaryKey())
                     audit.EntityId = GetEntityId(entry.Property(property.Name));
 
-                var auditProperty = typeof(TAuditProperty).EnsureCreate<TAuditProperty>();
-                auditProperty.AuditId = audit.Id;
+                var auditProperty = CreateAuditProperty();
+
                 auditProperty.PropertyName = property.Name;
-                auditProperty.PropertyTypeName = EntityPopulator.FormatTypeName(property.ClrType);
+                auditProperty.PropertyTypeName = StoreHelper.CreatedByTypeName(property.ClrType);
 
                 switch (entry.State)
                 {
@@ -197,36 +410,9 @@ namespace Librame.Extensions.Data.Aspects
                 auditProperties.Add(auditProperty);
             }
 
-            if (entry.State == EntityState.Modified && entry.Entity is IUpdation updation)
-            {
-                // 使用实体更新时间
-                audit.CreatedTime = ToDateTime(updation.GetCreatedTimeAsync(cancellationToken).ConfigureAndResult(), cancellationToken);
-                audit.CreatedBy = ToBy(updation.GetCreatedByAsync(cancellationToken).ConfigureAndResult());
-            }
-            else if (entry.Entity is ICreation creation)
-            {
-                // 使用实体创建时间
-                audit.CreatedTime = ToDateTime(creation.GetCreatedTimeAsync(cancellationToken).ConfigureAndResult(), cancellationToken);
-                audit.CreatedBy = ToBy(creation.GetCreatedByAsync(cancellationToken).ConfigureAndResult());
-            }
-            else
-            {
-                // 使用当前时间
-                audit.CreatedTime = Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
-            }
-
-            audit.CreatedTimeTicks = audit.CreatedTime.Ticks;
-
             return new KeyValuePair<TAudit, List<TAuditProperty>>(audit, auditProperties);
         }
 
-        /// <summary>
-        /// 获取审计标识。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回 <typeparamref name="TGenId"/>。</returns>
-        protected virtual TGenId GetAuditId(CancellationToken cancellationToken)
-            => Dependencies.IdentifierGenerator.GenerateAuditIdAsync().ConfigureAndResult();
 
         /// <summary>
         /// 获取表名。
@@ -251,37 +437,38 @@ namespace Librame.Extensions.Data.Aspects
             return propertyEntry.CurrentValue?.ToString();
         }
 
-        /// <summary>
-        /// 转换为日期时间格式。
-        /// </summary>
-        /// <param name="time">给定的日期对象。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <returns>返回 <see cref="DateTimeOffset"/>。</returns>
-        protected virtual DateTimeOffset ToDateTime(object time, CancellationToken cancellationToken)
-        {
-            if (time.IsNull())
-                return Dependencies.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
-
-            if (time is DateTimeOffset dateTimeOffset)
-                return dateTimeOffset;
-
-            if (time is DateTime dateTime)
-                return new DateTimeOffset(dateTime);
-
-            return DateTimeOffset.Parse(time.ToString(), CultureInfo.InvariantCulture);
-        }
 
         /// <summary>
-        /// 转换为人员内容。
+        /// 创建审计。
         /// </summary>
-        /// <param name="by">给定的对象。</param>
-        /// <returns>返回字符串。</returns>
-        protected virtual string ToBy(object by)
-        {
-            if (by is string str)
-                return str;
+        /// <returns>返回 <typeparamref name="TAudit"/>。</returns>
+        protected virtual TAudit CreateAudit()
+            => typeof(TAudit).EnsureCreate<TAudit>();
 
-            return by?.ToString();
+        /// <summary>
+        /// 创建审计属性。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TAuditProperty"/>。</returns>
+        protected virtual TAuditProperty CreateAuditProperty()
+            => typeof(TAuditProperty).EnsureCreate<TAuditProperty>();
+
+
+        /// <summary>
+        /// 获取实体入口列表。
+        /// </summary>
+        /// <param name="changeTracker">给定的 <see cref="ChangeTracker"/>。</param>
+        /// <returns>返回 <see cref="List{EntityEntry}"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        protected virtual List<EntityEntry> GetEntityEntries(ChangeTracker changeTracker)
+        {
+            changeTracker.NotNull(nameof(changeTracker));
+
+            var entityStates = Options.AuditEntityStates;
+
+            return changeTracker.Entries()
+                .Where(m => m.Entity.IsNotNull()
+                    && !m.Metadata.ClrType.IsDefined<NonAuditedAttribute>()
+                    && entityStates.Contains(m.State)).ToList();
         }
 
     }

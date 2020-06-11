@@ -4,16 +4,9 @@ using Xunit;
 namespace Librame.Extensions.Data.Tests
 {
     using Collections;
-    using Stores;
 
     public class TreeingTests
     {
-        public class TestTreeing : AbstractParentIdentifier<int>
-        {
-            public string Name { get; set; }
-        }
-
-
         [Fact]
         public void AllTest()
         {
@@ -35,7 +28,7 @@ namespace Librame.Extensions.Data.Tests
             }
 
             var treeing = list.AsTreeing<TestTreeing, int>();
-            Assert.Equal(10, treeing.Count);
+            Assert.Equal(10, treeing.Count); // ParentId=0 Count
         }
 
     }

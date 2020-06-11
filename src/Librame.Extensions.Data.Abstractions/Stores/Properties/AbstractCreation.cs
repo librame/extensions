@@ -24,12 +24,15 @@ namespace Librame.Extensions.Data.Stores
     /// 抽象创建。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractCreation<TId> : AbstractCreation<TId, string, DateTimeOffset>, ICreatedTimeTicks
+    public abstract class AbstractCreation<TId, TCreatedBy> : AbstractCreation<TId, TCreatedBy, DateTimeOffset>,
+        ICreation<TCreatedBy>
         where TId : IEquatable<TId>
+        where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractCreation{TId}"/>。
+        /// 构造一个 <see cref="AbstractCreation{TId, TCreatedBy}"/>。
         /// </summary>
         protected AbstractCreation()
         {
@@ -43,6 +46,27 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         [Display(Name = nameof(CreatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
         public virtual long CreatedTimeTicks { get; set; }
+
+
+        /// <summary>
+        /// 异步设置创建时间。
+        /// </summary>
+        /// <param name="newCreatedTime">给定的新创建时间对象。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
+        public override ValueTask<object> SetObjectCreatedTimeAsync(object newCreatedTime,
+            CancellationToken cancellationToken = default)
+        {
+            var realNewCreatedTime = newCreatedTime.CastTo<object, DateTimeOffset>(nameof(newCreatedTime));
+
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                CreatedTime = realNewCreatedTime;
+                CreatedTimeTicks = CreatedTime.Ticks;
+                return newCreatedTime;
+            });
+        }
+
     }
 
 
@@ -51,9 +75,10 @@ namespace Librame.Extensions.Data.Stores
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    /// <typeparam name="TCreatedTime">指定的创建时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
+    /// <typeparam name="TCreatedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
     [NotMapped]
-    public abstract class AbstractCreation<TId, TCreatedBy, TCreatedTime> : AbstractIdentifier<TId>, ICreation<TCreatedBy, TCreatedTime>
+    public abstract class AbstractCreation<TId, TCreatedBy, TCreatedTime> : AbstractIdentifier<TId>,
+        ICreation<TCreatedBy, TCreatedTime>
         where TId : IEquatable<TId>
         where TCreatedBy : IEquatable<TCreatedBy>
         where TCreatedTime : struct
@@ -72,70 +97,71 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 异步获取创建者。
+        /// 获取创建时间类型。
         /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TCreatedBy"/> （兼容标识或字符串）的异步操作。</returns>
-        public virtual Task<TCreatedBy> GetCreatedByAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => CreatedBy);
+        [NotMapped]
+        public Type CreatedTimeType
+            => typeof(TCreatedTime);
 
-        Task<object> ICreation.GetCreatedByAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)CreatedBy);
+        /// <summary>
+        /// 获取创建者类型。
+        /// </summary>
+        [NotMapped]
+        public Type CreatedByType
+            => typeof(TCreatedBy);
+
 
         /// <summary>
         /// 异步获取创建时间。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TCreatedTime"/> （兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
-        public virtual Task<TCreatedTime> GetCreatedTimeAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => CreatedTime);
+        /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
+        public virtual ValueTask<object> GetObjectCreatedTimeAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)CreatedTime);
 
-        Task<object> ICreation.GetCreatedTimeAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)CreatedTime);
+        /// <summary>
+        /// 异步获取创建者。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含创建者（兼容标识或字符串）的异步操作。</returns>
+        public virtual ValueTask<object> GetObjectCreatedByAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)CreatedBy);
 
 
         /// <summary>
-        /// 异步设置创建者。
+        /// 异步设置创建时间。
         /// </summary>
-        /// <param name="createdBy">给定的 <typeparamref name="TCreatedBy"/>。</param>
+        /// <param name="newCreatedTime">给定的新创建时间对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetCreatedByAsync(TCreatedBy createdBy, CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => CreatedBy = createdBy);
-
-        /// <summary>
-        /// 异步设置创建者。
-        /// </summary>
-        /// <param name="obj">给定的创建者对象。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetCreatedByAsync(object obj, CancellationToken cancellationToken = default)
+        /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
+        public virtual ValueTask<object> SetObjectCreatedTimeAsync(object newCreatedTime,
+            CancellationToken cancellationToken = default)
         {
-            var createdBy = obj.CastTo<object, TCreatedBy>(nameof(obj));
+            var realNewCreatedTime = newCreatedTime.CastTo<object, TCreatedTime>(nameof(newCreatedTime));
 
-            return cancellationToken.RunActionOrCancellationAsync(() => CreatedBy = createdBy);
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                CreatedTime = realNewCreatedTime;
+                return newCreatedTime;
+            });
         }
 
         /// <summary>
-        /// 异步设置创建时间。
+        /// 异步设置创建者。
         /// </summary>
-        /// <param name="createdTime">给定的 <typeparamref name="TCreatedTime"/>。</param>
+        /// <param name="newCreatedBy">给定的新创建者对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetCreatedTimeAsync(TCreatedTime createdTime, CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => CreatedTime = createdTime);
-
-        /// <summary>
-        /// 异步设置创建时间。
-        /// </summary>
-        /// <param name="obj">给定的创建时间对象。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetCreatedTimeAsync(object obj, CancellationToken cancellationToken = default)
+        /// <returns>返回一个包含创建者（兼容标识或字符串）的异步操作。</returns>
+        public virtual ValueTask<object> SetObjectCreatedByAsync(object newCreatedBy,
+            CancellationToken cancellationToken = default)
         {
-            var createdTime = obj.CastTo<object, TCreatedTime>(nameof(obj));
+            var realNewCreatedBy = newCreatedBy.CastTo<object, TCreatedBy>(nameof(newCreatedBy));
 
-            return cancellationToken.RunActionOrCancellationAsync(() => CreatedTime = createdTime);
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                CreatedBy = realNewCreatedBy;
+                return newCreatedBy;
+            });
         }
 
     }

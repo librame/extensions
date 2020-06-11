@@ -24,20 +24,20 @@ namespace Librame.Extensions.Core.Tests
         {
             CultureInfoUtility.Register(new CultureInfo(cultureName));
 
-            var minutesAgo = localizer.GetString(r => r.HumanizedMinutesAgo);
-            Assert.False(minutesAgo.ResourceNotFound);
+            var localized = localizer.GetString(r => r.HumanizedMinutesAgo);
+            Assert.False(localized.ResourceNotFound);
 
-            var hoursAgo = localizer.GetString(r => r.HumanizedHoursAgo);
-            Assert.False(hoursAgo.ResourceNotFound);
+            localized = localizer.GetString(r => r.HumanizedHoursAgo);
+            Assert.False(localized.ResourceNotFound);
 
-            var daysAgo = localizer.GetString(r => r.HumanizedDaysAgo);
-            Assert.False(daysAgo.ResourceNotFound);
+            localized = localizer.GetString(r => r.HumanizedDaysAgo);
+            Assert.False(localized.ResourceNotFound);
 
-            var monthsAgo = localizer.GetString(r => r.HumanizedMonthsAgo);
-            Assert.False(monthsAgo.ResourceNotFound);
+            localized = localizer.GetString(r => r.HumanizedMonthsAgo);
+            Assert.False(localized.ResourceNotFound);
 
-            var yearsAgo = localizer.GetString(r => r.HumanizedYearsAgo);
-            Assert.False(yearsAgo.ResourceNotFound);
+            localized = localizer.GetString(r => r.HumanizedYearsAgo);
+            Assert.False(localized.ResourceNotFound);
         }
 
     }

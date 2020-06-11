@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DataSynchronization" xml:space="preserve">
+    <value>數據同步</value>
+  </data>
   <data name="DefaultConnectionString" xml:space="preserve">
     <value>默認數據庫連結字符串</value>
   </data>
@@ -129,10 +132,13 @@
   <data name="Name" xml:space="preserve">
     <value>名稱</value>
   </data>
-  <data name="WriteConnectionSeparation" xml:space="preserve">
-    <value>寫入連結分離</value>
+  <data name="StructureSynchronization" xml:space="preserve">
+    <value>結構同步</value>
   </data>
   <data name="WriteConnectionString" xml:space="preserve">
     <value>寫入數據庫連結字符串</value>
+  </data>
+  <data name="WriteSeparation" xml:space="preserve">
+    <value>寫入分離</value>
   </data>
 </root>

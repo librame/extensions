@@ -36,7 +36,7 @@ namespace Librame.Extensions.Drawing.Options
             = "librame";
 
         /// <summary>
-        /// 水印图片文件组合器。
+        /// 水印图片路径。
         /// </summary>
         public FilePathCombiner ImagePath { get; set; }
             = new FilePathCombiner("watermark.png");

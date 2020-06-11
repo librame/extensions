@@ -92,7 +92,7 @@ namespace Librame.Extensions.Examples
                     dependency.Options.IdentifierGenerator = CombIdentifierGenerator.SQLite;
 
                     // for SQLite
-                    dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.DatabasesDierctory.CombinePath(dataFile));
+                    dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.DatabasesConfigDierctory.CombinePath(dataFile));
 
                     // ConnectionStrings 配置节点不支持 DefaultTenant 配置，须手动启用读写分离
                     dependency.Options.DefaultTenant.WritingSeparation = true;
@@ -114,7 +114,7 @@ namespace Librame.Extensions.Examples
         }
 
         static void DisplayData<TAccessor>(IServiceProvider provider, string databaseName)
-            where TAccessor : ExampleDbContextAccessorBase<Guid, int>
+            where TAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
         {
             Console.WriteLine($"Run {databaseName} database test:");
 

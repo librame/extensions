@@ -10,16 +10,16 @@ namespace Librame.Extensions.Data.Tests
     using Data.Builders;
     using Data.Stores;
 
-    public class TestGuidStoreIdentifierGenerator : GuidStoreIdentifierGenerator
+    public class TestGuidStoreIdentifierGenerator : GuidDataStoreIdentifierGenerator
     {
-        public TestGuidStoreIdentifierGenerator(IOptions<DataBuilderOptions> options,
-            IClockService clock, ILoggerFactory loggerFactory)
-            : base(options, clock, loggerFactory)
+        public TestGuidStoreIdentifierGenerator(IClockService clock,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(clock, options, loggerFactory)
         {
         }
 
 
         public Task<Guid> GetArticleIdAsync(CancellationToken cancellationToken = default)
-            => GenerateGenericIdAsync("ArticleId", cancellationToken);
+            => GenerateIdAsync("ArticleId", cancellationToken);
     }
 }

@@ -9,14 +9,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)'=='net48'">
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
   
   <ItemGroup>
@@ -25,6 +21,10 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\src\Librame.Extensions.Core\Librame.Extensions.Core.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="_configs\core_identifiers\" />
   </ItemGroup>
 
 </Project>

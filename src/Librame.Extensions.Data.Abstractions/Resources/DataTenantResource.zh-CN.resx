@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DataSynchronization" xml:space="preserve">
+    <value>数据同步</value>
+  </data>
   <data name="DefaultConnectionString" xml:space="preserve">
     <value>默认数据库连接字符串</value>
   </data>
@@ -129,10 +132,13 @@
   <data name="Name" xml:space="preserve">
     <value>名称</value>
   </data>
-  <data name="WriteConnectionSeparation" xml:space="preserve">
-    <value>写入连接分离</value>
+  <data name="StructureSynchronization" xml:space="preserve">
+    <value>结构同步</value>
   </data>
   <data name="WriteConnectionString" xml:space="preserve">
     <value>写入数据库连接字符串</value>
+  </data>
+  <data name="WriteSeparation" xml:space="preserve">
+    <value>写入分离</value>
   </data>
 </root>

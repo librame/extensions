@@ -150,8 +150,8 @@
   <data name="LockoutEnabled" xml:space="preserve">
     <value>启用锁定</value>
   </data>
-  <data name="LockoutEndTime" xml:space="preserve">
-    <value>解锁时间</value>
+  <data name="LockoutEnd" xml:space="preserve">
+    <value>锁定期结束</value>
   </data>
   <data name="ParentId" xml:space="preserve">
     <value>父标识</value>
@@ -170,5 +170,41 @@
   </data>
   <data name="UpdatedTimeTicks" xml:space="preserve">
     <value>更新时间周期数</value>
+  </data>
+  <data name="CommentCount" xml:space="preserve">
+    <value>评论次数</value>
+  </data>
+  <data name="CommenterCount" xml:space="preserve">
+    <value>评论人数</value>
+  </data>
+  <data name="FavoriteCount" xml:space="preserve">
+    <value>收藏人数</value>
+  </data>
+  <data name="ObjectorCount" xml:space="preserve">
+    <value>反对人数</value>
+  </data>
+  <data name="PublishedAs" xml:space="preserve">
+    <value>发表为</value>
+  </data>
+  <data name="PublishedBy" xml:space="preserve">
+    <value>发表者</value>
+  </data>
+  <data name="PublishedTime" xml:space="preserve">
+    <value>发表时间</value>
+  </data>
+  <data name="PublishedTimeTicks" xml:space="preserve">
+    <value>发表时间周期数</value>
+  </data>
+  <data name="RetweetCount" xml:space="preserve">
+    <value>转发次数</value>
+  </data>
+  <data name="SupporterCount" xml:space="preserve">
+    <value>支持人数</value>
+  </data>
+  <data name="VisitCount" xml:space="preserve">
+    <value>访问次数</value>
+  </data>
+  <data name="VisitorCount" xml:space="preserve">
+    <value>访问人数</value>
   </data>
 </root>

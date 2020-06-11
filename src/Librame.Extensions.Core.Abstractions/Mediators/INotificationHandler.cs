@@ -20,7 +20,7 @@ namespace Librame.Extensions.Core.Mediators
     /// </summary>
     /// <typeparam name="TNotification">指定的通知类型。</typeparam>
     public interface INotificationHandler<in TNotification>
-        where TNotification : INotification
+        where TNotification : INotificationIndication
     {
         /// <summary>
         /// 异步处理通知。

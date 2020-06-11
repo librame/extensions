@@ -18,17 +18,8 @@ namespace Librame.Extensions.Core.Mediators
     /// 请求接口。
     /// </summary>
     /// <typeparam name="TResponse">指定的响应类型。</typeparam>
-    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
-    public interface IRequest<out TResponse> : IRequest
-    {
-    }
-
-
-    /// <summary>
-    /// 请求接口。
-    /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
-    public interface IRequest
+    [SuppressMessage("Design", "CA1040:避免使用空接口")]
+    public interface IRequest<out TResponse> : IRequestIndication
     {
     }
 }

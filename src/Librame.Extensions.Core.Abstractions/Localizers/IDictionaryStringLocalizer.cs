@@ -18,7 +18,13 @@ namespace Librame.Extensions.Core.Localizers
     /// 字典字符串定位器接口。
     /// </summary>
     /// <typeparam name="TResource">指定的资源类型。</typeparam>
-    public interface IDictionaryStringLocalizer<TResource> : IStringLocalizer<TResource>
+    public interface IDictionaryStringLocalizer<out TResource> : IStringLocalizer<TResource>
     {
+        /// <summary>
+        /// 带有资源。
+        /// </summary>
+        /// <typeparam name="TNewResource">指定的新资源类型。</typeparam>
+        /// <returns>返回 <see cref="IDictionaryStringLocalizer{TResource}"/>。</returns>
+        IDictionaryStringLocalizer<TNewResource> WithResource<TNewResource>();
     }
 }

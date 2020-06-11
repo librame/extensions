@@ -10,16 +10,16 @@ namespace Librame.Extensions.Examples
     using Data.Builders;
     using Data.Stores;
 
-    public class ExampleStoreIdentifierGenerator : GuidStoreIdentifierGenerator
+    public class ExampleStoreIdentifierGenerator : GuidDataStoreIdentifierGenerator
     {
-        public ExampleStoreIdentifierGenerator(IOptions<DataBuilderOptions> options,
-            IClockService clock, ILoggerFactory loggerFactory)
-            : base(options, clock, loggerFactory)
+        public ExampleStoreIdentifierGenerator(IClockService clock,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(clock, options, loggerFactory)
         {
         }
 
 
         public Task<Guid> GetArticleIdAsync(CancellationToken cancellationToken = default)
-            => GenerateGenericIdAsync("ArticleId", cancellationToken);
+            => GenerateIdAsync("ArticleId", cancellationToken);
     }
 }

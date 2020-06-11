@@ -3,53 +3,10 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
-    using Decorators;
     using Services;
 
     public class CoreDecoratorTests
     {
-        public class TestService : AbstractService
-        {
-            public TestService()
-                : base()
-            {
-            }
-
-            public string Message { get; set; }
-                = "1";
-        }
-
-        public class TestServiceDecorator : TestService
-        {
-            public TestServiceDecorator(IDecorator<TestService> decorator)
-                : base()
-            {
-                Message = decorator.Source.Message + "2";
-            }
-        }
-
-
-        public class TestImplementation : TestService
-        {
-            public TestImplementation()
-                : base()
-            {
-                Message = "2";
-            }
-        }
-
-        public class TestImplementationDecorator
-        {
-            public TestImplementationDecorator(IDecorator<TestService, TestImplementation> decorator)
-                : base()
-            {
-                OtherMessage = decorator.Source.Message + "1";
-            }
-
-            public string OtherMessage { get; }
-        }
-
-
         [Fact]
         public void AllTest()
         {
@@ -57,8 +14,8 @@ namespace Librame.Extensions.Core.Tests
             var testDecorator = TestServiceProvider.Current.GetRequiredService<TestServiceDecorator>();
             Assert.NotEqual(test.Message, testDecorator.Message);
 
-            var impl = TestServiceProvider.Current.GetRequiredService<TestImplementation>();
-            var implDecorator = TestServiceProvider.Current.GetRequiredService<TestImplementationDecorator>();
+            var impl = TestServiceProvider.Current.GetRequiredService<TestServiceImplementation>();
+            var implDecorator = TestServiceProvider.Current.GetRequiredService<TestServiceImplementationDecorator>();
             Assert.NotEqual(impl.Message, implDecorator.OtherMessage);
 
             Assert.NotEqual(test.Message, impl.Message);

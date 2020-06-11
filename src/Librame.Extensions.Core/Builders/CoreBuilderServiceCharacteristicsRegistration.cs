@@ -51,6 +51,7 @@ namespace Librame.Extensions.Core.Builders
                 { typeof(ISecurityIdentifierProtector), ServiceCharacteristics.Singleton() },
 
                 // Localizers
+                { typeof(IEnhancedStringLocalizer<>), ServiceCharacteristics.Transient() },
                 { typeof(IDictionaryStringLocalizer<>), ServiceCharacteristics.Transient() },
                 { typeof(IDictionaryStringLocalizerFactory), ServiceCharacteristics.Singleton() },
 

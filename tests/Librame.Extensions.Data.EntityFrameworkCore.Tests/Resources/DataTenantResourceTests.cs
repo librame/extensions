@@ -6,7 +6,7 @@ using System.Globalization;
 namespace Librame.Extensions.Data.Tests
 {
     using Core.Utilities;
-    using Resources;
+    using Data.Resources;
 
     public class DataTenantResourceTests
     {
@@ -24,20 +24,29 @@ namespace Librame.Extensions.Data.Tests
         {
             CultureInfoUtility.Register(new CultureInfo(cultureName));
 
-            var name = localizer.GetString(r => r.Name);
-            Assert.False(name.ResourceNotFound);
+            var localized = localizer.GetString(r => r.Name);
+            Assert.False(localized.ResourceNotFound);
 
-            var host = localizer.GetString(r => r.Host);
-            Assert.False(host.ResourceNotFound);
+            localized = localizer.GetString(r => r.Host);
+            Assert.False(localized.ResourceNotFound);
 
-            var defaultConnection = localizer.GetString(r => r.DefaultConnectionString);
-            Assert.False(defaultConnection.ResourceNotFound);
+            localized = localizer.GetString(r => r.DefaultConnectionString);
+            Assert.False(localized.ResourceNotFound);
 
-            var writeConnection = localizer.GetString(r => r.WriteConnectionString);
-            Assert.False(writeConnection.ResourceNotFound);
+            localized = localizer.GetString(r => r.WriteConnectionString);
+            Assert.False(localized.ResourceNotFound);
 
-            var separation = localizer.GetString(r => r.WriteConnectionSeparation);
-            Assert.False(separation.ResourceNotFound);
+            localized = localizer.GetString(r => r.WriteSeparation);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.EncryptedConnectionStrings);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.DataSynchronization);
+            Assert.False(localized.ResourceNotFound);
+
+            localized = localizer.GetString(r => r.StructureSynchronization);
+            Assert.False(localized.ResourceNotFound);
         }
 
     }

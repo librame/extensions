@@ -73,7 +73,7 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="defaultTenant">给定的默认 <see cref="ITenant"/>。</param>
         public DataBuilderOptionsBase(ITenant defaultTenant)
         {
-            DefaultTenant = EntityPopulator.PopulateDefaultTenant(defaultTenant);
+            DefaultTenant = StoreHelper.PopulateDefaultTenant(defaultTenant);
         }
 
 

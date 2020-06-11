@@ -37,37 +37,36 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 获取标识。
+        /// 标识类型。
         /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task{TId}"/>。</returns>
-        public virtual Task<TId> GetIdAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => Id);
-
-        Task<object> IIdentifier.GetIdAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => (object)Id);
+        [NotMapped]
+        public Type IdType
+            => typeof(TId);
 
 
         /// <summary>
-        /// 设置标识。
+        /// 异步获取对象标识。
         /// </summary>
-        /// <param name="id">给定的 <typeparamref name="TId"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetIdAsync(TId id, CancellationToken cancellationToken = default)
-            => cancellationToken.RunActionOrCancellationAsync(() => Id = id);
+        /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
+        public virtual ValueTask<object> GetObjectIdAsync(CancellationToken cancellationToken)
+            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)Id);
 
         /// <summary>
-        /// 设置标识。
+        /// 异步设置对象标识。
         /// </summary>
-        /// <param name="obj">给定的标识对象。</param>
+        /// <param name="newId">给定的新对象标识。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        public virtual Task SetIdAsync(object obj, CancellationToken cancellationToken = default)
+        /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
+        public virtual ValueTask<object> SetObjectIdAsync(object newId, CancellationToken cancellationToken = default)
         {
-            var id = obj.CastTo<object, TId>(nameof(obj));
-            
-            return cancellationToken.RunActionOrCancellationAsync(() => Id = id);
+            var realNewId = newId.CastTo<object, TId>(nameof(newId));
+
+            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            {
+                Id = realNewId;
+                return newId;
+            });
         }
 
     }

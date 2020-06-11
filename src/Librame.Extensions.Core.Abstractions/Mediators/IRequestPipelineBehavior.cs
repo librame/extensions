@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core.Mediators
     /// <typeparam name="TRequest">指定的请求类型。</typeparam>
     /// <typeparam name="TResponse">指定的响应类型。</typeparam>
     public interface IRequestPipelineBehavior<in TRequest, TResponse>
-        where TRequest : IRequest
+        where TRequest : IRequestIndication
     {
         /// <summary>
         /// 异步管道处理程序。执行任何附加行为，并根据需要等待响应动作。

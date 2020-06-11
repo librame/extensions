@@ -50,7 +50,7 @@ namespace Librame.Extensions.Data.Accessors
 
         private void InitializeAccessorBase(DbContextOptions options)
         {
-            // Database.GetDbConnection().ConnectionString 的信息不一定完整
+            // Database.GetDbConnection().ConnectionString 的信息不一定完整（比如密码）
             CurrentConnectionString = Dependency.Options.OptionsExtensionConnectionStringFactory?.Invoke(options);
             CurrentConnectionString.NotEmpty("BuilderOptions.OptionsExtensionConnectionStringFactory");
 
@@ -120,7 +120,15 @@ namespace Librame.Extensions.Data.Accessors
             => CurrentConnectionString.Equals(connectionString, StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
-        /// 是写入数据连接字符串（支持未启用读写分离）。
+        /// 是默认连接字符串（未启用读写分离也将被视为默认连接字符串）。
+        /// </summary>
+        /// <returns>返回布尔值。</returns>
+        public virtual bool IsDefaultConnectionString()
+            => !CurrentTenant.WritingSeparation
+            || (CurrentTenant.WritingSeparation && IsCurrentConnectionString(CurrentTenant.DefaultConnectionString));
+
+        /// <summary>
+        /// 是写入连接字符串（未启用读写分离也将被视为写入连接字符串）。
         /// </summary>
         /// <returns>返回布尔值。</returns>
         public virtual bool IsWritingConnectionString()
@@ -252,27 +260,42 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回受影响的行数。</returns>
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            var count = 0;
+            // 如果启用镜像功能会因 DbContext 中的数据存在两份而导致数据主键跟踪抛出异常，此功能禁用
+            //if (CurrentTenant.DataSynchronization)
+            //{
+            //    SaveChangesToConnectionString(tenant => tenant.DefaultConnectionString,
+            //        tenant => CurrentConnectionString, IsDefaultConnectionString);
+            //}
 
-            if (_isSavingChanges)
+            return SaveChangesToConnectionString(tenant => tenant.WritingConnectionString,
+                tenant => tenant.DefaultConnectionString, IsWritingConnectionString);
+
+            // SaveChangesToConnectionString
+            int SaveChangesToConnectionString(Func<ITenant, string> changeFactory,
+                Func<ITenant, string> defaultFactory, Func<bool> validChangeFactory)
+            {
+                var count = 0;
+
+                if (_isSavingChanges)
+                    return count;
+
+                _isSavingChanges = true;
+
+                // 试着改变为写入数据库连接
+                var isChanged = ChangeConnectionString(changeFactory);
+
+                // 调用保存更改核心
+                if (validChangeFactory.Invoke())
+                    count = SaveChangesCore(acceptAllChangesOnSuccess);
+
+                // 试着还原为默认数据库连接
+                if (isChanged)
+                    ChangeConnectionString(defaultFactory);
+
+                _isSavingChanges = false;
+
                 return count;
-
-            _isSavingChanges = true;
-
-            // 试着改变为写入数据库连接
-            var isChanged = ChangeConnectionString(tenant => tenant.WritingConnectionString);
-
-            // 调用保存更改核心
-            if (IsWritingConnectionString())
-                count = SaveChangesCore(acceptAllChangesOnSuccess);
-
-            // 试着还原为默认数据库连接
-            if (isChanged)
-                ChangeConnectionString(tenant => tenant.DefaultConnectionString);
-
-            _isSavingChanges = false;
-
-            return count;
+            }
         }
 
         /// <summary>
@@ -289,37 +312,52 @@ namespace Librame.Extensions.Data.Accessors
         /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(async () =>
+            // 如果启用镜像功能会因 DbContext 中的数据存在两份而导致数据主键跟踪抛出异常，此功能禁用
+            //if (CurrentTenant.DataSynchronization)
+            //{
+            //    await SaveChangesToConnectionStringAsync(tenant => tenant.DefaultConnectionString,
+            //        tenant => CurrentConnectionString, IsDefaultConnectionString).ConfigureAndResultAsync();
+            //}
+
+            return await SaveChangesToConnectionStringAsync(tenant => tenant.WritingConnectionString,
+                tenant => tenant.DefaultConnectionString, IsWritingConnectionString).ConfigureAndResultAsync();
+
+            // SaveChangesToConnectionStringAsync
+            Task<int> SaveChangesToConnectionStringAsync(Func<ITenant, string> changeFactory,
+                Func<ITenant, string> defaultFactory, Func<bool> validChangeFactory)
             {
-                var count = 0;
-
-                if (_isSavingChanges)
-                    return count;
-
-                _isSavingChanges = true;
-
-                // 试着改变为写入数据库连接
-                var isChanged = await ChangeConnectionStringAsync(tenant => tenant.WritingConnectionString, cancellationToken)
-                    .ConfigureAndResultAsync();
-
-                // 调用保存更改核心
-                if (IsWritingConnectionString())
-                    count = await SaveChangesCoreAsync(acceptAllChangesOnSuccess, cancellationToken).ConfigureAndResultAsync();
-
-                // 试着还原为默认数据库连接
-                if (isChanged)
+                return cancellationToken.RunFactoryOrCancellationAsync(async () =>
                 {
-                    await ChangeConnectionStringAsync(tenant => tenant.DefaultConnectionString, cancellationToken: cancellationToken)
+                    var count = 0;
+
+                    if (_isSavingChanges)
+                        return count;
+
+                    _isSavingChanges = true;
+
+                    // 试着改变为写入数据库连接
+                    var isChanged = await ChangeConnectionStringAsync(changeFactory, cancellationToken)
                         .ConfigureAndResultAsync();
-                }
 
-                _isSavingChanges = false;
+                    // 调用保存更改核心
+                    if (validChangeFactory.Invoke())
+                        count = await SaveChangesCoreAsync(acceptAllChangesOnSuccess, cancellationToken).ConfigureAndResultAsync();
 
-                return count;
-            });
+                    // 试着还原为默认数据库连接
+                    if (isChanged)
+                    {
+                        await ChangeConnectionStringAsync(defaultFactory, cancellationToken: cancellationToken)
+                            .ConfigureAndResultAsync();
+                    }
+
+                    _isSavingChanges = false;
+
+                    return count;
+                });
+            }
         }
 
         /// <summary>
@@ -466,8 +504,8 @@ namespace Librame.Extensions.Data.Accessors
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含是否已切换的布尔值的异步操作。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public virtual Task<bool> ChangeConnectionStringAsync(Func<ITenant, string> changeFactory,
-            CancellationToken cancellationToken = default)
+        public virtual Task<bool> ChangeConnectionStringAsync(
+            Func<ITenant, string> changeFactory, CancellationToken cancellationToken = default)
         {
             changeFactory.NotNull(nameof(changeFactory));
 

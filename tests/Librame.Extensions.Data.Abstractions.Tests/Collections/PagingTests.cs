@@ -8,14 +8,6 @@ namespace Librame.Extensions.Data.Tests
 
     public class PagingTests
     {
-        public class TestPaging
-        {
-            public int Id { get; set; }
-
-            public string Name { get; set; }
-        }
-
-
         [Fact]
         public void AllTest()
         {
