@@ -112,7 +112,7 @@ namespace Librame.Extensions.Data.Builders
 
                 genericTypeArguments = genericTypeArguments ?? GenericTypeArguments;
                 if (genericTypeArguments.IsNull())
-                    throw new InvalidOperationException($"Registration builder.AddAccessor().");
+                    throw new InvalidOperationException("Registration builder.AddAccessor().");
 
                 return populateFactory.Invoke(populateType, genericTypeArguments);
             }
