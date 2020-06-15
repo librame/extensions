@@ -40,11 +40,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TAccessor">指定派生自 <see cref="DbContextAccessor{TGenId, TIncremId, TCreatedBy}"/> 的访问器类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="setupAction">给定的 <see cref="Action{DataBuilderOptions, DbContextOptionsBuilder}"/>。</param>
+        /// <param name="poolSize">设置池保留的最大实例数（可选；默认为128，如果小于1，将使用 AddDbContext() 注册）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddAccessor<TAccessor>(this IDataBuilder builder,
-            Action<ITenant, DbContextOptionsBuilder> setupAction)
+            Action<ITenant, DbContextOptionsBuilder> setupAction, int poolSize = 128)
             where TAccessor : DbContext, IAccessor
-            => builder.AddAccessor<IAccessor, TAccessor>(setupAction);
+            => builder.AddAccessor<IAccessor, TAccessor>(setupAction, poolSize);
 
         /// <summary>
         /// 添加数据库上下文访问器。
