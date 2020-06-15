@@ -84,7 +84,7 @@ namespace Librame.Extensions.Data.Stores
             _dbContextAccessor = accessor.CastTo<IAccessor,
                 IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>>(nameof(accessor));
 
-            if (_dbContextAccessor.Dependency.Options.Stores.UseInitializer
+            if (_dbContextAccessor.Dependency.Options.UseInitializer
                 && !Initializer.IsInitialized(accessor))
             {
                 Initializer.Initialize(this);

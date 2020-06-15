@@ -43,7 +43,7 @@ namespace Librame.Extensions.Data.Builders
     /// <summary>
     /// 数据构建器选项基类。
     /// </summary>
-    /// <typeparam name="TTableOptions">指定的表选项类型。</typeparam>
+    /// <typeparam name="TTableOptions">指定的表名选项类型。</typeparam>
     public class DataBuilderOptionsBase<TTableOptions> : DataBuilderOptionsBase<DataStoreOptions, TTableOptions>
         where TTableOptions : AbstractTableOptions, new()
     {
@@ -63,7 +63,8 @@ namespace Librame.Extensions.Data.Builders
     /// </summary>
     /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
     /// <typeparam name="TTableOptions">指定的表名选项类型。</typeparam>
-    public class DataBuilderOptionsBase<TStoreOptions, TTableOptions> : IExtensionBuilderOptions
+    public class DataBuilderOptionsBase<TStoreOptions, TTableOptions>
+        : AbstractDataOptions<TStoreOptions, TTableOptions>, IExtensionBuilderOptions
         where TStoreOptions : AbstractStoreOptions, new()
         where TTableOptions : AbstractTableOptions, new()
     {
@@ -140,20 +141,5 @@ namespace Librame.Extensions.Data.Builders
                 AssemblyReference.Load("System.Runtime"),
                 AssemblyReference.Load("System.Private.CoreLib")
             };
-
-
-        /// <summary>
-        /// 存储选项。
-        /// </summary>
-        /// <value>返回 <typeparamref name="TStoreOptions"/>。</value>
-        public TStoreOptions Stores { get; }
-            = new TStoreOptions();
-
-        /// <summary>
-        /// 表选项。
-        /// </summary>
-        /// <value>返回 <typeparamref name="TTableOptions"/>。</value>
-        public TTableOptions Tables { get; }
-            = new TTableOptions();
     }
 }
