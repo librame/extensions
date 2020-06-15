@@ -25,30 +25,15 @@ namespace Librame.Extensions.Data.Builders
     public interface IDataBuilder : IExtensionBuilder
     {
         /// <summary>
-        /// 数据库设计时类型。
-        /// </summary>
-        Type DatabaseDesignTimeType { get; }
-
-        /// <summary>
         /// 访问器泛型类型参数集合。
         /// </summary>
         /// <value>返回 <see cref="AccessorGenericTypeArguments"/>。</value>
         AccessorGenericTypeArguments GenericTypeArguments { get; }
 
-
         /// <summary>
-        /// 查找访问器泛型类型参数集合。
+        /// 数据库设计时类型。
         /// </summary>
-        /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
-        /// <returns>返回 <see cref="AccessorGenericTypeArguments"/>。</returns>
-        AccessorGenericTypeArguments FindGenericTypeArguments<TAccessor>();
-
-        /// <summary>
-        /// 查找访问器泛型类型参数集合。
-        /// </summary>
-        /// <param name="accessorType">给定的访问器类型。</param>
-        /// <returns>返回 <see cref="AccessorGenericTypeArguments"/>。</returns>
-        AccessorGenericTypeArguments FindGenericTypeArguments(Type accessorType);
+        Type DatabaseDesignTimeType { get; }
 
 
         /// <summary>

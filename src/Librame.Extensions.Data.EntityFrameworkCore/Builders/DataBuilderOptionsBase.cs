@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data.Builders
     /// <summary>
     /// 数据构建器选项基类。
     /// </summary>
-    public class DataBuilderOptionsBase : DataBuilderOptionsBase<TableOptions>
+    public class DataBuilderOptionsBase : DataBuilderOptionsBase<DataTableOptions>
     {
         /// <summary>
         /// 构造一个 <see cref="DataBuilderOptionsBase"/>
@@ -44,8 +44,8 @@ namespace Librame.Extensions.Data.Builders
     /// 数据构建器选项基类。
     /// </summary>
     /// <typeparam name="TTableOptions">指定的表选项类型。</typeparam>
-    public class DataBuilderOptionsBase<TTableOptions> : DataBuilderOptionsBase<StoreOptions, TTableOptions>
-        where TTableOptions : TableOptions, new()
+    public class DataBuilderOptionsBase<TTableOptions> : DataBuilderOptionsBase<DataStoreOptions, TTableOptions>
+        where TTableOptions : AbstractTableOptions, new()
     {
         /// <summary>
         /// 构造一个 <see cref="DataBuilderOptionsBase{TTableOptions}"/>
@@ -64,8 +64,8 @@ namespace Librame.Extensions.Data.Builders
     /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
     /// <typeparam name="TTableOptions">指定的表名选项类型。</typeparam>
     public class DataBuilderOptionsBase<TStoreOptions, TTableOptions> : IExtensionBuilderOptions
-        where TStoreOptions : StoreOptions, new()
-        where TTableOptions : TableOptions, new()
+        where TStoreOptions : AbstractStoreOptions, new()
+        where TTableOptions : AbstractTableOptions, new()
     {
         /// <summary>
         /// 构造一个 <see cref="DataBuilderOptionsBase{TStoreOptions, TTableOptions}"/>
@@ -86,6 +86,12 @@ namespace Librame.Extensions.Data.Builders
         /// 如果数据库不存在时，支持创建数据库（默认已启用）。
         /// </summary>
         public bool SupportsCreateDatabase { get; set; }
+            = true;
+
+        /// <summary>
+        /// 使用 <see cref="IStoreInitializer{TGenId}"/> 进行数据初始化（默认已启用）。
+        /// </summary>
+        public bool UseInitializer { get; set; }
             = true;
 
 

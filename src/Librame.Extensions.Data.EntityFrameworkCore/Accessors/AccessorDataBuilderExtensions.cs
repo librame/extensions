@@ -11,7 +11,6 @@
 #endregion
 
 using Librame.Extensions;
-using Librame.Extensions.Core.Identifiers;
 using Librame.Extensions.Data.Accessors;
 using Librame.Extensions.Data.Aspects;
 using Librame.Extensions.Data.Builders;
@@ -26,7 +25,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -36,10 +34,6 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class AccessorDataBuilderExtensions
     {
-        internal static ConcurrentDictionary<Type, AccessorGenericTypeArguments> GenericTypeArguments
-             = new ConcurrentDictionary<Type, AccessorGenericTypeArguments>();
-
-
         /// <summary>
         /// 添加服务类型为 <see cref="IAccessor"/> 的数据库上下文访问器。
         /// </summary>
@@ -70,9 +64,9 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.NotNull(nameof(builder));
             setupAction.NotNull(nameof(setupAction));
 
-            var genericTypesDescriptor = ValidAccessor(typeof(TImplementation));
-            if (genericTypesDescriptor.IsNotNull())
-                builder.SetProperty(p => p.GenericTypeArguments, genericTypesDescriptor);
+            var genericTypesArguments = DbContextAccessorHelper.ParseAccessorGenericTypeArguments(typeof(TImplementation));
+            if (genericTypesArguments.IsNotNull())
+                builder.SetProperty(p => p.GenericTypeArguments, genericTypesArguments);
 
             if (poolSize > 0)
             {
@@ -101,58 +95,6 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder
                 .AddInternalAccessorServices()
                 .AddDesignTimeServices<TImplementation>();
-        }
-
-        private static AccessorGenericTypeArguments ValidAccessor(Type accessorType)
-        {
-            var accessorTypeDefinition = typeof(IDbContextAccessor<,,,,>);
-
-            // 不强制实现数据类访问器
-            if (!accessorType.IsImplementedInterface(accessorTypeDefinition, out var resultType))
-                return null;
-
-            return GenericTypeArguments.GetOrAdd(accessorType, key =>
-            {
-                var arguments = new AccessorGenericTypeArguments
-                {
-                    AuditType = resultType.GenericTypeArguments[0],
-                    AuditPropertyType = resultType.GenericTypeArguments[1],
-                    EntityType = resultType.GenericTypeArguments[2],
-                    MigrationType = resultType.GenericTypeArguments[3],
-                    TenantType = resultType.GenericTypeArguments[4],
-                };
-
-                if (!accessorType.IsImplementedInterface(typeof(IDbContextAccessor<,,>), out resultType))
-                {
-                    var baseEntityType = arguments.TenantType
-                        ?? arguments.MigrationType
-                        ?? arguments.EntityType
-                        ?? arguments.AuditType;
-
-                    if (baseEntityType.IsImplementedInterface(typeof(IIdentifier<>), out resultType))
-                        arguments.GenIdType = resultType.GenericTypeArguments[0];
-
-                    if (baseEntityType.IsImplementedInterface(typeof(ICreation<,>), out resultType))
-                    {
-                        arguments.CreatedByType = resultType.GenericTypeArguments[0];
-                        arguments.CreatedTimeType = resultType.GenericTypeArguments[1];
-                    }
-
-                    if (arguments.AuditPropertyType.IsImplementedInterface(typeof(IIdentifier<>), out resultType))
-                        arguments.IncremIdType = resultType.GenericTypeArguments[0];
-                }
-                else
-                {
-                    arguments.GenIdType = resultType.GenericTypeArguments[0];
-                    arguments.IncremIdType = resultType.GenericTypeArguments[1];
-                    arguments.CreatedByType = resultType.GenericTypeArguments[2];
-
-                    if (arguments.TenantType.IsImplementedInterface(typeof(ICreation<,>), out resultType))
-                        arguments.CreatedTimeType = resultType.GenericTypeArguments[1];
-                }
-
-                return arguments;
-            });
         }
 
 
@@ -185,7 +127,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
             return builder;
         }
-
 
         /// <summary>
         /// 替换默认服务集合（<see cref="DbContext.OnConfiguring(DbContextOptionsBuilder)"/> 配置不支持 <see cref="EntityFrameworkServiceCollectionExtensions.AddDbContextPool{TContext}(IServiceCollection, Action{DbContextOptionsBuilder}, int)"/> 的替换模式）。

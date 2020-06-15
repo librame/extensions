@@ -19,8 +19,16 @@ namespace Librame.Extensions.Drawing.Builders
     using Core.Services;
     using Drawing.Services;
 
-    internal class DrawingBuilder : AbstractExtensionBuilder, IDrawingBuilder
+    /// <summary>
+    /// 图画构建器。
+    /// </summary>
+    public class DrawingBuilder : AbstractExtensionBuilder, IDrawingBuilder
     {
+        /// <summary>
+        /// 构造一个 <see cref="DrawingBuilder"/>。
+        /// </summary>
+        /// <param name="parentBuilder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="dependency">给定的 <see cref="DrawingBuilderDependency"/>。</param>
         public DrawingBuilder(IExtensionBuilder parentBuilder, DrawingBuilderDependency dependency)
             : base(parentBuilder, dependency)
         {
@@ -30,10 +38,6 @@ namespace Librame.Extensions.Drawing.Builders
         }
 
 
-        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
-            => DrawingBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
-
-
         private void AddDrawingServices()
         {
             // Services
@@ -41,6 +45,15 @@ namespace Librame.Extensions.Drawing.Builders
             AddService<IScaleService, ScaleService>();
             AddService<IWatermarkService, WatermarkService>();
         }
+
+
+        /// <summary>
+        /// 获取服务特征。
+        /// </summary>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
+            => DrawingBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
 
     }
 }

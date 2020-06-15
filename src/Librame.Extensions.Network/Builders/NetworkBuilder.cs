@@ -20,8 +20,16 @@ namespace Librame.Extensions.Network.Builders
     using Network.Requesters;
     using Network.Services;
 
-    internal class NetworkBuilder : AbstractExtensionBuilder, INetworkBuilder
+    /// <summary>
+    /// 网络构建器。
+    /// </summary>
+    public class NetworkBuilder : AbstractExtensionBuilder, INetworkBuilder
     {
+        /// <summary>
+        /// 构造一个 <see cref="NetworkBuilder"/>。
+        /// </summary>
+        /// <param name="parentBuilder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="dependency">给定的 <see cref="NetworkBuilderDependency"/>。</param>
         public NetworkBuilder(IExtensionBuilder parentBuilder, NetworkBuilderDependency dependency)
             : base(parentBuilder, dependency)
         {
@@ -29,13 +37,6 @@ namespace Librame.Extensions.Network.Builders
 
             AddNetworkServices();
         }
-
-
-        public IExtensionBuilderDependency DotNettyDependency { get; private set; }
-
-
-        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
-            => NetworkBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
 
 
         private void AddNetworkServices()
@@ -50,6 +51,21 @@ namespace Librame.Extensions.Network.Builders
             AddService<IEmailService, EmailService>();
             AddService<ISmsService, SmsService>();
         }
+
+
+        /// <summary>
+        /// DotNetty 依赖。
+        /// </summary>
+        public IExtensionBuilderDependency DotNettyDependency { get; private set; }
+
+
+        /// <summary>
+        /// 获取服务特征。
+        /// </summary>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
+            => NetworkBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
 
     }
 }

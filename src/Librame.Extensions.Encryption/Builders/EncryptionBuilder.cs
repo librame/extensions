@@ -20,8 +20,16 @@ namespace Librame.Extensions.Encryption.Builders
     using Encryption.Generators;
     using Encryption.Services;
 
-    internal class EncryptionBuilder : AbstractExtensionBuilder, IEncryptionBuilder
+    /// <summary>
+    /// 加密构建器。
+    /// </summary>
+    public class EncryptionBuilder : AbstractExtensionBuilder, IEncryptionBuilder
     {
+        /// <summary>
+        /// 构造一个 <see cref="EncryptionBuilder"/>。
+        /// </summary>
+        /// <param name="parentBuilder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="dependency">给定的 <see cref="EncryptionBuilderDependency"/>。</param>
         public EncryptionBuilder(IExtensionBuilder parentBuilder, EncryptionBuilderDependency dependency)
             : base(parentBuilder, dependency)
         {
@@ -29,10 +37,6 @@ namespace Librame.Extensions.Encryption.Builders
 
             AddEncryptionServices();
         }
-
-
-        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
-            => EncryptionBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
 
 
         private void AddEncryptionServices()
@@ -47,6 +51,15 @@ namespace Librame.Extensions.Encryption.Builders
             AddService<IRsaService, RsaService>();
             AddService<ISymmetricService, SymmetricService>();
         }
+
+
+        /// <summary>
+        /// 获取服务特征。
+        /// </summary>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
+            => EncryptionBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
 
     }
 }

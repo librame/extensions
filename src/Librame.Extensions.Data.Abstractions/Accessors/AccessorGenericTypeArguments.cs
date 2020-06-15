@@ -15,10 +15,15 @@ using System;
 namespace Librame.Extensions.Data.Accessors
 {
     /// <summary>
-    /// 访问器泛型类型参数集合。
+    /// 访问器泛型参数集合。
     /// </summary>
     public class AccessorGenericTypeArguments
     {
+        /// <summary>
+        /// 访问器类型。
+        /// </summary>
+        public Type AccessorType { get; set; }
+
         /// <summary>
         /// 审计类型。
         /// </summary>

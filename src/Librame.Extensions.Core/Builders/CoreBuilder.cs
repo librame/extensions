@@ -24,8 +24,16 @@ namespace Librame.Extensions.Core.Builders
     using Options;
     using Services;
 
-    internal class CoreBuilder : AbstractExtensionBuilder, ICoreBuilder
+    /// <summary>
+    /// 核心构建器。
+    /// </summary>
+    public class CoreBuilder : AbstractExtensionBuilder, ICoreBuilder
     {
+        /// <summary>
+        /// 构造一个 <see cref="CoreBuilder"/>。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="dependency">给定的 <see cref="CoreBuilderDependency"/>。</param>
         public CoreBuilder(IServiceCollection services, CoreBuilderDependency dependency)
             : base(services, dependency)
         {
@@ -34,10 +42,6 @@ namespace Librame.Extensions.Core.Builders
 
             AddInternalServices();
         }
-
-
-        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
-            => CoreBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
 
 
         private void AddInternalServices()
@@ -76,6 +80,14 @@ namespace Librame.Extensions.Core.Builders
             AddService<IEnvironmentService, EnvironmentService>();
         }
 
+
+        /// <summary>
+        /// 获取指定服务类型的特征。
+        /// </summary>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
+        public override ServiceCharacteristics GetServiceCharacteristics(Type serviceType)
+            => CoreBuilderServiceCharacteristicsRegistration.Register.GetOrDefault(serviceType);
+
     }
 }
-
