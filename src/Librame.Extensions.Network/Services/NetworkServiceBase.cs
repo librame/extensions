@@ -42,7 +42,7 @@ namespace Librame.Extensions.Network.Services
         protected NetworkServiceBase(NetworkBuilderDependency dependency, ILoggerFactory loggerFactory)
             : base(dependency?.Options, loggerFactory)
         {
-            CoreOptions = dependency.GetRequiredParentDependency<CoreBuilderDependency>().Options;
+            CoreOptions = dependency.GetRequiredDependency<CoreBuilderDependency>().Options;
         }
 
 

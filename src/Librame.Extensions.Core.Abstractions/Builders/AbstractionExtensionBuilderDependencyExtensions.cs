@@ -21,122 +21,93 @@ namespace Librame.Extensions.Core.Builders
     public static class AbstractionExtensionBuilderDependencyExtensions
     {
         /// <summary>
-        /// 获取必须的构建器依赖。
+        /// 获取必需的构建器依赖实例（支持查找当前或父级实例）。
         /// </summary>
         /// <typeparam name="TDependency">指定的构建器依赖类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <returns>返回 <typeparamref name="TDependency"/>。</returns>
-        public static TDependency GetRequiredDependency<TDependency>(this IExtensionBuilder builder)
+        /// <param name="currentDependency">给定的当前 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <param name="excludeCurrentDependency">排除当前 <see cref="IExtensionBuilderDependency"/>（可选；默认不排除）。</param>
+        /// <returns>返回 <typeparamref name="TDependency"/> 或抛出 <see cref="InvalidOperationException"/>。</returns>
+        public static TDependency GetRequiredDependency<TDependency>
+            (this IExtensionBuilderDependency currentDependency, bool excludeCurrentDependency = false)
             where TDependency : class, IExtensionBuilderDependency
         {
-            if (!builder.TryGetDependency(out TDependency result))
-                throw new InvalidOperationException($"The builder's dependency '{builder.Dependency?.GetType()}' is not '{typeof(TDependency)}'.");
+            if (!currentDependency.TryGetDependency<TDependency>(out var resultDependency, excludeCurrentDependency))
+                throw new InvalidOperationException($"The current dependency is not or does not contain a parent dependency '{typeof(TDependency)}'.");
 
-            return result;
+            return resultDependency;
         }
 
         /// <summary>
-        /// 尝试获取指定类型的构建器依赖。
+        /// 包含指定构建器依赖类型的实例（支持查找当前或父级实例）。
         /// </summary>
-        /// <typeparam name="TDependency">指定的构建器依赖类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="result">输出 <typeparamref name="TDependency"/>。</param>
-        /// <returns>返回布尔值。</returns>
-        public static bool TryGetDependency<TDependency>(this IExtensionBuilder builder, out TDependency result)
+        /// <typeparam name="TDependency">指定的构建器类型。</typeparam>
+        /// <param name="currentDependency">给定的当前 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <param name="excludeCurrentDependency">排除当前 <see cref="IExtensionBuilderDependency"/>（可选；默认不排除）。</param>
+        /// <returns>返回是否成功获取的布尔值。</returns>
+        public static bool ContainsDependency<TDependency>(this IExtensionBuilderDependency currentDependency,
+            bool excludeCurrentDependency = false)
+            where TDependency : class, IExtensionBuilderDependency
+            => currentDependency.TryGetDependency<TDependency>(out _, excludeCurrentDependency);
+
+        /// <summary>
+        /// 尝试获取指定构建器依赖类型的实例（支持查找当前或父级实例）。
+        /// </summary>
+        /// <typeparam name="TDependency">指定的构建器类型。</typeparam>
+        /// <param name="currentDependency">给定的当前 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <param name="resultDependency">输出结果 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <param name="excludeCurrentDependency">排除当前 <see cref="IExtensionBuilderDependency"/>（可选；默认不排除）。</param>
+        /// <returns>返回是否成功获取的布尔值。</returns>
+        public static bool TryGetDependency<TDependency>(this IExtensionBuilderDependency currentDependency,
+            out TDependency resultDependency, bool excludeCurrentDependency = false)
             where TDependency : class, IExtensionBuilderDependency
         {
-            builder.NotNull(nameof(builder));
+            resultDependency = LookupDependency(excludeCurrentDependency
+                ? currentDependency?.ParentDependency
+                : currentDependency);
 
-            if (builder?.Dependency is TDependency dependency)
+            return resultDependency.IsNotNull();
+
+            // LookupDependency
+            TDependency LookupDependency(IExtensionBuilderDependency builderDependency)
             {
-                result = dependency;
-                return true;
-            }
-
-            result = null;
-            return false;
-        }
-
-
-        /// <summary>
-        /// 获取必需的父级构建器依赖。
-        /// </summary>
-        /// <typeparam name="TParentDependency">指定的父级构建器依赖类型。</typeparam>
-        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
-        /// <returns>返回 <typeparamref name="TParentDependency"/> 或抛出 <see cref="InvalidOperationException"/>。</returns>
-        public static TParentDependency GetRequiredParentDependency<TParentDependency>
-            (this IExtensionBuilderDependency dependency)
-            where TParentDependency : class, IExtensionBuilderDependency
-        {
-            if (!dependency.TryGetParentDependency<TParentDependency>(out var result))
-                throw new InvalidOperationException($"The dependency is not contains parent dependency '{typeof(TParentDependency)}'.");
-
-            return result;
-        }
-
-        /// <summary>
-        /// 包含指定父级构建器依赖类型的实例。
-        /// </summary>
-        /// <typeparam name="TParentDependency">指定的父级构建器类型。</typeparam>
-        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
-        /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool ContainsParentDependency<TParentDependency>(this IExtensionBuilderDependency dependency)
-            where TParentDependency : class, IExtensionBuilderDependency
-            => dependency.TryGetParentDependency<TParentDependency>(out _);
-
-        /// <summary>
-        /// 尝试获取指定父级构建器依赖类型的实例。
-        /// </summary>
-        /// <typeparam name="TParentDependency">指定的父级构建器类型。</typeparam>
-        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
-        /// <param name="result">输出父级 <see cref="IExtensionBuilderDependency"/>。</param>
-        /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGetParentDependency<TParentDependency>(this IExtensionBuilderDependency dependency,
-            out TParentDependency result)
-            where TParentDependency : class, IExtensionBuilderDependency
-        {
-            // 仅查找父级
-            result = GetParentDependency(dependency?.ParentDependency);
-            return result.IsNotNull();
-
-            // GetParentDependency
-            TParentDependency GetParentDependency(IExtensionBuilderDependency currentDependency)
-            {
-                if (currentDependency.IsNull())
+                if (builderDependency.IsNull())
                     return null;
 
-                if (currentDependency is TParentDependency parentDependency)
-                    return parentDependency;
+                if (builderDependency is TDependency dependency)
+                    return dependency;
 
-                return GetParentDependency(currentDependency.ParentDependency);
+                return LookupDependency(builderDependency.ParentDependency);
             }
         }
 
 
         /// <summary>
-        /// 枚举当前以及所有父级依赖字典集合。
+        /// 枚举当前以及父级构建器依赖字典集合。
         /// </summary>
-        /// <param name="dependency">给定的 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <param name="currentDependency">给定的当前 <see cref="IExtensionBuilderDependency"/>。</param>
+        /// <param name="excludeCurrentDependency">排除当前 <see cref="IExtensionBuilderDependency"/>（可选；默认不排除）。</param>
         /// <returns>返回字典集合。</returns>
         public static Dictionary<string, IExtensionBuilderDependency> EnumerateDependencies
-            (this IExtensionBuilderDependency dependency)
+            (this IExtensionBuilderDependency currentDependency, bool excludeCurrentDependency = false)
         {
             var dependencies = new Dictionary<string, IExtensionBuilderDependency>();
 
-            AddParentDependency(dependency);
+            LookupDependency(excludeCurrentDependency
+                ? currentDependency?.ParentDependency
+                : currentDependency);
 
             return dependencies;
 
-            // AddParentDependency
-            void AddParentDependency(IExtensionBuilderDependency currentDependency)
+            // LookupDependency
+            void LookupDependency(IExtensionBuilderDependency dependency)
             {
-                if (currentDependency.IsNull())
+                if (dependency.IsNull())
                     return;
 
-                dependencies.Add(currentDependency.Name, currentDependency);
+                dependencies.Add(dependency.Name, dependency);
 
-                // 链式添加父级依赖
-                AddParentDependency(currentDependency.ParentDependency);
+                // 链式查找父级构建器依赖
+                LookupDependency(dependency.ParentDependency);
             }
         }
 

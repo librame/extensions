@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.6.0.2</Version>
+    <Version>7.6.0.3</Version>
     <Authors>Librame Pong</Authors>
     <Company>https://github.com/librame</Company>
     <Description>Based .NET Standard and Microsoft.Extensions packages on common framework.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based .NET Standard and Microsoft.Extensions packages on common framework.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.Extensions.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.6.0.2</AssemblyVersion>
-    <FileVersion>7.6.1157.17415</FileVersion>
+    <AssemblyVersion>7.6.0.3</AssemblyVersion>
+    <FileVersion>7.6.1158.17415</FileVersion>
     <RootNamespace>Librame.Extensions.Core</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>

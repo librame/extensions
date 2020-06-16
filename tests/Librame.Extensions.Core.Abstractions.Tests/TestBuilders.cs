@@ -6,9 +6,9 @@ namespace Librame.Extensions.Core.Tests
     using Builders;
     using Services;
 
-    public class InternalTestBuilder : AbstractExtensionBuilder, IExtensionBuilder
+    public class InternalBuilder : AbstractExtensionBuilder, IExtensionBuilder
     {
-        public InternalTestBuilder(IServiceCollection services, IExtensionBuilderDependency dependency)
+        public InternalBuilder(IServiceCollection services, IExtensionBuilderDependency dependency)
             : base(services, dependency)
         {
             Services.AddSingleton(this);
@@ -20,9 +20,9 @@ namespace Librame.Extensions.Core.Tests
         }
     }
 
-    public class PublicTestBuilder : AbstractExtensionBuilder, IExtensionBuilder
+    public class PublicBuilder : AbstractExtensionBuilder, IExtensionBuilder
     {
-        public PublicTestBuilder(IExtensionBuilder parentBuilder, IExtensionBuilderDependency dependency)
+        public PublicBuilder(IExtensionBuilder parentBuilder, IExtensionBuilderDependency dependency)
             : base(parentBuilder, dependency)
         {
             Services.AddSingleton(this);
@@ -66,7 +66,7 @@ namespace Librame.Extensions.Core.Tests
         public static IExtensionBuilder AddInternal(this IServiceCollection services,
             InternalBuilderDependency dependency)
         {
-            var builder = new InternalTestBuilder(services, dependency);
+            var builder = new InternalBuilder(services, dependency);
 
             services.AddSingleton(builder);
             services.AddSingleton(dependency);
@@ -77,7 +77,7 @@ namespace Librame.Extensions.Core.Tests
         public static IExtensionBuilder AddPublic(this IExtensionBuilder parentBuilder)
         {
             var dependency = new PublicBuilderDependency(parentBuilder.Dependency);
-            var builder = new PublicTestBuilder(parentBuilder, dependency);
+            var builder = new PublicBuilder(parentBuilder, dependency);
 
             parentBuilder.Services.AddSingleton(builder);
             parentBuilder.Services.AddSingleton(dependency);

@@ -11,6 +11,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace Librame.Extensions.Core.Builders
 {
@@ -19,63 +20,97 @@ namespace Librame.Extensions.Core.Builders
     /// </summary>
     public static class AbstractionExtensionBuilderExtensions
     {
-
-        #region ParentBuilder
-
         /// <summary>
-        /// 获取必需的父级构建器。
+        /// 获取必需的构建器实例。
         /// </summary>
-        /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <returns>返回 <typeparamref name="TParentBuilder"/> 或抛出 <see cref="InvalidOperationException"/>。</returns>
-        public static TParentBuilder GetRequiredParentBuilder<TParentBuilder>(this IExtensionBuilder builder)
-            where TParentBuilder : class, IExtensionBuilder
+        /// <typeparam name="TBuilder">指定的构建器类型。</typeparam>
+        /// <param name="currentBuilder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="excludeCurrentBuilder">排除当前 <see cref="IExtensionBuilder"/>（可选；默认不排除）。</param>
+        /// <returns>返回 <typeparamref name="TBuilder"/> 或抛出 <see cref="InvalidOperationException"/>。</returns>
+        public static TBuilder GetRequiredBuilder<TBuilder>(this IExtensionBuilder currentBuilder,
+            bool excludeCurrentBuilder = false)
+            where TBuilder : class, IExtensionBuilder
         {
-            if (!builder.TryGetParentBuilder<TParentBuilder>(out var result))
-                throw new InvalidOperationException($"The builder is not contains parent builder '{typeof(TParentBuilder)}'.");
+            if (!currentBuilder.TryGetBuilder<TBuilder>(out var resultBuilder, excludeCurrentBuilder))
+                throw new InvalidOperationException($"The current builder is not or does not contain a parent builder '{typeof(TBuilder)}'.");
 
-            return result;
+            return resultBuilder;
         }
 
         /// <summary>
-        /// 包含指定父级构建器类型的实例。
+        /// 包含指定构建器类型的实例（支持查找当前或父级实例）。
         /// </summary>
-        /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <typeparam name="TBuilder">指定的构建器类型。</typeparam>
+        /// <param name="currentBuilder">给定的 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="excludeCurrentBuilder">排除当前 <see cref="IExtensionBuilder"/>（可选；默认不排除）。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool ContainsParentBuilder<TParentBuilder>(this IExtensionBuilder builder)
-            where TParentBuilder : class, IExtensionBuilder
-            => builder.TryGetParentBuilder<TParentBuilder>(out _);
+        public static bool ContainsBuilder<TBuilder>(this IExtensionBuilder currentBuilder,
+            bool excludeCurrentBuilder = false)
+            where TBuilder : class, IExtensionBuilder
+            => currentBuilder.TryGetBuilder<TBuilder>(out _, excludeCurrentBuilder);
 
         /// <summary>
-        /// 尝试获取指定父级构建器类型的实例。
+        /// 尝试获取指定构建器类型的实例（支持查找当前或父级实例）。
         /// </summary>
-        /// <typeparam name="TParentBuilder">指定的父级构建器类型。</typeparam>
-        /// <param name="builder">给定的 <see cref="IExtensionBuilder"/>。</param>
-        /// <param name="result">输出父级 <see cref="IExtensionBuilder"/>。</param>
+        /// <typeparam name="TBuilder">指定的构建器类型。</typeparam>
+        /// <param name="currentBuilder">给定的当前 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="resultBuilder">输出结果 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="excludeCurrentBuilder">排除当前 <see cref="IExtensionBuilder"/>（可选；默认不排除）。</param>
         /// <returns>返回是否成功获取的布尔值。</returns>
-        public static bool TryGetParentBuilder<TParentBuilder>(this IExtensionBuilder builder,
-            out TParentBuilder result)
-            where TParentBuilder : class, IExtensionBuilder
+        public static bool TryGetBuilder<TBuilder>(this IExtensionBuilder currentBuilder,
+            out TBuilder resultBuilder, bool excludeCurrentBuilder = false)
+            where TBuilder : class, IExtensionBuilder
         {
-            // 仅查找父级
-            result = GetParentBuilder(builder?.ParentBuilder);
-            return result.IsNotNull();
+            resultBuilder = LookupBuilder(excludeCurrentBuilder
+                ? currentBuilder?.ParentBuilder
+                : currentBuilder);
+            
+            return resultBuilder.IsNotNull();
 
-            // GetParentBuilder
-            TParentBuilder GetParentBuilder(IExtensionBuilder currentBuilder)
+            // LookupBuilder
+            TBuilder LookupBuilder(IExtensionBuilder extensionBuilder)
             {
-                if (currentBuilder.IsNull())
+                if (extensionBuilder.IsNull())
                     return null;
 
-                if (currentBuilder is TParentBuilder parentBuilder)
-                    return parentBuilder;
+                if (extensionBuilder is TBuilder builder)
+                    return builder;
 
-                return GetParentBuilder(currentBuilder.ParentBuilder);
+                // 链式查找父级构建器
+                return LookupBuilder(extensionBuilder.ParentBuilder);
             }
         }
 
-        #endregion
+
+        /// <summary>
+        /// 枚举当前以及父级构建器字典集合。
+        /// </summary>
+        /// <param name="currentBuilder">给定的当前 <see cref="IExtensionBuilder"/>。</param>
+        /// <param name="excludeCurrentBuilder">排除当前 <see cref="IExtensionBuilder"/>（可选；默认不排除）。</param>
+        /// <returns>返回字典集合。</returns>
+        public static Dictionary<string, IExtensionBuilder> EnumerateBuilders
+            (this IExtensionBuilder currentBuilder, bool excludeCurrentBuilder = false)
+        {
+            var builders = new Dictionary<string, IExtensionBuilder>();
+
+            LookupBuilder(excludeCurrentBuilder
+                ? currentBuilder?.ParentBuilder
+                : currentBuilder);
+
+            return builders;
+
+            // LookupBuilder
+            void LookupBuilder(IExtensionBuilder builder)
+            {
+                if (builder.IsNull())
+                    return;
+
+                builders.Add(builder.Name, builder);
+
+                // 链式查找父级构建器
+                LookupBuilder(builder.ParentBuilder);
+            }
+        }
 
     }
 }

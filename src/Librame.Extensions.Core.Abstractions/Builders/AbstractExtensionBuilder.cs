@@ -18,6 +18,7 @@ using System.Linq;
 
 namespace Librame.Extensions.Core.Builders
 {
+    using Serializers;
     using Services;
 
     /// <summary>
@@ -52,11 +53,26 @@ namespace Librame.Extensions.Core.Builders
 
 
         /// <summary>
+        /// 名称。
+        /// </summary>
+        public string Name
+            => GetType().Name;
+
+        /// <summary>
+        /// 类型。
+        /// </summary>
+        public SerializableString<Type> Type
+            => new SerializableString<Type>(GetType());
+
+
+        /// <summary>
         /// 父级构建器。
         /// </summary>
         /// <value>
         /// 返回 <see cref="IExtensionBuilder"/>。
         /// </value>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IExtensionBuilder ParentBuilder { get; }
 
         /// <summary>
@@ -73,6 +89,8 @@ namespace Librame.Extensions.Core.Builders
         /// <value>
         /// 返回 <see cref="IServiceCollection"/>。
         /// </value>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public IServiceCollection Services { get; }
 
 

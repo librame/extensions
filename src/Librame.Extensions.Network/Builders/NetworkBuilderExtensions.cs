@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class NetworkBuilderExtensions
     {
         /// <summary>
-        /// 添加网络扩展。
+        /// 添加网络扩展（默认支持自行添加加密扩展）。
         /// </summary>
         /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
         /// <param name="configureDependency">给定的配置依赖动作方法（可选）。</param>
@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
             => parentBuilder.AddNetwork<NetworkBuilderDependency>(configureDependency, builderFactory);
 
         /// <summary>
-        /// 添加网络扩展。
+        /// 添加网络扩展（默认支持自行添加加密扩展）。
         /// </summary>
         /// <typeparam name="TDependency">指定的依赖类型。</typeparam>
         /// <param name="parentBuilder">给定的父级 <see cref="IExtensionBuilder"/>。</param>
@@ -51,7 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<IExtensionBuilder, TDependency, INetworkBuilder> builderFactory = null)
             where TDependency : NetworkBuilderDependency
         {
-            if (!parentBuilder.ContainsParentBuilder<IEncryptionBuilder>())
+            if (!parentBuilder.ContainsBuilder<IEncryptionBuilder>())
             {
                 parentBuilder
                     .AddEncryption()

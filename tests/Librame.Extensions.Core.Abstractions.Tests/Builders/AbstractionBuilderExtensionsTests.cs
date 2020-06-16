@@ -20,64 +20,88 @@ namespace Librame.Extensions.Core.Tests
 
 
         [Fact]
-        public void ContainsParentBuilderTest()
+        public void ContainsBuilderTest()
         {
-            var result = _builder.ContainsParentBuilder<ICoreBuilder>();
-            Assert.False(result);
-        }
-
-        [Fact]
-        public void TryGetParentBuilderTest()
-        {
-            if (!_builder.TryGetParentBuilder(out PublicTestBuilder @public))
-            {
-                // PublicTestBuilder is not parent builder
-                Assert.Null(@public);
-            }
-
-            if (_builder.TryGetParentBuilder(out InternalTestBuilder @internal))
-            {
-                Assert.NotNull(@internal);
-                Assert.True(@internal is InternalTestBuilder);
-                Assert.NotNull(@internal.Dependency);
-            }
-
-            Assert.NotNull(_builder.Dependency);
-        }
-
-
-        [Fact]
-        public void ContainsParentDependencyTest()
-        {
-            var result = _builder.Dependency.ContainsParentDependency<PublicBuilderDependency>();
+            var result = _builder.ContainsBuilder<PublicBuilder>(excludeCurrentBuilder: true);
             Assert.False(result);
 
-            result = _builder.Dependency.ContainsParentDependency<InternalBuilderDependency>();
+            result = _builder.ContainsBuilder<PublicBuilder>();
+            Assert.True(result);
+
+            result = _builder.ContainsBuilder<InternalBuilder>();
             Assert.True(result);
         }
 
         [Fact]
-        public void TryGetParentDependencyTest()
+        public void TryGetBuilderTest()
         {
-            Assert.NotNull(_builder.Dependency);
-
-            if (!_builder.Dependency.TryGetParentDependency(out PublicBuilderDependency @public))
+            if (!_builder.TryGetBuilder(out PublicBuilder @public, excludeCurrentBuilder: true))
             {
-                // PublicTestDependency is not parent builder
+                // PublicBuilder is not parent builder
                 Assert.Null(@public);
             }
 
-            if (_builder.Dependency.TryGetParentDependency(out InternalBuilderDependency @internal))
+            if (_builder.TryGetBuilder(out InternalBuilder @internal))
             {
                 Assert.NotNull(@internal);
             }
         }
 
+        [Fact]
+        public void EnumerateBuildersTest()
+        {
+            var builders = _builder.EnumerateBuilders();
+            Assert.NotEmpty(builders);
+
+            var provider = _builder.Services.BuildServiceProvider();
+            var publicBuilder = provider.GetRequiredService<PublicBuilder>();
+
+            var currentBuilders = publicBuilder.EnumerateBuilders();
+            Assert.Equal(builders.Count, currentBuilders.Count);
+
+            var internalBuilder = provider.GetRequiredService<InternalBuilder>();
+            currentBuilders = internalBuilder.EnumerateBuilders();
+            Assert.True(builders.Count > currentBuilders.Count);
+
+            var filePath = $"{nameof(EnumerateBuildersTest)}.json"
+                .AsFilePathCombiner(publicBuilder.Dependency.ReportDirectory);
+            filePath.WriteJson(builders);
+        }
+
+
+        [Fact]
+        public void ContainsDependencyTest()
+        {
+            var result = _builder.Dependency.ContainsDependency<PublicBuilderDependency>(excludeCurrentDependency: true);
+            Assert.False(result);
+
+            result = _builder.Dependency.ContainsDependency<PublicBuilderDependency>();
+            Assert.True(result);
+
+            result = _builder.Dependency.ContainsDependency<InternalBuilderDependency>();
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void TryGetDependencyTest()
+        {
+            Assert.NotNull(_builder.Dependency);
+
+            if (!_builder.Dependency.TryGetDependency(out PublicBuilderDependency @public, excludeCurrentDependency: true))
+            {
+                // PublicBuilderDependency is not parent builder dependency
+                Assert.Null(@public);
+            }
+
+            if (_builder.Dependency.TryGetDependency(out InternalBuilderDependency @internal))
+            {
+                Assert.NotNull(@internal);
+            }
+        }
 
         [Fact]
         public void EnumerateDependenciesTest()
         {
-            // Last Dependency
             var dependencies = _builder.Dependency.EnumerateDependencies();
             Assert.NotEmpty(dependencies);
 

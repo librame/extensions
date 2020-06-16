@@ -76,6 +76,6 @@ namespace Librame.Extensions.Network.DotNetty.Demo
         /// </summary>
         /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
         public CoreBuilderOptions CoreOptions
-            => Dependency.GetRequiredParentDependency<CoreBuilderDependency>().Options;
+            => Dependency.GetRequiredDependency<CoreBuilderDependency>().Options;
     }
 }

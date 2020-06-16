@@ -79,7 +79,7 @@ namespace Librame.Extensions.Data.Services
             : base(dependency?.Options, loggerFactory)
         {
             _memoryCache = memoryCache.NotNull(nameof(memoryCache));
-            _coreOptions = dependency.GetRequiredParentDependency<CoreBuilderDependency>().Options;
+            _coreOptions = dependency.GetRequiredDependency<CoreBuilderDependency>().Options;
         }
 
 

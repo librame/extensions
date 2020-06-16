@@ -16,6 +16,7 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Core.Builders
 {
+    using Serializers;
     using Services;
 
     /// <summary>
@@ -23,6 +24,17 @@ namespace Librame.Extensions.Core.Builders
     /// </summary>
     public interface IExtensionBuilder
     {
+        /// <summary>
+        /// 名称。
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// 类型。
+        /// </summary>
+        SerializableString<Type> Type { get; }
+
+
         /// <summary>
         /// 父级构建器。
         /// </summary>

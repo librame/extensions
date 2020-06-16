@@ -54,6 +54,8 @@ namespace Librame.Extensions.Core.Builders
         /// <summary>
         /// 源构建器。
         /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
         public TSource Source { get; }
 
 
