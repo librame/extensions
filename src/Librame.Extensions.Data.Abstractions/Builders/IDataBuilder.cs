@@ -25,10 +25,10 @@ namespace Librame.Extensions.Data.Builders
     public interface IDataBuilder : IExtensionBuilder
     {
         /// <summary>
-        /// 访问器泛型类型参数集合。
+        /// 访问器泛型类型映射描述符。
         /// </summary>
-        /// <value>返回 <see cref="AccessorGenericTypeArguments"/>。</value>
-        AccessorGenericTypeArguments GenericTypeArguments { get; }
+        /// <value>返回 <see cref="AccessorGenericTypeMappingDescriptor"/>。</value>
+        AccessorGenericTypeMappingDescriptor AccessorMappingDescriptor { get; }
 
         /// <summary>
         /// 数据库设计时类型。
@@ -44,13 +44,13 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="populateServiceFactory">给定的填充服务类型工厂方法（可选；当服务类型为泛型类型定义时，此参数必填）。</param>
         /// <param name="populateImplementationFactory">给定的填充实现类型工厂方法（可选；默认填充主要泛型类型参数集合到实现类型定义）。</param>
         /// <param name="addEnumerable">添加为可枚举集合（可选；默认不是可枚举集合）。</param>
-        /// <param name="genericTypeArguments">给定的 <see cref="AccessorGenericTypeArguments"/>（可选；默认使用当前访问器泛型类型参数集合）。</param>
+        /// <param name="accessorMappingDescriptor">给定的 <see cref="AccessorGenericTypeMappingDescriptor"/>（可选；默认使用当前访问器泛型类型参数集合）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        IDataBuilder AddGenericServiceByPopulateGenericTypeArguments(Type serviceType,
+        IDataBuilder AddGenericServiceByPopulateMappingDescriptor(Type serviceType,
             Type implementationTypeDefinition,
-            Func<Type, AccessorGenericTypeArguments, Type> populateServiceFactory = null,
-            Func<Type, AccessorGenericTypeArguments, Type> populateImplementationFactory = null,
-            bool addEnumerable = false, AccessorGenericTypeArguments genericTypeArguments = null);
+            Func<Type, AccessorGenericTypeMappingDescriptor, Type> populateServiceFactory = null,
+            Func<Type, AccessorGenericTypeMappingDescriptor, Type> populateImplementationFactory = null,
+            bool addEnumerable = false, AccessorGenericTypeMappingDescriptor accessorMappingDescriptor = null);
 
 
         /// <summary>

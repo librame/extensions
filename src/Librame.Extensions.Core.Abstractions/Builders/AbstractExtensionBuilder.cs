@@ -118,9 +118,9 @@ namespace Librame.Extensions.Core.Builders
             // 使用已实现泛型类型定义的服务泛型类型参数数组来填充服务类型定义
             var serviceType = serviceTypeDefinition.MakeGenericType(resultType.GenericTypeArguments);
 
-            // 如果不添加为可枚举集合
+            // 如果不添加为可枚举集合，则尝试移除可能已存在的服务集合
             if (!addEnumerable)
-                Services.TryReplaceAll(serviceType, implementationType, throwIfNotFound: false);
+                Services.TryRemoveAll(serviceType, throwIfNotFound: false);
 
             var characteristics = GetServiceCharacteristics(serviceTypeDefinition);
             Services.AddByCharacteristics(serviceType, implementationType, characteristics);

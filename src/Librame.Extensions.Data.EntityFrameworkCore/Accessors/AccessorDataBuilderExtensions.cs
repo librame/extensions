@@ -65,9 +65,9 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.NotNull(nameof(builder));
             setupAction.NotNull(nameof(setupAction));
 
-            var genericTypesArguments = DbContextAccessorHelper.ParseAccessorGenericTypeArguments(typeof(TImplementation));
-            if (genericTypesArguments.IsNotNull())
-                builder.SetProperty(p => p.GenericTypeArguments, genericTypesArguments);
+            var accessorMappingDescriptor = DbContextAccessorHelper.ParseMappingDescriptor(typeof(TImplementation));
+            if (accessorMappingDescriptor.IsNotNull())
+                builder.SetProperty(p => p.AccessorMappingDescriptor, accessorMappingDescriptor);
 
             if (poolSize > 0)
             {

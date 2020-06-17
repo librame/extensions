@@ -11,9 +11,12 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Librame.Extensions.Data.Accessors
 {
+    using Core;
     using Core.Identifiers;
     using Data.Stores;
 
@@ -23,58 +26,92 @@ namespace Librame.Extensions.Data.Accessors
     public static class DbContextAccessorHelper
     {
         /// <summary>
-        /// 解析访问器泛型类型参数集合。
+        /// 解析泛型类型映射描述符。
         /// </summary>
-        /// <param name="accessorType">给定的访问器类型。</param>
-        /// <returns>返回 <see cref="AccessorGenericTypeArguments"/>。</returns>
-        public static AccessorGenericTypeArguments ParseAccessorGenericTypeArguments(Type accessorType)
+        /// <param name="accessorTypeImplementation">给定的访问器类型实现。</param>
+        /// <returns>返回 <see cref="AccessorGenericTypeMappingDescriptor"/>。</returns>
+        public static AccessorGenericTypeMappingDescriptor ParseMappingDescriptor(Type accessorTypeImplementation)
+        {
+            var mappings = ParseMappingDictionary(accessorTypeImplementation, out var accessorMapping);
+            return new AccessorGenericTypeMappingDescriptor(accessorMapping, mappings);
+        }
+
+
+        /// <summary>
+        /// 解析泛型类型映射字典。
+        /// </summary>
+        /// <param name="accessorTypeImplementation">给定的访问器类型实现。</param>
+        /// <returns>返回 <see cref="Dictionary{String, GenericTypeMapping}"/>。</returns>
+        public static Dictionary<string, GenericTypeMapping> ParseMappingDictionary(Type accessorTypeImplementation)
+            => ParseMappingDictionary(accessorTypeImplementation, out _);
+
+        /// <summary>
+        /// 解析泛型类型映射字典。
+        /// </summary>
+        /// <param name="accessorTypeImplementation">给定的访问器类型实现。</param>
+        /// <param name="accessorMapping">输出访问器 <see cref="GenericTypeMapping"/>。</param>
+        /// <returns>返回 <see cref="Dictionary{String, GenericTypeMapping}"/>。</returns>
+        public static Dictionary<string, GenericTypeMapping> ParseMappingDictionary(Type accessorTypeImplementation,
+            out GenericTypeMapping accessorMapping)
         {
             var accessorTypeDefinition = typeof(IDbContextAccessor<,,,,>);
 
-            // 不强制实现数据类访问器
-            if (!accessorType.IsImplementedInterface(accessorTypeDefinition, out var resultType))
+            // 因访问器默认服务类型为 IAccessor，所以不强制实现访问器泛型类型定义
+            if (!accessorTypeImplementation.IsImplementedInterface(accessorTypeDefinition, out var resultType))
+            {
+                accessorMapping = null;
                 return null;
+            }
 
-            var arguments = new AccessorGenericTypeArguments
+            accessorMapping = new GenericTypeMapping(accessorTypeDefinition, accessorTypeImplementation);
+
+            var parameters = GenericTypeMapping.PopulateDictionary(accessorTypeDefinition, resultType);
+
+            accessorTypeDefinition = typeof(IDbContextAccessor<,,>);
+            var accessorTypeParameters = accessorTypeDefinition.GetTypeInfo().GenericTypeParameters;
+
+            var auditType = parameters["TAudit"].ArgumentType;
+            if (!accessorTypeImplementation.IsImplementedInterface(accessorTypeDefinition, out resultType))
             {
-                AccessorType = accessorType,
-                AuditType = resultType.GenericTypeArguments[0],
-                AuditPropertyType = resultType.GenericTypeArguments[1],
-                EntityType = resultType.GenericTypeArguments[2],
-                MigrationType = resultType.GenericTypeArguments[3],
-                TenantType = resultType.GenericTypeArguments[4],
-            };
+                var auditPropertyType = parameters["TAuditProperty"].ArgumentType;
 
-            if (!accessorType.IsImplementedInterface(typeof(IDbContextAccessor<,,>), out resultType))
-            {
-                var baseEntityType = arguments.TenantType
-                    ?? arguments.MigrationType
-                    ?? arguments.EntityType
-                    ?? arguments.AuditType;
+                var identifierTypeDefinition = typeof(IIdentifier<>);
+                var identifierTypeParameter = identifierTypeDefinition.GetTypeInfo().GenericTypeParameters[0];
 
-                if (baseEntityType.IsImplementedInterface(typeof(IIdentifier<>), out resultType))
-                    arguments.GenIdType = resultType.GenericTypeArguments[0];
-
-                if (baseEntityType.IsImplementedInterface(typeof(ICreation<,>), out resultType))
+                if (auditType.IsImplementedInterface(identifierTypeDefinition, out resultType))
                 {
-                    arguments.CreatedByType = resultType.GenericTypeArguments[0];
-                    arguments.CreatedTimeType = resultType.GenericTypeArguments[1];
+                    parameters.Add("TGenId", new GenericTypeMapping(identifierTypeParameter,
+                        resultType.GenericTypeArguments[0]));
                 }
 
-                if (arguments.AuditPropertyType.IsImplementedInterface(typeof(IIdentifier<>), out resultType))
-                    arguments.IncremIdType = resultType.GenericTypeArguments[0];
+                if (auditPropertyType.IsImplementedInterface(identifierTypeDefinition, out resultType))
+                {
+                    parameters.Add("TIncremId", new GenericTypeMapping(identifierTypeParameter,
+                        resultType.GenericTypeArguments[0]));
+                }
             }
             else
             {
-                arguments.GenIdType = resultType.GenericTypeArguments[0];
-                arguments.IncremIdType = resultType.GenericTypeArguments[1];
-                arguments.CreatedByType = resultType.GenericTypeArguments[2];
+                parameters.Add("TGenId", new GenericTypeMapping(accessorTypeParameters[0],
+                    resultType.GenericTypeArguments[0]));
 
-                if (arguments.TenantType.IsImplementedInterface(typeof(ICreation<,>), out resultType))
-                    arguments.CreatedTimeType = resultType.GenericTypeArguments[1];
+                parameters.Add("TIncremId", new GenericTypeMapping(accessorTypeParameters[1],
+                    resultType.GenericTypeArguments[1]));
             }
 
-            return arguments;
+            var creationTypeDefinition = typeof(ICreation<,>);
+            var creationTypeParameters = creationTypeDefinition.GetTypeInfo().GenericTypeParameters;
+
+            if (auditType.IsImplementedInterface(creationTypeDefinition, out resultType))
+            {
+                parameters.Add("TCreatedBy", new GenericTypeMapping(creationTypeParameters[0],
+                    resultType.GenericTypeArguments[0]));
+
+                parameters.Add("TCreatedTime", new GenericTypeMapping(creationTypeParameters[1],
+                    resultType.GenericTypeArguments[1]));
+            }
+
+            return parameters;
         }
 
     }

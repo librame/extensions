@@ -139,8 +139,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.NotNull(nameof(builder));
 
-            return builder.AddGenericServiceByPopulateGenericTypeArguments(serviceType, implementationTypeDefinition,
-                (type, args) => type.MakeGenericType(args.GenIdType, args.CreatedByType),
+            return builder.AddGenericServiceByPopulateMappingDescriptor(serviceType, implementationTypeDefinition,
+                (type, descriptor) => type.MakeGenericType(descriptor.GenId.ArgumentType, descriptor.CreatedBy.ArgumentType),
                 addEnumerable: true);
         }
 
@@ -193,7 +193,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.NotNull(nameof(builder));
 
-            return builder.AddGenericServiceByPopulateGenericTypeArguments(serviceType,
+            return builder.AddGenericServiceByPopulateMappingDescriptor(serviceType,
                 implementationTypeDefinition);
         }
 

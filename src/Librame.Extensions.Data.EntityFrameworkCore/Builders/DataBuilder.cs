@@ -44,9 +44,9 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
-        /// 访问器泛型参数集合。
+        /// 访问器泛型类型映射描述符。
         /// </summary>
-        public AccessorGenericTypeArguments GenericTypeArguments { get; internal set; }
+        public AccessorGenericTypeMappingDescriptor AccessorMappingDescriptor { get; private set; }
 
         /// <summary>
         /// 数据库设计时类型。
@@ -89,18 +89,18 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="populateServiceFactory">给定的填充服务类型工厂方法（可选；当服务类型为泛型类型定义时，此参数必填）。</param>
         /// <param name="populateImplementationFactory">给定的填充实现类型工厂方法（可选；默认填充主要泛型类型参数集合到实现类型定义）。</param>
         /// <param name="addEnumerable">添加为可枚举集合（可选；默认不是可枚举集合）。</param>
-        /// <param name="genericTypeArguments">给定的 <see cref="AccessorGenericTypeArguments"/>（可选；默认使用当前访问器泛型类型参数集合）。</param>
+        /// <param name="accessorMappingDescriptor">给定的 <see cref="AccessorGenericTypeMappingDescriptor"/>（可选；默认使用当前访问器泛型类型映射描述符）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public virtual IDataBuilder AddGenericServiceByPopulateGenericTypeArguments(Type serviceType,
+        public virtual IDataBuilder AddGenericServiceByPopulateMappingDescriptor(Type serviceType,
             Type implementationTypeDefinition,
-            Func<Type, AccessorGenericTypeArguments, Type> populateServiceFactory = null,
-            Func<Type, AccessorGenericTypeArguments, Type> populateImplementationFactory = null,
-            bool addEnumerable = false, AccessorGenericTypeArguments genericTypeArguments = null)
+            Func<Type, AccessorGenericTypeMappingDescriptor, Type> populateServiceFactory = null,
+            Func<Type, AccessorGenericTypeMappingDescriptor, Type> populateImplementationFactory = null,
+            bool addEnumerable = false, AccessorGenericTypeMappingDescriptor accessorMappingDescriptor = null)
         {
             if (false == implementationTypeDefinition?.IsGenericTypeDefinition)
                 throw new NotSupportedException($"The implementation type '{implementationTypeDefinition}' only support generic type definition.");
-
+            
             if (!implementationTypeDefinition.IsImplementedInterface(serviceType, out var resultType))
                 throw new InvalidOperationException($"The type '{implementationTypeDefinition}' does not implement '{serviceType}' interface.");
 
@@ -110,35 +110,35 @@ namespace Librame.Extensions.Data.Builders
 
             var implementationType = PopulateGenericTypeArguments(implementationTypeDefinition, populateImplementationFactory);
 
-            // 如果不添加为可枚举集合
+            // 如果不添加为可枚举集合，则尝试移除可能已存在的服务集合
             if (!addEnumerable)
-                Services.TryReplaceAll(serviceType, implementationType, throwIfNotFound: false);
+                Services.TryRemoveAll(serviceType, throwIfNotFound: false);
 
             Services.AddByCharacteristics(serviceType, implementationType, characteristics);
             return this;
 
             // PopulateGenericTypeArguments
             Type PopulateGenericTypeArguments(Type populateType,
-                Func<Type, AccessorGenericTypeArguments, Type> populateFactory = null)
+                Func<Type, AccessorGenericTypeMappingDescriptor, Type> populateFactory = null)
             {
                 if (populateFactory.IsNull())
                 {
                     populateFactory = (type, args) => type.MakeGenericType(
-                        args.AuditType,
-                        args.AuditPropertyType,
-                        args.EntityType,
-                        args.MigrationType,
-                        args.TenantType,
-                        args.GenIdType,
-                        args.IncremIdType,
-                        args.CreatedByType);
+                        args.Audit.ArgumentType,
+                        args.AuditProperty.ArgumentType,
+                        args.Entity.ArgumentType,
+                        args.Migration.ArgumentType,
+                        args.Tenant.ArgumentType,
+                        args.GenId.ArgumentType,
+                        args.IncremId.ArgumentType,
+                        args.CreatedBy.ArgumentType);
                 }
 
-                genericTypeArguments = genericTypeArguments ?? GenericTypeArguments;
-                if (genericTypeArguments.IsNull())
-                    throw new InvalidOperationException("Registration builder.AddAccessor().");
+                accessorMappingDescriptor = accessorMappingDescriptor ?? AccessorMappingDescriptor;
+                if (accessorMappingDescriptor.IsNull())
+                    throw new InvalidOperationException($"The {nameof(AccessorMappingDescriptor)} is null. You should use the {nameof(AccessorDataBuilderExtensions.AddAccessor)}().");
 
-                return populateFactory.Invoke(populateType, genericTypeArguments);
+                return populateFactory.Invoke(populateType, accessorMappingDescriptor);
             }
         }
 

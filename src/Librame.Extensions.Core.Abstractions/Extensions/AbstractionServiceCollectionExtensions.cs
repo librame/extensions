@@ -26,6 +26,17 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class AbstractionServiceCollectionExtensions
     {
+        private static Func<ServiceDescriptor, bool> GetPredicateDescriptor(Type serviceType,
+            Type implementationType = null)
+        {
+            serviceType.NotNull(nameof(serviceType));
+
+            if (implementationType.IsNull())
+                return p => p.ServiceType == serviceType;
+            else
+                return p => p.ServiceType == serviceType && p.ImplementationType == implementationType;
+        }
+
 
         #region AddByCharacteristics
 
@@ -181,20 +192,13 @@ namespace Microsoft.Extensions.DependencyInjection
         public static bool TryGetAll(this IServiceCollection services, Type serviceType,
             out IReadOnlyList<ServiceDescriptor> descriptors, Type implementationType = null)
         {
+            services.NotNull(nameof(services));
+
             // 存在多个相同服务与实现类型的服务集合
             descriptors = services.Where(GetPredicateDescriptor(serviceType, implementationType))
                 .AsReadOnlyList();
 
             return descriptors.Count > 0;
-        }
-
-        private static Func<ServiceDescriptor, bool> GetPredicateDescriptor(Type serviceType,
-            Type implementationType = null)
-        {
-            if (implementationType.IsNull())
-                return p => p.ServiceType == serviceType;
-            else
-                return p => p.ServiceType == serviceType && p.ImplementationType == implementationType;
         }
 
 
@@ -221,11 +225,180 @@ namespace Microsoft.Extensions.DependencyInjection
         public static bool TryGetSingle(this IServiceCollection services, Type serviceType,
             Func<ServiceDescriptor, bool> predicate, out ServiceDescriptor descriptor)
         {
+            services.NotNull(nameof(services));
+
             // 存在多个相同服务与实现类型的服务集合
-            descriptor = services.Where(p => p.ServiceType == serviceType)
+            descriptor = services.Where(GetPredicateDescriptor(serviceType))
                 .SingleOrDefault(predicate);
 
             return descriptor.IsNotNull();
+        }
+
+        #endregion
+
+
+        #region TryRemove
+
+        /// <summary>
+        /// 尝试移除指定类型的所有服务描述符。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        public static bool TryRemoveAll<TService>(this IServiceCollection services,
+            bool throwIfNotFound = true)
+            where TService : class
+            => services.TryRemoveAll<TService>(out _, throwIfNotFound);
+
+        /// <summary>
+        /// 尝试移除指定类型的所有服务描述符。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <typeparam name="TImplementation">指定的实现类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        public static bool TryRemoveAll<TService, TImplementation>(this IServiceCollection services,
+            bool throwIfNotFound = true)
+            where TService : class
+            where TImplementation : class, TService
+            => services.TryRemoveAll<TService, TImplementation>(out _, throwIfNotFound);
+
+        /// <summary>
+        /// 尝试移除指定类型的所有服务描述符。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="implementationType">给定的实现类型（可选）。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static bool TryRemoveAll(this IServiceCollection services, Type serviceType,
+            Type implementationType = null, bool throwIfNotFound = true)
+            => services.TryRemoveAll(serviceType, out _, implementationType, throwIfNotFound);
+
+
+        /// <summary>
+        /// 尝试移除指定类型的所有服务描述符。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="descriptors">输出 <see cref="IReadOnlyList{ServiceDescriptor}"/>。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        public static bool TryRemoveAll<TService>(this IServiceCollection services,
+            out IReadOnlyList<ServiceDescriptor> descriptors, bool throwIfNotFound = true)
+            where TService : class
+            => services.TryRemoveAll(typeof(TService), out descriptors, implementationType: null, throwIfNotFound);
+
+        /// <summary>
+        /// 尝试移除指定类型的所有服务描述符。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <typeparam name="TImplementation">指定的实现类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="descriptors">输出 <see cref="IReadOnlyList{ServiceDescriptor}"/>。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        public static bool TryRemoveAll<TService, TImplementation>(this IServiceCollection services,
+            out IReadOnlyList<ServiceDescriptor> descriptors, bool throwIfNotFound = true)
+            where TService : class
+            where TImplementation : class, TService
+            => services.TryRemoveAll(typeof(TService), out descriptors, typeof(TImplementation), throwIfNotFound);
+
+        /// <summary>
+        /// 尝试移除指定类型的所有服务描述符。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="descriptors">输出 <see cref="IReadOnlyList{ServiceDescriptor}"/>。</param>
+        /// <param name="implementationType">给定的实现类型（可选）。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static bool TryRemoveAll(this IServiceCollection services, Type serviceType,
+            out IReadOnlyList<ServiceDescriptor> descriptors, Type implementationType = null, bool throwIfNotFound = true)
+        {
+            if (!services.TryGetAll(serviceType, out descriptors, implementationType))
+            {
+                if (throwIfNotFound)
+                    throw new ArgumentNullException($"The service type '{serviceType}' and implementation type (if {nameof(implementationType)} not null) services were not found.");
+
+                return false;
+            }
+
+            foreach (var descriptor in descriptors)
+            {
+                if (!services.Remove(descriptor))
+                    return false;
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// 尝试移除指定类型的服务描述符。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="predicate">给定的断定工厂方法。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        public static bool TryRemoveSingle<TService>(this IServiceCollection services,
+            Func<ServiceDescriptor, bool> predicate, bool throwIfNotFound = true)
+            => services.TryRemoveSingle<TService>(predicate, out _, throwIfNotFound);
+
+        /// <summary>
+        /// 尝试移除指定类型的服务描述符。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="predicate">给定的断定工厂方法。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static bool TryRemoveSingle(this IServiceCollection services, Type serviceType,
+            Func<ServiceDescriptor, bool> predicate, bool throwIfNotFound = true)
+            => services.TryRemoveSingle(serviceType, predicate, out _, throwIfNotFound);
+
+
+        /// <summary>
+        /// 尝试移除指定类型的服务描述符。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="predicate">给定的断定工厂方法。</param>
+        /// <param name="descriptor">输出 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        public static bool TryRemoveSingle<TService>(this IServiceCollection services,
+            Func<ServiceDescriptor, bool> predicate, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+            => services.TryRemoveSingle(typeof(TService), predicate, out descriptor, throwIfNotFound);
+
+        /// <summary>
+        /// 尝试移除指定类型的服务描述符。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="predicate">给定的断定工厂方法。</param>
+        /// <param name="descriptor">输出 <see cref="ServiceDescriptor"/>。</param>
+        /// <param name="throwIfNotFound">未找到服务类型时抛出异常（可选；默认启用）。</param>
+        /// <returns>返回是否成功移除的布尔值。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static bool TryRemoveSingle(this IServiceCollection services, Type serviceType,
+            Func<ServiceDescriptor, bool> predicate, out ServiceDescriptor descriptor, bool throwIfNotFound = true)
+        {
+            if (!services.TryGetSingle(serviceType, predicate, out descriptor))
+            {
+                if (throwIfNotFound)
+                    throw new ArgumentNullException($"The service type '{serviceType}' and predicate's service were not found.");
+
+                return false;
+            }
+
+            return services.Remove(descriptor);
         }
 
         #endregion
