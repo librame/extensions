@@ -145,7 +145,7 @@ namespace Librame.Extensions.Data.Stores
         public virtual ValueTask<IPageable<TAudit>> GetPagingAuditsAsync(int index, int size,
             Func<IQueryable<TAudit>, IQueryable<TAudit>> queryFactory = null, CancellationToken cancellationToken = default)
         {
-			var query = queryFactory?.Invoke(Audits) ?? Audits;
+			var query = queryFactory?.Invoke(Audits.AsNoTracking()) ?? Audits.AsNoTracking();
             return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
                 index, size, cancellationToken);
         }
@@ -181,11 +181,11 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="size">给定的页大小。</param>
         /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IPageable{TTable}"/> 的异步操作。</returns>
+        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         public virtual ValueTask<IPageable<TEntity>> GetPagingEntitiesAsync(int index, int size,
             Func<IQueryable<TEntity>, IQueryable<TEntity>> queryFactory = null, CancellationToken cancellationToken = default)
         {
-            var query = queryFactory?.Invoke(Entities) ?? Entities;
+            var query = queryFactory?.Invoke(Entities.AsNoTracking()) ?? Entities.AsNoTracking();
             return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
                 index, size, cancellationToken);
         }
@@ -211,11 +211,11 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="size">给定的页大小。</param>
         /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IPageable{TTable}"/> 的异步操作。</returns>
+        /// <returns>返回一个包含 <see cref="IPageable{TMigration}"/> 的异步操作。</returns>
         public virtual ValueTask<IPageable<TMigration>> GetPagingMigrationsAsync(int index, int size,
             Func<IQueryable<TMigration>, IQueryable<TMigration>> queryFactory = null, CancellationToken cancellationToken = default)
         {
-            var query = queryFactory?.Invoke(Migrations) ?? Migrations;
+            var query = queryFactory?.Invoke(Migrations.AsNoTracking()) ?? Migrations.AsNoTracking();
             return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
                 index, size, cancellationToken);
         }
@@ -232,7 +232,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="host">给定的主机。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
-        public virtual Task<bool> ContainTenantAsync(string name, string host, CancellationToken cancellationToken = default)
+        public virtual ValueTask<bool> ContainTenantAsync(string name, string host, CancellationToken cancellationToken = default)
             => _dbContextAccessor.Tenants.ExistsAsync(p => p.Name == name && p.Host == host, lookupLocal: true, cancellationToken);
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="host">给定的主机。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TTenant"/> 的异步操作。</returns>
-        public virtual Task<TTenant> GetTenantAsync(string name, string host, CancellationToken cancellationToken = default)
+        public virtual ValueTask<TTenant> GetTenantAsync(string name, string host, CancellationToken cancellationToken = default)
             => Tenants.SingleOrDefaultAsync(p => p.Name == name && p.Host == host, cancellationToken);
 
         /// <summary>
@@ -260,10 +260,10 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="List{TTenant}"/> 的异步操作。</returns>
-        public virtual Task<List<TTenant>> GetAllTenantsAsync(Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
+        public virtual ValueTask<List<TTenant>> GetAllTenantsAsync(Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
             CancellationToken cancellationToken = default)
         {
-            var query = queryFactory?.Invoke(Tenants) ?? Tenants;
+            var query = queryFactory?.Invoke(Tenants.AsNoTracking()) ?? Tenants.AsNoTracking();
             return query.ToListAsync(cancellationToken);
         }
 
@@ -278,7 +278,7 @@ namespace Librame.Extensions.Data.Stores
         public virtual ValueTask<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size,
             Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null, CancellationToken cancellationToken = default)
         {
-            var query = queryFactory?.Invoke(Tenants) ?? Tenants;
+            var query = queryFactory?.Invoke(Tenants.AsNoTracking()) ?? Tenants.AsNoTracking();
             return query.AsDescendingPagingByIndexAsync(index, size, cancellationToken);
         }
 
@@ -289,7 +289,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
         /// <returns>返回一个包含 <see cref="OperationResult"/> 的异步操作。</returns>
-        public virtual Task<OperationResult> TryCreateAsync(CancellationToken cancellationToken, params TTenant[] tenants)
+        public virtual ValueTask<OperationResult> TryCreateAsync(CancellationToken cancellationToken, params TTenant[] tenants)
             => _dbContextAccessor.Tenants.TryCreateAsync(cancellationToken, tenants);
 
         /// <summary>

@@ -47,7 +47,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="size">给定的页大小。</param>
         /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IPageable{TTable}"/> 的异步操作。</returns>
+        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
         ValueTask<IPageable<TEntity>> GetPagingEntitiesAsync(int index, int size,
             Func<IQueryable<TEntity>, IQueryable<TEntity>> queryFactory = null,
             CancellationToken cancellationToken = default);

@@ -18,6 +18,23 @@ namespace Librame.Extensions.Data.Stores
     /// 存储初始化器接口。
     /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+    public interface IStoreInitializer<TGenId, TCreatedBy> : IStoreInitializer<TGenId>
+        where TGenId : IEquatable<TGenId>
+        where TCreatedBy : IEquatable<TCreatedBy>
+    {
+        /// <summary>
+        /// 默认创建者生成器。
+        /// </summary>
+        /// <value>返回 <see cref="IDefaultValueGenerator{TCreatedBy}"/>。</value>
+        IDefaultValueGenerator<TCreatedBy> CreatedByGenerator { get; }
+    }
+    
+    
+    /// <summary>
+    /// 存储初始化器接口。
+    /// </summary>
+    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     public interface IStoreInitializer<TGenId> : IStoreInitializerIndication
         where TGenId : IEquatable<TGenId>
     {
