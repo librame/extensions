@@ -36,10 +36,10 @@ namespace Librame.Extensions.Data.Accessors
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        /// <param name="accessor">给定的数据库上下文访问器。</param>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-            (this ModelBuilder modelBuilder, DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> accessor)
+            (this ModelBuilder modelBuilder, IAccessor accessor)
             where TAudit : DataAudit<TGenId, TCreatedBy>
             where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
             where TEntity : DataEntity<TGenId, TCreatedBy>
