@@ -12,17 +12,24 @@
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Core;
     using Core.Services;
+    using Data.Accessors;
 
     /// <summary>
-    /// 存储标识符生成器标示接口（用于标记、约束实例）。
+    /// 存储初始化验证器接口。
     /// </summary>
-    public interface IStoreIdentifierGeneratorIndication : IService, IIndication
+    public interface IStoreInitializationValidator : IService
     {
         /// <summary>
-        /// 时钟。
+        /// 是否已完成初始化。
         /// </summary>
-        IClockService Clock { get; }
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        bool IsInitialized(IAccessor accessor);
+
+        /// <summary>
+        /// 设置已完成初始化。
+        /// </summary>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        void SetInitialized(IAccessor accessor);
     }
 }

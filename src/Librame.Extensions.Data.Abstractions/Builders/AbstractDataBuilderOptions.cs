@@ -10,14 +10,16 @@
 
 #endregion
 
-namespace Librame.Extensions.Data.Options
+namespace Librame.Extensions.Data.Builders
 {
+    using Options;
+
     /// <summary>
-    /// 抽象数据选项。
+    /// 抽象数据构建器选项。
     /// </summary>
     /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
     /// <typeparam name="TTableOptions">指定的表名选项类型。</typeparam>
-    public abstract class AbstractDataOptions<TStoreOptions, TTableOptions>
+    public abstract class AbstractDataBuilderOptions<TStoreOptions, TTableOptions>
         where TStoreOptions : AbstractStoreOptions, new()
         where TTableOptions : AbstractTableOptions, new()
     {

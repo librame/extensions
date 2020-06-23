@@ -17,7 +17,6 @@ namespace Librame.Extensions.Data.Builders
     using Core.Builders;
     using Data.Accessors;
     using Data.Stores;
-    using Data.ValueGenerators;
 
     /// <summary>
     /// 数据构建器接口。
@@ -54,34 +53,27 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
-        /// 添加默认值生成器。
+        /// 添加存储中心。
         /// </summary>
-        /// <typeparam name="TGenerator">指定实现 <see cref="IDefaultValueGenerator{TValue}"/> 接口的默认值生成器类型，推荐从 <see cref="AbstractValueGenerator{TValue}"/> 派生。</typeparam>
+        /// <typeparam name="THub">指定实现 <see cref="IStoreHub"/> 接口的存储中心类型，推荐从 <see cref="AbstractStoreHub"/> 派生，可选实现 <see cref="IDataStoreHub{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/> 接口。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        IDataBuilder AddDefaultValueGenerator<TGenerator>()
-            where TGenerator : IValueGeneratorIndication;
-
-        /// <summary>
-        /// 添加默认值生成器。
-        /// </summary>
-        /// <param name="generatorType">给定的默认值生成器类型（推荐从 <see cref="AbstractValueGenerator{TValue}"/> 派生）。</param>
-        /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        IDataBuilder AddDefaultValueGenerator(Type generatorType);
-
+        IDataBuilder AddStoreHub<THub>()
+            where THub : class, IStoreHub;
 
         /// <summary>
         /// 添加存储标识符生成器。
         /// </summary>
-        /// <typeparam name="TGenerator">指定实现 <see cref="IDataStoreIdentifierGenerator{TGenId}"/> 接口的存储标识符类型，推荐从 <see cref="AbstractDataStoreIdentifierGenerator{TGenId}"/> 派生。</typeparam>
+        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentifierGenerator"/> 接口的存储标识符类型，推荐从 <see cref="AbstractDataStoreIdentifierGenerator{TGenId}"/> 派生。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         IDataBuilder AddStoreIdentifierGenerator<TGenerator>()
-            where TGenerator : class, IStoreIdentifierGeneratorIndication;
+            where TGenerator : class, IStoreIdentifierGenerator;
 
         /// <summary>
-        /// 添加存储标识符生成器。
+        /// 添加存储初始化器。
         /// </summary>
-        /// <param name="generatorType">给定的生成器类型。</param>
+        /// <typeparam name="TInitializer">指定实现 <see cref="IStoreInitializer"/> 接口的初始化器类型，推荐从 <see cref="AbstractDataStoreInitializer{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy}"/> 派生。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        IDataBuilder AddStoreIdentifierGenerator(Type generatorType);
+        IDataBuilder AddStoreInitializer<TInitializer>()
+            where TInitializer : class, IStoreInitializer;
     }
 }

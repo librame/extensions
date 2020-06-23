@@ -21,8 +21,10 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public interface IDataStoreHub<TGenId, TIncremId, TCreatedBy> : IDataStoreHub<DataAudit<TGenId, TCreatedBy>,
-        DataAuditProperty<TIncremId, TGenId>, DataEntity<TGenId, TCreatedBy>,
-        DataMigration<TGenId, TCreatedBy>, DataTenant<TGenId, TCreatedBy>, TGenId>
+        DataAuditProperty<TIncremId, TGenId>,
+        DataEntity<TGenId, TCreatedBy>,
+        DataMigration<TGenId, TCreatedBy>,
+        DataTenant<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
@@ -38,15 +40,16 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TEntity">指定的数据实体类型。</typeparam>
     /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    public interface IDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId> : IStoreHub<TGenId>,
-        IAuditStore<TAudit, TAuditProperty>, IEntityStore<TEntity>, IMigrationStore<TMigration>, ITenantStore<TTenant>
+    public interface IDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant> : IStoreHub,
+        IAuditStore<TAudit, TAuditProperty>,
+        IEntityStore<TEntity>,
+        IMigrationStore<TMigration>,
+        ITenantStore<TTenant>
         where TAudit : class
         where TAuditProperty : class
         where TEntity : class
         where TMigration : class
         where TTenant : class
-        where TGenId : IEquatable<TGenId>
     {
     }
 }

@@ -14,7 +14,7 @@ namespace Librame.Extensions.Data.Tests
         private readonly TestDbContextAccessor _currentAccessor;
 
 
-        public TestStoreHub(IStoreInitializer<Guid> initializer, IAccessor accessor)
+        public TestStoreHub(IStoreInitializer initializer, IAccessor accessor)
             : base(initializer, accessor)
         {
             _currentAccessor = accessor as TestDbContextAccessor;

@@ -18,7 +18,7 @@ namespace Librame.Extensions.Data.Stores
     /// 更新接口（已集成创建接口）。
     /// </summary>
     /// <typeparam name="TUpdatedBy">指定的更新者。</typeparam>
-    public interface IUpdation<TUpdatedBy> : IUpdation<TUpdatedBy, DateTimeOffset>, IUpdatedTimeTicks
+    public interface IUpdation<TUpdatedBy> : IUpdation<TUpdatedBy, DateTimeOffset>, IUpdatedTimeTicks, ICreation<TUpdatedBy>
         where TUpdatedBy : IEquatable<TUpdatedBy>
     {
     }

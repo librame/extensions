@@ -25,6 +25,31 @@ namespace Librame.Extensions.Data.Stores
     public static class AbstractionCreationExtensions
     {
         /// <summary>
+        /// 异步填充创建属性。
+        /// </summary>
+        /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+        /// <param name="creation">给定的 <see cref="ICreation{TCreatedBy}"/>。</param>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="ICreation{TCreatedBy}"/> 的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static async Task<ICreation<TCreatedBy>> PopulateCreationAsync<TCreatedBy>
+            (this ICreation<TCreatedBy> creation, IClockService clock,
+            CancellationToken cancellationToken = default)
+            where TCreatedBy : IEquatable<TCreatedBy>
+        {
+            creation.NotNull(nameof(creation));
+            clock.NotNull(nameof(clock));
+
+            creation.CreatedTime = await clock.GetNowOffsetAsync(cancellationToken: cancellationToken)
+                .ConfigureAndResultAsync();
+
+            creation.CreatedTimeTicks = creation.CreatedTime.Ticks;
+
+            return creation;
+        }
+
+        /// <summary>
         /// 异步填充创建属性（支持日期时间为可空类型）。
         /// </summary>
         /// <exception cref="ArgumentNullException">

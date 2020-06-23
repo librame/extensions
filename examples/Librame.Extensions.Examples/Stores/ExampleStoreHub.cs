@@ -14,7 +14,7 @@ namespace Librame.Extensions.Examples
         private readonly TAccessor _currentAccessor;
 
 
-        public ExampleStoreHub(IStoreInitializer<Guid> initializer, TAccessor accessor)
+        public ExampleStoreHub(IStoreInitializer initializer, TAccessor accessor)
             : base(initializer, accessor)
         {
             _currentAccessor = accessor;

@@ -10,7 +10,6 @@
 
 #endregion
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,33 +18,23 @@ namespace Librame.Extensions.Data.Aspects
     using Core.Services;
     using Data.Accessors;
     using Data.Stores;
-    using Data.ValueGenerators;
 
     /// <summary>
     /// 数据库上下文访问器截面接口。
     /// </summary>
-    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public interface IAccessorAspect<TGenId, TCreatedBy> : ISortableService
-        where TGenId : IEquatable<TGenId>
-        where TCreatedBy : IEquatable<TCreatedBy>
+    public interface IAccessorAspect : ISortableService
     {
         /// <summary>
-        /// 时钟服务。
+        /// 标识符生成器。
+        /// </summary>
+        /// <value>返回 <see cref="IStoreIdentifierGenerator"/>。</value>
+        public IStoreIdentifierGenerator IdentifierGenerator { get; }
+
+        /// <summary>
+        /// 时钟。
         /// </summary>
         /// <value>返回 <see cref="IClockService"/>。</value>
         public IClockService Clock { get; }
-
-        /// <summary>
-        /// 存储标识符生成器。
-        /// </summary>
-        /// <value>返回 <see cref="IDataStoreIdentifierGenerator{TGenId}"/>。</value>
-        public IDataStoreIdentifierGenerator<TGenId> IdentifierGenerator { get; }
-
-        /// <summary>
-        /// 创建者默认值生成器。
-        /// </summary>
-        public IDefaultValueGenerator<TCreatedBy> CreatedByGenerator { get; }
 
         /// <summary>
         /// 启用截面。

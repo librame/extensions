@@ -26,12 +26,10 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Aspects
 {
     using Core.Mediators;
-    using Core.Services;
     using Data.Accessors;
     using Data.Builders;
     using Data.Mediators;
     using Data.Stores;
-    using Data.ValueGenerators;
 
     /// <summary>
     /// 数据实体迁移数据库上下文访问器截面。
@@ -45,8 +43,7 @@ namespace Librame.Extensions.Data.Aspects
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public class DataEntityMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>,
-            IMigrateAccessorAspect<TGenId, TCreatedBy>
+        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>, IMigrateAccessorAspect
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId, TCreatedBy>
@@ -60,16 +57,13 @@ namespace Librame.Extensions.Data.Aspects
         /// 构造一个数据实体迁移数据库上下文访问器截面。
         /// </summary>
         /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</param>
-        /// <param name="createdByGenerator">给定的 <see cref="IDefaultValueGenerator{TValue}"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public DataEntityMigrateDbContextAccessorAspect(IMemoryCache memoryCache,
-            IClockService clock, IStoreIdentifierGenerator<TGenId> identifierGenerator,
-            IDefaultValueGenerator<TCreatedBy> createdByGenerator,
+            IStoreIdentifierGenerator identifierGenerator,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, identifierGenerator, createdByGenerator, options, loggerFactory, priority: 2)
+            : base(identifierGenerator, options, loggerFactory, priority: 2)
         {
             MemoryCache = memoryCache.NotNull(nameof(memoryCache));
         }
@@ -258,12 +252,11 @@ namespace Librame.Extensions.Data.Aspects
         {
             var entity = typeof(TEntity).EnsureCreate<TEntity>();
 
-            entity.Id = IdentifierGenerator.GenerateEntityIdAsync(cancellationToken).ConfigureAndResult();
+            entity.Id = DataIdentifierGenerator.GenerateEntityIdAsync(cancellationToken).ConfigureAndResult();
             entity.EntityName = entityType.ClrType.GetDisplayNameWithNamespace();
             entity.AssemblyName = entityType.ClrType.GetAssemblyDisplayName();
-            entity.CreatedTime = Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
-            entity.CreatedTimeTicks = entity.CreatedTime.Ticks;
-            entity.CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult();
+
+            entity.PopulateCreationAsync(Clock, cancellationToken).ConfigureAndResult();
 
             if (entityType.ClrType.TryGetCustomAttribute(out DescriptionAttribute descr)
                 && descr.Description.IsNotEmpty())

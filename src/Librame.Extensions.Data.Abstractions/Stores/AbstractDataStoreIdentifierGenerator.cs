@@ -24,7 +24,7 @@ namespace Librame.Extensions.Data.Stores
     /// 抽象数据存储标识符生成器。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public abstract class AbstractDataStoreIdentifierGenerator<TId> : AbstractStoreIdentifierGenerator<TId>, IDataStoreIdentifierGenerator<TId>
+    public abstract class AbstractDataStoreIdentifierGenerator<TId> : AbstractStoreIdentifierGenerator<TId>
         where TId : IEquatable<TId>
     {
         /// <summary>
@@ -33,9 +33,9 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="generator">给定的 <see cref="IIdentifierGenerator{TId}"/>。</param>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractDataStoreIdentifierGenerator(IClockService clock, IIdentifierGenerator<TId> generator,
+        protected AbstractDataStoreIdentifierGenerator(IIdentifierGenerator<TId> generator, IClockService clock,
             ILoggerFactory loggerFactory)
-            : base(clock, generator, loggerFactory)
+            : base(generator, clock, loggerFactory)
         {
         }
 
@@ -46,11 +46,11 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="idName">给定的标识名称。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
-        public override async Task<TId> GenerateIdAsync(string idName,
-            CancellationToken cancellationToken = default)
+        public override async Task<TId> GenerateIdAsync(string idName, CancellationToken cancellationToken = default)
         {
             var id = await Generator.GenerateAsync(Clock, cancellationToken)
                 .ConfigureAndResultAsync();
+
             Logger.LogTrace($"Generate {idName}: {id}");
 
             return id;

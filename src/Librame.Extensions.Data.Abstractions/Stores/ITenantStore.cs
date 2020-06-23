@@ -36,11 +36,19 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 异步包含指定租户。
         /// </summary>
+        /// <param name="tenant">给定的 <see cref="ITenant"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含布尔值的异步操作。</returns>
+        Task<bool> ContainTenantAsync(ITenant tenant, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// 异步包含指定租户。
+        /// </summary>
         /// <param name="name">给定的名称。</param>
         /// <param name="host">给定的主机。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
-        ValueTask<bool> ContainTenantAsync(string name, string host, CancellationToken cancellationToken = default);
+        Task<bool> ContainTenantAsync(string name, string host, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 异步获取指定租户。
@@ -65,7 +73,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <see cref="List{TTenant}"/> 的异步操作。</returns>
-        ValueTask<List<TTenant>> GetAllTenantsAsync(Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
+        ValueTask<IReadOnlyList<TTenant>> GetAllTenantsAsync(Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
             CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -87,7 +95,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
         /// <returns>返回一个包含 <see cref="OperationResult"/> 的异步操作。</returns>
-        ValueTask<OperationResult> TryCreateAsync(CancellationToken cancellationToken, params TTenant[] tenants);
+        Task<OperationResult> TryCreateAsync(CancellationToken cancellationToken, params TTenant[] tenants);
 
         /// <summary>
         /// 尝试创建租户集合。

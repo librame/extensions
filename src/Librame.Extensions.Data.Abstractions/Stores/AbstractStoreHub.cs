@@ -10,8 +10,6 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Data.Stores
 {
     using Accessors;
@@ -19,16 +17,14 @@ namespace Librame.Extensions.Data.Stores
     /// <summary>
     /// 抽象存储中心。
     /// </summary>
-    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    public abstract class AbstractStoreHub<TGenId> : AbstractStore, IStoreHub<TGenId>
-        where TGenId : IEquatable<TGenId>
+    public abstract class AbstractStoreHub : AbstractStore, IStoreHub
     {
         /// <summary>
         /// 构造一个存储中心。
         /// </summary>
-        /// <param name="initializer">给定的 <see cref="IStoreInitializer{TGenId}"/>。</param>
+        /// <param name="initializer">给定的 <see cref="IStoreInitializer"/>。</param>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        protected AbstractStoreHub(IStoreInitializer<TGenId> initializer, IAccessor accessor)
+        protected AbstractStoreHub(IStoreInitializer initializer, IAccessor accessor)
             : base(accessor)
         {
             Initializer = initializer.NotNull(nameof(initializer));
@@ -38,7 +34,7 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 存储初始化器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreInitializer{TGenId}"/>。</value>
-        public IStoreInitializer<TGenId> Initializer { get; }
+        /// <value>返回 <see cref="IStoreInitializer"/>。</value>
+        public IStoreInitializer Initializer { get; }
     }
 }

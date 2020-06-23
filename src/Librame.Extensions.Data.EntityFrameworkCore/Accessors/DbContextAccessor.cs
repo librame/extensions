@@ -117,7 +117,7 @@ namespace Librame.Extensions.Data.Accessors
             => modelBuilder.ConfigureDataStores(this);
 
 
-        #region SaveChangesCore (ISaveChangesDbContextAccessorAspect)
+        #region SaveChangesCore (ISaveChangesAccessorAspect)
 
         /// <summary>
         /// 重载保存更改核心。
@@ -126,7 +126,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回受影响的行数。</returns>
         protected override int SaveChangesCore(bool acceptAllChangesOnSuccess)
         {
-            var aspects = GetService<IServicesManager<ISaveChangesAccessorAspect<TGenId, TCreatedBy>>>();
+            var aspects = GetService<IServicesManager<ISaveChangesAccessorAspect>>();
             aspects.ForEach(aspect =>
             {
                 if (aspect.Enabled)
@@ -154,7 +154,7 @@ namespace Librame.Extensions.Data.Accessors
         protected override async Task<int> SaveChangesCoreAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
-            var aspects = GetService<IServicesManager<ISaveChangesAccessorAspect<TGenId, TCreatedBy>>>();
+            var aspects = GetService<IServicesManager<ISaveChangesAccessorAspect>>();
             aspects.ForEach(async aspect =>
             {
                 if (aspect.Enabled)
@@ -176,7 +176,7 @@ namespace Librame.Extensions.Data.Accessors
         #endregion
 
 
-        #region MigrateCore (IMigrationService, Invoke IMigrateDbContextAccessorAspect)
+        #region MigrateCore (IMigrationAccessorService, Invoke IMigrateAccessorAspect)
 
         /// <summary>
         /// 迁移。
@@ -201,7 +201,7 @@ namespace Librame.Extensions.Data.Accessors
         #endregion
 
 
-        #region SwitchTenant (ITenantService)
+        #region SwitchTenant (IMultiTenantAccessorService)
 
         /// <summary>
         /// 获取切换的租户。

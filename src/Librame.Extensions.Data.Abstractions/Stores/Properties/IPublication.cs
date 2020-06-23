@@ -18,7 +18,7 @@ namespace Librame.Extensions.Data.Stores
     /// 发表接口（已集成创建接口）。
     /// </summary>
     /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
-    public interface IPublication<TPublishedBy> : IPublication<TPublishedBy, DateTimeOffset>, IPublishedTimeTicks
+    public interface IPublication<TPublishedBy> : IPublication<TPublishedBy, DateTimeOffset>, IPublishedTimeTicks, ICreation<TPublishedBy>
         where TPublishedBy : IEquatable<TPublishedBy>
     {
     }

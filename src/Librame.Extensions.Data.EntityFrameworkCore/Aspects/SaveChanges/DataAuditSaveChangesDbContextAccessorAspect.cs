@@ -24,12 +24,10 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Aspects
 {
     using Core.Mediators;
-    using Core.Services;
     using Data.Accessors;
     using Data.Builders;
     using Data.Mediators;
     using Data.Stores;
-    using Data.ValueGenerators;
 
     /// <summary>
     /// 数据审计保存变化访问器截面。
@@ -43,8 +41,7 @@ namespace Librame.Extensions.Data.Aspects
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public class DataAuditSaveChangesDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>,
-            ISaveChangesAccessorAspect<TGenId, TCreatedBy>
+        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>, ISaveChangesAccessorAspect
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId, TCreatedBy>
@@ -57,16 +54,12 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个数据审计保存变化访问器截面。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</param>
-        /// <param name="createdByGenerator">给定的 <see cref="IDefaultValueGenerator{TValue}"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public DataAuditSaveChangesDbContextAccessorAspect(IClockService clock,
-            IStoreIdentifierGenerator<TGenId> identifierGenerator,
-            IDefaultValueGenerator<TCreatedBy> createdByGenerator,
+        public DataAuditSaveChangesDbContextAccessorAspect(IStoreIdentifierGenerator identifierGenerator,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, identifierGenerator, createdByGenerator, options, loggerFactory, priority: 1)
+            : base(identifierGenerator, options, loggerFactory, priority: 1)
         {
         }
 
@@ -94,7 +87,7 @@ namespace Librame.Extensions.Data.Aspects
             {
                 var pair = InitializeAuditPair(entry);
 
-                pair.Key.Id = IdentifierGenerator.GenerateAuditIdAsync().ConfigureAndResult();
+                pair.Key.Id = DataIdentifierGenerator.GenerateAuditIdAsync().ConfigureAndResult();
                 pair.Value.ForEach(p => p.AuditId = pair.Key.Id);
 
                 PopulateAuditCreatedTime(entry, pair.Key);
@@ -134,7 +127,7 @@ namespace Librame.Extensions.Data.Aspects
             {
                 var pair = InitializeAuditPair(entry);
 
-                pair.Key.Id = await IdentifierGenerator.GenerateAuditIdAsync(cancellationToken).ConfigureAndResultAsync();
+                pair.Key.Id = await DataIdentifierGenerator.GenerateAuditIdAsync(cancellationToken).ConfigureAndResultAsync();
                 pair.Value.ForEach(p => p.AuditId = pair.Key.Id);
 
                 await PopulateAuditCreatedTimeAsync(entry, pair.Key, cancellationToken).ConfigureAndWaitAsync();
@@ -176,6 +169,16 @@ namespace Librame.Extensions.Data.Aspects
                 {
                     var updatedTime = objectUpdation.GetObjectUpdatedTimeAsync().ConfigureAndResult();
                     audit.SetObjectCreatedTimeAsync(updatedTime).ConfigureAndResult();
+                }
+                else if (entry.Entity is IPublication<TCreatedBy> publication)
+                {
+                    var publishedTime = publication.GetPublishedTimeAsync().ConfigureAndResult();
+                    audit.SetCreatedTimeAsync(publishedTime).ConfigureAndResult();
+                }
+                else if (entry.Entity is IObjectPublication objectPublication)
+                {
+                    var publishedTime = objectPublication.GetObjectPublishedTimeAsync().ConfigureAndResult();
+                    audit.SetObjectCreatedTimeAsync(publishedTime).ConfigureAndResult();
                 }
                 else
                 {
@@ -227,6 +230,16 @@ namespace Librame.Extensions.Data.Aspects
                     var updatedTime = await objectUpdation.GetObjectUpdatedTimeAsync(cancellationToken).ConfigureAndResultAsync();
                     await audit.SetObjectCreatedTimeAsync(updatedTime, cancellationToken).ConfigureAndResultAsync();
                 }
+                else if (entry.Entity is IPublication<TCreatedBy> publication)
+                {
+                    var publishedTime = await publication.GetPublishedTimeAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetCreatedTimeAsync(publishedTime, cancellationToken).ConfigureAndResultAsync();
+                }
+                else if (entry.Entity is IObjectPublication objectPublication)
+                {
+                    var publishedTime = await objectPublication.GetObjectPublishedTimeAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetObjectCreatedTimeAsync(publishedTime, cancellationToken).ConfigureAndResultAsync();
+                }
                 else
                 {
                     audit.CreatedTime = await Clock.GetNowOffsetAsync(cancellationToken: cancellationToken)
@@ -277,10 +290,19 @@ namespace Librame.Extensions.Data.Aspects
                     var updatedBy = objectUpdation.GetObjectUpdatedByAsync().ConfigureAndResult();
                     audit.SetObjectCreatedByAsync(updatedBy).ConfigureAndResult();
                 }
+                else if (entry.Entity is IPublication<TCreatedBy> publication)
+                {
+                    var publishedBy = publication.GetPublishedByAsync().ConfigureAndResult();
+                    audit.SetCreatedByAsync(publishedBy).ConfigureAndResult();
+                }
+                else if (entry.Entity is IObjectPublication objectPublication)
+                {
+                    var publishedBy = objectPublication.GetObjectPublishedByAsync().ConfigureAndResult();
+                    audit.SetObjectCreatedByAsync(publishedBy).ConfigureAndResult();
+                }
                 else
                 {
-                    audit.CreatedBy = CreatedByGenerator.GetValueAsync(GetType())
-                        .ConfigureAndResult();
+                    audit.CreatedBy = GetDefaultCreatedBy();
                 }
             }
             else
@@ -297,8 +319,7 @@ namespace Librame.Extensions.Data.Aspects
                 }
                 else
                 {
-                    audit.CreatedBy = CreatedByGenerator.GetValueAsync(GetType())
-                        .ConfigureAndResult();
+                    audit.CreatedBy = GetDefaultCreatedBy();
                 }
             }
         }
@@ -327,10 +348,19 @@ namespace Librame.Extensions.Data.Aspects
                     var updatedBy = await objectUpdation.GetObjectUpdatedByAsync(cancellationToken).ConfigureAndResultAsync();
                     await audit.SetObjectCreatedByAsync(updatedBy, cancellationToken).ConfigureAndResultAsync();
                 }
+                else if (entry.Entity is IPublication<TCreatedBy> publication)
+                {
+                    var publishedBy = await publication.GetPublishedByAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetCreatedByAsync(publishedBy, cancellationToken).ConfigureAndResultAsync();
+                }
+                else if (entry.Entity is IObjectPublication objectPublication)
+                {
+                    var publishedBy = await objectPublication.GetObjectPublishedByAsync(cancellationToken).ConfigureAndResultAsync();
+                    await audit.SetObjectCreatedByAsync(publishedBy, cancellationToken).ConfigureAndResultAsync();
+                }
                 else
                 {
-                    audit.CreatedBy = await CreatedByGenerator.GetValueAsync(GetType(), cancellationToken)
-                        .ConfigureAndResultAsync();
+                    audit.CreatedBy = GetDefaultCreatedBy();
                 }
             }
             else
@@ -347,8 +377,7 @@ namespace Librame.Extensions.Data.Aspects
                 }
                 else
                 {
-                    audit.CreatedBy = await CreatedByGenerator.GetValueAsync(GetType(), cancellationToken)
-                        .ConfigureAndResultAsync();
+                    audit.CreatedBy = GetDefaultCreatedBy();
                 }
             }
         }
@@ -437,20 +466,12 @@ namespace Librame.Extensions.Data.Aspects
             return propertyEntry.CurrentValue?.ToString();
         }
 
-
         /// <summary>
-        /// 创建审计。
+        /// 获取默认创建者。
         /// </summary>
-        /// <returns>返回 <typeparamref name="TAudit"/>。</returns>
-        protected virtual TAudit CreateAudit()
-            => typeof(TAudit).EnsureCreate<TAudit>();
-
-        /// <summary>
-        /// 创建审计属性。
-        /// </summary>
-        /// <returns>返回 <typeparamref name="TAuditProperty"/>。</returns>
-        protected virtual TAuditProperty CreateAuditProperty()
-            => typeof(TAuditProperty).EnsureCreate<TAuditProperty>();
+        /// <returns>返回 <typeparamref name="TCreatedBy"/>。</returns>
+        protected virtual TCreatedBy GetDefaultCreatedBy()
+            => default;
 
 
         /// <summary>
@@ -470,6 +491,21 @@ namespace Librame.Extensions.Data.Aspects
                     && !m.Metadata.ClrType.IsDefined<NonAuditedAttribute>()
                     && entityStates.Contains(m.State)).ToList();
         }
+
+
+        /// <summary>
+        /// 创建审计。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TAudit"/>。</returns>
+        protected virtual TAudit CreateAudit()
+            => typeof(TAudit).EnsureCreate<TAudit>();
+
+        /// <summary>
+        /// 创建审计属性。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TAuditProperty"/>。</returns>
+        protected virtual TAuditProperty CreateAuditProperty()
+            => typeof(TAuditProperty).EnsureCreate<TAuditProperty>();
 
     }
 }

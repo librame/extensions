@@ -10,45 +10,37 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Data.Stores
 {
+    using Core.Services;
+
     /// <summary>
     /// 存储初始化器接口。
     /// </summary>
-    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public interface IStoreInitializer<TGenId, TCreatedBy> : IStoreInitializer<TGenId>
-        where TGenId : IEquatable<TGenId>
-        where TCreatedBy : IEquatable<TCreatedBy>
+    public interface IStoreInitializer : IService
     {
         /// <summary>
-        /// 默认创建者生成器。
+        /// 验证器。
         /// </summary>
-        /// <value>返回 <see cref="IDefaultValueGenerator{TCreatedBy}"/>。</value>
-        IDefaultValueGenerator<TCreatedBy> CreatedByGenerator { get; }
-    }
-    
-    
-    /// <summary>
-    /// 存储初始化器接口。
-    /// </summary>
-    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    public interface IStoreInitializer<TGenId> : IStoreInitializerIndication
-        where TGenId : IEquatable<TGenId>
-    {
+        /// <value>返回 <see cref="IStoreInitializationValidator"/>。</value>
+        IStoreInitializationValidator Validator { get; }
+
         /// <summary>
-        /// 存储标识符生成器。
+        /// 标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</value>
-        IStoreIdentifierGenerator<TGenId> IdentifierGenerator { get; }
+        IStoreIdentifierGenerator IdentifierGenerator { get; }
+
+
+        /// <summary>
+        /// 需要保存变化。
+        /// </summary>
+        bool RequiredSaveChanges { get; }
 
 
         /// <summary>
         /// 初始化存储。
         /// </summary>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TGenId}"/>。</param>
-        void Initialize(IStoreHub<TGenId> stores);
+        /// <param name="stores">给定的 <see cref="IStoreHub"/>。</param>
+        void Initialize(IStoreHub stores);
     }
 }

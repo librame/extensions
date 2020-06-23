@@ -217,12 +217,12 @@ namespace Librame.Extensions.Data.Services
         protected virtual void MigrateAspectServices(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             Action migrateStructureAction)
         {
-            IServicesManager<IMigrateAccessorAspect<TGenId, TCreatedBy>> aspects = null;
+            IServicesManager<IMigrateAccessorAspect> aspects = null;
 
             // 数据迁移支持写入连接（包括未启用读写分离的默认连接）//或启用数据同步的默认与写入连接
             if (dbContextAccessor.IsWritingConnectionString()) //|| dbContextAccessor.CurrentTenant.DataSynchronization
             {
-                aspects = dbContextAccessor.GetService<IServicesManager<IMigrateAccessorAspect<TGenId, TCreatedBy>>>();
+                aspects = dbContextAccessor.GetService<IServicesManager<IMigrateAccessorAspect>>();
 
                 aspects.ForEach(aspect =>
                 {
@@ -263,12 +263,12 @@ namespace Librame.Extensions.Data.Services
         protected virtual async Task MigrateAspectServicesAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             Action migrateAction, CancellationToken cancellationToken = default)
         {
-            IServicesManager<IMigrateAccessorAspect<TGenId, TCreatedBy>> aspects = null;
+            IServicesManager<IMigrateAccessorAspect> aspects = null;
 
             // 数据迁移支持写入连接（包括未启用读写分离的默认连接）//或启用数据同步的默认与写入连接
             if (dbContextAccessor.IsWritingConnectionString()) //|| dbContextAccessor.CurrentTenant.DataSynchronization
             {
-                aspects = dbContextAccessor.GetService<IServicesManager<IMigrateAccessorAspect<TGenId, TCreatedBy>>>();
+                aspects = dbContextAccessor.GetService<IServicesManager<IMigrateAccessorAspect>>();
 
                 aspects.ForEach(async aspect =>
                 {

@@ -37,6 +37,7 @@ namespace Librame.Extensions.Data.Builders
             : base(defaultTenant)
         {
         }
+
     }
 
 
@@ -55,6 +56,7 @@ namespace Librame.Extensions.Data.Builders
             : base(defaultTenant)
         {
         }
+
     }
 
 
@@ -64,7 +66,7 @@ namespace Librame.Extensions.Data.Builders
     /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
     /// <typeparam name="TTableOptions">指定的表名选项类型。</typeparam>
     public class DataBuilderOptionsBase<TStoreOptions, TTableOptions>
-        : AbstractDataOptions<TStoreOptions, TTableOptions>, IExtensionBuilderOptions
+        : AbstractDataBuilderOptions<TStoreOptions, TTableOptions>, IExtensionBuilderOptions
         where TStoreOptions : AbstractStoreOptions, new()
         where TTableOptions : AbstractTableOptions, new()
     {
@@ -90,7 +92,7 @@ namespace Librame.Extensions.Data.Builders
             = true;
 
         /// <summary>
-        /// 使用 <see cref="IStoreInitializer{TGenId}"/> 进行数据初始化（默认已启用）。
+        /// 使用 <see cref="IStoreInitializer"/> 进行数据初始化（默认已启用）。
         /// </summary>
         public bool UseInitializer { get; set; }
             = true;

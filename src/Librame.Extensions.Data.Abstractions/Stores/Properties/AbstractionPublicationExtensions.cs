@@ -25,7 +25,30 @@ namespace Librame.Extensions.Data.Stores
     public static class AbstractionPublicationExtensions
     {
         /// <summary>
-        /// 异步填充发表属性（支持日期时间为可空类型）。
+        /// 异步填充发表属性（已集成填充创建属性）。
+        /// </summary>
+        /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
+        /// <param name="publication">给定的 <see cref="IPublication{TPublishedBy}"/>。</param>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="IPublication{TPublishedBy}"/> 的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static async Task<IPublication<TPublishedBy>> PopulatePublicationAsync<TPublishedBy>
+            (this IPublication<TPublishedBy> publication, IClockService clock,
+            CancellationToken cancellationToken = default)
+            where TPublishedBy : IEquatable<TPublishedBy>
+        {
+            await publication.PopulateCreationAsync(clock, cancellationToken)
+                .ConfigureAndResultAsync();
+
+            publication.PublishedTime = publication.CreatedTime;
+            publication.PublishedTimeTicks = publication.CreatedTimeTicks;
+
+            return publication;
+        }
+
+        /// <summary>
+        /// 异步填充发表属性（支持日期时间为可空类型；已集成填充创建属性）。
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="publication"/> or <paramref name="clock"/> is null.

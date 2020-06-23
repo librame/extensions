@@ -21,13 +21,11 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Aspects
 {
     using Core.Mediators;
-    using Core.Services;
     using Data.Accessors;
     using Data.Builders;
     using Data.Compilers;
     using Data.Mediators;
     using Data.Stores;
-    using Data.ValueGenerators;
 
     /// <summary>
     /// 数据迁移迁移数据库上下文访问器截面。
@@ -41,8 +39,7 @@ namespace Librame.Extensions.Data.Aspects
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public class DataMigrationMigrateDbContextAccessorAspect<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>,
-            IMigrateAccessorAspect<TGenId, TCreatedBy>
+        : DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>, IMigrateAccessorAspect
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId, TCreatedBy>
@@ -55,16 +52,12 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个数据迁移迁移数据库上下文访问器截面。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</param>
-        /// <param name="createdByGenerator">给定的 <see cref="IDefaultValueGenerator{TValue}"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public DataMigrationMigrateDbContextAccessorAspect(IClockService clock,
-            IStoreIdentifierGenerator<TGenId> identifierGenerator,
-            IDefaultValueGenerator<TCreatedBy> createdByGenerator,
+        public DataMigrationMigrateDbContextAccessorAspect(IStoreIdentifierGenerator identifierGenerator,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, identifierGenerator, createdByGenerator, options, loggerFactory, priority: 1) // 迁移优先级最高
+            : base(identifierGenerator, options, loggerFactory, priority: 1) // 迁移优先级最高
         {
         }
 
@@ -139,9 +132,7 @@ namespace Librame.Extensions.Data.Aspects
             (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
         {
-            var createdTime = Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResult();
-            var createdBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult();
-            var id = IdentifierGenerator.GenerateMigrationIdAsync(cancellationToken).ConfigureAndResult();
+            var id = DataIdentifierGenerator.GenerateMigrationIdAsync(cancellationToken).ConfigureAndResult();
 
             return ExtensionSettings.Preference.RunLockerResult(() =>
             {
@@ -155,9 +146,8 @@ namespace Librame.Extensions.Data.Aspects
                 migration.ModelSnapshotName = modelSnapshotTypeName;
                 migration.ModelBody = modelSnapshot.Body;
                 migration.ModelHash = modelSnapshot.Hash;
-                migration.CreatedTime = createdTime;
-                migration.CreatedTimeTicks = migration.CreatedTime.Ticks;
-                migration.CreatedBy = createdBy;
+
+                migration.PopulateCreationAsync(Clock, cancellationToken).ConfigureAndResult();
 
                 return migration;
             });

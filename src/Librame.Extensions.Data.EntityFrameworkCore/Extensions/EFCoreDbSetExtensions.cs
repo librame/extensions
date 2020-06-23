@@ -55,7 +55,8 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="lookupLocal">同时查找本地缓存（可选；默认查找）。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static bool Exists<TEntity>(this DbSet<TEntity> dbSet, Expression<Func<TEntity, bool>> predicate,
+        public static bool Exists<TEntity>(this DbSet<TEntity> dbSet,
+            Expression<Func<TEntity, bool>> predicate,
             bool lookupLocal = true)
             where TEntity : class
         {
@@ -79,7 +80,8 @@ namespace Microsoft.EntityFrameworkCore
         /// <returns>返回一个包含布尔值的异步操作。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static Task<bool> ExistsAsync<TEntity>(this DbSet<TEntity> dbSet,
-            bool lookupLocal = true, CancellationToken cancellationToken = default)
+            bool lookupLocal = true,
+            CancellationToken cancellationToken = default)
             where TEntity : class
         {
             dbSet.NotNull(nameof(dbSet));
@@ -100,8 +102,10 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static Task<bool> ExistsAsync<TEntity>(this DbSet<TEntity> dbSet, Expression<Func<TEntity, bool>> predicate,
-            bool lookupLocal = true, CancellationToken cancellationToken = default)
+        public static Task<bool> ExistsAsync<TEntity>(this DbSet<TEntity> dbSet,
+            Expression<Func<TEntity, bool>> predicate,
+            bool lookupLocal = true,
+            CancellationToken cancellationToken = default)
             where TEntity : class
         {
             dbSet.NotNull(nameof(dbSet));
@@ -122,7 +126,8 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="dbSet">给定的 <see cref="DbSet{TEntity}"/>。</param>
         /// <param name="resultSelector">给定的结果选择器表达式。</param>
         /// <returns>返回 <typeparamref name="TEntity"/>。</returns>
-        public static TEntity FirstOrDefaultByMax<TEntity, TResult>(this DbSet<TEntity> dbSet, Expression<Func<TEntity, TResult>> resultSelector)
+        public static TEntity FirstOrDefaultByMax<TEntity, TResult>(this DbSet<TEntity> dbSet,
+            Expression<Func<TEntity, TResult>> resultSelector)
             where TEntity : class
             where TResult : IEquatable<TResult>
         {
@@ -137,9 +142,10 @@ namespace Microsoft.EntityFrameworkCore
         /// <typeparam name="TResult">指定的结果类型。</typeparam>
         /// <param name="dbSet">给定的 <see cref="DbSet{TEntity}"/>。</param>
         /// <param name="resultSelector">给定的结果选择器表达式。</param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回包含 <typeparamref name="TEntity"/> 的异步操作。</returns>
-        public static Task<TEntity> FirstOrDefaultByMaxAsync<TEntity, TResult>(this DbSet<TEntity> dbSet, Expression<Func<TEntity, TResult>> resultSelector,
+        public static Task<TEntity> FirstOrDefaultByMaxAsync<TEntity, TResult>(this DbSet<TEntity> dbSet,
+            Expression<Func<TEntity, TResult>> resultSelector,
             CancellationToken cancellationToken = default)
             where TEntity : class
             where TResult : IEquatable<TResult>
@@ -157,7 +163,8 @@ namespace Microsoft.EntityFrameworkCore
         /// <param name="dbSet">给定的 <see cref="DbSet{TEntity}"/>。</param>
         /// <param name="resultSelector">给定的结果选择器表达式。</param>
         /// <returns>返回实体。</returns>
-        public static TEntity FirstOrDefaultByMin<TEntity, TResult>(this DbSet<TEntity> dbSet, Expression<Func<TEntity, TResult>> resultSelector)
+        public static TEntity FirstOrDefaultByMin<TEntity, TResult>(this DbSet<TEntity> dbSet,
+            Expression<Func<TEntity, TResult>> resultSelector)
             where TEntity : class
             where TResult : IEquatable<TResult>
         {
@@ -172,9 +179,10 @@ namespace Microsoft.EntityFrameworkCore
         /// <typeparam name="TResult">指定的结果类型。</typeparam>
         /// <param name="dbSet">给定的 <see cref="DbSet{TEntity}"/>。</param>
         /// <param name="resultSelector">给定的结果选择器表达式。</param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回包含 <typeparamref name="TEntity"/> 的异步操作。</returns>
-        public static Task<TEntity> FirstOrDefaultByMinAsync<TEntity, TResult>(this DbSet<TEntity> dbSet, Expression<Func<TEntity, TResult>> resultSelector,
+        public static Task<TEntity> FirstOrDefaultByMinAsync<TEntity, TResult>(this DbSet<TEntity> dbSet,
+            Expression<Func<TEntity, TResult>> resultSelector,
             CancellationToken cancellationToken = default)
             where TEntity : class
             where TResult : IEquatable<TResult>

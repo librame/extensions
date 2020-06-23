@@ -21,7 +21,6 @@ namespace Librame.Extensions.Data.Builders
     using Data.Protectors;
     using Data.Services;
     using Data.Stores;
-    using Data.ValueGenerators;
 
     /// <summary>
     /// <see cref="IDataBuilder"/> 服务特征注册。
@@ -45,8 +44,8 @@ namespace Librame.Extensions.Data.Builders
             return new Dictionary<Type, ServiceCharacteristics>
             {
                 // Aspects
-                { typeof(ISaveChangesAccessorAspect<,>), ServiceCharacteristics.Singleton() },
-                { typeof(IMigrateAccessorAspect<,>), ServiceCharacteristics.Singleton() },
+                { typeof(ISaveChangesAccessorAspect), ServiceCharacteristics.Singleton() },
+                { typeof(IMigrateAccessorAspect), ServiceCharacteristics.Singleton() },
                 
                 // Mediators
                 { typeof(AuditNotificationHandler<,>), ServiceCharacteristics.Transient() },
@@ -61,12 +60,10 @@ namespace Librame.Extensions.Data.Builders
                 { typeof(IMultiTenantAccessorService), ServiceCharacteristics.Singleton() },
 
                 // Stores
-                { typeof(IStoreHub<>), ServiceCharacteristics.Scoped() },
-                { typeof(IStoreIdentifierGenerator<>), ServiceCharacteristics.Singleton() },
-                { typeof(IStoreInitializer<>), ServiceCharacteristics.Scoped() },
-
-                // ValueGenerators
-                { typeof(IDefaultValueGenerator<>), ServiceCharacteristics.Singleton() }
+                { typeof(IStoreHub), ServiceCharacteristics.Scoped() },
+                { typeof(IStoreIdentifierGenerator), ServiceCharacteristics.Singleton() },
+                { typeof(IStoreInitializer), ServiceCharacteristics.Scoped() },
+                { typeof(IStoreInitializationValidator), ServiceCharacteristics.Scoped() }
             };
         }
 

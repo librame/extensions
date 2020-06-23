@@ -12,9 +12,9 @@ namespace Librame.Extensions.Examples
 
     public class ExampleStoreIdentifierGenerator : GuidDataStoreIdentifierGenerator
     {
-        public ExampleStoreIdentifierGenerator(IClockService clock,
-            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, options, loggerFactory)
+        public ExampleStoreIdentifierGenerator(IOptions<DataBuilderOptions> options,
+            IClockService clock, ILoggerFactory loggerFactory)
+            : base(options, clock, loggerFactory)
         {
         }
 

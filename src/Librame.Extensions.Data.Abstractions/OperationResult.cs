@@ -120,6 +120,38 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 异步尝试运行工厂方法。
+        /// </summary>
+        /// <param name="taskFactory">给定的异步操作工厂方法。</param>
+        /// <returns>返回一个包含 <see cref="OperationResult"/> 的异步操作。</returns>
+        public static ValueTask<OperationResult> TryRunFactoryAsync(Func<ValueTask> taskFactory)
+            => TryRunFactoryAsync<Exception>(taskFactory);
+
+        /// <summary>
+        /// 异步尝试运行工厂方法。
+        /// </summary>
+        /// <typeparam name="TException">指定的异常类型。</typeparam>
+        /// <param name="taskFactory">给定的异步操作工厂方法。</param>
+        /// <returns>返回一个包含 <see cref="OperationResult"/> 的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static async ValueTask<OperationResult> TryRunFactoryAsync<TException>(Func<ValueTask> taskFactory)
+            where TException : Exception
+        {
+            taskFactory.NotNull(nameof(taskFactory));
+
+            try
+            {
+                await taskFactory.Invoke().ConfigureAndWaitAsync();
+                return Success;
+            }
+            catch (TException ex)
+            {
+                return Failed(ex);
+            }
+        }
+
+
+        /// <summary>
         /// 尝试运行动作方法。
         /// </summary>
         /// <param name="action">给定的动作方法。</param>

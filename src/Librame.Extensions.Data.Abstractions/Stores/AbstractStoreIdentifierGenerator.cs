@@ -24,35 +24,35 @@ namespace Librame.Extensions.Data.Stores
     /// 抽象存储标识符生成器。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public abstract class AbstractStoreIdentifierGenerator<TId> : AbstractService, IStoreIdentifierGenerator<TId>
+    public abstract class AbstractStoreIdentifierGenerator<TId> : AbstractService, IStoreIdentifierGenerator
         where TId : IEquatable<TId>
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractStoreIdentifierGenerator{TId}"/>。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="generator">给定的 <see cref="IIdentifierGenerator{TId}"/>。</param>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractStoreIdentifierGenerator(IClockService clock, IIdentifierGenerator<TId> generator,
+        protected AbstractStoreIdentifierGenerator(IIdentifierGenerator<TId> generator, IClockService clock,
             ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
-            Clock = clock.NotNull(nameof(clock));
             Generator = generator.NotNull(nameof(generator));
+            Clock = clock.NotNull(nameof(clock));
         }
 
-
-        /// <summary>
-        /// 时钟。
-        /// </summary>
-        /// <value>返回 <see cref="IClockService"/>。</value>
-        public IClockService Clock { get; }
 
         /// <summary>
         /// 标识符生成器。
         /// </summary>
         /// <value>返回 <see cref="IIdentifierGenerator{TId}"/>。</value>
         public IIdentifierGenerator<TId> Generator { get; }
+
+        /// <summary>
+        /// 时钟。
+        /// </summary>
+        /// <value>返回 <see cref="IClockService"/>。</value>
+        public IClockService Clock { get; }
 
 
         /// <summary>

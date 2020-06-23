@@ -11,45 +11,42 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data.Stores
 {
     using Core.Services;
-    using Data.Accessors;
 
     /// <summary>
     /// 抽象存储初始化器。
     /// </summary>
-    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    public abstract class AbstractStoreInitializer<TGenId> : AbstractService, IStoreInitializer<TGenId>
-        where TGenId : IEquatable<TGenId>
+    public abstract class AbstractStoreInitializer : AbstractService, IStoreInitializer
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractStoreInitializer{TGenId}"/>。
+        /// 构造一个 <see cref="AbstractStoreInitializer"/>。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</param>
+        /// <param name="validator">给定的 <see cref="IStoreInitializationValidator"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractStoreInitializer(IStoreIdentifierGenerator<TGenId> identifierGenerator,
-            ILoggerFactory loggerFactory)
+        protected AbstractStoreInitializer(IStoreInitializationValidator validator,
+            IStoreIdentifierGenerator identifierGenerator, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
+            Validator = validator.NotNull(nameof(validator));
             IdentifierGenerator = identifierGenerator.NotNull(nameof(identifierGenerator));
         }
 
 
         /// <summary>
-        /// 存储标识符生成器。
+        /// 验证器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentifierGenerator{TGenId}"/>。</value>
-        public IStoreIdentifierGenerator<TGenId> IdentifierGenerator { get; }
+        /// <value>返回 <see cref="IStoreInitializationValidator"/>。</value>
+        public IStoreInitializationValidator Validator { get; }
 
         /// <summary>
-        /// 时钟服务。
+        /// 标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IClockService"/>。</value>
-        public IClockService Clock
-            => IdentifierGenerator.Clock;
+        public IStoreIdentifierGenerator IdentifierGenerator { get; }
 
 
         /// <summary>
@@ -59,15 +56,40 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 是否已完成初始化。
+        /// 初始化。
         /// </summary>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public abstract bool IsInitialized(IAccessor accessor);
+        /// <param name="stores">给定的 <see cref="IStoreHub"/>。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public virtual void Initialize(IStoreHub stores)
+        {
+            stores.NotNull(nameof(stores));
+
+            // 切换为写入数据连接
+            stores.Accessor.ChangeConnectionString(tenant => tenant.WritingConnectionString);
+
+            // 如果未能成功切换，则直接直接退出
+            if (!stores.Accessor.IsWritingConnectionString())
+                return;
+
+            InitializeCore(stores);
+
+            if (RequiredSaveChanges)
+            {
+                stores.Accessor.SaveChanges();
+
+                Validator.SetInitialized(stores.Accessor);
+
+                RequiredSaveChanges = false;
+            };
+
+            // 还原为默认数据连接
+            stores.Accessor.ChangeConnectionString(tenant => tenant.DefaultConnectionString);
+        }
 
         /// <summary>
-        /// 初始化存储。
+        /// 初始化核心。
         /// </summary>
-        /// <param name="stores">给定的 <see cref="IStoreHub{TGenId}"/>。</param>
-        public abstract void Initialize(IStoreHub<TGenId> stores);
+        /// <param name="stores">给定的 <see cref="IStoreHub"/>。</param>
+        protected abstract void InitializeCore(IStoreHub stores);
     }
 }

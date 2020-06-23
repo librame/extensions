@@ -6,7 +6,6 @@ using System.Linq;
 namespace Librame.Extensions.Examples
 {
     using Data.Stores;
-    using Data.ValueGenerators;
     using Models;
 
     public class ExampleStoreInitializer<TAccessor> : GuidDataStoreInitializer<int>
@@ -20,20 +19,18 @@ namespace Librame.Extensions.Examples
         private IList<Category<int, Guid, Guid>> _categories;
 
 
-        public ExampleStoreInitializer(IDefaultValueGenerator<Guid> createdByGenerator,
-            IStoreIdentifierGenerator<Guid> identifierGenerator, ILoggerFactory loggerFactory)
-            : base(createdByGenerator, identifierGenerator, loggerFactory)
+        public ExampleStoreInitializer(IStoreIdentifierGenerator identifierGenerator,
+            IStoreInitializationValidator validator, ILoggerFactory loggerFactory)
+            : base(identifierGenerator, validator, loggerFactory)
         {
         }
 
 
-        protected override void InitializeData(IDataStoreHub<DataAudit<Guid, Guid>,
-            DataAuditProperty<int, Guid>, DataEntity<Guid, Guid>, DataMigration<Guid, Guid>,
-            DataTenant<Guid, Guid>, Guid> dataStores)
+        protected override void InitializeCore(IStoreHub stores)
         {
-            base.InitializeData(dataStores);
+            base.InitializeCore(stores);
 
-            if (dataStores.Accessor is TAccessor dbContextAccessor)
+            if (stores.Accessor is TAccessor dbContextAccessor)
             {
                 InitializeCategories(dbContextAccessor);
 
@@ -50,24 +47,21 @@ namespace Librame.Extensions.Examples
                 {
                     new Category<int, Guid, Guid>
                     {
-                        Name = $"First {_categoryName}",
-                        CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
-                        CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult()
+                        Name = $"First {_categoryName}"
                     },
                     new Category<int, Guid, Guid>
                     {
-                        Name = $"Last {_categoryName}",
-                        CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
-                        CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult()
+                        Name = $"Last {_categoryName}"
                     }
                 };
 
                 _categories.ForEach(category =>
                 {
-                    category.CreatedTimeTicks = category.CreatedTime.Ticks;
+                    category.PopulateCreationAsync(Clock).ConfigureAndResult();
                 });
 
                 accessor.Categories.AddRange(_categories);
+
                 RequiredSaveChanges = true;
             }
             else
@@ -90,17 +84,16 @@ namespace Librame.Extensions.Examples
                         Id = identifier.GetArticleIdAsync().ConfigureAndResult(),
                         Title = $"{_articleName} {i.FormatString(3)}",
                         Descr = $"Descr {i.FormatString(3)}",
-                        Category = (i < 50) ? _categories.First() : _categories.Last(),
-                        CreatedTime = Clock.GetNowOffsetAsync().ConfigureAndResult(),
-                        CreatedBy = CreatedByGenerator.GetValueAsync(GetType()).ConfigureAndResult()
+                        Category = (i < 50) ? _categories.First() : _categories.Last()
                     };
 
-                    article.CreatedTimeTicks = article.CreatedTime.Ticks;
+                    article.PopulateCreationAsync(Clock).ConfigureAndResult();
 
                     articles.Add(article);
                 }
 
                 stores.Articles.AddRange(articles);
+
                 RequiredSaveChanges = true;
             }
         }

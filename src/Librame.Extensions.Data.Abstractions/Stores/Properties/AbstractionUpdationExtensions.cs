@@ -25,6 +25,29 @@ namespace Librame.Extensions.Data.Stores
     public static class AbstractionUpdationExtensions
     {
         /// <summary>
+        /// 异步填充更新属性（已集成填充创建属性）。
+        /// </summary>
+        /// <typeparam name="TUpdatedBy">指定的发表者类型。</typeparam>
+        /// <param name="updation">给定的 <see cref="IUpdation{TUpdatedBy}"/>。</param>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="IUpdation{TUpdatedBy}"/> 的异步操作。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static async Task<IUpdation<TUpdatedBy>> PopulateUpdationAsync<TUpdatedBy>
+            (this IUpdation<TUpdatedBy> updation, IClockService clock,
+            CancellationToken cancellationToken = default)
+            where TUpdatedBy : IEquatable<TUpdatedBy>
+        {
+            await updation.PopulateCreationAsync(clock, cancellationToken)
+                .ConfigureAndResultAsync();
+
+            updation.UpdatedTime = updation.CreatedTime;
+            updation.UpdatedTimeTicks = updation.CreatedTimeTicks;
+
+            return updation;
+        }
+
+        /// <summary>
         /// 异步填充更新属性（支持日期时间为可空类型）。
         /// </summary>
         /// <exception cref="ArgumentNullException">

@@ -36,10 +36,37 @@ namespace Librame.Extensions.Data.Accessors
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
         /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-            (this ModelBuilder modelBuilder, IAccessor accessor)
+            (this ModelBuilder modelBuilder, DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> accessor)
+            where TAudit : DataAudit<TGenId, TCreatedBy>
+            where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
+            where TEntity : DataEntity<TGenId, TCreatedBy>
+            where TMigration : DataMigration<TGenId, TCreatedBy>
+            where TTenant : DataTenant<TGenId, TCreatedBy>
+            where TGenId : IEquatable<TGenId>
+            where TIncremId : IEquatable<TIncremId>
+            where TCreatedBy : IEquatable<TCreatedBy>
+            => modelBuilder.ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant,
+                TGenId, TIncremId, TCreatedBy>(accessor as DbContextAccessorBase);
+
+        /// <summary>
+        /// 配置数据存储集合。
+        /// </summary>
+        /// <typeparam name="TAudit">指定的审计类型。</typeparam>
+        /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
+        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
+        /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+        /// <typeparam name="TTenant">指定的租户类型。</typeparam>
+        /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
+        /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
+        /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
+        /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
+        /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static void ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+            (this ModelBuilder modelBuilder, DbContextAccessorBase accessor)
             where TAudit : DataAudit<TGenId, TCreatedBy>
             where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
             where TEntity : DataEntity<TGenId, TCreatedBy>

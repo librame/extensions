@@ -30,9 +30,9 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public GuidDataStoreIdentifierGenerator(IClockService clock,
-            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(clock, options?.Value.IdentifierGenerator, loggerFactory)
+        public GuidDataStoreIdentifierGenerator(IOptions<DataBuilderOptions> options,
+            IClockService clock, ILoggerFactory loggerFactory)
+            : base(options?.Value.IdentifierGenerator, clock, loggerFactory)
         {
         }
 

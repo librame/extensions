@@ -10,21 +10,17 @@
 
 #endregion
 
-using System;
-
 namespace Librame.Extensions.Data.Stores
 {
     /// <summary>
     /// 存储中心接口。
     /// </summary>
-    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    public interface IStoreHub<TGenId> : IStoreHubIndication
-        where TGenId : IEquatable<TGenId>
+    public interface IStoreHub : IStore
     {
         /// <summary>
         /// 存储初始化器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreInitializer{TGenId}"/>。</value>
-        IStoreInitializer<TGenId> Initializer { get; }
+        /// <value>返回 <see cref="IStoreInitializer"/>。</value>
+        IStoreInitializer Initializer { get; }
     }
 }
