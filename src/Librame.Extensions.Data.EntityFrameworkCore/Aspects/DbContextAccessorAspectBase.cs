@@ -56,15 +56,15 @@ namespace Librame.Extensions.Data.Aspects
             : base(identifierGenerator, options, loggerFactory, priority)
         {
             DataIdentifierGenerator = identifierGenerator.CastTo<IStoreIdentifierGenerator,
-                AbstractDataStoreIdentifierGenerator<TGenId>>(nameof(identifierGenerator));
+                IDataStoreIdentifierGenerator<TGenId>>(nameof(identifierGenerator));
         }
 
 
         /// <summary>
         /// 数据存储标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="AbstractDataStoreIdentifierGenerator{TGenId}"/>。</value>
-        protected AbstractDataStoreIdentifierGenerator<TGenId> DataIdentifierGenerator { get; }
+        /// <value>返回 <see cref="IDataStoreIdentifierGenerator{TGenId}"/>。</value>
+        protected IDataStoreIdentifierGenerator<TGenId> DataIdentifierGenerator { get; }
 
 
         #region PreProcess

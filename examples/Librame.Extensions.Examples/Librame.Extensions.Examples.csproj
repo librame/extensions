@@ -35,6 +35,7 @@
     <Folder Include="_configs\core_identifiers\" />
     <Folder Include="_configs\data_bases\" />
     <Folder Include="_configs\data_compilers\" />
+    <Folder Include="_reports\data_initializers\" />
   </ItemGroup>
 
 </Project>

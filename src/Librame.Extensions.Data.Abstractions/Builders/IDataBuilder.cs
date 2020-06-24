@@ -55,7 +55,7 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 添加存储中心。
         /// </summary>
-        /// <typeparam name="THub">指定实现 <see cref="IStoreHub"/> 接口的存储中心类型，推荐从 <see cref="AbstractStoreHub"/> 派生，可选实现 <see cref="IDataStoreHub{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/> 接口。</typeparam>
+        /// <typeparam name="THub">指定实现 <see cref="IStoreHub"/> 接口的存储中心类型，推荐从 <see cref="AbstractStoreHub"/> 派生，可选实现 <see cref="IDataStoreHub{TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/> 接口。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         IDataBuilder AddStoreHub<THub>()
             where THub : class, IStoreHub;
@@ -71,7 +71,7 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 添加存储初始化器。
         /// </summary>
-        /// <typeparam name="TInitializer">指定实现 <see cref="IStoreInitializer"/> 接口的初始化器类型，推荐从 <see cref="AbstractDataStoreInitializer{TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy}"/> 派生。</typeparam>
+        /// <typeparam name="TInitializer">指定实现 <see cref="IStoreInitializer"/> 接口的初始化器类型，推荐从 <see cref="AbstractDataStoreInitializer{TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy}"/> 派生。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         IDataBuilder AddStoreInitializer<TInitializer>()
             where TInitializer : class, IStoreInitializer;

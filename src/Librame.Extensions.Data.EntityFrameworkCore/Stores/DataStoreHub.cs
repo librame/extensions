@@ -25,13 +25,23 @@ namespace Librame.Extensions.Data.Stores
     /// <summary>
     /// 数据存储中心。
     /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public class DataStoreHub<TGenId, TIncremId, TCreatedBy>
-        : DataStoreHub<DataAudit<TGenId, TCreatedBy>, DataAuditProperty<TIncremId, TGenId>,
-            DataEntity<TGenId, TCreatedBy>, DataMigration<TGenId, TCreatedBy>, DataTenant<TGenId, TCreatedBy>,
-            TGenId, TIncremId, TCreatedBy>, IDataStoreHub<TGenId, TIncremId, TCreatedBy>
+    public class DataStoreHub<TAccessor, TGenId, TIncremId, TCreatedBy> : DataStoreHub<TAccessor,
+        DataAudit<TGenId, TCreatedBy>,
+        DataAuditProperty<TIncremId, TGenId>,
+        DataEntity<TGenId, TCreatedBy>,
+        DataMigration<TGenId, TCreatedBy>,
+        DataTenant<TGenId, TCreatedBy>,
+        TGenId, TIncremId, TCreatedBy>,
+        IDataStoreHub<TAccessor, TGenId, TIncremId, TCreatedBy>
+        where TAccessor : class, IDbContextAccessor<DataAudit<TGenId, TCreatedBy>,
+            DataAuditProperty<TIncremId, TGenId>,
+            DataEntity<TGenId, TCreatedBy>,
+            DataMigration<TGenId, TCreatedBy>,
+            DataTenant<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
@@ -45,12 +55,14 @@ namespace Librame.Extensions.Data.Stores
             : base(initializer, accessor)
         {
         }
+
     }
 
 
     /// <summary>
     /// 数据存储中心。
     /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
     /// <typeparam name="TEntity">指定的实体类型。</typeparam>
@@ -59,8 +71,9 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public class DataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-        : AbstractStoreHub, IDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
+    public class DataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+        : AbstractStoreHub, IDataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant>
+        where TAccessor : class, IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty: DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId, TCreatedBy>
@@ -70,9 +83,6 @@ namespace Librame.Extensions.Data.Stores
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
-        private readonly IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant> _dbContextAccessor;
-
-
         /// <summary>
         /// 构造一个数据存储中心。
         /// </summary>
@@ -81,10 +91,10 @@ namespace Librame.Extensions.Data.Stores
         public DataStoreHub(IStoreInitializer initializer, IAccessor accessor)
             : base(initializer, accessor)
         {
-            _dbContextAccessor = accessor.CastTo<IAccessor,
-                IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>>(nameof(accessor));
+            // 访问器必须提前完成转换，否则在初始化过程中，访问特定访问器的数据集会抛出空异常
+            Accessor = accessor.CastTo<IAccessor, TAccessor>(nameof(accessor));
 
-            if (_dbContextAccessor.Dependency.Options.UseInitializer
+            if (Accessor.Dependency.Options.UseInitializer
                 && !Initializer.Validator.IsInitialized(accessor))
             {
                 Initializer.Initialize(this);
@@ -93,34 +103,41 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
+        /// 访问器。
+        /// </summary>
+        /// <value>返回 <typeparamref name="TAccessor"/>。</value>
+        public new TAccessor Accessor { get; }
+
+
+        /// <summary>
         /// 审计查询。
         /// </summary>
         public IQueryable<TAudit> Audits
-            => _dbContextAccessor.Audits;
+            => Accessor.Audits;
 
         /// <summary>
         /// 审计属性查询。
         /// </summary>
         public IQueryable<TAuditProperty> AuditProperties
-            => _dbContextAccessor.AuditProperties;
+            => Accessor.AuditProperties;
 
         /// <summary>
         /// 实体查询。
         /// </summary>
         public IQueryable<TEntity> Entities
-            => _dbContextAccessor.Entities;
+            => Accessor.Entities;
 
         /// <summary>
         /// 迁移查询。
         /// </summary>
         public IQueryable<TMigration> Migrations
-            => _dbContextAccessor.Migrations;
+            => Accessor.Migrations;
 
         /// <summary>
         /// 租户查询。
         /// </summary>
         public IQueryable<TTenant> Tenants
-            => _dbContextAccessor.Tenants;
+            => Accessor.Tenants;
 
 
         #region IAuditStore
@@ -132,7 +149,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="keyValues">给定的键值对数组或标识。</param>
         /// <returns>返回一个包含 <typeparamref name="TAudit"/> 的异步操作。</returns>
         public virtual ValueTask<TAudit> FindAuditAsync(CancellationToken cancellationToken, params object[] keyValues)
-            => _dbContextAccessor.Audits.FindAsync(keyValues, cancellationToken);
+            => Accessor.Audits.FindAsync(keyValues, cancellationToken);
 
         /// <summary>
         /// 异步获取分页审计集合。
@@ -158,7 +175,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="keyValues">给定的键值对数组或标识。</param>
         /// <returns>返回一个包含 <typeparamref name="TAuditProperty"/> 的异步操作。</returns>
         public virtual ValueTask<TAuditProperty> FindAuditPropertyAsync(CancellationToken cancellationToken, params object[] keyValues)
-            => _dbContextAccessor.AuditProperties.FindAsync(keyValues, cancellationToken);
+            => Accessor.AuditProperties.FindAsync(keyValues, cancellationToken);
 
         #endregion
 
@@ -172,7 +189,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="keyValues">给定的键值对数组或标识。</param>
         /// <returns>返回一个包含 <typeparamref name="TEntity"/> 的异步操作。</returns>
         public virtual ValueTask<TEntity> FindEntityAsync(CancellationToken cancellationToken, params object[] keyValues)
-            => _dbContextAccessor.Entities.FindAsync(keyValues, cancellationToken);
+            => Accessor.Entities.FindAsync(keyValues, cancellationToken);
 
         /// <summary>
         /// 异步获取分页实体集合。
@@ -202,7 +219,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="keyValues">给定的键值对数组或标识。</param>
         /// <returns>返回一个包含 <typeparamref name="TMigration"/> 的异步操作。</returns>
         public virtual ValueTask<TMigration> FindMigrationAsync(CancellationToken cancellationToken, params object[] keyValues)
-            => _dbContextAccessor.Migrations.FindAsync(keyValues, cancellationToken);
+            => Accessor.Migrations.FindAsync(keyValues, cancellationToken);
 
         /// <summary>
         /// 异步获取分页迁移集合。
@@ -231,7 +248,8 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="tenant">给定的 <see cref="ITenant"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
-        public virtual Task<bool> ContainTenantAsync(ITenant tenant, CancellationToken cancellationToken = default)
+        public virtual Task<bool> ContainTenantAsync(ITenant tenant,
+            CancellationToken cancellationToken = default)
             => ContainTenantAsync(tenant?.Name, tenant.Host, cancellationToken);
 
         /// <summary>
@@ -241,8 +259,10 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="host">给定的主机。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含布尔值的异步操作。</returns>
-        public virtual Task<bool> ContainTenantAsync(string name, string host, CancellationToken cancellationToken = default)
-            => _dbContextAccessor.Tenants.ExistsAsync(p => p.Name == name && p.Host == host, lookupLocal: true, cancellationToken);
+        public virtual Task<bool> ContainTenantAsync(string name, string host,
+            CancellationToken cancellationToken = default)
+            => Accessor.Tenants.ExistsAsync(p => p.Name == name && p.Host == host,
+                lookupLocal: true, cancellationToken);
 
         /// <summary>
         /// 异步获取指定租户。
@@ -251,7 +271,8 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="host">给定的主机。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TTenant"/> 的异步操作。</returns>
-        public virtual ValueTask<TTenant> GetTenantAsync(string name, string host, CancellationToken cancellationToken = default)
+        public virtual ValueTask<TTenant> GetTenantAsync(string name, string host,
+            CancellationToken cancellationToken = default)
             => cancellationToken.RunFactoryOrCancellationValueAsync(()
                 => Tenants.AsNoTracking().FirstOrDefault(p => p.Name == name && p.Host == host));
 
@@ -261,8 +282,9 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <param name="keyValues">给定的键值对数组或标识。</param>
         /// <returns>返回一个包含 <typeparamref name="TTenant"/> 的异步操作。</returns>
-        public virtual ValueTask<TTenant> FindTenantAsync(CancellationToken cancellationToken, params object[] keyValues)
-            => _dbContextAccessor.Tenants.FindAsync(keyValues, cancellationToken);
+        public virtual ValueTask<TTenant> FindTenantAsync(CancellationToken cancellationToken,
+            params object[] keyValues)
+            => Accessor.Tenants.FindAsync(keyValues, cancellationToken);
 
         /// <summary>
         /// 异步获取所有分页租户集合。
@@ -303,7 +325,7 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回一个包含 <see cref="OperationResult"/> 的异步操作。</returns>
         public virtual Task<OperationResult> TryCreateAsync(CancellationToken cancellationToken,
             params TTenant[] tenants)
-            => _dbContextAccessor.Tenants.TryCreateAsync(cancellationToken, tenants);
+            => Accessor.Tenants.TryCreateAsync(cancellationToken, tenants);
 
         /// <summary>
         /// 尝试创建租户集合。
@@ -311,7 +333,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
         /// <returns>返回 <see cref="OperationResult"/>。</returns>
         public virtual OperationResult TryCreate(params TTenant[] tenants)
-            => _dbContextAccessor.Tenants.TryCreate(tenants);
+            => Accessor.Tenants.TryCreate(tenants);
 
         /// <summary>
         /// 尝试更新租户集合。
@@ -319,7 +341,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
         /// <returns>返回 <see cref="OperationResult"/>。</returns>
         public virtual OperationResult TryUpdate(params TTenant[] tenants)
-            => _dbContextAccessor.Tenants.TryUpdate(tenants);
+            => Accessor.Tenants.TryUpdate(tenants);
 
         /// <summary>
         /// 尝试删除租户集合。
@@ -327,7 +349,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
         /// <returns>返回 <see cref="OperationResult"/>。</returns>
         public virtual OperationResult TryDelete(params TTenant[] tenants)
-            => _dbContextAccessor.Tenants.TryLogicDelete(tenants);
+            => Accessor.Tenants.TryLogicDelete(tenants);
 
         #endregion
 

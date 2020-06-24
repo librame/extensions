@@ -111,6 +111,25 @@ namespace Librame.Extensions
 
 
         /// <summary>
+        /// 格式化为字符串。
+        /// </summary>
+        /// <param name="buffer">给定的字节数组。</param>
+        /// <param name="timeTicks">给定的时间周期数。</param>
+        /// <returns>返回字符串。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static string FormatString(this byte[] buffer, long timeTicks)
+        {
+            buffer.NotNull(nameof(buffer));
+
+            var i = 1L;
+            foreach (var b in buffer)
+                i *= b + 1;
+
+            return "{0:x}".Format(_ = timeTicks);
+        }
+
+
+        /// <summary>
         /// 将数值格式化为 2 位长度的字符串（如：01）。
         /// </summary>
         /// <param name="number">给定的 32 位带符号整数。</param>

@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace Librame.Extensions.Tests
 {
@@ -51,8 +52,12 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void FormatStringTest()
         {
+            var buffer = Guid.NewGuid().ToByteArray();
+            var format = buffer.FormatString(DateTime.UtcNow.Ticks);
+            Assert.NotEmpty(format);
+
             var i = 3;
-            var format = i.FormatString();
+            format = i.FormatString();
             Assert.Equal("03", format);
 
             format = i.FormatString(4);

@@ -17,20 +17,24 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Data.Stores
 {
     using Core.Services;
+    using Data.Accessors;
 
     /// <summary>
     /// 抽象数据存储初始化器。
     /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public abstract class AbstractDataStoreInitializer<TGenId, TIncremId, TCreatedBy>
-        : AbstractDataStoreInitializer<DataAudit<TGenId, TCreatedBy>,
+    public abstract class AbstractDataStoreInitializer<TAccessor, TGenId, TIncremId, TCreatedBy>
+        : AbstractDataStoreInitializer<TAccessor,
+            DataAudit<TGenId, TCreatedBy>,
             DataAuditProperty<TIncremId, TGenId>,
             DataEntity<TGenId, TCreatedBy>,
             DataMigration<TGenId, TCreatedBy>,
             DataTenant<TGenId, TCreatedBy>,
             TGenId, TIncremId, TCreatedBy>
+        where TAccessor : class, IAccessor
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
@@ -53,6 +57,7 @@ namespace Librame.Extensions.Data.Stores
     /// <summary>
     /// 抽象数据存储初始化器。
     /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
     /// <typeparam name="TEntity">指定的数据实体类型。</typeparam>
@@ -61,9 +66,10 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public abstract class AbstractDataStoreInitializer<TAudit, TAuditProperty, TEntity, TMigration, TTenant,
+    public abstract class AbstractDataStoreInitializer<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant,
         TGenId, TIncremId, TCreatedBy>
         : AbstractStoreInitializer
+        where TAccessor : class, IAccessor
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId, TCreatedBy>
@@ -84,7 +90,7 @@ namespace Librame.Extensions.Data.Stores
             : base(validator, identifierGenerator, loggerFactory)
         {
             DataIdentifierGenerator = identifierGenerator.CastTo<IStoreIdentifierGenerator,
-                AbstractDataStoreIdentifierGenerator<TGenId>>(nameof(identifierGenerator));
+                IDataStoreIdentifierGenerator<TGenId>>(nameof(identifierGenerator));
 
             Clock = DataIdentifierGenerator.Clock;
         }
@@ -93,8 +99,8 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 数据标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="AbstractDataStoreIdentifierGenerator{TGenId}"/>。</value>
-        protected AbstractDataStoreIdentifierGenerator<TGenId> DataIdentifierGenerator { get; }
+        /// <value>返回 <see cref="IDataStoreIdentifierGenerator{TGenId}"/>。</value>
+        protected IDataStoreIdentifierGenerator<TGenId> DataIdentifierGenerator { get; }
 
         /// <summary>
         /// 时钟。
@@ -109,7 +115,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="stores">给定的 <see cref="IStoreHub"/>。</param>
         protected override void InitializeCore(IStoreHub stores)
         {
-            if (stores is IDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant> dataStores)
+            if (stores is IDataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant> dataStores)
                 InitializeData(dataStores);
         }
 
@@ -117,7 +123,8 @@ namespace Librame.Extensions.Data.Stores
         /// 初始化数据。
         /// </summary>
         /// <param name="dataStores">给定的数据存储中心。</param>
-        protected virtual void InitializeData(IDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant> dataStores)
+        protected virtual void InitializeData
+            (IDataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant> dataStores)
             => InitializeDataTenants(dataStores);
 
         /// <summary>
@@ -125,7 +132,8 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <param name="dataStores">给定的数据存储中心。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected virtual void InitializeDataTenants(IDataStoreHub<TAudit, TAuditProperty, TEntity, TMigration, TTenant> dataStores)
+        protected virtual void InitializeDataTenants
+            (IDataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant> dataStores)
         {
             if (dataStores.ContainTenantAsync(dataStores.Accessor.CurrentTenant).ConfigureAndResult())
                 return;

@@ -12,14 +12,15 @@
 
 namespace Librame.Extensions.Data.Builders
 {
-    using Options;
+    using Core.Builders;
+    using Data.Options;
 
     /// <summary>
     /// 抽象数据构建器选项。
     /// </summary>
     /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
     /// <typeparam name="TTableOptions">指定的表名选项类型。</typeparam>
-    public abstract class AbstractDataBuilderOptions<TStoreOptions, TTableOptions>
+    public abstract class AbstractDataBuilderOptions<TStoreOptions, TTableOptions> : IExtensionBuilderOptions
         where TStoreOptions : AbstractStoreOptions, new()
         where TTableOptions : AbstractTableOptions, new()
     {

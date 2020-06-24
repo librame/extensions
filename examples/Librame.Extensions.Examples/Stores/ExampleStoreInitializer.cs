@@ -8,7 +8,7 @@ namespace Librame.Extensions.Examples
     using Data.Stores;
     using Models;
 
-    public class ExampleStoreInitializer<TAccessor> : GuidDataStoreInitializer<int>
+    public class ExampleStoreInitializer<TAccessor> : GuidDataStoreInitializer<TAccessor, int>
         where TAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
     {
         private readonly string _categoryName

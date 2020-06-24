@@ -20,6 +20,25 @@ namespace Librame.Extensions
     public static class GuidExtensions
     {
         /// <summary>
+        /// 转换为长度为 15 的短字符串形式。
+        /// </summary>
+        /// <param name="g">给定的 <see cref="Guid"/>。</param>
+        /// <param name="timestamp">给定的时间戳（可选；默认为当前时间的 UTC 形式）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AsShortString(this Guid g, DateTime? timestamp = null)
+            => g.ToByteArray().FormatString(timestamp.NotNullOrDefault(DateTime.UtcNow).Ticks);
+
+        /// <summary>
+        /// 转换为长度为 15 的短字符串形式。
+        /// </summary>
+        /// <param name="g">给定的 <see cref="Guid"/>。</param>
+        /// <param name="timestamp">给定的时间戳。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AsShortString(this Guid g, DateTimeOffset timestamp)
+            => g.ToByteArray().FormatString(timestamp.Ticks);
+
+
+        /// <summary>
         /// 转换为有顺序的 GUID。
         /// </summary>
         /// <param name="g">给定的 <see cref="Guid"/>。</param>

@@ -12,7 +12,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
 namespace Librame.Extensions.Core.Identifiers
 {
@@ -75,7 +74,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// <param name="timestamp">给定的 <see cref="DateTime"/>。</param>
         /// <returns>返回字符串。</returns>
         public string ToShortString(DateTime timestamp)
-            => ToShortString(timestamp.Ticks);
+            => _buffer.FormatString(timestamp.Ticks);
 
         /// <summary>
         /// 转换为长度为 15 的短字符串（不可解析还原，可当作标识）。
@@ -83,17 +82,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// <param name="timestamp">给定的 <see cref="DateTimeOffset"/>。</param>
         /// <returns>返回字符串。</returns>
         public string ToShortString(DateTimeOffset timestamp)
-            => ToShortString(timestamp.Ticks);
-
-        private string ToShortString(long ticks)
-        {
-            var i = 1L;
-            foreach (var b in _buffer)
-                i *= b + 1;
-
-            // Length(15): 8d737ebe809e70e
-            return string.Format(CultureInfo.InvariantCulture, "{0:x}", _ = ticks);
-        }
+            => _buffer.FormatString(timestamp.Ticks);
 
 
         /// <summary>

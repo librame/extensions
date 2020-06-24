@@ -8,7 +8,7 @@ namespace Librame.Extensions.Data.Tests
     using Models;
     using Stores;
 
-    public class TestStoreInitializer : GuidDataStoreInitializer<int>
+    public class TestStoreInitializer : GuidDataStoreInitializer<TestDbContextAccessor, int>
     {
         private readonly string _categoryName
             = typeof(Category<int, Guid, Guid>).GetGenericBodyName();

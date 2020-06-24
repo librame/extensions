@@ -4,28 +4,25 @@ using System.Linq;
 
 namespace Librame.Extensions.Examples
 {
+    using Data.Accessors;
     using Data.Collections;
     using Data.Stores;
     using Models;
 
-    public class ExampleStoreHub<TAccessor> : DataStoreHub<Guid, int, Guid>
+    public class ExampleStoreHub<TAccessor> : DataStoreHub<TAccessor, Guid, int, Guid>
         where TAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
     {
-        private readonly TAccessor _currentAccessor;
-
-
-        public ExampleStoreHub(IStoreInitializer initializer, TAccessor accessor)
+        public ExampleStoreHub(IStoreInitializer initializer, IAccessor accessor)
             : base(initializer, accessor)
         {
-            _currentAccessor = accessor;
         }
 
 
         public IList<Category<int, Guid, Guid>> GetCategories()
-            => _currentAccessor.Categories.ToList();
+            => Accessor.Categories.ToList();
 
         public IPageable<Article<Guid, int, Guid>> GetArticles()
-            => _currentAccessor.Articles.AsDescendingPagingByIndex(1, 10);
+            => Accessor.Articles.AsDescendingPagingByIndex(1, 10);
 
         public ExampleStoreHub<TAccessor> UseWriteDbConnection()
         {
