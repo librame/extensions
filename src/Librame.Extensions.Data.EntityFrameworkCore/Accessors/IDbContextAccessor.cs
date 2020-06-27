@@ -11,31 +11,10 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Librame.Extensions.Data.Accessors
 {
     using Builders;
-    using Stores;
-
-    /// <summary>
-    /// 数据库上下文访问器接口。
-    /// </summary>
-    /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
-    /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
-    /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public interface IDbContextAccessor<TGenId, TIncremId, TCreatedBy>
-        : IDbContextAccessor<DataAudit<TGenId, TCreatedBy>,
-            DataAuditProperty<TIncremId, TGenId>,
-            DataEntity<TGenId, TCreatedBy>,
-            DataMigration<TGenId, TCreatedBy>,
-            DataTenant<TGenId, TCreatedBy>>
-        where TGenId : IEquatable<TGenId>
-        where TIncremId : IEquatable<TIncremId>
-        where TCreatedBy : IEquatable<TCreatedBy>
-    {
-    }
-
 
     /// <summary>
     /// 数据库上下文访问器接口。

@@ -25,13 +25,30 @@ namespace Librame.Extensions.Data.Accessors
     /// <summary>
     /// 数据库上下文访问器。
     /// </summary>
+    public class DbContextAccessor : DbContextAccessor<Guid, int, Guid>
+    {
+        /// <summary>
+        /// 构造一个数据库上下文访问器。
+        /// </summary>
+        /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
+        public DbContextAccessor(DbContextOptions options)
+            : base(options)
+        {
+        }
+
+    }
+
+
+    /// <summary>
+    /// 数据库上下文访问器。
+    /// </summary>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public class DbContextAccessor<TGenId, TIncremId, TCreatedBy>
         : DbContextAccessor<DataAudit<TGenId, TCreatedBy>, DataAuditProperty<TIncremId, TGenId>,
             DataEntity<TGenId, TCreatedBy>, DataMigration<TGenId, TCreatedBy>, DataTenant<TGenId, TCreatedBy>,
-            TGenId, TIncremId, TCreatedBy>, IDbContextAccessor<TGenId, TIncremId, TCreatedBy>
+            TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
@@ -60,7 +77,8 @@ namespace Librame.Extensions.Data.Accessors
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public class DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-        : DbContextAccessorBase, IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
+        : DbContextAccessorBase,
+        IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId, TCreatedBy>

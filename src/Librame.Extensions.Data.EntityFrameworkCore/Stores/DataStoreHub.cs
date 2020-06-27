@@ -25,6 +25,44 @@ namespace Librame.Extensions.Data.Stores
     /// <summary>
     /// 数据存储中心。
     /// </summary>
+    public class DataStoreHub : DataStoreHub<DbContextAccessor>
+    {
+        /// <summary>
+        /// 构造一个数据存储中心。
+        /// </summary>
+        /// <param name="initializer">给定的 <see cref="IStoreInitializer"/>。</param>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        public DataStoreHub(IStoreInitializer initializer, IAccessor accessor)
+            : base(initializer, accessor)
+        {
+        }
+
+    }
+
+
+    /// <summary>
+    /// 数据存储中心。
+    /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
+    public class DataStoreHub<TAccessor> : DataStoreHub<TAccessor, Guid, int, Guid>
+        where TAccessor : DbContextAccessor
+    {
+        /// <summary>
+        /// 构造一个数据存储中心。
+        /// </summary>
+        /// <param name="initializer">给定的 <see cref="IStoreInitializer"/>。</param>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        public DataStoreHub(IStoreInitializer initializer, IAccessor accessor)
+            : base(initializer, accessor)
+        {
+        }
+
+    }
+
+
+    /// <summary>
+    /// 数据存储中心。
+    /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
@@ -35,13 +73,8 @@ namespace Librame.Extensions.Data.Stores
         DataEntity<TGenId, TCreatedBy>,
         DataMigration<TGenId, TCreatedBy>,
         DataTenant<TGenId, TCreatedBy>,
-        TGenId, TIncremId, TCreatedBy>,
-        IDataStoreHub<TAccessor, TGenId, TIncremId, TCreatedBy>
-        where TAccessor : class, IDbContextAccessor<DataAudit<TGenId, TCreatedBy>,
-            DataAuditProperty<TIncremId, TGenId>,
-            DataEntity<TGenId, TCreatedBy>,
-            DataMigration<TGenId, TCreatedBy>,
-            DataTenant<TGenId, TCreatedBy>>
+        TGenId, TIncremId, TCreatedBy>
+        where TAccessor : DbContextAccessor<TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
@@ -73,7 +106,7 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public class DataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
         : AbstractStoreHub, IDataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant>
-        where TAccessor : class, IDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
+        where TAccessor : DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty: DataAuditProperty<TIncremId, TGenId>
         where TEntity : DataEntity<TGenId, TCreatedBy>
