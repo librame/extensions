@@ -34,11 +34,11 @@ namespace Librame.Extensions.Storage.Builders
         {
             Services.AddSingleton<IStorageBuilder>(this);
 
-            AddStorageServices();
+            AddInternalServices();
         }
 
 
-        private void AddStorageServices()
+        private void AddInternalServices()
         {
             // Services
             AddService<IFileService, FileService>();
