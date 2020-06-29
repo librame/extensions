@@ -3,17 +3,18 @@ using Xunit;
 
 namespace Librame.Extensions.Core.Tests
 {
+    using Mappers;
     using Mediators;
 
-    public class GenericTypeMappingTests
+    public class TypeParameterMappingHelperTests
     {
         [Fact]
-        public void PopulateArrayTest()
+        public void ParseAsArrayTest()
         {
             var baseType = typeof(INotificationHandler<>);
             var implType = typeof(INotificationHandler<PingNotification>);
 
-            var parameters = GenericTypeMapping.PopulateArray(baseType, implType);
+            var parameters = TypeParameterMappingHelper.ParseAsArray(baseType, implType);
             
             Assert.Single(parameters);
             Assert.Equal("TNotification", parameters[0].ParameterName);
@@ -23,7 +24,7 @@ namespace Librame.Extensions.Core.Tests
             baseType = typeof(IRequestHandler<,>);
             implType = typeof(IRequestHandler<PingRequest, Pong>);
 
-            parameters = GenericTypeMapping.PopulateArray(baseType, implType);
+            parameters = TypeParameterMappingHelper.ParseAsArray(baseType, implType);
 
             Assert.Equal(2, parameters.Length);
             Assert.Equal("TRequest", parameters[0].ParameterName);
@@ -33,12 +34,12 @@ namespace Librame.Extensions.Core.Tests
         }
 
         [Fact]
-        public void PopulateDictionaryTest()
+        public void ParseAsDictionaryTest()
         {
             var baseType = typeof(INotificationHandler<>);
             var implType = typeof(INotificationHandler<PingNotification>);
 
-            var parameters = GenericTypeMapping.PopulateDictionary(baseType, implType);
+            var parameters = TypeParameterMappingHelper.ParseAsDictionary(baseType, implType);
 
             Assert.Single(parameters);
             Assert.Equal("TNotification", parameters.Keys.First());
@@ -48,7 +49,7 @@ namespace Librame.Extensions.Core.Tests
             baseType = typeof(IRequestHandler<,>);
             implType = typeof(IRequestHandler<PingRequest, Pong>);
 
-            parameters = GenericTypeMapping.PopulateDictionary(baseType, implType);
+            parameters = TypeParameterMappingHelper.ParseAsDictionary(baseType, implType);
 
             Assert.Equal(2, parameters.Count);
             Assert.Equal("TRequest", parameters.Keys.First());

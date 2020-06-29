@@ -14,6 +14,7 @@ using Librame.Extensions;
 using Librame.Extensions.Data.Accessors;
 using Librame.Extensions.Data.Aspects;
 using Librame.Extensions.Data.Builders;
+using Librame.Extensions.Data.Mappers;
 using Librame.Extensions.Data.Migrations;
 using Librame.Extensions.Data.Services;
 using Librame.Extensions.Data.Stores;
@@ -65,9 +66,9 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.NotNull(nameof(builder));
             setupAction.NotNull(nameof(setupAction));
 
-            var accessorMappingDescriptor = DbContextAccessorHelper.ParseMappingDescriptor(typeof(TImplementation));
-            if (accessorMappingDescriptor.IsNotNull())
-                builder.SetProperty(p => p.AccessorMappingDescriptor, accessorMappingDescriptor);
+            var typeParameterMapper = AccessorTypeParameterMappingHelper.ParseMapper(typeof(TImplementation));
+            if (typeParameterMapper.IsNotNull())
+                builder.SetProperty(p => p.AccessorTypeParameterMapper, typeParameterMapper);
 
             if (poolSize > 0)
             {

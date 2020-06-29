@@ -15,7 +15,7 @@ using System;
 namespace Librame.Extensions.Data.Builders
 {
     using Core.Builders;
-    using Data.Accessors;
+    using Data.Mappers;
     using Data.Stores;
 
     /// <summary>
@@ -24,10 +24,9 @@ namespace Librame.Extensions.Data.Builders
     public interface IDataBuilder : IExtensionBuilder
     {
         /// <summary>
-        /// 访问器泛型类型映射描述符。
+        /// 访问器类型参数映射器。
         /// </summary>
-        /// <value>返回 <see cref="AccessorGenericTypeMappingDescriptor"/>。</value>
-        AccessorGenericTypeMappingDescriptor AccessorMappingDescriptor { get; }
+        AccessorTypeParameterMapper AccessorTypeParameterMapper { get; }
 
         /// <summary>
         /// 数据库设计时类型。
@@ -36,20 +35,20 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
-        /// 通过填充泛型类型参数集合添加泛型服务。
+        /// 通过填充访问器类型参数集合添加泛型服务。
         /// </summary>
         /// <param name="serviceType">给定的服务类型（支持非泛型）。</param>
         /// <param name="implementationTypeDefinition">给定的实现类型定义。</param>
         /// <param name="populateServiceFactory">给定的填充服务类型工厂方法（可选；当服务类型为泛型类型定义时，此参数必填）。</param>
-        /// <param name="populateImplementationFactory">给定的填充实现类型工厂方法（可选；默认填充主要泛型类型参数集合到实现类型定义）。</param>
+        /// <param name="populateImplementationFactory">给定的填充实现类型工厂方法（可选；默认使用 <see cref="AccessorTypeParameterMapper"/> 填充实现类型定义）。</param>
         /// <param name="addEnumerable">添加为可枚举集合（可选；默认不是可枚举集合）。</param>
-        /// <param name="accessorMappingDescriptor">给定的 <see cref="AccessorGenericTypeMappingDescriptor"/>（可选；默认使用当前访问器泛型类型参数集合）。</param>
+        /// <param name="accessorTypeParameterMapper">给定的 <see cref="Mappers.AccessorTypeParameterMapper"/>（可选；默认使用 <see cref="AccessorTypeParameterMapper"/>）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
-        IDataBuilder AddGenericServiceByPopulateMappingDescriptor(Type serviceType,
+        IDataBuilder AddGenericServiceByPopulateAccessorTypeParameters(Type serviceType,
             Type implementationTypeDefinition,
-            Func<Type, AccessorGenericTypeMappingDescriptor, Type> populateServiceFactory = null,
-            Func<Type, AccessorGenericTypeMappingDescriptor, Type> populateImplementationFactory = null,
-            bool addEnumerable = false, AccessorGenericTypeMappingDescriptor accessorMappingDescriptor = null);
+            Func<Type, AccessorTypeParameterMapper, Type> populateServiceFactory = null,
+            Func<Type, AccessorTypeParameterMapper, Type> populateImplementationFactory = null,
+            bool addEnumerable = false, AccessorTypeParameterMapper accessorTypeParameterMapper = null);
 
 
         /// <summary>

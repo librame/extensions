@@ -72,7 +72,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.NotNull(nameof(builder));
 
-            return builder.AddGenericServiceByPopulateMappingDescriptor(serviceType, implementationTypeDefinition,
+            return builder.AddGenericServiceByPopulateAccessorTypeParameters(serviceType, implementationTypeDefinition,
                 (type, descriptor) => type.MakeGenericType(descriptor.GenId.ArgumentType, descriptor.CreatedBy.ArgumentType),
                 addEnumerable: true);
         }
@@ -127,7 +127,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.NotNull(nameof(builder));
 
-            return builder.AddGenericServiceByPopulateMappingDescriptor(serviceType,
+            return builder.AddGenericServiceByPopulateAccessorTypeParameters(serviceType,
                 implementationTypeDefinition);
         }
 
