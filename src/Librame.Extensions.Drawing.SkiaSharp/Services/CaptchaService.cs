@@ -55,7 +55,7 @@ namespace Librame.Extensions.Drawing.Services
 
         public Task<bool> DrawFileAsync(string captcha, string savePath, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 DrawCore(captcha, data =>
                 {
@@ -74,7 +74,7 @@ namespace Librame.Extensions.Drawing.Services
 
         public Task<bool> DrawStreamAsync(string captcha, Stream target, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 DrawCore(captcha, data =>
                 {
@@ -90,7 +90,7 @@ namespace Librame.Extensions.Drawing.Services
 
         public Task<byte[]> DrawBytesAsync(string captcha, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var buffer = default(byte[]);
 

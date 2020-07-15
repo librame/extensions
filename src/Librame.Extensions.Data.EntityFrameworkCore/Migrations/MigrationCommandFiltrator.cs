@@ -20,38 +20,35 @@ namespace Librame.Extensions.Data.Migrations
     using Core.Builders;
     using Core.Combiners;
     using Data.Accessors;
-    using Data.Builders;
-    using Data.Compilers;
 
     /// <summary>
     /// 迁移命令过滤器。
     /// </summary>
     public static class MigrationCommandFiltrator
     {
-        private static FilePathCombiner GetFilePathCombiner(IAccessor accessor)
-            => ModelSnapshotCompiler.CombineFilePath(accessor, d => d.MigrationsConfigDirectory, ".json");
+        private static FilePathCombiner GetFilePathCombiner(DbContextAccessorBase accessor)
+            => DbContextAccessorHelper.GenerateAccessorFilePath(accessor, ".json",
+                dependency => dependency.MigrationsConfigDirectory);
 
         private static string GetCacheKey(FilePathCombiner filePath)
-            => $"{nameof(MigrationCommandFiltrator)}:{filePath}";
+            => DbContextAccessorHelper.GenerateAccessorKey(nameof(MigrationCommandFiltrator), filePath);
 
 
         /// <summary>
         /// 过滤命令。
         /// </summary>
         /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         /// <param name="commands">给定的 <see cref="IEnumerable{MigrationCommand}"/>。</param>
-        /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
         /// <param name="coreOptions">给定的 <see cref="CoreBuilderOptions"/>。</param>
         /// <returns>返回 <see cref="IReadOnlyList{MigrationCommand}"/></returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static IReadOnlyList<MigrationCommand> Filter(IMemoryCache memoryCache,
-            IAccessor accessor, IEnumerable<MigrationCommand> commands,
-            DataBuilderOptions options, CoreBuilderOptions coreOptions)
+            DbContextAccessorBase accessor, IEnumerable<MigrationCommand> commands,
+            CoreBuilderOptions coreOptions)
         {
             memoryCache.NotNull(nameof(memoryCache));
             commands.NotNull(nameof(commands));
-            options.NotNull(nameof(options));
             coreOptions.NotNull(nameof(coreOptions));
 
             var filePath = GetFilePathCombiner(accessor);
@@ -66,7 +63,9 @@ namespace Librame.Extensions.Data.Migrations
             var execCommands = new List<MigrationCommand>();
             foreach (var command in commands)
             {
-                var info = ToInfo(command);
+                var info = new MigrationCommandInfo(command.CommandText)
+                    .SetConnectionString(accessor);
+
                 if (!cacheInfos.Contains(info))
                 {
                     cacheInfos.Add(info);
@@ -75,18 +74,6 @@ namespace Librame.Extensions.Data.Migrations
             }
 
             return execCommands;
-
-            // ToInfo
-            MigrationCommandInfo ToInfo(MigrationCommand command)
-            {
-                var tenant = accessor.CurrentTenant;
-                return new MigrationCommandInfo
-                {
-                    Text = command.CommandText,
-                    // 为防止连接字符串信息泄露，此处仅用连接代称
-                    ConnectionString = $"Name={tenant?.Name};Host={tenant?.Host};ConnectionStringTag={accessor.GetCurrentConnectionStringTag()}"
-                };
-            }
         }
 
 
@@ -94,10 +81,10 @@ namespace Librame.Extensions.Data.Migrations
         /// 保存过滤命令。
         /// </summary>
         /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         /// <param name="options">给定的 <see cref="CoreBuilderOptions"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static void Save(IMemoryCache memoryCache, IAccessor accessor,
+        public static void Save(IMemoryCache memoryCache, DbContextAccessorBase accessor,
             CoreBuilderOptions options)
         {
             memoryCache.NotNull(nameof(memoryCache));

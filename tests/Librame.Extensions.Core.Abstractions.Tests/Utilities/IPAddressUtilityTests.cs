@@ -11,7 +11,7 @@ namespace Librame.Extensions.Core.Tests
         {
             (var v4, var v6) = await IPAddressUtility
                 .GetLocalIPv4AndIPv6AddressAsync()
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             Assert.True(v4.IsIPv4());
             Assert.True(v6.IsIPv6());

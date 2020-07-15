@@ -105,10 +105,10 @@ namespace Librame.Extensions.Data.Stores
             }
 
             if (dateTimeType == typeof(DateTime))
-                return await clock.GetNowAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
+                return await clock.GetNowAsync(cancellationToken: cancellationToken).ConfigureAwait();
 
             else if (dateTimeType == typeof(DateTimeOffset))
-                return await clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAndResultAsync();
+                return await clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAwait();
 
             return null;
         }

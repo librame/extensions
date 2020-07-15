@@ -48,7 +48,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             try
             {
                 handler = new FactorialClientHandler(this);
-                await StartAsync(handler, configureProcess, host, port).ConfigureAndWaitAsync();
+                await StartAsync(handler, configureProcess, host, port).ConfigureAwait();
             }
             finally
             {
@@ -78,7 +78,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                 var channel = await WrapperFactory
                     .CreateTcp(false, out group)
                     .AddFactorialHandler(tlsCertificate, channelHandler)
-                    .ConnectAsync(endPoint, _clientOptions.RetryCount).ConfigureAndResultAsync();
+                    .ConnectAsync(endPoint, _clientOptions.RetryCount).ConfigureAwait();
 
                 Logger.LogInformation($"Connect ip end point: {endPoint}");
 

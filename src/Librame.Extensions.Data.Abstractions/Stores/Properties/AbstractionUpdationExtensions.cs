@@ -39,7 +39,7 @@ namespace Librame.Extensions.Data.Stores
             where TUpdatedBy : IEquatable<TUpdatedBy>
         {
             await updation.PopulateCreationAsync(clock, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             updation.UpdatedTime = updation.CreatedTime;
             updation.UpdatedTimeTicks = updation.CreatedTimeTicks;
@@ -67,22 +67,22 @@ namespace Librame.Extensions.Data.Stores
             updation.NotNull(nameof(updation));
 
             var newUpdatedTime = await StoreHelper.GetDateTimeNowAsync(clock,
-                updation.CreatedTimeType, cancellationToken).ConfigureAndResultAsync();
+                updation.CreatedTimeType, cancellationToken).ConfigureAwait();
 
             if (newUpdatedTime.IsNotNull())
             {
                 await updation.SetObjectCreatedTimeAsync(newUpdatedTime, cancellationToken)
-                    .ConfigureAndResultAsync();
+                    .ConfigureAwait();
 
                 await updation.SetObjectUpdatedTimeAsync(newUpdatedTime, cancellationToken)
-                    .ConfigureAndResultAsync();
+                    .ConfigureAwait();
             }
 
             await updation.SetObjectCreatedByAsync(newUpdatedBy, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             await updation.SetObjectUpdatedByAsync(newUpdatedBy, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             return updation;
         }
@@ -103,7 +103,7 @@ namespace Librame.Extensions.Data.Stores
         {
             updation.NotNull(nameof(updation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => updation.UpdatedTime);
+            return cancellationToken.RunOrCancelValueAsync(() => updation.UpdatedTime);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Librame.Extensions.Data.Stores
         {
             updation.NotNull(nameof(updation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => updation.UpdatedBy);
+            return cancellationToken.RunOrCancelValueAsync(() => updation.UpdatedBy);
         }
 
 
@@ -142,7 +142,7 @@ namespace Librame.Extensions.Data.Stores
         {
             updation.NotNull(nameof(updation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => updation.UpdatedTime = newUpdatedTimeFactory.Invoke(updation.UpdatedTime));
         }
 
@@ -163,7 +163,7 @@ namespace Librame.Extensions.Data.Stores
         {
             updation.NotNull(nameof(updation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => updation.UpdatedBy = newUpdatedByFactory.Invoke(updation.UpdatedBy));
         }
 
@@ -185,7 +185,7 @@ namespace Librame.Extensions.Data.Stores
         {
             updation.NotNull(nameof(updation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => updation.UpdatedTime = newUpdatedTime);
         }
 
@@ -206,7 +206,7 @@ namespace Librame.Extensions.Data.Stores
         {
             updation.NotNull(nameof(updation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => updation.UpdatedBy = newUpdatedBy);
         }
 
@@ -225,9 +225,9 @@ namespace Librame.Extensions.Data.Stores
             updation.NotNull(nameof(updation));
             newUpdatedTimeFactory.NotNull(nameof(newUpdatedTimeFactory));
 
-            var newUpdatedTime = await updation.GetObjectUpdatedTimeAsync(cancellationToken).ConfigureAndResultAsync();
+            var newUpdatedTime = await updation.GetObjectUpdatedTimeAsync(cancellationToken).ConfigureAwait();
             return await updation.SetObjectUpdatedTimeAsync(newUpdatedTimeFactory.Invoke(newUpdatedTime), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
         /// <summary>
@@ -244,9 +244,9 @@ namespace Librame.Extensions.Data.Stores
             updation.NotNull(nameof(updation));
             newUpdatedByFactory.NotNull(nameof(newUpdatedByFactory));
 
-            var newUpdatedBy = await updation.GetObjectUpdatedByAsync(cancellationToken).ConfigureAndResultAsync();
+            var newUpdatedBy = await updation.GetObjectUpdatedByAsync(cancellationToken).ConfigureAwait();
             return await updation.SetObjectUpdatedByAsync(newUpdatedByFactory.Invoke(newUpdatedBy), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
     }

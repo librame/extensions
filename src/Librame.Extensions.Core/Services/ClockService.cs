@@ -63,7 +63,7 @@ namespace Librame.Extensions.Core.Services
 
         public Task<DateTime> GetNowAsync(DateTime? timestamp = null, bool? isUtc = null,
             CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => GetNow(timestamp, isUtc));
+            => cancellationToken.RunOrCancelAsync(() => GetNow(timestamp, isUtc));
 
 
         public DateTimeOffset GetNowOffset(DateTimeOffset? timestamp = null, bool? isUtc = null)
@@ -89,7 +89,7 @@ namespace Librame.Extensions.Core.Services
 
         public Task<DateTimeOffset> GetNowOffsetAsync(DateTimeOffset? timestamp = null, bool? isUtc = null,
             CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => GetNowOffset(timestamp, isUtc));
+            => cancellationToken.RunOrCancelAsync(() => GetNowOffset(timestamp, isUtc));
 
     }
 }

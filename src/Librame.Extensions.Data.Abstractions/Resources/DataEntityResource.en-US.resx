@@ -129,10 +129,10 @@
   <data name="IsSharding" xml:space="preserve">
     <value>Is sharding</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name</value>
-  </data>
   <data name="Schema" xml:space="preserve">
     <value>Schema</value>
+  </data>
+  <data name="TableName" xml:space="preserve">
+    <value>Table name</value>
   </data>
 </root>

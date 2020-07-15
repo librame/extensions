@@ -36,7 +36,7 @@ namespace Librame.Extensions.Encryption
             if (fileName.IsEmpty()) // 默认兼容 IdentityServer4 生成的临时密钥文件
                 fileName = "tempkey.rsa".CombineCurrentDirectory();
 
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 RsaSecurityKey securityKey;
 

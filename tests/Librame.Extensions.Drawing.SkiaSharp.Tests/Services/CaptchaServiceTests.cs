@@ -32,7 +32,7 @@ namespace Librame.Extensions.Drawing.Tests
                 captcha = _captchas[r.Next(0, _captchas.Length)];
             });
 
-            var buffer = await _service.DrawBytesAsync(captcha).ConfigureAndResultAsync();
+            var buffer = await _service.DrawBytesAsync(captcha).ConfigureAwait();
             Assert.NotNull(buffer);
         }
 
@@ -46,7 +46,7 @@ namespace Librame.Extensions.Drawing.Tests
             });
 
             var saveFile = "captcha.png".AsFilePathCombiner(_service.Dependency.ResourceDirectory);
-            var result = await _service.DrawFileAsync(captcha, saveFile).ConfigureAndResultAsync();
+            var result = await _service.DrawFileAsync(captcha, saveFile).ConfigureAwait();
             Assert.True(result);
         }
 

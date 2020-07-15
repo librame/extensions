@@ -41,6 +41,25 @@ namespace Librame.Extensions
     public static class PathExtensions
     {
         /// <summary>
+        /// 清除无效的文件名字符集合。
+        /// </summary>
+        /// <param name="fileName">给定的文件名。</param>
+        /// <returns>返回字符串。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static string ClearInvalidFileNameChars(this string fileName)
+        {
+            fileName.NotEmpty(nameof(fileName));
+
+            foreach (var ch in Path.GetInvalidFileNameChars())
+            {
+                fileName = fileName.CompatibleReplace(ch.ToString(), string.Empty);
+            }
+
+            return fileName;
+        }
+
+
+        /// <summary>
         /// 不带开发相对路径的路径。
         /// </summary>
         /// <param name="currentPath">给定的当前目录。</param>
@@ -227,7 +246,7 @@ namespace Librame.Extensions
                 {
                     basePath = basePath.Replace(ExtensionSettings.DirectorySeparatorChar,
                         ExtensionSettings.AltDirectorySeparatorChar);
-                    separatorIndex = -1;
+                    //separatorIndex = -1; // 冗余
                 }
                 else
                 {

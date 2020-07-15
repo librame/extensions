@@ -77,7 +77,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 PreProcessCore(dbContextAccessor);
         }
 
@@ -86,7 +86,7 @@ namespace Librame.Extensions.Data.Aspects
         /// </summary>
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         protected virtual void PreProcessCore
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
         }
 
@@ -101,7 +101,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 return PreProcessCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.CompletedTask;
@@ -114,7 +114,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         protected virtual Task PreProcessCoreAsync
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 
@@ -131,7 +131,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 PostProcessCore(dbContextAccessor);
         }
 
@@ -140,7 +140,7 @@ namespace Librame.Extensions.Data.Aspects
         /// </summary>
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         protected virtual void PostProcessCore
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
         }
 
@@ -155,7 +155,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 return PostProcessCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.CompletedTask;
@@ -168,7 +168,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         protected virtual Task PostProcessCoreAsync
-            (DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 

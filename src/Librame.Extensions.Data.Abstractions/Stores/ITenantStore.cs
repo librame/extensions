@@ -34,35 +34,6 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 异步包含指定租户。
-        /// </summary>
-        /// <param name="tenant">给定的 <see cref="ITenant"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含布尔值的异步操作。</returns>
-        Task<bool> ContainTenantAsync(ITenant tenant,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// 异步包含指定租户。
-        /// </summary>
-        /// <param name="name">给定的名称。</param>
-        /// <param name="host">给定的主机。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含布尔值的异步操作。</returns>
-        Task<bool> ContainTenantAsync(string name, string host,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// 异步获取指定租户。
-        /// </summary>
-        /// <param name="name">给定的名称。</param>
-        /// <param name="host">给定的主机。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TTenant"/> 的异步操作。</returns>
-        ValueTask<TTenant> GetTenantAsync(string name, string host,
-            CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// 异步查找指定租户。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
@@ -92,36 +63,5 @@ namespace Librame.Extensions.Data.Stores
         ValueTask<IPageable<TTenant>> GetPagingTenantsAsync(int index, int size,
             Func<IQueryable<TTenant>, IQueryable<TTenant>> queryFactory = null,
             CancellationToken cancellationToken = default);
-
-
-        /// <summary>
-        /// 尝试异步创建租户集合。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
-        /// <returns>返回一个包含 <see cref="OperationResult"/> 的异步操作。</returns>
-        Task<OperationResult> TryCreateAsync(CancellationToken cancellationToken,
-            params TTenant[] tenants);
-
-        /// <summary>
-        /// 尝试创建租户集合。
-        /// </summary>
-        /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
-        /// <returns>返回 <see cref="OperationResult"/>。</returns>
-        OperationResult TryCreate(params TTenant[] tenants);
-
-        /// <summary>
-        /// 尝试更新租户集合。
-        /// </summary>
-        /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
-        /// <returns>返回 <see cref="OperationResult"/>。</returns>
-        OperationResult TryUpdate(params TTenant[] tenants);
-
-        /// <summary>
-        /// 尝试删除租户集合。
-        /// </summary>
-        /// <param name="tenants">给定的 <typeparamref name="TTenant"/> 数组。</param>
-        /// <returns>返回 <see cref="OperationResult"/>。</returns>
-        OperationResult TryDelete(params TTenant[] tenants);
     }
 }

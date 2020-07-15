@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加服务类型为 <see cref="IAccessor"/> 的数据库上下文访问器。
         /// </summary>
-        /// <typeparam name="TAccessor">指定派生自 <see cref="DbContextAccessor{TGenId, TIncremId, TCreatedBy}"/> 的访问器类型。</typeparam>
+        /// <typeparam name="TAccessor">指定派生自 <see cref="DataDbContextAccessor{TGenId, TIncremId, TCreatedBy}"/> 的访问器类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="setupAction">给定的 <see cref="Action{DataBuilderOptions, DbContextOptionsBuilder}"/>。</param>
         /// <param name="poolSize">设置池保留的最大实例数（可选；默认为128，如果小于1，将使用 AddDbContext() 注册）。</param>
@@ -51,8 +51,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 添加数据库上下文访问器。
         /// </summary>
-        /// <typeparam name="TAccessor">指定派生自 <see cref="IDbContextAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/> 的访问器类型。</typeparam>
-        /// <typeparam name="TImplementation">指定派生自 <see cref="DbContextAccessor{TGenId, TIncremId, TCreatedBy}"/> 的访问器实现类型。</typeparam>
+        /// <typeparam name="TAccessor">指定派生自 <see cref="IDataAccessor{TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/> 的访问器类型。</typeparam>
+        /// <typeparam name="TImplementation">指定派生自 <see cref="DataDbContextAccessor{TGenId, TIncremId, TCreatedBy}"/> 的访问器实现类型。</typeparam>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="setupAction">给定的 <see cref="Action{ITenant, DbContextOptionsBuilder}"/>。</param>
         /// <param name="poolSize">设置池保留的最大实例数（可选；默认为128，如果小于1，将使用 AddDbContext() 注册）。</param>
@@ -102,10 +102,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IDataBuilder AddInternalAccessorServices(this IDataBuilder builder)
         {
-            builder.AddMigrateAccessorAspect(typeof(DataEntityMigrateDbContextAccessorAspect<,,,,,,,>));
-            builder.AddMigrateAccessorAspect(typeof(DataMigrationMigrateDbContextAccessorAspect<,,,,,,,>));
-
-            builder.AddSaveChangesAccessorAspect(typeof(DataAuditSaveChangesDbContextAccessorAspect<,,,,,,,>));
+            builder.AddMigrateAccessorAspect(typeof(EntityMigrateDbContextAccessorAspect<,,,,,,,>));
+            builder.AddSaveChangesAccessorAspect(typeof(AuditSaveChangesDbContextAccessorAspect<,,,,,,,>));
 
             builder.AddMigrationAccessorService(typeof(MigrationAccessorService<,,,,,,,>));
             builder.AddMultiTenantAccessorService(typeof(MultiTenantAccessorService<,,,,,,,>));

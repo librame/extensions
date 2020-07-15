@@ -84,7 +84,7 @@ namespace Librame.Extensions.Core.Identifiers
             clock.NotNull(nameof(clock));
 
             var timestamp = await GetTimestampAsync(clock, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             if (_lastTimestamp == timestamp)
             {
@@ -94,7 +94,7 @@ namespace Librame.Extensions.Core.Identifiers
                 if (_sequence == 0)
                 {
                     timestamp = await GetNextTimestampAsync(clock, cancellationToken)
-                        .ConfigureAndResultAsync();
+                        .ConfigureAwait();
                 }
             }
             else
@@ -110,7 +110,7 @@ namespace Librame.Extensions.Core.Identifiers
                 throw new Exception($"Clock moved backwards. Refusing to generate id for {_lastTimestamp - timestamp} milliseconds");
             }
 
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 var nextId = (timestamp - _twepoch << _timestampLeftShift)
                     | (_dataCenterId << _dataCenterIdShift)
@@ -128,12 +128,12 @@ namespace Librame.Extensions.Core.Identifiers
             CancellationToken cancellationToken = default)
         {
             var timestamp = await GetTimestampAsync(clock, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             while (timestamp <= _lastTimestamp)
             {
                 timestamp = await GetTimestampAsync(clock, cancellationToken)
-                    .ConfigureAndResultAsync();
+                    .ConfigureAwait();
             }
 
             return timestamp;
@@ -143,7 +143,7 @@ namespace Librame.Extensions.Core.Identifiers
             CancellationToken cancellationToken = default)
         {
             var offsetNow = await clock.GetNowOffsetAsync(cancellationToken: cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             var offsetBaseTime = new DateTimeOffset(ExtensionSettings.Preference.BaseDateTime, offsetNow.Offset);
             return (long)(offsetNow - offsetBaseTime).TotalMilliseconds;

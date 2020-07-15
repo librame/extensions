@@ -32,7 +32,7 @@ namespace Librame.Extensions.Data.Mediators
 
         public override Task HandleAsync(AuditNotification<TAudit, TAuditProperty> notification, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 Logger.LogInformation($"{notification.Audits.Count} Audits have been added.");
 

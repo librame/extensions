@@ -31,7 +31,7 @@ namespace Librame.Extensions.Data.Mediators
 
         public override Task HandleAsync(MigrationNotification<TMigration> notification, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 Logger.LogInformation($"{notification.Migration} have been registed.");
 

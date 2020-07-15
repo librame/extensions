@@ -468,7 +468,7 @@ namespace Librame.Extensions
             var algo = HashAlgorithms.GetOrAdd(name,
                 key => HashAlgorithm.Create(key.Name));
 
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 var hash = algo.ComputeHash(buffer);
 
@@ -548,7 +548,7 @@ namespace Librame.Extensions
             var algo = HmacAlgorithms.GetOrAdd(typeof(THmac).Name,
                 key => HMAC.Create(key));
             
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 algo.Key = key.NotEmpty(nameof(key));
 
@@ -679,7 +679,7 @@ namespace Librame.Extensions
             var algo = SymmetricAlgorithms.GetOrAdd(typeof(TSym).Name,
                 key => SymmetricAlgorithm.Create(key));
 
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 algo.Key = key.NotEmpty(nameof(key));
                 algo.IV = iv.NotEmpty(nameof(iv));
@@ -753,7 +753,7 @@ namespace Librame.Extensions
             var algo = AsymmetricAlgorithms.GetOrAdd(typeof(TAsym).Name,
                 key => AsymmetricAlgorithm.Create(key));
 
-            return ExtensionSettings.Preference.RunLockerResult(() => endecryptFactory.Invoke(algo as TAsym));
+            return ExtensionSettings.Preference.RunLocker(() => endecryptFactory.Invoke(algo as TAsym));
         }
 
         #endregion

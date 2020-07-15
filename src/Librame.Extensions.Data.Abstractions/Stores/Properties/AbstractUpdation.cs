@@ -65,7 +65,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewCreatedTime = newCreatedTime.CastTo<object, DateTimeOffset>(nameof(newCreatedTime));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 CreatedTime = realNewCreatedTime;
                 CreatedTimeTicks = CreatedTime.Ticks;
@@ -83,7 +83,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewUpdatedTime = newUpdatedTime.CastTo<object, DateTimeOffset>(nameof(newUpdatedTime));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 UpdatedTime = realNewUpdatedTime;
                 UpdatedTimeTicks = UpdatedTime.Ticks;
@@ -126,7 +126,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectUpdatedTimeAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)UpdatedTime);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)UpdatedTime);
 
         /// <summary>
         /// 异步获取更新者。
@@ -134,7 +134,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含更新者（兼容标识或字符串）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectUpdatedByAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)UpdatedBy);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)UpdatedBy);
 
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewUpdatedTime = newUpdatedTime.CastTo<object, TUpdatedTime>(nameof(newUpdatedTime));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 UpdatedTime = realNewUpdatedTime;
                 return newUpdatedTime;
@@ -164,7 +164,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewUpdatedBy = newUpdatedBy.CastTo<object, TUpdatedBy>(nameof(newUpdatedBy));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 UpdatedBy = realNewUpdatedBy;
                 return newUpdatedBy;

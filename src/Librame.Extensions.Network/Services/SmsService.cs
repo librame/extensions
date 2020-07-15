@@ -35,7 +35,7 @@ namespace Librame.Extensions.Network.Services
 
         public async Task<string> SendAsync(string mobile, string text)
         {
-            var list = await SendAsync(new SmsDescriptor(mobile, text)).ConfigureAndResultAsync();
+            var list = await SendAsync(new SmsDescriptor(mobile, text)).ConfigureAwait();
             return list.First();
         }
 
@@ -53,7 +53,7 @@ namespace Librame.Extensions.Network.Services
                 var gatewayUrl = Options.Sms.GetewayUrlFactory.Invoke(Options.Sms.PlatformInfo, descr);
 
                 var result = await _requesters.DefaultService.GetResponseStringAsync(gatewayUrl, postData: null,
-                    Options.Sms.EnableCodec, parameters).ConfigureAndResultAsync();
+                    Options.Sms.EnableCodec, parameters).ConfigureAwait();
 
                 list.Add(result);
             }

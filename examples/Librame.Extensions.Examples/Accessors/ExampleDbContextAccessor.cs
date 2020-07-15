@@ -31,7 +31,7 @@ namespace Librame.Extensions.Examples
         }
     }
 
-    public class ExampleDbContextAccessorBase<TGenId, TIncremId, TCreatedBy> : DbContextAccessor<TGenId, TIncremId, TCreatedBy>
+    public class ExampleDbContextAccessorBase<TGenId, TIncremId, TCreatedBy> : DataDbContextAccessor<TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>

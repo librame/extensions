@@ -49,7 +49,7 @@ namespace Librame.Extensions.Network.Services
 
         public async Task<IList<string>> GetImageLinksAsync(string url, string pattern = null)
         {
-            var hyperLinks = await GetHyperLinksAsync(url, pattern).ConfigureAndResultAsync();
+            var hyperLinks = await GetHyperLinksAsync(url, pattern).ConfigureAwait();
             Logger.LogDebug($"Get hyper links: {string.Join(",", hyperLinks)}");
 
             if (hyperLinks.IsEmpty()) return hyperLinks;
@@ -63,7 +63,7 @@ namespace Librame.Extensions.Network.Services
 
         public async Task<IList<string>> GetHyperLinksAsync(string url, string pattern = null)
         {
-            var response = await GetContentAsync(url).ConfigureAndResultAsync();
+            var response = await GetContentAsync(url).ConfigureAwait();
 
             var links = new List<string>();
 

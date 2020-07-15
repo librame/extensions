@@ -70,7 +70,7 @@ namespace Librame.Extensions.Core.Services
         /// <returns>返回一个包含 <see cref="DateTime"/> 的异步操作。</returns>
         public Task<DateTime> GetNowAsync(DateTime? timestamp = null, bool? isUtc = null,
             CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => GetNow(timestamp, isUtc));
+            => cancellationToken.RunOrCancelAsync(() => GetNow(timestamp, isUtc));
 
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Librame.Extensions.Core.Services
         /// <returns>返回一个包含 <see cref="DateTimeOffset"/> 的异步操作。</returns>
         public Task<DateTimeOffset> GetNowOffsetAsync(DateTimeOffset? timestamp = null, bool? isUtc = null,
             CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationAsync(() => GetNowOffset(timestamp, isUtc));
+            => cancellationToken.RunOrCancelAsync(() => GetNowOffset(timestamp, isUtc));
 
     }
 }

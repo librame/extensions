@@ -76,7 +76,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                             .Handler(new LoggingHandler(DotNettyLogLevel.INFO));
                     })
                     .AddTelnetHandler(tlsCertificate, channelHandler)
-                    .BindAsync(endPoint).ConfigureAndResultAsync();
+                    .BindAsync(endPoint).ConfigureAwait();
 
                 Logger.LogInformation($"Bind ip end point: {endPoint}");
 

@@ -43,7 +43,7 @@ namespace Librame.Extensions
         /// <returns>返回 <see cref="IAsyncEnumerable{T}"/>。</returns>
         public static async IAsyncEnumerable<T> YieldAsyncEnumerable<T>(this Task<T> task)
         {
-            yield return await task.ConfigureAndResultAsync();
+            yield return await task.ConfigureAwait();
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Librame.Extensions
             enumerable.NotNull(nameof(enumerable));
 
             foreach (var task in enumerable)
-                yield return await task.ConfigureAndResultAsync();
+                yield return await task.ConfigureAwait();
         }
 
 

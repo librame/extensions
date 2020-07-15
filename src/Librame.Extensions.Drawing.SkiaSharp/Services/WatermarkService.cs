@@ -56,7 +56,7 @@ namespace Librame.Extensions.Drawing.Services
         public Task<bool> DrawFileAsync(string imagePath, string savePath,
             WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var result = false;
 
@@ -79,7 +79,7 @@ namespace Librame.Extensions.Drawing.Services
         public Task<bool> DrawStreamAsync(string imagePath, Stream target,
             WatermarkMode mode = WatermarkMode.Text, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var result = false;
 
@@ -99,7 +99,7 @@ namespace Librame.Extensions.Drawing.Services
         public Task<byte[]> DrawBytesAsync(string imagePath, WatermarkMode mode = WatermarkMode.Text,
             CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var buffer = default(byte[]);
 

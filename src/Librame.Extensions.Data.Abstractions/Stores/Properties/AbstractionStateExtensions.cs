@@ -35,7 +35,7 @@ namespace Librame.Extensions.Data.Stores
         {
             state.NotNull(nameof(state));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => state.Status);
+            return cancellationToken.RunOrCancelValueAsync(() => state.Status);
         }
 
 
@@ -54,7 +54,7 @@ namespace Librame.Extensions.Data.Stores
             state.NotNull(nameof(state));
             newStatusFactory.NotNull(nameof(newStatusFactory));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => state.Status = newStatusFactory.Invoke(state.Status));
         }
 
@@ -72,7 +72,7 @@ namespace Librame.Extensions.Data.Stores
         {
             state.NotNull(nameof(state));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => state.Status = newStatus);
         }
 
@@ -91,9 +91,9 @@ namespace Librame.Extensions.Data.Stores
             state.NotNull(nameof(state));
             newStatusFactory.NotNull(nameof(newStatusFactory));
 
-            var newStatus = await state.GetObjectStatusAsync(cancellationToken).ConfigureAndResultAsync();
+            var newStatus = await state.GetObjectStatusAsync(cancellationToken).ConfigureAwait();
             return await state.SetObjectStatusAsync(newStatusFactory.Invoke(newStatus), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
     }

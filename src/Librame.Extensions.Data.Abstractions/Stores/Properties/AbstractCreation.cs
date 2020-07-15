@@ -59,7 +59,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewCreatedTime = newCreatedTime.CastTo<object, DateTimeOffset>(nameof(newCreatedTime));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 CreatedTime = realNewCreatedTime;
                 CreatedTimeTicks = CreatedTime.Ticks;
@@ -117,7 +117,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectCreatedTimeAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)CreatedTime);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)CreatedTime);
 
         /// <summary>
         /// 异步获取创建者。
@@ -125,7 +125,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含创建者（兼容标识或字符串）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectCreatedByAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)CreatedBy);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)CreatedBy);
 
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewCreatedTime = newCreatedTime.CastTo<object, TCreatedTime>(nameof(newCreatedTime));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 CreatedTime = realNewCreatedTime;
                 return newCreatedTime;
@@ -157,7 +157,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewCreatedBy = newCreatedBy.CastTo<object, TCreatedBy>(nameof(newCreatedBy));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 CreatedBy = realNewCreatedBy;
                 return newCreatedBy;

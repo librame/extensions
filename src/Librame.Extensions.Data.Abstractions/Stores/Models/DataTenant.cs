@@ -62,7 +62,7 @@ namespace Librame.Extensions.Data.Stores
         public virtual string Host { get; set; }
 
         /// <summary>
-        /// 加密连接字符串。
+        /// 加密连接字符串（默认不启用）。
         /// </summary>
         [Display(Name = nameof(EncryptedConnectionStrings), ResourceType = typeof(DataTenantResource))]
         public virtual bool EncryptedConnectionStrings { get; set; }
@@ -88,7 +88,7 @@ namespace Librame.Extensions.Data.Stores
         public virtual bool WritingSeparation { get; set; }
 
         /// <summary>
-        /// 数据同步（默认不启用；此功能已禁用）。
+        /// 数据同步（默认不启用）。
         /// </summary>
         [Display(Name = nameof(DataSynchronization), ResourceType = typeof(DataTenantResource))]
         public virtual bool DataSynchronization { get; set; }
@@ -122,7 +122,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => ToString().CompatibleGetHashCode();
+            => Id.ToString().CompatibleGetHashCode();
 
 
         /// <summary>
@@ -130,6 +130,6 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => $"{nameof(Name)}={Name},{nameof(Host)}={Host}";
+            => $"{nameof(Id)}={Id};{nameof(Name)}={Name};{nameof(Host)}={Host}";
     }
 }

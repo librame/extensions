@@ -35,7 +35,7 @@ namespace Librame.Extensions.Core.Identifiers
         {
             parentIdentifier.NotNull(nameof(parentIdentifier));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => parentIdentifier.ParentId);
+            return cancellationToken.RunOrCancelValueAsync(() => parentIdentifier.ParentId);
         }
 
 
@@ -54,7 +54,7 @@ namespace Librame.Extensions.Core.Identifiers
             parentIdentifier.NotNull(nameof(parentIdentifier));
             newParentIdFactory.NotNull(nameof(newParentIdFactory));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => parentIdentifier.ParentId = newParentIdFactory.Invoke(parentIdentifier.ParentId));
         }
 
@@ -72,7 +72,7 @@ namespace Librame.Extensions.Core.Identifiers
         {
             parentIdentifier.NotNull(nameof(parentIdentifier));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => parentIdentifier.ParentId = newParentId);
         }
 
@@ -91,9 +91,9 @@ namespace Librame.Extensions.Core.Identifiers
             parentIdentifier.NotNull(nameof(parentIdentifier));
             newParentIdFactory.NotNull(nameof(newParentIdFactory));
 
-            var newParentId = await parentIdentifier.GetObjectParentIdAsync(cancellationToken).ConfigureAndResultAsync();
+            var newParentId = await parentIdentifier.GetObjectParentIdAsync(cancellationToken).ConfigureAwait();
             return await parentIdentifier.SetObjectParentIdAsync(newParentIdFactory.Invoke(newParentId), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
     }

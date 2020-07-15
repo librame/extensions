@@ -48,7 +48,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含排名（兼容整数、单双精度的排序字段）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectRankAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)Rank);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)Rank);
 
         /// <summary>
         /// 异步设置对象排名。
@@ -60,7 +60,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewRank = newRank.CastTo<object, TRank>(nameof(newRank));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 Rank = realNewRank;
                 return newRank;

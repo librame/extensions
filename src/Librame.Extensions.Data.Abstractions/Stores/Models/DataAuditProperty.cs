@@ -59,5 +59,13 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         [Display(Name = nameof(NewValue), ResourceType = typeof(DataAuditPropertyResource))]
         public virtual string NewValue { get; set; }
+
+
+        /// <summary>
+        /// 将标识转换为字符串。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => $"{nameof(Id)}={Id};{nameof(AuditId)}={AuditId};{nameof(PropertyName)}={PropertyName}";
     }
 }

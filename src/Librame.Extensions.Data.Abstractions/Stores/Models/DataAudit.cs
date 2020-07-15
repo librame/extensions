@@ -25,7 +25,8 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据审计")]
     [NonAudited]
-    public class DataAudit<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>
+    public class DataAudit<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>,
+        IEquatable<DataAudit<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
@@ -58,5 +59,38 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         [Display(Name = nameof(StateName), ResourceType = typeof(DataAuditResource))]
         public virtual string StateName { get; set; }
+
+
+        /// <summary>
+        /// 唯一索引是否相等。
+        /// </summary>
+        /// <param name="other">给定的其他 <see cref="DataAudit{TGenId, TCreatedBy}"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        public bool Equals(DataAudit<TGenId, TCreatedBy> other)
+            => TableName == other?.TableName && EntityId == other.EntityId && State == other.State;
+
+        /// <summary>
+        /// 重写是否相等。
+        /// </summary>
+        /// <param name="obj">给定要比较的对象。</param>
+        /// <returns>返回布尔值。</returns>
+        public override bool Equals(object obj)
+            => obj is DataAudit<TGenId, TCreatedBy> other && Equals(other);
+
+
+        /// <summary>
+        /// 获取哈希码。
+        /// </summary>
+        /// <returns>返回 32 位整数。</returns>
+        public override int GetHashCode()
+            => Id.ToString().CompatibleGetHashCode();
+
+
+        /// <summary>
+        /// 将标识转换为字符串。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => $"{nameof(Id)}={Id};{nameof(TableName)}={TableName};{nameof(EntityId)}={EntityId}";
     }
 }

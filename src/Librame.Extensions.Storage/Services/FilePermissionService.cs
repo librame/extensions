@@ -33,7 +33,7 @@ namespace Librame.Extensions.Storage.Services
 
         private Task<string> GenerateTokenAsync(string idTraceName, CancellationToken cancellationToken)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var buffer = RandomUtility.GenerateByteArray(32);
                 var token = buffer.AsBase64String();

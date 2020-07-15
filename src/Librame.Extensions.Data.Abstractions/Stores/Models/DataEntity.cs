@@ -24,7 +24,8 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据实体")]
-    public class DataEntity<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>, IEquatable<DataEntity<TGenId, TCreatedBy>>
+    public class DataEntity<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>,
+        IEquatable<DataEntity<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
@@ -35,10 +36,10 @@ namespace Librame.Extensions.Data.Stores
         public virtual string Schema { get; set; }
 
         /// <summary>
-        /// 名称。
+        /// 表名。
         /// </summary>
-        [Display(Name = nameof(Name), ResourceType = typeof(DataEntityResource))]
-        public virtual string Name { get; set; }
+        [Display(Name = nameof(TableName), ResourceType = typeof(DataEntityResource))]
+        public virtual string TableName { get; set; }
 
         /// <summary>
         /// 是否分表。
@@ -49,11 +50,11 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 描述。
         /// </summary>
-        [Display(Name = nameof(Name), ResourceType = typeof(DataEntityResource))]
+        [Display(Name = nameof(Description), ResourceType = typeof(DataEntityResource))]
         public virtual string Description { get; set; }
 
         /// <summary>
-        /// 实体类型名。
+        /// 实体名。
         /// </summary>
         [Display(Name = nameof(EntityName), ResourceType = typeof(DataEntityResource))]
         public virtual string EntityName { get; set; }
@@ -71,7 +72,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="other">给定的 <see cref="DataEntity{TGenId, TCreatedBy}"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(DataEntity<TGenId, TCreatedBy> other)
-            => Schema == other?.Schema && Name == other?.Name;
+            => Schema == other?.Schema && TableName == other.TableName;
 
         /// <summary>
         /// 重写是否相等。
@@ -87,14 +88,14 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => ToString().CompatibleGetHashCode();
+            => Id.ToString().CompatibleGetHashCode();
 
 
         /// <summary>
-        /// 转换为字符串。
+        /// 将架构（如果存在）、名称转换为字符串。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => new TableDescriptor(Name, Schema);
+            => $"{nameof(Id)}={Id};Table={new TableDescriptor(TableName, Schema)};{nameof(EntityName)}={EntityName};{nameof(IsSharding)}={IsSharding}";
     }
 }

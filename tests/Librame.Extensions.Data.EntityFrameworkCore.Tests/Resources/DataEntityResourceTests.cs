@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data.Tests
             var localized = localizer.GetString(r => r.Schema);
             Assert.False(localized.ResourceNotFound);
 
-            localized = localizer.GetString(r => r.Name);
+            localized = localizer.GetString(r => r.TableName);
             Assert.False(localized.ResourceNotFound);
 
             localized = localizer.GetString(r => r.IsSharding);

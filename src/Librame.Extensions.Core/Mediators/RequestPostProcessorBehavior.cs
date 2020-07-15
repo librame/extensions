@@ -35,10 +35,10 @@ namespace Librame.Extensions.Core.Mediators
         {
             nextHandler.NotNull(nameof(nextHandler));
 
-            var response = await nextHandler.Invoke().ConfigureAndResultAsync();
+            var response = await nextHandler.Invoke().ConfigureAwait();
 
             foreach (var post in _postProcessors)
-                await post.Process(request, response, cancellationToken).ConfigureAndWaitAsync();
+                await post.Process(request, response, cancellationToken).ConfigureAwait();
 
             return response;
         }

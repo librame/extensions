@@ -6,18 +6,7 @@ namespace Librame.Extensions.Data.Tests
     using Accessors;
     using Models;
 
-    public class TestDbContextAccessor : TestDbContextAccessor<Guid, int, Guid>
-    {
-        public TestDbContextAccessor(DbContextOptions options)
-            : base(options)
-        {
-        }
-    }
-
-    public class TestDbContextAccessor<TGenId, TIncremId, TCreatedBy> : DbContextAccessor<TGenId, TIncremId, TCreatedBy>
-        where TGenId : IEquatable<TGenId>
-        where TIncremId : IEquatable<TIncremId>
-        where TCreatedBy : IEquatable<TCreatedBy>
+    public class TestDbContextAccessor : DataDbContextAccessor
     {
         public TestDbContextAccessor(DbContextOptions options)
             : base(options)
@@ -25,9 +14,16 @@ namespace Librame.Extensions.Data.Tests
         }
 
 
-        public DbSet<Category<TIncremId, TGenId, TCreatedBy>> Categories { get; set; }
+        public DbSet<Category<int, Guid, Guid>> Categories { get; set; }
 
-        public DbSet<Article<TGenId, TIncremId, TCreatedBy>> Articles { get; set; }
+        public DbSet<Article<Guid, int, Guid>> Articles { get; set; }
+
+
+        public DbSetManager<Category<int, Guid, Guid>> CategoriesManager
+            => Categories.AsManager();
+
+        public DbSetManager<Article<Guid, int, Guid>> ArticlesManager
+            => Articles.AsManager();
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,7 +32,7 @@ namespace Librame.Extensions.Data.Tests
 
             var maxLength = Dependency.Options.Stores.MaxLengthForProperties;
 
-            modelBuilder.Entity<Category<TIncremId, TGenId, Guid>>(b =>
+            modelBuilder.Entity<Category<int, Guid, Guid>>(b =>
             {
                 b.ToTable();
 
@@ -58,12 +54,12 @@ namespace Librame.Extensions.Data.Tests
                 }
             });
 
-            modelBuilder.Entity<Article<TGenId, TIncremId, Guid>>(b =>
+            modelBuilder.Entity<Article<Guid, int, Guid>>(b =>
             {
                 b.ToTable(table =>
                 {
                     // 使用年份进行分表（注：需要在 Article 做 [ShardingTable] 标识）
-                    table.AppendYearSuffix(CurrentTimestamp);
+                    table.AppendYearSuffix(CurrentTimestamp.AddYears(5)); // .AddYears(1)
                 });
 
                 b.HasKey(x => x.Id);

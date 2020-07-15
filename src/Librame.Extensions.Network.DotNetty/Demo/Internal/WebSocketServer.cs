@@ -69,7 +69,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                 var channel = await WrapperFactory
                     .CreateTcpServer(_serverOptions.UseLibuv, out bossGroup, out workerGroup)
                     .AddWebSocketHandler(tlsCertificate, channelHandler)
-                    .BindAsync(endPoint).ConfigureAndResultAsync();
+                    .BindAsync(endPoint).ConfigureAwait();
 
                 Logger.LogInformation("Open your web browser and navigate to "
                     + $"{(_serverOptions.IsSsl ? "https" : "http")}"

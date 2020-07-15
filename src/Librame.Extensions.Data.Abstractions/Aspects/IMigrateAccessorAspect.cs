@@ -17,9 +17,5 @@ namespace Librame.Extensions.Data.Aspects
     /// </summary>
     public interface IMigrateAccessorAspect : IAccessorAspect
     {
-        /// <summary>
-        /// 需要保存更改。
-        /// </summary>
-        bool RequiredSaveChanges { get; set; }
     }
 }

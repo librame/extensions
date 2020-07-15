@@ -41,7 +41,7 @@ namespace Librame.Extensions.Core.Services
         /// <returns>返回 <see cref="ServiceCharacteristics"/>。</returns>
         public ServiceCharacteristics AddOrSet(Type serviceType, ServiceCharacteristics characteristics)
         {
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 if (_dictionary.ContainsKey(serviceType))
                     _dictionary[serviceType] = characteristics;
@@ -77,7 +77,7 @@ namespace Librame.Extensions.Core.Services
         /// <returns>返回布尔值。</returns>
         public bool TryAdd(Type serviceType, ServiceCharacteristics characteristics)
         {
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 if (!_dictionary.ContainsKey(serviceType))
                 {

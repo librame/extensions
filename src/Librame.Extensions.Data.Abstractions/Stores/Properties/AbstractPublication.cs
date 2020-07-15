@@ -65,7 +65,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewCreatedTime = newCreatedTime.CastTo<object, DateTimeOffset>(nameof(newCreatedTime));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 CreatedTime = realNewCreatedTime;
                 CreatedTimeTicks = CreatedTime.Ticks;
@@ -83,7 +83,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewPublishedTime = newPublishedTime.CastTo<object, DateTimeOffset>(nameof(newPublishedTime));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 PublishedTime = realNewPublishedTime;
                 PublishedTimeTicks = PublishedTime.Ticks;
@@ -132,7 +132,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectPublishedTimeAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)PublishedTime);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)PublishedTime);
 
         /// <summary>
         /// 异步获取发表者。
@@ -140,7 +140,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含发表者（兼容标识或字符串）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectPublishedByAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)PublishedBy);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)PublishedBy);
 
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewPublishedTime = newPublishedTime.CastTo<object, TPublishedTime>(nameof(newPublishedTime));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 PublishedTime = realNewPublishedTime;
                 return newPublishedTime;
@@ -172,7 +172,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewPublishedBy = newPublishedBy.CastTo<object, TPublishedBy>(nameof(newPublishedBy));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 PublishedBy = realNewPublishedBy;
                 return newPublishedBy;

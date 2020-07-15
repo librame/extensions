@@ -47,17 +47,21 @@ namespace Librame.Extensions.Data.Builders
         protected DataBuilderDependency(string name, IExtensionBuilderDependency parentDependency = null)
             : base(name, parentDependency)
         {
-            CompilersConfigDirectory = ConfigDirectory.CombinePath(DataSettings.Preference.CompilersFolder);
+            // ConfigDirectory
+            //CompilersConfigDirectory = ConfigDirectory.CombinePath(DataSettings.Preference.CompilersFolder);
             DatabasesConfigDierctory = ConfigDirectory.CombinePath(DataSettings.Preference.DatabasesFolder);
             MigrationsConfigDirectory = ConfigDirectory.CombinePath(DataSettings.Preference.MigrationsFolder);
+
+            // ReportDirectory
+            DatabasesReportDirectory = ReportDirectory.CombinePath(DataSettings.Preference.DatabasesFolder);
             InitializersReportDirectory = ReportDirectory.CombinePath(DataSettings.Preference.InitializersFolder);
         }
 
 
-        /// <summary>
-        /// 编译配置目录。
-        /// </summary>
-        public string CompilersConfigDirectory { get; set; }
+        ///// <summary>
+        ///// 编译配置目录。
+        ///// </summary>
+        //public string CompilersConfigDirectory { get; set; }
 
         /// <summary>
         /// 数据库配置目录。
@@ -68,6 +72,12 @@ namespace Librame.Extensions.Data.Builders
         /// 迁移配置目录。
         /// </summary>
         public string MigrationsConfigDirectory { get; set; }
+
+
+        /// <summary>
+        /// 数据库报告目录。
+        /// </summary>
+        public string DatabasesReportDirectory { get; set; }
 
         /// <summary>
         /// 初始化器报告目录。

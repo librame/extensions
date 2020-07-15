@@ -42,7 +42,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectParentIdAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)ParentId);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)ParentId);
 
         /// <summary>
         /// 异步设置对象标识。
@@ -54,7 +54,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewParentId = newParentId.CastTo<object, TId>(nameof(newParentId));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 ParentId = realNewParentId;
                 return newParentId;

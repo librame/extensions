@@ -32,7 +32,7 @@ namespace Librame.Extensions.Data.Mediators
         public override Task HandleAsync(EntityNotification<TEntity> notification,
             CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 if (notification.Adds.IsNotEmpty())
                     Logger.LogInformation($"{notification.Adds.Count} entities added.");

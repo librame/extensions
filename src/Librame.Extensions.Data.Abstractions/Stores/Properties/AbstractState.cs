@@ -46,7 +46,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含状态（兼容不支持枚举类型的实体框架）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectStatusAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)Status);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)Status);
 
         /// <summary>
         /// 异步设置对象状态。
@@ -58,7 +58,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewStatus = newStatus.CastTo<object, TStatus>(nameof(newStatus));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 Status = realNewStatus;
                 return newStatus;

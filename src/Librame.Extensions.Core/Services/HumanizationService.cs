@@ -38,7 +38,7 @@ namespace Librame.Extensions.Core.Services
 
         public Task<string> HumanizeAsync(DateTime dateTime, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var now = DateTime.Now;
                 if (now <= dateTime)
@@ -53,7 +53,7 @@ namespace Librame.Extensions.Core.Services
 
         public Task<string> HumanizeAsync(DateTimeOffset dateTimeOffset, CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var now = DateTimeOffset.Now;
                 if (now <= dateTimeOffset)

@@ -42,7 +42,7 @@ namespace Librame.Extensions.Data.Stores
             clock.NotNull(nameof(clock));
 
             creation.CreatedTime = await clock.GetNowOffsetAsync(cancellationToken: cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             creation.CreatedTimeTicks = creation.CreatedTime.Ticks;
 
@@ -69,16 +69,16 @@ namespace Librame.Extensions.Data.Stores
             creation.NotNull(nameof(creation));
 
             var newCreatedTime = await StoreHelper.GetDateTimeNowAsync(clock,
-                creation.CreatedTimeType, cancellationToken).ConfigureAndResultAsync();
+                creation.CreatedTimeType, cancellationToken).ConfigureAwait();
 
             if (newCreatedTime.IsNotNull())
             {
                 await creation.SetObjectCreatedTimeAsync(newCreatedTime, cancellationToken)
-                    .ConfigureAndResultAsync();
+                    .ConfigureAwait();
             }
 
             await creation.SetObjectCreatedByAsync(newCreatedBy, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             return creation;
         }
@@ -99,7 +99,7 @@ namespace Librame.Extensions.Data.Stores
         {
             creation.NotNull(nameof(creation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => creation.CreatedTime);
+            return cancellationToken.RunOrCancelValueAsync(() => creation.CreatedTime);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace Librame.Extensions.Data.Stores
         {
             creation.NotNull(nameof(creation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => creation.CreatedBy);
+            return cancellationToken.RunOrCancelValueAsync(() => creation.CreatedBy);
         }
 
 
@@ -138,7 +138,7 @@ namespace Librame.Extensions.Data.Stores
         {
             creation.NotNull(nameof(creation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => creation.CreatedTime = newCreatedTimeFactory.Invoke(creation.CreatedTime));
         }
 
@@ -159,7 +159,7 @@ namespace Librame.Extensions.Data.Stores
         {
             creation.NotNull(nameof(creation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => creation.CreatedBy = newCreatedByFactory.Invoke(creation.CreatedBy));
         }
 
@@ -181,7 +181,7 @@ namespace Librame.Extensions.Data.Stores
         {
             creation.NotNull(nameof(creation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => creation.CreatedTime = newCreatedTime);
         }
 
@@ -202,7 +202,7 @@ namespace Librame.Extensions.Data.Stores
         {
             creation.NotNull(nameof(creation));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => creation.CreatedBy = newCreatedBy);
         }
 
@@ -221,9 +221,9 @@ namespace Librame.Extensions.Data.Stores
             creation.NotNull(nameof(creation));
             newCreatedTimeFactory.NotNull(nameof(newCreatedTimeFactory));
 
-            var newCreatedTime = await creation.GetObjectCreatedTimeAsync(cancellationToken).ConfigureAndResultAsync();
+            var newCreatedTime = await creation.GetObjectCreatedTimeAsync(cancellationToken).ConfigureAwait();
             return await creation.SetObjectCreatedTimeAsync(newCreatedTimeFactory.Invoke(newCreatedTime), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
         /// <summary>
@@ -240,9 +240,9 @@ namespace Librame.Extensions.Data.Stores
             creation.NotNull(nameof(creation));
             newCreatedByFactory.NotNull(nameof(newCreatedByFactory));
 
-            var newCreatedBy = await creation.GetObjectCreatedByAsync(cancellationToken).ConfigureAndResultAsync();
+            var newCreatedBy = await creation.GetObjectCreatedByAsync(cancellationToken).ConfigureAwait();
             return await creation.SetObjectCreatedByAsync(newCreatedByFactory.Invoke(newCreatedBy), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
     }

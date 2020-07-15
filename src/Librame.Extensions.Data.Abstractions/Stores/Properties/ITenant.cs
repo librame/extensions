@@ -50,7 +50,7 @@ namespace Librame.Extensions.Data.Stores
         bool WritingSeparation { get; set; }
 
         /// <summary>
-        /// 数据同步（如果启用，默认与写入连接的数据互为镜像；此功能已禁用）。
+        /// 数据同步（如果启用，默认与写入连接的数据互为镜像）。
         /// </summary>
         bool DataSynchronization { get; set; }
 

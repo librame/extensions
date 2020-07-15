@@ -11,7 +11,7 @@ namespace Librame.Extensions.Core.Tests
         public async void AllTest()
         {
             var service = TestServiceProvider.Current.GetRequiredService<IEnvironmentService>();
-            var info = await service.GetEnvironmentInfoAsync().ConfigureAndResultAsync();
+            var info = await service.GetEnvironmentInfoAsync().ConfigureAwait();
             Assert.NotEmpty(info.ApplicationName);
         }
 

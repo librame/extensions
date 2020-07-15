@@ -39,7 +39,7 @@ namespace Librame.Extensions.Data.Stores
             where TPublishedBy : IEquatable<TPublishedBy>
         {
             await publication.PopulateCreationAsync(clock, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             publication.PublishedTime = publication.CreatedTime;
             publication.PublishedTimeTicks = publication.CreatedTimeTicks;
@@ -67,22 +67,22 @@ namespace Librame.Extensions.Data.Stores
             publication.NotNull(nameof(publication));
 
             var newPublishedTime = await StoreHelper.GetDateTimeNowAsync(clock,
-                publication.CreatedTimeType, cancellationToken).ConfigureAndResultAsync();
+                publication.CreatedTimeType, cancellationToken).ConfigureAwait();
 
             if (newPublishedTime.IsNotNull())
             {
                 await publication.SetObjectCreatedTimeAsync(newPublishedTime, cancellationToken)
-                    .ConfigureAndResultAsync();
+                    .ConfigureAwait();
 
                 await publication.SetObjectPublishedTimeAsync(newPublishedTime, cancellationToken)
-                    .ConfigureAndResultAsync();
+                    .ConfigureAwait();
             }
 
             await publication.SetObjectCreatedByAsync(newPublishedBy, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             await publication.SetObjectPublishedByAsync(newPublishedBy, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             return publication;
         }
@@ -103,7 +103,7 @@ namespace Librame.Extensions.Data.Stores
         {
             publication.NotNull(nameof(publication));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => publication.PublishedTime);
+            return cancellationToken.RunOrCancelValueAsync(() => publication.PublishedTime);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Librame.Extensions.Data.Stores
         {
             publication.NotNull(nameof(publication));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => publication.PublishedBy);
+            return cancellationToken.RunOrCancelValueAsync(() => publication.PublishedBy);
         }
 
 
@@ -142,7 +142,7 @@ namespace Librame.Extensions.Data.Stores
         {
             publication.NotNull(nameof(publication));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => publication.PublishedTime = newPublishedTimeFactory.Invoke(publication.PublishedTime));
         }
 
@@ -163,7 +163,7 @@ namespace Librame.Extensions.Data.Stores
         {
             publication.NotNull(nameof(publication));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => publication.PublishedBy = newPublishedByFactory.Invoke(publication.PublishedBy));
         }
 
@@ -185,7 +185,7 @@ namespace Librame.Extensions.Data.Stores
         {
             publication.NotNull(nameof(publication));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => publication.PublishedTime = newPublishedTime);
         }
 
@@ -206,7 +206,7 @@ namespace Librame.Extensions.Data.Stores
         {
             publication.NotNull(nameof(publication));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => publication.PublishedBy = newPublishedBy);
         }
 
@@ -225,9 +225,9 @@ namespace Librame.Extensions.Data.Stores
             publication.NotNull(nameof(publication));
             newPublishedTimeFactory.NotNull(nameof(newPublishedTimeFactory));
 
-            var newPublishedTime = await publication.GetObjectPublishedTimeAsync(cancellationToken).ConfigureAndResultAsync();
+            var newPublishedTime = await publication.GetObjectPublishedTimeAsync(cancellationToken).ConfigureAwait();
             return await publication.SetObjectPublishedTimeAsync(newPublishedTimeFactory.Invoke(newPublishedTime), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
         /// <summary>
@@ -244,9 +244,9 @@ namespace Librame.Extensions.Data.Stores
             publication.NotNull(nameof(publication));
             newPublishedByFactory.NotNull(nameof(newPublishedByFactory));
 
-            var newPublishedBy = await publication.GetObjectPublishedByAsync(cancellationToken).ConfigureAndResultAsync();
+            var newPublishedBy = await publication.GetObjectPublishedByAsync(cancellationToken).ConfigureAwait();
             return await publication.SetObjectPublishedByAsync(newPublishedByFactory.Invoke(newPublishedBy), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
     }

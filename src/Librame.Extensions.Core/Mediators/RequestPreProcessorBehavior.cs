@@ -36,9 +36,9 @@ namespace Librame.Extensions.Core.Mediators
             nextHandler.NotNull(nameof(nextHandler));
 
             foreach (var pre in _preProcessors)
-                await pre.ProcessAsync(request, cancellationToken).ConfigureAndWaitAsync();
+                await pre.ProcessAsync(request, cancellationToken).ConfigureAwait();
 
-            return await nextHandler.Invoke().ConfigureAndResultAsync();
+            return await nextHandler.Invoke().ConfigureAwait();
         }
 
     }

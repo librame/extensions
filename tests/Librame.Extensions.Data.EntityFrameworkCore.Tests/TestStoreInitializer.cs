@@ -2,44 +2,55 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Tests
 {
     using Models;
     using Stores;
+    using Validators;
 
-    public class TestStoreInitializer : GuidDataStoreInitializer<TestDbContextAccessor, int>
+    public class TestStoreInitializer : DataStoreInitializer<TestDbContextAccessor>
     {
         private readonly string _categoryName
             = typeof(Category<int, Guid, Guid>).GetGenericBodyName();
         private readonly string _articleName
             = typeof(Article<Guid, int, Guid>).GetGenericBodyName();
 
-        private IList<Category<int, Guid, Guid>> _categories;
+        private IList<Category<int, Guid, Guid>> _categories = null;
+        private IList<Article<Guid, int, Guid>> _articles = null;
 
 
         public TestStoreInitializer(IStoreIdentifierGenerator identifierGenerator,
-            IStoreInitializationValidator validator, ILoggerFactory loggerFactory)
+            IDataInitializationValidator validator, ILoggerFactory loggerFactory)
             : base(identifierGenerator, validator, loggerFactory)
         {
         }
 
 
-        protected override void InitializeCore(IStoreHub stores)
+        protected override void InitializeStores()
         {
-            base.InitializeCore(stores);
+            base.InitializeStores();
 
-            if (stores.Accessor is TestDbContextAccessor dbContextAccessor)
-            {
-                InitializeCategories(dbContextAccessor);
+            InitializeCategories();
 
-                InitializeArticles(dbContextAccessor);
-            }
+            InitializeArticles();
         }
 
-        private void InitializeCategories(TestDbContextAccessor accessor)
+        protected override async Task InitializeStoresAsync(CancellationToken cancellationToken)
         {
-            if (!accessor.Categories.Any())
+            await base.InitializeStoresAsync(cancellationToken).ConfigureAwait();
+
+            await InitializeCategoriesAsync(cancellationToken).ConfigureAwait();
+
+            await InitializeArticlesAsync(cancellationToken).ConfigureAwait();
+        }
+
+
+        private void InitializeCategories()
+        {
+            if (_categories.IsEmpty())
             {
                 _categories = new List<Category<int, Guid, Guid>>
                 {
@@ -55,45 +66,117 @@ namespace Librame.Extensions.Data.Tests
 
                 _categories.ForEach(category =>
                 {
-                    category.PopulateCreationAsync(Clock).ConfigureAndResult();
+                    category.PopulateCreationAsync(Clock).ConfigureAwaitCompleted();
                 });
-
-                accessor.Categories.AddRange(_categories);
-
-                RequiredSaveChanges = true;
             }
-            else
-            {
-                _categories = accessor.Categories.ToList();
-            }
+
+            Accessor.CategoriesManager.TryAddRange(p => p.Equals(_categories.First()),
+                () => _categories,
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                });
         }
 
-        private void InitializeArticles(TestDbContextAccessor stores)
+        private Task InitializeCategoriesAsync(CancellationToken cancellationToken)
         {
-            if (!stores.Categories.Any())
+            if (_categories.IsEmpty())
             {
-                var articles = new List<Article<Guid, int, Guid>>();
+                _categories = new List<Category<int, Guid, Guid>>
+                {
+                    new Category<int, Guid, Guid>
+                    {
+                        Name = $"First {_categoryName}"
+                    },
+                    new Category<int, Guid, Guid>
+                    {
+                        Name = $"Last {_categoryName}"
+                    }
+                };
+
+                _categories.ForEach(async category =>
+                {
+                    await category.PopulateCreationAsync(Clock).ConfigureAwait();
+                });
+            }
+
+            return Accessor.CategoriesManager.TryAddRangeAsync(p => p.Equals(_categories.First()),
+                () => _categories,
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                },
+                cancellationToken);
+        }
+
+
+        private void InitializeArticles()
+        {
+            if (_articles.IsEmpty())
+            {
+                _articles = new List<Article<Guid, int, Guid>>();
+
                 var identifier = IdentifierGenerator as TestGuidStoreIdentifierGenerator;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < 50; i++)
                 {
                     var article = new Article<Guid, int, Guid>
                     {
-                        Id = identifier.GetArticleIdAsync().ConfigureAndResult(),
+                        Id = identifier.GetArticleIdAsync().ConfigureAwaitCompleted(),
                         Title = $"{_articleName} {i.FormatString(3)}",
                         Descr = $"Descr {i.FormatString(3)}",
-                        Category = (i < 50) ? _categories.First() : _categories.Last()
+                        Category = (i < 25) ? _categories.First() : _categories.Last()
                     };
 
-                    article.PopulateCreationAsync(Clock).ConfigureAndResult();
+                    article.PopulateCreationAsync(Clock).ConfigureAwaitCompleted();
 
-                    articles.Add(article);
+                    _articles.Add(article);
                 }
-
-                stores.Articles.AddRange(articles);
-
-                RequiredSaveChanges = true;
             }
+
+            Accessor.ArticlesManager.TryAddRange(p => p.Equals(_articles.First()),
+                () => _articles,
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                });
+        }
+
+        private async Task InitializeArticlesAsync(CancellationToken cancellationToken)
+        {
+            if (_articles.IsEmpty())
+            {
+                _articles = new List<Article<Guid, int, Guid>>();
+
+                var identifier = IdentifierGenerator as TestGuidStoreIdentifierGenerator;
+
+                for (int i = 0; i < 50; i++)
+                {
+                    var article = new Article<Guid, int, Guid>
+                    {
+                        Id = await identifier.GetArticleIdAsync().ConfigureAwait(),
+                        Title = $"{_articleName} {i.FormatString(3)}",
+                        Descr = $"Descr {i.FormatString(3)}",
+                        Category = (i < 25) ? _categories.First() : _categories.Last()
+                    };
+
+                    await article.PopulateCreationAsync(Clock).ConfigureAwait();
+
+                    _articles.Add(article);
+                }
+            }
+
+            await Accessor.ArticlesManager.TryAddRangeAsync(p => p.Equals(_articles.First()),
+                () => _articles,
+                addedPost =>
+                {
+                    if (!Accessor.RequiredSaveChanges)
+                        Accessor.RequiredSaveChanges = true;
+                },
+                cancellationToken).ConfigureAwait();
         }
 
     }

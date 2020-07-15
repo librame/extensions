@@ -154,7 +154,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectIdAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)Id);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)Id);
 
         /// <summary>
         /// 异步获取对象标识。
@@ -162,7 +162,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectParentIdAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)ParentId);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)ParentId);
 
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace Librame.Extensions.Data.Collections
         {
             var realNewId = newId.CastTo<object, TId>(nameof(newId));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 Id = realNewId;
                 return newId;
@@ -192,7 +192,7 @@ namespace Librame.Extensions.Data.Collections
         {
             var realNewParentId = newParentId.CastTo<object, TId>(nameof(newParentId));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 ParentId = realNewParentId;
                 return newParentId;

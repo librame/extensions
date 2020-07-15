@@ -71,7 +71,7 @@ namespace Librame.Extensions.Core.Identifiers
 
         private List<SecurityIdentifierKeyInfo> GetKeyInfos()
         {
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 return _memoryCache.GetOrCreate(GetCacheKey(), entry =>
                 {
@@ -91,7 +91,7 @@ namespace Librame.Extensions.Core.Identifiers
 
                 while (infos.Count < count)
                 {
-                    var createdTime = _clock.GetNowOffsetAsync().ConfigureAndResult();
+                    var createdTime = _clock.GetNowOffsetAsync().ConfigureAwaitCompleted();
                     var identifier = SecurityIdentifier.New();
 
                     var info = SecurityIdentifierKeyInfo.Create(identifier, createdTime);

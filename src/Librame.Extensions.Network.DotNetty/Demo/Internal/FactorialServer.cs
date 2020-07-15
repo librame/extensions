@@ -74,7 +74,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                             .Handler(new LoggingHandler("LSTN"));
                     })
                     .AddFactorialHandler(tlsCertificate, channelHandler)
-                    .BindAsync(endPoint).ConfigureAndResultAsync();
+                    .BindAsync(endPoint).ConfigureAwait();
 
                 configureProcess.Invoke(channel);
             }

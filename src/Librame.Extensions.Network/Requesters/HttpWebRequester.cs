@@ -53,7 +53,7 @@ namespace Librame.Extensions.Network.Requesters
 
             HttpWebRequest request;
 
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var opts = Options.Requester;
 

@@ -37,5 +37,13 @@ namespace Librame.Extensions.Data.Mediators
         /// 删除实体集合。
         /// </summary>
         public IReadOnlyList<TEntity> Removes { get; set; }
+
+
+        /// <summary>
+        /// 包含添加、更新或删除等实体集合。
+        /// </summary>
+        /// <returns>返回布尔值。</returns>
+        public bool ContainsEntities()
+            => Adds.IsNotEmpty() || Updates.IsNotEmpty() || Removes.IsNotEmpty();
     }
 }

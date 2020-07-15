@@ -93,7 +93,7 @@ namespace Librame.Extensions.Tests
         public void PropertyValuesEqualsTest()
         {
             var source = new TestClass();
-            var compare = typeof(TestClass).EnsureCreate<TestClass>();
+            var compare = ObjectExtensions.EnsureCreate<TestClass>();
 
             Assert.True(source.PropertyValuesEquals(compare));
             Assert.True(source.YieldEnumerable().SequencePropertyValuesEquals(compare.YieldEnumerable()));

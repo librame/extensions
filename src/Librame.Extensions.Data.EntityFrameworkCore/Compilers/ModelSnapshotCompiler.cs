@@ -45,51 +45,8 @@ namespace Librame.Extensions.Data.Compilers
         /// <param name="accessorType">给定的访问器类型。</param>
         /// <returns>返回 <see cref="TypeNameCombiner"/>。</returns>
         public static TypeNameCombiner GenerateTypeName(Type accessorType)
-            => new TypeNameCombiner($"{accessorType.GetGenericBodyName()}{nameof(ModelSnapshot)}", accessorType?.Namespace);
-
-
-        /// <summary>
-        /// 导出模型快照文件路径。
-        /// </summary>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        /// <param name="basePathFactory">给定基础路径的工厂方法（可选；默认为模型快照目录）。</param>
-        /// <param name="extension">给定的扩展名（可选；默认为 <see cref="ICorePreferenceSetting.CompileAssemblyFileExtension"/>）。</param>
-        /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static FilePathCombiner CombineFilePath(IAccessor accessor,
-            Func<DataBuilderDependency, string> basePathFactory = null, string extension = null)
-        {
-            accessor.NotNull(nameof(accessor));
-            
-            var dependency = accessor.GetService<DataBuilderDependency>();
-            var basePath = basePathFactory?.Invoke(dependency) ?? dependency.CompilersConfigDirectory;
-
-            var builder = accessor.GetService<IDataBuilder>();
-            return CombineFilePath(accessor.CurrentType, builder.DatabaseDesignTimeType,
-                basePath, accessor.GetCurrentConnectionStringTag(), extension);
-        }
-
-        /// <summary>
-        /// 导出模型快照文件路径。
-        /// </summary>
-        /// <param name="accessorType">给定的访问器类型。</param>
-        /// <param name="designTimeType">给定的设计时类型。</param>
-        /// <param name="basePath">给定的基础路径。</param>
-        /// <param name="connectionStringTag">给定的连接字符串标签。</param>
-        /// <param name="extension">给定的扩展名（可选；默认为 <see cref="ICorePreferenceSetting.CompileAssemblyFileExtension"/>）。</param>
-        /// <returns>返回 <see cref="FilePathCombiner"/>。</returns>
-        public static FilePathCombiner CombineFilePath(Type accessorType, Type designTimeType,
-            string basePath, string connectionStringTag, string extension = null)
-        {
-            if (extension.IsEmpty())
-                extension = CoreSettings.Preference.CompileAssemblyFileExtension;
-
-            var fileName = $"{accessorType.GetDisplayName(true)}.{designTimeType.GetDisplayName(true)}.{connectionStringTag}{extension}";
-            var filePath = new FilePathCombiner(fileName, basePath);
-            filePath.CreateDirectory();
-
-            return filePath;
-        }
+            => new TypeNameCombiner($"{accessorType.GetGenericBodyName()}{nameof(ModelSnapshot)}",
+                accessorType?.Namespace);
 
 
         /// <summary>
@@ -112,12 +69,14 @@ namespace Librame.Extensions.Data.Compilers
         /// <summary>
         /// 编译模型快照。
         /// </summary>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         /// <param name="model">给定的 <see cref="IModel"/>。</param>
         /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
+        /// <param name="filePath">给定的 <see cref="FilePathCombiner"/>。</param>
         /// <returns>返回包含字节数组与哈希的元组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static FilePathCombiner CompileInFile(IAccessor accessor, IModel model, DataBuilderOptions options)
+        public static FilePathCombiner CompileInFile(DbContextAccessorBase accessor,
+            IModel model, DataBuilderOptions options, FilePathCombiner filePath)
         {
             accessor.NotNull(nameof(accessor));
             model.NotNull(nameof(model));
@@ -129,24 +88,21 @@ namespace Librame.Extensions.Data.Compilers
             var sourceCode = generator.GenerateSnapshot(typeName.Namespace, accessorType,
                 typeName.Name, model);
 
-            // 导出包含模型快照的程序集文件
-            var exportAssemblyPath = CombineFilePath(accessor);
             var references = GetMetadataReferences(options, accessorType);
 
-            return CSharpCompiler.CompileInFile(exportAssemblyPath, references, sourceCode);
+            return CSharpCompiler.CompileInFile(filePath, references, sourceCode);
         }
 
         /// <summary>
         /// 编译模型快照。
         /// </summary>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         /// <param name="model">给定的 <see cref="IModel"/>。</param>
-        /// <param name="options">给定的 <see cref="DataBuilderOptions"/>。</param>
         /// <param name="typeName">给定的模型快照 <see cref="TypeNameCombiner"/>。</param>
         /// <returns>返回包含字节数组与哈希的元组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static (byte[] Body, string Hash) CompileInMemory(IAccessor accessor, IModel model,
-            DataBuilderOptions options, TypeNameCombiner typeName)
+        public static (byte[] body, string hash) CompileInMemory(DbContextAccessorBase accessor,
+            IModel model, TypeNameCombiner typeName)
         {
             accessor.NotNull(nameof(accessor));
             model.NotNull(nameof(model));
@@ -158,14 +114,15 @@ namespace Librame.Extensions.Data.Compilers
             var sourceCode = generator.GenerateSnapshot(typeName.Namespace, accessor.CurrentType,
                 typeName.Name, model);
 
-            var references = GetMetadataReferences(options, accessor.CurrentType);
+            var references = GetMetadataReferences(accessor.Dependency.Options, accessor.CurrentType);
 
             var buffer = CSharpCompiler.CompileInMemory(references, sourceCode);
             return (StoreAssembly(buffer), sourceCode.Sha256Base64String(coreOptions.Encoding));
         }
 
 
-        private static IReadOnlyList<MetadataReference> GetMetadataReferences(DataBuilderOptions options, Type accessorType)
+        private static IReadOnlyList<MetadataReference> GetMetadataReferences(DataBuilderOptions options,
+            Type accessorType)
         {
             return _references.GetOrAdd(accessorType, t =>
             {

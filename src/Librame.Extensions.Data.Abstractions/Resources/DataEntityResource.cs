@@ -25,9 +25,9 @@ namespace Librame.Extensions.Data.Resources
         public string Schema { get; set; }
 
         /// <summary>
-        /// 名称。
+        /// 表名。
         /// </summary>
-        public string Name { get; set; }
+        public string TableName { get; set; }
 
         /// <summary>
         /// 是否分表。
@@ -40,7 +40,7 @@ namespace Librame.Extensions.Data.Resources
         public string Description { get; set; }
 
         /// <summary>
-        /// 实体类型名。
+        /// 实体名。
         /// </summary>
         public string EntityName { get; set; }
 

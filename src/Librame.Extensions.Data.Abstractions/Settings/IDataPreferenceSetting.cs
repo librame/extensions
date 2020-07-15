@@ -41,6 +41,17 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 访问器可隔离字符串连接符。
+        /// </summary>
+        char AccessorIsolateableStringConnector { get; }
+
+        /// <summary>
+        /// 迁移命令信息连接字符串的连接符。
+        /// </summary>
+        char MigrationCommandInfoConnectionStringConnector { get; }
+
+
+        /// <summary>
         /// 默认创建时间。
         /// </summary>
         DateTimeOffset DefaultCreatedTime { get; }
@@ -49,6 +60,11 @@ namespace Librame.Extensions.Data
         /// 默认排序。
         /// </summary>
         float DefaultRank { get; }
+
+        /// <summary>
+        /// 默认架构。
+        /// </summary>
+        string DefaultSchema { get; }
 
         /// <summary>
         /// 默认状态。

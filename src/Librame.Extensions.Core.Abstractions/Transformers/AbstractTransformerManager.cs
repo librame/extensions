@@ -141,7 +141,7 @@ namespace Librame.Extensions.Core.Transformers
 
             if (oldTransformer != newTransformer)
             {
-                return ExtensionSettings.Preference.RunLockerResult(() =>
+                return ExtensionSettings.Preference.RunLocker(() =>
                 {
                     _transformers.Remove(oldTransformer);
                     _transformers.Add(newTransformer);

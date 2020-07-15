@@ -45,6 +45,19 @@ namespace Librame.Extensions.Data
 
 
         /// <summary>
+        /// 访问器可隔离字符串连接符。
+        /// </summary>
+        public virtual char AccessorIsolateableStringConnector
+            => '_'; // 与租户域名“.”字符作区分
+
+        /// <summary>
+        /// 迁移命令信息连接字符串的连接符。
+        /// </summary>
+        public virtual char MigrationCommandInfoConnectionStringConnector
+            => ':';
+
+
+        /// <summary>
         /// 默认创建时间（<see cref="DateTimeOffset.UtcNow"/>）。
         /// </summary>
         public virtual DateTimeOffset DefaultCreatedTime
@@ -55,6 +68,12 @@ namespace Librame.Extensions.Data
         /// </summary>
         public virtual float DefaultRank
             => 10;
+
+        /// <summary>
+        /// 默认架构（dbo）。
+        /// </summary>
+        public virtual string DefaultSchema
+            => "dbo";
 
         /// <summary>
         /// 默认状态（<see cref="DataStatus.Public"/>）。

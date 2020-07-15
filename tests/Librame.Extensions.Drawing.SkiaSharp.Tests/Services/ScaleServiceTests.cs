@@ -32,9 +32,9 @@ namespace Librame.Extensions.Drawing.Tests
             var directory = _service.Dependency.ResourceDirectory.CombinePath("pictures");
 
             // Clear
-            await _service.DeleteScalesByDirectoryAsync(directory).ConfigureAndResultAsync();
+            await _service.DeleteScalesByDirectoryAsync(directory).ConfigureAwait();
 
-            var count = await _service.DrawFilesByDirectoryAsync(directory).ConfigureAndResultAsync();
+            var count = await _service.DrawFilesByDirectoryAsync(directory).ConfigureAwait();
             Assert.True(count > 0);
         }
 

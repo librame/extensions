@@ -63,7 +63,7 @@ namespace Librame.Extensions.Drawing.Services
             if (scales.IsNull())
                 scales = Options.Scales ?? throw new ArgumentNullException(InternalResource.ScaleOptionsIsEmpty);
 
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var count = 0;
                 var files = Directory.EnumerateFiles(imageDirectory, "*.*", SearchOption.AllDirectories);
@@ -90,7 +90,7 @@ namespace Librame.Extensions.Drawing.Services
         public Task<int> DrawFilesByDirectoryAsync(string imageDirectory, IEnumerable<ScaleOptions> scales = null,
             CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var count = 0;
                 var files = Directory.EnumerateFiles(imageDirectory, "*.*", SearchOption.AllDirectories);
@@ -111,7 +111,7 @@ namespace Librame.Extensions.Drawing.Services
         public Task<int> DrawFilesAsync(IEnumerable<string> imagePaths, IEnumerable<ScaleOptions> scales = null,
             CancellationToken cancellationToken = default)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 var count = 0;
 
@@ -176,7 +176,7 @@ namespace Librame.Extensions.Drawing.Services
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
                             var middleName = s.Suffix.NotEmptyOrDefault(() =>
                             {
-                                return Clock.GetNowOffsetAsync().ConfigureAndResult().Ticks.ToString(CultureInfo.InvariantCulture);
+                                return Clock.GetNowOffsetAsync().ConfigureAwaitCompleted().Ticks.ToString(CultureInfo.InvariantCulture);
                             });
 
                             // 设定缩放保存路径

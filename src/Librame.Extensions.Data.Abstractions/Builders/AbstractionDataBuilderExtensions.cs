@@ -47,6 +47,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type implementationTypeDefinition)
             => builder.AddAccessorAspect<ISaveChangesAccessorAspect>(implementationTypeDefinition);
 
+
         /// <summary>
         /// 添加访问器截面。
         /// </summary>
@@ -83,7 +84,7 @@ namespace Microsoft.Extensions.DependencyInjection
         #region AddAccessorService
 
         /// <summary>
-        /// 添加访问器服务。
+        /// 添加迁移访问器服务。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="implementationTypeDefinition">给定的实现类型定义。</param>
@@ -93,7 +94,7 @@ namespace Microsoft.Extensions.DependencyInjection
             => builder.AddAccessorService<IMigrationAccessorService>(implementationTypeDefinition);
 
         /// <summary>
-        /// 添加访问器服务。
+        /// 添加多租户访问器服务。
         /// </summary>
         /// <param name="builder">给定的 <see cref="IDataBuilder"/>。</param>
         /// <param name="implementationTypeDefinition">给定的实现类型定义。</param>
@@ -101,6 +102,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IDataBuilder AddMultiTenantAccessorService(this IDataBuilder builder,
             Type implementationTypeDefinition)
             => builder.AddAccessorService<IMultiTenantAccessorService>(implementationTypeDefinition);
+
 
         /// <summary>
         /// 添加访问器服务。

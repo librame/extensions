@@ -11,11 +11,89 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Stores
 {
     using Core.Services;
+    using Data.Accessors;
+    using Data.Validators;
+
+    /// <summary>
+    /// 抽象存储初始化器。
+    /// </summary>
+    /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
+    public abstract class AbstractStoreInitializer<TAccessor> : AbstractStoreInitializer
+        where TAccessor : class, IAccessor
+    {
+        /// <summary>
+        /// 构造一个 <see cref="AbstractStoreInitializer"/>。
+        /// </summary>
+        /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        protected AbstractStoreInitializer(IDataInitializationValidator validator,
+            IStoreIdentifierGenerator identifierGenerator, ILoggerFactory loggerFactory)
+            : base(validator, identifierGenerator, loggerFactory)
+        {
+        }
+
+
+        /// <summary>
+        /// 当前访问器（在初始化核心 <see cref="InitializeCore(IAccessor)"/> 后方可使用）。
+        /// </summary>
+        /// <value>返回 <typeparamref name="TAccessor"/>。</value>
+        protected TAccessor Accessor { get; private set; }
+
+
+        /// <summary>
+        /// 初始化核心。
+        /// </summary>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        protected override void InitializeCore(IAccessor accessor)
+        {
+            if (accessor is TAccessor dataAccessor)
+            {
+                Accessor = dataAccessor;
+
+                InitializeStores();
+            }
+        }
+
+        /// <summary>
+        /// 异步初始化核心。
+        /// </summary>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        protected override Task InitializeCoreAsync(IAccessor accessor, CancellationToken cancellationToken)
+        {
+            if (accessor is TAccessor dataAccessor)
+            {
+                Accessor = dataAccessor;
+
+                return InitializeStoresAsync(cancellationToken);
+            }
+
+            return Task.CompletedTask;
+        }
+
+
+        /// <summary>
+        /// 初始化存储集合。
+        /// </summary>
+        protected abstract void InitializeStores();
+
+        /// <summary>
+        /// 异步初始化存储集合。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        protected abstract Task InitializeStoresAsync(CancellationToken cancellationToken);
+
+    }
+
 
     /// <summary>
     /// 抽象存储初始化器。
@@ -25,10 +103,10 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个 <see cref="AbstractStoreInitializer"/>。
         /// </summary>
-        /// <param name="validator">给定的 <see cref="IStoreInitializationValidator"/>。</param>
+        /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
         /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractStoreInitializer(IStoreInitializationValidator validator,
+        protected AbstractStoreInitializer(IDataInitializationValidator validator,
             IStoreIdentifierGenerator identifierGenerator, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
@@ -38,58 +116,69 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 验证器。
+        /// 初始化验证器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreInitializationValidator"/>。</value>
-        public IStoreInitializationValidator Validator { get; }
+        /// <value>返回 <see cref="IDataInitializationValidator"/>。</value>
+        public IDataInitializationValidator Validator { get; }
 
         /// <summary>
         /// 标识符生成器。
         /// </summary>
+        /// <value>返回 <see cref="IStoreIdentifierGenerator"/>。</value>
         public IStoreIdentifierGenerator IdentifierGenerator { get; }
 
+        /// <summary>
+        /// 时钟。
+        /// </summary>
+        /// <value>返回 <see cref="IClockService"/>。</value>
+        public IClockService Clock
+            => IdentifierGenerator.Clock;
+
 
         /// <summary>
-        /// 需要保存变化。
+        /// 初始化访问器。
         /// </summary>
-        public bool RequiredSaveChanges { get; protected set; }
-
-
-        /// <summary>
-        /// 初始化。
-        /// </summary>
-        /// <param name="stores">给定的 <see cref="IStoreHub"/>。</param>
-        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public virtual void Initialize(IStoreHub stores)
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        public virtual void Initialize(IAccessor accessor)
         {
-            stores.NotNull(nameof(stores));
-
-            // 切换为写入数据连接
-            stores.Accessor.ChangeConnectionString(tenant => tenant.WritingConnectionString);
-
-            // 如果未能成功切换，则直接直接退出
-            if (!stores.Accessor.IsWritingConnectionString())
-                return;
-
-            InitializeCore(stores);
-
-            if (RequiredSaveChanges)
+            if (!Validator.IsInitialized(accessor))
             {
-                stores.Accessor.SaveChanges();
+                InitializeCore(accessor);
 
-                Validator.SetInitialized(stores.Accessor);
-
-                RequiredSaveChanges = false;
-            };
-
-            // 还原为默认数据连接
-            stores.Accessor.ChangeConnectionString(tenant => tenant.DefaultConnectionString);
+                Validator.SetInitialized(accessor);
+            }
         }
+
+        /// <summary>
+        /// 异步初始化访问器。
+        /// </summary>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        public virtual async Task InitializeAsync(IAccessor accessor, CancellationToken cancellationToken = default)
+        {
+            if (!await Validator.IsInitializedAsync(accessor, cancellationToken).ConfigureAwait())
+            {
+                await InitializeCoreAsync(accessor, cancellationToken).ConfigureAwait();
+
+                await Validator.SetInitializedAsync(accessor, cancellationToken).ConfigureAwait();
+            }
+        }
+
 
         /// <summary>
         /// 初始化核心。
         /// </summary>
-        /// <param name="stores">给定的 <see cref="IStoreHub"/>。</param>
-        protected abstract void InitializeCore(IStoreHub stores);
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        protected abstract void InitializeCore(IAccessor accessor);
+
+        /// <summary>
+        /// 异步初始化核心。
+        /// </summary>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <returns>返回 <see cref="Task"/>。</returns>
+        protected abstract Task InitializeCoreAsync(IAccessor accessor, CancellationToken cancellationToken);
+
     }
 }

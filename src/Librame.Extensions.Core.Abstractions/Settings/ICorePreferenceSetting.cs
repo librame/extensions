@@ -45,7 +45,7 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 编译程序集文件扩展名（禁止使用”.dll“扩展名 ）。
+        /// 编译程序集文件扩展名（不推荐使用”.dll“扩展名 ）。
         /// </summary>
         string CompileAssemblyFileExtension { get; }
 

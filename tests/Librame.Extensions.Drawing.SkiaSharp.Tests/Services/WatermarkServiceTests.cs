@@ -23,7 +23,7 @@ namespace Librame.Extensions.Drawing.Tests
             var imageFile = "microsoft_edge.jpg".AsFilePathCombiner(_service.Dependency.ResourceDirectory);
             var saveFile = imageFile.WithFileName("microsoft_edge-watermark.png");
             
-            var succeed = await _service.DrawFileAsync(imageFile, saveFile).ConfigureAndResultAsync();
+            var succeed = await _service.DrawFileAsync(imageFile, saveFile).ConfigureAwait();
             Assert.True(succeed);
         }
 

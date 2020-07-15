@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AssemblyName" xml:space="preserve">
-    <value>程序集名稱</value>
+    <value>程序集名</value>
   </data>
   <data name="Description" xml:space="preserve">
     <value>備注</value>
   </data>
   <data name="EntityName" xml:space="preserve">
-    <value>實體名稱</value>
+    <value>實體名</value>
   </data>
   <data name="IsSharding" xml:space="preserve">
     <value>分表</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>名稱</value>
-  </data>
   <data name="Schema" xml:space="preserve">
     <value>架構</value>
+  </data>
+  <data name="TableName" xml:space="preserve">
+    <value>表名</value>
   </data>
 </root>

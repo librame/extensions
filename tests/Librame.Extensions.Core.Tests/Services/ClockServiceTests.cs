@@ -13,10 +13,10 @@ namespace Librame.Extensions.Core.Tests
         {
             var service = TestServiceProvider.Current.GetRequiredService<IClockService>();
 
-            var now = await service.GetNowAsync().ConfigureAndResultAsync();
+            var now = await service.GetNowAsync().ConfigureAwait();
             Assert.Equal(now.Day, DateTime.UtcNow.Day);
 
-            var nowOffset = await service.GetNowOffsetAsync().ConfigureAndResultAsync();
+            var nowOffset = await service.GetNowOffsetAsync().ConfigureAwait();
             Assert.Equal(nowOffset.Day, DateTimeOffset.UtcNow.Day);
         }
 

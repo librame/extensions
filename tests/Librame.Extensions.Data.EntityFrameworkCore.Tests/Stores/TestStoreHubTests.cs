@@ -11,6 +11,8 @@ namespace Librame.Extensions.Data.Tests
 {
     using Core.Identifiers;
     using Core.Services;
+    using Data.Builders;
+    using System.Collections.Generic;
 
     public class TestStoreHubTests
     {
@@ -46,6 +48,37 @@ namespace Librame.Extensions.Data.Tests
 
             var serviceProvider = services.BuildServiceProvider();
             var stores = serviceProvider.GetRequiredService<TestStoreHub>();
+
+            var audits = stores.GetAudits();
+            Assert.Empty(audits);
+
+            audits = stores.UseWriteDbConnection().GetAudits();
+            Assert.NotEmpty(audits);
+
+            var auditProperties = stores.GetAuditProperties();
+            Assert.Empty(auditProperties);
+
+            auditProperties = stores.UseWriteDbConnection().GetAuditProperties();
+            Assert.NotEmpty(auditProperties);
+
+            var entities = stores.GetEntities();
+            Assert.Empty(entities);
+
+            entities = stores.UseWriteDbConnection().GetEntities();
+            Assert.NotEmpty(entities);
+
+            var migrations = stores.GetMigrations();
+            Assert.Empty(migrations);
+
+            migrations = stores.UseWriteDbConnection().GetMigrations();
+            Assert.NotEmpty(migrations);
+
+            var tenants = stores.GetTenants();
+            Assert.Empty(tenants);
+
+            tenants = stores.UseWriteDbConnection().GetTenants();
+            Assert.NotEmpty(tenants);
+
 
             var categories = stores.GetCategories();
             Assert.Empty(categories);
@@ -92,6 +125,37 @@ namespace Librame.Extensions.Data.Tests
             var serviceProvider = services.BuildServiceProvider();
             var stores = serviceProvider.GetRequiredService<TestStoreHub>();
 
+            var audits = stores.GetAudits();
+            Assert.Empty(audits);
+
+            audits = stores.UseWriteDbConnection().GetAudits();
+            Assert.NotEmpty(audits);
+
+            var auditProperties = stores.GetAuditProperties();
+            Assert.Empty(auditProperties);
+
+            auditProperties = stores.UseWriteDbConnection().GetAuditProperties();
+            Assert.NotEmpty(auditProperties);
+
+            var entities = stores.GetEntities();
+            Assert.Empty(entities);
+
+            entities = stores.UseWriteDbConnection().GetEntities();
+            Assert.NotEmpty(entities);
+
+            var migrations = stores.GetMigrations();
+            Assert.Empty(migrations);
+
+            migrations = stores.UseWriteDbConnection().GetMigrations();
+            Assert.NotEmpty(migrations);
+
+            var tenants = stores.GetTenants();
+            Assert.Empty(tenants);
+
+            tenants = stores.UseWriteDbConnection().GetTenants();
+            Assert.NotEmpty(tenants);
+
+
             var categories = stores.GetCategories();
             Assert.Empty(categories);
 
@@ -121,7 +185,10 @@ namespace Librame.Extensions.Data.Tests
                         = "Data Source=" + dependency.DatabasesConfigDierctory.CombinePath("librame_data_default.db");
                     dependency.Options.DefaultTenant.WritingConnectionString
                         = "Data Source=" + dependency.DatabasesConfigDierctory.CombinePath("librame_data_writing.db");
+
                     dependency.Options.DefaultTenant.WritingSeparation = true;
+                    dependency.Options.DefaultTenant.DataSynchronization = true;
+                    dependency.Options.DefaultTenant.StructureSynchronization = true;
                 })
                 .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
                 {
@@ -135,18 +202,62 @@ namespace Librame.Extensions.Data.Tests
 
             var serviceProvider = services.BuildServiceProvider();
             var stores = serviceProvider.GetRequiredService<TestStoreHub>();
+            var dependency = serviceProvider.GetRequiredService<DataBuilderDependency>();
 
-            var categories = stores.GetCategories();
-            Assert.Empty(categories);
+            //var audits = stores.GetAudits();
+            //VerifyDefaultDbConnectionEntities(dependency, audits);
 
-            categories = stores.UseWriteDbConnection().GetCategories();
-            Assert.NotEmpty(categories);
+            //audits = stores.UseWriteDbConnection().GetAudits();
+            //Assert.NotEmpty(audits);
+
+            //var auditProperties = stores.UseDefaultDbConnection().GetAuditProperties();
+            //VerifyDefaultDbConnectionEntities(dependency, auditProperties);
+
+            //auditProperties = stores.UseWriteDbConnection().GetAuditProperties();
+            //Assert.NotEmpty(auditProperties);
+
+            //var entities = stores.UseDefaultDbConnection().GetEntities();
+            //VerifyDefaultDbConnectionEntities(dependency, entities);
+
+            //entities = stores.UseWriteDbConnection().GetEntities();
+            //Assert.NotEmpty(entities);
+
+            //var migrations = stores.UseDefaultDbConnection().GetMigrations();
+            //VerifyDefaultDbConnectionEntities(dependency, migrations);
+
+            //migrations = stores.UseWriteDbConnection().GetMigrations();
+            //Assert.NotEmpty(migrations);
+
+            //var tenants = stores.UseDefaultDbConnection().GetTenants();
+            //VerifyDefaultDbConnectionEntities(dependency, tenants);
+
+            //tenants = stores.UseWriteDbConnection().GetTenants();
+            //Assert.NotEmpty(tenants);
+
+
+            //var categories = stores.UseDefaultDbConnection().GetCategories();
+            //VerifyDefaultDbConnectionEntities(dependency, categories);
+
+            //categories = stores.UseWriteDbConnection().GetCategories();
+            //Assert.NotEmpty(categories);
 
             var articles = stores.UseDefaultDbConnection().GetArticles();
-            Assert.Empty(articles);
+            if (dependency.Options.DefaultTenant.DataSynchronization)
+                Assert.True(articles.Total >= 0); // 如果已分表，则此表内容可能为空
+            else
+                Assert.True(articles.IsEmpty());
 
             articles = stores.UseWriteDbConnection().GetArticles();
             Assert.True(articles.Total >= 0); // 如果已分表，则此表内容可能为空
+        }
+
+        private void VerifyDefaultDbConnectionEntities<TEntity>(DataBuilderDependency dependency,
+            IEnumerable<TEntity> entities)
+            where TEntity : class
+        {
+            Assert.True(dependency.Options.DefaultTenant.DataSynchronization
+                ? entities.IsNotEmpty()
+                : entities.IsEmpty());
         }
 
     }

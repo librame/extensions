@@ -13,13 +13,13 @@ namespace Librame.Extensions.Storage.Tests
         {
             var service = TestServiceProvider.Current.GetRequiredService<IFilePermissionService>();
 
-            var accessToken = await service.GetAccessTokenAsync().ConfigureAndResultAsync();
+            var accessToken = await service.GetAccessTokenAsync().ConfigureAwait();
             Assert.NotEmpty(accessToken);
 
-            var authorizationCode = await service.GetAuthorizationCodeAsync().ConfigureAndResultAsync();
+            var authorizationCode = await service.GetAuthorizationCodeAsync().ConfigureAwait();
             Assert.NotEmpty(authorizationCode);
 
-            var cookieValue = await service.GetCookieValueAsync().ConfigureAndResultAsync();
+            var cookieValue = await service.GetCookieValueAsync().ConfigureAwait();
             Assert.NotEmpty(cookieValue);
         }
 

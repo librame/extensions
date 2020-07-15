@@ -9,7 +9,7 @@ namespace Librame.Extensions.Examples
     using Data.Stores;
     using Models;
 
-    public class ExampleStoreHub<TAccessor> : DataStoreHub<TAccessor, Guid, int, Guid>
+    public class ExampleStoreHub<TAccessor> : DataStoreHub<TAccessor>
         where TAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
     {
         public ExampleStoreHub(IStoreInitializer initializer, IAccessor accessor)

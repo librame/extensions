@@ -45,7 +45,7 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         public virtual async ValueTask<TValue> ProgressiveCommentCountAsync(CancellationToken cancellationToken = default)
         {
-            CommentCount = await ProgressiveCountAsync(CommentCount, cancellationToken).ConfigureAndResultAsync();
+            CommentCount = await ProgressiveCountAsync(CommentCount, cancellationToken).ConfigureAwait();
             return CommentCount;
         }
 
@@ -56,7 +56,7 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         public virtual async ValueTask<TValue> ProgressiveCommenterCountAsync(CancellationToken cancellationToken = default)
         {
-            CommenterCount = await ProgressiveCountAsync(CommenterCount, cancellationToken).ConfigureAndResultAsync();
+            CommenterCount = await ProgressiveCountAsync(CommenterCount, cancellationToken).ConfigureAwait();
             return CommenterCount;
         }
 

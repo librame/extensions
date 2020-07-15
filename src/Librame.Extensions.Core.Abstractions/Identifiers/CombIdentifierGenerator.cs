@@ -57,9 +57,9 @@ namespace Librame.Extensions.Core.Identifiers
             clock.NotNull(nameof(clock));
 
             var timestampBytes = await GetCurrentTimestampAsync(clock, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 var randomBytes = RandomUtility.GenerateByteArray(10);
                 var guidBytes = new byte[16];
@@ -94,7 +94,7 @@ namespace Librame.Extensions.Core.Identifiers
             CancellationToken cancellationToken = default)
         {
             var now = await clock.GetNowOffsetAsync(cancellationToken: cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             var buffer = BitConverter.GetBytes(now.Ticks / 10000L);
             if (BitConverter.IsLittleEndian)

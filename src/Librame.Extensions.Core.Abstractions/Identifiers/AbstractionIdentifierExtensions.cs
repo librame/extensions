@@ -35,7 +35,7 @@ namespace Librame.Extensions.Core.Identifiers
         {
             identifier.NotNull(nameof(identifier));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => identifier.Id);
+            return cancellationToken.RunOrCancelValueAsync(() => identifier.Id);
         }
 
 
@@ -54,7 +54,7 @@ namespace Librame.Extensions.Core.Identifiers
             identifier.NotNull(nameof(identifier));
             newIdFactory.NotNull(nameof(newIdFactory));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => identifier.Id = newIdFactory.Invoke(identifier.Id));
         }
 
@@ -72,7 +72,7 @@ namespace Librame.Extensions.Core.Identifiers
         {
             identifier.NotNull(nameof(identifier));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => identifier.Id = newId);
         }
 
@@ -91,9 +91,9 @@ namespace Librame.Extensions.Core.Identifiers
             identifier.NotNull(nameof(identifier));
             newIdFactory.NotNull(nameof(newIdFactory));
 
-            var newId = await identifier.GetObjectIdAsync(cancellationToken).ConfigureAndResultAsync();
+            var newId = await identifier.GetObjectIdAsync(cancellationToken).ConfigureAwait();
             return await identifier.SetObjectIdAsync(newIdFactory.Invoke(newId), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
     }

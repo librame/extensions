@@ -26,7 +26,7 @@ namespace Librame.Extensions.Tests
             var test = (TestClass)typeof(TestClass).EnsureCreateObject();
             Assert.NotNull(test);
 
-            var testSub = typeof(TestSubClass).EnsureCreate<TestSubClass>();
+            var testSub = ObjectExtensions.EnsureCreate<TestSubClass>();
             Assert.NotNull(testSub);
 
             Assert.Equal(test.Property3, testSub.Property3);

@@ -22,19 +22,11 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个存储中心。
         /// </summary>
-        /// <param name="initializer">给定的 <see cref="IStoreInitializer"/>。</param>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        protected AbstractStoreHub(IStoreInitializer initializer, IAccessor accessor)
+        protected AbstractStoreHub(IAccessor accessor)
             : base(accessor)
         {
-            Initializer = initializer.NotNull(nameof(initializer));
         }
 
-
-        /// <summary>
-        /// 存储初始化器。
-        /// </summary>
-        /// <value>返回 <see cref="IStoreInitializer"/>。</value>
-        public IStoreInitializer Initializer { get; }
     }
 }

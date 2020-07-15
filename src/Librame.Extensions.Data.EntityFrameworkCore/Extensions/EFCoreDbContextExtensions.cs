@@ -11,9 +11,16 @@
 #endregion
 
 using Librame.Extensions;
+using Librame.Extensions.Data.Accessors;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -71,6 +78,157 @@ namespace Microsoft.EntityFrameworkCore
 
             dbContext.SaveChanges();
         }
+
+
+        #region SaveChangesNow
+
+        /// <summary>
+        /// 立即保存更改。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <returns>返回整数。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static int SaveChangesNow(this DbContextAccessorBase dbContextAccessor,
+            bool acceptAllChangesOnSuccess = true)
+        {
+            var count = SaveChangesNow((DbContext)dbContextAccessor, acceptAllChangesOnSuccess);
+
+            dbContextAccessor.RequiredSaveChanges = false;
+
+            return count;
+        }
+
+        /// <summary>
+        /// 立即保存更改。
+        /// </summary>
+        /// <param name="dbContext">给定的 <see cref="DbContext"/>。</param>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <returns>返回整数。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
+        public static int SaveChangesNow(this DbContext dbContext, bool acceptAllChangesOnSuccess = true)
+        {
+            dbContext.NotNull(nameof(dbContext));
+
+            CheckDisposed(dbContext);
+
+            var dependencies = dbContext.GetService<IDbContextDependencies>();
+
+            dependencies.UpdateLogger.SaveChangesStarting(dbContext);
+
+            TryDetectChanges(dbContext);
+
+            try
+            {
+                var entitiesSaved = dependencies.StateManager.SaveChanges(acceptAllChangesOnSuccess);
+
+                dependencies.UpdateLogger.SaveChangesCompleted(dbContext, entitiesSaved);
+
+                return entitiesSaved;
+            }
+            catch (DbUpdateConcurrencyException exception)
+            {
+                dependencies.UpdateLogger.OptimisticConcurrencyException(dbContext, exception);
+
+                throw;
+            }
+            catch (Exception exception)
+            {
+                dependencies.UpdateLogger.SaveChangesFailed(dbContext, exception);
+
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// 异步立即保存更改。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含整数的异步操作。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static async Task<int> SaveChangesNowAsync(this DbContextAccessorBase dbContextAccessor,
+            bool acceptAllChangesOnSuccess = true, CancellationToken cancellationToken = default)
+        {
+            var count = await SaveChangesNowAsync((DbContext)dbContextAccessor,
+                acceptAllChangesOnSuccess, cancellationToken).ConfigureAwait();
+
+            dbContextAccessor.RequiredSaveChanges = false;
+
+            return count;
+        }
+
+        /// <summary>
+        /// 异步立即保存更改。
+        /// </summary>
+        /// <param name="dbContext">给定的 <see cref="DbContext"/>。</param>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含整数的异步操作。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
+        public static async Task<int> SaveChangesNowAsync(this DbContext dbContext,
+            bool acceptAllChangesOnSuccess = true, CancellationToken cancellationToken = default)
+        {
+            dbContext.NotNull(nameof(dbContext));
+
+            CheckDisposed(dbContext);
+
+            var dependencies = dbContext.GetService<IDbContextDependencies>();
+
+            dependencies.UpdateLogger.SaveChangesStarting(dbContext);
+
+            TryDetectChanges(dbContext);
+
+            try
+            {
+                var entitiesSaved = await dependencies.StateManager
+                    .SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)
+                    .ConfigureAwait();
+
+                dependencies.UpdateLogger.SaveChangesCompleted(dbContext, entitiesSaved);
+
+                return entitiesSaved;
+            }
+            catch (DbUpdateConcurrencyException exception)
+            {
+                dependencies.UpdateLogger.OptimisticConcurrencyException(dbContext, exception);
+
+                throw;
+            }
+            catch (Exception exception)
+            {
+                dependencies.UpdateLogger.SaveChangesFailed(dbContext, exception);
+
+                throw;
+            }
+        }
+
+        private static void CheckDisposed(DbContext dbContext)
+        {
+            var disposed = (bool)typeof(DbContext)
+                .GetField("_disposed", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(dbContext);
+
+            if (disposed)
+            {
+                throw new ObjectDisposedException(dbContext.GetType().ShortDisplayName(),
+                    CoreStrings.ContextDisposed);
+            }
+        }
+
+        private static void TryDetectChanges(DbContext dbContext)
+        {
+            if (dbContext.ChangeTracker.AutoDetectChangesEnabled)
+            {
+                dbContext.ChangeTracker.DetectChanges();
+            }
+        }
+
+        #endregion
 
     }
 }

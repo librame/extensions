@@ -24,7 +24,7 @@ namespace Librame.Extensions.Storage.Tests
             var filePath = @"d:\baidu_jgylogo3.gif";
             File.Delete(filePath);
 
-            var combiner = await _fileTransfer.DownloadFileAsync(url, filePath).ConfigureAndResultAsync();
+            var combiner = await _fileTransfer.DownloadFileAsync(url, filePath).ConfigureAwait();
             Assert.NotNull(combiner);
             Assert.True(combiner.Exists());
 

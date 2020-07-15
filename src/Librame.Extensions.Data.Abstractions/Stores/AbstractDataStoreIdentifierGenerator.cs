@@ -50,7 +50,7 @@ namespace Librame.Extensions.Data.Stores
         public override async Task<TId> GenerateIdAsync(string idName, CancellationToken cancellationToken = default)
         {
             var id = await Generator.GenerateAsync(Clock, cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
 
             Logger.LogTrace($"Generate {idName}: {id}");
 

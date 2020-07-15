@@ -55,7 +55,7 @@ namespace Librame.Extensions.Data.Mappers
         public static Dictionary<string, TypeParameterMapping> ParseAsDictionary(Type accessorTypeImplementation,
             out TypeParameterMapping accessorMapping)
         {
-            var accessorTypeDefinition = typeof(IDbContextAccessor<,,,,>);
+            var accessorTypeDefinition = typeof(IDataAccessor<,,,,>);
 
             // 因访问器默认服务类型为 IAccessor，所以不强制实现访问器泛型类型定义
             if (!accessorTypeImplementation.IsImplementedInterface(accessorTypeDefinition, out var resultType))

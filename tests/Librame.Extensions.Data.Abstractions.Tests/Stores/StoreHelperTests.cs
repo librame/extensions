@@ -20,7 +20,7 @@ namespace Librame.Extensions.Data.Tests
             Thread.Sleep(1000);
 
             await entity.PopulateCreationAsync(new TestClockService(),
-                StoreHelper.CreatedByTypeName<StoreHelperTests>()).ConfigureAndResultAsync();
+                StoreHelper.CreatedByTypeName<StoreHelperTests>()).ConfigureAwait();
 
             Assert.NotEqual(createdBy, entity.CreatedBy);
             Assert.NotEqual(createdTime, entity.CreatedTime);

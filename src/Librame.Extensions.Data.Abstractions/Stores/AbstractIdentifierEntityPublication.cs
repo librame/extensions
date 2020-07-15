@@ -130,7 +130,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含排名（兼容整数、单双精度的排序字段）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectRankAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)Rank);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)Rank);
 
         /// <summary>
         /// 异步获取对象状态。
@@ -138,7 +138,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含状态（兼容不支持枚举类型的实体框架）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectStatusAsync(CancellationToken cancellationToken = default)
-            => cancellationToken.RunFactoryOrCancellationValueAsync(() => (object)Status);
+            => cancellationToken.RunOrCancelValueAsync(() => (object)Status);
 
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewRank = newRank.CastTo<object, TRank>(nameof(newRank));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 Rank = realNewRank;
                 return newRank;
@@ -168,7 +168,7 @@ namespace Librame.Extensions.Data.Stores
         {
             var realNewStatus = newStatus.CastTo<object, TStatus>(nameof(newStatus));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 Status = realNewStatus;
                 return newStatus;

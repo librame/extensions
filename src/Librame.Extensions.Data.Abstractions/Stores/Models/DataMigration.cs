@@ -25,7 +25,8 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据迁移")]
-    public class DataMigration<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>, IEquatable<DataMigration<TGenId, TCreatedBy>>
+    public class DataMigration<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>,
+        IEquatable<DataMigration<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
@@ -77,14 +78,14 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => ToString().CompatibleGetHashCode();
+            => Id.ToString().CompatibleGetHashCode();
 
 
         /// <summary>
-        /// 转换为字符串。
+        /// 将模型散列转换为字符串。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => ModelHash;
+            => $"{nameof(Id)}={Id};{nameof(ModelHash)}={ModelHash};{nameof(ModelSnapshotName)}={ModelSnapshotName}";
     }
 }

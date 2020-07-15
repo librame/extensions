@@ -55,7 +55,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                     var webSocketHandler = handler.CastTo<IChannelHandler,
                         WebSocketClientHandler>(nameof(handler));
 
-                    await webSocketHandler.HandshakeCompletion.ConfigureAndWaitAsync();
+                    await webSocketHandler.HandshakeCompletion.ConfigureAwait();
 
                     Logger.LogInformation("WebSocket handshake completed.\n");
                     Logger.LogInformation($"\t[{_clientOptions.ExitCommand}]:Quit \n\t [ping]:Send ping frame\n\t Enter any text and Enter: Send text frame");
@@ -72,7 +72,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
 
                 return new WebSocketClientHandler(this, handshaker);
             },
-            _configureProcess, host, port).ConfigureAndWaitAsync();
+            _configureProcess, host, port).ConfigureAwait();
         }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
@@ -111,7 +111,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                 var channel = await WrapperFactory
                     .CreateTcp(_clientOptions.UseLibuv, out group)
                     .AddWebSocketHandler(tlsCertificate, webSocketHandler)
-                    .ConnectAsync(endPoint, _clientOptions.RetryCount).ConfigureAndResultAsync();
+                    .ConnectAsync(endPoint, _clientOptions.RetryCount).ConfigureAwait();
 
                 Logger.LogInformation($"Connect ip end point: {endPoint}");
 
@@ -124,7 +124,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             finally
             {
                 await group.ShutdownGracefullyAsync(_clientOptions.QuietPeriod,
-                    _clientOptions.TimeOut).ConfigureAndWaitAsync();
+                    _clientOptions.TimeOut).ConfigureAwait();
             }
         }
 

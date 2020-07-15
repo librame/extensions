@@ -39,7 +39,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static void ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-            (this ModelBuilder modelBuilder, DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> accessor)
+            (this ModelBuilder modelBuilder, DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> accessor)
             where TAudit : DataAudit<TGenId, TCreatedBy>
             where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
             where TEntity : DataEntity<TGenId, TCreatedBy>
@@ -99,17 +99,17 @@ namespace Librame.Extensions.Data.Accessors
                 
                 b.HasKey(k => k.Id);
                 
-                b.HasIndex(i => new { i.EntityTypeName, i.State }).HasName();
+                b.HasIndex(i => new { i.TableName, i.EntityId, i.State }).HasName().IsUnique();
 
                 if (maxLength > 0)
                 {
                     b.Property(p => p.Id).HasMaxLength(maxLength);
-                    b.Property(p => p.EntityId).HasMaxLength(maxLength);
-                    b.Property(p => p.TableName).HasMaxLength(maxLength);
+                    b.Property(p => p.EntityId).HasMaxLength(maxLength).IsRequired();
+                    b.Property(p => p.TableName).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.StateName).HasMaxLength(maxLength);
 
                     // 在 MySQL 中如果长度超出 255 会被转换为不能作为主键或唯一性约束 的 BLOB/TEXT 类型
-                    b.Property(p => p.EntityTypeName).HasMaxLength(maxLength).IsRequired();
+                    b.Property(p => p.EntityTypeName).HasMaxLength(maxLength);
                 }
             });
 
@@ -157,13 +157,13 @@ namespace Librame.Extensions.Data.Accessors
 
                 b.HasKey(k => k.Id);
 
-                b.HasIndex(i => new { i.Schema, i.Name }).HasName().IsUnique();
+                b.HasIndex(i => new { i.Schema, i.TableName }).HasName().IsUnique();
 
                 if (maxLength > 0)
                 {
                     b.Property(p => p.Id).HasMaxLength(maxLength);
                     b.Property(p => p.Schema).HasMaxLength(maxLength).IsRequired();
-                    b.Property(p => p.Name).HasMaxLength(maxLength).IsRequired();
+                    b.Property(p => p.TableName).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.EntityName).HasMaxLength(maxLength);
                     b.Property(p => p.AssemblyName).HasMaxLength(maxLength);
                     b.Property(p => p.Description).HasMaxLength(maxLength);

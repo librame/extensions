@@ -57,26 +57,43 @@ namespace Librame.Extensions.Data.Services
 
 
         /// <summary>
-        /// 获取切换的租户。
+        /// 获取当前租户。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
         /// <returns>返回 <see cref="ITenant"/>。</returns>
-        public virtual ITenant GetSwitchTenant(IAccessor accessor)
+        public virtual ITenant GetCurrentTenant(IAccessor accessor)
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
-                return GetSwitchTenantCore(dbContextAccessor);
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+                return GetCurrentTenantCore(dbContextAccessor);
 
             return null;
         }
 
         /// <summary>
-        /// 获取切换的租户核心。
+        /// 异步获取当前租户。
+        /// </summary>
+        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="ITenant"/> 的异步操作。</returns>
+        public virtual Task<ITenant> GetCurrentTenantAsync(IAccessor accessor, CancellationToken cancellationToken = default)
+        {
+            accessor.NotNull(nameof(accessor));
+
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+                return GetCurrentTenantCoreAsync(dbContextAccessor, cancellationToken);
+
+            return Task.FromResult((ITenant)null);
+        }
+
+
+        /// <summary>
+        /// 获取当前租户核心。
         /// </summary>
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <returns>返回 <see cref="ITenant"/>。</returns>
-        protected virtual ITenant GetSwitchTenantCore(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+        protected virtual ITenant GetCurrentTenantCore(DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
             // 默认不切换
             var defaultTenant = Options.DefaultTenant;
@@ -85,33 +102,16 @@ namespace Librame.Extensions.Data.Services
             return defaultTenant;
         }
 
-
         /// <summary>
-        /// 异步获取切换的租户。
-        /// </summary>
-        /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="ITenant"/> 的异步操作。</returns>
-        public virtual Task<ITenant> GetSwitchTenantAsync(IAccessor accessor, CancellationToken cancellationToken = default)
-        {
-            accessor.NotNull(nameof(accessor));
-
-            if (accessor is DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
-                return GetSwitchTenantCoreAsync(dbContextAccessor, cancellationToken);
-
-            return Task.FromResult((ITenant)null);
-        }
-
-        /// <summary>
-        /// 异步获取切换的租户核心。
+        /// 异步获取当前租户核心。
         /// </summary>
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <see cref="Task{ITenant}"/>。</returns>
-        protected virtual Task<ITenant> GetSwitchTenantCoreAsync(DbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
-            CancellationToken cancellationToken = default)
+        protected virtual Task<ITenant> GetCurrentTenantCoreAsync(DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+            CancellationToken cancellationToken)
         {
-            return cancellationToken.RunFactoryOrCancellationAsync(() =>
+            return cancellationToken.RunOrCancelAsync(() =>
             {
                 // 默认不切换
                 var defaultTenant = Options.DefaultTenant;

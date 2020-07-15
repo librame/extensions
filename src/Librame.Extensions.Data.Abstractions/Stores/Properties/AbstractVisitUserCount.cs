@@ -45,7 +45,7 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         public virtual async ValueTask<TValue> ProgressiveVisitCountAsync(CancellationToken cancellationToken = default)
         {
-            VisitCount = await ProgressiveCountAsync(VisitCount, cancellationToken).ConfigureAndResultAsync();
+            VisitCount = await ProgressiveCountAsync(VisitCount, cancellationToken).ConfigureAwait();
             return VisitCount;
         }
 
@@ -56,7 +56,7 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         public virtual async ValueTask<TValue> ProgressiveVisitorCountAsync(CancellationToken cancellationToken = default)
         {
-            VisitorCount = await ProgressiveCountAsync(VisitorCount, cancellationToken).ConfigureAndResultAsync();
+            VisitorCount = await ProgressiveCountAsync(VisitorCount, cancellationToken).ConfigureAwait();
             return VisitorCount;
         }
 

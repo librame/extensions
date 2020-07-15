@@ -36,7 +36,7 @@ namespace Librame.Extensions.Core.Mediators
             async Task PublishAsync()
             {
                 foreach (var factory in factories)
-                    await factory.Invoke().ConfigureAndWaitAsync();
+                    await factory.Invoke().ConfigureAwait();
             }
         }
 

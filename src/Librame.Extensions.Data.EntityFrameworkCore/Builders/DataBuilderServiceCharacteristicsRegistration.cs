@@ -21,6 +21,7 @@ namespace Librame.Extensions.Data.Builders
     using Data.Protectors;
     using Data.Services;
     using Data.Stores;
+    using Data.Validators;
 
     /// <summary>
     /// <see cref="IDataBuilder"/> 服务特征注册。
@@ -62,8 +63,11 @@ namespace Librame.Extensions.Data.Builders
                 // Stores
                 { typeof(IStoreHub), ServiceCharacteristics.Scoped() },
                 { typeof(IStoreIdentifierGenerator), ServiceCharacteristics.Singleton() },
-                { typeof(IStoreInitializer), ServiceCharacteristics.Scoped() },
-                { typeof(IStoreInitializationValidator), ServiceCharacteristics.Scoped() }
+                { typeof(IStoreInitializer), ServiceCharacteristics.Singleton() },
+
+                // Validators
+                { typeof(IDatabaseCreationValidator), ServiceCharacteristics.Singleton() },
+                { typeof(IDataInitializationValidator), ServiceCharacteristics.Singleton() }
             };
         }
 

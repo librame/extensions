@@ -80,7 +80,7 @@ namespace Librame.Extensions.Core.Utilities
 
         private static Assembly[] InitializeAssemblies()
         {
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 return AppDomain.CurrentDomain.GetAssemblies();
             });
@@ -88,7 +88,7 @@ namespace Librame.Extensions.Core.Utilities
 
         private static Assembly[] InitializeAssembliesWithoutSystem()
         {
-            return ExtensionSettings.Preference.RunLockerResult(() =>
+            return ExtensionSettings.Preference.RunLocker(() =>
             {
                 return CurrentAssemblies.Where(WithoutSystemAssembly).ToArray();
             });

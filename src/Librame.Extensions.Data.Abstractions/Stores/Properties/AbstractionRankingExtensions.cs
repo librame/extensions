@@ -35,7 +35,7 @@ namespace Librame.Extensions.Data.Stores
         {
             ranking.NotNull(nameof(ranking));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => ranking.Rank);
+            return cancellationToken.RunOrCancelValueAsync(() => ranking.Rank);
         }
 
 
@@ -54,7 +54,7 @@ namespace Librame.Extensions.Data.Stores
             ranking.NotNull(nameof(ranking));
             newRankFactory.NotNull(nameof(newRankFactory));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => ranking.Rank = newRankFactory.Invoke(ranking.Rank));
         }
 
@@ -72,7 +72,7 @@ namespace Librame.Extensions.Data.Stores
         {
             ranking.NotNull(nameof(ranking));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => ranking.Rank = newRank);
         }
 
@@ -91,9 +91,9 @@ namespace Librame.Extensions.Data.Stores
             ranking.NotNull(nameof(ranking));
             newRankFactory.NotNull(nameof(newRankFactory));
 
-            var newRank = await ranking.GetObjectRankAsync(cancellationToken).ConfigureAndResultAsync();
+            var newRank = await ranking.GetObjectRankAsync(cancellationToken).ConfigureAwait();
             return await ranking.SetObjectRankAsync(newRankFactory.Invoke(newRank), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
     }

@@ -35,7 +35,7 @@ namespace Librame.Extensions.Data.Stores
         {
             lockout.NotNull(nameof(lockout));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() => lockout.LockoutEnd);
+            return cancellationToken.RunOrCancelValueAsync(() => lockout.LockoutEnd);
         }
 
 
@@ -54,7 +54,7 @@ namespace Librame.Extensions.Data.Stores
             lockout.NotNull(nameof(lockout));
             newLockoutFactory.NotNull(nameof(newLockoutFactory));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(()
+            return cancellationToken.RunOrCancelValueAsync(()
                 => newLockoutFactory.Invoke(lockout.LockoutEnd));
         }
 
@@ -72,7 +72,7 @@ namespace Librame.Extensions.Data.Stores
         {
             lockout.NotNull(nameof(lockout));
 
-            return cancellationToken.RunFactoryOrCancellationValueAsync(() =>
+            return cancellationToken.RunOrCancelValueAsync(() =>
             {
                 lockout.LockoutEnd = newLockoutEnd;
                 return newLockoutEnd;
@@ -94,9 +94,9 @@ namespace Librame.Extensions.Data.Stores
             lockout.NotNull(nameof(lockout));
             newLockoutEndFactory.NotNull(nameof(newLockoutEndFactory));
 
-            var newLockoutEnd = await lockout.GetObjectLockoutEndAsync(cancellationToken).ConfigureAndResultAsync();
+            var newLockoutEnd = await lockout.GetObjectLockoutEndAsync(cancellationToken).ConfigureAwait();
             return await lockout.SetObjectLockoutEndAsync(newLockoutEndFactory.Invoke(newLockoutEnd), cancellationToken)
-                .ConfigureAndResultAsync();
+                .ConfigureAwait();
         }
 
     }

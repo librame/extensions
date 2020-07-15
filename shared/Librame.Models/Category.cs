@@ -4,6 +4,7 @@ using System.ComponentModel;
 
 namespace Librame.Models
 {
+    using Extensions;
     using Extensions.Data.Stores;
 
     [Description("分类")]
@@ -18,7 +19,18 @@ namespace Librame.Models
             = new List<Article<TGenId, TIncremId, TCreatedBy>>();
 
 
+        public bool Equals(Category<TIncremId, TGenId, TCreatedBy> other)
+            => Name == other?.Name;
+
+        public override bool Equals(object obj)
+            => obj is Category<TIncremId, TGenId, TCreatedBy> other && Equals(other);
+
+
+        public override int GetHashCode()
+            => ToString().CompatibleGetHashCode();
+
+
         public override string ToString()
-            => $"{nameof(Name)}={Name},{nameof(Id)}={Id}";
+            => Name;
     }
 }

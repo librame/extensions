@@ -41,7 +41,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.6.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.7.1" />
     <PackageReference Include="System.Security.Cryptography.Cng" Version="4.7.0" />
   </ItemGroup>
 

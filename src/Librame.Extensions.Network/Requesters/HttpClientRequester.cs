@@ -59,9 +59,9 @@ namespace Librame.Extensions.Network.Requesters
         public override async Task<byte[]> GetResponseBytesAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
-            var message = await GetResponseMessage(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAndResultAsync();
+            var message = await GetResponseMessage(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAwait();
 
-            var buffer = await message.Content.ReadAsByteArrayAsync().ConfigureAndResultAsync();
+            var buffer = await message.Content.ReadAsByteArrayAsync().ConfigureAwait();
             if (buffer.IsNotEmpty())
                 return ByteCodec.Decode(buffer, enableCodec);
 
@@ -80,7 +80,7 @@ namespace Librame.Extensions.Network.Requesters
         public override async Task<string> GetResponseStringAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
-            var buffer = await GetResponseBytesAsync(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAndResultAsync();
+            var buffer = await GetResponseBytesAsync(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAwait();
 
             if (buffer.IsNotEmpty())
                 return buffer.AsEncodingString(Encoding);
@@ -100,8 +100,8 @@ namespace Librame.Extensions.Network.Requesters
         public override async Task<Stream> GetResponseStreamAsync(Uri uri, string postData = null,
             bool enableCodec = false, RequestParameters parameters = default, CancellationToken cancellationToken = default)
         {
-            var message = await GetResponseMessage(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAndResultAsync();
-            return await message.Content.ReadAsStreamAsync().ConfigureAndResultAsync();
+            var message = await GetResponseMessage(uri, postData, enableCodec, parameters, cancellationToken).ConfigureAwait();
+            return await message.Content.ReadAsStreamAsync().ConfigureAwait();
         }
 
 
@@ -164,14 +164,14 @@ namespace Librame.Extensions.Network.Requesters
                     var buffer = ByteCodec.EncodeStringAsBytes(postData, enableCodec);
                     var content = new ByteArrayContent(buffer);
 
-                    responseMessage = await client.PostAsync(uri, content, cancellationToken).ConfigureAndResultAsync();
+                    responseMessage = await client.PostAsync(uri, content, cancellationToken).ConfigureAwait();
 
                     Logger.LogDebug($"Send data: {postData}");
                     Logger.LogDebug($"Enable codec: {enableCodec}");
                 }
                 else
                 {
-                    responseMessage = await client.GetAsync(uri, cancellationToken).ConfigureAndResultAsync();
+                    responseMessage = await client.GetAsync(uri, cancellationToken).ConfigureAwait();
                 }
 
                 return responseMessage;

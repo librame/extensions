@@ -22,6 +22,7 @@ namespace Librame.Extensions.Data.Builders
     using Data.Mediators;
     using Data.Protectors;
     using Data.Stores;
+    using Data.Validators;
 
     /// <summary>
     /// 数据构建器。
@@ -64,7 +65,8 @@ namespace Librame.Extensions.Data.Builders
             AddService<IPrivacyDataProtector, PrivacyDataProtector>();
 
             // Stores
-            AddService<IStoreInitializationValidator, StoreInitializationValidator>();
+            AddService<IDatabaseCreationValidator, DatabaseCreationValidator>();
+            AddService<IDataInitializationValidator, DataInitializationValidator>();
         }
 
 
@@ -135,7 +137,7 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 添加存储中心。
         /// </summary>
-        /// <typeparam name="THub">指定实现 <see cref="IStoreHub"/> 接口的存储中心类型，推荐从 <see cref="AbstractStoreHub"/> 派生，可选实现 <see cref="IDataStoreHub{TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant}"/> 接口。</typeparam>
+        /// <typeparam name="THub">指定实现 <see cref="IStoreHub"/> 接口的存储中心类型，推荐从 <see cref="DataStoreHub{TAccessor}"/> 派生。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public virtual IDataBuilder AddStoreHub<THub>()
             where THub : class, IStoreHub
@@ -148,7 +150,7 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 添加存储标识符生成器。
         /// </summary>
-        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentifierGenerator"/> 接口的存储标识符类型，推荐从 <see cref="AbstractDataStoreIdentifierGenerator{TGenId}"/> 派生。</typeparam>
+        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentifierGenerator"/> 接口的存储标识符类型，推荐使用 <see cref="GuidDataStoreIdentifierGenerator"/>。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public virtual IDataBuilder AddStoreIdentifierGenerator<TGenerator>()
             where TGenerator : class, IStoreIdentifierGenerator
@@ -160,7 +162,7 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 添加存储初始化器。
         /// </summary>
-        /// <typeparam name="TInitializer">指定实现 <see cref="IStoreInitializer"/> 接口的初始化器类型，推荐从 <see cref="AbstractDataStoreInitializer{TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy}"/> 派生。</typeparam>
+        /// <typeparam name="TInitializer">指定实现 <see cref="IStoreInitializer"/> 接口的初始化器类型，推荐从 <see cref="DataStoreInitializer{TAccessor}"/> 派生。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public virtual IDataBuilder AddStoreInitializer<TInitializer>()
             where TInitializer : class, IStoreInitializer

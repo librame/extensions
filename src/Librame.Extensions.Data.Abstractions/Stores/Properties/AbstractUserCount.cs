@@ -57,7 +57,7 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         public virtual async ValueTask<TValue> ProgressiveSupporterCountAsync(CancellationToken cancellationToken = default)
         {
-            SupporterCount = await ProgressiveCountAsync(SupporterCount, cancellationToken).ConfigureAndResultAsync();
+            SupporterCount = await ProgressiveCountAsync(SupporterCount, cancellationToken).ConfigureAwait();
             return SupporterCount;
         }
 
@@ -68,7 +68,7 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         public virtual async ValueTask<TValue> ProgressiveObjectorCountAsync(CancellationToken cancellationToken = default)
         {
-            ObjectorCount = await ProgressiveCountAsync(ObjectorCount, cancellationToken).ConfigureAndResultAsync();
+            ObjectorCount = await ProgressiveCountAsync(ObjectorCount, cancellationToken).ConfigureAwait();
             return ObjectorCount;
         }
 
@@ -79,7 +79,7 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         public virtual async ValueTask<TValue> ProgressiveFavoriteCountAsync(CancellationToken cancellationToken = default)
         {
-            FavoriteCount = await ProgressiveCountAsync(FavoriteCount, cancellationToken).ConfigureAndResultAsync();
+            FavoriteCount = await ProgressiveCountAsync(FavoriteCount, cancellationToken).ConfigureAwait();
             return FavoriteCount;
         }
 
@@ -90,7 +90,7 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         public virtual async ValueTask<TValue> ProgressiveRetweetCountAsync(CancellationToken cancellationToken = default)
         {
-            RetweetCount = await ProgressiveCountAsync(RetweetCount, cancellationToken).ConfigureAndResultAsync();
+            RetweetCount = await ProgressiveCountAsync(RetweetCount, cancellationToken).ConfigureAwait();
             return RetweetCount;
         }
 

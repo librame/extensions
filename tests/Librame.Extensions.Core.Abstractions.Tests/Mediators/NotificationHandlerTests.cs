@@ -21,7 +21,7 @@ namespace Librame.Extensions.Core.Tests
             {
                 Message = "Ping"
             })
-            .ConfigureAndWaitAsync();
+            .ConfigureAwait();
 
             Assert.Contains("Ping Pong", builder.ToString());
         }

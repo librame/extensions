@@ -58,7 +58,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                         bootstrap.Option(ChannelOption.SoBroadcast, true);
                     })
                     .AddQuoteOfTheMomentHandler(channelHandler)
-                    .BindAsync(IPEndPoint.MinPort).ConfigureAndResultAsync();
+                    .BindAsync(IPEndPoint.MinPort).ConfigureAwait();
 
                 configureProcess.Invoke(channel);
             }
@@ -69,7 +69,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             finally
             {
                 await group.ShutdownGracefullyAsync(_clientOptions.QuietPeriod,
-                    _clientOptions.TimeOut).ConfigureAndWaitAsync();
+                    _clientOptions.TimeOut).ConfigureAwait();
             }
         }
 

@@ -63,9 +63,9 @@ namespace Librame.Extensions.Core.Utilities
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         public static async Task RunTaskAsync(Action action, CancellationToken cancellationToken = default)
         {
-            await _semaphore.Value.WaitAsync(cancellationToken).ConfigureAndWaitAsync();
+            await _semaphore.Value.WaitAsync(cancellationToken).ConfigureAwait();
 
-            await cancellationToken.RunActionOrCancellationAsync(action).ConfigureAndWaitAsync();
+            await cancellationToken.RunOrCancelAsync(action).ConfigureAwait();
 
             _semaphore.Value.Release();
         }
@@ -80,9 +80,9 @@ namespace Librame.Extensions.Core.Utilities
         public static async Task<TResult> RunTaskAsync<TResult>(Func<TResult> func,
             CancellationToken cancellationToken = default)
         {
-            await _semaphore.Value.WaitAsync(cancellationToken).ConfigureAndWaitAsync();
+            await _semaphore.Value.WaitAsync(cancellationToken).ConfigureAwait();
 
-            var value = await cancellationToken.RunFactoryOrCancellationAsync(func).ConfigureAndResultAsync();
+            var value = await cancellationToken.RunOrCancelAsync(func).ConfigureAwait();
 
             _semaphore.Value.Release();
 
@@ -98,9 +98,9 @@ namespace Librame.Extensions.Core.Utilities
         /// <returns>返回 <see cref="ValueTask"/>。</returns>
         public static async ValueTask RunValueTaskAsync(Action action, CancellationToken cancellationToken = default)
         {
-            await _semaphore.Value.WaitAsync(cancellationToken).ConfigureAndWaitAsync();
+            await _semaphore.Value.WaitAsync(cancellationToken).ConfigureAwait();
 
-            await cancellationToken.RunActionOrCancellationValueAsync(action).ConfigureAndWaitAsync();
+            await cancellationToken.RunOrCancelValueAsync(action).ConfigureAwait();
 
             _semaphore.Value.Release();
         }
@@ -115,9 +115,9 @@ namespace Librame.Extensions.Core.Utilities
         public static async ValueTask<TResult> RunValueTaskAsync<TResult>(Func<TResult> func,
             CancellationToken cancellationToken = default)
         {
-            await _semaphore.Value.WaitAsync(cancellationToken).ConfigureAndWaitAsync();
+            await _semaphore.Value.WaitAsync(cancellationToken).ConfigureAwait();
 
-            var value = await cancellationToken.RunFactoryOrCancellationValueAsync(func).ConfigureAndResultAsync();
+            var value = await cancellationToken.RunOrCancelValueAsync(func).ConfigureAwait();
 
             _semaphore.Value.Release();
 

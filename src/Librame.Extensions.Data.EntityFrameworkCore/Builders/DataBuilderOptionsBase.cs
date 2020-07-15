@@ -92,7 +92,7 @@ namespace Librame.Extensions.Data.Builders
             = true;
 
         /// <summary>
-        /// 使用 <see cref="IStoreInitializer"/> 进行数据初始化（默认已启用）。
+        /// 使用 <see cref="IStoreInitializer"/> 进行初始化（默认已启用）。
         /// </summary>
         public bool UseInitializer { get; set; }
             = true;
@@ -104,28 +104,47 @@ namespace Librame.Extensions.Data.Builders
         public Func<DbContextOptions, string> OptionsExtensionConnectionStringFactory { get; set; }
             = options => options.Extensions.OfType<RelationalOptionsExtension>().First().ConnectionString;
 
-        /// <summary>
-        /// 改变数据库连接的后置动作（默认调用 <see cref="DbContextAccessorBase.Migrate()"/>）。
-        /// </summary>
-        [Newtonsoft.Json.JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public Action<DbContextAccessorBase> PostChangedDbConnectionAction { get; set; }
-            = accessor => accessor.Migrate();
 
         /// <summary>
-        /// 创建数据库的后置动作（默认调用 <see cref="PostChangedDbConnectionAction"/>）。
+        /// 已创建数据库的后置动作（默认调用 <see cref="DbContextAccessorBase.Migrate()"/>）。
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public Action<DbContextAccessorBase> PostDatabaseCreatedAction { get; set; }
-            = accessor => accessor.Dependency.Options.PostChangedDbConnectionAction?.Invoke(accessor);
+
+        /// <summary>
+        /// 已更改数据库的后置动作（默认调用 <see cref="DbContextAccessorBase.Migrate()"/>）。
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Action<DbContextAccessorBase> PostDatabaseChangedAction { get; set; }
+
+        /// <summary>
+        /// 已切换租户的后置动作。
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Action<DbContextAccessorBase> PostTenantSwitchedAction { get; set; }
+
+        /// <summary>
+        /// 已迁移的后置动作。
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Action<DbContextAccessorBase> PostMigratedAction { get; set; }
+
+        /// <summary>
+        /// 保存更改的后置动作。
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Action<DbContextAccessorBase> PostSaveChangesAction { get; set; }
 
 
         /// <summary>
-        /// 审计实体状态数组（默认对实体的增加、修改、删除状态进行审核）。
+        /// 审计实体状态数组（默认为空表示对除 <see cref="EntityState.Unchanged"/> 外的所有实体状态进行审核）。
         /// </summary>
         public IReadOnlyList<EntityState> AuditEntityStates { get; set; }
-            = new List<EntityState> { EntityState.Added, EntityState.Modified, EntityState.Deleted };
 
         /// <summary>
         /// 迁移程序集引用列表。

@@ -18,18 +18,25 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Accessors
 {
     using Core.Services;
-    using Data.Stores;
     using Data.Services;
+    using Data.Validators;
 
     /// <summary>
     /// 访问器接口。
     /// </summary>
-    public interface IAccessor : ISaveChanges, IInfrastructureService, IDisposable
+    public interface IAccessor : ISaveChanges, IMultiTenancy, IMigration, IInfrastructureService, IDisposable
     {
         /// <summary>
         /// 时钟服务。
         /// </summary>
+        /// <value>返回 <see cref="IClockService"/>。</value>
         IClockService Clock { get; }
+
+        /// <summary>
+        /// 数据库创建验证器。
+        /// </summary>
+        /// <value>返回 <see cref="IDatabaseCreationValidator"/>。</value>
+        IDatabaseCreationValidator CreationValidator { get; }
 
 
         /// <summary>
@@ -41,43 +48,6 @@ namespace Librame.Extensions.Data.Accessors
         /// 当前类型。
         /// </summary>
         Type CurrentType { get; }
-
-        /// <summary>
-        /// 当前租户。
-        /// </summary>
-        /// <value>返回 <see cref="ITenant"/>。</value>
-        ITenant CurrentTenant { get; }
-
-        /// <summary>
-        /// 当前连接字符串。
-        /// </summary>
-        string CurrentConnectionString { get; }
-
-
-        /// <summary>
-        /// 是当前连接字符串。
-        /// </summary>
-        /// <param name="connectionString">给定的连接字符串。</param>
-        /// <returns>返回布尔值。</returns>
-        bool IsCurrentConnectionString(string connectionString);
-
-        /// <summary>
-        /// 是默认连接字符串（未启用读写分离也将被视为默认连接字符串）。
-        /// </summary>
-        /// <returns>返回布尔值。</returns>
-        bool IsDefaultConnectionString();
-
-        /// <summary>
-        /// 是写入连接字符串（未启用读写分离也将被视为写入连接字符串）。
-        /// </summary>
-        /// <returns>返回布尔值。</returns>
-        bool IsWritingConnectionString();
-
-        /// <summary>
-        /// 获取当前数据连接字符串标签（用于表示当前是 <see cref="ITenant.DefaultConnectionString"/> 还是 <see cref="ITenant.WritingConnectionString"/>）。
-        /// </summary>
-        /// <returns>返回字符串。</returns>
-        string GetCurrentConnectionStringTag();
 
 
         /// <summary>
@@ -96,35 +66,5 @@ namespace Librame.Extensions.Data.Accessors
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响行数的异步操作。</returns>
         Task<int> ExecuteSqlRawAsync(string sql, IEnumerable<object> parameters, CancellationToken cancellationToken = default);
-
-
-        /// <summary>
-        /// 迁移。
-        /// </summary>
-        void Migrate();
-
-        /// <summary>
-        /// 异步迁移。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回 <see cref="Task"/>。</returns>
-        Task MigrateAsync(CancellationToken cancellationToken = default);
-
-
-        /// <summary>
-        /// 改变连接字符串。
-        /// </summary>
-        /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
-        /// <returns>返回已改变的布尔值。</returns>
-        bool ChangeConnectionString(Func<ITenant, string> changeConnectionStringFactory);
-
-        /// <summary>
-        /// 异步改变连接字符串。
-        /// </summary>
-        /// <param name="changeConnectionStringFactory">给定改变租户数据库连接的工厂方法。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含已改变的布尔值的异步操作。</returns>
-        Task<bool> ChangeConnectionStringAsync(Func<ITenant, string> changeConnectionStringFactory,
-            CancellationToken cancellationToken = default);
     }
 }

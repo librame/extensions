@@ -185,7 +185,7 @@ namespace Librame.Extensions
         /// <param name="func">给定的工厂方法。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public virtual TResult RunLockerResult<TResult>(Func<TResult> func)
+        public virtual TResult RunLocker<TResult>(Func<TResult> func)
         {
             func.NotNull(nameof(func));
 
@@ -202,7 +202,7 @@ namespace Librame.Extensions
         /// <param name="func">给定的工厂方法（输入参数为当前锁定器索引）。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public virtual TResult RunLockerResult<TResult>(Func<int, TResult> func)
+        public virtual TResult RunLocker<TResult>(Func<int, TResult> func)
         {
             func.NotNull(nameof(func));
 
@@ -248,7 +248,7 @@ namespace Librame.Extensions
         /// <param name="func">给定的动作。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public virtual TResult RunSpinLockerResult<TResult>(Func<TResult> func)
+        public virtual TResult RunSpinLocker<TResult>(Func<TResult> func)
         {
             func.NotNull(nameof(func));
 
