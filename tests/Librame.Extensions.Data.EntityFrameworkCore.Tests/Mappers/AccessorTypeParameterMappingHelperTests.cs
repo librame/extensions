@@ -17,7 +17,7 @@ namespace Librame.Extensions.Data.Tests
 
             Assert.NotNull(mapper.Audit);
             Assert.NotNull(mapper.AuditProperty);
-            Assert.NotNull(mapper.Entity);
+            Assert.NotNull(mapper.Tabulation);
             Assert.NotNull(mapper.Migration);
             Assert.NotNull(mapper.Tenant);
 

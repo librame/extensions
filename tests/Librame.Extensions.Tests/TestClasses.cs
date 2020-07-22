@@ -2,7 +2,18 @@
 
 namespace Librame.Extensions.Tests
 {
-    public class TestClass
+    interface ITestA<T>
+    {
+        void TestMethod();
+    }
+
+
+    interface ITestB : ITestA<string>
+    {
+    }
+
+
+    public class TestClass : ITestB
     {
         static string _field1 = nameof(_field1);
         //string _field2 = null;
@@ -11,6 +22,15 @@ namespace Librame.Extensions.Tests
         static string Property1 { get; set; }
         string Property2 { get; set; }
         public string Property3 { get; set; }
+
+        public void TestMethod()
+        {
+        }
+    }
+
+    public class TestClass<T> : TestClass
+    {
+        public T Item { get; }
     }
 
 
@@ -20,7 +40,7 @@ namespace Librame.Extensions.Tests
     }
 
 
-    public class TestSubClassReference
+    public class TestSubClassReference : TestClass<string>
     {
         public TestSubClassReference(TestSubClass testSub)
         {
@@ -29,4 +49,5 @@ namespace Librame.Extensions.Tests
 
         public TestSubClass TestSub { get; }
     }
+
 }

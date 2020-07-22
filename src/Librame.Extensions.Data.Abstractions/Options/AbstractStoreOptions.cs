@@ -21,7 +21,6 @@ namespace Librame.Extensions.Data.Options
         /// 映射关系（默认不启用）。
         /// </summary>
         public bool MapRelationship { get; set; }
-            = false;
 
         /// <summary>
         /// 属性集合的最大长度（默认为 250）。

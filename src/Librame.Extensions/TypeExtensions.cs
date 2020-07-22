@@ -26,6 +26,141 @@ namespace Librame.Extensions
     public static class TypeExtensions
     {
         /// <summary>
+        /// 是否为具实类型（非接口与抽象类型，即可实例化类型）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsConcreteType(this Type type)
+            => type.IsNotNull() && !type.IsAbstract && !type.IsInterface;
+
+        /// <summary>
+        /// 是否为开放式泛型（泛类型定义或包含泛型参数集合）。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsOpenGenericType(this Type type)
+        {
+            // 如泛型 List<string>，则 GenericTypeDefinition 为 List<T>，GenericParameters 为 string
+            return type.IsNotNull()
+                && (type.IsGenericTypeDefinition || type.ContainsGenericParameters);
+        }
+
+        /// <summary>
+        /// 是否为可空类型。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsNullableType(this Type type)
+        {
+            // 如可空泛型 int?，则 GenericTypeDefinition() 为 Nullable<T>
+            return type.IsNotNull()
+                && type.IsGenericType
+                && type.GetGenericTypeDefinition() == ExtensionSettings.NullableTypeDefinition;
+        }
+
+        /// <summary>
+        /// 是整数类型（整数类型配置参考 <see cref="IExtensionPreferenceSetting.IntegerTypes"/>）。
+        /// </summary>
+        /// <param name="type">给定的 <see cref="Type"/>。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static bool IsIntegerType(this Type type)
+        {
+            type.NotNull(nameof(type));
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                type = type.UnwrapNullableType();
+
+            return ExtensionSettings.Preference.IntegerTypes.Contains(type);
+        }
+
+        /// <summary>
+        /// 是否为字符串类型。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsStringType(this Type type)
+            => type.IsNotNull() && type == ExtensionSettings.StringType;
+
+        /// <summary>
+        /// 是否可以从目标类型分配。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseType"/> 或 <paramref name="targetType"/> 为空。
+        /// </exception>
+        /// <remarks>
+        /// 详情参考 <see cref="Type.IsAssignableFrom(Type)"/>。
+        /// </remarks>
+        /// <param name="baseType">给定的基础类型。</param>
+        /// <param name="targetType">给定的目标类型。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsAssignableFromTargetType(this Type baseType, Type targetType)
+        {
+            baseType.NotNull(nameof(baseType));
+            targetType.NotNull(nameof(targetType));
+
+            var baseTypeInfo = baseType.GetTypeInfo();
+            var fromTypeInfo = targetType.GetTypeInfo();
+
+            // 对泛型提供支持
+            if (baseTypeInfo.IsGenericType && baseTypeInfo.GenericTypeParameters.Length > 0)
+            {
+                baseTypeInfo = baseType.MakeGenericType(baseTypeInfo.GenericTypeParameters).GetTypeInfo();
+                fromTypeInfo = targetType.MakeGenericType(fromTypeInfo.GenericTypeParameters).GetTypeInfo();
+            }
+
+            return baseTypeInfo.IsAssignableFrom(fromTypeInfo);
+        }
+
+        /// <summary>
+        /// 是否可以分配给基础类型。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="baseType"/> 或 <paramref name="targetType"/> 为空。
+        /// </exception>
+        /// <remarks>
+        /// 与 <see cref="IsAssignableFromTargetType(Type, Type)"/> 参数相反。
+        /// </remarks>
+        /// <param name="targetType">给定的目标类型。</param>
+        /// <param name="baseType">给定的基础类型。</param>
+        /// <returns>返回布尔值。</returns>
+        public static bool IsAssignableToBaseType(this Type targetType, Type baseType)
+            => baseType.IsAssignableFromTargetType(targetType);
+
+        /// <summary>
+        /// 获取所有基础类型列表。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <returns>返回 <see cref="IReadOnlyList{T}"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static IReadOnlyList<Type> GetBaseTypes(this Type type)
+        {
+            type.NotNull(nameof(type));
+
+            List<Type> baseTypes = null;
+
+            // 当前基类（Object 为最顶层基类，接口会直接返回 NULL）
+            var baseType = type.BaseType;
+
+            // 遍历所有基类
+            while (baseType != null)
+            {
+                if (baseTypes.IsNull())
+                    baseTypes = new List<Type>();
+
+                baseTypes.Add(baseType);
+
+                baseType = baseType.BaseType;
+            }
+
+            return baseTypes;
+        }
+
+        /// <summary>
         /// 解开可空类型。
         /// </summary>
         /// <param name="nullableType">给定的可空类型。</param>
@@ -276,7 +411,7 @@ namespace Librame.Extensions
         #endregion
 
 
-        #region IsImplementedInterface
+        #region IsImplemented
 
         /// <summary>
         /// 是否已实现某个接口类型。
@@ -285,8 +420,8 @@ namespace Librame.Extensions
         /// <param name="type">给定的当前类型。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static bool IsImplementedInterface<TInterface>(this Type type)
-            => type.IsImplementedInterface(typeof(TInterface), out _);
+        public static bool IsImplementedInterfaceType<TInterface>(this Type type)
+            => type.IsImplementedInterfaceType(typeof(TInterface), out _);
 
         /// <summary>
         /// 是否已实现某个接口类型。
@@ -296,8 +431,8 @@ namespace Librame.Extensions
         /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static bool IsImplementedInterface<TInterface>(this Type type, out Type resultType)
-            => type.IsImplementedInterface(typeof(TInterface), out resultType);
+        public static bool IsImplementedInterfaceType<TInterface>(this Type type, out Type resultType)
+            => type.IsImplementedInterfaceType(typeof(TInterface), out resultType);
 
         /// <summary>
         /// 是否已实现某个接口类型。
@@ -306,8 +441,8 @@ namespace Librame.Extensions
         /// <param name="interfaceType">给定的接口类型（支持泛型类型定义）。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static bool IsImplementedInterface(this Type type, Type interfaceType)
-            => type.IsImplementedInterface(interfaceType, out _);
+        public static bool IsImplementedInterfaceType(this Type type, Type interfaceType)
+            => type.IsImplementedInterfaceType(interfaceType, out _);
 
         /// <summary>
         /// 是否已实现某个接口类型。
@@ -317,7 +452,7 @@ namespace Librame.Extensions
         /// <param name="resultType">输出此结果类型（当接口类型为泛型定义时，可用于得到泛型参数等操作）。</param>
         /// <returns>返回布尔值。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static bool IsImplementedInterface(this Type type, Type interfaceType, out Type resultType)
+        public static bool IsImplementedInterfaceType(this Type type, Type interfaceType, out Type resultType)
         {
             type.NotNull(nameof(type));
             interfaceType.NotNull(nameof(interfaceType));
@@ -335,6 +470,69 @@ namespace Librame.Extensions
             }
 
             resultType = allInterfaceTypes.FirstOrDefault(type => type == interfaceType);
+            return resultType.IsNotNull();
+        }
+
+
+        /// <summary>
+        /// 是否已实现某个基础（非接口）类型。
+        /// </summary>
+        /// <typeparam name="TBase">指定的基础类型（支持泛型类型定义）。</typeparam>
+        /// <param name="type">给定的当前类型。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedBaseType<TBase>(this Type type)
+            => type.IsImplementedBaseType(typeof(TBase), out _);
+
+        /// <summary>
+        /// 是否已实现某个基础（非接口）类型。
+        /// </summary>
+        /// <typeparam name="TBase">指定的基础类型（支持泛型类型定义）。</typeparam>
+        /// <param name="type">给定的当前类型。</param>
+        /// <param name="resultType">输出此结果类型（当基础类型为泛型定义时，可用于得到泛型参数等操作）。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedBaseType<TBase>(this Type type, out Type resultType)
+            => type.IsImplementedBaseType(typeof(TBase), out resultType);
+
+        /// <summary>
+        /// 是否已实现某个基础（非接口）类型。
+        /// </summary>
+        /// <param name="type">给定的当前类型。</param>
+        /// <param name="baseType">给定的基础类型（支持泛型类型定义）。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        public static bool IsImplementedBaseType(this Type type, Type baseType)
+            => type.IsImplementedBaseType(baseType, out _);
+
+        /// <summary>
+        /// 是否已实现某个基础（非接口）类型。
+        /// </summary>
+        /// <param name="type">给定的当前类型。</param>
+        /// <param name="baseType">给定的基础类型（支持泛型类型定义）。</param>
+        /// <param name="resultType">输出此结果类型（当基础类型为泛型定义时，可用于得到泛型参数等操作）。</param>
+        /// <returns>返回布尔值。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static bool IsImplementedBaseType(this Type type, Type baseType, out Type resultType)
+        {
+            baseType.NotNull(nameof(baseType));
+
+            if (baseType.IsInterface)
+                throw new NotSupportedException($"The base type '{baseType}' does not support interface.");
+
+            var allBaseTypes = type.GetBaseTypes();
+
+            // 如果判定的基础类型是泛型定义
+            if (baseType.IsGenericTypeDefinition)
+            {
+                resultType = allBaseTypes
+                    .Where(type => type.IsGenericType)
+                    .FirstOrDefault(type => type.GetGenericTypeDefinition() == baseType);
+
+                return resultType.IsNotNull();
+            }
+
+            resultType = allBaseTypes.FirstOrDefault(type => type == baseType);
             return resultType.IsNotNull();
         }
 
@@ -440,6 +638,25 @@ namespace Librame.Extensions
 
             property.SetValue(element, newPropertyValue);
             return element;
+        }
+
+        /// <summary>
+        /// 设置属性。
+        /// </summary>
+        /// <param name="obj">给定的对象。</param>
+        /// <param name="propertyName">给定的属性名称。</param>
+        /// <param name="newPropertyValue">给定的新属性值。</param>
+        /// <returns>返回对象。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static object SetProperty(this object obj, string propertyName, object newPropertyValue)
+        {
+            obj.NotNull(nameof(obj));
+
+            var property = obj.GetType().GetProperty(propertyName);
+            property.NotNull(nameof(property));
+
+            property.SetValue(obj, newPropertyValue);
+            return obj;
         }
 
         #endregion

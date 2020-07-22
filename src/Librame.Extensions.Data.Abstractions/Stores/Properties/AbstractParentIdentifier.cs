@@ -61,5 +61,13 @@ namespace Librame.Extensions.Data.Stores
             });
         }
 
+
+        /// <summary>
+        /// 转换为标识键值对字符串。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => $"{base.ToString()};{nameof(ParentId)}={ParentId}";
+
     }
 }

@@ -23,23 +23,6 @@ namespace Librame.Extensions.Core.Identifiers
     public static class AbstractionParentIdentifierExtensions
     {
         /// <summary>
-        /// 异步获取父标识。
-        /// </summary>
-        /// <typeparam name="TParentId">指定的父标识类型（兼容各种引用与值类型标识）。</typeparam>
-        /// <param name="parentIdentifier">给定的 <see cref="IParentIdentifier{TId}"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TParentId"/> （兼容各种引用与值类型标识）的异步操作。</returns>
-        public static ValueTask<TParentId> GetParentIdAsync<TParentId>(this IParentIdentifier<TParentId> parentIdentifier,
-            CancellationToken cancellationToken = default)
-            where TParentId : IEquatable<TParentId>
-        {
-            parentIdentifier.NotNull(nameof(parentIdentifier));
-
-            return cancellationToken.RunOrCancelValueAsync(() => parentIdentifier.ParentId);
-        }
-
-
-        /// <summary>
         /// 异步设置父标识。
         /// </summary>
         /// <typeparam name="TParentId">指定的父标识类型（兼容各种引用与值类型标识）。</typeparam>
@@ -56,24 +39,6 @@ namespace Librame.Extensions.Core.Identifiers
 
             return cancellationToken.RunOrCancelValueAsync(()
                 => parentIdentifier.ParentId = newParentIdFactory.Invoke(parentIdentifier.ParentId));
-        }
-
-        /// <summary>
-        /// 异步设置父标识。
-        /// </summary>
-        /// <typeparam name="TParentId">指定的父标识类型（兼容各种引用与值类型标识）。</typeparam>
-        /// <param name="parentIdentifier">给定的 <see cref="IParentIdentifier{TId}"/>。</param>
-        /// <param name="newParentId">给定的新 <typeparamref name="TParentId"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TParentId"/> （兼容各种引用与值类型标识）的异步操作。</returns>
-        public static ValueTask<TParentId> SetParentIdAsync<TParentId>(this IParentIdentifier<TParentId> parentIdentifier,
-            TParentId newParentId, CancellationToken cancellationToken = default)
-            where TParentId : IEquatable<TParentId>
-        {
-            parentIdentifier.NotNull(nameof(parentIdentifier));
-
-            return cancellationToken.RunOrCancelValueAsync(()
-                => parentIdentifier.ParentId = newParentId);
         }
 
 

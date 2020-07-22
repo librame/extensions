@@ -42,14 +42,19 @@ namespace Librame.Extensions.Data.Validators
 
         public void SetInitialized(IAccessor accessor)
         {
-            var filePath = GetReportFilePath(accessor as DbContextAccessorBase);
+            var now = accessor.Clock.GetNowOffset();
 
-            var now = accessor.Clock.GetNowOffsetAsync().ConfigureAwaitCompleted();
+            var filePath = GetReportFilePath(accessor as DbContextAccessorBase);
             filePath.WriteAllText($"The data was successfully initialized at {now}.");
         }
 
-        public Task SetInitializedAsync(IAccessor accessor, CancellationToken cancellationToken = default)
-            => cancellationToken.RunOrCancelAsync(() => SetInitialized(accessor));
+        public async Task SetInitializedAsync(IAccessor accessor, CancellationToken cancellationToken = default)
+        {
+            var now = await accessor.Clock.GetNowOffsetAsync().ConfigureAwait();
+
+            var filePath = GetReportFilePath(accessor as DbContextAccessorBase);
+            filePath.WriteAllText($"The data was successfully initialized at {now}.");
+        }
 
 
         private static FilePathCombiner GetReportFilePath(DbContextAccessorBase accessor)

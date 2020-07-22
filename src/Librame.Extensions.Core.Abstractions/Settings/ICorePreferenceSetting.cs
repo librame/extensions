@@ -39,9 +39,9 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 标识符文件夹。
+        /// 令牌文件夹。
         /// </summary>
-        string IdentifiersFolder { get; }
+        string TokensFolder { get; }
 
 
         /// <summary>
@@ -55,19 +55,19 @@ namespace Librame.Extensions.Core
         char KeySeparator { get; }
 
         /// <summary>
-        /// 默认创建时间。
+        /// 安全令牌转换器。
         /// </summary>
-        IAlgorithmConverter SecurityIdentifierConverter { get; }
+        IAlgorithmConverter SecurityTokenConverter { get; }
 
         /// <summary>
-        /// 安全标识符钥匙信息集合数。
+        /// 安全令牌数。
         /// </summary>
-        int SecurityIdentifierKeyInfosCount { get; }
+        int SecurityTokensCount { get; }
 
         /// <summary>
-        /// 安全标识符钥匙环文件路径。
+        /// 安全令牌钥匙环文件路径。
         /// </summary>
-        FilePathCombiner SecurityIdentifierKeyRingFilePath { get; }
+        FilePathCombiner SecurityTokenKeyRingFilePath { get; }
 
         /// <summary>
         /// 系统程序集前缀。

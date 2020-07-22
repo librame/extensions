@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace Librame.Extensions.Data.Tests
 {
-    using Accessors;
-    using Collections;
+    using Extensions.Data.Accessors;
+    using Extensions.Data.Collections;
+    using Extensions.Data.Stores;
     using Models;
-    using Stores;
 
     public class TestStoreHub : DataStoreHub<TestDbContextAccessor>
     {
@@ -24,8 +24,8 @@ namespace Librame.Extensions.Data.Tests
         public IPageable<DataAuditProperty<int, Guid>> GetAuditProperties()
             => Accessor.AuditProperties.AsNoTracking().AsPagingByIndex(q => q.OrderByDescending(k => k.Id), 1, 10);
 
-        public IPageable<DataEntity<Guid, Guid>> GetEntities()
-            => Accessor.Entities.AsNoTracking().AsPagingByIndex(q => q.OrderByDescending(k => k.Id), 1, 10);
+        public IPageable<DataTabulation<Guid, Guid>> GetEntities()
+            => Accessor.Tabulations.AsNoTracking().AsPagingByIndex(q => q.OrderByDescending(k => k.Id), 1, 10);
 
         public IList<DataMigration<Guid, Guid>> GetMigrations()
             => Accessor.Migrations.AsNoTracking().ToList();
@@ -34,7 +34,7 @@ namespace Librame.Extensions.Data.Tests
             => Accessor.Tenants.AsNoTracking().ToList();
 
 
-        public IList<Category<int, Guid, Guid>> GetCategories()
+        public IList<Category<int, Guid>> GetCategories()
             => Accessor.Categories.AsNoTracking().ToList();
 
         public IPageable<Article<Guid, int, Guid>> GetArticles()

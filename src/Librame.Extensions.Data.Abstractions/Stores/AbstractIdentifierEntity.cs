@@ -71,16 +71,23 @@ namespace Librame.Extensions.Data.Stores
         /// 获取排名类型。
         /// </summary>
         [NotMapped]
-        public Type RankType
+        public virtual Type RankType
             => typeof(TRank);
 
         /// <summary>
         /// 获取状态类型。
         /// </summary>
         [NotMapped]
-        public Type StatusType
+        public virtual Type StatusType
             => typeof(TStatus);
 
+
+        /// <summary>
+        /// 获取对象排名。
+        /// </summary>
+        /// <returns>返回排名（兼容整数、单双精度的排序字段）。</returns>
+        public virtual object GetObjectRank()
+            => Rank;
 
         /// <summary>
         /// 异步获取对象排名。
@@ -89,6 +96,14 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回一个包含排名（兼容整数、单双精度的排序字段）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectRankAsync(CancellationToken cancellationToken)
             => cancellationToken.RunOrCancelValueAsync(() => (object)Rank);
+
+
+        /// <summary>
+        /// 获取对象状态。
+        /// </summary>
+        /// <returns>返回状态（兼容不支持枚举类型的实体框架）。</returns>
+        public virtual object GetObjectStatus()
+            => Status;
 
         /// <summary>
         /// 异步获取对象状态。
@@ -100,12 +115,24 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
+        /// 设置对象排名。
+        /// </summary>
+        /// <param name="newRank">给定的新对象排名。</param>
+        /// <returns>返回排名（兼容整数、单双精度的排序字段）。</returns>
+        public virtual object SetObjectRank(object newRank)
+        {
+            Rank = newRank.CastTo<object, TRank>(nameof(newRank));
+            return newRank;
+        }
+
+        /// <summary>
         /// 异步设置对象排名。
         /// </summary>
         /// <param name="newRank">给定的新对象排名。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含排名（兼容整数、单双精度的排序字段）的异步操作。</returns>
-        public virtual ValueTask<object> SetObjectRankAsync(object newRank, CancellationToken cancellationToken = default)
+        public virtual ValueTask<object> SetObjectRankAsync(object newRank,
+            CancellationToken cancellationToken = default)
         {
             var realNewRank = newRank.CastTo<object, TRank>(nameof(newRank));
 
@@ -114,6 +141,18 @@ namespace Librame.Extensions.Data.Stores
                 Rank = realNewRank;
                 return newRank;
             });
+        }
+
+
+        /// <summary>
+        /// 设置对象状态。
+        /// </summary>
+        /// <param name="newStatus">给定的新状态对象。</param>
+        /// <returns>返回状态（兼容不支持枚举类型的实体框架）。</returns>
+        public virtual object SetObjectStatus(object newStatus)
+        {
+            Status = newStatus.CastTo<object, TStatus>(nameof(newStatus));
+            return newStatus;
         }
 
         /// <summary>
@@ -132,6 +171,14 @@ namespace Librame.Extensions.Data.Stores
                 return newStatus;
             });
         }
+
+
+        /// <summary>
+        /// 转换为字符串。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => $"{base.ToString()};{nameof(Rank)}={Rank};{nameof(Status)}={Status}";
 
     }
 }

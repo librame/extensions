@@ -19,9 +19,16 @@ namespace Librame.Extensions.Data.Stores
     /// 计数接口。
     /// </summary>
     /// <typeparam name="TValue">指定的数值类型。</typeparam>
-    public interface ICount<TValue>
+    public interface ICount<TValue> : IObjectCount
         where TValue : struct
     {
+        /// <summary>
+        /// 累减计数。
+        /// </summary>
+        /// <param name="count">给定要累减的计数。</param>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue DegressiveCount(TValue count);
+
         /// <summary>
         /// 异步累减计数。
         /// </summary>
@@ -29,6 +36,14 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         ValueTask<TValue> DegressiveCountAsync(TValue count, CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 累加计数。
+        /// </summary>
+        /// <param name="count">给定要累加的计数。</param>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue ProgressiveCount(TValue count);
 
         /// <summary>
         /// 异步累加计数。

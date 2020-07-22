@@ -481,7 +481,7 @@ namespace Librame.Extensions.Data
         {
             ids.NotNull(nameof(ids));
 
-            if (!EntityType.IsImplementedInterface<IIdentifier<TId>>())
+            if (!EntityType.IsImplementedInterfaceType<IIdentifier<TId>>())
                 throw new InvalidOperationException($"Unsupported remove entity type '{EntityType}'. The entity type needs to implement the identifier interface '{typeof(IIdentifier<TId>)}'.");
 
             foreach (var id in ids)
@@ -525,7 +525,7 @@ namespace Librame.Extensions.Data
         {
             entities.NotNull(nameof(entities));
 
-            if (!EntityType.IsImplementedInterface<IState<TStatus>>())
+            if (!EntityType.IsImplementedInterfaceType<IState<TStatus>>())
                 throw new InvalidOperationException($"Unsupported logic remove entity type '{EntityType}'. The entity type needs to implement the state interface '{typeof(IState<TStatus>)}'.");
 
             foreach (var entity in entities)

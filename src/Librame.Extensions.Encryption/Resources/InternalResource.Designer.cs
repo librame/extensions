@@ -61,11 +61,11 @@ namespace Librame.Extensions.Encryption.Resources {
         }
         
         /// <summary>
-        ///   查找类似 Both the option identifier and the identifier parameter are null. 的本地化字符串。
+        ///   查找类似 Both the option token and the token parameter are null. 的本地化字符串。
         /// </summary>
-        internal static string ArgumentNullExceptionIdentifierBothNull {
+        internal static string ArgumentNullExceptionTokenBothNull {
             get {
-                return ResourceManager.GetString("ArgumentNullExceptionIdentifierBothNull", resourceCulture);
+                return ResourceManager.GetString("ArgumentNullExceptionTokenBothNull", resourceCulture);
             }
         }
         

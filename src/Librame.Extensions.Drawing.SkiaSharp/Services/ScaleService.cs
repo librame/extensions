@@ -176,7 +176,7 @@ namespace Librame.Extensions.Drawing.Services
                             // 设定文件中间名（如果后缀为空，则采用时间周期）
                             var middleName = s.Suffix.NotEmptyOrDefault(() =>
                             {
-                                return Clock.GetNowOffsetAsync().ConfigureAwaitCompleted().Ticks.ToString(CultureInfo.InvariantCulture);
+                                return Clock.GetNowOffset().Ticks.ToString(CultureInfo.InvariantCulture);
                             });
 
                             // 设定缩放保存路径

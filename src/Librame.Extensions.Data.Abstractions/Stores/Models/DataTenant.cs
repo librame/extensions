@@ -16,7 +16,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Resources;
+    using Core.Identifiers;
+    using Data.Resources;
 
     /// <summary>
     /// 数据租户。
@@ -24,7 +25,9 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据租户")]
-    public class DataTenant<TGenId, TCreatedBy> : AbstractIdentifierEntityCreation<TGenId, TCreatedBy>, ITenant
+    public class DataTenant<TGenId, TCreatedBy> : AbstractIdentifierEntityCreation<TGenId, TCreatedBy>,
+        IGenerativeIdentifier<TGenId>,
+        ITenant
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
@@ -101,12 +104,12 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 相等比较。
+        /// 除主键外的唯一索引相等比较（参见实体映射的唯一索引配置）。
         /// </summary>
         /// <param name="other">给定的 <see cref="ITenant"/>。</param>
         /// <returns>返回布尔值。</returns>
         public bool Equals(ITenant other)
-            => Name == other?.Name && Host == other?.Host;
+            => Name == other?.Name && Host == other.Host;
 
         /// <summary>
         /// 重写是否相等。
@@ -122,7 +125,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Id.ToString().CompatibleGetHashCode();
+            => Name.CompatibleGetHashCode() ^ Host.CompatibleGetHashCode();
 
 
         /// <summary>
@@ -130,6 +133,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => $"{nameof(Id)}={Id};{nameof(Name)}={Name};{nameof(Host)}={Host}";
+            => $"{base.ToString()};{nameof(Name)}={Name};{nameof(Host)}={Host}";
+
     }
 }

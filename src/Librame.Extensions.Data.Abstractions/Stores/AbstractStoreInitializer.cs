@@ -31,10 +31,10 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个 <see cref="AbstractStoreInitializer"/>。
         /// </summary>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected AbstractStoreInitializer(IDataInitializationValidator validator,
-            IStoreIdentifierGenerator identifierGenerator, ILoggerFactory loggerFactory)
+            IStoreIdentityGenerator identifierGenerator, ILoggerFactory loggerFactory)
             : base(validator, identifierGenerator, loggerFactory)
         {
         }
@@ -104,10 +104,10 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个 <see cref="AbstractStoreInitializer"/>。
         /// </summary>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected AbstractStoreInitializer(IDataInitializationValidator validator,
-            IStoreIdentifierGenerator identifierGenerator, ILoggerFactory loggerFactory)
+            IStoreIdentityGenerator identifierGenerator, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             Validator = validator.NotNull(nameof(validator));
@@ -124,8 +124,8 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentifierGenerator"/>。</value>
-        public IStoreIdentifierGenerator IdentifierGenerator { get; }
+        /// <value>返回 <see cref="IStoreIdentityGenerator"/>。</value>
+        public IStoreIdentityGenerator IdentifierGenerator { get; }
 
         /// <summary>
         /// 时钟。

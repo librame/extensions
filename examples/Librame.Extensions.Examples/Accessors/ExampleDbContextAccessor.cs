@@ -7,93 +7,76 @@ namespace Librame.Extensions.Examples
     using Data.Accessors;
     using Models;
 
-    public class MySqlExampleDbContextAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
+    public class ExampleDbContextAccessor : DataDbContextAccessor
     {
-        public MySqlExampleDbContextAccessor(DbContextOptions options)
-            : base(options)
-        {
-        }
-    }
-
-    public class SqlServerExampleDbContextAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
-    {
-        public SqlServerExampleDbContextAccessor(DbContextOptions options)
-            : base(options)
-        {
-        }
-    }
-
-    public class SqliteExampleDbContextAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
-    {
-        public SqliteExampleDbContextAccessor(DbContextOptions options)
-            : base(options)
-        {
-        }
-    }
-
-    public class ExampleDbContextAccessorBase<TGenId, TIncremId, TCreatedBy> : DataDbContextAccessor<TGenId, TIncremId, TCreatedBy>
-        where TGenId : IEquatable<TGenId>
-        where TIncremId : IEquatable<TIncremId>
-        where TCreatedBy : IEquatable<TCreatedBy>
-    {
-        protected ExampleDbContextAccessorBase(DbContextOptions options)
+        protected ExampleDbContextAccessor(DbContextOptions options)
             : base(options)
         {
         }
 
 
-        public DbSet<Category<TIncremId, TGenId, TCreatedBy>> Categories { get; set; }
+        public DbSet<Category<int, Guid>> Categories { get; set; }
 
-        public DbSet<Article<TGenId, TIncremId, TCreatedBy>> Articles { get; set; }
+        public DbSet<Article<Guid, int, Guid>> Articles { get; set; }
 
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public DbSetManager<Category<int, Guid>> CategoriesManager
+            => Categories.AsManager();
+
+        public DbSetManager<Article<Guid, int, Guid>> ArticlesManager
+            => Articles.AsManager();
+
+
+        protected override void OnModelCreatingCore(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreatingCore(modelBuilder);
 
+            var mapRelationship = Dependency.Options.Stores.MapRelationship;
             var maxLength = Dependency.Options.Stores.MaxLengthForProperties;
 
-            modelBuilder.Entity<Category<TIncremId, TGenId, TCreatedBy>>(b =>
+            modelBuilder.Entity<Category<int, Guid>>(b =>
             {
                 b.ToTable();
+
+                b.HasIndex(i => i.Name).HasName().IsUnique();
 
                 b.HasKey(x => x.Id);
 
                 b.Property(x => x.Id).ValueGeneratedOnAdd();
 
-                if (maxLength > 0)
-                {
-                    b.Property(x => x.Name).HasMaxLength(maxLength).IsRequired();
-                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
-                }
+                b.Property(x => x.Name).HasMaxLength(50).IsRequired();
 
-                // 关联
-                if (Dependency.Options.Stores.MapRelationship)
+                if (mapRelationship)
                 {
-                    b.HasMany(x => x.Articles).WithOne(x => x.Category)
-                        .IsRequired().OnDelete(DeleteBehavior.Cascade);
+                    b.HasMany<Article<Guid, int, Guid>>().WithOne().HasForeignKey(fk => fk.CategoryId).IsRequired();
                 }
             });
 
-            modelBuilder.Entity<Article<TGenId, TIncremId, TCreatedBy>>(b =>
+            modelBuilder.Entity<Article<Guid, int, Guid>>(b =>
             {
                 b.ToTable(table =>
                 {
-                    // 使用年份进行分表（注：需要在文章中添加 [Shardable] 特性）
-                    table.AppendYearSuffix(CurrentTimestamp);
+                    // 使用年份进行分表（注：需要在 Article 做 [Shardable] 标识）
+                    table.AppendYearSuffix(CurrentTimestamp); // .AddYears(1)
                 });
+
+                b.HasIndex(i => new { i.CategoryId, i.Title }).HasName().IsUnique();
 
                 b.HasKey(x => x.Id);
 
+                b.Property(x => x.Id).ValueGeneratedNever();
+
+                b.Property(x => x.Title).HasMaxLength(256).IsRequired();
+
                 if (maxLength > 0)
                 {
-                    b.Property(x => x.Id).HasMaxLength(maxLength);
-                    b.Property(x => x.Title).HasMaxLength(maxLength).IsRequired();
-                    b.Property(p => p.CreatedBy).HasMaxLength(maxLength);
+                    b.Property(p => p.Descr).HasMaxLength(maxLength);
                 }
 
-                // MaxLength
-                b.Property(p => p.Descr);
+                if (mapRelationship)
+                {
+                    b.HasMany<Category<int, Guid>>().WithOne().HasForeignKey(fk => fk.Id).IsRequired();
+                }
             });
         }
 

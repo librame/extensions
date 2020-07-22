@@ -26,7 +26,7 @@ namespace Librame.Extensions
     public static class CompatibilityExtensions
     {
 
-        #if NET48
+#if NET48
 
         /// <summary>
         /// 清空并行集合。
@@ -42,7 +42,7 @@ namespace Librame.Extensions
                 bag.TryTake(out _);
         }
 
-        #endif
+#endif
 
 
         /// <summary>
@@ -56,11 +56,11 @@ namespace Librame.Extensions
         {
             str.NotNull(nameof(str));
 
-            #if !NET48
-                return str.Contains(value, StringComparison.InvariantCulture);
-            #else
-                return str.Contains(value);
-            #endif
+#if !NET48
+            return str.Contains(value, StringComparison.InvariantCulture);
+#else
+            return str.Contains(value);
+#endif
         }
 
         /// <summary>
@@ -74,11 +74,11 @@ namespace Librame.Extensions
         {
             str.NotNull(nameof(str));
 
-            #if !NET48
-                return str.Contains(value, StringComparison.InvariantCulture);
-            #else
-                return str.Contains(value);
-            #endif
+#if !NET48
+            return str.Contains(value, StringComparison.InvariantCulture);
+#else
+            return str.Contains(value);
+#endif
         }
 
 
@@ -92,11 +92,11 @@ namespace Librame.Extensions
         {
             str.NotNull(nameof(str));
 
-            #if !NET48
-                return str.GetHashCode(StringComparison.Ordinal);
-            #else
-                return str.GetHashCode();
-            #endif
+#if !NET48
+            return str.GetHashCode(StringComparison.Ordinal);
+#else
+            return str.GetHashCode();
+#endif
         }
 
 
@@ -111,11 +111,11 @@ namespace Librame.Extensions
         {
             str.NotNull(nameof(str));
 
-            #if !NET48
-                return str.IndexOf(value, StringComparison.InvariantCulture);
-            #else
-                return str.IndexOf(value);
-            #endif
+#if !NET48
+            return str.IndexOf(value, StringComparison.InvariantCulture);
+#else
+            return str.IndexOf(value);
+#endif
         }
 
         ///// <summary>
@@ -148,10 +148,11 @@ namespace Librame.Extensions
         {
             str.NotNull(nameof(str));
 
-            #if !NET48
-                return str.StartsWith(value);
+#if !NET48
+            return str.StartsWith(value);
 #else
-                return str.StartsWith(value.ToString(CultureInfo.InvariantCulture), StringComparison.InvariantCulture);
+            return str.StartsWith(value.ToString(CultureInfo.InvariantCulture),
+                StringComparison.InvariantCulture);
 #endif
         }
 
@@ -182,10 +183,10 @@ namespace Librame.Extensions
         {
             str.NotNull(nameof(str));
 
-            #if !NET48
-                return str.EndsWith(value);
+#if !NET48
+            return str.EndsWith(value);
 #else
-                return str.EndsWith(value.ToString(CultureInfo.InvariantCulture), StringComparison.InvariantCulture);
+            return str.EndsWith(value.ToString(CultureInfo.InvariantCulture), StringComparison.InvariantCulture);
 #endif
         }
 
@@ -207,7 +208,7 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 包含。
+        /// 分拆字符。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="value">给定的字符。</param>
@@ -217,15 +218,15 @@ namespace Librame.Extensions
         {
             str.NotNull(nameof(str));
 
-            #if !NET48
-                return str.Split(value);
-            #else
-                return str.Split(value); // 在方法直接用会出现不支持 NET48 的感叹号
-            #endif
+#if !NET48
+            return str.Split(value);
+#else
+            return str.Split(value); // 在方法直接用会出现不支持 NET48 的感叹号
+#endif
         }
 
         /// <summary>
-        /// 包含。
+        /// 分拆字符串。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="value">给定的字符串。</param>
@@ -235,16 +236,16 @@ namespace Librame.Extensions
         {
             str.NotNull(nameof(str));
 
-            #if !NET48
-                return str.Split(value);
-            #else
-                return Regex.Split(str, Regex.Escape(value), RegexOptions.IgnoreCase);
-            #endif
+#if !NET48
+            return str.Split(value);
+#else
+            return Regex.Split(str, Regex.Escape(value), RegexOptions.IgnoreCase);
+#endif
         }
 
 
         /// <summary>
-        /// 替换。
+        /// 替换字符串。
         /// </summary>
         /// <param name="str">给定的字符串。</param>
         /// <param name="oldValue">给定的旧值。</param>
@@ -255,27 +256,55 @@ namespace Librame.Extensions
         {
             str.NotNull(nameof(str));
 
-            #if !NET48
-                return str.Replace(oldValue, newValue, StringComparison.InvariantCulture);
-            #else
-                return str.Replace(oldValue, newValue);
-            #endif
+#if !NET48
+            return str.Replace(oldValue, newValue, StringComparison.InvariantCulture);
+#else
+            return str.Replace(oldValue, newValue);
+#endif
         }
 
 
         /// <summary>
-        /// 包含。
+        /// 组合为字符串。
         /// </summary>
         /// <param name="values">给定的字符串集合。</param>
         /// <param name="separator">给定的连接符。</param>
         /// <returns>返回布尔值。</returns>
         public static string CompatibleJoinString(this IEnumerable<string> values, char separator)
         {
-            #if !NET48
-                return string.Join(separator, values);
-            #else
-                return string.Join(separator.ToString(CultureInfo.InvariantCulture), values);
-            #endif
+#if !NET48
+            return string.Join(separator, values);
+#else
+            return string.Join(separator.ToString(CultureInfo.InvariantCulture), values);
+#endif
+        }
+
+
+        /// <summary>
+        /// 定义 Unix 时间等于 0 的时间点。
+        /// </summary>
+        /// <returns>返回 <see cref="DateTime"/>。</returns>
+        public static DateTime CompatibleUnixEpoch()
+        {
+#if !NET48
+            return DateTime.UnixEpoch;
+#else
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+#endif
+        }
+
+        /// <summary>
+        /// 定义 Unix 时间等于 0 的时间点。
+        /// </summary>
+        /// <returns>返回 <see cref="DateTimeOffset"/>。</returns>
+        public static DateTimeOffset CompatibleUnixEpochOffset()
+        {
+#if !NET48
+            return DateTimeOffset.UnixEpoch;
+#else
+            var dateTime = CompatibleUnixEpoch();
+            return new DateTimeOffset(dateTime, TimeZoneInfo.Utc.GetUtcOffset(dateTime));
+#endif
         }
 
     }

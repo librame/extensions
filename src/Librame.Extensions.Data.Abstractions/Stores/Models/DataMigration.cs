@@ -17,7 +17,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Resources;
+    using Core.Identifiers;
+    using Data.Resources;
 
     /// <summary>
     /// 数据迁移。
@@ -26,6 +27,7 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据迁移")]
     public class DataMigration<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>,
+        IGenerativeIdentifier<TGenId>,
         IEquatable<DataMigration<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
@@ -57,7 +59,7 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 唯一索引是否相等。
+        /// 除主键外的唯一索引相等比较（参见实体映射的唯一索引配置）。
         /// </summary>
         /// <param name="other">给定的其他 <see cref="DataMigration{TGenId, TCreatedBy}"/>。</param>
         /// <returns>返回布尔值。</returns>
@@ -78,14 +80,15 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回 32 位整数。</returns>
         public override int GetHashCode()
-            => Id.ToString().CompatibleGetHashCode();
+            => ModelHash.CompatibleGetHashCode();
 
 
         /// <summary>
-        /// 将模型散列转换为字符串。
+        /// 转换为字符串。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => $"{nameof(Id)}={Id};{nameof(ModelHash)}={ModelHash};{nameof(ModelSnapshotName)}={ModelSnapshotName}";
+            => $"{base.ToString()};{nameof(ModelHash)}={ModelHash};{nameof(ModelSnapshotName)}={ModelSnapshotName}";
+
     }
 }

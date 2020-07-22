@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core.Identifiers
     public interface IObjectIdentifier
     {
         /// <summary>
-        /// 获取标识类型。
+        /// 标识类型。
         /// </summary>
         Type IdType { get; }
 

@@ -11,7 +11,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 
 namespace Librame.Extensions.Data.Mappers
 {
@@ -26,9 +25,9 @@ namespace Librame.Extensions.Data.Mappers
         /// 构造一个 <see cref="AccessorTypeParameterMapper"/>。
         /// </summary>
         /// <param name="accessor">给定的访问器 <see cref="TypeParameterMapping"/>。</param>
-        /// <param name="mappings">给定的类型参数映射字典集合。</param>
+        /// <param name="mappings">给定的 <see cref="TypeParameterMappingCollection"/>。</param>
         public AccessorTypeParameterMapper(TypeParameterMapping accessor,
-            Dictionary<string, TypeParameterMapping> mappings)
+            TypeParameterMappingCollection mappings)
             : base(mappings)
         {
             Accessor = accessor.NotNull(nameof(accessor));
@@ -54,16 +53,16 @@ namespace Librame.Extensions.Data.Mappers
             => GetGenericMapping(nameof(AuditProperty));
 
         /// <summary>
-        /// 实体映射。
-        /// </summary>
-        public virtual TypeParameterMapping Entity
-            => GetGenericMapping(nameof(Entity));
-
-        /// <summary>
         /// 迁移映射。
         /// </summary>
         public virtual TypeParameterMapping Migration
             => GetGenericMapping(nameof(Migration));
+
+        /// <summary>
+        /// 表格映射。
+        /// </summary>
+        public virtual TypeParameterMapping Tabulation
+            => GetMapping($"T{nameof(Tabulation)}");
 
         /// <summary>
         /// 租户映射。
@@ -108,8 +107,8 @@ namespace Librame.Extensions.Data.Mappers
             {
                 Audit.ArgumentType,
                 AuditProperty.ArgumentType,
-                Entity.ArgumentType,
                 Migration.ArgumentType,
+                Tabulation.ArgumentType,
                 Tenant.ArgumentType,
                 GenId.ArgumentType,
                 IncremId.ArgumentType,

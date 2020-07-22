@@ -33,8 +33,8 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentifierGenerator"/>。</value>
-        IStoreIdentifierGenerator IdentifierGenerator { get; }
+        /// <value>返回 <see cref="IStoreIdentityGenerator"/>。</value>
+        IStoreIdentityGenerator IdentifierGenerator { get; }
 
         /// <summary>
         /// 时钟。

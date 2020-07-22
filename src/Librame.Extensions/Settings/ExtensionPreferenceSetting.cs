@@ -419,6 +419,48 @@ namespace Librame.Extensions
         public virtual DateTimeOffset BaseDateTimeOffset
             => new DateTimeOffset(BaseDateTime);
 
+        /// <summary>
+        /// 中国农历（阴阳合历）。
+        /// </summary>
+        public virtual ChineseLunisolarCalendar ChineseCalendar
+            => new ChineseLunisolarCalendar();
+
+        /// <summary>
+        /// 中国月。
+        /// </summary>
+        public virtual IReadOnlyList<string> ChineseMonths
+            => new List<string> { "正", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二(腊)" };
+
+        /// <summary>
+        /// 中国旬。
+        /// </summary>
+        public virtual IReadOnlyList<string> ChineseTenDays
+            => new List<string> { "初", "十", "廿", "三" };
+
+        /// <summary>
+        /// 中国日。
+        /// </summary>
+        public virtual IReadOnlyList<string> ChineseDays
+            => new List<string> { "一", "二", "三", "四", "五", "六", "七", "八", "九", "十" };
+
+        /// <summary>
+        /// 十天干。
+        /// </summary>
+        public virtual IReadOnlyList<string> TenCelestialStems
+            => new List<string> { "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸" };
+
+        /// <summary>
+        /// 十二地支。
+        /// </summary>
+        public virtual IReadOnlyList<string> TwelveTerrestrialBranches
+            => new List<string> { "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥" };
+
+        /// <summary>
+        /// 十二生肖。
+        /// </summary>
+        public virtual IReadOnlyList<string> TwelveAnimalSigns
+            => new List<string> { "鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪" };
+
         #endregion
 
 
@@ -429,6 +471,27 @@ namespace Librame.Extensions
         /// </summary>
         public virtual Encoding DefaultEncoding
             => ExtensionSettings.UTF8Encoding;
+
+        #endregion
+
+
+        #region Type Extensions
+
+        /// <summary>
+        /// 整数类型列表。
+        /// </summary>
+        public virtual IReadOnlyList<Type> IntegerTypes
+            => new Type[]
+            {
+                typeof(sbyte),
+                typeof(byte),
+                typeof(short),
+                typeof(ushort),
+                typeof(int),
+                typeof(uint),
+                typeof(long),
+                typeof(ulong)
+            };
 
         #endregion
 

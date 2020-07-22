@@ -22,10 +22,16 @@ namespace Librame.Extensions.Data.Stores
     public interface IObjectRanking
     {
         /// <summary>
-        /// 获取排名类型。
+        /// 排名类型。
         /// </summary>
         Type RankType { get; }
 
+
+        /// <summary>
+        /// 获取对象排名。
+        /// </summary>
+        /// <returns>返回排名（兼容整数、单双精度的排序字段）。</returns>
+        object GetObjectRank();
 
         /// <summary>
         /// 异步获取对象排名。
@@ -34,10 +40,18 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回一个包含排名（兼容整数、单双精度的排序字段）的异步操作。</returns>
         ValueTask<object> GetObjectRankAsync(CancellationToken cancellationToken = default);
 
+
+        /// <summary>
+        /// 设置对象排名。
+        /// </summary>
+        /// <param name="newRank">给定的新排名对象。</param>
+        /// <returns>返回排名（兼容整数、单双精度的排序字段）。</returns>
+        object SetObjectRank(object newRank);
+
         /// <summary>
         /// 异步设置对象排名。
         /// </summary>
-        /// <param name="newRank">给定的新对象排名。</param>
+        /// <param name="newRank">给定的新排名对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含排名（兼容整数、单双精度的排序字段）的异步操作。</returns>
         ValueTask<object> SetObjectRankAsync(object newRank, CancellationToken cancellationToken = default);

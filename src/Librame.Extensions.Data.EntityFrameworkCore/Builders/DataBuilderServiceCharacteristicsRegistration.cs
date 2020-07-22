@@ -50,7 +50,7 @@ namespace Librame.Extensions.Data.Builders
                 
                 // Mediators
                 { typeof(AuditNotificationHandler<,>), ServiceCharacteristics.Transient() },
-                { typeof(EntityNotificationHandler<>), ServiceCharacteristics.Transient() },
+                { typeof(TabulationNotificationHandler<>), ServiceCharacteristics.Transient() },
                 { typeof(MigrationNotificationHandler<>), ServiceCharacteristics.Transient() },
 
                 // Protectors
@@ -58,11 +58,11 @@ namespace Librame.Extensions.Data.Builders
 
                 // Services
                 { typeof(IMigrationAccessorService), ServiceCharacteristics.Singleton() },
-                { typeof(IMultiTenantAccessorService), ServiceCharacteristics.Singleton() },
+                { typeof(IMultiTenancyAccessorService), ServiceCharacteristics.Singleton() },
 
                 // Stores
                 { typeof(IStoreHub), ServiceCharacteristics.Scoped() },
-                { typeof(IStoreIdentifierGenerator), ServiceCharacteristics.Singleton() },
+                { typeof(IStoreIdentityGenerator), ServiceCharacteristics.Singleton() },
                 { typeof(IStoreInitializer), ServiceCharacteristics.Singleton() },
 
                 // Validators

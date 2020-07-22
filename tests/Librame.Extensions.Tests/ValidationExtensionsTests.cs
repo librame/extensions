@@ -7,17 +7,6 @@ namespace Librame.Extensions.Tests
 {
     public class ValidationExtensionsTests
     {
-        interface IAnimal
-        {
-        }
-        class Cat : IAnimal
-        {
-        }
-        class Dog : IAnimal
-        {
-        }
-
-
         [Fact]
         public void IsWhiteSpaceTest()
         {
@@ -90,29 +79,6 @@ namespace Librame.Extensions.Tests
             Assert.True(num.IsOutOfRange(3, 9, true));
             Assert.False(num.IsOutOfRange(1, 4, false, true));
             Assert.True(num.IsOutOfRange(10, 30));
-        }
-
-        [Fact]
-        public void IsNullableTypeTest()
-        {
-            Assert.True(typeof(bool?).IsNullableType());
-            Assert.False(typeof(bool).IsNullableType());
-        }
-
-        [Fact]
-        public void IsAssignableFromTargetTest()
-        {
-            var baseType = typeof(IAnimal);
-            var catType = typeof(Cat);
-            var dogType = typeof(Dog);
-
-            Assert.True(baseType.IsAssignableFromTargetType(catType));
-            Assert.True(baseType.IsAssignableFromTargetType(dogType));
-            Assert.False(catType.IsAssignableFromTargetType(dogType));
-
-            Assert.True(catType.IsAssignableToBaseType(baseType));
-            Assert.True(dogType.IsAssignableToBaseType(baseType));
-            Assert.False(catType.IsAssignableToBaseType(dogType));
         }
 
         [Fact]

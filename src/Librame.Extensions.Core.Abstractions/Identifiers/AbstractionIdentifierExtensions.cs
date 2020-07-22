@@ -23,23 +23,6 @@ namespace Librame.Extensions.Core.Identifiers
     public static class AbstractionIdentifierExtensions
     {
         /// <summary>
-        /// 异步获取标识。
-        /// </summary>
-        /// <typeparam name="TId">指定的标识类型（兼容各种引用与值类型标识）。</typeparam>
-        /// <param name="identifier">给定的 <see cref="IIdentifier{TId}"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TId"/> （兼容各种引用与值类型标识）的异步操作。</returns>
-        public static ValueTask<TId> GetIdAsync<TId>(this IIdentifier<TId> identifier,
-            CancellationToken cancellationToken = default)
-            where TId : IEquatable<TId>
-        {
-            identifier.NotNull(nameof(identifier));
-
-            return cancellationToken.RunOrCancelValueAsync(() => identifier.Id);
-        }
-
-
-        /// <summary>
         /// 异步设置标识。
         /// </summary>
         /// <typeparam name="TId">指定的标识类型（兼容各种引用与值类型标识）。</typeparam>
@@ -56,24 +39,6 @@ namespace Librame.Extensions.Core.Identifiers
 
             return cancellationToken.RunOrCancelValueAsync(()
                 => identifier.Id = newIdFactory.Invoke(identifier.Id));
-        }
-
-        /// <summary>
-        /// 异步设置标识。
-        /// </summary>
-        /// <typeparam name="TId">指定的标识类型（兼容各种引用与值类型标识）。</typeparam>
-        /// <param name="identifier">给定的 <see cref="IIdentifier{TId}"/>。</param>
-        /// <param name="newId">给定的新 <typeparamref name="TId"/>。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TId"/> （兼容各种引用与值类型标识）的异步操作。</returns>
-        public static ValueTask<TId> SetIdAsync<TId>(this IIdentifier<TId> identifier,
-            TId newId, CancellationToken cancellationToken = default)
-            where TId : IEquatable<TId>
-        {
-            identifier.NotNull(nameof(identifier));
-
-            return cancellationToken.RunOrCancelValueAsync(()
-                => identifier.Id = newId);
         }
 
 

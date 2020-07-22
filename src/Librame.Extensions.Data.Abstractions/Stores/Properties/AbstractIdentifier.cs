@@ -40,7 +40,7 @@ namespace Librame.Extensions.Data.Stores
         /// 标识类型。
         /// </summary>
         [NotMapped]
-        public Type IdType
+        public virtual Type IdType
             => typeof(TId);
 
 
@@ -68,6 +68,14 @@ namespace Librame.Extensions.Data.Stores
                 return newId;
             });
         }
+
+
+        /// <summary>
+        /// 转换为字符串。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => $"{nameof(Id)}={Id}";
 
     }
 }

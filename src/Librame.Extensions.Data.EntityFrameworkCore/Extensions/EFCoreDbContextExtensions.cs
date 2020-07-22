@@ -15,6 +15,8 @@ using Librame.Extensions.Data.Accessors;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Update;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -80,19 +82,17 @@ namespace Microsoft.EntityFrameworkCore
         }
 
 
-        #region SaveChangesNow
+        #region SaveChanges
 
         /// <summary>
-        /// 立即保存更改。
+        /// 提交保存更改同步。
         /// </summary>
         /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
-        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
-        /// <returns>返回整数。</returns>
+        /// <returns>返回受影响的行数。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static int SaveChangesNow(this DbContextAccessorBase dbContextAccessor,
-            bool acceptAllChangesOnSuccess = true)
+        public static int SubmitSaveChangesSynchronization(this DbContextAccessorBase dbContextAccessor)
         {
-            var count = SaveChangesNow((DbContext)dbContextAccessor, acceptAllChangesOnSuccess);
+            var count = SubmitSaveChangesSynchronization((DbContext)dbContextAccessor);
 
             dbContextAccessor.RequiredSaveChanges = false;
 
@@ -100,14 +100,102 @@ namespace Microsoft.EntityFrameworkCore
         }
 
         /// <summary>
-        /// 立即保存更改。
+        /// 异步提交保存更改同步。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含受影响的行数的异步操作。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static async Task<int> SubmitSaveChangesSynchronizationAsync(this DbContextAccessorBase dbContextAccessor,
+            CancellationToken cancellationToken = default)
+        {
+            var count = await SubmitSaveChangesSynchronizationAsync((DbContext)dbContextAccessor,
+                cancellationToken).ConfigureAwait();
+
+            dbContextAccessor.RequiredSaveChanges = false;
+
+            return count;
+        }
+
+
+        /// <summary>
+        /// 提交保存更改同步。
+        /// </summary>
+        /// <param name="dbContext">给定的 <see cref="DbContext"/>。</param>
+        /// <returns>返回受影响的行数。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static int SubmitSaveChangesSynchronization(this DbContext dbContext)
+        {
+            var dependencies = dbContext.GetService<RelationalDatabaseDependencies>();
+            var batchExecutor = dbContext.GetService<IBatchExecutor>();
+
+            return batchExecutor.Execute(null, dependencies.Connection);
+        }
+
+        /// <summary>
+        /// 异步提交保存更改同步。
+        /// </summary>
+        /// <param name="dbContext">给定的 <see cref="DbContext"/>。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含受影响的行数的异步操作。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static Task<int> SubmitSaveChangesSynchronizationAsync(this DbContext dbContext,
+            CancellationToken cancellationToken = default)
+        {
+            var dependencies = dbContext.GetService<RelationalDatabaseDependencies>();
+            var batchExecutor = dbContext.GetService<IBatchExecutor>();
+
+            return batchExecutor.ExecuteAsync(null, dependencies.Connection, cancellationToken);
+        }
+
+
+        /// <summary>
+        /// 提交保存更改。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <returns>返回受影响的行数。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static int SubmitSaveChanges(this DbContextAccessorBase dbContextAccessor,
+            bool acceptAllChangesOnSuccess = true)
+        {
+            var count = SubmitSaveChanges((DbContext)dbContextAccessor, acceptAllChangesOnSuccess);
+
+            dbContextAccessor.RequiredSaveChanges = false;
+
+            return count;
+        }
+
+        /// <summary>
+        /// 异步提交保存更改。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
+        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含受影响的行数的异步操作。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static async Task<int> SubmitSaveChangesAsync(this DbContextAccessorBase dbContextAccessor,
+            bool acceptAllChangesOnSuccess = true, CancellationToken cancellationToken = default)
+        {
+            var count = await SubmitSaveChangesAsync((DbContext)dbContextAccessor,
+                acceptAllChangesOnSuccess, cancellationToken).ConfigureAwait();
+
+            dbContextAccessor.RequiredSaveChanges = false;
+
+            return count;
+        }
+
+
+        /// <summary>
+        /// 提交保存更改。
         /// </summary>
         /// <param name="dbContext">给定的 <see cref="DbContext"/>。</param>
         /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
-        /// <returns>返回整数。</returns>
+        /// <returns>返回受影响的行数。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
-        public static int SaveChangesNow(this DbContext dbContext, bool acceptAllChangesOnSuccess = true)
+        public static int SubmitSaveChanges(this DbContext dbContext,
+            bool acceptAllChangesOnSuccess = true)
         {
             dbContext.NotNull(nameof(dbContext));
 
@@ -141,36 +229,16 @@ namespace Microsoft.EntityFrameworkCore
             }
         }
 
-
         /// <summary>
-        /// 异步立即保存更改。
-        /// </summary>
-        /// <param name="dbContextAccessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
-        /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含整数的异步操作。</returns>
-        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static async Task<int> SaveChangesNowAsync(this DbContextAccessorBase dbContextAccessor,
-            bool acceptAllChangesOnSuccess = true, CancellationToken cancellationToken = default)
-        {
-            var count = await SaveChangesNowAsync((DbContext)dbContextAccessor,
-                acceptAllChangesOnSuccess, cancellationToken).ConfigureAwait();
-
-            dbContextAccessor.RequiredSaveChanges = false;
-
-            return count;
-        }
-
-        /// <summary>
-        /// 异步立即保存更改。
+        /// 异步提交保存更改。
         /// </summary>
         /// <param name="dbContext">给定的 <see cref="DbContext"/>。</param>
         /// <param name="acceptAllChangesOnSuccess">指示是否在更改已成功发送到数据库之后调用。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含整数的异步操作。</returns>
+        /// <returns>返回一个包含受影响的行数的异步操作。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
-        public static async Task<int> SaveChangesNowAsync(this DbContext dbContext,
+        public static async Task<int> SubmitSaveChangesAsync(this DbContext dbContext,
             bool acceptAllChangesOnSuccess = true, CancellationToken cancellationToken = default)
         {
             dbContext.NotNull(nameof(dbContext));

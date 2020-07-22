@@ -22,20 +22,34 @@ namespace Librame.Extensions.Data.Stores
     public interface IObjectState
     {
         /// <summary>
-        /// 获取排名类型。
+        /// 状态类型。
         /// </summary>
         Type StatusType { get; }
 
 
         /// <summary>
-        /// 异步获取状态。
+        /// 获取对象状态。
+        /// </summary>
+        /// <returns>返回状态（兼容不支持枚举类型的实体框架）。</returns>
+        object GetObjectStatus();
+
+        /// <summary>
+        /// 异步获取对象状态。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含状态（兼容不支持枚举类型的实体框架）的异步操作。</returns>
         ValueTask<object> GetObjectStatusAsync(CancellationToken cancellationToken = default);
 
+
         /// <summary>
-        /// 异步设置状态。
+        /// 设置对象状态。
+        /// </summary>
+        /// <param name="newStatus">给定的新状态对象。</param>
+        /// <returns>返回状态（兼容不支持枚举类型的实体框架）。</returns>
+        object SetObjectStatus(object newStatus);
+
+        /// <summary>
+        /// 异步设置对象状态。
         /// </summary>
         /// <param name="newStatus">给定的新状态对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>

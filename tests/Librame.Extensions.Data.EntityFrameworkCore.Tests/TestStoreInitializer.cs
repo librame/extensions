@@ -7,26 +7,30 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Extensions.Data.Stores;
+    using Extensions.Data.Validators;
     using Models;
-    using Stores;
-    using Validators;
 
     public class TestStoreInitializer : DataStoreInitializer<TestDbContextAccessor>
     {
         private readonly string _categoryName
-            = typeof(Category<int, Guid, Guid>).GetGenericBodyName();
+            = typeof(Category<int, Guid>).GetGenericBodyName();
         private readonly string _articleName
             = typeof(Article<Guid, int, Guid>).GetGenericBodyName();
 
-        private IList<Category<int, Guid, Guid>> _categories = null;
+        private IList<Category<int, Guid>> _categories = null;
         private IList<Article<Guid, int, Guid>> _articles = null;
 
 
-        public TestStoreInitializer(IStoreIdentifierGenerator identifierGenerator,
+        public TestStoreInitializer(IStoreIdentityGenerator identifierGenerator,
             IDataInitializationValidator validator, ILoggerFactory loggerFactory)
             : base(identifierGenerator, validator, loggerFactory)
         {
         }
+
+
+        private int ProgressiveIncremId(int index)
+            => ++index;
 
 
         protected override void InitializeStores()
@@ -52,13 +56,13 @@ namespace Librame.Extensions.Data.Tests
         {
             if (_categories.IsEmpty())
             {
-                _categories = new List<Category<int, Guid, Guid>>
+                _categories = new List<Category<int, Guid>>
                 {
-                    new Category<int, Guid, Guid>
+                    new Category<int, Guid>
                     {
                         Name = $"First {_categoryName}"
                     },
-                    new Category<int, Guid, Guid>
+                    new Category<int, Guid>
                     {
                         Name = $"Last {_categoryName}"
                     }
@@ -66,7 +70,7 @@ namespace Librame.Extensions.Data.Tests
 
                 _categories.ForEach(category =>
                 {
-                    category.PopulateCreationAsync(Clock).ConfigureAwaitCompleted();
+                    category.PopulateCreation(Clock);
                 });
             }
 
@@ -83,13 +87,13 @@ namespace Librame.Extensions.Data.Tests
         {
             if (_categories.IsEmpty())
             {
-                _categories = new List<Category<int, Guid, Guid>>
+                _categories = new List<Category<int, Guid>>
                 {
-                    new Category<int, Guid, Guid>
+                    new Category<int, Guid>
                     {
                         Name = $"First {_categoryName}"
                     },
-                    new Category<int, Guid, Guid>
+                    new Category<int, Guid>
                     {
                         Name = $"Last {_categoryName}"
                     }
@@ -118,19 +122,24 @@ namespace Librame.Extensions.Data.Tests
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var identifier = IdentifierGenerator as TestGuidStoreIdentifierGenerator;
+                var identifier = IdentifierGenerator as TestGuidStoreIdentityGenerator;
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < 10; i++)
                 {
+                    var category = (i < 5) ? _categories.First() : _categories.Last();
+                    var categoryIndex = (i < 5) ? 0 : 1;
+
                     var article = new Article<Guid, int, Guid>
                     {
-                        Id = identifier.GetArticleIdAsync().ConfigureAwaitCompleted(),
-                        Title = $"{_articleName} {i.FormatString(3)}",
-                        Descr = $"Descr {i.FormatString(3)}",
-                        Category = (i < 25) ? _categories.First() : _categories.Last()
+                        Id = identifier.GenerateArticleId(),
+                        Title = $"{_articleName} {i.FormatString(2)}",
+                        Descr = $"Descr {i.FormatString(2)}",
+                        CategoryId = category.Id.Equals(0)
+                            ? ProgressiveIncremId(categoryIndex)
+                            : category.Id
                     };
 
-                    article.PopulateCreationAsync(Clock).ConfigureAwaitCompleted();
+                    article.PopulateCreation(Clock);
 
                     _articles.Add(article);
                 }
@@ -151,16 +160,21 @@ namespace Librame.Extensions.Data.Tests
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var identifier = IdentifierGenerator as TestGuidStoreIdentifierGenerator;
+                var identifier = IdentifierGenerator as TestGuidStoreIdentityGenerator;
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < 10; i++)
                 {
+                    var category = (i < 5) ? _categories.First() : _categories.Last();
+                    var categoryIndex = (i < 5) ? 0 : 1;
+
                     var article = new Article<Guid, int, Guid>
                     {
-                        Id = await identifier.GetArticleIdAsync().ConfigureAwait(),
-                        Title = $"{_articleName} {i.FormatString(3)}",
-                        Descr = $"Descr {i.FormatString(3)}",
-                        Category = (i < 25) ? _categories.First() : _categories.Last()
+                        Id = await identifier.GenerateArticleIdAsync().ConfigureAwait(),
+                        Title = $"{_articleName} {i.FormatString(2)}",
+                        Descr = $"Descr {i.FormatString(2)}",
+                        CategoryId = category.Id.Equals(0)
+                            ? ProgressiveIncremId(categoryIndex)
+                            : category.Id
                     };
 
                     await article.PopulateCreationAsync(Clock).ConfigureAwait();

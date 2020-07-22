@@ -23,6 +23,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Update;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using System;
@@ -102,11 +104,11 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IDataBuilder AddInternalAccessorServices(this IDataBuilder builder)
         {
-            builder.AddMigrateAccessorAspect(typeof(EntityMigrateDbContextAccessorAspect<,,,,,,,>));
+            builder.AddMigrateAccessorAspect(typeof(TabulationMigrateDbContextAccessorAspect<,,,,,,,>));
             builder.AddSaveChangesAccessorAspect(typeof(AuditSaveChangesDbContextAccessorAspect<,,,,,,,>));
 
             builder.AddMigrationAccessorService(typeof(MigrationAccessorService<,,,,,,,>));
-            builder.AddMultiTenantAccessorService(typeof(MultiTenantAccessorService<,,,,,,,>));
+            builder.AddMultiTenantAccessorService(typeof(MultiTenancyAccessorService<,,,,,,,>));
 
             return builder;
         }
@@ -137,6 +139,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // 在使用自定义迁移服务时，利用模型缓存键工厂使模型缓存失效后重新映射表名来达到分表的方法同样会变成重命名及修改的迁移操作而导致失败。
             //optionsBuilder.ReplaceService<IModelCacheKeyFactory, DbContextAccessorModelCacheKeyFactory>();
             optionsBuilder.ReplaceService<IMigrationsModelDiffer, ShardingMigrationsModelDiffer>();
+            optionsBuilder.ReplaceService<IBatchExecutor, AccessorBatchExecutor>();
         }
 
     }

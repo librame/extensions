@@ -39,7 +39,7 @@ namespace Librame.Extensions.Core.Builders
         protected CoreBuilderDependency(string name)
             : base(name)
         {
-            IdentifiersDirectory = ConfigDirectory.CombinePath(CoreSettings.Preference.IdentifiersFolder);
+            TokensDirectory = ConfigDirectory.CombinePath(CoreSettings.Preference.TokensFolder);
         }
 
 
@@ -72,8 +72,8 @@ namespace Librame.Extensions.Core.Builders
 
 
         /// <summary>
-        /// 标识符目录。
+        /// 令牌目录。
         /// </summary>
-        public string IdentifiersDirectory { get; set; }
+        public string TokensDirectory { get; set; }
     }
 }

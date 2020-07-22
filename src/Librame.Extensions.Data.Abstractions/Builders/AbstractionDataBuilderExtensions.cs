@@ -101,7 +101,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public static IDataBuilder AddMultiTenantAccessorService(this IDataBuilder builder,
             Type implementationTypeDefinition)
-            => builder.AddAccessorService<IMultiTenantAccessorService>(implementationTypeDefinition);
+            => builder.AddAccessorService<IMultiTenancyAccessorService>(implementationTypeDefinition);
 
 
         /// <summary>

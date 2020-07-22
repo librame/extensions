@@ -8,12 +8,65 @@ namespace Librame.Extensions.Tests
     public class TypeExtensionsTests
     {
         [Fact]
+        public void IsIntegerTypeTest()
+        {
+            var type = typeof(int);
+            Assert.True(type.IsIntegerType());
+
+            type = typeof(long?);
+            Assert.True(type.IsIntegerType());
+
+            type = typeof(sbyte?);
+            Assert.True(type.IsIntegerType());
+
+            type = typeof(Guid?);
+            Assert.False(type.IsIntegerType());
+        }
+
+
+        [Fact]
+        public void IsNullableTypeTest()
+        {
+            Assert.True(typeof(bool?).IsNullableType());
+            Assert.False(typeof(bool).IsNullableType());
+        }
+
+
+        [Fact]
+        public void IsAssignableFromTargetTypeTest()
+        {
+            var baseType = typeof(ITestA<string>);
+            var testType = typeof(TestClass);
+            var testSubType = typeof(TestSubClass);
+
+            Assert.True(baseType.IsAssignableFromTargetType(testType));
+            Assert.True(baseType.IsAssignableFromTargetType(testSubType));
+            Assert.False(testType.IsAssignableFromTargetType(testSubType));
+
+            Assert.True(testType.IsAssignableToBaseType(baseType));
+            Assert.True(testSubType.IsAssignableToBaseType(baseType));
+            Assert.False(testType.IsAssignableToBaseType(testSubType));
+        }
+
+
+        [Fact]
+        public void GetBaseTypesTest()
+        {
+            var type = typeof(TestSubClass);
+            var baseTypes = type.GetBaseTypes();
+            Assert.NotEmpty(baseTypes);
+        }
+
+
+        [Fact]
         public void UnwrapNullableTypeTest()
         {
             var type = typeof(bool?).UnwrapNullableType();
             Assert.Equal(typeof(bool), type);
         }
 
+
+        #region GetDisplayName
 
         [Fact]
         public void GetGenericBodyNameTest()
@@ -52,6 +105,10 @@ namespace Librame.Extensions.Tests
             Assert.Equal(targetQualifiedName, qualifiedName);
         }
 
+        #endregion
+
+
+        #region GetMemberInfos
 
         [Fact]
         public void GetAllFieldsTest()
@@ -76,6 +133,8 @@ namespace Librame.Extensions.Tests
             properties = type.GetAllPropertiesWithoutStatic();
             Assert.Equal(2, properties.Length);
         }
+
+        #endregion
 
 
         [Fact]
@@ -136,62 +195,27 @@ namespace Librame.Extensions.Tests
 
 
         [Fact]
-        public void IsImplementedInterfaceTest()
+        public void IsImplementedInterfaceTypeTest()
         {
-            Assert.True(typeof(TestClass).IsImplementedInterface<ITestB>());
-            Assert.True(typeof(ITestB).IsImplementedInterface<ITestA<string>>());
-            Assert.True(typeof(TestClass).IsImplementedInterface(typeof(ITestA<>), out Type genericType));
-            Assert.True(genericType.GetGenericArguments().Single() == typeof(string));
+            Assert.True(typeof(TestClass).IsImplementedInterfaceType<ITestB>());
+            Assert.True(typeof(ITestB).IsImplementedInterfaceType<ITestA<string>>());
+
+            Assert.True(typeof(TestClass).IsImplementedInterfaceType(typeof(ITestA<>), out Type resultType));
+            Assert.True(resultType.GetGenericArguments().Single() == typeof(string));
         }
 
 
-        interface ITestA<T>
+        [Fact]
+        public void IsImplementedBaseTypeTest()
         {
-            void TestMethod();
-        }
-
-        interface ITestB : ITestA<string>
-        {
-        }
-
-        class TestClass : ITestB
-        {
-            static string _field1 = null;
-            string _field2 = null;
-            public string Field3 = string.Empty;
-
-            static string Property1 { get; set; }
-            string Property2 { get; set; }
-            public string Property3 { get; set; }
-
-            public void TestMethod()
+            Assert.True(typeof(TestSubClass).IsImplementedBaseType<TestClass>());
+            Assert.ThrowsAny<NotSupportedException>(() =>
             {
-                Assert.Null(_field1);
-                Assert.Null(_field2);
-            }
-        }
+                typeof(TestSubClass).IsImplementedBaseType<ITestB>();
+            });
 
-
-        public class TestSetProperty : ITestSetProperty
-        {
-            public string PublicProperty { get; set; }
-
-            public int ProtectedProperty { get; protected set; }
-
-            public bool InternalProperty { get; internal set; }
-
-            public DateTime PrivateProperty { get; private set; }
-        }
-
-        public interface ITestSetProperty
-        {
-            public string PublicProperty { get; set; }
-
-            public int ProtectedProperty { get; }
-
-            public bool InternalProperty { get; }
-
-            public DateTime PrivateProperty { get; }
+            Assert.True(typeof(TestSubClassReference).IsImplementedBaseType(typeof(TestClass<>), out Type resultType));
+            Assert.True(resultType.GetGenericArguments().Single() == typeof(string));
         }
 
     }

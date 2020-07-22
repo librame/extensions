@@ -23,7 +23,7 @@ namespace Librame.Extensions.Data.Stores
         where TValue : struct
     {
         /// <summary>
-        /// 评论次数。
+        /// 评论条数。
         /// </summary>
         TValue CommentCount { get; set; }
 
@@ -33,12 +33,59 @@ namespace Librame.Extensions.Data.Stores
         TValue CommenterCount { get; set; }
 
 
+        #region Degressive
+
         /// <summary>
-        /// 异步累加评论次数。
+        /// 累减评论条数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue DegressiveCommentCount();
+
+        /// <summary>
+        /// 异步累减评论条数。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
+        ValueTask<TValue> DegressiveCommentCountAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 异步累减评论人数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue DegressiveCommenterCount();
+
+        /// <summary>
+        /// 异步累减评论人数。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
+        ValueTask<TValue> DegressiveCommenterCountAsync(CancellationToken cancellationToken = default);
+
+        #endregion
+
+
+        #region Progressive
+
+        /// <summary>
+        /// 累加评论条数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue ProgressiveCommentCount();
+
+        /// <summary>
+        /// 异步累加评论条数。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         ValueTask<TValue> ProgressiveCommentCountAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 异步累加评论人数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue ProgressiveCommenterCount();
 
         /// <summary>
         /// 异步累加评论人数。
@@ -46,5 +93,8 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         ValueTask<TValue> ProgressiveCommenterCountAsync(CancellationToken cancellationToken = default);
+
+        #endregion
+
     }
 }

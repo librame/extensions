@@ -11,7 +11,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -22,7 +21,7 @@ namespace Librame.Extensions.Core.Mappers
     /// </summary>
     public static class TypeParameterMappingHelper
     {
-        private static void ValidGenericType(Type genericTypeDefinition, Type genericTypeImplementation)
+        private static void ValidGenericTypeDefinition(Type genericTypeDefinition, Type genericTypeImplementation)
         {
             genericTypeDefinition.NotNull(nameof(genericTypeDefinition));
             genericTypeImplementation.NotNull(nameof(genericTypeImplementation));
@@ -37,7 +36,7 @@ namespace Librame.Extensions.Core.Mappers
                 throw new NotSupportedException($"The generic type implementation '{genericTypeImplementation}' can't be generic type definition.");
         }
 
-        private static void ValidGenericTypes(Type[] parameterTypes, Type[] argumentTypes)
+        private static void ValidGenericTypeParameters(Type[] parameterTypes, Type[] argumentTypes)
         {
             parameterTypes.NotNull(nameof(parameterTypes));
             argumentTypes.NotNull(nameof(argumentTypes));
@@ -48,69 +47,33 @@ namespace Librame.Extensions.Core.Mappers
 
 
         /// <summary>
-        /// 解析为数组。
+        /// 解析类型参数映射集合（默认以定义参数类型名称为键名）。
         /// </summary>
         /// <param name="genericTypeDefinition">给定的泛型类型定义。</param>
         /// <param name="genericTypeImplementation">给定的泛型类型实现。</param>
-        /// <returns>返回 <see cref="TypeParameterMapping"/> 数组。</returns>
+        /// <returns>返回 <see cref="TypeParameterMappingCollection"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public static TypeParameterMapping[] ParseAsArray(Type genericTypeDefinition, Type genericTypeImplementation)
+        public static TypeParameterMappingCollection ParseCollection(Type genericTypeDefinition,
+            Type genericTypeImplementation)
         {
-            ValidGenericType(genericTypeDefinition, genericTypeImplementation);
+            ValidGenericTypeDefinition(genericTypeDefinition, genericTypeImplementation);
 
-            return ParseAsArray(genericTypeDefinition.GetTypeInfo().GenericTypeParameters,
+            return ParseCollection(genericTypeDefinition.GetTypeInfo().GenericTypeParameters,
                 genericTypeImplementation.GenericTypeArguments);
         }
 
         /// <summary>
-        /// 解析为数组。
+        /// 解析类型参数映射集合（默认以定义参数类型名称为键名）。
         /// </summary>
         /// <param name="parameterTypes">给定的定义参数类型数组。</param>
         /// <param name="argumentTypes">给定的实现参数类型数组。</param>
-        /// <returns>返回 <see cref="TypeParameterMapping"/> 数组。</returns>
+        /// <returns>返回 <see cref="TypeParameterMappingCollection"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public static TypeParameterMapping[] ParseAsArray(Type[] parameterTypes, Type[] argumentTypes)
+        public static TypeParameterMappingCollection ParseCollection(Type[] parameterTypes, Type[] argumentTypes)
         {
-            ValidGenericTypes(parameterTypes, argumentTypes);
+            ValidGenericTypeParameters(parameterTypes, argumentTypes);
 
-            var parameters = new TypeParameterMapping[parameterTypes.Length];
-
-            for (var i = 0; i < parameterTypes.Length; i++)
-            {
-                parameters[i] = new TypeParameterMapping(parameterTypes[i], argumentTypes[i]);
-            }
-
-            return parameters;
-        }
-
-
-        /// <summary>
-        /// 解析为字典。
-        /// </summary>
-        /// <param name="genericTypeDefinition">给定的泛型类型定义。</param>
-        /// <param name="genericTypeImplementation">给定的泛型类型实现。</param>
-        /// <returns>返回 <see cref="Dictionary{String, GenericTypeParameter}"/>。</returns>
-        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public static Dictionary<string, TypeParameterMapping> ParseAsDictionary(Type genericTypeDefinition, Type genericTypeImplementation)
-        {
-            ValidGenericType(genericTypeDefinition, genericTypeImplementation);
-
-            return ParseAsDictionary(genericTypeDefinition.GetTypeInfo().GenericTypeParameters,
-                genericTypeImplementation.GenericTypeArguments);
-        }
-
-        /// <summary>
-        /// 解析为字典（默认以定义参数类型名称为键名）。
-        /// </summary>
-        /// <param name="parameterTypes">给定的定义参数类型数组。</param>
-        /// <param name="argumentTypes">给定的实现参数类型数组。</param>
-        /// <returns>返回 <see cref="Dictionary{String, GenericTypeParameter}"/>。</returns>
-        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public static Dictionary<string, TypeParameterMapping> ParseAsDictionary(Type[] parameterTypes, Type[] argumentTypes)
-        {
-            ValidGenericTypes(parameterTypes, argumentTypes);
-
-            var parameters = new Dictionary<string, TypeParameterMapping>();
+            var parameters = new TypeParameterMappingCollection();
 
             for (var i = 0; i < parameterTypes.Length; i++)
             {

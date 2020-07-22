@@ -16,16 +16,16 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Data.Protectors
 {
     using Core;
-    using Core.Identifiers;
+    using Core.Tokens;
 
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class PrivacyDataProtector : IPrivacyDataProtector
     {
-        private readonly ISecurityIdentifierKeyRing _keyRing;
-        private readonly ISecurityIdentifierProtector _encryptor;
+        private readonly ISecurityTokenKeyRing _keyRing;
+        private readonly ISecurityTokenProtector _encryptor;
 
 
-        public PrivacyDataProtector(ISecurityIdentifierKeyRing keyRing, ISecurityIdentifierProtector protector)
+        public PrivacyDataProtector(ISecurityTokenKeyRing keyRing, ISecurityTokenProtector protector)
         {
             _keyRing = keyRing.NotNull(nameof(keyRing));
             _encryptor = protector.NotNull(nameof(keyRing));

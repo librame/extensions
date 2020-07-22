@@ -22,11 +22,24 @@ namespace Librame.Extensions.Data.Stores
     public interface IObjectUpdation : IObjectCreation
     {
         /// <summary>
+        /// 获取对象更新时间。
+        /// </summary>
+        /// <returns>返回日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）。</returns>
+        object GetObjectUpdatedTime();
+
+        /// <summary>
         /// 异步获取对象更新时间。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
         ValueTask<object> GetObjectUpdatedTimeAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 获取对象更新者。
+        /// </summary>
+        /// <returns>返回更新者（兼容标识或字符串）。</returns>
+        object GetObjectUpdatedBy();
 
         /// <summary>
         /// 异步获取对象更新者。
@@ -37,12 +50,27 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
+        /// 设置对象更新时间。
+        /// </summary>
+        /// <param name="newUpdatedTime">给定的新更新时间对象。</param>
+        /// <returns>返回日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）。</returns>
+        object SetObjectUpdatedTime(object newUpdatedTime);
+
+        /// <summary>
         /// 异步设置对象更新时间。
         /// </summary>
         /// <param name="newUpdatedTime">给定的新更新时间对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
         ValueTask<object> SetObjectUpdatedTimeAsync(object newUpdatedTime, CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 设置对象更新者。
+        /// </summary>
+        /// <param name="newUpdatedBy">给定的新更新者对象。</param>
+        /// <returns>返回创建者（兼容标识或字符串）。</returns>
+        object SetObjectUpdatedBy(object newUpdatedBy);
 
         /// <summary>
         /// 异步设置对象更新者。

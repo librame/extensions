@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgumentNullExceptionIdentifierBothNull" xml:space="preserve">
-    <value>Both the option identifier and the identifier parameter are null.</value>
+  <data name="ArgumentNullExceptionTokenBothNull" xml:space="preserve">
+    <value>Both the option token and the token parameter are null.</value>
   </data>
   <data name="InvalidOperationExceptionInvalidSigningKey" xml:space="preserve">
     <value>Signing key is not asymmetric.</value>

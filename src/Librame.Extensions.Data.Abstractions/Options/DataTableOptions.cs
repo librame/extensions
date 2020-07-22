@@ -15,7 +15,7 @@ using System;
 namespace Librame.Extensions.Data.Options
 {
     /// <summary>
-    /// 表名选项。
+    /// 数据表选项。
     /// </summary>
     public class DataTableOptions : AbstractTableOptions
     {
@@ -37,14 +37,14 @@ namespace Librame.Extensions.Data.Options
         public Action<TableDescriptor> AuditProperty { get; set; }
 
         /// <summary>
-        /// 实体表描述符配置动作。
-        /// </summary>
-        public Action<TableDescriptor> Entity { get; set; }
-
-        /// <summary>
         /// 迁移表描述符配置动作。
         /// </summary>
         public Action<TableDescriptor> Migration { get; set; }
+
+        /// <summary>
+        /// 表格表描述符配置动作。
+        /// </summary>
+        public Action<TableDescriptor> Tabulation { get; set; }
 
         /// <summary>
         /// 租户表描述符配置动作。

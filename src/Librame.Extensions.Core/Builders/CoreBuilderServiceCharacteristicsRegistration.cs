@@ -20,6 +20,7 @@ namespace Librame.Extensions.Core.Builders
     using Localizers;
     using Mediators;
     using Services;
+    using Tokens;
 
     /// <summary>
     /// <see cref="ICoreBuilder"/> 服务特征注册。
@@ -45,10 +46,9 @@ namespace Librame.Extensions.Core.Builders
                 // Decorators
                 { typeof(IDecorator<,>), ServiceCharacteristics.Transient() },
                 { typeof(IDecorator<>), ServiceCharacteristics.Transient() },
-
+                
                 // Identifiers
-                { typeof(ISecurityIdentifierKeyRing), ServiceCharacteristics.Singleton() },
-                { typeof(ISecurityIdentifierProtector), ServiceCharacteristics.Singleton() },
+                { typeof(IIdentityGeneratorFactory), ServiceCharacteristics.Singleton() },
 
                 // Localizers
                 { typeof(IEnhancedStringLocalizer<>), ServiceCharacteristics.Transient() },
@@ -68,7 +68,11 @@ namespace Librame.Extensions.Core.Builders
                 { typeof(IInjectionService), ServiceCharacteristics.Transient() },
                 { typeof(IHumanizationService), ServiceCharacteristics.Singleton() },
                 { typeof(IClockService), ServiceCharacteristics.Singleton() },
-                { typeof(IEnvironmentService), ServiceCharacteristics.Singleton() }
+                { typeof(IEnvironmentService), ServiceCharacteristics.Singleton() },
+                
+                // Tokens
+                { typeof(ISecurityTokenKeyRing), ServiceCharacteristics.Singleton() },
+                { typeof(ISecurityTokenProtector), ServiceCharacteristics.Singleton() }
             };
         }
 

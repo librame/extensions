@@ -19,7 +19,6 @@ using System.Linq;
 namespace Librame.Extensions.Data.Builders
 {
     using Core;
-    using Core.Builders;
     using Data.Accessors;
     using Data.Options;
     using Data.Stores;
@@ -66,7 +65,7 @@ namespace Librame.Extensions.Data.Builders
     /// <typeparam name="TStoreOptions">指定的存储选项类型。</typeparam>
     /// <typeparam name="TTableOptions">指定的表名选项类型。</typeparam>
     public class DataBuilderOptionsBase<TStoreOptions, TTableOptions>
-        : AbstractDataBuilderOptions<TStoreOptions, TTableOptions>, IExtensionBuilderOptions
+        : AbstractDataBuilderOptions<TStoreOptions, TTableOptions>
         where TStoreOptions : AbstractStoreOptions, new()
         where TTableOptions : AbstractTableOptions, new()
     {
@@ -106,14 +105,14 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
-        /// 已创建数据库的后置动作（默认调用 <see cref="DbContextAccessorBase.Migrate()"/>）。
+        /// 已创建数据库的后置动作。
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public Action<DbContextAccessorBase> PostDatabaseCreatedAction { get; set; }
 
         /// <summary>
-        /// 已更改数据库的后置动作（默认调用 <see cref="DbContextAccessorBase.Migrate()"/>）。
+        /// 已更改数据库的后置动作。
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]

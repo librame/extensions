@@ -14,8 +14,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Encryption.Services
 {
-    using Core.Identifiers;
     using Core.Services;
+    using Core.Tokens;
     using Encryption.Builders;
     using Encryption.Generators;
 
@@ -32,33 +32,33 @@ namespace Librame.Extensions.Encryption.Services
         public IKeyGenerator KeyGenerator { get; }
 
 
-        public byte[] HmacMd5(byte[] buffer, out byte[] key, SecurityIdentifier identifier = null)
+        public byte[] HmacMd5(byte[] buffer, out byte[] key, SecurityToken token = null)
         {
-            key = KeyGenerator.GetHmacMd5Key(identifier);
+            key = KeyGenerator.GetHmacMd5Key(token);
             return buffer.HmacMd5(key);
         }
 
-        public byte[] HmacSha1(byte[] buffer, out byte[] key, SecurityIdentifier identifier = null)
+        public byte[] HmacSha1(byte[] buffer, out byte[] key, SecurityToken token = null)
         {
-            key = KeyGenerator.GetHmacSha1Key(identifier);
+            key = KeyGenerator.GetHmacSha1Key(token);
             return buffer.HmacSha1(key);
         }
 
-        public byte[] HmacSha256(byte[] buffer, out byte[] key, SecurityIdentifier identifier = null)
+        public byte[] HmacSha256(byte[] buffer, out byte[] key, SecurityToken token = null)
         {
-            key = KeyGenerator.GetHmacSha256Key(identifier);
+            key = KeyGenerator.GetHmacSha256Key(token);
             return buffer.HmacSha256(key);
         }
 
-        public byte[] HmacSha384(byte[] buffer, out byte[] key, SecurityIdentifier identifier = null)
+        public byte[] HmacSha384(byte[] buffer, out byte[] key, SecurityToken token = null)
         {
-            key = KeyGenerator.GetHmacSha384Key(identifier);
+            key = KeyGenerator.GetHmacSha384Key(token);
             return buffer.HmacSha384(key);
         }
 
-        public byte[] HmacSha512(byte[] buffer, out byte[] key, SecurityIdentifier identifier = null)
+        public byte[] HmacSha512(byte[] buffer, out byte[] key, SecurityToken token = null)
         {
-            key = KeyGenerator.GetHmacSha512Key(identifier);
+            key = KeyGenerator.GetHmacSha512Key(token);
             return buffer.HmacSha512(key);
         }
 

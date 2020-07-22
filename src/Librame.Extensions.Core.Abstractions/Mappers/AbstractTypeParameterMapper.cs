@@ -26,26 +26,17 @@ namespace Librame.Extensions.Core.Mappers
         /// <summary>
         /// 构造一个 <see cref="AbstractTypeParameterMapper"/>。
         /// </summary>
-        /// <param name="mappings">给定的类型参数映射字典集合。</param>
-        protected AbstractTypeParameterMapper(Dictionary<string, TypeParameterMapping> mappings)
-            : this(mappings as IReadOnlyDictionary<string, TypeParameterMapping>)
+        /// <param name="mappings">给定的 <see cref="TypeParameterMappingCollection"/>。</param>
+        protected AbstractTypeParameterMapper(TypeParameterMappingCollection mappings)
         {
-        }
-
-        /// <summary>
-        /// 构造一个 <see cref="AbstractTypeParameterMapper"/>。
-        /// </summary>
-        /// <param name="mappings">给定的类型参数映射字典集合。</param>
-        protected AbstractTypeParameterMapper(IReadOnlyDictionary<string, TypeParameterMapping> mappings)
-        {
-            Mappings = mappings.NotEmpty(nameof(mappings));
+            Mappings = mappings.NotNull(nameof(mappings));
         }
 
 
         /// <summary>
-        /// 类型参数映射字典集合。
+        /// 类型参数映射集合。
         /// </summary>
-        protected IReadOnlyDictionary<string, TypeParameterMapping> Mappings { get; }
+        public TypeParameterMappingCollection Mappings { get; }
 
 
         /// <summary>

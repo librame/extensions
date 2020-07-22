@@ -46,26 +46,115 @@ namespace Librame.Extensions.Data.Stores
         TValue RetweetCount { get; set; }
 
 
+        #region Degressive
+
         /// <summary>
-        /// 异步累加顶数。
+        /// 累减支持人数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue DegressiveSupporterCount();
+
+        /// <summary>
+        /// 异步累减支持人数。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
+        ValueTask<TValue> DegressiveSupporterCountAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 累减反对人数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue DegressiveObjectorCount();
+
+        /// <summary>
+        /// 异步累减反对人数。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
+        ValueTask<TValue> DegressiveObjectorCountAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 累减收藏人数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue DegressiveFavoriteCount();
+
+        /// <summary>
+        /// 异步累减收藏人数。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
+        ValueTask<TValue> DegressiveFavoriteCountAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 累减转发次数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue DegressiveRetweetCount();
+
+        /// <summary>
+        /// 异步累减转发次数。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
+        ValueTask<TValue> DegressiveRetweetCountAsync(CancellationToken cancellationToken = default);
+
+        #endregion
+
+
+        #region Progressive
+
+        /// <summary>
+        /// 累加支持人数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue ProgressiveSupporterCount();
+
+        /// <summary>
+        /// 异步累加支持人数。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         ValueTask<TValue> ProgressiveSupporterCountAsync(CancellationToken cancellationToken = default);
 
+
         /// <summary>
-        /// 异步累加踩数。
+        /// 累加反对人数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue ProgressiveObjectorCount();
+
+        /// <summary>
+        /// 异步累加反对人数。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         ValueTask<TValue> ProgressiveObjectorCountAsync(CancellationToken cancellationToken = default);
 
+
         /// <summary>
-        /// 异步累加收藏数。
+        /// 累加收藏人数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue ProgressiveFavoriteCount();
+
+        /// <summary>
+        /// 异步累加收藏人数。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         ValueTask<TValue> ProgressiveFavoriteCountAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 累加转发次数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue ProgressiveRetweetCount();
 
         /// <summary>
         /// 异步累加转发次数。
@@ -73,5 +162,8 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         ValueTask<TValue> ProgressiveRetweetCountAsync(CancellationToken cancellationToken = default);
+
+        #endregion
+
     }
 }

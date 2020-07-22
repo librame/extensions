@@ -58,7 +58,7 @@ namespace Librame.Extensions.Data.Builders
         {
             // Mediators
             AddService(typeof(AuditNotificationHandler<,>));
-            AddService(typeof(EntityNotificationHandler<>));
+            AddService(typeof(TabulationNotificationHandler<>));
             AddService(typeof(MigrationNotificationHandler<>));
 
             // Protectors
@@ -99,7 +99,7 @@ namespace Librame.Extensions.Data.Builders
             if (false == implementationTypeDefinition?.IsGenericTypeDefinition)
                 throw new NotSupportedException($"The implementation type '{implementationTypeDefinition}' only support generic type definition.");
             
-            if (!implementationTypeDefinition.IsImplementedInterface(serviceType, out var resultType))
+            if (!implementationTypeDefinition.IsImplementedInterfaceType(serviceType, out var resultType))
                 throw new InvalidOperationException($"The type '{implementationTypeDefinition}' does not implement '{serviceType}' interface.");
 
             var characteristics = GetServiceCharacteristics(serviceType);
@@ -150,12 +150,13 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 添加存储标识符生成器。
         /// </summary>
-        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentifierGenerator"/> 接口的存储标识符类型，推荐使用 <see cref="GuidDataStoreIdentifierGenerator"/>。</typeparam>
+        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentityGenerator"/> 接口的存储标识符类型，推荐使用 <see cref="GuidDataStoreIdentityGenerator"/>。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public virtual IDataBuilder AddStoreIdentifierGenerator<TGenerator>()
-            where TGenerator : class, IStoreIdentifierGenerator
+            where TGenerator : class, IStoreIdentityGenerator
         {
-            AddService<IStoreIdentifierGenerator, TGenerator>();
+            AddService<IStoreIdentityGenerator, TGenerator>();
+            AddService(sp => (TGenerator)sp.GetService<IStoreIdentityGenerator>());
             return this;
         }
 
@@ -168,6 +169,7 @@ namespace Librame.Extensions.Data.Builders
             where TInitializer : class, IStoreInitializer
         {
             AddService<IStoreInitializer, TInitializer>();
+            AddService(sp => (TInitializer)sp.GetService<IStoreInitializer>());
             return this;
         }
 

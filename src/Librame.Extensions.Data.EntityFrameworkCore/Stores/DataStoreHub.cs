@@ -51,8 +51,8 @@ namespace Librame.Extensions.Data.Stores
     public class DataStoreHub<TAccessor, TGenId, TIncremId, TCreatedBy> : DataStoreHub<TAccessor,
         DataAudit<TGenId, TCreatedBy>,
         DataAuditProperty<TIncremId, TGenId>,
-        DataEntity<TGenId, TCreatedBy>,
         DataMigration<TGenId, TCreatedBy>,
+        DataTabulation<TGenId, TCreatedBy>,
         DataTenant<TGenId, TCreatedBy>,
         TGenId, TIncremId, TCreatedBy>
         where TAccessor : DataDbContextAccessor<TGenId, TIncremId, TCreatedBy>
@@ -78,19 +78,19 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
-    /// <typeparam name="TEntity">指定的实体类型。</typeparam>
     /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+    /// <typeparam name="TTabulation">指定的表格类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public class DataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-        : AbstractStoreHub, IDataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant>
-        where TAccessor : DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+    public class DataStoreHub<TAccessor, TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy>
+        : AbstractStoreHub, IDataStoreHub<TAccessor, TAudit, TAuditProperty, TMigration, TTabulation, TTenant>
+        where TAccessor : DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy>
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty: DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId, TCreatedBy>
         where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTabulation : DataTabulation<TGenId, TCreatedBy>
         where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
@@ -127,16 +127,16 @@ namespace Librame.Extensions.Data.Stores
             => Accessor.AuditProperties;
 
         /// <summary>
-        /// 实体查询。
-        /// </summary>
-        public IQueryable<TEntity> Entities
-            => Accessor.Entities;
-
-        /// <summary>
         /// 迁移查询。
         /// </summary>
         public IQueryable<TMigration> Migrations
             => Accessor.Migrations;
+
+        /// <summary>
+        /// 实体查询。
+        /// </summary>
+        public IQueryable<TTabulation> Tabulations
+            => Accessor.Tabulations;
 
         /// <summary>
         /// 租户查询。
@@ -185,36 +185,6 @@ namespace Librame.Extensions.Data.Stores
         #endregion
 
 
-        #region IEntityStore
-
-        /// <summary>
-        /// 异步查找实体。
-        /// </summary>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
-        /// <param name="keyValues">给定的键值对数组或标识。</param>
-        /// <returns>返回一个包含 <typeparamref name="TEntity"/> 的异步操作。</returns>
-        public virtual ValueTask<TEntity> FindEntityAsync(CancellationToken cancellationToken, params object[] keyValues)
-            => Accessor.Entities.FindAsync(keyValues, cancellationToken);
-
-        /// <summary>
-        /// 异步获取分页实体集合。
-        /// </summary>
-        /// <param name="index">给定的页索引。</param>
-        /// <param name="size">给定的页大小。</param>
-        /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
-        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
-        public virtual ValueTask<IPageable<TEntity>> GetPagingEntitiesAsync(int index, int size,
-            Func<IQueryable<TEntity>, IQueryable<TEntity>> queryFactory = null, CancellationToken cancellationToken = default)
-        {
-            var query = queryFactory?.Invoke(Entities.AsNoTracking()) ?? Entities.AsNoTracking();
-            return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
-                index, size, cancellationToken);
-        }
-
-        #endregion
-
-
         #region IMigrationStore
 
         /// <summary>
@@ -238,6 +208,36 @@ namespace Librame.Extensions.Data.Stores
             Func<IQueryable<TMigration>, IQueryable<TMigration>> queryFactory = null, CancellationToken cancellationToken = default)
         {
             var query = queryFactory?.Invoke(Migrations.AsNoTracking()) ?? Migrations.AsNoTracking();
+            return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
+                index, size, cancellationToken);
+        }
+
+        #endregion
+
+
+        #region ITabulationStore
+
+        /// <summary>
+        /// 异步查找表格。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
+        /// <param name="keyValues">给定的键值对数组或标识。</param>
+        /// <returns>返回一个包含 <typeparamref name="TTabulation"/> 的异步操作。</returns>
+        public virtual ValueTask<TTabulation> FindTabulationAsync(CancellationToken cancellationToken, params object[] keyValues)
+            => Accessor.Tabulations.FindAsync(keyValues, cancellationToken);
+
+        /// <summary>
+        /// 异步获取分页表格集合。
+        /// </summary>
+        /// <param name="index">给定的页索引。</param>
+        /// <param name="size">给定的页大小。</param>
+        /// <param name="queryFactory">给定的查询工厂方法（可选）。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <see cref="IPageable{TEntity}"/> 的异步操作。</returns>
+        public virtual ValueTask<IPageable<TTabulation>> GetPagingTabulationsAsync(int index, int size,
+            Func<IQueryable<TTabulation>, IQueryable<TTabulation>> queryFactory = null, CancellationToken cancellationToken = default)
+        {
+            var query = queryFactory?.Invoke(Tabulations.AsNoTracking()) ?? Tabulations.AsNoTracking();
             return query.AsPagingByIndexAsync(q => q.OrderByDescending(k => k.CreatedTime),
                 index, size, cancellationToken);
         }

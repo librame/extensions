@@ -2391,13 +2391,14 @@ namespace Librame.Extensions.Data.Migrations
 
                     // 从目标实体集合映射中筛选出标记分表的实体类型
                     var targetEntityTypes = _targetEntitiesMap.Keys.Where(type
-                        => type.ClrType.TryGetCustomAttribute(out ShardableAttribute attribute));
+                        => type.ClrType.IsDefined<ShardableAttribute>());
 
                     foreach (var targetEntityType in targetEntityTypes)
                     {
                         // 查找来源中的同实体名称是否存在
                         var sourceEntityType = _sourceEntitiesMap.Keys
                             .FirstOrDefault(type => type.Name == targetEntityType.Name);
+
                         if (sourceEntityType == null)
                             continue;
 

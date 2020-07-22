@@ -29,8 +29,8 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         /// <typeparam name="TAudit">指定的审计类型。</typeparam>
         /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
         /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+        /// <typeparam name="TTabulation">指定的表格类型。</typeparam>
         /// <typeparam name="TTenant">指定的租户类型。</typeparam>
         /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
@@ -38,17 +38,17 @@ namespace Librame.Extensions.Data.Accessors
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static void ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-            (this ModelBuilder modelBuilder, DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> accessor)
+        public static void ConfigureDataStores<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy>
+            (this ModelBuilder modelBuilder, DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> accessor)
             where TAudit : DataAudit<TGenId, TCreatedBy>
             where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-            where TEntity : DataEntity<TGenId, TCreatedBy>
             where TMigration : DataMigration<TGenId, TCreatedBy>
+            where TTabulation : DataTabulation<TGenId, TCreatedBy>
             where TTenant : DataTenant<TGenId, TCreatedBy>
             where TGenId : IEquatable<TGenId>
             where TIncremId : IEquatable<TIncremId>
             where TCreatedBy : IEquatable<TCreatedBy>
-            => modelBuilder.ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant,
+            => modelBuilder.ConfigureDataStores<TAudit, TAuditProperty, TMigration, TTabulation, TTenant,
                 TGenId, TIncremId, TCreatedBy>(accessor as DbContextAccessorBase);
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         /// <typeparam name="TAudit">指定的审计类型。</typeparam>
         /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
-        /// <typeparam name="TEntity">指定的实体类型。</typeparam>
         /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+        /// <typeparam name="TTabulation">指定的表格类型。</typeparam>
         /// <typeparam name="TTenant">指定的租户类型。</typeparam>
         /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
         /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
@@ -65,12 +65,12 @@ namespace Librame.Extensions.Data.Accessors
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static void ConfigureDataStores<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+        public static void ConfigureDataStores<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy>
             (this ModelBuilder modelBuilder, DbContextAccessorBase accessor)
             where TAudit : DataAudit<TGenId, TCreatedBy>
             where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-            where TEntity : DataEntity<TGenId, TCreatedBy>
             where TMigration : DataMigration<TGenId, TCreatedBy>
+            where TTabulation : DataTabulation<TGenId, TCreatedBy>
             where TTenant : DataTenant<TGenId, TCreatedBy>
             where TGenId : IEquatable<TGenId>
             where TIncremId : IEquatable<TIncremId>
@@ -82,6 +82,8 @@ namespace Librame.Extensions.Data.Accessors
             var maxLength = accessor.Dependency.Options.Stores.MaxLengthForProperties;
             var protectPrivacyData = accessor.Dependency.Options.Stores.ProtectPrivacyData;
             var tables = accessor.Dependency.Options.Tables;
+
+            var isGenIdString = typeof(TGenId).IsStringType();
 
             if (tables.DefaultSchema.IsNotEmpty())
                 modelBuilder.HasDefaultSchema(tables.DefaultSchema);
@@ -96,14 +98,18 @@ namespace Librame.Extensions.Data.Accessors
 
                     t.Configure(tables.Audit);
                 });
-                
-                b.HasKey(k => k.Id);
-                
+
                 b.HasIndex(i => new { i.TableName, i.EntityId, i.State }).HasName().IsUnique();
+
+                b.HasKey(k => k.Id);
+
+                b.Property(p => p.Id).ValueGeneratedNever();
 
                 if (maxLength > 0)
                 {
-                    b.Property(p => p.Id).HasMaxLength(maxLength);
+                    if (isGenIdString)
+                        b.Property(p => p.Id).HasMaxLength(maxLength);
+
                     b.Property(p => p.EntityId).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.TableName).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.StateName).HasMaxLength(maxLength);
@@ -126,11 +132,11 @@ namespace Librame.Extensions.Data.Accessors
                         .Configure(tables.AuditProperty);
                 });
 
-                b.HasKey(k => k.Id);
-
                 b.HasIndex(i => new { i.AuditId }).HasName();
 
-                b.Property(p => p.Id).ValueGeneratedOnAdd();
+                b.HasKey(k => k.Id);
+
+                b.Property(x => x.Id).ValueGeneratedOnAdd();
 
                 if (maxLength > 0)
                 {
@@ -144,34 +150,6 @@ namespace Librame.Extensions.Data.Accessors
                 b.Property(p => p.NewValue);
             });
 
-            // 实体
-            modelBuilder.Entity<TEntity>(b =>
-            {
-                b.ToTable(t =>
-                {
-                    if (tables.UseDataPrefix)
-                        t.InsertDataPrefix();
-
-                    t.Configure(tables.Entity);
-                });
-
-                b.HasKey(k => k.Id);
-
-                b.HasIndex(i => new { i.Schema, i.TableName }).HasName().IsUnique();
-
-                if (maxLength > 0)
-                {
-                    b.Property(p => p.Id).HasMaxLength(maxLength);
-                    b.Property(p => p.Schema).HasMaxLength(maxLength).IsRequired();
-                    b.Property(p => p.TableName).HasMaxLength(maxLength).IsRequired();
-                    b.Property(p => p.EntityName).HasMaxLength(maxLength);
-                    b.Property(p => p.AssemblyName).HasMaxLength(maxLength);
-                    b.Property(p => p.Description).HasMaxLength(maxLength);
-                }
-
-                b.Property(p => p.IsSharding).HasDefaultValue(false);
-            });
-
             // 迁移
             modelBuilder.Entity<TMigration>(b =>
             {
@@ -183,18 +161,53 @@ namespace Librame.Extensions.Data.Accessors
                     t.Configure(tables.Migration);
                 });
 
+                b.HasIndex(i => i.ModelHash).HasName().IsUnique();
+
                 b.HasKey(k => k.Id);
 
-                // 不做唯一索引
-                b.HasIndex(i => i.ModelHash).HasName();
+                b.Property(p => p.Id).ValueGeneratedNever();
 
                 if (maxLength > 0)
                 {
-                    b.Property(p => p.Id).HasMaxLength(maxLength);
+                    if (isGenIdString)
+                        b.Property(p => p.Id).HasMaxLength(maxLength);
+
                     b.Property(p => p.ModelHash).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.AccessorName).HasMaxLength(maxLength);
                     b.Property(p => p.ModelSnapshotName).HasMaxLength(maxLength);
                 }
+            });
+
+            // 表格
+            modelBuilder.Entity<TTabulation>(b =>
+            {
+                b.ToTable(t =>
+                {
+                    if (tables.UseDataPrefix)
+                        t.InsertDataPrefix();
+
+                    t.Configure(tables.Tabulation);
+                });
+
+                b.HasIndex(i => new { i.Schema, i.TableName }).HasName().IsUnique();
+
+                b.HasKey(k => k.Id);
+
+                b.Property(p => p.Id).ValueGeneratedNever();
+
+                if (maxLength > 0)
+                {
+                    if (isGenIdString)
+                        b.Property(p => p.Id).HasMaxLength(maxLength);
+
+                    b.Property(p => p.Schema).HasMaxLength(maxLength).IsRequired();
+                    b.Property(p => p.TableName).HasMaxLength(maxLength).IsRequired();
+                    b.Property(p => p.EntityName).HasMaxLength(maxLength);
+                    b.Property(p => p.AssemblyName).HasMaxLength(maxLength);
+                    b.Property(p => p.Description).HasMaxLength(maxLength);
+                }
+
+                b.Property(p => p.IsSharding).HasDefaultValue(false);
             });
 
             // 租户
@@ -208,13 +221,17 @@ namespace Librame.Extensions.Data.Accessors
                     t.Configure(tables.Tenant);
                 });
 
+                b.HasIndex(i => new { i.Name, i.Host }).HasName().IsUnique();
+
                 b.HasKey(k => k.Id);
 
-                b.HasIndex(i => new { i.Name, i.Host }).HasName().IsUnique();
+                b.Property(p => p.Id).ValueGeneratedNever();
 
                 if (maxLength > 0)
                 {
-                    b.Property(p => p.Id).HasMaxLength(maxLength);
+                    if (isGenIdString)
+                        b.Property(p => p.Id).HasMaxLength(maxLength);
+
                     b.Property(p => p.Name).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.Host).HasMaxLength(maxLength).IsRequired();
                     b.Property(p => p.DefaultConnectionString).HasMaxLength(maxLength).IsRequired();

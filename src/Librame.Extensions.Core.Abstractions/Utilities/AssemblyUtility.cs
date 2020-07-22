@@ -71,7 +71,7 @@ namespace Librame.Extensions.Core.Utilities
                 .Select(t => t.EnsureCreate<TExported>())
                 .ToList();
 
-            if (baseType.IsImplementedInterface<ISortable>())
+            if (baseType.IsImplementedInterfaceType<ISortable>())
                 exporteds.Sort();
 
             return exporteds;

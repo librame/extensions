@@ -14,8 +14,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Encryption.Services
 {
-    using Core.Identifiers;
     using Core.Services;
+    using Core.Tokens;
     using Encryption.Builders;
     using Encryption.Generators;
 
@@ -40,19 +40,19 @@ namespace Librame.Extensions.Encryption.Services
         #region AES
 
         public byte[] EncryptAes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null)
+            SecurityToken token = null)
         {
-            key = KeyGenerator.GetAesKey(identifier);
-            vector = VectorGenerator.GetAesVector(key, identifier);
+            key = KeyGenerator.GetAesKey(token);
+            vector = VectorGenerator.GetAesVector(key, token);
 
             return buffer.AsAes(key, vector);
         }
 
         public byte[] DecryptAes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null)
+            SecurityToken token = null)
         {
-            key = KeyGenerator.GetAesKey(identifier);
-            vector = VectorGenerator.GetAesVector(key, identifier);
+            key = KeyGenerator.GetAesKey(token);
+            vector = VectorGenerator.GetAesVector(key, token);
 
             return buffer.FromAes(key, vector);
         }
@@ -63,19 +63,19 @@ namespace Librame.Extensions.Encryption.Services
         #region DES
 
         public byte[] EncryptDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null)
+            SecurityToken token = null)
         {
-            key = KeyGenerator.GetDesKey(identifier);
-            vector = VectorGenerator.GetDesVector(key, identifier);
+            key = KeyGenerator.GetDesKey(token);
+            vector = VectorGenerator.GetDesVector(key, token);
 
             return buffer.AsDes(key, vector);
         }
 
         public byte[] DecryptDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null)
+            SecurityToken token = null)
         {
-            key = KeyGenerator.GetDesKey(identifier);
-            vector = VectorGenerator.GetDesVector(key, identifier);
+            key = KeyGenerator.GetDesKey(token);
+            vector = VectorGenerator.GetDesVector(key, token);
 
             return buffer.FromDes(key, vector);
         }
@@ -86,19 +86,19 @@ namespace Librame.Extensions.Encryption.Services
         #region TripleDES
 
         public byte[] EncryptTripleDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null)
+            SecurityToken token = null)
         {
-            key = KeyGenerator.GetTripleDesKey(identifier);
-            vector = VectorGenerator.GetTripleDesVector(key, identifier);
+            key = KeyGenerator.GetTripleDesKey(token);
+            vector = VectorGenerator.GetTripleDesVector(key, token);
 
             return buffer.AsTripleDes(key, vector);
         }
 
         public byte[] DecryptTripleDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null)
+            SecurityToken token = null)
         {
-            key = KeyGenerator.GetTripleDesKey(identifier);
-            vector = VectorGenerator.GetTripleDesVector(key, identifier);
+            key = KeyGenerator.GetTripleDesKey(token);
+            vector = VectorGenerator.GetTripleDesVector(key, token);
 
             return buffer.FromTripleDes(key, vector);
         }

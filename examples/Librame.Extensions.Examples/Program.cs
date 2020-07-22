@@ -12,6 +12,7 @@ namespace Librame.Extensions.Examples
 {
     using Core.Builders;
     using Core.Identifiers;
+    using Core.Options;
     using Data.Builders;
 
     class Program
@@ -37,15 +38,13 @@ namespace Librame.Extensions.Examples
 
         static void RunMySql()
         {
-            var builder = CreateBuilder()
+            var builder = CreateBuilder(options => options.GuidIdentifierGenerator = CombIdentityGenerator.MySQL)
                 .AddData(dependency =>
                 {
-                    dependency.Options.IdentifierGenerator = CombIdentifierGenerator.MySQL;
-
                     // for MySQL
                     dependency.BindDefaultTenant(MySqlConnectionStringHelper.Validate);
                 })
-                .AddAccessor<MySqlExampleDbContextAccessor>((tenant, optionsBuilder) =>
+                .AddAccessor<ExampleDbContextAccessor>((tenant, optionsBuilder) =>
                 {
                     // for MySQL
                     optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
@@ -57,18 +56,18 @@ namespace Librame.Extensions.Examples
                 // for MySQL
                 .AddDatabaseDesignTime<MySqlDesignTimeServices>()
                 .AddStoreIdentifierGenerator<ExampleStoreIdentifierGenerator>()
-                .AddStoreInitializer<ExampleStoreInitializer<MySqlExampleDbContextAccessor>>()
-                .AddStoreHub<ExampleStoreHub<MySqlExampleDbContextAccessor>>();
+                .AddStoreInitializer<ExampleStoreInitializer>()
+                .AddStoreHub<ExampleStoreHub>();
 
             var provider = builder.Services.BuildServiceProvider();
-            DisplayData<MySqlExampleDbContextAccessor>(provider, "MySql");
+            DisplayData(provider, "MySql");
         }
 
         static void RunSqlServer()
         {
             var builder = CreateBuilder()
                 .AddData()
-                .AddAccessor<SqlServerExampleDbContextAccessor>((tenant, optionsBuilder) =>
+                .AddAccessor<ExampleDbContextAccessor>((tenant, optionsBuilder) =>
                 {
                     // for SqlServer
                     optionsBuilder.UseSqlServer(tenant.DefaultConnectionString,
@@ -77,27 +76,27 @@ namespace Librame.Extensions.Examples
                 // for SqlServer
                 .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
                 .AddStoreIdentifierGenerator<ExampleStoreIdentifierGenerator>()
-                .AddStoreInitializer<ExampleStoreInitializer<SqlServerExampleDbContextAccessor>>()
-                .AddStoreHub<ExampleStoreHub<SqlServerExampleDbContextAccessor>>();
+                .AddStoreInitializer<ExampleStoreInitializer>()
+                .AddStoreHub<ExampleStoreHub>();
 
             var provider = builder.Services.BuildServiceProvider();
-            DisplayData<SqlServerExampleDbContextAccessor>(provider, "SqlServer");
+            DisplayData(provider, "SqlServer");
         }
 
         static void RunSqlite()
         {
-            var builder = CreateBuilder()
+            var builder = CreateBuilder(options => options.GuidIdentifierGenerator = CombIdentityGenerator.SQLite)
                 .AddData(dependency =>
                 {
-                    dependency.Options.IdentifierGenerator = CombIdentifierGenerator.SQLite;
-
                     // for SQLite
                     dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.DatabasesConfigDierctory.CombinePath(dataFile));
 
                     // ConnectionStrings 配置节点不支持 DefaultTenant 配置，须手动启用读写分离
                     dependency.Options.DefaultTenant.WritingSeparation = true;
+                    dependency.Options.DefaultTenant.DataSynchronization = true;
+                    dependency.Options.DefaultTenant.StructureSynchronization = true;
                 })
-                .AddAccessor<SqliteExampleDbContextAccessor>((tenant, optionsBuilder) =>
+                .AddAccessor<ExampleDbContextAccessor>((tenant, optionsBuilder) =>
                 {
                     // for SQLite
                     optionsBuilder.UseSqlite(tenant.DefaultConnectionString,
@@ -106,15 +105,14 @@ namespace Librame.Extensions.Examples
                 // for SQLite
                 .AddDatabaseDesignTime<SqliteDesignTimeServices>()
                 .AddStoreIdentifierGenerator<ExampleStoreIdentifierGenerator>()
-                .AddStoreInitializer<ExampleStoreInitializer<SqliteExampleDbContextAccessor>>()
-                .AddStoreHub<ExampleStoreHub<SqliteExampleDbContextAccessor>>();
+                .AddStoreInitializer<ExampleStoreInitializer>()
+                .AddStoreHub<ExampleStoreHub>();
 
             var provider = builder.Services.BuildServiceProvider();
-            DisplayData<SqliteExampleDbContextAccessor>(provider, "Sqlite");
+            DisplayData(provider, "Sqlite");
         }
 
-        static void DisplayData<TAccessor>(IServiceProvider provider, string databaseName)
-            where TAccessor : ExampleDbContextAccessorBase<Guid, int, Guid>
+        static void DisplayData(IServiceProvider provider, string databaseName)
         {
             Console.WriteLine($"Run {databaseName} database test:");
 
@@ -129,7 +127,7 @@ namespace Librame.Extensions.Examples
             Console.WriteLine($"Current tenant WritingSeparation: {tenant.WritingSeparation}.");
 
             // Write Data
-            var stores = provider.GetRequiredService<ExampleStoreHub<TAccessor>>();
+            var stores = provider.GetRequiredService<ExampleStoreHub>();
 
             var categories = stores.GetCategories();
             Console.WriteLine($"Default database categories is empty: {categories.IsEmpty()}.");
@@ -148,7 +146,7 @@ namespace Librame.Extensions.Examples
             Console.ReadKey();
         }
 
-        static ICoreBuilder CreateBuilder()
+        static ICoreBuilder CreateBuilder(Action<IdentifierOptions> configureOptions = null)
         {
             //var basePath = AppContext.BaseDirectory.WithoutDevelopmentRelativePath();
             //var root = new ConfigurationBuilder()
@@ -171,6 +169,8 @@ namespace Librame.Extensions.Examples
                     logging.AddConsole(logger => logger.IncludeScopes = false);
                     logging.AddFilter((str, level) => true);
                 };
+
+                configureOptions?.Invoke(dependency.Options.Identifier);
             });
         }
 

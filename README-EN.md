@@ -116,6 +116,10 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
     PM> Install-Package: Pomelo.EntityFrameworkCore.MySql
 
     var services = builder
+        .AddLibrame(dependency =>
+        {
+            dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.MySQL;
+        })
         .AddData(dependency =>
         {
             dependency.Options.IdentifierGenerator = CombIdentifierGenerator.MySQL;
@@ -140,6 +144,11 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
     PM> Install-Package: Microsoft.EntityFrameworkCore.SqlServer
 
     var services = builder
+        .AddLibrame(dependency =>
+        {
+            // SQLServer (Default)
+            //dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLServer;
+        })
         .AddData()
         .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
         {
@@ -157,9 +166,12 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
     PM> Install-Package: Microsoft.EntityFrameworkCore.Sqlite
 
     var services = builder
+        .AddLibrame(dependency =>
+        {
+            dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLite;
+        })
         .AddData(dependency =>
         {
-            dependency.Options.IdentifierGenerator = CombIdentifierGenerator.SQLite;
             // ConnectionStrings Section is not support DefaultTenant.WritingSeparation
             dependency.Options.DefaultTenant.WritingSeparation = true;
             dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.BaseDirectory.CombinePath(dataFile));

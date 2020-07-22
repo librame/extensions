@@ -34,11 +34,18 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 获取排名类型。
+        /// 状态类型。
         /// </summary>
-        public Type StatusType
+        public virtual Type StatusType
             => typeof(TStatus);
 
+
+        /// <summary>
+        /// 获取对象状态。
+        /// </summary>
+        /// <returns>返回状态（兼容不支持枚举类型的实体框架）。</returns>
+        public virtual object GetObjectStatus()
+            => Status;
 
         /// <summary>
         /// 异步获取对象状态。
@@ -48,13 +55,26 @@ namespace Librame.Extensions.Data.Stores
         public virtual ValueTask<object> GetObjectStatusAsync(CancellationToken cancellationToken = default)
             => cancellationToken.RunOrCancelValueAsync(() => (object)Status);
 
+
+        /// <summary>
+        /// 设置对象状态。
+        /// </summary>
+        /// <param name="newStatus">给定的新状态对象。</param>
+        /// <returns>返回状态（兼容不支持枚举类型的实体框架）。</returns>
+        public virtual object SetObjectStatus(object newStatus)
+        {
+            Status = newStatus.CastTo<object, TStatus>(nameof(newStatus));
+            return newStatus;
+        }
+
         /// <summary>
         /// 异步设置对象状态。
         /// </summary>
         /// <param name="newStatus">给定的新状态对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含状态（兼容不支持枚举类型的实体框架）的异步操作。</returns>
-        public virtual ValueTask<object> SetObjectStatusAsync(object newStatus, CancellationToken cancellationToken = default)
+        public virtual ValueTask<object> SetObjectStatusAsync(object newStatus,
+            CancellationToken cancellationToken = default)
         {
             var realNewStatus = newStatus.CastTo<object, TStatus>(nameof(newStatus));
 

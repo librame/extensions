@@ -13,7 +13,6 @@
 using Librame.Extensions;
 using Librame.Extensions.Core.Builders;
 using Librame.Extensions.Core.Options;
-using Microsoft.Extensions.Logging;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -23,26 +22,6 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class CoreBuilderServiceCollectionExtensions
     {
-        /// <summary>
-        /// 添加 Librame。
-        /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <param name="configureLoggingBuilder">给定的配置日志构建器动作方法。</param>
-        /// <param name="builderFactory">给定创建核心构建器的工厂方法（可选）。</param>
-        /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
-        public static ICoreBuilder AddLibrame(this IServiceCollection services,
-            Action<ILoggingBuilder> configureLoggingBuilder,
-            Func<IServiceCollection, CoreBuilderDependency, ICoreBuilder> builderFactory = null)
-        {
-            configureLoggingBuilder.NotNull(nameof(configureLoggingBuilder));
-
-            return services.AddLibrame(dependency =>
-            {
-                dependency.ConfigureLoggingBuilder = configureLoggingBuilder;
-            },
-            builderFactory);
-        }
-
         /// <summary>
         /// 添加 Librame。
         /// </summary>

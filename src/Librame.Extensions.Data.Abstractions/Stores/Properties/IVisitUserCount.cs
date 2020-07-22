@@ -36,11 +36,24 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
+        /// 累加访问次数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue ProgressiveVisitCount();
+
+        /// <summary>
         /// 异步累加访问次数。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="ValueTask{TValue}"/>。</returns>
         ValueTask<TValue> ProgressiveVisitCountAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 累加访问人数。
+        /// </summary>
+        /// <returns>返回 <typeparamref name="TValue"/>。</returns>
+        TValue ProgressiveVisitorCount();
 
         /// <summary>
         /// 异步累加访问人数。

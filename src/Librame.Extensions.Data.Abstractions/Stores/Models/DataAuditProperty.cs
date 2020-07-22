@@ -16,7 +16,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Resources;
+    using Core.Identifiers;
+    using Data.Resources;
 
     /// <summary>
     /// 数据审计属性。
@@ -26,7 +27,8 @@ namespace Librame.Extensions.Data.Stores
     [Description("数据审计属性")]
     [NonAudited]
     [Shardable]
-    public class DataAuditProperty<TIncremId, TAuditId> : AbstractIdentifier<TIncremId>
+    public class DataAuditProperty<TIncremId, TAuditId> : AbstractIdentifier<TIncremId>,
+        IIncrementalIdentifier<TIncremId>
         where TIncremId : IEquatable<TIncremId>
         where TAuditId : IEquatable<TAuditId>
     {
@@ -62,10 +64,11 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 将标识转换为字符串。
+        /// 转换为字符串。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => $"{nameof(Id)}={Id};{nameof(AuditId)}={AuditId};{nameof(PropertyName)}={PropertyName}";
+            => $"{base.ToString()};{nameof(AuditId)}={AuditId};{nameof(PropertyName)}={PropertyName}";
+
     }
 }

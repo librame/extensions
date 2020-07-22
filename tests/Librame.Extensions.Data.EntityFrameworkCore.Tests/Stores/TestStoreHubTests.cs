@@ -5,33 +5,42 @@ using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Design.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    using Core.Identifiers;
-    using Core.Services;
-    using Data.Builders;
-    using System.Collections.Generic;
+    using Extensions.Core.Identifiers;
+    using Extensions.Core.Services;
+    using Extensions.Data.Builders;
+    using Extensions.Data.Stores;
+    using Models;
 
     public class TestStoreHubTests
     {
         [Fact]
         public void MySqlTest()
         {
-            // Initialize Database: 7s
+            // Initialize Database Test: 6s
+            // Default Sharding Test: 5s
             var services = new ServiceCollection();
 
-            services.AddLibrame()
+            services
+                .AddLibrame(dependency =>
+                {
+                    dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.MySQL;
+                })
                 .AddData(dependency =>
                 {
-                    dependency.Options.IdentifierGenerator = CombIdentifierGenerator.MySQL;
-
                     dependency.Options.DefaultTenant.DefaultConnectionString
                         = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_default;user=root;password=123456;");
                     dependency.Options.DefaultTenant.WritingConnectionString
                         = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_writing;user=root;password=123456;");
+                    
                     dependency.Options.DefaultTenant.WritingSeparation = true;
+                    dependency.Options.DefaultTenant.DataSynchronization = true;
+                    dependency.Options.DefaultTenant.StructureSynchronization = true;
                 })
                 .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
                 {
@@ -43,74 +52,36 @@ namespace Librame.Extensions.Data.Tests
                 })
                 .AddDatabaseDesignTime<MySqlDesignTimeServices>()
                 .AddStoreHub<TestStoreHub>()
-                .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
+                .AddStoreIdentifierGenerator<TestGuidStoreIdentityGenerator>()
                 .AddStoreInitializer<TestStoreInitializer>();
 
-            var serviceProvider = services.BuildServiceProvider();
-            var stores = serviceProvider.GetRequiredService<TestStoreHub>();
-
-            var audits = stores.GetAudits();
-            Assert.Empty(audits);
-
-            audits = stores.UseWriteDbConnection().GetAudits();
-            Assert.NotEmpty(audits);
-
-            var auditProperties = stores.GetAuditProperties();
-            Assert.Empty(auditProperties);
-
-            auditProperties = stores.UseWriteDbConnection().GetAuditProperties();
-            Assert.NotEmpty(auditProperties);
-
-            var entities = stores.GetEntities();
-            Assert.Empty(entities);
-
-            entities = stores.UseWriteDbConnection().GetEntities();
-            Assert.NotEmpty(entities);
-
-            var migrations = stores.GetMigrations();
-            Assert.Empty(migrations);
-
-            migrations = stores.UseWriteDbConnection().GetMigrations();
-            Assert.NotEmpty(migrations);
-
-            var tenants = stores.GetTenants();
-            Assert.Empty(tenants);
-
-            tenants = stores.UseWriteDbConnection().GetTenants();
-            Assert.NotEmpty(tenants);
-
-
-            var categories = stores.GetCategories();
-            Assert.Empty(categories);
-
-            categories = stores.UseWriteDbConnection().GetCategories();
-            Assert.NotEmpty(categories);
-
-            var articles = stores.UseDefaultDbConnection().GetArticles();
-            Assert.Empty(articles);
-
-            articles = stores.UseWriteDbConnection().GetArticles();
-            Assert.True(articles.Total >= 0); // 如果已分表，则此表内容可能为空
+            TestStores(services.BuildServiceProvider());
         }
 
 
         [Fact]
         public void SqlServerTest()
         {
-            // Initialize Database: 27s
+            // Initialize Database Test: 27s
+            // Default Sharding Test: 5s
             var services = new ServiceCollection();
 
-            services.AddLibrame()
-                .AddData(dependency =>
+            services
+                .AddLibrame(dependency =>
                 {
                     // SQLServer (Default)
-                    //dependency.Options.IdentifierGenerator = CombIdentifierGenerator.SQLServer;
-
+                    //dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLServer;
+                })
+                .AddData(dependency =>
+                {
                     dependency.Options.DefaultTenant.DefaultConnectionString
                         = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
                     dependency.Options.DefaultTenant.WritingConnectionString
                         = "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True";
+
                     dependency.Options.DefaultTenant.WritingSeparation = true;
+                    dependency.Options.DefaultTenant.DataSynchronization = true;
+                    dependency.Options.DefaultTenant.StructureSynchronization = true;
                 })
                 .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
                 {
@@ -119,68 +90,27 @@ namespace Librame.Extensions.Data.Tests
                 })
                 .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
                 .AddStoreHub<TestStoreHub>()
-                .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
+                .AddStoreIdentifierGenerator<TestGuidStoreIdentityGenerator>()
                 .AddStoreInitializer<TestStoreInitializer>();
 
-            var serviceProvider = services.BuildServiceProvider();
-            var stores = serviceProvider.GetRequiredService<TestStoreHub>();
-
-            var audits = stores.GetAudits();
-            Assert.Empty(audits);
-
-            audits = stores.UseWriteDbConnection().GetAudits();
-            Assert.NotEmpty(audits);
-
-            var auditProperties = stores.GetAuditProperties();
-            Assert.Empty(auditProperties);
-
-            auditProperties = stores.UseWriteDbConnection().GetAuditProperties();
-            Assert.NotEmpty(auditProperties);
-
-            var entities = stores.GetEntities();
-            Assert.Empty(entities);
-
-            entities = stores.UseWriteDbConnection().GetEntities();
-            Assert.NotEmpty(entities);
-
-            var migrations = stores.GetMigrations();
-            Assert.Empty(migrations);
-
-            migrations = stores.UseWriteDbConnection().GetMigrations();
-            Assert.NotEmpty(migrations);
-
-            var tenants = stores.GetTenants();
-            Assert.Empty(tenants);
-
-            tenants = stores.UseWriteDbConnection().GetTenants();
-            Assert.NotEmpty(tenants);
-
-
-            var categories = stores.GetCategories();
-            Assert.Empty(categories);
-
-            categories = stores.UseWriteDbConnection().GetCategories();
-            Assert.NotEmpty(categories);
-
-            var articles = stores.UseDefaultDbConnection().GetArticles();
-            Assert.Empty(articles);
-
-            articles = stores.UseWriteDbConnection().GetArticles();
-            Assert.True(articles.Total >= 0); // 如果已分表，则此表内容可能为空
+            TestStores(services.BuildServiceProvider());
         }
 
 
         [Fact]
         public void SqliteTest()
         {
-            // Initialize Database: 3s
+            // Initialize Database Test: 5s
+            // Default Sharding Test: 5s
             var services = new ServiceCollection();
 
-            services.AddLibrame()
+            services
+                .AddLibrame(dependency =>
+                {
+                    dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLite;
+                })
                 .AddData(dependency =>
                 {
-                    dependency.Options.IdentifierGenerator = CombIdentifierGenerator.SQLite;
-
                     dependency.Options.DefaultTenant.DefaultConnectionString
                         = "Data Source=" + dependency.DatabasesConfigDierctory.CombinePath("librame_data_default.db");
                     dependency.Options.DefaultTenant.WritingConnectionString
@@ -197,49 +127,55 @@ namespace Librame.Extensions.Data.Tests
                 })
                 .AddDatabaseDesignTime<SqliteDesignTimeServices>()
                 .AddStoreHub<TestStoreHub>()
-                .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
+                .AddStoreIdentifierGenerator<TestGuidStoreIdentityGenerator>()
                 .AddStoreInitializer<TestStoreInitializer>();
 
-            var serviceProvider = services.BuildServiceProvider();
+            TestStores(services.BuildServiceProvider());
+        }
+
+
+        private void TestStores(ServiceProvider serviceProvider)
+        {
             var stores = serviceProvider.GetRequiredService<TestStoreHub>();
             var dependency = serviceProvider.GetRequiredService<DataBuilderDependency>();
 
-            //var audits = stores.GetAudits();
-            //VerifyDefaultDbConnectionEntities(dependency, audits);
+            // DataStores
+            var audits = stores.GetAudits();
+            VerifyDefaultData(audits);
 
-            //audits = stores.UseWriteDbConnection().GetAudits();
-            //Assert.NotEmpty(audits);
+            audits = stores.UseWriteDbConnection().GetAudits();
+            Assert.NotEmpty(audits);
 
-            //var auditProperties = stores.UseDefaultDbConnection().GetAuditProperties();
-            //VerifyDefaultDbConnectionEntities(dependency, auditProperties);
+            var auditProperties = stores.UseDefaultDbConnection().GetAuditProperties();
+            VerifyDefaultData(auditProperties);
 
-            //auditProperties = stores.UseWriteDbConnection().GetAuditProperties();
-            //Assert.NotEmpty(auditProperties);
+            auditProperties = stores.UseWriteDbConnection().GetAuditProperties();
+            Assert.NotEmpty(auditProperties);
 
-            //var entities = stores.UseDefaultDbConnection().GetEntities();
-            //VerifyDefaultDbConnectionEntities(dependency, entities);
+            var entities = stores.UseDefaultDbConnection().GetEntities();
+            VerifyDefaultData(entities);
 
-            //entities = stores.UseWriteDbConnection().GetEntities();
-            //Assert.NotEmpty(entities);
+            entities = stores.UseWriteDbConnection().GetEntities();
+            Assert.NotEmpty(entities);
 
-            //var migrations = stores.UseDefaultDbConnection().GetMigrations();
-            //VerifyDefaultDbConnectionEntities(dependency, migrations);
+            var migrations = stores.UseDefaultDbConnection().GetMigrations();
+            VerifyDefaultData(migrations);
 
-            //migrations = stores.UseWriteDbConnection().GetMigrations();
-            //Assert.NotEmpty(migrations);
+            migrations = stores.UseWriteDbConnection().GetMigrations();
+            Assert.NotEmpty(migrations);
 
-            //var tenants = stores.UseDefaultDbConnection().GetTenants();
-            //VerifyDefaultDbConnectionEntities(dependency, tenants);
+            var tenants = stores.UseDefaultDbConnection().GetTenants();
+            VerifyDefaultData(tenants);
 
-            //tenants = stores.UseWriteDbConnection().GetTenants();
-            //Assert.NotEmpty(tenants);
+            tenants = stores.UseWriteDbConnection().GetTenants();
+            Assert.NotEmpty(tenants);
 
+            // TestStores
+            var categories = stores.UseDefaultDbConnection().GetCategories();
+            VerifyDefaultData(categories);
 
-            //var categories = stores.UseDefaultDbConnection().GetCategories();
-            //VerifyDefaultDbConnectionEntities(dependency, categories);
-
-            //categories = stores.UseWriteDbConnection().GetCategories();
-            //Assert.NotEmpty(categories);
+            categories = stores.UseWriteDbConnection().GetCategories();
+            Assert.NotEmpty(categories);
 
             var articles = stores.UseDefaultDbConnection().GetArticles();
             if (dependency.Options.DefaultTenant.DataSynchronization)
@@ -249,15 +185,54 @@ namespace Librame.Extensions.Data.Tests
 
             articles = stores.UseWriteDbConnection().GetArticles();
             Assert.True(articles.Total >= 0); // 如果已分表，则此表内容可能为空
+
+
+            // 独立测试分表文章（需先自行更改 TestDbContextAccessor 文章分表的年份再进行测试）
+            //AddShardingArticle(serviceProvider, stores, categories);
+
+
+            void VerifyDefaultData<TEntity>(IEnumerable<TEntity> items)
+                where TEntity : class
+            {
+                Assert.True(dependency.Options.DefaultTenant.DataSynchronization
+                    ? items.IsNotEmpty()
+                    : items.IsEmpty());
+            }
         }
 
-        private void VerifyDefaultDbConnectionEntities<TEntity>(DataBuilderDependency dependency,
-            IEnumerable<TEntity> entities)
-            where TEntity : class
+
+        private void AddShardingArticle(ServiceProvider serviceProvider, TestStoreHub stores,
+            IList<Category<int, Guid>> categories)
         {
-            Assert.True(dependency.Options.DefaultTenant.DataSynchronization
-                ? entities.IsNotEmpty()
-                : entities.IsEmpty());
+            var clock = serviceProvider.GetRequiredService<IClockService>();
+            var identifierGenerator = serviceProvider.GetRequiredService<TestGuidStoreIdentityGenerator>();
+
+            var categoryId = categories.First().Id;
+            var shardingArticle = "Sharding Article";
+
+            stores.Accessor.ArticlesManager.TryAdd(p => p.CategoryId == categoryId && p.Title == shardingArticle,
+                () =>
+                {
+                    var article = new Article<Guid, int, Guid>
+                    {
+                        Id = identifierGenerator.GenerateArticleId(),
+                        Title = "Sharding Article",
+                        Descr = "Descr Sharding Article",
+                        CategoryId = categories.First().Id
+                    };
+
+                    article.PopulateCreation(clock);
+
+                    return article;
+                },
+                addedPost =>
+                {
+                    if (!stores.Accessor.RequiredSaveChanges)
+                        stores.Accessor.RequiredSaveChanges = true;
+                });
+
+            if (stores.Accessor.RequiredSaveChanges)
+                stores.Accessor.SaveChanges();
         }
 
     }

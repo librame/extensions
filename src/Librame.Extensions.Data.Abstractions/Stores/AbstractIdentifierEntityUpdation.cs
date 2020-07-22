@@ -125,12 +125,27 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
+        /// 获取对象排名。
+        /// </summary>
+        /// <returns>返回排名（兼容整数、单双精度的排序字段）。</returns>
+        public virtual object GetObjectRank()
+            => Rank;
+
+        /// <summary>
         /// 异步获取对象排名。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含排名（兼容整数、单双精度的排序字段）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectRankAsync(CancellationToken cancellationToken)
             => cancellationToken.RunOrCancelValueAsync(() => (object)Rank);
+
+
+        /// <summary>
+        /// 获取对象状态。
+        /// </summary>
+        /// <returns>返回状态（兼容不支持枚举类型的实体框架）。</returns>
+        public virtual object GetObjectStatus()
+            => Status;
 
         /// <summary>
         /// 异步获取对象状态。
@@ -140,6 +155,17 @@ namespace Librame.Extensions.Data.Stores
         public virtual ValueTask<object> GetObjectStatusAsync(CancellationToken cancellationToken = default)
             => cancellationToken.RunOrCancelValueAsync(() => (object)Status);
 
+
+        /// <summary>
+        /// 设置对象排名。
+        /// </summary>
+        /// <param name="newRank">给定的新对象排名。</param>
+        /// <returns>返回排名（兼容整数、单双精度的排序字段）。</returns>
+        public virtual object SetObjectRank(object newRank)
+        {
+            Rank = newRank.CastTo<object, TRank>(nameof(newRank));
+            return newRank;
+        }
 
         /// <summary>
         /// 异步设置对象排名。
@@ -156,6 +182,18 @@ namespace Librame.Extensions.Data.Stores
                 Rank = realNewRank;
                 return newRank;
             });
+        }
+
+
+        /// <summary>
+        /// 设置对象状态。
+        /// </summary>
+        /// <param name="newStatus">给定的新状态对象。</param>
+        /// <returns>返回状态（兼容不支持枚举类型的实体框架）。</returns>
+        public virtual object SetObjectStatus(object newStatus)
+        {
+            Status = newStatus.CastTo<object, TStatus>(nameof(newStatus));
+            return newStatus;
         }
 
         /// <summary>

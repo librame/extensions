@@ -42,10 +42,10 @@ namespace Librame.Extensions.Core
 
 
         /// <summary>
-        /// 标识符文件夹。
+        /// 令牌文件夹。
         /// </summary>
-        public virtual string IdentifiersFolder
-            => "core_identifiers";
+        public virtual string TokensFolder
+            => "core_tokens";
 
 
         /// <summary>
@@ -61,22 +61,22 @@ namespace Librame.Extensions.Core
             => ':';
 
         /// <summary>
-        /// 安全标识符转换器（<see cref="HexStringConverter"/>）。
+        /// 安全令牌转换器（<see cref="HexStringConverter"/>）。
         /// </summary>
-        public virtual IAlgorithmConverter SecurityIdentifierConverter
+        public virtual IAlgorithmConverter SecurityTokenConverter
             => ConverterManager.GetAlgorithm<HexStringConverter>();
 
         /// <summary>
-        /// 安全标识符钥匙信息集合数（默认生成 20 条记录）。
+        /// 安全令牌数（默认生成 20 条记录）。
         /// </summary>
-        public virtual int SecurityIdentifierKeyInfosCount
+        public virtual int SecurityTokensCount
             => 20;
 
         /// <summary>
-        /// 安全标识符钥匙环文件路径。
+        /// 安全令牌钥匙环文件路径。
         /// </summary>
-        public virtual FilePathCombiner SecurityIdentifierKeyRingFilePath
-            => new FilePathCombiner("security_identifier.keyring");
+        public virtual FilePathCombiner SecurityTokenKeyRingFilePath
+            => new FilePathCombiner("security_tokens.keyring");
 
         /// <summary>
         /// 系统程序集前缀。

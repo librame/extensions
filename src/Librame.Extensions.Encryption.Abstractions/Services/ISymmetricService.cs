@@ -12,8 +12,8 @@
 
 namespace Librame.Extensions.Encryption.Services
 {
-    using Core.Identifiers;
     using Core.Services;
+    using Core.Tokens;
     using Encryption.Generators;
 
     /// <summary>
@@ -46,10 +46,10 @@ namespace Librame.Extensions.Encryption.Services
         /// <param name="buffer">给定待加密的字节数组。</param>
         /// <param name="key">输出密钥。</param>
         /// <param name="vector">输出向量。</param>
-        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="token">给定的 <see cref="SecurityToken"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
         byte[] EncryptAes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+            SecurityToken token = null);
 
         /// <summary>
         /// 解密 AES。
@@ -57,10 +57,10 @@ namespace Librame.Extensions.Encryption.Services
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">输出密钥。</param>
         /// <param name="vector">输出向量。</param>
-        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="token">给定的 <see cref="SecurityToken"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
         byte[] DecryptAes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+            SecurityToken token = null);
 
         #endregion
 
@@ -73,10 +73,10 @@ namespace Librame.Extensions.Encryption.Services
         /// <param name="buffer">给定待加密的字节数组。</param>
         /// <param name="key">输出密钥。</param>
         /// <param name="vector">输出向量。</param>
-        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="token">给定的 <see cref="SecurityToken"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
         byte[] EncryptDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+            SecurityToken token = null);
 
         /// <summary>
         /// 解密 DES。
@@ -84,10 +84,10 @@ namespace Librame.Extensions.Encryption.Services
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">输出密钥。</param>
         /// <param name="vector">输出向量。</param>
-        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="token">给定的 <see cref="SecurityToken"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
         byte[] DecryptDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+            SecurityToken token = null);
 
         #endregion
 
@@ -100,10 +100,10 @@ namespace Librame.Extensions.Encryption.Services
         /// <param name="buffer">给定待加密的字节数组。</param>
         /// <param name="key">输出密钥。</param>
         /// <param name="vector">输出向量。</param>
-        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="token">给定的 <see cref="SecurityToken"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
         byte[] EncryptTripleDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+            SecurityToken token = null);
 
         /// <summary>
         /// 解密 TripleDES。
@@ -111,10 +111,10 @@ namespace Librame.Extensions.Encryption.Services
         /// <param name="buffer">给定的字节数组。</param>
         /// <param name="key">输出密钥。</param>
         /// <param name="vector">输出向量。</param>
-        /// <param name="identifier">给定的 <see cref="SecurityIdentifier"/>（可选；默认使用选项配置）。</param>
+        /// <param name="token">给定的 <see cref="SecurityToken"/>（可选；默认使用选项配置）。</param>
         /// <returns>返回字节数组。</returns>
         byte[] DecryptTripleDes(byte[] buffer, out byte[] key, out byte[] vector,
-            SecurityIdentifier identifier = null);
+            SecurityToken token = null);
 
         #endregion
 

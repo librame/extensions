@@ -24,15 +24,15 @@ namespace Librame.Extensions.Data.Options
             = true;
 
         /// <summary>
-        /// 使用数据实体（默认已启用）。
-        /// </summary>
-        public bool UseDataEntity { get; set; }
-            = true;
-
-        /// <summary>
         /// 使用数据迁移（默认已启用）。
         /// </summary>
         public bool UseDataMigration { get; set; }
+            = true;
+
+        /// <summary>
+        /// 使用数据表格（默认已启用）。
+        /// </summary>
+        public bool UseDataTabulation { get; set; }
             = true;
 
         /// <summary>

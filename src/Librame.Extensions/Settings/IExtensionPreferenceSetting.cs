@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Librame.Extensions
@@ -229,6 +230,41 @@ namespace Librame.Extensions
         /// </summary>
         DateTimeOffset BaseDateTimeOffset { get; }
 
+        /// <summary>
+        /// 中国农历（阴阳合历）。
+        /// </summary>
+        ChineseLunisolarCalendar ChineseCalendar { get; }
+
+        /// <summary>
+        /// 中国月。
+        /// </summary>
+        IReadOnlyList<string> ChineseMonths { get; }
+
+        /// <summary>
+        /// 中国旬。
+        /// </summary>
+        IReadOnlyList<string> ChineseTenDays { get; }
+
+        /// <summary>
+        /// 中国日。
+        /// </summary>
+        IReadOnlyList<string> ChineseDays { get; }
+
+        /// <summary>
+        /// 十天干。
+        /// </summary>
+        IReadOnlyList<string> TenCelestialStems { get; }
+
+        /// <summary>
+        /// 十二地支。
+        /// </summary>
+        IReadOnlyList<string> TwelveTerrestrialBranches { get; }
+
+        /// <summary>
+        /// 十二生肖。
+        /// </summary>
+        IReadOnlyList<string> TwelveAnimalSigns { get; }
+
         #endregion
 
 
@@ -238,6 +274,16 @@ namespace Librame.Extensions
         /// 默认字符编码。
         /// </summary>
         Encoding DefaultEncoding { get; }
+
+        #endregion
+
+
+        #region Type Extensions
+
+        /// <summary>
+        /// 整数类型列表。
+        /// </summary>
+        IReadOnlyList<Type> IntegerTypes { get; }
 
         #endregion
 

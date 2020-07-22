@@ -13,8 +13,8 @@
 namespace Librame.Extensions.Encryption.Builders
 {
     using Core.Builders;
-    using Core.Identifiers;
     using Core.Serializers;
+    using Core.Tokens;
 
     /// <summary>
     /// 加密构建器选项。
@@ -47,9 +47,9 @@ namespace Librame.Extensions.Encryption.Builders
 
 
         /// <summary>
-        /// 安全标识符。
+        /// 安全令牌。
         /// </summary>
-        public SerializableString<SecurityIdentifier> Identifier { get; set; }
-            = new SerializableString<SecurityIdentifier>(SecurityIdentifier.New());
+        public SerializableString<SecurityToken> Token { get; set; }
+            = new SerializableString<SecurityToken>(SecurityToken.New());
     }
 }

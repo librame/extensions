@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,18 +45,18 @@ namespace Librame.Extensions.Data.Services
     /// </summary>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
-    /// <typeparam name="TEntity">指定的实体类型。</typeparam>
     /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+    /// <typeparam name="TTabulation">指定的表格类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public class MigrationAccessorService<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+    public class MigrationAccessorService<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy>
         : AbstractExtensionBuilderService<DataBuilderOptions>, IMigrationAccessorService
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId, TCreatedBy>
         where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTabulation : DataTabulation<TGenId, TCreatedBy>
         where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
@@ -88,7 +89,7 @@ namespace Librame.Extensions.Data.Services
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 MigrateCore(dbContextAccessor);
         }
 
@@ -102,7 +103,7 @@ namespace Librame.Extensions.Data.Services
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 return MigrateCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.CompletedTask;
@@ -114,7 +115,7 @@ namespace Librame.Extensions.Data.Services
         /// </summary>
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected virtual void MigrateCore(DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+        protected virtual void MigrateCore(DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
             var lastModel = ResolvePersistentModel(dbContextAccessor);
             if (lastModel.IsNotNull())
@@ -150,7 +151,7 @@ namespace Librame.Extensions.Data.Services
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected virtual async Task MigrateCoreAsync(DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+        protected virtual async Task MigrateCoreAsync(DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken)
         {
             var lastModel = ResolvePersistentModel(dbContextAccessor);
@@ -191,13 +192,13 @@ namespace Librame.Extensions.Data.Services
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <param name="migrateStructureAction">给定的迁移结构动作。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected virtual void MigrateAspectServices(DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+        protected virtual void MigrateAspectServices(DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             Action migrateStructureAction)
         {
             IServicesManager<IMigrateAccessorAspect> aspects = null;
 
-            // 数据迁移支持写入连接（包括未启用读写分离的默认连接）或启用数据同步的默认与写入连接
-            if (dbContextAccessor.IsWritingConnectionString() || dbContextAccessor.CurrentTenant.DataSynchronization)
+            // 数据迁移支持写入连接（包括未启用读写分离的默认连接）// 或启用数据同步的默认与写入连接（数据同步改为在 AccessorBatchExecutor 底层实现）
+            if (dbContextAccessor.IsWritingConnectionString()) // || dbContextAccessor.CurrentTenant.DataSynchronization
             {
                 aspects = dbContextAccessor.GetService<IServicesManager<IMigrateAccessorAspect>>();
                 aspects.ForEach(aspect =>
@@ -229,13 +230,13 @@ namespace Librame.Extensions.Data.Services
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected virtual Task MigrateAspectServicesAsync(DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+        protected virtual Task MigrateAspectServicesAsync(DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             Action migrateAction, CancellationToken cancellationToken)
         {
             IServicesManager<IMigrateAccessorAspect> aspects = null;
 
-            // 数据迁移支持写入连接（包括未启用读写分离的默认连接）或启用数据同步的默认与写入连接
-            if (dbContextAccessor.IsWritingConnectionString() || dbContextAccessor.CurrentTenant.DataSynchronization)
+            // 数据迁移支持写入连接（包括未启用读写分离的默认连接）// 或启用数据同步的默认与写入连接（数据同步改为在 AccessorBatchExecutor 底层实现）
+            if (dbContextAccessor.IsWritingConnectionString()) // || dbContextAccessor.CurrentTenant.DataSynchronization
             {
                 aspects = dbContextAccessor.GetService<IServicesManager<IMigrateAccessorAspect>>();
                 aspects.ForEach(async aspect =>
@@ -268,7 +269,7 @@ namespace Librame.Extensions.Data.Services
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <param name="operationDifferences">给定的迁移操作差异集合。</param>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected virtual void ExecuteMigrationCommands(DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+        protected virtual void ExecuteMigrationCommands(DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             IReadOnlyList<MigrationOperation> operationDifferences)
         {
             //var rawSqlCommandBuilder = dbContextAccessor.GetService<IRawSqlCommandBuilder>();
@@ -280,6 +281,8 @@ namespace Librame.Extensions.Data.Services
 
             ExtensionSettings.Preference.RunLocker(() =>
             {
+                operationDifferences = FilterInvalidOperationDifferences(dbContextAccessor, operationDifferences);
+
                 // 生成操作差异的迁移命令列表
                 var differenceCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
                 //.Concat(new[] { new MigrationCommand(insertCommand, _currentContext.Context, _commandLogger) })
@@ -297,13 +300,45 @@ namespace Librame.Extensions.Data.Services
         }
 
         /// <summary>
+        /// 过滤无效的操作差异。
+        /// </summary>
+        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
+        /// <param name="operationDifferences">给定的迁移操作差异集合。</param>
+        /// <returns>返回迁移操作差异集合。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        protected virtual IReadOnlyList<MigrationOperation> FilterInvalidOperationDifferences
+            (DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+            IReadOnlyList<MigrationOperation> operationDifferences)
+        {
+            if (!operationDifferences.Any(p => p is CreateIndexOperation))
+                return operationDifferences;
+
+            // 过滤分表创建时，同时创建已存在索引的情况
+            var shardingTables = dbContextAccessor.Model.GetEntityTypes()
+                .Where(p => p.ClrType.IsDefined<ShardableAttribute>())
+                .Select(s => s.GetTableDescriptor().ToString())
+                .ToList();
+
+            return operationDifferences.Where(p =>
+            {
+                // 如果当前是创建索引迁移操作且属于分表索引
+                if (p is CreateIndexOperation create && shardingTables.Contains(create.Table))
+                    return false; // FALSE 表示过滤此操作
+
+                return true;
+            })
+            .ToList();
+        }
+
+
+        /// <summary>
         /// 解析持久化模型。
         /// </summary>
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <returns>返回 <see cref="IModel"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        protected IModel ResolvePersistentModel
-            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+        protected virtual IModel ResolvePersistentModel
+            (DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
             return ExtensionSettings.Preference.RunLocker(() =>
             {
@@ -340,21 +375,24 @@ namespace Librame.Extensions.Data.Services
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         protected virtual void AddMigration
-            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            (DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
+            if (!dbContextAccessor.IsWritingConnectionString())
+                return;
+            
             (var body, var hash) = CreateModelSnapshot(dbContextAccessor, out var typeName);
 
             dbContextAccessor.MigrationsManager.TryAdd(p => p.ModelHash == hash,
                 () =>
                 {
-                    var identifierGenerator = (IDataStoreIdentifierGenerator<TGenId>)dbContextAccessor
-                        .GetService<IStoreIdentifierGenerator>();
+                    var identifierGenerator = (IDataStoreIdentityGenerator<TGenId>)dbContextAccessor
+                        .GetService<IStoreIdentityGenerator>();
 
                     var migration = ObjectExtensions.EnsureCreate<TMigration>();
 
-                    migration.Id = identifierGenerator.GenerateMigrationIdAsync().ConfigureAwaitCompleted();
+                    migration.Id = identifierGenerator.GenerateMigrationId();
 
-                    migration.PopulateCreationAsync(identifierGenerator.Clock).ConfigureAwaitCompleted();
+                    migration.PopulateCreation(identifierGenerator.Clock);
 
                     migration.AccessorName = dbContextAccessor.CurrentType.GetDisplayNameWithNamespace();
                     migration.ModelSnapshotName = typeName;

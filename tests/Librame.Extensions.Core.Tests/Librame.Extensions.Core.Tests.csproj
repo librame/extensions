@@ -24,7 +24,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="_configs\core_identifiers\" />
+    <Folder Include="_configs\" />
   </ItemGroup>
 
 </Project>

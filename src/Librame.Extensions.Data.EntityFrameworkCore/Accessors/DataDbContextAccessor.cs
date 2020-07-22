@@ -41,9 +41,13 @@ namespace Librame.Extensions.Data.Accessors
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public class DataDbContextAccessor<TGenId, TIncremId, TCreatedBy>
-        : DataDbContextAccessor<DataAudit<TGenId, TCreatedBy>, DataAuditProperty<TIncremId, TGenId>,
-            DataEntity<TGenId, TCreatedBy>, DataMigration<TGenId, TCreatedBy>, DataTenant<TGenId, TCreatedBy>,
-            TGenId, TIncremId, TCreatedBy>, IDataAccessor<TGenId, TIncremId, TCreatedBy>
+        : DataDbContextAccessor<DataAudit<TGenId, TCreatedBy>,
+            DataAuditProperty<TIncremId, TGenId>,
+            DataMigration<TGenId, TCreatedBy>,
+            DataTabulation<TGenId, TCreatedBy>,
+            DataTenant<TGenId, TCreatedBy>,
+            TGenId, TIncremId, TCreatedBy>,
+        IDataAccessor<TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
@@ -65,18 +69,18 @@ namespace Librame.Extensions.Data.Accessors
     /// </summary>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
-    /// <typeparam name="TEntity">指定的实体类型。</typeparam>
     /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+    /// <typeparam name="TTabulation">指定的实体类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public class DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
-        : DbContextAccessorBase, IDataAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
+    public class DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy>
+        : DbContextAccessorBase, IDataAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant>
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId, TCreatedBy>
         where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTabulation : DataTabulation<TGenId, TCreatedBy>
         where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
@@ -105,14 +109,14 @@ namespace Librame.Extensions.Data.Accessors
         public DbSet<TAuditProperty> AuditProperties { get; set; }
 
         /// <summary>
-        /// 实体数据集。
-        /// </summary>
-        public DbSet<TEntity> Entities { get; set; }
-
-        /// <summary>
         /// 迁移数据集。
         /// </summary>
         public DbSet<TMigration> Migrations { get; set; }
+
+        /// <summary>
+        /// 表格数据集。
+        /// </summary>
+        public DbSet<TTabulation> Tabulations { get; set; }
 
         /// <summary>
         /// 租户数据集。
@@ -137,16 +141,16 @@ namespace Librame.Extensions.Data.Accessors
             => AuditProperties.AsManager();
 
         /// <summary>
-        /// 实体数据集。
-        /// </summary>
-        public DbSetManager<TEntity> EntitiesManager
-            => Entities.AsManager();
-
-        /// <summary>
         /// 迁移数据集。
         /// </summary>
         public DbSetManager<TMigration> MigrationsManager
             => Migrations.AsManager();
+
+        /// <summary>
+        /// 表格数据集。
+        /// </summary>
+        public DbSetManager<TTabulation> TabulationsManager
+            => Tabulations.AsManager();
 
         /// <summary>
         /// 租户数据集。
@@ -158,10 +162,10 @@ namespace Librame.Extensions.Data.Accessors
 
 
         /// <summary>
-        /// 开始模型创建。
+        /// 配置模型构建器核心。
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreatingCore(ModelBuilder modelBuilder)
             => modelBuilder.ConfigureDataStores(this);
 
     }

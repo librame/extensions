@@ -11,7 +11,7 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public async Task AllTest()
         {
-            var entity = new DataEntity<string, string>();
+            var entity = new DataTabulation<string, string>();
 
             var createdBy = entity.CreatedBy;
             var createdTime = entity.CreatedTime;

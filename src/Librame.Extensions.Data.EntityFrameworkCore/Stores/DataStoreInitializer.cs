@@ -31,10 +31,10 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个数据存储初始化器。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected DataStoreInitializer(IStoreIdentifierGenerator identifierGenerator,
+        protected DataStoreInitializer(IStoreIdentityGenerator identifierGenerator,
             IDataInitializationValidator validator, ILoggerFactory loggerFactory)
             : base(identifierGenerator, validator, loggerFactory)
         {
@@ -54,8 +54,8 @@ namespace Librame.Extensions.Data.Stores
         : DataStoreInitializer<TAccessor,
             DataAudit<TGenId, TCreatedBy>,
             DataAuditProperty<TIncremId, TGenId>,
-            DataEntity<TGenId, TCreatedBy>,
             DataMigration<TGenId, TCreatedBy>,
+            DataTabulation<TGenId, TCreatedBy>,
             DataTenant<TGenId, TCreatedBy>,
             TGenId, TIncremId, TCreatedBy>
         where TAccessor : class, IDataAccessor<TGenId, TIncremId, TCreatedBy>
@@ -66,10 +66,10 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个数据存储初始化器。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected DataStoreInitializer(IStoreIdentifierGenerator identifierGenerator,
+        protected DataStoreInitializer(IStoreIdentityGenerator identifierGenerator,
             IDataInitializationValidator validator, ILoggerFactory loggerFactory)
             : base(identifierGenerator, validator, loggerFactory)
         {
@@ -84,20 +84,20 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
-    /// <typeparam name="TEntity">指定的数据实体类型。</typeparam>
     /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+    /// <typeparam name="TTabulation">指定的数据实体类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public class DataStoreInitializer<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant,
+    public class DataStoreInitializer<TAccessor, TAudit, TAuditProperty, TMigration, TTabulation, TTenant,
         TGenId, TIncremId, TCreatedBy>
         : AbstractStoreInitializer<TAccessor>
-        where TAccessor : class, IDataAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant>
+        where TAccessor : class, IDataAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant>
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId, TCreatedBy>
         where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTabulation : DataTabulation<TGenId, TCreatedBy>
         where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
@@ -106,23 +106,23 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个数据存储初始化器。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected DataStoreInitializer(IStoreIdentifierGenerator identifierGenerator,
+        protected DataStoreInitializer(IStoreIdentityGenerator identifierGenerator,
             IDataInitializationValidator validator, ILoggerFactory loggerFactory)
             : base(validator, identifierGenerator, loggerFactory)
         {
-            DataIdentifierGenerator = identifierGenerator.CastTo<IStoreIdentifierGenerator,
-                IDataStoreIdentifierGenerator<TGenId>>(nameof(identifierGenerator));
+            DataIdentifierGenerator = identifierGenerator.CastTo<IStoreIdentityGenerator,
+                IDataStoreIdentityGenerator<TGenId>>(nameof(identifierGenerator));
         }
 
 
         /// <summary>
         /// 数据标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IDataStoreIdentifierGenerator{TGenId}"/>。</value>
-        protected IDataStoreIdentifierGenerator<TGenId> DataIdentifierGenerator { get; }
+        /// <value>返回 <see cref="IDataStoreIdentityGenerator{TGenId}"/>。</value>
+        protected IDataStoreIdentityGenerator<TGenId> DataIdentifierGenerator { get; }
 
 
         /// <summary>
@@ -164,10 +164,10 @@ namespace Librame.Extensions.Data.Stores
                     }
 
                     // 填充创建属性
-                    currentTenant.PopulateCreationAsync(Clock).ConfigureAwaitCompleted();
+                    currentTenant.PopulateCreation(Clock);
 
                     // 设定标识
-                    currentTenant.Id = DataIdentifierGenerator.GenerateTenantIdAsync().ConfigureAwaitCompleted();
+                    currentTenant.Id = DataIdentifierGenerator.GenerateTenantId();
 
                     Logger.LogTrace($"Add default tenant '{currentTenant}' to {Accessor.CurrentConnectionString}.");
 

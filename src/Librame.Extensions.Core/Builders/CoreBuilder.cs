@@ -23,6 +23,7 @@ namespace Librame.Extensions.Core.Builders
     using Mediators;
     using Options;
     using Services;
+    using Tokens;
 
     /// <summary>
     /// 核心构建器。
@@ -51,8 +52,11 @@ namespace Librame.Extensions.Core.Builders
             AddService(typeof(IDecorator<>), typeof(CoreDecorator<>));
 
             // Identifiers
-            AddService<ISecurityIdentifierKeyRing, SecurityIdentifierKeyRing>();
-            AddService<ISecurityIdentifierProtector, SecurityIdentifierProtector>();
+            AddService(typeof(IIdentityGeneratorFactory), sp =>
+            {
+                var options = sp.GetRequiredService<IOptions<CoreBuilderOptions>>();
+                return new IdentityGeneratorFactory(options.Value.Identifier);
+            });
 
             // Localizers
             AddService(typeof(IEnhancedStringLocalizer<>), typeof(EnhancedStringLocalizer<>));
@@ -78,6 +82,10 @@ namespace Librame.Extensions.Core.Builders
             AddService<IHumanizationService, HumanizationService>();
             AddService<IClockService, ClockService>();
             AddService<IEnvironmentService, EnvironmentService>();
+
+            // Tokens
+            AddService<ISecurityTokenKeyRing, SecurityTokenKeyRing>();
+            AddService<ISecurityTokenProtector, SecurityTokenProtector>();
         }
 
 

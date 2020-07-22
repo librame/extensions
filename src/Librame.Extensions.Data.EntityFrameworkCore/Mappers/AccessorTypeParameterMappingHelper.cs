@@ -11,8 +11,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace Librame.Extensions.Data.Mappers
 {
@@ -33,32 +31,24 @@ namespace Librame.Extensions.Data.Mappers
         /// <returns>返回 <see cref="AccessorTypeParameterMapper"/>。</returns>
         public static AccessorTypeParameterMapper ParseMapper(Type accessorTypeImplementation)
         {
-            var mappings = ParseAsDictionary(accessorTypeImplementation, out var accessorMapping);
+            var mappings = ParseCollection(accessorTypeImplementation, out var accessorMapping);
             return new AccessorTypeParameterMapper(accessorMapping, mappings);
         }
 
 
         /// <summary>
-        /// 解析为字典。
-        /// </summary>
-        /// <param name="accessorTypeImplementation">给定的访问器类型实现。</param>
-        /// <returns>返回 <see cref="Dictionary{String, TypeParameterMapping}"/>。</returns>
-        public static Dictionary<string, TypeParameterMapping> ParseAsDictionary(Type accessorTypeImplementation)
-            => ParseAsDictionary(accessorTypeImplementation, out _);
-
-        /// <summary>
-        /// 解析为字典。
+        /// 解析类型参数映射集合（默认以定义参数类型名称为键名）。
         /// </summary>
         /// <param name="accessorTypeImplementation">给定的访问器类型实现。</param>
         /// <param name="accessorMapping">输出访问器 <see cref="TypeParameterMapping"/>。</param>
-        /// <returns>返回 <see cref="Dictionary{String, TypeParameterMapping}"/>。</returns>
-        public static Dictionary<string, TypeParameterMapping> ParseAsDictionary(Type accessorTypeImplementation,
+        /// <returns>返回 <see cref="TypeParameterMappingCollection"/>。</returns>
+        public static TypeParameterMappingCollection ParseCollection(Type accessorTypeImplementation,
             out TypeParameterMapping accessorMapping)
         {
             var accessorTypeDefinition = typeof(IDataAccessor<,,,,>);
 
             // 因访问器默认服务类型为 IAccessor，所以不强制实现访问器泛型类型定义
-            if (!accessorTypeImplementation.IsImplementedInterface(accessorTypeDefinition, out var resultType))
+            if (!accessorTypeImplementation.IsImplementedInterfaceType(accessorTypeDefinition, out var resultType))
             {
                 accessorMapping = null;
                 return null;
@@ -66,40 +56,11 @@ namespace Librame.Extensions.Data.Mappers
 
             accessorMapping = new TypeParameterMapping(accessorTypeDefinition, accessorTypeImplementation);
 
-            var mappings = TypeParameterMappingHelper.ParseAsDictionary(accessorTypeDefinition, resultType);
+            var mappings = TypeParameterMappingHelper.ParseCollection(accessorTypeDefinition, resultType);
 
-            var otherTypeDefinition = typeof(IIdentifier<>);
-
-            var otherTypeImplementation = mappings["TAuditProperty"].ArgumentType;
-            if (otherTypeImplementation.IsImplementedInterface(otherTypeDefinition, out resultType))
-            {
-                var genericTypeParameters = otherTypeDefinition.GetTypeInfo().GenericTypeParameters;
-
-                mappings.Add("TIncremId", new TypeParameterMapping(genericTypeParameters[0],
-                    resultType.GenericTypeArguments[0]));
-            }
-
-            otherTypeImplementation = mappings["TAudit"].ArgumentType;
-            if (otherTypeImplementation.IsImplementedInterface(otherTypeDefinition, out resultType))
-            {
-                var genericTypeParameters = otherTypeDefinition.GetTypeInfo().GenericTypeParameters;
-
-                mappings.Add("TGenId", new TypeParameterMapping(genericTypeParameters[0],
-                    resultType.GenericTypeArguments[0]));
-            }
-
-            otherTypeDefinition = typeof(ICreation<,>);
-
-            if (otherTypeImplementation.IsImplementedInterface(otherTypeDefinition, out resultType))
-            {
-                var genericTypeParameters = otherTypeDefinition.GetTypeInfo().GenericTypeParameters;
-
-                mappings.Add("TCreatedBy", new TypeParameterMapping(genericTypeParameters[0],
-                    resultType.GenericTypeArguments[0]));
-
-                mappings.Add("TCreatedTime", new TypeParameterMapping(genericTypeParameters[1],
-                    resultType.GenericTypeArguments[1]));
-            }
+            mappings.TryFindTypeDefinitionFromValuesAndAddMapping(typeof(IGenerativeIdentifier<>));
+            mappings.TryFindTypeDefinitionFromValuesAndAddMapping(typeof(IIncrementalIdentifier<>));
+            mappings.TryFindTypeDefinitionFromValuesAndAddMapping(typeof(ICreation<,>));
 
             return mappings;
         }

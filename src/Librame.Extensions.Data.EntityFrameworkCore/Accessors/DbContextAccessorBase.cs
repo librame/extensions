@@ -11,14 +11,13 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -69,6 +68,46 @@ namespace Librame.Extensions.Data.Accessors
             => GetService<DataBuilderDependency>();
 
 
+        /// <summary>
+        /// 配置数据库上下文选项构建器。
+        /// </summary>
+        /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => OnConfiguringCore(optionsBuilder);
+
+        /// <summary>
+        /// 配置数据库上下文选项构建器核心。
+        /// </summary>
+        /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
+        protected virtual void OnConfiguringCore(DbContextOptionsBuilder optionsBuilder)
+        {
+        }
+
+
+        /// <summary>
+        /// 配置模型构建器。
+        /// </summary>
+        /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            OnModelCreatingCore(modelBuilder);
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                entityType.TryAddDeleteStatusQueryFilter();
+            }
+        }
+
+        /// <summary>
+        /// 配置模型构建器核心。
+        /// </summary>
+        /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
+        protected virtual void OnModelCreatingCore(ModelBuilder modelBuilder)
+        {
+        }
+
+
         #region EnsureDatabaseCreated and EnsureDatabaseChanged
 
         /// <summary>
@@ -85,6 +124,10 @@ namespace Librame.Extensions.Data.Accessors
                 CreationValidator.SetCreated(this);
 
                 Dependency.Options.PostDatabaseCreatedAction?.Invoke(this);
+
+                // 初始化迁移
+                if (!IsFromMigrateInvoke)
+                    Migrate();
 
                 return true;
             }
@@ -109,6 +152,10 @@ namespace Librame.Extensions.Data.Accessors
 
                 Dependency.Options.PostDatabaseCreatedAction?.Invoke(this);
 
+                // 初始化迁移
+                if (!IsFromMigrateInvoke)
+                    Migrate();
+
                 return true;
             }
 
@@ -124,12 +171,11 @@ namespace Librame.Extensions.Data.Accessors
         protected virtual bool EnsureDatabaseChanged(string connectionString)
         {
             connectionString.NotEmpty(connectionString);
+            //Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
 
             if (IsCurrentConnectionString(connectionString))
             {
-                //Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
-                //Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
-
+                Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
                 return false;
             }
 
@@ -170,12 +216,11 @@ namespace Librame.Extensions.Data.Accessors
             CancellationToken cancellationToken = default)
         {
             connectionString.NotEmpty(connectionString);
+            //Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
 
             if (IsCurrentConnectionString(connectionString))
             {
-                //Logger.LogTrace(InternalResource.ChangeConnectionStringIsEmpty);
-                //Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
-
+                Logger.LogTrace(InternalResource.ChangeConnectionStringSameAsCurrent);
                 return false;
             }
 
@@ -229,7 +274,7 @@ namespace Librame.Extensions.Data.Accessors
         /// 当前时间戳。
         /// </summary>
         public DateTimeOffset CurrentTimestamp
-            => Clock.GetNowOffsetAsync().ConfigureAwaitCompleted();
+            => Clock.GetNowOffset();
 
         /// <summary>
         /// 当前类型。
@@ -295,7 +340,14 @@ namespace Librame.Extensions.Data.Accessors
             IsFromMigrateInvoke = true;
 
             // 外部直接调用迁移，需引用写入分离操作
-            count = WritingSeparationOperation(() => MigrateCore());
+            count = WritingSeparationOperation(() =>
+            {
+                return MigrateCore();
+            },
+            () =>
+            {
+                return MigrateCore(isDataSynchronization: true);
+            });
 
             IsFromMigrateInvoke = false;
 
@@ -321,7 +373,7 @@ namespace Librame.Extensions.Data.Accessors
             if (IsFromSaveChangesInvoke)
             {
                 // 已区分读写，直接调用迁移核心
-                count = await MigrateCoreAsync(cancellationToken).ConfigureAwait();
+                count = await MigrateCoreAsync(cancellationToken: cancellationToken).ConfigureAwait();
                 return count;
             }
 
@@ -331,7 +383,11 @@ namespace Librame.Extensions.Data.Accessors
             // 外部直接调用迁移，需引用写入分离操作
             count = await WritingSeparationOperationAsync(() =>
             {
-                return MigrateCoreAsync(cancellationToken);
+                return MigrateCoreAsync(cancellationToken: cancellationToken);
+            },
+            () =>
+            {
+                return MigrateCoreAsync(isDataSynchronization: true, cancellationToken);
             },
             cancellationToken).ConfigureAwait();
 
@@ -344,8 +400,9 @@ namespace Librame.Extensions.Data.Accessors
         /// <summary>
         /// 迁移核心（不区分读写）。
         /// </summary>
+        /// <param name="isDataSynchronization">是数据同步迁移（可选；默认不是）。</param>
         /// <returns>返回受影响的行数。</returns>
-        protected virtual int MigrateCore()
+        protected virtual int MigrateCore(bool isDataSynchronization = false)
         {
             var migration = GetService<IMigrationAccessorService>();
             migration.Migrate(this);
@@ -360,8 +417,11 @@ namespace Librame.Extensions.Data.Accessors
 
             var count = 0;
 
-            if (RequiredSaveChanges)
+            if (RequiredSaveChanges && !isDataSynchronization)
                 count = SaveChangesCore(true);
+
+            else if (isDataSynchronization)
+                count = this.SubmitSaveChangesSynchronization();
 
             return count;
         }
@@ -369,9 +429,11 @@ namespace Librame.Extensions.Data.Accessors
         /// <summary>
         /// 异步迁移核心（不区分读写）。
         /// </summary>
+        /// <param name="isDataSynchronization">是数据同步迁移（可选；默认不是）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响的行数的异步操作。</returns>
-        protected virtual async Task<int> MigrateCoreAsync(CancellationToken cancellationToken = default)
+        protected virtual async Task<int> MigrateCoreAsync(bool isDataSynchronization = false,
+            CancellationToken cancellationToken = default)
         {
             var migration = GetService<IMigrationAccessorService>();
             await migration.MigrateAsync(this, cancellationToken).ConfigureAwait();
@@ -386,8 +448,11 @@ namespace Librame.Extensions.Data.Accessors
 
             var count = 0;
 
-            if (RequiredSaveChanges)
+            if (RequiredSaveChanges && !isDataSynchronization)
                 count = await SaveChangesCoreAsync(true, cancellationToken).ConfigureAwait();
+
+            else if (isDataSynchronization)
+                count = await this.SubmitSaveChangesSynchronizationAsync(cancellationToken).ConfigureAwait();
 
             return count;
         }
@@ -407,6 +472,11 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         public bool RequiredSaveChanges { get; set; }
 
+        /// <summary>
+        /// 所需的标识插入表名列表。
+        /// </summary>
+        public IReadOnlyList<string> RequiredIdentityInsertTableNames { get; set; }
+
 
         /// <summary>
         /// 重载保存更改。
@@ -425,7 +495,14 @@ namespace Librame.Extensions.Data.Accessors
             // 标识保存更改调用，防止死循环
             IsFromSaveChangesInvoke = true;
 
-            var count = WritingSeparationOperation(() => SaveChangesCore(acceptAllChangesOnSuccess));
+            var count = WritingSeparationOperation(() =>
+            {
+                return SaveChangesCore(acceptAllChangesOnSuccess);
+            },
+            () =>
+            {
+                return this.SubmitSaveChangesSynchronization();
+            });
 
             IsFromSaveChangesInvoke = false;
 
@@ -447,6 +524,10 @@ namespace Librame.Extensions.Data.Accessors
             var count = await WritingSeparationOperationAsync(() =>
             {
                 return SaveChangesCoreAsync(acceptAllChangesOnSuccess, cancellationToken);
+            },
+            () =>
+            {
+                return this.SubmitSaveChangesSynchronizationAsync(cancellationToken);
             },
             cancellationToken).ConfigureAwait();
 
@@ -478,12 +559,8 @@ namespace Librame.Extensions.Data.Accessors
                     aspect.PreProcess(this); // 前置处理保存变化
             });
 
-            // 验证上次写入连接的实体状态集合
-            //（解决在数据同步时，写入连接保存更改后会更新实体状态导致默认连接不能正常保存）
-            VerifyLastWritingSaveChangesEntityStates();
-
             // 保存更改
-            var count = this.SaveChangesNow(acceptAllChangesOnSuccess);
+            var count = this.SubmitSaveChanges(acceptAllChangesOnSuccess);
 
             Dependency.Options.PostSaveChangesAction?.Invoke(this);
 
@@ -512,12 +589,8 @@ namespace Librame.Extensions.Data.Accessors
                     await aspect.PreProcessAsync(this, cancellationToken).ConfigureAwait(); // 异步前置处理保存变化
             });
 
-            // 验证上次写入连接的实体状态集合
-            //（解决在数据同步时，写入连接保存更改后会更新实体状态导致默认连接不能正常保存）
-            VerifyLastWritingSaveChangesEntityStates();
-
             // 异步保存更改
-            var count = await this.SaveChangesNowAsync(acceptAllChangesOnSuccess, cancellationToken)
+            var count = await this.SubmitSaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)
                 .ConfigureAwait();
 
             Dependency.Options.PostSaveChangesAction?.Invoke(this);
@@ -529,44 +602,6 @@ namespace Librame.Extensions.Data.Accessors
             });
 
             return count;
-        }
-
-
-        private IList<EntityState> _lastWritingSaveChangesEntityStates = null;
-
-        [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
-        private void VerifyLastWritingSaveChangesEntityStates()
-        {
-            var stateManager = GetService<IStateManager>();
-
-            // 缓存写入连接字符串的实体状态集合
-            if (IsWritingConnectionString())
-            {
-                if (stateManager.Count > 0 && stateManager.Entries.Any(entry
-                    => entry.EntityState != EntityState.Unchanged))
-                {
-                    // 因同实体类型可能有不同状态，所以缓存所有列表以进行比较
-                    _lastWritingSaveChangesEntityStates = stateManager.Entries
-                        .Select(s => s.EntityState).ToList();
-                }
-
-                return;
-            }
-
-            if (_lastWritingSaveChangesEntityStates.IsNotEmpty())
-            {
-                if (stateManager.Count == _lastWritingSaveChangesEntityStates.Count)
-                {
-                    var index = 0;
-                    foreach (var entry in stateManager.Entries)
-                    {
-                        entry.SetEntityState(_lastWritingSaveChangesEntityStates[index]);
-                    }
-                }
-
-                // 仅使用一次，即使对比不匹配也直接清除
-                _lastWritingSaveChangesEntityStates = null;
-            }
         }
 
         #endregion
@@ -696,7 +731,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回是否已切换的布尔值。</returns>
         public virtual bool TrySwitchTenant()
         {
-            var tenantService = GetService<IMultiTenantAccessorService>();
+            var tenantService = GetService<IMultiTenancyAccessorService>();
 
             var tenant = tenantService.GetCurrentTenant(this);
 
@@ -710,7 +745,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回一个包含是否已切换的布尔值的异步操作。</returns>
         public virtual async Task<bool> TrySwitchTenantAsync(CancellationToken cancellationToken = default)
         {
-            var tenantService = GetService<IMultiTenantAccessorService>();
+            var tenantService = GetService<IMultiTenancyAccessorService>();
 
             var tenant = await tenantService.GetCurrentTenantAsync(this, cancellationToken)
                 .ConfigureAwait();
@@ -744,12 +779,14 @@ namespace Librame.Extensions.Data.Accessors
         /// 写入分离操作。
         /// </summary>
         /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="operationFunc">给定的操作工厂方法。</param>
+        /// <param name="writingFunc">给定的写入操作工厂方法。</param>
+        /// <param name="dataSynchronizationFunc">给定的数据同步操作工厂方法（可选）。</param>
         /// <returns>返回 <typeparamref name="TResult"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        protected virtual TResult WritingSeparationOperation<TResult>(Func<TResult> operationFunc)
+        protected virtual TResult WritingSeparationOperation<TResult>(Func<TResult> writingFunc,
+            Func<TResult> dataSynchronizationFunc = null)
         {
-            operationFunc.NotNull(nameof(operationFunc));
+            writingFunc.NotNull(nameof(writingFunc));
 
             // 暂存当前租户与连接字符串
             var lastTenant = CurrentTenant;
@@ -758,14 +795,16 @@ namespace Librame.Extensions.Data.Accessors
             // 保存变化到写入连接字符串
             ChangeConnectionString(tenant => tenant.WritingConnectionString);
 
-            var result = operationFunc.Invoke();
+            var result = writingFunc.Invoke();
 
             if (CurrentTenant.DataSynchronization)
             {
+                dataSynchronizationFunc.NotNull(nameof(dataSynchronizationFunc));
+
                 // 数据同步到默认连接字符串
                 ChangeConnectionString(tenant => tenant.DefaultConnectionString);
 
-                operationFunc.Invoke();
+                dataSynchronizationFunc.Invoke();
             }
 
             // 还原租户与连接字符串
@@ -782,14 +821,16 @@ namespace Librame.Extensions.Data.Accessors
         /// 异步写入分离操作。
         /// </summary>
         /// <typeparam name="TResult">指定的结果类型。</typeparam>
-        /// <param name="operationFunc">给定的异步操作工厂方法。</param>
+        /// <param name="writingFunc">给定的异步写入操作工厂方法。</param>
+        /// <param name="dataSynchronizationFunc">给定的异步数据同步操作工厂方法（可选）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TResult"/> 的异步操作。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         protected virtual async Task<TResult> WritingSeparationOperationAsync<TResult>
-            (Func<Task<TResult>> operationFunc, CancellationToken cancellationToken = default)
+            (Func<Task<TResult>> writingFunc, Func<Task<TResult>> dataSynchronizationFunc = null,
+            CancellationToken cancellationToken = default)
         {
-            operationFunc.NotNull(nameof(operationFunc));
+            writingFunc.NotNull(nameof(writingFunc));
 
             // 暂存当前租户与连接字符串
             var lastTenant = CurrentTenant;
@@ -799,15 +840,17 @@ namespace Librame.Extensions.Data.Accessors
             await ChangeConnectionStringAsync(tenant => tenant.WritingConnectionString,
                 cancellationToken).ConfigureAwait();
 
-            var value = await operationFunc.Invoke().ConfigureAwait();
+            var value = await writingFunc.Invoke().ConfigureAwait();
 
             if (CurrentTenant.DataSynchronization)
             {
+                dataSynchronizationFunc.NotNull(nameof(dataSynchronizationFunc));
+
                 // 数据同步到默认连接字符串
                 await ChangeConnectionStringAsync(tenant => tenant.DefaultConnectionString,
                     cancellationToken).ConfigureAwait();
 
-                await operationFunc.Invoke().ConfigureAwait();
+                await dataSynchronizationFunc.Invoke().ConfigureAwait();
             }
 
             // 还原租户与连接字符串
@@ -842,9 +885,15 @@ namespace Librame.Extensions.Data.Accessors
         /// 获取服务。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="isRequired">是必需的服务（可选；默认必需，不存在将抛出异常）。</param>
         /// <returns>返回 <typeparamref name="TService"/>。</returns>
-        public virtual TService GetService<TService>()
-            => AccessorExtensions.GetService<TService>(this);
+        public virtual TService GetService<TService>(bool isRequired = true)
+        {
+            if (isRequired)
+                return AccessorExtensions.GetService<TService>(this);
+
+            return GetServiceProvider().GetService<TService>();
+        }
 
         /// <summary>
         /// 获取服务提供程序。

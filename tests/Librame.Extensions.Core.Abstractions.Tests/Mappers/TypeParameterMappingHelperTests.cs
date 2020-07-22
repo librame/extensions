@@ -14,7 +14,7 @@ namespace Librame.Extensions.Core.Tests
             var baseType = typeof(INotificationHandler<>);
             var implType = typeof(INotificationHandler<PingNotification>);
 
-            var parameters = TypeParameterMappingHelper.ParseAsArray(baseType, implType);
+            var parameters = TypeParameterMappingHelper.ParseCollection(baseType, implType);
             
             Assert.Single(parameters);
             Assert.Equal("TNotification", parameters[0].ParameterName);
@@ -24,9 +24,9 @@ namespace Librame.Extensions.Core.Tests
             baseType = typeof(IRequestHandler<,>);
             implType = typeof(IRequestHandler<PingRequest, Pong>);
 
-            parameters = TypeParameterMappingHelper.ParseAsArray(baseType, implType);
+            parameters = TypeParameterMappingHelper.ParseCollection(baseType, implType);
 
-            Assert.Equal(2, parameters.Length);
+            Assert.Equal(2, parameters.Count);
             Assert.Equal("TRequest", parameters[0].ParameterName);
             Assert.Equal("TResponse", parameters[1].ParameterName);
             Assert.Equal(nameof(PingRequest), parameters[0].ArgumentName);
@@ -39,7 +39,7 @@ namespace Librame.Extensions.Core.Tests
             var baseType = typeof(INotificationHandler<>);
             var implType = typeof(INotificationHandler<PingNotification>);
 
-            var parameters = TypeParameterMappingHelper.ParseAsDictionary(baseType, implType);
+            var parameters = TypeParameterMappingHelper.ParseCollection(baseType, implType);
 
             Assert.Single(parameters);
             Assert.Equal("TNotification", parameters.Keys.First());
@@ -49,7 +49,7 @@ namespace Librame.Extensions.Core.Tests
             baseType = typeof(IRequestHandler<,>);
             implType = typeof(IRequestHandler<PingRequest, Pong>);
 
-            parameters = TypeParameterMappingHelper.ParseAsDictionary(baseType, implType);
+            parameters = TypeParameterMappingHelper.ParseCollection(baseType, implType);
 
             Assert.Equal(2, parameters.Count);
             Assert.Equal("TRequest", parameters.Keys.First());

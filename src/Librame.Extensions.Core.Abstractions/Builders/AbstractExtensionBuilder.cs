@@ -112,7 +112,7 @@ namespace Librame.Extensions.Core.Builders
             if ((bool)implementationType?.IsGenericTypeDefinition)
                 throw new NotSupportedException($"The implementation type '{implementationType}' do not support generic type definition.");
 
-            if (!implementationType.IsImplementedInterface(serviceTypeDefinition, out var resultType))
+            if (!implementationType.IsImplementedInterfaceType(serviceTypeDefinition, out var resultType))
                 throw new InvalidOperationException($"The type '{implementationType}' does not implement '{serviceTypeDefinition}' interface.");
 
             // 使用已实现泛型类型定义的服务泛型类型参数数组来填充服务类型定义

@@ -27,18 +27,18 @@ namespace Librame.Extensions.Data.Aspects
     /// </summary>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
-    /// <typeparam name="TEntity">指定的实体类型。</typeparam>
     /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+    /// <typeparam name="TTabulation">指定的表格类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TIncremId">指定的增量式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
-    public class DbContextAccessorAspectBase<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy>
+    public class DbContextAccessorAspectBase<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy>
         : AbstractAccessorAspect<DataBuilderOptions>
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty : DataAuditProperty<TIncremId, TGenId>
-        where TEntity : DataEntity<TGenId, TCreatedBy>
         where TMigration : DataMigration<TGenId, TCreatedBy>
+        where TTabulation : DataTabulation<TGenId, TCreatedBy>
         where TTenant : DataTenant<TGenId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
@@ -47,24 +47,24 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个数据库上下文访问器截面基类。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentifierGenerator"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="priority">给定的优先级（数值越小越优先）。</param>
-        protected DbContextAccessorAspectBase(IStoreIdentifierGenerator identifierGenerator,
+        protected DbContextAccessorAspectBase(IStoreIdentityGenerator identifierGenerator,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory, float priority)
             : base(identifierGenerator, options, loggerFactory, priority)
         {
-            DataIdentifierGenerator = identifierGenerator.CastTo<IStoreIdentifierGenerator,
-                IDataStoreIdentifierGenerator<TGenId>>(nameof(identifierGenerator));
+            DataIdentifierGenerator = identifierGenerator.CastTo<IStoreIdentityGenerator,
+                IDataStoreIdentityGenerator<TGenId>>(nameof(identifierGenerator));
         }
 
 
         /// <summary>
         /// 数据存储标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IDataStoreIdentifierGenerator{TGenId}"/>。</value>
-        protected IDataStoreIdentifierGenerator<TGenId> DataIdentifierGenerator { get; }
+        /// <value>返回 <see cref="IDataStoreIdentityGenerator{TGenId}"/>。</value>
+        protected IDataStoreIdentityGenerator<TGenId> DataIdentifierGenerator { get; }
 
 
         #region PreProcess
@@ -77,7 +77,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 PreProcessCore(dbContextAccessor);
         }
 
@@ -86,7 +86,7 @@ namespace Librame.Extensions.Data.Aspects
         /// </summary>
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         protected virtual void PreProcessCore
-            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            (DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
         }
 
@@ -101,7 +101,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 return PreProcessCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.CompletedTask;
@@ -114,7 +114,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         protected virtual Task PreProcessCoreAsync
-            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+            (DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 
@@ -131,7 +131,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 PostProcessCore(dbContextAccessor);
         }
 
@@ -140,7 +140,7 @@ namespace Librame.Extensions.Data.Aspects
         /// </summary>
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         protected virtual void PostProcessCore
-            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            (DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
         }
 
@@ -155,7 +155,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             accessor.NotNull(nameof(accessor));
 
-            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
+            if (accessor is DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
                 return PostProcessCoreAsync(dbContextAccessor, cancellationToken);
 
             return Task.CompletedTask;
@@ -168,7 +168,7 @@ namespace Librame.Extensions.Data.Aspects
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回 <see cref="Task"/>。</returns>
         protected virtual Task PostProcessCoreAsync
-            (DataDbContextAccessor<TAudit, TAuditProperty, TEntity, TMigration, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
+            (DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
             CancellationToken cancellationToken = default)
             => Task.CompletedTask;
 

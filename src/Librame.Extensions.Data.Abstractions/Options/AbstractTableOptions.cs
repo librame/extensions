@@ -13,7 +13,7 @@
 namespace Librame.Extensions.Data.Options
 {
     /// <summary>
-    /// 抽象存储选项。
+    /// 抽象表选项。
     /// </summary>
     public abstract class AbstractTableOptions
     {

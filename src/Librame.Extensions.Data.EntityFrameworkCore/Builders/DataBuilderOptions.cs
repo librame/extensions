@@ -14,7 +14,6 @@ using System;
 
 namespace Librame.Extensions.Data.Builders
 {
-    using Core.Identifiers;
     using Data.Stores;
 
     /// <summary>
@@ -22,23 +21,6 @@ namespace Librame.Extensions.Data.Builders
     /// </summary>
     public class DataBuilderOptions : DataBuilderOptions<Guid, Guid>
     {
-        /// <summary>
-        /// 构造一个 <see cref="DataBuilderOptions"/>（默认使用符合 SQL Server 排序规则的 <see cref="Guid"/> 标识符生成器方案）。
-        /// </summary>
-        public DataBuilderOptions()
-            : this(CombIdentifierGenerator.SQLServer)
-        {
-        }
-
-        /// <summary>
-        /// 构造一个 <see cref="DataBuilderOptions"/>。
-        /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IIdentifierGenerator{Guid}"/>。</param>
-        protected DataBuilderOptions(IIdentifierGenerator<Guid> identifierGenerator)
-            : base(identifierGenerator)
-        {
-        }
-
     }
 
 
@@ -54,18 +36,10 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 构造一个 <see cref="DataBuilderOptions{TGenId, TCreatedBy}"/>。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IIdentifierGenerator{TGenId}"/> 标识符生成器。</param>
-        protected DataBuilderOptions(IIdentifierGenerator<TGenId> identifierGenerator)
+        protected DataBuilderOptions()
             : base(new DataTenant<TGenId, TCreatedBy>())
         {
-            IdentifierGenerator = identifierGenerator.NotNull(nameof(identifierGenerator));
         }
 
-
-        /// <summary>
-        /// 标识符生成器。
-        /// </summary>
-        /// <value>返回 <see cref="IIdentifierGenerator{TGenId}"/>。</value>
-        public IIdentifierGenerator<TGenId> IdentifierGenerator { get; set; }
     }
 }

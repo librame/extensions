@@ -20,19 +20,19 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     /// <typeparam name="TAudit">指定的审计类型。</typeparam>
     /// <typeparam name="TAuditProperty">指定的审计属性类型。</typeparam>
-    /// <typeparam name="TEntity">指定的数据实体类型。</typeparam>
     /// <typeparam name="TMigration">指定的迁移类型。</typeparam>
+    /// <typeparam name="TTabulation">指定的表格类型。</typeparam>
     /// <typeparam name="TTenant">指定的租户类型。</typeparam>
-    public interface IDataStoreHub<TAccessor, TAudit, TAuditProperty, TEntity, TMigration, TTenant> : IStoreHub,
+    public interface IDataStoreHub<TAccessor, TAudit, TAuditProperty, TMigration, TTabulation, TTenant> : IStoreHub,
         IAuditStore<TAudit, TAuditProperty>,
-        IEntityStore<TEntity>,
         IMigrationStore<TMigration>,
+        ITabulationStore<TTabulation>,
         ITenantStore<TTenant>
         where TAccessor : class, IAccessor
         where TAudit : class
         where TAuditProperty : class
-        where TEntity : class
         where TMigration : class
+        where TTabulation : class
         where TTenant : class
     {
         /// <summary>

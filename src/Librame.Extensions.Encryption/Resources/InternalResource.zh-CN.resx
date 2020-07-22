@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ArgumentNullExceptionIdentifierBothNull" xml:space="preserve">
-    <value>选项标识符和标识符参数均为空。</value>
+  <data name="ArgumentNullExceptionTokenBothNull" xml:space="preserve">
+    <value>选项令牌和令牌参数均为空。</value>
   </data>
   <data name="InvalidOperationExceptionInvalidSigningKey" xml:space="preserve">
     <value>签名密钥不是非对称的。</value>

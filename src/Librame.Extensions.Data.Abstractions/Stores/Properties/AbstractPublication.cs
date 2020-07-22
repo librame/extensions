@@ -55,7 +55,19 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 异步设置创建时间。
+        /// 设置对象创建时间。
+        /// </summary>
+        /// <param name="newCreatedTime">给定的新创建时间对象。</param>
+        /// <returns>返回日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）。</returns>
+        public override object SetObjectCreatedTime(object newCreatedTime)
+        {
+            CreatedTime = newCreatedTime.CastTo<object, DateTimeOffset>(nameof(newCreatedTime));
+            CreatedTimeTicks = CreatedTime.Ticks;
+            return newCreatedTime;
+        }
+
+        /// <summary>
+        /// 异步设置对象创建时间。
         /// </summary>
         /// <param name="newCreatedTime">给定的新创建时间对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
@@ -73,8 +85,21 @@ namespace Librame.Extensions.Data.Stores
             });
         }
 
+
         /// <summary>
-        /// 异步设置发表时间。
+        /// 设置对象发表时间。
+        /// </summary>
+        /// <param name="newPublishedTime">给定的新发表时间对象。</param>
+        /// <returns>返回日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）。</returns>
+        public override object SetObjectPublishedTime(object newPublishedTime)
+        {
+            PublishedTime = newPublishedTime.CastTo<object, DateTimeOffset>(nameof(newPublishedTime));
+            PublishedTimeTicks = PublishedTime.Ticks;
+            return newPublishedTime;
+        }
+
+        /// <summary>
+        /// 异步设置对象发表时间。
         /// </summary>
         /// <param name="newPublishedTime">给定的新发表时间对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
@@ -127,15 +152,30 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 异步获取发表时间。
+        /// 获取对象发表时间。
+        /// </summary>
+        /// <returns>返回日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）。</returns>
+        public virtual object GetObjectPublishedTime()
+            => PublishedTime;
+
+        /// <summary>
+        /// 异步获取对象发表时间。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectPublishedTimeAsync(CancellationToken cancellationToken)
             => cancellationToken.RunOrCancelValueAsync(() => (object)PublishedTime);
 
+
         /// <summary>
-        /// 异步获取发表者。
+        /// 获取对象发表者。
+        /// </summary>
+        /// <returns>返回发表者（兼容标识或字符串）。</returns>
+        public virtual object GetObjectPublishedBy()
+            => PublishedBy;
+
+        /// <summary>
+        /// 异步获取对象发表者。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含发表者（兼容标识或字符串）的异步操作。</returns>
@@ -144,7 +184,18 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 异步设置发表时间。
+        /// 设置对象发表时间。
+        /// </summary>
+        /// <param name="newPublishedTime">给定的新发表时间对象。</param>
+        /// <returns>返回日期与时间（兼容 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/>）。</returns>
+        public virtual object SetObjectPublishedTime(object newPublishedTime)
+        {
+            PublishedTime = newPublishedTime.CastTo<object, TPublishedTime>(nameof(newPublishedTime));
+            return newPublishedTime;
+        }
+
+        /// <summary>
+        /// 异步设置对象发表时间。
         /// </summary>
         /// <param name="newPublishedTime">给定的新发表时间对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
@@ -161,8 +212,20 @@ namespace Librame.Extensions.Data.Stores
             });
         }
 
+
         /// <summary>
-        /// 异步设置发表者。
+        /// 设置对象发表者。
+        /// </summary>
+        /// <param name="newPublishedBy">给定的新发表者对象。</param>
+        /// <returns>返回一个包含发表者（兼容标识或字符串）的异步操作。</returns>
+        public virtual object SetObjectPublishedBy(object newPublishedBy)
+        {
+            PublishedBy = newPublishedBy.CastTo<object, TPublishedBy>(nameof(newPublishedBy));
+            return newPublishedBy;
+        }
+
+        /// <summary>
+        /// 异步设置对象发表者。
         /// </summary>
         /// <param name="newPublishedBy">给定的新发表者对象。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>

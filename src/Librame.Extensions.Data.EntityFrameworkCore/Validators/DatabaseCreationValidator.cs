@@ -42,14 +42,20 @@ namespace Librame.Extensions.Data.Validators
 
         public void SetCreated(IAccessor accessor)
         {
-            var filePath = GetReportFilePath(accessor as DbContextAccessorBase);
+            var now = accessor.Clock.GetNowOffset();
 
-            var now = accessor.Clock.GetNowOffsetAsync().ConfigureAwaitCompleted();
+            var filePath = GetReportFilePath(accessor as DbContextAccessorBase);
             filePath.WriteAllText($"The database was successfully created at {now}.");
         }
 
-        public Task SetCreatedAsync(IAccessor accessor, CancellationToken cancellationToken = default)
-            => cancellationToken.RunOrCancelAsync(() => SetCreated(accessor));
+        public async Task SetCreatedAsync(IAccessor accessor, CancellationToken cancellationToken = default)
+        {
+            var now = await accessor.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait();
+
+            var filePath = GetReportFilePath(accessor as DbContextAccessorBase);
+            filePath.WriteAllText($"The database was successfully created at {now}.");
+        }
 
 
         private static FilePathCombiner GetReportFilePath(DbContextAccessorBase accessor)

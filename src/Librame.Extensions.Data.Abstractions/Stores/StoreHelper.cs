@@ -82,7 +82,37 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 更新日期时间对象（支持日期时间为可空类型）。
+        /// 获取当前日期时间对象（支持日期时间为可空类型）。
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="clock"/> or <paramref name="dateTimeType"/> is null.
+        /// </exception>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <param name="dateTimeType">给定的日期时间类型。</param>
+        /// <returns>返回更新或默认日期时间。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static object GetDateTimeNow(IClockService clock, Type dateTimeType)
+        {
+            clock.NotNull(nameof(clock));
+            dateTimeType.NotNull(nameof(dateTimeType));
+
+            if (dateTimeType.IsGenericType
+                && dateTimeType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                dateTimeType = dateTimeType.UnwrapNullableType();
+            }
+
+            if (dateTimeType == typeof(DateTime))
+                return clock.GetNow();
+
+            else if (dateTimeType == typeof(DateTimeOffset))
+                return clock.GetNowOffset();
+
+            return null;
+        }
+
+        /// <summary>
+        /// 异步获取当前日期时间对象（支持日期时间为可空类型）。
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="clock"/> or <paramref name="dateTimeType"/> is null.
