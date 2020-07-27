@@ -19,7 +19,7 @@ namespace Librame.Extensions.Network.DotNetty.QuoteOfTheMoment.Client
                 Console.WriteLine("Sending broadcast QOTM");
 
                 // Broadcast the QOTM request to port.
-                var bytes = client.Encoding.Encoding.Source.GetBytes("QOTM?");
+                var bytes = ExtensionSettings.Preference.DefaultEncoding.GetBytes("QOTM?");
                 var buffer = Unpooled.WrappedBuffer(bytes);
 
                 var endPoint = new IPEndPoint(IPAddress.Broadcast,

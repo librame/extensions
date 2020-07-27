@@ -284,6 +284,14 @@ namespace Librame.Extensions.Data.Accessors
 
 
         /// <summary>
+        /// 存在任何数据集集合（默认返回 FALSE）。
+        /// </summary>
+        /// <returns>返回布尔值。</returns>
+        public virtual bool AnySets()
+            => false;
+
+
+        /// <summary>
         /// 执行 SQL 命令。
         /// </summary>
         /// <param name="sql">给定的 SQL 语句。</param>

@@ -9,7 +9,7 @@ namespace Librame.Extensions.Examples
 
     public class ExampleDbContextAccessor : DataDbContextAccessor
     {
-        protected ExampleDbContextAccessor(DbContextOptions options)
+        public ExampleDbContextAccessor(DbContextOptions options)
             : base(options)
         {
         }

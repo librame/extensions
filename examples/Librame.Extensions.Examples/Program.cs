@@ -14,6 +14,7 @@ namespace Librame.Extensions.Examples
     using Core.Identifiers;
     using Core.Options;
     using Data.Builders;
+    using Librame.Extensions.Core;
 
     class Program
     {
@@ -55,9 +56,9 @@ namespace Librame.Extensions.Examples
                 })
                 // for MySQL
                 .AddDatabaseDesignTime<MySqlDesignTimeServices>()
+                .AddStoreHub<ExampleStoreHub>()
                 .AddStoreIdentifierGenerator<ExampleStoreIdentifierGenerator>()
-                .AddStoreInitializer<ExampleStoreInitializer>()
-                .AddStoreHub<ExampleStoreHub>();
+                .AddStoreInitializer<ExampleStoreInitializer>();
 
             var provider = builder.Services.BuildServiceProvider();
             DisplayData(provider, "MySql");
@@ -66,7 +67,11 @@ namespace Librame.Extensions.Examples
         static void RunSqlServer()
         {
             var builder = CreateBuilder()
-                .AddData()
+                .AddData(dependency =>
+                {
+                    dependency.Options.MigrationAssemblyReferences.Add(
+                        AssemblyReference.Load("Microsoft.EntityFrameworkCore.SqlServer"));
+                })
                 .AddAccessor<ExampleDbContextAccessor>((tenant, optionsBuilder) =>
                 {
                     // for SqlServer
@@ -75,9 +80,9 @@ namespace Librame.Extensions.Examples
                 })
                 // for SqlServer
                 .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
+                .AddStoreHub<ExampleStoreHub>()
                 .AddStoreIdentifierGenerator<ExampleStoreIdentifierGenerator>()
-                .AddStoreInitializer<ExampleStoreInitializer>()
-                .AddStoreHub<ExampleStoreHub>();
+                .AddStoreInitializer<ExampleStoreInitializer>();
 
             var provider = builder.Services.BuildServiceProvider();
             DisplayData(provider, "SqlServer");
@@ -104,9 +109,9 @@ namespace Librame.Extensions.Examples
                 })
                 // for SQLite
                 .AddDatabaseDesignTime<SqliteDesignTimeServices>()
+                .AddStoreHub<ExampleStoreHub>()
                 .AddStoreIdentifierGenerator<ExampleStoreIdentifierGenerator>()
-                .AddStoreInitializer<ExampleStoreInitializer>()
-                .AddStoreHub<ExampleStoreHub>();
+                .AddStoreInitializer<ExampleStoreInitializer>();
 
             var provider = builder.Services.BuildServiceProvider();
             DisplayData(provider, "Sqlite");

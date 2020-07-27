@@ -82,7 +82,9 @@ Librame.Extensions.Storage (and Storage.Abstractions)
             "EncryptedConnectionStrings": true,
             "DefaultConnectionString": "fcuc9SMDHqvxk/3Ras0Emo09N9OorPNvSS8aZtpKC2Jh+NwoaOFOVoz7p4VKkFNr8lQULoTL6G7aYprarg49SpGtu3JVS3x5e8iV1+Ik18sFqR4dP5kjm8fNuZPZtMOS",
             "WritingConnectionString": "fcuc9SMDHqvxk/3Ras0Emo09N9OorPNvSS8aZtpKC2Jh+NwoaOFOVoz7p4VKkFNrOH9h2XeXJ984w4jHBRgKtJGtu3JVS3x5e8iV1+Ik18sFqR4dP5kjm8fNuZPZtMOS",
-            "WritingSeparation": true
+            "WritingSeparation": true,
+            "DataSynchronization": true,
+            "StructureSynchronization": true
         },
         // 测试3: SQL Server (默认支持)
         "DataBuilderDependency": {
@@ -93,7 +95,9 @@ Librame.Extensions.Storage (and Storage.Abstractions)
                     "Host": "localhost",
                     "DefaultConnectionString": "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True",
                     "WritingConnectionString": "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True",
-                    "WritingSeparation": true
+                    "WritingSeparation": true,
+                    "DataSynchronization": true,
+                    "StructureSynchronization": true
                 }
             }
         }
@@ -133,9 +137,9 @@ Librame.Extensions.Storage (and Storage.Abstractions)
             });
         })
         .AddDatabaseDesignTime<MySqlDesignTimeServices>()
+        .AddStoreHub<TestStoreHub>()
         .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
         .AddStoreInitializer<TestStoreInitializer>()
-        .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
 ### 使用 SQL Server
@@ -148,16 +152,20 @@ Librame.Extensions.Storage (and Storage.Abstractions)
             // SQLServer (Default)
             //dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLServer;
         })
-        .AddData()
+        .AddData(dependency =>
+        {
+            dependency.Options.MigrationAssemblyReferences.Add(
+                AssemblyReference.Load("Microsoft.EntityFrameworkCore.SqlServer"));
+        })
         .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
         {
             optionsBuilder.UseSqlServer(tenant.DefaultConnectionString,
                 sqlServer => sqlServer.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
         })
         .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
+        .AddStoreHub<TestStoreHub>()
         .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
         .AddStoreInitializer<TestStoreInitializer>()
-        .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
 ### 使用 SQLite
@@ -173,6 +181,9 @@ Librame.Extensions.Storage (and Storage.Abstractions)
         {
             // ConnectionStrings Section is not support DefaultTenant.WritingSeparation
             dependency.Options.DefaultTenant.WritingSeparation = true;
+            dependency.Options.DefaultTenant.DataSynchronization = true;
+            dependency.Options.DefaultTenant.StructureSynchronization = true;
+            
             dependency.BindConnectionStrings(dataFile => "Data Source=" + dependency.BaseDirectory.CombinePath(dataFile));
         })
         .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
@@ -181,9 +192,9 @@ Librame.Extensions.Storage (and Storage.Abstractions)
                 sqlite => sqlite.MigrationsAssembly(typeof(Program).GetAssemblyDisplayName()));
         })
         .AddDatabaseDesignTime<SqliteDesignTimeServices>()
+        .AddStoreHub<TestStoreHub>()
         .AddStoreIdentifierGenerator<TestGuidStoreIdentifierGenerator>()
         .AddStoreInitializer<TestStoreInitializer>()
-        .AddStoreHub<TestStoreHub>()
         .BuildServiceProvider();
 
 ### 创建模型与访问器

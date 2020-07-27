@@ -122,7 +122,7 @@ namespace Librame.Extensions.Examples
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var identifier = IdentifierGenerator as ExampleStoreIdentifierGenerator;
+                var generator = IdentifierGenerator as ExampleStoreIdentifierGenerator;
 
                 for (int i = 0; i < 10; i++)
                 {
@@ -131,7 +131,7 @@ namespace Librame.Extensions.Examples
 
                     var article = new Article<Guid, int, Guid>
                     {
-                        Id = identifier.GetArticleId(),
+                        Id = generator.GetArticleId(),
                         Title = $"{_articleName} {i.FormatString(2)}",
                         Descr = $"Descr {i.FormatString(2)}",
                         CategoryId = category.Id.Equals(0)

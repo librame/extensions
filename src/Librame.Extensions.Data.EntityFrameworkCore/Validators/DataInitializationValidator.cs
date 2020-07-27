@@ -33,7 +33,14 @@ namespace Librame.Extensions.Data.Validators
         public bool IsInitialized(IAccessor accessor)
         {
             var filePath = GetReportFilePath(accessor as DbContextAccessorBase);
-            return filePath.Exists();
+            if (filePath.Exists())
+                return true;
+
+            if (!accessor.AnySets())
+                return false;
+
+            SetInitialized(accessor);
+            return true;
         }
 
         public Task<bool> IsInitializedAsync(IAccessor accessor, CancellationToken cancellationToken = default)

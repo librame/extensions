@@ -12,6 +12,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace Librame.Extensions.Data.Accessors
 {
@@ -94,6 +95,14 @@ namespace Librame.Extensions.Data.Accessors
             : base(options)
         {
         }
+
+
+        /// <summary>
+        /// 存在任何数据集集合。
+        /// </summary>
+        /// <returns>返回布尔值。</returns>
+        public override bool AnySets()
+            => Audits.Any() && Migrations.Any() && Tabulations.Any() && Tenants.Any();
 
 
         #region DbSet

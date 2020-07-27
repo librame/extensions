@@ -15,6 +15,7 @@ namespace Librame.Extensions.Data.Tests
     using Extensions.Core.Services;
     using Extensions.Data.Builders;
     using Extensions.Data.Stores;
+    using Librame.Extensions.Core;
     using Models;
 
     public class TestStoreHubTests
@@ -82,6 +83,9 @@ namespace Librame.Extensions.Data.Tests
                     dependency.Options.DefaultTenant.WritingSeparation = true;
                     dependency.Options.DefaultTenant.DataSynchronization = true;
                     dependency.Options.DefaultTenant.StructureSynchronization = true;
+
+                    dependency.Options.MigrationAssemblyReferences.Add(
+                        AssemblyReference.Load("Microsoft.EntityFrameworkCore.SqlServer"));
                 })
                 .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
                 {

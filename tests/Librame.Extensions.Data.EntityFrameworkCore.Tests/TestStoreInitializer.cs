@@ -122,7 +122,7 @@ namespace Librame.Extensions.Data.Tests
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var identifier = IdentifierGenerator as TestGuidStoreIdentityGenerator;
+                var generator = IdentifierGenerator as TestGuidStoreIdentityGenerator;
 
                 for (int i = 0; i < 10; i++)
                 {
@@ -131,7 +131,7 @@ namespace Librame.Extensions.Data.Tests
 
                     var article = new Article<Guid, int, Guid>
                     {
-                        Id = identifier.GenerateArticleId(),
+                        Id = generator.GenerateArticleId(),
                         Title = $"{_articleName} {i.FormatString(2)}",
                         Descr = $"Descr {i.FormatString(2)}",
                         CategoryId = category.Id.Equals(0)
