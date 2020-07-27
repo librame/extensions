@@ -67,7 +67,8 @@ namespace Librame.Extensions.Data.Builders
 
                 // Validators
                 { typeof(IDatabaseCreationValidator), ServiceCharacteristics.Singleton() },
-                { typeof(IDataInitializationValidator), ServiceCharacteristics.Singleton() }
+                { typeof(IDataInitializationValidator), ServiceCharacteristics.Singleton() },
+                { typeof(IMigrationCommandExecutionValidator), ServiceCharacteristics.Singleton() }
             };
         }
 

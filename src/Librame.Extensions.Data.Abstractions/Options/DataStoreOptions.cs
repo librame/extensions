@@ -24,19 +24,19 @@ namespace Librame.Extensions.Data.Options
             = true;
 
         /// <summary>
-        /// 使用数据迁移（默认已启用）。
+        /// 使用数据迁移（默认已启用，禁用可能会导致部分迁移功能失效）。
         /// </summary>
         public bool UseDataMigration { get; set; }
             = true;
 
         /// <summary>
-        /// 使用数据表格（默认已启用）。
+        /// 使用数据表格（默认已启用，禁用可能会导致部分迁移功能失效）。
         /// </summary>
         public bool UseDataTabulation { get; set; }
             = true;
 
         /// <summary>
-        /// 使用数据租户（默认已启用）。
+        /// 使用数据租户（默认已启用，禁用可能会影响多租户功能）。
         /// </summary>
         public bool UseDataTenant { get; set; }
             = true;

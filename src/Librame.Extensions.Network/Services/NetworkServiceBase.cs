@@ -15,7 +15,6 @@ using System.Text;
 
 namespace Librame.Extensions.Network.Services
 {
-    using Core.Builders;
     using Core.Services;
     using Network.Builders;
 
@@ -31,7 +30,6 @@ namespace Librame.Extensions.Network.Services
         protected NetworkServiceBase(NetworkServiceBase serviceBase)
             : base(serviceBase?.Options, serviceBase?.LoggerFactory)
         {
-            CoreOptions = serviceBase.CoreOptions;
         }
 
         /// <summary>
@@ -42,20 +40,13 @@ namespace Librame.Extensions.Network.Services
         protected NetworkServiceBase(NetworkBuilderDependency dependency, ILoggerFactory loggerFactory)
             : base(dependency?.Options, loggerFactory)
         {
-            CoreOptions = dependency.GetRequiredDependency<CoreBuilderDependency>().Options;
         }
 
-
-        /// <summary>
-        /// 核心构建器选项。
-        /// </summary>
-        /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
-        public CoreBuilderOptions CoreOptions { get; }
 
         /// <summary>
         /// 字符编码。
         /// </summary>
         public Encoding Encoding
-            => CoreOptions.Encoding;
+            => ExtensionSettings.Preference.DefaultEncoding;
     }
 }

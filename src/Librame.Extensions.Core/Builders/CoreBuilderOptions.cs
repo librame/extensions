@@ -10,24 +10,21 @@
 
 #endregion
 
-using System.Text;
-
 namespace Librame.Extensions.Core.Builders
 {
     using Identifiers;
     using Options;
-    using Serializers;
 
     /// <summary>
     /// 核心构建器选项。
     /// </summary>
     public class CoreBuilderOptions : CoreBuilderOptions<IdentifierOptions>
     {
-        /// <summary>
-        /// 字符编码（默认为 UTF8）。
-        /// </summary>
-        public SerializableString<Encoding> Encoding { get; }
-            = new SerializableString<Encoding>(ExtensionSettings.Preference.DefaultEncoding);
+        ///// <summary>
+        ///// 字符编码（默认为 UTF8）。
+        ///// </summary>
+        //public SerializableString<Encoding> Encoding { get; }
+        //    = new SerializableString<Encoding>(ExtensionSettings.Preference.DefaultEncoding);
 
         /// <summary>
         /// 解决时钟回流的偏移量（默认为 1）。

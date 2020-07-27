@@ -20,7 +20,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.Extensions.pfx</AssemblyOriginatorKeyFile>
     <AssemblyVersion>7.7.0.1</AssemblyVersion>
-    <FileVersion>7.7.1194.17415</FileVersion>
+    <FileVersion>7.7.1199.17415</FileVersion>
     <RootNamespace>Librame.Extensions.Core</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>

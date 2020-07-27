@@ -15,13 +15,13 @@ using Librame.Extensions.Data.Accessors;
 using Librame.Extensions.Data.Aspects;
 using Librame.Extensions.Data.Builders;
 using Librame.Extensions.Data.Mappers;
-using Librame.Extensions.Data.Migrations;
 using Librame.Extensions.Data.Services;
 using Librame.Extensions.Data.Stores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.EntityFrameworkCore.Update.Internal;
@@ -138,8 +138,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             // 在使用自定义迁移服务时，利用模型缓存键工厂使模型缓存失效后重新映射表名来达到分表的方法同样会变成重命名及修改的迁移操作而导致失败。
             //optionsBuilder.ReplaceService<IModelCacheKeyFactory, DbContextAccessorModelCacheKeyFactory>();
-            optionsBuilder.ReplaceService<IMigrationsModelDiffer, ShardingMigrationsModelDiffer>();
-            optionsBuilder.ReplaceService<IBatchExecutor, AccessorBatchExecutor>();
+            optionsBuilder.ReplaceService<IBatchExecutor, BatchExecutorRewrite>();
+            optionsBuilder.ReplaceService<IMigrationsModelDiffer, MigrationsModelDifferRewrite>();
         }
 
     }

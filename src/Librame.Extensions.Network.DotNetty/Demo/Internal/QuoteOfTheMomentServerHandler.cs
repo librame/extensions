@@ -60,13 +60,13 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                 return;
             }
 
-            var message = packet.Content.ToString(_server.CoreOptions.Encoding);
+            var message = packet.Content.ToString(_server.Encoding);
             if (message != "QOTM?")
             {
                 return;
             }
 
-            var bytes = _server.CoreOptions.Encoding.Source.GetBytes("QOTM: " + NextQuote());
+            var bytes = _server.Encoding.GetBytes("QOTM: " + NextQuote());
             var buffer = Unpooled.WrappedBuffer(bytes);
             ctx.WriteAsync(new DatagramPacket(buffer, packet.Sender));
         }

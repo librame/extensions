@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -28,7 +29,6 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Services
 {
-    using Core.Builders;
     using Core.Combiners;
     using Core.Mediators;
     using Core.Services;
@@ -37,8 +37,8 @@ namespace Librame.Extensions.Data.Services
     using Data.Builders;
     using Data.Compilers;
     using Data.Mediators;
-    using Data.Migrations;
     using Data.Stores;
+    using Data.Validators;
 
     /// <summary>
     /// 迁移访问器服务。
@@ -62,23 +62,30 @@ namespace Librame.Extensions.Data.Services
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
-        private readonly IMemoryCache _memoryCache;
-        private readonly CoreBuilderOptions _coreOptions;
+        /// <summary>
+        /// 构造一个迁移访问器服务。
+        /// </summary>
+        /// <param name="executionValidator">给定的 <see cref="IMigrationCommandExecutionValidator"/>。</param>
+        /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
+        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
+        public MigrationAccessorService(IMigrationCommandExecutionValidator executionValidator,
+            IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
+            : base(options, loggerFactory)
+        {
+            ExecutionValidator = executionValidator.NotNull(nameof(executionValidator));
+            MemoryCache = ExecutionValidator.MemoryCache;
+        }
 
 
         /// <summary>
-        /// 构造一个迁移服务。
+        /// 执行验证器。
         /// </summary>
-        /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
-        /// <param name="dependency">给定的 <see cref="DataBuilderDependency"/>。</param>
-        /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public MigrationAccessorService(IMemoryCache memoryCache, DataBuilderDependency dependency,
-            ILoggerFactory loggerFactory)
-            : base(dependency?.Options, loggerFactory)
-        {
-            _memoryCache = memoryCache.NotNull(nameof(memoryCache));
-            _coreOptions = dependency.GetRequiredDependency<CoreBuilderDependency>().Options;
-        }
+        public IMigrationCommandExecutionValidator ExecutionValidator { get; }
+
+        /// <summary>
+        /// 内存缓存。
+        /// </summary>
+        public IMemoryCache MemoryCache { get; }
 
 
         /// <summary>
@@ -279,55 +286,111 @@ namespace Librame.Extensions.Data.Services
             //var historyRepository = dbContextAccessor.GetService<IHistoryRepository>();
             //var insertCommand = rawSqlCommandBuilder.Build(historyRepository.GetInsertScript(new HistoryRow(migration.GetId(), ProductInfo.GetVersion())));
 
+            // 过滤已迁移的操作集合（如历史分表迁移）
+            operationDifferences = FilterMigratedOperations(dbContextAccessor.TabulationsManager, operationDifferences);
+            if (operationDifferences.IsNull())
+                return;
+
+            // 按表操作为最高优先级排序
+            operationDifferences = operationDifferences.OrderByTableOperation();
+
+            // 生成操作差异的迁移命令集合（如数据库不支持的迁移操作命令）
+            var differenceCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
+            //.Concat(new[] { new MigrationCommand(insertCommand, _currentContext.Context, _commandLogger) })
+            if (differenceCommands.Count <= 0)
+                return;
+
+            // 过滤已执行的迁移命令集合
+            var executeCommands = ExecutionValidator.FilterExecuted(dbContextAccessor, differenceCommands);
+            if (executeCommands.Count <= 0)
+                return;
+
             ExtensionSettings.Preference.RunLocker(() =>
             {
-                operationDifferences = FilterInvalidOperationDifferences(dbContextAccessor, operationDifferences);
+                migrationCommandExecutor.ExecuteNonQuery(executeCommands, connection);
 
-                // 生成操作差异的迁移命令列表
-                var differenceCommands = migrationsSqlGenerator.Generate(operationDifferences, dbContextAccessor.Model);
-                //.Concat(new[] { new MigrationCommand(insertCommand, _currentContext.Context, _commandLogger) })
-
-                // 过滤需要执行的迁移命令集合（为防止命令执行过程中出错）
-                var executeCommands = MigrationCommandFiltrator.Filter(_memoryCache,
-                    dbContextAccessor, differenceCommands, _coreOptions);
-
-                if (executeCommands.Count > 0)
-                {
-                    migrationCommandExecutor.ExecuteNonQuery(executeCommands, connection);
-                    MigrationCommandFiltrator.Save(_memoryCache, dbContextAccessor, _coreOptions);
-                }
+                ExecutionValidator.SaveExecuted(dbContextAccessor);
             });
         }
 
+
         /// <summary>
-        /// 过滤无效的操作差异。
+        /// 过滤已迁移的操作集合（支持查询历史分表迁移）。
         /// </summary>
-        /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
-        /// <param name="operationDifferences">给定的迁移操作差异集合。</param>
-        /// <returns>返回迁移操作差异集合。</returns>
+        /// <param name="manager">给定的 <see cref="DbSetManager{TTabulation}"/>。</param>
+        /// <param name="operations">给定的 <see cref="IReadOnlyList{MigrationOperation}"/>。</param>
+        /// <returns>返回 <see cref="IReadOnlyList{MigrationOperation}"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        protected virtual IReadOnlyList<MigrationOperation> FilterInvalidOperationDifferences
-            (DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor,
-            IReadOnlyList<MigrationOperation> operationDifferences)
+        protected virtual IReadOnlyList<MigrationOperation> FilterMigratedOperations(DbSetManager<TTabulation> manager,
+            IReadOnlyList<MigrationOperation> operations)
         {
-            if (!operationDifferences.Any(p => p is CreateIndexOperation))
-                return operationDifferences;
+            if (!operations.Any(p => p is CreateTableOperation))
+                return operations;
 
-            // 过滤分表创建时，同时创建已存在索引的情况
-            var shardingTables = dbContextAccessor.Model.GetEntityTypes()
-                .Where(p => p.ClrType.IsDefined<ShardableAttribute>())
-                .Select(s => s.GetTableDescriptor().ToString())
-                .ToList();
+            // 提取已存在的创建表操作
+            var existTables = operations.Where(p => p is CreateTableOperation createTable
+                && manager.DbSet.Any(t => t.TableName == createTable.Name))
+                .Select(p => p as CreateTableOperation).ToList();
 
-            return operationDifferences.Where(p =>
+            if (existTables.Count <= 0)
+                return operations;
+
+            List<MigrationOperation> filteredOperations = null;
+
+            // 过滤在分表迁移后，将分表手动调整为原表名时，默认取出最新快照中没包含原表名导致重复创建原表的迁移操作
+            foreach (var operation in operations)
             {
-                // 如果当前是创建索引迁移操作且属于分表索引
-                if (p is CreateIndexOperation create && shardingTables.Contains(create.Table))
-                    return false; // FALSE 表示过滤此操作
+                // 因 EFCore 的表格类操作没有统一的接口，只能手动判定
+                // 凡是属于已存在创建表名的操作均视为已执行过的操作
+                if (operation is CreateTableOperation createTable
+                    && existTables.Any(p => p.Schema == createTable.Schema && p.Name == createTable.Name))
+                {
+                    continue;
+                }
 
-                return true;
-            })
-            .ToList();
+                if (operation is AddPrimaryKeyOperation addPrimaryKey
+                    && existTables.Any(p => p.Schema == addPrimaryKey.Schema && p.Name == addPrimaryKey.Table))
+                {
+                    continue;
+                }
+
+                if (operation is AlterTableOperation alterTable
+                    && existTables.Any(p => p.Schema == alterTable.Schema && p.Name == alterTable.Name))
+                {
+                    continue;
+                }
+
+                if (operation is AddColumnOperation addColumn
+                    && existTables.Any(p => p.Schema == addColumn.Schema && p.Name == addColumn.Table))
+                {
+                    continue;
+                }
+
+                if (operation is AddForeignKeyOperation addForeignKey
+                    && existTables.Any(p => p.Schema == addForeignKey.Schema && p.Name == addForeignKey.Table))
+                {
+                    continue;
+                }
+
+                if (operation is AddUniqueConstraintOperation addUniqueConstraint
+                    && existTables.Any(p => p.Schema == addUniqueConstraint.Schema && p.Name == addUniqueConstraint.Table))
+                {
+                    continue;
+                }
+
+                if (operation is CreateCheckConstraintOperation createCheckConstraint
+                    && existTables.Any(p => p.Schema == createCheckConstraint.Schema && p.Name == createCheckConstraint.Table))
+                {
+                    continue;
+                }
+
+                if (filteredOperations.IsNull())
+                    filteredOperations = new List<MigrationOperation>();
+
+                filteredOperations.Add(operation);
+            }
+
+            return filteredOperations;
         }
 
 
@@ -336,7 +399,6 @@ namespace Librame.Extensions.Data.Services
         /// </summary>
         /// <param name="dbContextAccessor">给定的数据库上下文访问器。</param>
         /// <returns>返回 <see cref="IModel"/>。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         protected virtual IModel ResolvePersistentModel
             (DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy> dbContextAccessor)
         {
@@ -344,7 +406,7 @@ namespace Librame.Extensions.Data.Services
             {
                 var cacheKey = DbContextAccessorHelper.GetMigrationCacheKey(dbContextAccessor);
 
-                return _memoryCache.GetOrCreate(cacheKey, entry =>
+                return MemoryCache.GetOrCreate(cacheKey, entry =>
                 {
                     Type snapshotType = null;
 
@@ -356,6 +418,7 @@ namespace Librame.Extensions.Data.Services
                     {
                         var buffer = ModelSnapshotCompiler.RestoreAssembly(lastMigration.ModelBody);
                         var modelAssembly = Assembly.Load(buffer);
+
                         snapshotType = modelAssembly.GetType(lastMigration.ModelSnapshotName,
                             throwOnError: true, ignoreCase: false);
                     }
@@ -408,7 +471,7 @@ namespace Librame.Extensions.Data.Services
 
                     // 移除当前缓存
                     var cacheKey = DbContextAccessorHelper.GetMigrationCacheKey(dbContextAccessor);
-                    _memoryCache.Remove(cacheKey);
+                    MemoryCache.Remove(cacheKey);
 
                     // 发送迁移通知
                     var mediator = dbContextAccessor.GetService<IMediator>();

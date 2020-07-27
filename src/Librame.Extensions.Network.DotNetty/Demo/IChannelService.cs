@@ -10,12 +10,13 @@
 
 #endregion
 
+using System.Text;
+
 namespace Librame.Extensions.Network.DotNetty
 {
-    using Builders;
-    using Core.Builders;
     using Core.Services;
     using Encryption.Services;
+    using Network.Builders;
 
     /// <summary>
     /// 信道服务接口。
@@ -37,9 +38,8 @@ namespace Librame.Extensions.Network.DotNetty
         DotNettyOptions Options { get; }
 
         /// <summary>
-        /// 核心构建器选项。
+        /// 字符编码。
         /// </summary>
-        /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
-        public CoreBuilderOptions CoreOptions { get; }
+        Encoding Encoding { get; }
     }
 }

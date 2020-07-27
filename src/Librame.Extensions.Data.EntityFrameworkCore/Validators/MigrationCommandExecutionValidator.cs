@@ -14,48 +14,58 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
-namespace Librame.Extensions.Data.Migrations
+namespace Librame.Extensions.Data.Validators
 {
-    using Core.Builders;
     using Core.Combiners;
     using Data.Accessors;
+    using Data.Migrations;
 
     /// <summary>
-    /// 迁移命令过滤器。
+    /// 迁移命令执行验证器。
     /// </summary>
-    public static class MigrationCommandFiltrator
+    public class MigrationCommandExecutionValidator : IMigrationCommandExecutionValidator
     {
-        private static FilePathCombiner GetFilePathCombiner(DbContextAccessorBase accessor)
-            => DbContextAccessorHelper.GenerateAccessorFilePath(accessor, ".json",
-                dependency => dependency.MigrationsConfigDirectory);
-
-        private static string GetCacheKey(FilePathCombiner filePath)
-            => DbContextAccessorHelper.GenerateAccessorKey(nameof(MigrationCommandFiltrator), filePath);
+        private Encoding _defaultEncoding = null;
 
 
         /// <summary>
-        /// 过滤命令。
+        /// 构造一个 <see cref="MigrationCommandExecutionValidator"/>。
         /// </summary>
         /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
+        public MigrationCommandExecutionValidator(IMemoryCache memoryCache)
+        {
+            MemoryCache = memoryCache.NotNull(nameof(memoryCache));
+
+            _defaultEncoding = ExtensionSettings.Preference.DefaultEncoding;
+        }
+
+
+        /// <summary>
+        /// 内存缓存。
+        /// </summary>
+        public IMemoryCache MemoryCache { get; }
+
+
+        /// <summary>
+        /// 过滤已执行的迁移命令。
+        /// </summary>
         /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
         /// <param name="commands">给定的 <see cref="IEnumerable{MigrationCommand}"/>。</param>
-        /// <param name="coreOptions">给定的 <see cref="CoreBuilderOptions"/>。</param>
         /// <returns>返回 <see cref="IReadOnlyList{MigrationCommand}"/></returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static IReadOnlyList<MigrationCommand> Filter(IMemoryCache memoryCache,
-            DbContextAccessorBase accessor, IEnumerable<MigrationCommand> commands,
-            CoreBuilderOptions coreOptions)
+        public IReadOnlyList<MigrationCommand> FilterExecuted(DbContextAccessorBase accessor,
+            IEnumerable<MigrationCommand> commands)
         {
-            memoryCache.NotNull(nameof(memoryCache));
+            accessor.NotNull(nameof(accessor));
             commands.NotNull(nameof(commands));
-            coreOptions.NotNull(nameof(coreOptions));
 
             var filePath = GetFilePathCombiner(accessor);
-            var cacheInfos = memoryCache.GetOrCreate(GetCacheKey(filePath), entry =>
+            var cacheInfos = MemoryCache.GetOrCreate(GetCacheKey(filePath), entry =>
             {
                 if (filePath.Exists())
-                    return filePath.ReadJson<List<MigrationCommandInfo>>();
+                    return filePath.ReadJson<List<MigrationCommandInfo>>(_defaultEncoding);
 
                 return new List<MigrationCommandInfo>();
             });
@@ -78,22 +88,31 @@ namespace Librame.Extensions.Data.Migrations
 
 
         /// <summary>
-        /// 保存过滤命令。
+        /// 保存已执行的迁移命令。
         /// </summary>
-        /// <param name="memoryCache">给定的 <see cref="IMemoryCache"/>。</param>
         /// <param name="accessor">给定的 <see cref="DbContextAccessorBase"/>。</param>
-        /// <param name="options">给定的 <see cref="CoreBuilderOptions"/>。</param>
+        /// <returns>返回 <see cref="IReadOnlyList{MigrationCommandInfo}"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static void Save(IMemoryCache memoryCache, DbContextAccessorBase accessor,
-            CoreBuilderOptions options)
+        public IReadOnlyList<MigrationCommandInfo> SaveExecuted(DbContextAccessorBase accessor)
         {
-            memoryCache.NotNull(nameof(memoryCache));
-            options.NotNull(nameof(options));
+            accessor.NotNull(nameof(accessor));
 
             var filePath = GetFilePathCombiner(accessor);
-            var cacheInfos = memoryCache.Get<List<MigrationCommandInfo>>(GetCacheKey(filePath));
-            filePath.WriteJson(cacheInfos, options.Encoding);
+
+            var cacheInfos = MemoryCache.Get<List<MigrationCommandInfo>>(GetCacheKey(filePath));
+
+            filePath.WriteJson(cacheInfos, _defaultEncoding);
+
+            return cacheInfos;
         }
+
+
+        private static FilePathCombiner GetFilePathCombiner(DbContextAccessorBase accessor)
+            => DbContextAccessorHelper.GenerateAccessorFilePath(accessor, ".json",
+                dependency => dependency.MigrationsConfigDirectory);
+
+        private static string GetCacheKey(FilePathCombiner filePath)
+            => DbContextAccessorHelper.GenerateAccessorKey(nameof(MigrationCommandExecutionValidator), filePath);
 
     }
 }

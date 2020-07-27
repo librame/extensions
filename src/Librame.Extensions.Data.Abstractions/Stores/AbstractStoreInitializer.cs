@@ -145,7 +145,8 @@ namespace Librame.Extensions.Data.Stores
             {
                 InitializeCore(accessor);
 
-                Validator.SetInitialized(accessor);
+                // 设置已初始化标识改由底层 BatchExecutorReplacement 实现
+                //Validator.SetInitialized(accessor);
             }
         }
 
@@ -161,7 +162,8 @@ namespace Librame.Extensions.Data.Stores
             {
                 await InitializeCoreAsync(accessor, cancellationToken).ConfigureAwait();
 
-                await Validator.SetInitializedAsync(accessor, cancellationToken).ConfigureAwait();
+                // 设置已初始化标识改由底层 BatchExecutorReplacement 实现
+                //await Validator.SetInitializedAsync(accessor, cancellationToken).ConfigureAwait();
             }
         }
 

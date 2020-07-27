@@ -42,7 +42,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
                 return;
             }
 
-            var message = packet.Content.ToString(_client.CoreOptions.Encoding);
+            var message = packet.Content.ToString(_client.Encoding);
             if (!message.StartsWith("QOTM: ", StringComparison.OrdinalIgnoreCase))
             {
                 return;

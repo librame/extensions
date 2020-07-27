@@ -55,6 +55,44 @@ namespace Librame.Extensions.Data
             = typeof(TEntity);
 
 
+        /// <summary>
+        /// 获取首条或默认实体。
+        /// </summary>
+        /// <param name="predicate">给定的谓语表达式。</param>
+        /// <returns>返回本地与数据库实体的元组。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public virtual (TEntity localEntity, TEntity dbEntity) GetFirstOrDefault
+            (Expression<Func<TEntity, bool>> predicate)
+        {
+            // From Local Cache
+            var localEntity = DbSet.Local.FirstOrDefault(predicate.Compile());
+
+            // From Database
+            var dbEntity = DbSet.FirstOrDefault(predicate);
+
+            return (localEntity, dbEntity);
+        }
+
+        /// <summary>
+        /// 获取首条或默认实体。
+        /// </summary>
+        /// <param name="predicate">给定的谓语表达式。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回本地与数据库实体的元组。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public virtual async Task<(TEntity localEntity, TEntity dbEntity)> GetFirstOrDefaultAsync
+            (Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            // From Local Cache
+            var localEntity = DbSet.Local.FirstOrDefault(predicate.Compile());
+
+            // From Database
+            var dbEntity = await DbSet.FirstOrDefaultAsync(predicate, cancellationToken).ConfigureAwait();
+
+            return (localEntity, dbEntity);
+        }
+
+
         #region AddOrUpdate
 
         /// <summary>

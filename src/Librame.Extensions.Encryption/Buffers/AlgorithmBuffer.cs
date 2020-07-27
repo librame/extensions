@@ -62,5 +62,6 @@ namespace Librame.Extensions.Encryption.Buffers
 
         public override int GetHashCode()
             => _buffer.GetHashCode();
+
     }
 }

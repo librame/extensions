@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations.Design;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -25,7 +24,6 @@ namespace Librame.Extensions.Data.Compilers
 {
     using Core;
     using Core.Compilers;
-    using Core.Builders;
     using Core.Combiners;
     using Data.Accessors;
     using Data.Builders;
@@ -109,7 +107,6 @@ namespace Librame.Extensions.Data.Compilers
             typeName.NotNull(nameof(typeName));
 
             var generator = accessor.GetService<IMigrationsCodeGenerator>();
-            var coreOptions = accessor.GetService<IOptions<CoreBuilderOptions>>().Value;
 
             var sourceCode = generator.GenerateSnapshot(typeName.Namespace, accessor.CurrentType,
                 typeName.Name, model);
@@ -117,7 +114,9 @@ namespace Librame.Extensions.Data.Compilers
             var references = GetMetadataReferences(accessor.Dependency.Options, accessor.CurrentType);
 
             var buffer = CSharpCompiler.CompileInMemory(references, sourceCode);
-            return (StoreAssembly(buffer), sourceCode.Sha256Base64String(coreOptions.Encoding));
+            var encoding = ExtensionSettings.Preference.DefaultEncoding;
+
+            return (StoreAssembly(buffer), sourceCode.Sha256Base64String(encoding));
         }
 
 

@@ -49,11 +49,13 @@ namespace Librame.Extensions.Network.DotNetty.Demo
         public override void ChannelActive(IChannelHandlerContext context)
             => _handshaker.HandshakeAsync(context.Channel).LinkOutcome(_completionSource);
 
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public override void ChannelInactive(IChannelHandlerContext context)
         {
             _logger.LogInformation("WebSocket Client disconnected!");
         }
 
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         protected override void ChannelRead0(IChannelHandlerContext context, object message)
         {
             var channel = context.Channel;
@@ -78,7 +80,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             if (message is IFullHttpResponse response)
             {
                 throw new InvalidOperationException(
-                    $"Unexpected FullHttpResponse (getStatus={response.Status}, content={response.Content.ToString(_client.CoreOptions.Encoding)})");
+                    $"Unexpected FullHttpResponse (getStatus={response.Status}, content={response.Content.ToString(_client.Encoding)})");
             }
 
             if (message is TextWebSocketFrame textFrame)

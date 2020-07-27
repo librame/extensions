@@ -36,7 +36,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
         {
             var buffer = message as IByteBuffer;
             if (buffer.IsNotNull())
-                _logger.LogInformation($"Received from client: {buffer.ToString(_server.CoreOptions.Encoding)}");
+                _logger.LogInformation($"Received from client: {buffer.ToString(_server.Encoding)}");
 
             context.WriteAsync(message);
         }

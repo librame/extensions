@@ -26,7 +26,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
 
         private readonly IByteBuffer _buffer;
 
-
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public EchoClientHandler(IEchoClient client)
         {
             _client = client;
@@ -35,7 +35,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             _buffer = Unpooled.Buffer(_client.Options.EchoClient.BufferSize);
 
             var initMessage = "Welcome to Librame";
-            _buffer.WriteBytes(_client.CoreOptions.Encoding.Source.GetBytes(initMessage));
+            _buffer.WriteBytes(_client.Encoding.GetBytes(initMessage));
             _logger.LogInformation($"Write message: {initMessage}");
         }
 
@@ -47,7 +47,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
         {
             var buffer = message as IByteBuffer;
             if (buffer.IsNotNull())
-                _logger.LogInformation($"Received from server: {buffer.ToString(_client.CoreOptions.Encoding)}");
+                _logger.LogInformation($"Received from server: {buffer.ToString(_client.Encoding)}");
 
             context.WriteAsync(message);
         }

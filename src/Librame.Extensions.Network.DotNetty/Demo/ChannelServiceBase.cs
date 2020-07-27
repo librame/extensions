@@ -11,10 +11,10 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
+using System.Text;
 
 namespace Librame.Extensions.Network.DotNetty.Demo
 {
-    using Core.Builders;
     using Core.Services;
     using Encryption.Services;
     using Network.Builders;
@@ -72,10 +72,9 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             => Dependency.Options;
 
         /// <summary>
-        /// 核心构建器选项。
+        /// 字符编码。
         /// </summary>
-        /// <value>返回 <see cref="CoreBuilderOptions"/>。</value>
-        public CoreBuilderOptions CoreOptions
-            => Dependency.GetRequiredDependency<CoreBuilderDependency>().Options;
+        public Encoding Encoding
+            => ExtensionSettings.Preference.DefaultEncoding;
     }
 }

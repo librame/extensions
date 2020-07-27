@@ -41,7 +41,7 @@ namespace Librame.Extensions.Tests
 
             Assert.True(baseType.IsAssignableFromTargetType(testType));
             Assert.True(baseType.IsAssignableFromTargetType(testSubType));
-            Assert.False(testType.IsAssignableFromTargetType(testSubType));
+            Assert.True(testType.IsAssignableFromTargetType(testSubType));
 
             Assert.True(testType.IsAssignableToBaseType(baseType));
             Assert.True(testSubType.IsAssignableToBaseType(baseType));
@@ -116,10 +116,10 @@ namespace Librame.Extensions.Tests
             var type = typeof(TestClass);
 
             var fields = type.GetAllFields();
-            Assert.Equal(6, fields.Length);
+            Assert.Equal(5, fields.Length);
 
             fields = type.GetAllFieldsWithoutStatic();
-            Assert.Equal(4, fields.Length);
+            Assert.Equal(3, fields.Length);
         }
 
         [Fact]

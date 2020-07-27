@@ -10,7 +10,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,11 +29,6 @@ namespace Librame.Extensions.Data
         /// 所需的保存更改。
         /// </summary>
         bool RequiredSaveChanges { get; set; }
-
-        /// <summary>
-        /// 所需的标识插入表名列表。
-        /// </summary>
-        IReadOnlyList<string> RequiredIdentityInsertTableNames { get; set; }
 
 
         /// <summary>

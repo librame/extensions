@@ -64,9 +64,10 @@ namespace Librame.Extensions.Data.Builders
             // Protectors
             AddService<IPrivacyDataProtector, PrivacyDataProtector>();
 
-            // Stores
+            // Validators
             AddService<IDatabaseCreationValidator, DatabaseCreationValidator>();
             AddService<IDataInitializationValidator, DataInitializationValidator>();
+            AddService<IMigrationCommandExecutionValidator, MigrationCommandExecutionValidator>();
         }
 
 

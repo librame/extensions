@@ -313,6 +313,11 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         public bool IsFromMigrateInvoke { get; protected set; }
 
+        /// <summary>
+        /// 包含初始化数据。
+        /// </summary>
+        public bool ContainsInitializationData { get; protected set; }
+
 
         /// <summary>
         /// 数据库迁移，默认配置在改变数据库连接的后置动作时被调用（如果选项已启用迁移，则调用迁移核心方法，反之则调用数据库默认迁移方法）。
@@ -346,9 +351,10 @@ namespace Librame.Extensions.Data.Accessors
             },
             () =>
             {
-                return MigrateCore(isDataSynchronization: true);
+                return MigrateSynchronization();
             });
 
+            ContainsInitializationData = false;
             IsFromMigrateInvoke = false;
 
             return count;
@@ -387,10 +393,11 @@ namespace Librame.Extensions.Data.Accessors
             },
             () =>
             {
-                return MigrateCoreAsync(isDataSynchronization: true, cancellationToken);
+                return MigrateSynchronizationAsync(cancellationToken);
             },
             cancellationToken).ConfigureAwait();
 
+            ContainsInitializationData = false;
             IsFromMigrateInvoke = false;
 
             return count;
@@ -400,9 +407,8 @@ namespace Librame.Extensions.Data.Accessors
         /// <summary>
         /// 迁移核心（不区分读写）。
         /// </summary>
-        /// <param name="isDataSynchronization">是数据同步迁移（可选；默认不是）。</param>
         /// <returns>返回受影响的行数。</returns>
-        protected virtual int MigrateCore(bool isDataSynchronization = false)
+        protected virtual int MigrateCore()
         {
             var migration = GetService<IMigrationAccessorService>();
             migration.Migrate(this);
@@ -413,15 +419,14 @@ namespace Librame.Extensions.Data.Accessors
             {
                 var initializer = GetService<IStoreInitializer>();
                 initializer.Initialize(this);
+
+                ContainsInitializationData = true;
             }
 
             var count = 0;
 
-            if (RequiredSaveChanges && !isDataSynchronization)
+            if (RequiredSaveChanges)
                 count = SaveChangesCore(true);
-
-            else if (isDataSynchronization)
-                count = this.SubmitSaveChangesSynchronization();
 
             return count;
         }
@@ -429,11 +434,9 @@ namespace Librame.Extensions.Data.Accessors
         /// <summary>
         /// 异步迁移核心（不区分读写）。
         /// </summary>
-        /// <param name="isDataSynchronization">是数据同步迁移（可选；默认不是）。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含受影响的行数的异步操作。</returns>
-        protected virtual async Task<int> MigrateCoreAsync(bool isDataSynchronization = false,
-            CancellationToken cancellationToken = default)
+        protected virtual async Task<int> MigrateCoreAsync(CancellationToken cancellationToken = default)
         {
             var migration = GetService<IMigrationAccessorService>();
             await migration.MigrateAsync(this, cancellationToken).ConfigureAwait();
@@ -444,17 +447,48 @@ namespace Librame.Extensions.Data.Accessors
             {
                 var initializer = GetService<IStoreInitializer>();
                 await initializer.InitializeAsync(this, cancellationToken).ConfigureAwait();
+
+                ContainsInitializationData = true;
             }
 
             var count = 0;
 
-            if (RequiredSaveChanges && !isDataSynchronization)
+            if (RequiredSaveChanges)
                 count = await SaveChangesCoreAsync(true, cancellationToken).ConfigureAwait();
 
-            else if (isDataSynchronization)
-                count = await this.SubmitSaveChangesSynchronizationAsync(cancellationToken).ConfigureAwait();
-
             return count;
+        }
+
+
+        /// <summary>
+        /// 迁移同步。
+        /// </summary>
+        /// <returns>返回受影响的行数。</returns>
+        protected virtual int MigrateSynchronization()
+        {
+            // 可能存在结构迁移
+            var migration = GetService<IMigrationAccessorService>();
+            migration.Migrate(this);
+
+            //Dependency.Options.PostMigratedAction?.Invoke(this);
+
+            return this.SubmitSaveChangesSynchronization();
+        }
+
+        /// <summary>
+        /// 异步迁移同步。
+        /// </summary>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含受影响的行数的异步操作。</returns>
+        protected virtual async Task<int> MigrateSynchronizationAsync(CancellationToken cancellationToken = default)
+        {
+            // 可能存在结构迁移
+            var migration = GetService<IMigrationAccessorService>();
+            await migration.MigrateAsync(this, cancellationToken).ConfigureAwait();
+
+            //Dependency.Options.PostMigratedAction?.Invoke(this);
+
+            return await this.SubmitSaveChangesSynchronizationAsync(cancellationToken).ConfigureAwait();
         }
 
         #endregion
@@ -471,11 +505,6 @@ namespace Librame.Extensions.Data.Accessors
         /// 所需的保存更改。
         /// </summary>
         public bool RequiredSaveChanges { get; set; }
-
-        /// <summary>
-        /// 所需的标识插入表名列表。
-        /// </summary>
-        public IReadOnlyList<string> RequiredIdentityInsertTableNames { get; set; }
 
 
         /// <summary>

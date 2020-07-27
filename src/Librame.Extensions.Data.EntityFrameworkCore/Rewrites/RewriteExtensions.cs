@@ -10,14 +10,14 @@
 
 #endregion
 
-using System;
+using Librame.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Librame.Extensions.Data.Migrations
+namespace Microsoft.EntityFrameworkCore.Migrations.Internal
 {
-    static class ShardingMigrationsModelDifferExtensions
+    internal static class RewriteExtensions
     {
         /// <summary>
         ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
@@ -28,6 +28,8 @@ namespace Librame.Extensions.Data.Migrations
             TKey key)
             where TValue : new()
         {
+            source.NotNull(nameof(source));
+
             if (!source.TryGetValue(key, out var value))
             {
                 value = new TValue();
@@ -37,17 +39,11 @@ namespace Librame.Extensions.Data.Migrations
             return value;
         }
 
-        public static IEnumerable<Type> GetBaseTypes(this Type type)
-        {
-            type = type.GetTypeInfo().BaseType;
 
-            while (type != null)
-            {
-                yield return type;
-
-                type = type.GetTypeInfo().BaseType;
-            }
-        }
+        /// <summary>
+        ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
+        ///     directly from your code. This API may change or be removed in future releases.
+        /// </summary>
         public static bool IsSameAs(this MemberInfo propertyInfo, MemberInfo otherPropertyInfo)
             => propertyInfo == null
                 ? otherPropertyInfo == null

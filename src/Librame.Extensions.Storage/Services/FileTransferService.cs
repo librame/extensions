@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -22,7 +21,6 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Storage.Services
 {
-    using Core.Builders;
     using Core.Combiners;
     using Core.Services;
     using Storage.Builders;
@@ -30,15 +28,16 @@ namespace Librame.Extensions.Storage.Services
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class FileTransferService : AbstractExtensionBuilderService<StorageBuilderOptions>, IFileTransferService
     {
-        private readonly IFilePermissionService _permissionService;
+        private readonly IFilePermissionService _permission;
 
 
-        public FileTransferService(IFilePermissionService permission, IOptions<CoreBuilderOptions> coreOptions)
-            : base(permission.CastTo<IFilePermissionService, AbstractExtensionBuilderService<StorageBuilderOptions>>(nameof(permission)))
+        public FileTransferService(IFilePermissionService permission)
+            : base(permission.CastTo<IFilePermissionService,
+                AbstractExtensionBuilderService<StorageBuilderOptions>>(nameof(permission)))
         {
-            _permissionService = permission;
+            _permission = permission;
 
-            Encoding = coreOptions.NotNull(nameof(coreOptions)).Value.Encoding;
+            Encoding = ExtensionSettings.Preference.DefaultEncoding;
         }
 
 
@@ -179,19 +178,19 @@ namespace Librame.Extensions.Storage.Services
 
             if (UseAccessToken)
             {
-                var accessToken = await _permissionService.GetAccessTokenAsync(cancellationToken).ConfigureAwait();
+                var accessToken = await _permission.GetAccessTokenAsync(cancellationToken).ConfigureAwait();
                 hwr.Headers.Add("access_token", accessToken);
             }
 
             if (UseAuthorizationCode)
             {
-                var authorizationCode = await _permissionService.GetAuthorizationCodeAsync(cancellationToken).ConfigureAwait();
+                var authorizationCode = await _permission.GetAuthorizationCodeAsync(cancellationToken).ConfigureAwait();
                 hwr.Headers.Add(HttpRequestHeader.Authorization, authorizationCode);
             }
 
             if (UseCookieValue)
             {
-                var cookieValue = await _permissionService.GetCookieValueAsync(cancellationToken).ConfigureAwait();
+                var cookieValue = await _permission.GetCookieValueAsync(cancellationToken).ConfigureAwait();
                 hwr.Headers.Add(HttpRequestHeader.Cookie, cookieValue);
             }
 

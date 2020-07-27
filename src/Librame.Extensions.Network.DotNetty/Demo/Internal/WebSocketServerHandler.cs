@@ -153,7 +153,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
             // Generate an error page if response getStatus code is not OK (200).
             if (response.Status.Code != 200)
             {
-                var buffer = Unpooled.CopiedBuffer(_server.CoreOptions.Encoding.Source.GetBytes(response.Status.ToString()));
+                var buffer = Unpooled.CopiedBuffer(_server.Encoding.GetBytes(response.Status.ToString()));
                 response.Content.WriteBytes(buffer);
                 buffer.Release();
                 HttpUtil.SetContentLength(response, response.Content.ReadableBytes);

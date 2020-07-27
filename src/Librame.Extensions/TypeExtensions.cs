@@ -103,17 +103,16 @@ namespace Librame.Extensions
             baseType.NotNull(nameof(baseType));
             targetType.NotNull(nameof(targetType));
 
-            var baseTypeInfo = baseType.GetTypeInfo();
-            var fromTypeInfo = targetType.GetTypeInfo();
-
-            // 对泛型提供支持
-            if (baseTypeInfo.IsGenericType && baseTypeInfo.GenericTypeParameters.Length > 0)
+            // 对泛型类型定义提供支持
+            if (baseType.IsGenericTypeDefinition)
             {
-                baseTypeInfo = baseType.MakeGenericType(baseTypeInfo.GenericTypeParameters).GetTypeInfo();
-                fromTypeInfo = targetType.MakeGenericType(fromTypeInfo.GenericTypeParameters).GetTypeInfo();
+                if (baseType.IsInterface)
+                    return targetType.IsImplementedInterfaceType(baseType);
+
+                return targetType.IsImplementedBaseType(baseType);
             }
 
-            return baseTypeInfo.IsAssignableFrom(fromTypeInfo);
+            return baseType.IsAssignableFrom(targetType);
         }
 
         /// <summary>
@@ -132,32 +131,24 @@ namespace Librame.Extensions
             => baseType.IsAssignableFromTargetType(targetType);
 
         /// <summary>
-        /// 获取所有基础类型列表。
+        /// 获取基础类型集合。
         /// </summary>
         /// <param name="type">给定的类型。</param>
-        /// <returns>返回 <see cref="IReadOnlyList{T}"/>。</returns>
+        /// <returns>返回 <see cref="IEnumerable{Type}"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static IReadOnlyList<Type> GetBaseTypes(this Type type)
+        public static IEnumerable<Type> GetBaseTypes(this Type type)
         {
             type.NotNull(nameof(type));
 
-            List<Type> baseTypes = null;
-
             // 当前基类（Object 为最顶层基类，接口会直接返回 NULL）
-            var baseType = type.BaseType;
+            type = type.BaseType;
 
-            // 遍历所有基类
-            while (baseType != null)
+            while (type != null)
             {
-                if (baseTypes.IsNull())
-                    baseTypes = new List<Type>();
+                yield return type;
 
-                baseTypes.Add(baseType);
-
-                baseType = baseType.BaseType;
+                type = type.BaseType;
             }
-
-            return baseTypes;
         }
 
         /// <summary>

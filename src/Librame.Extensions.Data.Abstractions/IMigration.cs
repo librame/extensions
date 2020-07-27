@@ -25,6 +25,11 @@ namespace Librame.Extensions.Data
         /// </summary>
         bool IsFromMigrateInvoke { get; }
 
+        /// <summary>
+        /// 包含初始化数据。
+        /// </summary>
+        bool ContainsInitializationData { get; }
+
 
         /// <summary>
         /// 数据库迁移。

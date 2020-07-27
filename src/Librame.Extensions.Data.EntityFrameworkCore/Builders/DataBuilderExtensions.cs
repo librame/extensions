@@ -16,6 +16,7 @@ using Librame.Extensions.Core.Builders;
 using Librame.Extensions.Core.Options;
 using Librame.Extensions.Data.Builders;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -64,6 +65,10 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 parentBuilder.Services
                     .AddEntityFrameworkDesignTimeServices();
+
+                // TypeMappingSourceDependencies 默认被重复注册导致依赖异常，须移除后重新注册
+                parentBuilder.Services.TryRemoveAll<TypeMappingSourceDependencies>();
+                parentBuilder.Services.AddSingleton<TypeMappingSourceDependencies>();
             }
 
             // Create Builder
