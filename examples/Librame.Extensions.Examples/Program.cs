@@ -10,11 +10,11 @@ using System;
 
 namespace Librame.Extensions.Examples
 {
+    using Core;
     using Core.Builders;
     using Core.Identifiers;
     using Core.Options;
     using Data.Builders;
-    using Librame.Extensions.Core;
 
     class Program
     {

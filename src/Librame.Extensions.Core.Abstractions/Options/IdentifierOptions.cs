@@ -30,5 +30,10 @@ namespace Librame.Extensions.Core.Options
         /// 长整型标识符生成器。
         /// </summary>
         public IIdentityGenerator<long> LongIdentifierGenerator { get; set; }
+
+        /// <summary>
+        /// 字符串标识符生成器。
+        /// </summary>
+        public IIdentityGenerator<string> StringIdentifierGenerator { get; set; }
     }
 }

@@ -28,11 +28,25 @@ namespace Librame.Extensions.Core.Identifiers
 
 
         /// <summary>
+        /// 获取对象标识。
+        /// </summary>
+        /// <returns>返回对象标识（兼容各种引用与值类型标识）。</returns>
+        object GetObjectId();
+
+        /// <summary>
         /// 异步获取对象标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含对象标识（兼容各种引用与值类型标识）的异步操作。</returns>
         ValueTask<object> GetObjectIdAsync(CancellationToken cancellationToken = default);
+
+
+        /// <summary>
+        /// 设置对象标识。
+        /// </summary>
+        /// <param name="newId">给定的新标识对象。</param>
+        /// <returns>返回对象标识（兼容各种引用与值类型标识）。</returns>
+        object SetObjectId(object newId);
 
         /// <summary>
         /// 异步设置对象标识。

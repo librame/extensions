@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,9 +21,9 @@ namespace Librame.Extensions.Data.Tests
         private IList<Article<Guid, int, Guid>> _articles = null;
 
 
-        public TestStoreInitializer(IStoreIdentityGenerator identifierGenerator,
+        public TestStoreInitializer(IStoreIdentityGenerator identityGenerator,
             IDataInitializationValidator validator, ILoggerFactory loggerFactory)
-            : base(identifierGenerator, validator, loggerFactory)
+            : base(identityGenerator, validator, loggerFactory)
         {
         }
 
@@ -74,7 +73,7 @@ namespace Librame.Extensions.Data.Tests
                 });
             }
 
-            Accessor.CategoriesManager.TryAddRange(p => p.Equals(_categories.First()),
+            Accessor.CategoriesManager.TryAddRange(p => p.Equals(_categories[0]),
                 () => _categories,
                 addedPost =>
                 {
@@ -105,7 +104,7 @@ namespace Librame.Extensions.Data.Tests
                 });
             }
 
-            return Accessor.CategoriesManager.TryAddRangeAsync(p => p.Equals(_categories.First()),
+            return Accessor.CategoriesManager.TryAddRangeAsync(p => p.Equals(_categories[0]),
                 () => _categories,
                 addedPost =>
                 {
@@ -122,11 +121,11 @@ namespace Librame.Extensions.Data.Tests
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var generator = IdentifierGenerator as TestGuidStoreIdentityGenerator;
+                var generator = IdentityGenerator as TestGuidStoreIdentityGenerator;
 
                 for (int i = 0; i < 10; i++)
                 {
-                    var category = (i < 5) ? _categories.First() : _categories.Last();
+                    var category = (i < 5) ? _categories[0] : _categories[_categories.Count - 1];
                     var categoryIndex = (i < 5) ? 0 : 1;
 
                     var article = new Article<Guid, int, Guid>
@@ -145,7 +144,7 @@ namespace Librame.Extensions.Data.Tests
                 }
             }
 
-            Accessor.ArticlesManager.TryAddRange(p => p.Equals(_articles.First()),
+            Accessor.ArticlesManager.TryAddRange(p => p.Equals(_articles[0]),
                 () => _articles,
                 addedPost =>
                 {
@@ -160,11 +159,11 @@ namespace Librame.Extensions.Data.Tests
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var identifier = IdentifierGenerator as TestGuidStoreIdentityGenerator;
+                var identifier = IdentityGenerator as TestGuidStoreIdentityGenerator;
 
                 for (int i = 0; i < 10; i++)
                 {
-                    var category = (i < 5) ? _categories.First() : _categories.Last();
+                    var category = (i < 5) ? _categories[0] : _categories[_categories.Count - 1];
                     var categoryIndex = (i < 5) ? 0 : 1;
 
                     var article = new Article<Guid, int, Guid>
@@ -183,7 +182,7 @@ namespace Librame.Extensions.Data.Tests
                 }
             }
 
-            await Accessor.ArticlesManager.TryAddRangeAsync(p => p.Equals(_articles.First()),
+            await Accessor.ArticlesManager.TryAddRangeAsync(p => p.Equals(_articles[0]),
                 () => _articles,
                 addedPost =>
                 {

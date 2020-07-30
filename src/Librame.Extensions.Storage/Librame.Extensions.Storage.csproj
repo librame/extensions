@@ -5,7 +5,7 @@
     <ApplicationIcon>..\..\Librame.ico</ApplicationIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>7.7.0.1</Version>
+    <Version>7.7.0.2</Version>
     <Authors>Librame Pong</Authors>
     <Company>https://github.com/librame</Company>
     <Description>Based Librame.Extensions.Storage.Abstractions on .NET Standard extension implementation.</Description>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Based Librame.Extensions.Storage.Abstractions on .NET Standard extension implementation.</PackageReleaseNotes>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Librame.Extensions.pfx</AssemblyOriginatorKeyFile>
-    <AssemblyVersion>7.7.0.1</AssemblyVersion>
-    <FileVersion>7.7.1199.17415</FileVersion>
+    <AssemblyVersion>7.7.0.2</AssemblyVersion>
+    <FileVersion>7.7.1202.17415</FileVersion>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 

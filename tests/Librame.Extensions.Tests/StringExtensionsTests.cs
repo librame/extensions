@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using Xunit;
 
 namespace Librame.Extensions.Tests
 {
     public class StringExtensionsTests
     {
+
+        #region Leading & Trailing
+
         [Fact]
         public void EnsureLeadingTest()
         {
@@ -46,8 +50,10 @@ namespace Librame.Extensions.Tests
             Assert.Equal($"{str}{testString}", append); // no append
         }
 
+        #endregion
 
-        #region FormatString
+
+        #region Format
 
         [Fact]
         public void FormatStringTest()
@@ -62,6 +68,25 @@ namespace Librame.Extensions.Tests
 
             format = i.FormatString(4);
             Assert.Equal("0003", format);
+        }
+
+        #endregion
+
+
+        #region System
+
+        [Fact]
+        public void SystemStringTest()
+        {
+            // length: 12
+            var number = Stopwatch.GetTimestamp();
+
+            // length: 7
+            var system = number.AsSystemString();
+            Assert.NotEmpty(system);
+
+            var from = system.FromSystemString();
+            Assert.Equal(number, from);
         }
 
         #endregion

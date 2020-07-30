@@ -17,6 +17,7 @@ namespace Librame.Extensions.Data.Tests
                     .AddStoreIdentifierGenerator<TestGuidStoreIdentityGenerator>();
 
                 services.AddSingleton<TestLongStoreIdentityGenerator>();
+                services.AddSingleton<TestStringStoreIdentityGenerator>();
 
                 return services.BuildServiceProvider();
             });

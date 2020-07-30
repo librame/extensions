@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data.Stores
     /// </summary>
     /// <typeparam name="TAccessor">指定的访问器类型。</typeparam>
     public class DataStoreHub<TAccessor> : DataStoreHub<TAccessor, Guid, int, Guid>
-        where TAccessor : DataDbContextAccessor
+        where TAccessor : class, IDataAccessor
     {
         /// <summary>
         /// 构造一个数据存储中心。
@@ -55,7 +55,7 @@ namespace Librame.Extensions.Data.Stores
         DataTabulation<TGenId, TCreatedBy>,
         DataTenant<TGenId, TCreatedBy>,
         TGenId, TIncremId, TCreatedBy>
-        where TAccessor : DataDbContextAccessor<TGenId, TIncremId, TCreatedBy>
+        where TAccessor : class, IDataAccessor<TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>
@@ -86,7 +86,7 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     public class DataStoreHub<TAccessor, TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy>
         : AbstractStoreHub, IDataStoreHub<TAccessor, TAudit, TAuditProperty, TMigration, TTabulation, TTenant>
-        where TAccessor : DataDbContextAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant, TGenId, TIncremId, TCreatedBy>
+        where TAccessor : class, IDataAccessor<TAudit, TAuditProperty, TMigration, TTabulation, TTenant>
         where TAudit : DataAudit<TGenId, TCreatedBy>
         where TAuditProperty: DataAuditProperty<TIncremId, TGenId>
         where TMigration : DataMigration<TGenId, TCreatedBy>

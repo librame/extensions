@@ -40,8 +40,12 @@ namespace Librame.Extensions.Core.Identifiers
 
                 _identifierGenerators = new List<IObjectIdentityGenerator>();
 
-                _identifierGenerators.Add(options.GuidIdentifierGenerator);
-                _identifierGenerators.Add(options.LongIdentifierGenerator);
+                foreach (var property in typeof(IdentifierOptions).GetProperties())
+                {
+                    var value = property.GetValue(options);
+                    if (value.IsNotNull() && value is IObjectIdentityGenerator generator)
+                        _identifierGenerators.Add(generator);
+                }
             }
         }
 

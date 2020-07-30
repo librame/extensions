@@ -105,8 +105,6 @@ namespace Librame.Extensions.Data.Accessors
             => Audits.Any() && Migrations.Any() && Tabulations.Any() && Tenants.Any();
 
 
-        #region DbSet
-
         /// <summary>
         /// 审计数据集。
         /// </summary>
@@ -132,10 +130,6 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         public DbSet<TTenant> Tenants { get; set; }
 
-        #endregion
-
-
-        #region DbSetManager
 
         /// <summary>
         /// 审计数据集。
@@ -166,8 +160,6 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         public DbSetManager<TTenant> TenantsManager
             => Tenants.AsManager();
-
-        #endregion
 
 
         /// <summary>

@@ -149,12 +149,27 @@ namespace Librame.Extensions.Data.Collections
 
 
         /// <summary>
+        /// 获取对象标识。
+        /// </summary>
+        /// <returns>返回标识（兼容各种引用与值类型标识）。</returns>
+        public virtual object GetObjectId()
+            => Id;
+
+        /// <summary>
         /// 异步获取对象标识。
         /// </summary>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectIdAsync(CancellationToken cancellationToken)
             => cancellationToken.RunOrCancelValueAsync(() => (object)Id);
+
+
+        /// <summary>
+        /// 获取对象标识。
+        /// </summary>
+        /// <returns>返回标识（兼容各种引用与值类型标识）。</returns>
+        public virtual object GetObjectParentId()
+            => ParentId;
 
         /// <summary>
         /// 异步获取对象标识。
@@ -166,12 +181,24 @@ namespace Librame.Extensions.Data.Collections
 
 
         /// <summary>
+        /// 设置对象标识。
+        /// </summary>
+        /// <param name="newId">给定的新对象标识。</param>
+        /// <returns>返回标识（兼容各种引用与值类型标识）。</returns>
+        public virtual object SetObjectId(object newId)
+        {
+            Id = newId.CastTo<object, TId>(nameof(newId));
+            return newId;
+        }
+
+        /// <summary>
         /// 异步设置对象标识。
         /// </summary>
         /// <param name="newId">给定的新对象标识。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
-        public virtual ValueTask<object> SetObjectIdAsync(object newId, CancellationToken cancellationToken = default)
+        public virtual ValueTask<object> SetObjectIdAsync(object newId,
+            CancellationToken cancellationToken = default)
         {
             var realNewId = newId.CastTo<object, TId>(nameof(newId));
 
@@ -182,13 +209,26 @@ namespace Librame.Extensions.Data.Collections
             });
         }
 
+
+        /// <summary>
+        /// 设置对象标识。
+        /// </summary>
+        /// <param name="newParentId">给定的新对象标识。</param>
+        /// <returns>返回标识（兼容各种引用与值类型标识）。</returns>
+        public virtual object SetObjectParentId(object newParentId)
+        {
+            ParentId = newParentId.CastTo<object, TId>(nameof(newParentId));
+            return newParentId;
+        }
+
         /// <summary>
         /// 异步设置对象标识。
         /// </summary>
         /// <param name="newParentId">给定的新对象标识。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
-        public virtual ValueTask<object> SetObjectParentIdAsync(object newParentId, CancellationToken cancellationToken = default)
+        public virtual ValueTask<object> SetObjectParentIdAsync(object newParentId,
+            CancellationToken cancellationToken = default)
         {
             var realNewParentId = newParentId.CastTo<object, TId>(nameof(newParentId));
 

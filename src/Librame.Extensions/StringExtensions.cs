@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Librame.Extensions
@@ -188,6 +189,69 @@ namespace Librame.Extensions
             format = "{" + format + "}";
 
             return formatFactory.Invoke(format, value);
+        }
+
+        #endregion
+
+
+        #region System
+
+        /// <summary>
+        /// 将长整数转换为进制字符串。
+        /// </summary>
+        /// <param name="number">给定的长整数。</param>
+        /// <param name="system">给定的进制（可选；默认为 62 进制）。</param>
+        /// <returns>返回字符串。</returns>
+        public static string AsSystemString(this long number, int system = 62)
+        {
+            var chars = ExtensionSettings.Preference.AllLettersAndDigits;
+            system.NotOutOfRange(2, chars.Length, nameof(system));
+
+            chars = chars.Substring(0, system);
+
+            var values = new List<string>();
+
+            var n = number;
+            while (n > 0)
+            {
+                var mod = n % system;
+                n = Math.Abs(n / system);
+
+                var ch = chars[Convert.ToInt32(mod)];
+                values.Insert(0, ch.ToString());
+            }
+
+            return string.Join("", values);
+        }
+
+        /// <summary>
+        /// 将进制字符串还原为长整数。
+        /// </summary>
+        /// <param name="systemString">给定的进制字符串。</param>
+        /// <param name="system">给定的进制（可选；默认为 62 进制）。</param>
+        /// <returns>返回长整数。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static long FromSystemString(this string systemString, int system = 62)
+        {
+            systemString.NotEmpty(nameof(systemString));
+
+            var chars = ExtensionSettings.Preference.AllLettersAndDigits;
+            system.NotOutOfRange(2, chars.Length, nameof(system));
+
+            chars = chars.Substring(0, system);
+
+            var value = 0L;
+
+            systemString.ToCharArray().Reverse().ForEach((ch, i) =>
+            {
+                var indexOf = chars.CompatibleIndexOf(ch);
+                if (indexOf >= 0)
+                {
+                    value += indexOf * (long)Math.Pow(system, i);
+                }
+            });
+
+            return value;
         }
 
         #endregion

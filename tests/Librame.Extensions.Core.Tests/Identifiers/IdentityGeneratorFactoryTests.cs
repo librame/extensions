@@ -22,8 +22,15 @@ namespace Librame.Extensions.Core.Tests
             Assert.NotEqual(Guid.Empty, guid);
 
             var longGenerator = factory.GetGenerator<long>();
-            var id = longGenerator.GenerateId(clock);
-            Assert.True(id > 0);
+            var lid = longGenerator.GenerateId(clock);
+            Assert.True(lid > 0);
+
+            var stringGenerator = factory.GetGenerator<string>();
+            var strid = stringGenerator.GenerateId(clock);
+            Assert.NotEmpty(strid);
+
+            var shortid = (stringGenerator as StringIdentityGenerator).GenerateShortId(clock, 8);
+            Assert.NotEmpty(shortid);
         }
 
     }

@@ -22,9 +22,9 @@ namespace Librame.Extensions.Examples
         private IList<Article<Guid, int, Guid>> _articles = null;
 
 
-        public ExampleStoreInitializer(IStoreIdentityGenerator identifierGenerator,
+        public ExampleStoreInitializer(IStoreIdentityGenerator identityGenerator,
             IDataInitializationValidator validator, ILoggerFactory loggerFactory)
-            : base(identifierGenerator, validator, loggerFactory)
+            : base(identityGenerator, validator, loggerFactory)
         {
         }
 
@@ -122,7 +122,7 @@ namespace Librame.Extensions.Examples
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var generator = IdentifierGenerator as ExampleStoreIdentifierGenerator;
+                var generator = IdentityGenerator as ExampleStoreIdentifierGenerator;
 
                 for (int i = 0; i < 10; i++)
                 {
@@ -160,7 +160,7 @@ namespace Librame.Extensions.Examples
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var identifier = IdentifierGenerator as ExampleStoreIdentifierGenerator;
+                var identifier = IdentityGenerator as ExampleStoreIdentifierGenerator;
 
                 for (int i = 0; i < 10; i++)
                 {

@@ -76,7 +76,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <returns>返回长整数。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         public override long GenerateId(IClockService clock)
         {
             clock.NotNull(nameof(clock));
@@ -109,7 +109,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含长整数的异步操作。</returns>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         public override async Task<long> GenerateIdAsync(IClockService clock,
             CancellationToken cancellationToken = default)
         {

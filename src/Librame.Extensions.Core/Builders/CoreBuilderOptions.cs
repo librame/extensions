@@ -20,12 +20,6 @@ namespace Librame.Extensions.Core.Builders
     /// </summary>
     public class CoreBuilderOptions : CoreBuilderOptions<IdentifierOptions>
     {
-        ///// <summary>
-        ///// 字符编码（默认为 UTF8）。
-        ///// </summary>
-        //public SerializableString<Encoding> Encoding { get; }
-        //    = new SerializableString<Encoding>(ExtensionSettings.Preference.DefaultEncoding);
-
         /// <summary>
         /// 解决时钟回流的偏移量（默认为 1）。
         /// </summary>
@@ -55,6 +49,7 @@ namespace Librame.Extensions.Core.Builders
         {
             Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLServer;
             Identifier.LongIdentifierGenerator = SnowflakeIdentityGenerator.Default;
+            Identifier.StringIdentifierGenerator = StringIdentityGenerator.Default;
         }
 
     }

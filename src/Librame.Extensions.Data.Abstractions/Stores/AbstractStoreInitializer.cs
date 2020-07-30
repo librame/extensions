@@ -31,11 +31,11 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个 <see cref="AbstractStoreInitializer"/>。
         /// </summary>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="identityGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected AbstractStoreInitializer(IDataInitializationValidator validator,
-            IStoreIdentityGenerator identifierGenerator, ILoggerFactory loggerFactory)
-            : base(validator, identifierGenerator, loggerFactory)
+            IStoreIdentityGenerator identityGenerator, ILoggerFactory loggerFactory)
+            : base(validator, identityGenerator, loggerFactory)
         {
         }
 
@@ -104,14 +104,14 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个 <see cref="AbstractStoreInitializer"/>。
         /// </summary>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="identityGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected AbstractStoreInitializer(IDataInitializationValidator validator,
-            IStoreIdentityGenerator identifierGenerator, ILoggerFactory loggerFactory)
+            IStoreIdentityGenerator identityGenerator, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             Validator = validator.NotNull(nameof(validator));
-            IdentifierGenerator = identifierGenerator.NotNull(nameof(identifierGenerator));
+            IdentityGenerator = identityGenerator.NotNull(nameof(identityGenerator));
         }
 
 
@@ -122,17 +122,17 @@ namespace Librame.Extensions.Data.Stores
         public IDataInitializationValidator Validator { get; }
 
         /// <summary>
-        /// 标识符生成器。
+        /// 标识生成器。
         /// </summary>
         /// <value>返回 <see cref="IStoreIdentityGenerator"/>。</value>
-        public IStoreIdentityGenerator IdentifierGenerator { get; }
+        public IStoreIdentityGenerator IdentityGenerator { get; }
 
         /// <summary>
         /// 时钟。
         /// </summary>
         /// <value>返回 <see cref="IClockService"/>。</value>
         public IClockService Clock
-            => IdentifierGenerator.Clock;
+            => IdentityGenerator.Clock;
 
 
         /// <summary>
