@@ -51,7 +51,7 @@ namespace Librame.Extensions
         {
             bytes.NotEmpty(nameof(bytes));
 
-            var chars = ExtensionSettings.Preference.Base32Chars;
+            var chars = ExtensionSettings.Preference.Base32Charset;
 
             var sb = new StringBuilder();
             for (var offset = 0; offset < bytes.Length;)
@@ -122,7 +122,7 @@ namespace Librame.Extensions
             if (base32String.HasLower())
                 base32String = base32String.ToUpperInvariant();
 
-            var chars = ExtensionSettings.Preference.Base32Chars;
+            var chars = ExtensionSettings.Preference.Base32Charset;
 
             var bytes = new byte[base32String.Length * 5 / 8];
             var bitIndex = 0;

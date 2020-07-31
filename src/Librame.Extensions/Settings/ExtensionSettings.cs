@@ -149,11 +149,24 @@ namespace Librame.Extensions
         public static readonly Type NullableTypeDefinition
             = typeof(Nullable<>);
 
-        internal const BindingFlags AllFlags
+
+        /// <summary>
+        /// 所有绑定标记（包含公共、非公共、实例、静态等标记）。
+        /// </summary>
+        public const BindingFlags AllBindingFlags
             = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-        internal const BindingFlags AllFlagsWithoutStatic
+        /// <summary>
+        /// 除静态外的所有绑定标记（包含公共、非公共、实例等标记）。
+        /// </summary>
+        public const BindingFlags AllBindingFlagsWithoutStatic
             = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+
+        /// <summary>
+        /// 所有属性绑定标记（包含公共、实例等标记）。
+        /// </summary>
+        public const BindingFlags AllPropertiesBindingFlags
+            = BindingFlags.Public | BindingFlags.Instance;
 
         #endregion
 

@@ -78,10 +78,10 @@ namespace Librame.Extensions.Tests
         [Fact]
         public void SystemStringTest()
         {
-            // length: 12
+            // length: 13
             var number = Stopwatch.GetTimestamp();
 
-            // length: 7
+            // length: 8
             var system = number.AsSystemString();
             Assert.NotEmpty(system);
 

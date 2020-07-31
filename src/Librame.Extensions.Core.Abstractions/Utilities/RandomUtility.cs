@@ -102,7 +102,7 @@ namespace Librame.Extensions.Core.Utilities
 
             var pairs = new Dictionary<string, string>();
             var chars = hasSpecial
-                ? ExtensionSettings.Preference.AlgorithmChars
+                ? ExtensionSettings.Preference.AlgorithmCharset
                 : ExtensionSettings.Preference.AllLettersAndDigits;
 
             Run(r =>

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Core.Serializers
 {
+    using Singletons;
     using Transformers;
 
     /// <summary>
@@ -23,6 +24,7 @@ namespace Librame.Extensions.Core.Serializers
     public class SerializerManager : AbstractTransformerManager<ISerializer>
     {
         private SerializerManager()
+            : base()
         {
         }
 
@@ -30,8 +32,8 @@ namespace Librame.Extensions.Core.Serializers
         /// <summary>
         /// 默认实例。
         /// </summary>
-        public static readonly SerializerManager Default
-            = new SerializerManager();
+        public static SerializerManager Default
+            => SingletonFactory<SerializerManager>.Instance;
 
 
         #region GetBySourceAndTarget

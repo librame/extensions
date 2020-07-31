@@ -13,6 +13,7 @@
 using Librame.Extensions;
 using Librame.Extensions.Core.Builders;
 using Librame.Extensions.Core.Options;
+using Librame.Extensions.Core.Starters;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -48,6 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TDependency : CoreBuilderDependency, new()
         {
             // Use PreStarter
+            services.AddLibramePreStarterFactory<PreStarterFactory>();
             services.UsePreStarter();
 
             // Clear Options Cache

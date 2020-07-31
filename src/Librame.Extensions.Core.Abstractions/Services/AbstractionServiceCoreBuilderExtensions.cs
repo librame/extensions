@@ -26,12 +26,12 @@ namespace Librame.Extensions.Core.Builders
     public static class AbstractionServiceCoreBuilderExtensions
     {
         /// <summary>
-        /// 添加 <see cref="AssemblyUtility.CurrentAssembliesWithoutSystem"/> 中所有已定义 <see cref="AutoRegisterableServiceAttribute"/> 特性的服务集合。
+        /// 添加 <see cref="AssemblyUtility.CurrentThirdPartyAssemblies"/> 中所有已定义 <see cref="AutoRegisterableServiceAttribute"/> 特性的服务集合。
         /// </summary>
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddAutoRegistrationServices(this ICoreBuilder builder)
-            => builder.AddAutoRegistrationServices(AssemblyUtility.CurrentAssembliesWithoutSystem);
+            => builder.AddAutoRegistrationServices(AssemblyUtility.CurrentThirdPartyAssemblies);
 
         /// <summary>
         /// 添加指定程序集集合中所有已定义 <see cref="AutoRegisterableServiceAttribute"/> 特性的服务集合。

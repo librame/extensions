@@ -16,6 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Librame.Extensions.Core.Tokens
 {
     using Combiners;
+    using Converters;
 
     /// <summary>
     /// 安全令牌。
@@ -29,18 +30,21 @@ namespace Librame.Extensions.Core.Tokens
         /// 构造一个 <see cref="SecurityToken"/>。
         /// </summary>
         /// <param name="g">给定的 <see cref="Guid"/>。</param>
-        public SecurityToken(Guid g)
+        /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>（可选；默认使用 <see cref="HexStringConverter"/>）。</param>
+        public SecurityToken(Guid g, IAlgorithmConverter converter = null)
             : this(g.ToByteArray())
         {
+            EnsureConverter(converter);
         }
 
         /// <summary>
         /// 构造一个 <see cref="SecurityToken"/>。
         /// </summary>
         /// <param name="token">给定的令牌字符串。</param>
-        public SecurityToken(string token)
+        /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>（可选；默认使用 <see cref="HexStringConverter"/>）。</param>
+        public SecurityToken(string token, IAlgorithmConverter converter = null)
         {
-            if (!TryParseToken(token, out var buffer))
+            if (!TryParseToken(EnsureConverter(converter), token, out var buffer))
                 throw new ArgumentException($"The token '{token}' is not a valid security token.");
 
             _buffer = buffer;
@@ -50,6 +54,20 @@ namespace Librame.Extensions.Core.Tokens
         {
             _buffer = buffer;
         }
+
+
+        private IAlgorithmConverter EnsureConverter(IAlgorithmConverter converter = null)
+        {
+            Converter = converter ?? ConverterManager.GetAlgorithm<HexStringConverter>();
+            return Converter;
+        }
+
+
+        /// <summary>
+        /// 算法转换器。
+        /// </summary>
+        /// <value>返回 <see cref="IAlgorithmConverter"/>。</value>
+        public IAlgorithmConverter Converter { get; private set; }
 
 
         /// <summary>
@@ -118,26 +136,26 @@ namespace Librame.Extensions.Core.Tokens
         {
             return new SignedTokenCombiner(new string[]
             {
-                CoreSettings.Preference.SecurityTokenConverter.ConvertTo(_buffer)
+                Converter.ConvertTo(_buffer)
             },
             s => s.Sha256HexString());
         }
 
         [SuppressMessage("Design", "CA1031:不捕获常规异常类型")]
-        private static bool TryParseToken(string token, out byte[] buffer)
+        private static bool TryParseToken(IAlgorithmConverter converter, string token, out byte[] buffer)
         {
-            try
+            if (TryParseSignedToken(token, out var result))
             {
-                var signedToken = new SignedTokenCombiner(token, s => s.Sha256HexString());
-                buffer = CoreSettings.Preference.SecurityTokenConverter.ConvertFrom(signedToken.DataSegments[0]);
+                buffer = converter.ConvertFrom(result.DataSegments[0]);
                 return true;
             }
-            catch (Exception)
-            {
-                buffer = null;
-                return false;
-            }
+
+            buffer = null;
+            return false;
         }
+
+        private static bool TryParseSignedToken(string token, out SignedTokenCombiner result)
+            => SignedTokenCombiner.TryParseCombiner(token, out result, s => s.Sha256HexString());
 
 
         /// <summary>
@@ -208,13 +226,14 @@ namespace Librame.Extensions.Core.Tokens
         /// </summary>
         /// <param name="token">给定的令牌字符串。</param>
         /// <param name="result">输出 <see cref="SecurityToken"/>。</param>
+        /// <param name="converter">给定的 <see cref="IAlgorithmConverter"/>（可选；默认使用 <see cref="HexStringConverter"/>）。</param>
         /// <returns>返回布尔值。</returns>
         public static bool TryGetToken(string token,
-            out SecurityToken result)
+            out SecurityToken result, IAlgorithmConverter converter = null)
         {
-            if (TryParseToken(token, out var buffer))
+            if (TryParseSignedToken(token, out _))
             {
-                result = new SecurityToken(buffer);
+                result = new SecurityToken(token, converter);
                 return true;
             }
 

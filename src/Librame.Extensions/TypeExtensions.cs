@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -142,11 +143,9 @@ namespace Librame.Extensions
 
             // 当前基类（Object 为最顶层基类，接口会直接返回 NULL）
             type = type.BaseType;
-
             while (type != null)
             {
                 yield return type;
-
                 type = type.BaseType;
             }
         }
@@ -284,7 +283,7 @@ namespace Librame.Extensions
         /// <returns>返回字段信息数组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FieldInfo[] GetAllFields(this Type type)
-            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllFlags);
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllBindingFlags);
 
         /// <summary>
         /// 获取所有非静态字段集合（包括公开、非公开、实例等）。
@@ -293,7 +292,7 @@ namespace Librame.Extensions
         /// <returns>返回字段信息数组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FieldInfo[] GetAllFieldsWithoutStatic(this Type type)
-            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllFlagsWithoutStatic);
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllBindingFlagsWithoutStatic);
 
 
         /// <summary>
@@ -303,7 +302,7 @@ namespace Librame.Extensions
         /// <returns>返回字段信息数组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static PropertyInfo[] GetAllProperties(this Type type)
-            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllFlags);
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllBindingFlags);
 
         /// <summary>
         /// 获取所有非静态属性集合（包括公开、非公开、实例等）。
@@ -312,7 +311,7 @@ namespace Librame.Extensions
         /// <returns>返回字段信息数组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static PropertyInfo[] GetAllPropertiesWithoutStatic(this Type type)
-            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllFlagsWithoutStatic);
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllBindingFlagsWithoutStatic);
 
         #endregion
 
@@ -326,10 +325,9 @@ namespace Librame.Extensions
         /// <param name="action">给定的注册动作。</param>
         /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
         /// <returns>返回已调用的类型集合数。</returns>
-        /// <returns>返回已调用的类型集合数。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static int InvokeTypes(this Assembly assembly,
-            Action<Type> action, Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
+        public static int InvokeTypes(this Assembly assembly, Action<Type> action,
+            Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
         {
             assembly.NotNull(nameof(assembly));
 
@@ -350,14 +348,16 @@ namespace Librame.Extensions
         /// <param name="assemblies">给定的 <see cref="IEnumerable{Assembly}"/>。</param>
         /// <param name="action">给定的注册动作。</param>
         /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
+        /// <param name="exceptionAction">给定的异常处理动作（可选）。</param>
         /// <returns>返回已调用的类型集合数。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
-        public static int InvokeTypes(this IEnumerable<Assembly> assemblies,
-            Action<Type> action, Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
+        public static int InvokeTypes(this IEnumerable<Assembly> assemblies, Action<Type> action,
+            Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null,
+            Action<Exception> exceptionAction = null)
         {
             action.NotNull(nameof(action));
 
-            var allTypes = assemblies.ExportedTypes(filterTypes);
+            var allTypes = assemblies.ExportedTypes(filterTypes, exceptionAction);
 
             foreach (var type in allTypes)
                 action.Invoke(type);
@@ -371,10 +371,12 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="assemblies">给定的 <see cref="IEnumerable{Assembly}"/>。</param>
         /// <param name="filterTypes">给定的类型过滤工厂方法（可选）。</param>
+        /// <param name="exceptionAction">给定的异常处理动作（可选）。</param>
         /// <returns>返回 <see cref="IReadOnlyList{Type}"/>。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static List<Type> ExportedTypes(this IEnumerable<Assembly> assemblies,
-            Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null)
+            Func<IEnumerable<Type>, IEnumerable<Type>> filterTypes = null,
+            Action<Exception> exceptionAction = null)
         {
             assemblies.NotEmpty(nameof(assemblies));
 
@@ -384,11 +386,16 @@ namespace Librame.Extensions
             {
                 try
                 {
-                    // 解决不支持的程序集抛出“System.NotSupportedException: 动态程序集中不支持已调用的成员。”的异常
                     allTypes.AddRange(assembly.GetExportedTypes());
                 }
-                catch (NotSupportedException)
+                catch (NotSupportedException notSupported)
                 {
+                    exceptionAction?.Invoke(notSupported);
+                    continue;
+                }
+                catch (FileNotFoundException fileNotFound)
+                {
+                    exceptionAction?.Invoke(fileNotFound);
                     continue;
                 }
             }
@@ -538,10 +545,10 @@ namespace Librame.Extensions
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="sources">给定的源类型实例集合。</param>
         /// <param name="compares">给定的比较类型实例集合。</param>
-        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为公共属性标记）。</param>
+        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为 <see cref="ExtensionSettings.AllPropertiesBindingFlags"/>）。</param>
         /// <returns>返回布尔值。</returns>
         public static bool SequencePropertyValuesEquals<T>(this IEnumerable<T> sources, IEnumerable<T> compares,
-            BindingFlags bindingFlags = BindingFlags.Public)
+            BindingFlags bindingFlags = ExtensionSettings.AllPropertiesBindingFlags)
         {
             sources.NotEmpty(nameof(sources));
             compares.NotEmpty(nameof(compares));
@@ -550,15 +557,18 @@ namespace Librame.Extensions
             if (sequenceCount != compares.Count())
                 return false;
 
-            var propertyInfos = typeof(T).GetProperties(bindingFlags);
+            var properties = typeof(T).GetProperties(bindingFlags);
             for (var i = 0; i < sequenceCount; i++)
             {
                 var source = sources.ElementAt(i);
                 var compare = compares.ElementAt(i);
 
-                foreach (var info in propertyInfos)
+                foreach (var property in properties)
                 {
-                    if (!info.GetValue(source).Equals(info.GetValue(compare)))
+                    var left = property.GetValue(source);
+                    var right = property.GetValue(compare);
+
+                    if (left != right)
                         return false;
                 }
             }
@@ -572,18 +582,22 @@ namespace Librame.Extensions
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="source">给定的源类型实例。</param>
         /// <param name="compare">给定的比较类型实例。</param>
-        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为公共属性标记）。</param>
+        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为 <see cref="ExtensionSettings.AllPropertiesBindingFlags"/>）。</param>
         /// <returns>返回布尔值。</returns>
-        public static bool PropertyValuesEquals<T>(this T source, T compare, BindingFlags bindingFlags = BindingFlags.Public)
+        public static bool PropertyValuesEquals<T>(this T source, T compare,
+            BindingFlags bindingFlags = ExtensionSettings.AllPropertiesBindingFlags)
             where T : class
         {
             source.NotNull(nameof(source));
             compare.NotNull(nameof(compare));
 
-            var propertyInfos = typeof(T).GetProperties(bindingFlags);
-            foreach (var info in propertyInfos)
+            var properties = typeof(T).GetProperties(bindingFlags);
+            foreach (var property in properties)
             {
-                if (!info.GetValue(source).Equals(info.GetValue(compare)))
+                var left = property.GetValue(source);
+                var right = property.GetValue(compare);
+
+                if (left != right)
                     return false;
             }
 

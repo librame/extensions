@@ -30,10 +30,33 @@ namespace Librame.Extensions.Core.Starters
 
 
         /// <summary>
+        /// 是否启动。
+        /// </summary>
+        public bool IsStarting { get; protected set; }
+
+
+        /// <summary>
         /// 启动。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
-        public abstract IServiceCollection Start(IServiceCollection services);
+        public virtual IServiceCollection Start(IServiceCollection services)
+        {
+            if (!IsStarting)
+            {
+                StartCore(services);
+            }
+
+            IsStarting = true;
+
+            return services;
+        }
+
+        /// <summary>
+        /// 启动核心。
+        /// </summary>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
+        public abstract IServiceCollection StartCore(IServiceCollection services);
     }
 }

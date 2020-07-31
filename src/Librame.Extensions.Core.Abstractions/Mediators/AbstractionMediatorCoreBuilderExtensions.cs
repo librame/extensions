@@ -34,7 +34,7 @@ namespace Librame.Extensions.Core.Builders
         /// <param name="builder">给定的 <see cref="ICoreBuilder"/>。</param>
         /// <returns>返回 <see cref="ICoreBuilder"/>。</returns>
         public static ICoreBuilder AddAutoRegistrationMediators(this ICoreBuilder builder)
-            => builder.AddAutoRegistrationMediators(AssemblyUtility.CurrentAssembliesWithoutSystem);
+            => builder.AddAutoRegistrationMediators(AssemblyUtility.CurrentThirdPartyAssemblies);
 
         /// <summary>
         /// 通过指定的程序集数组添加中介者集合。

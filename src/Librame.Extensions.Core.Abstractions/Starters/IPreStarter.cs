@@ -20,6 +20,12 @@ namespace Librame.Extensions.Core.Starters
     public interface IPreStarter : ISortable
     {
         /// <summary>
+        /// 是否启动。
+        /// </summary>
+        bool IsStarting { get; }
+
+
+        /// <summary>
         /// 启动预启动器。
         /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>

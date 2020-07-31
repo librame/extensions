@@ -39,10 +39,10 @@ namespace Librame.Extensions.Core.Identifiers
 
 
         /// <summary>
-        /// 转换进制（默认为 62 进制）。
+        /// 转换进制（默认为 52 进制）。
         /// </summary>
         public int System { get; set; }
-            = 62;
+            = 52;
 
 
         /// <summary>

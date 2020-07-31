@@ -33,7 +33,7 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个数据存储中心。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public DataStoreHub(IAccessor accessor)
+        protected DataStoreHub(IAccessor accessor)
             : base(accessor)
         {
         }
@@ -64,7 +64,7 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个数据存储中心。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public DataStoreHub(IAccessor accessor)
+        protected DataStoreHub(IAccessor accessor)
             : base(accessor)
         {
         }
@@ -100,7 +100,7 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个数据存储中心。
         /// </summary>
         /// <param name="accessor">给定的 <see cref="IAccessor"/>。</param>
-        public DataStoreHub(IAccessor accessor)
+        protected DataStoreHub(IAccessor accessor)
             : base(accessor)
         {
             Accessor = accessor.CastTo<IAccessor, TAccessor>(nameof(accessor));

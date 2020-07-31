@@ -10,7 +10,9 @@ namespace Librame.Extensions.Core.Tests
         public void AllTest()
         {
             Assert.NotEmpty(AssemblyUtility.CurrentAssemblies);
-            Assert.NotEmpty(AssemblyUtility.CurrentAssembliesWithoutSystem);
+            Assert.NotEmpty(AssemblyUtility.CurrentThirdPartyAssemblies);
+            Assert.NotEmpty(AssemblyUtility.CurrentThirdPartyExportedTypes);
         }
+
     }
 }

@@ -11,11 +11,11 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
+    using Extensions.Core;
     using Extensions.Core.Identifiers;
     using Extensions.Core.Services;
     using Extensions.Data.Builders;
     using Extensions.Data.Stores;
-    using Librame.Extensions.Core;
     using Models;
 
     public class TestStoreHubTests

@@ -155,7 +155,10 @@ namespace Librame.Extensions.Tests
             var compare = ObjectExtensions.EnsureCreate<TestClass>();
 
             Assert.True(source.PropertyValuesEquals(compare));
-            Assert.True(source.YieldEnumerable().SequencePropertyValuesEquals(compare.YieldEnumerable()));
+
+            var equals = source.YieldEnumerable()
+                .SequencePropertyValuesEquals(compare.YieldEnumerable());
+            Assert.True(equals);
         }
 
 

@@ -15,27 +15,25 @@ using System.Collections.Generic;
 
 namespace Librame.Extensions.Core.Converters
 {
+    using Singletons;
     using Transformers;
 
     /// <summary>
     /// 转换器管理器。
     /// </summary>
-    public class ConverterManager : AbstractTransformerManager<IConverter>
+    public sealed class ConverterManager : AbstractTransformerManager<IConverter>
     {
         private ConverterManager()
+            : base()
         {
         }
-
-
-        private static readonly Type _baseAlgorithmConverterType
-            = typeof(IAlgorithmConverter);
 
 
         /// <summary>
         /// 默认实例。
         /// </summary>
-        public static readonly ConverterManager Default
-            = new ConverterManager();
+        public static ConverterManager Default
+            => SingletonFactory<ConverterManager>.Instance;
 
 
         #region GetBySourceAndTarget
@@ -73,7 +71,7 @@ namespace Librame.Extensions.Core.Converters
         /// <returns>返回 <see cref="IAlgorithmConverter"/>。</returns>
         public static IAlgorithmConverter GetAlgorithm(Type algorithmConverterType)
         {
-            _baseAlgorithmConverterType.AssignableFromTarget(algorithmConverterType);
+            typeof(IAlgorithmConverter).AssignableFromTarget(algorithmConverterType);
             return (IAlgorithmConverter)Default.Get(algorithmConverterType);
         }
 

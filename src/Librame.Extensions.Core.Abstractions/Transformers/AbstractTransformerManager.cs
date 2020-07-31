@@ -34,7 +34,7 @@ namespace Librame.Extensions.Core.Transformers
         /// </summary>
         public AbstractTransformerManager()
         {
-            _transformers = AssemblyUtility.CurrentExportedInstancesWithoutSystem<TTransformer>();
+            _transformers = AssemblyUtility.CreateCurrentThirdPartyExportedInstances<TTransformer>();
         }
 
 

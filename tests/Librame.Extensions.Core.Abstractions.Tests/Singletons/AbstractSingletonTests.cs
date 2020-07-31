@@ -11,10 +11,10 @@ namespace Librame.Extensions.Core.Tests
         [Fact]
         public void AllTest()
         {
-            var guid = SealedGuidSingleton.Instance.Guid;
+            var guid = SealedGuidSingleton.Default.Guid;
 
             for (var i = 0; i < 10; i++)
-                Assert.Equal(guid, SealedGuidSingleton.Instance.Guid);
+                Assert.Equal(guid, SealedGuidSingleton.Default.Guid);
         }
 
         [Fact]
@@ -22,10 +22,10 @@ namespace Librame.Extensions.Core.Tests
         {
             var results = StopwatchUtility.Run(() =>
             {
-                var guid = SealedGuidSingleton.Instance.Guid;
+                var guid = SealedGuidSingleton.Default.Guid;
 
                 for (var i = 0; i < 1000; i++)
-                    Assert.Equal(guid, SealedGuidSingleton.Instance.Guid);
+                    Assert.Equal(guid, SealedGuidSingleton.Default.Guid);
             },
             () =>
             {

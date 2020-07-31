@@ -200,14 +200,18 @@ namespace Librame.Extensions
         /// 将长整数转换为进制字符串。
         /// </summary>
         /// <param name="number">给定的长整数。</param>
-        /// <param name="system">给定的进制（可选；默认为 62 进制）。</param>
+        /// <param name="system">给定的进制（可选；进制越低，位数越长；默认为 52 进制）。</param>
+        /// <param name="mapCharset">映射字符集（可选；默认使用 <see cref="IExtensionPreferenceSetting.AllLetters"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsSystemString(this long number, int system = 62)
+        public static string AsSystemString(this long number, int system = 52,
+            string mapCharset = null)
         {
-            var chars = ExtensionSettings.Preference.AllLettersAndDigits;
-            system.NotOutOfRange(2, chars.Length, nameof(system));
+            if (mapCharset.IsEmpty())
+                mapCharset = ExtensionSettings.Preference.AllLetters;
 
-            chars = chars.Substring(0, system);
+            system.NotOutOfRange(2, mapCharset.Length, nameof(system));
+
+            mapCharset = mapCharset.Substring(0, system);
 
             var values = new List<string>();
 
@@ -217,7 +221,7 @@ namespace Librame.Extensions
                 var mod = n % system;
                 n = Math.Abs(n / system);
 
-                var ch = chars[Convert.ToInt32(mod)];
+                var ch = mapCharset[Convert.ToInt32(mod)];
                 values.Insert(0, ch.ToString());
             }
 
@@ -228,23 +232,27 @@ namespace Librame.Extensions
         /// 将进制字符串还原为长整数。
         /// </summary>
         /// <param name="systemString">给定的进制字符串。</param>
-        /// <param name="system">给定的进制（可选；默认为 62 进制）。</param>
+        /// <param name="system">给定的进制（可选；进制越低，位数越长；默认为 52 进制）。</param>
+        /// <param name="mapCharset">映射字符集（可选；默认使用 <see cref="IExtensionPreferenceSetting.AllLetters"/>）。</param>
         /// <returns>返回长整数。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static long FromSystemString(this string systemString, int system = 62)
+        public static long FromSystemString(this string systemString, int system = 52,
+            string mapCharset = null)
         {
             systemString.NotEmpty(nameof(systemString));
 
-            var chars = ExtensionSettings.Preference.AllLettersAndDigits;
-            system.NotOutOfRange(2, chars.Length, nameof(system));
+            if (mapCharset.IsEmpty())
+                mapCharset = ExtensionSettings.Preference.AllLetters;
 
-            chars = chars.Substring(0, system);
+            system.NotOutOfRange(2, mapCharset.Length, nameof(system));
+
+            mapCharset = mapCharset.Substring(0, system);
 
             var value = 0L;
 
             systemString.ToCharArray().Reverse().ForEach((ch, i) =>
             {
-                var indexOf = chars.CompatibleIndexOf(ch);
+                var indexOf = mapCharset.CompatibleIndexOf(ch);
                 if (indexOf >= 0)
                 {
                     value += indexOf * (long)Math.Pow(system, i);

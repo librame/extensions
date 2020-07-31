@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 
 namespace Librame.Extensions
@@ -137,12 +138,12 @@ namespace Librame.Extensions
         /// <summary>
         /// 算法字符集（包括 71 个大小写字母表、阿拉伯数字和算法特殊符号）。
         /// </summary>
-        string AlgorithmChars { get; }
+        string AlgorithmCharset { get; }
 
         /// <summary>
         /// BASE32 字符集。
         /// </summary>
-        string Base32Chars { get; }
+        string Base32Charset { get; }
 
 
         /// <summary>
@@ -279,6 +280,11 @@ namespace Librame.Extensions
 
 
         #region Type Extensions
+
+        /// <summary>
+        /// 当前程序集列表。
+        /// </summary>
+        IReadOnlyList<Assembly> CurrentAssemblies { get; }
 
         /// <summary>
         /// 整数类型列表。

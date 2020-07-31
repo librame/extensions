@@ -12,10 +12,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 
@@ -68,21 +70,21 @@ namespace Librame.Extensions
         /// <summary>
         /// 最大锁定器数量（默认为 <see cref="ExtensionSettings.ProcessorCount"/>）。
         /// </summary>
-        public virtual int MaxLockerCount
-            => ExtensionSettings.ProcessorCount;
+        public virtual int MaxLockerCount { get; }
+            = ExtensionSettings.ProcessorCount;
 
         /// <summary>
         /// 断定死锁的持续时长（默认为3秒）。
         /// </summary>
-        public virtual TimeSpan DeadlockDuration
-            => TimeSpan.FromSeconds(3);
+        public virtual TimeSpan DeadlockDuration { get; }
+            = TimeSpan.FromSeconds(3);
 
 
         /// <summary>
         /// 获取锁定器。
         /// </summary>
         /// <returns>返回锁定器对象。</returns>
-        public object GetLocker()
+        public virtual object GetLocker()
             => GetLocker(out _);
 
         /// <summary>
@@ -90,7 +92,7 @@ namespace Librame.Extensions
         /// </summary>
         /// <param name="index">输出索引。</param>
         /// <returns>返回锁定器对象。</returns>
-        public object GetLocker(out int index)
+        public virtual object GetLocker(out int index)
         {
             lock (ExtensionSettings.Locker)
             {
@@ -118,7 +120,9 @@ namespace Librame.Extensions
 
                 while (true)
                 {
-                    var locker = _lockers.FirstOrDefault(obj => !Monitor.IsEntered(obj));
+                    // 使用 _lockers.FirstOrDefault(obj => !Monitor.IsEntered(obj))
+                    // 可能会抛出 IndexOutOfRangeException 异常（特别是存在死锁的情形下）
+                    var locker = _lockers.Where(obj => !Monitor.IsEntered(obj)).FirstOrDefault();
                     if (locker.IsNotNull())
                     {
                         index = _lockers.FindIndex(obj => ReferenceEquals(obj, locker));
@@ -273,20 +277,20 @@ namespace Librame.Extensions
         /// <summary>
         /// 0-9 的数字。
         /// </summary>
-        public virtual string Digits
-            => "0123456789";
+        public virtual string Digits { get; }
+            = "0123456789";
 
         /// <summary>
         /// 26 个小写字母。
         /// </summary>
-        public virtual string LowercaseLetters
-            => "abcdefghijklmnopqrstuvwxyz";
+        public virtual string LowercaseLetters { get; }
+            = "abcdefghijklmnopqrstuvwxyz";
 
         /// <summary>
         /// 26 个大写字母。
         /// </summary>
-        public virtual string UppercaseLetters
-            => "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        public virtual string UppercaseLetters { get; }
+            = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         /// <summary>
         /// 52 个大小写字母表。
@@ -303,19 +307,19 @@ namespace Librame.Extensions
         /// <summary>
         /// 9 个算法特殊符号。
         /// </summary>
-        public virtual string AlgorithmSpecialSymbols
-            => "~!@#$%^&*";
+        public virtual string AlgorithmSpecialSymbols { get; }
+            = "~!@#$%^&*";
 
         /// <summary>
         /// 算法字符集（包括 71 个大小写字母表、阿拉伯数字和算法特殊符号）。
         /// </summary>
-        public virtual string AlgorithmChars
+        public virtual string AlgorithmCharset
             => AllLettersAndDigits + AlgorithmSpecialSymbols;
 
         /// <summary>
         /// BASE32 字符集。
         /// </summary>
-        public virtual string Base32Chars
+        public virtual string Base32Charset
             => UppercaseLetters + "234567";
 
 
@@ -375,20 +379,20 @@ namespace Librame.Extensions
         /// <summary>
         /// LZNT1 压缩格式。
         /// </summary>
-        public virtual ushort CompressionFormatLZNT1
-            => 2;
+        public virtual ushort CompressionFormatLZNT1 { get; }
+            = 2;
 
         /// <summary>
         /// 压缩引擎最大值。
         /// </summary>
-        public virtual ushort CompressionEngineMaximum
-            => 0x100;
+        public virtual ushort CompressionEngineMaximum { get; }
+            = 0x100;
 
         /// <summary>
         /// 支持的压缩文件类型集合（默认支持 GZip 与 Deflate 压缩算法文件类型）。
         /// </summary>
-        public virtual IReadOnlyList<string> SupportedCompressedFileTypes
-            => ".cmp,.gz".Split(',');
+        public virtual IReadOnlyList<string> SupportedCompressedFileTypes { get; }
+            = ".cmp,.gz".Split(',');
 
         /// <summary>
         /// Deflate 压缩文件类型。
@@ -410,8 +414,8 @@ namespace Librame.Extensions
         /// <summary>
         /// 基础日期与时间（1911-01-01）。
         /// </summary>
-        public virtual DateTime BaseDateTime
-            => new DateTime(1911, 1, 1);
+        public virtual DateTime BaseDateTime { get; }
+            = new DateTime(1911, 1, 1);
 
         /// <summary>
         /// 基础日期与时间（<see cref="BaseDateTime"/>）。
@@ -422,44 +426,44 @@ namespace Librame.Extensions
         /// <summary>
         /// 中国农历（阴阳合历）。
         /// </summary>
-        public virtual ChineseLunisolarCalendar ChineseCalendar
-            => new ChineseLunisolarCalendar();
+        public virtual ChineseLunisolarCalendar ChineseCalendar { get; }
+            = new ChineseLunisolarCalendar();
 
         /// <summary>
         /// 中国月。
         /// </summary>
-        public virtual IReadOnlyList<string> ChineseMonths
-            => new List<string> { "正", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二(腊)" };
+        public virtual IReadOnlyList<string> ChineseMonths { get; }
+            = new List<string> { "正", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二(腊)" };
 
         /// <summary>
         /// 中国旬。
         /// </summary>
-        public virtual IReadOnlyList<string> ChineseTenDays
-            => new List<string> { "初", "十", "廿", "三" };
+        public virtual IReadOnlyList<string> ChineseTenDays { get; }
+            = new List<string> { "初", "十", "廿", "三" };
 
         /// <summary>
         /// 中国日。
         /// </summary>
-        public virtual IReadOnlyList<string> ChineseDays
-            => new List<string> { "一", "二", "三", "四", "五", "六", "七", "八", "九", "十" };
+        public virtual IReadOnlyList<string> ChineseDays { get; }
+            = new List<string> { "一", "二", "三", "四", "五", "六", "七", "八", "九", "十" };
 
         /// <summary>
         /// 十天干。
         /// </summary>
-        public virtual IReadOnlyList<string> TenCelestialStems
-            => new List<string> { "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸" };
+        public virtual IReadOnlyList<string> TenCelestialStems { get; }
+            = new List<string> { "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸" };
 
         /// <summary>
         /// 十二地支。
         /// </summary>
-        public virtual IReadOnlyList<string> TwelveTerrestrialBranches
-            => new List<string> { "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥" };
+        public virtual IReadOnlyList<string> TwelveTerrestrialBranches { get; }
+            = new List<string> { "子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥" };
 
         /// <summary>
         /// 十二生肖。
         /// </summary>
-        public virtual IReadOnlyList<string> TwelveAnimalSigns
-            => new List<string> { "鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪" };
+        public virtual IReadOnlyList<string> TwelveAnimalSigns { get; }
+            = new List<string> { "鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪" };
 
         #endregion
 
@@ -478,10 +482,16 @@ namespace Librame.Extensions
         #region Type Extensions
 
         /// <summary>
+        /// 当前程序集列表。
+        /// </summary>
+        public virtual IReadOnlyList<Assembly> CurrentAssemblies { get; }
+            = new ReadOnlyCollection<Assembly>(AppDomain.CurrentDomain.GetAssemblies());
+
+        /// <summary>
         /// 整数类型列表。
         /// </summary>
-        public virtual IReadOnlyList<Type> IntegerTypes
-            => new Type[]
+        public virtual IReadOnlyList<Type> IntegerTypes { get; }
+            = new List<Type>
             {
                 typeof(sbyte),
                 typeof(byte),

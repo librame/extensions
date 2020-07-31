@@ -15,7 +15,6 @@ using System.Collections.Generic;
 namespace Librame.Extensions.Core
 {
     using Combiners;
-    using Converters;
 
     /// <summary>
     /// 核心偏好设置接口。
@@ -55,11 +54,6 @@ namespace Librame.Extensions.Core
         char KeySeparator { get; }
 
         /// <summary>
-        /// 安全令牌转换器。
-        /// </summary>
-        IAlgorithmConverter SecurityTokenConverter { get; }
-
-        /// <summary>
         /// 安全令牌数。
         /// </summary>
         int SecurityTokensCount { get; }
@@ -69,9 +63,10 @@ namespace Librame.Extensions.Core
         /// </summary>
         FilePathCombiner SecurityTokenKeyRingFilePath { get; }
 
+
         /// <summary>
-        /// 系统程序集前缀。
+        /// 包含第三方服务的程序集前缀列表。
         /// </summary>
-        IReadOnlyList<string> SystemAssemblyPrefixes { get; }
+        List<string> ThirdPartyAssemblyPrefixes { get; }
     }
 }

@@ -13,32 +13,29 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Librame.Extensions.Core.Starters
 {
     using Utilities;
 
-    /// <summary>
-    /// 预启动器工厂。
-    /// </summary>
-    public class PreStarterFactory : IPreStarterFactory
+    [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
+    internal class PreStarterFactory : IPreStarterFactory
     {
-        /// <summary>
-        /// 创建预启动器。
-        /// </summary>
-        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
-        /// <returns>返回 <see cref="IReadOnlyList{IPrestarter}"/>。</returns>
+        private static IReadOnlyList<IPreStarter> _preStarters
+            = AssemblyUtility.CreateCurrentThirdPartyExportedInstances<IPreStarter>();
+
+
         public virtual IServiceCollection Create(IServiceCollection services)
         {
             services.NotNull(nameof(services));
 
-            var preStarters = AssemblyUtility.CurrentExportedInstancesWithoutSystem<IPreStarter>();
-            foreach (var preStarter in preStarters)
+            foreach (var preStarter in _preStarters)
             {
                 preStarter.Start(services);
             }
 
-            services.TryAddSingleton<IEnumerable<IPreStarter>>(preStarters);
+            services.TryAddSingleton<IEnumerable<IPreStarter>>(_preStarters);
 
             return services;
         }

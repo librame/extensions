@@ -57,7 +57,7 @@ namespace Librame.Extensions.Data.Accessors
         /// 构造一个集成数据存储的数据库上下文访问器。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
-        public DataDbContextAccessor(DbContextOptions options)
+        protected DataDbContextAccessor(DbContextOptions options)
             : base(options)
         {
         }
@@ -91,7 +91,7 @@ namespace Librame.Extensions.Data.Accessors
         /// 构造一个集成数据存储的数据库上下文访问器。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
-        public DataDbContextAccessor(DbContextOptions options)
+        protected DataDbContextAccessor(DbContextOptions options)
             : base(options)
         {
         }
