@@ -37,6 +37,11 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         Type DatabaseDesignTimeType { get; }
 
+        /// <summary>
+        /// 服务提供程序。
+        /// </summary>
+        IServiceProvider ServiceProvider { get; }
+
 
         /// <summary>
         /// 时钟服务。

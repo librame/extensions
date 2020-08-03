@@ -96,11 +96,17 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
-        /// 已创建数据库的后置动作（默认无动作）。
+        /// 已创建数据库的后置动作（默认根据条件调用迁移方法）。
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public Action<DbContextAccessorBase> PostDatabaseCreatedAction { get; set; }
+            = accessor =>
+            {
+                // 初始化迁移
+                if (!accessor.IsFromMigrateInvoke)
+                    accessor.Migrate();
+            };
 
         /// <summary>
         /// 已更改数据库的后置动作（默认无动作）。

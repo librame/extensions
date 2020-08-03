@@ -47,6 +47,14 @@ namespace Microsoft.EntityFrameworkCore
         public virtual DataBuilderDbContextOptionsBuilder UseDataBuilder(IDataBuilder dataBuilder)
             => WithOption(e => e.WithDataBuilder(dataBuilder));
 
+        /// <summary>
+        /// 使用服务提供程序。
+        /// </summary>
+        /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
+        /// <returns>返回 <see cref="DataBuilderDbContextOptionsBuilder"/>。</returns>
+        public virtual DataBuilderDbContextOptionsBuilder UseServiceProvider(IServiceProvider serviceProvider)
+            => WithOption(e => e.WithServiceProvider(serviceProvider));
+
 
         /// <summary>
         /// 带有选项。

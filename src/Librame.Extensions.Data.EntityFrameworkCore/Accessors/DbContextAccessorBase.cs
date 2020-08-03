@@ -48,10 +48,11 @@ namespace Librame.Extensions.Data.Accessors
             var dataBuilderExtension = DataBuilderDbContextOptionsExtension.Extract(options);
             var relationalExtension = RelationalOptionsExtension.Extract(options);
 
+            Dependency = dataBuilderExtension.DataBuilder.Dependency as DataBuilderDependency;
+
             AccessorTypeParameterMapper = dataBuilderExtension.DataBuilder.AccessorTypeParameterMapper;
             DatabaseDesignTimeType = dataBuilderExtension.DataBuilder.DatabaseDesignTimeType;
-
-            Dependency = dataBuilderExtension.DataBuilder.Dependency as DataBuilderDependency;
+            ServiceProvider = dataBuilderExtension.ServiceProvider;
             
             InitializeAccessorBase(dataBuilderExtension, relationalExtension);
         }
@@ -97,11 +98,6 @@ namespace Librame.Extensions.Data.Accessors
                 CreationValidator.SetCreated(this);
 
                 Dependency.Options.PostDatabaseCreatedAction?.Invoke(this);
-
-                // 初始化迁移
-                if (!IsFromMigrateInvoke)
-                    Migrate();
-
                 return true;
             }
 
@@ -124,11 +120,6 @@ namespace Librame.Extensions.Data.Accessors
                 await CreationValidator.SetCreatedAsync(this, cancellationToken).ConfigureAwait();
 
                 Dependency.Options.PostDatabaseCreatedAction?.Invoke(this);
-
-                // 初始化迁移
-                if (!IsFromMigrateInvoke)
-                    Migrate();
-
                 return true;
             }
 
@@ -281,6 +272,11 @@ namespace Librame.Extensions.Data.Accessors
         /// 数据库设计时类型。
         /// </summary>
         public Type DatabaseDesignTimeType { get; }
+
+        /// <summary>
+        /// 服务提供程序。
+        /// </summary>
+        public IServiceProvider ServiceProvider { get; }
 
 
         /// <summary>
@@ -955,17 +951,11 @@ namespace Librame.Extensions.Data.Accessors
         public virtual TService GetService<TService>(bool isRequired = true)
         {
             if (isRequired)
-                return AccessorExtensions.GetService<TService>(this);
+                return ServiceProvider.GetRequiredService<TService>();
 
-            return GetServiceProvider().GetService<TService>();
+            return ServiceProvider.GetService<TService>();
+            //return AccessorExtensions.GetService<TService>(this); // 新版本可能会造成访问冲突
         }
-
-        /// <summary>
-        /// 获取服务提供程序。
-        /// </summary>
-        /// <returns>返回 <see cref="IServiceProvider"/>。</returns>
-        public virtual IServiceProvider GetServiceProvider()
-            => AccessorExtensions.GetInfrastructure(this);
 
         #endregion
 

@@ -28,6 +28,7 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
     public class DataBuilderDbContextOptionsExtension : IDbContextOptionsExtension
     {
         private IDataBuilder _dataBuilder;
+        private IServiceProvider _serviceProvider;
 
 
         /// <summary>
@@ -47,6 +48,7 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
             copyFrom.NotNull(nameof(copyFrom));
 
             _dataBuilder = copyFrom._dataBuilder;
+            _serviceProvider = copyFrom._serviceProvider;
         }
 
 
@@ -70,18 +72,44 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
         public virtual IDataBuilder DataBuilder
             => _dataBuilder;
 
+        /// <summary>
+        /// 服务提供程序。
+        /// </summary>
+        public virtual IServiceProvider ServiceProvider
+            => _serviceProvider;
+
 
         /// <summary>
         /// 带有指定 <see cref="IDataBuilder"/> 的副本实例。
         /// </summary>
         /// <param name="dataBuilder">给定的 <see cref="IDataBuilder"/>。</param>
+        /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDbContextOptionsExtension"/>。</returns>
-        public virtual DataBuilderDbContextOptionsExtension WithDataBuilder(IDataBuilder dataBuilder)
+        public virtual DataBuilderDbContextOptionsExtension WithDataBuilder(IDataBuilder dataBuilder,
+            IServiceProvider serviceProvider = null)
         {
             dataBuilder.NotNull(nameof(dataBuilder));
 
             var clone = Clone();
             clone._dataBuilder = dataBuilder;
+
+            if (serviceProvider.IsNotNull())
+                clone._serviceProvider = serviceProvider;
+
+            return clone;
+        }
+
+        /// <summary>
+        /// 带有指定 <see cref="IServiceProvider"/> 的副本实例。
+        /// </summary>
+        /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
+        /// <returns>返回 <see cref="DataBuilderDbContextOptionsExtension"/>。</returns>
+        public virtual DataBuilderDbContextOptionsExtension WithServiceProvider(IServiceProvider serviceProvider)
+        {
+            serviceProvider.NotNull(nameof(serviceProvider));
+
+            var clone = Clone();
+            clone._serviceProvider = serviceProvider;
 
             return clone;
         }
@@ -172,6 +200,14 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
                                 .Append(' ');
                         }
 
+                        if (Extension._serviceProvider != null)
+                        {
+                            builder
+                                .Append("ServiceProvider=")
+                                .Append(Extension._serviceProvider.GetType().GetDisplayNameWithNamespace())
+                                .Append(' ');
+                        }
+
                         _logFragment = builder.ToString();
                     }
 
@@ -181,12 +217,16 @@ namespace Microsoft.EntityFrameworkCore.Infrastructure
 
 
             public override long GetServiceProviderHashCode()
-                => Extension._dataBuilder.GetType().GetHashCode();
+                => Extension._dataBuilder?.GetType().GetHashCode() ?? 0
+                ^ Extension._serviceProvider?.GetType().GetHashCode() ?? 0;
 
             public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
             {
                 debugInfo["DataBuilder:" + nameof(DataBuilderDbContextOptionsBuilder.UseDataBuilder)] =
                     (Extension._dataBuilder?.GetType().GetHashCode() ?? 0).ToString(CultureInfo.InvariantCulture);
+
+                debugInfo["DataBuilder:" + nameof(DataBuilderDbContextOptionsBuilder.UseServiceProvider)] =
+                    (Extension._serviceProvider?.GetType().GetHashCode() ?? 0).ToString(CultureInfo.InvariantCulture);
             }
 
         }

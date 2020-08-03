@@ -28,16 +28,18 @@ namespace Microsoft.EntityFrameworkCore
         /// </summary>
         /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
         /// <param name="dataBuilder">给定的 <see cref="IDataBuilder"/>。</param>
+        /// <param name="serviceProvider">给定的 <see cref="IServiceProvider"/>。</param>
         /// <param name="dataBuilderOptionsAction">给定的配置动作（可选）。</param>
         /// <returns>返回 <see cref="DataBuilderDbContextOptionsExtension"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         public static DbContextOptionsBuilder UseDataBuilder(this DbContextOptionsBuilder optionsBuilder,
-            IDataBuilder dataBuilder, Action<DataBuilderDbContextOptionsBuilder> dataBuilderOptionsAction = null)
+            IDataBuilder dataBuilder, IServiceProvider serviceProvider,
+            Action<DataBuilderDbContextOptionsBuilder> dataBuilderOptionsAction = null)
         {
             optionsBuilder.NotNull(nameof(optionsBuilder));
             dataBuilder.NotNull(nameof(dataBuilder));
 
-            var extension = GetOrCreateExtension(optionsBuilder).WithDataBuilder(dataBuilder);
+            var extension = GetOrCreateExtension(optionsBuilder).WithDataBuilder(dataBuilder, serviceProvider);
             ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
 
             dataBuilderOptionsAction?.Invoke(new DataBuilderDbContextOptionsBuilder(optionsBuilder));

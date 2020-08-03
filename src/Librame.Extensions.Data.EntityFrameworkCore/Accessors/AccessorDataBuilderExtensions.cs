@@ -77,7 +77,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 {
                     optionsBuilder.ReplaceServices();
 
-                    optionsBuilder.UseDataBuilder(builder);
+                    optionsBuilder.UseDataBuilder(builder, sp);
 
                     setupAction.Invoke((builder.Dependency as DataBuilderDependency).Options.DefaultTenant,
                         optionsBuilder);
@@ -90,7 +90,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 {
                     optionsBuilder.ReplaceServices();
 
-                    optionsBuilder.UseDataBuilder(builder);
+                    optionsBuilder.UseDataBuilder(builder, sp);
 
                     setupAction.Invoke((builder.Dependency as DataBuilderDependency).Options.DefaultTenant,
                         optionsBuilder);

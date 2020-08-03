@@ -11,7 +11,6 @@
 #endregion
 
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace Librame.Extensions.Data.Stores
 {
@@ -53,12 +52,5 @@ namespace Librame.Extensions.Data.Stores
         /// <returns>返回 <typeparamref name="TService"/>。</returns>
         public virtual TService GetService<TService>(bool isRequired = true)
             => Accessor.GetService<TService>(isRequired);
-
-        /// <summary>
-        /// 获取服务提供程序。
-        /// </summary>
-        /// <returns>返回 <see cref="IServiceProvider"/>。</returns>
-        public virtual IServiceProvider GetServiceProvider()
-            => Accessor.GetServiceProvider();
     }
 }
