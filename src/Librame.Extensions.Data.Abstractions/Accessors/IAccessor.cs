@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Accessors
 {
     using Core.Services;
+    using Data.Mappers;
     using Data.Services;
     using Data.Validators;
 
@@ -26,6 +27,17 @@ namespace Librame.Extensions.Data.Accessors
     /// </summary>
     public interface IAccessor : ISaveChanges, IMultiTenancy, IMigration, IInfrastructureService, IDisposable
     {
+        /// <summary>
+        /// 访问器泛型类型映射描述符。
+        /// </summary>
+        AccessorTypeParameterMapper AccessorTypeParameterMapper { get; }
+
+        /// <summary>
+        /// 数据库设计时类型。
+        /// </summary>
+        Type DatabaseDesignTimeType { get; }
+
+
         /// <summary>
         /// 时钟服务。
         /// </summary>

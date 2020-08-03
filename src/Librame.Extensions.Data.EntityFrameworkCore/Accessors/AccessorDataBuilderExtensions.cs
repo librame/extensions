@@ -26,7 +26,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -76,10 +75,12 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 builder.Services.AddDbContextPool<TAccessor, TImplementation>((sp, optionsBuilder) =>
                 {
-                    var options = sp.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
-                    setupAction.Invoke(options.DefaultTenant, optionsBuilder);
-
                     optionsBuilder.ReplaceServices();
+
+                    optionsBuilder.UseDataBuilder(builder);
+
+                    setupAction.Invoke((builder.Dependency as DataBuilderDependency).Options.DefaultTenant,
+                        optionsBuilder);
                 },
                 poolSize);
             }
@@ -87,10 +88,12 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 builder.Services.AddDbContext<TAccessor, TImplementation>((sp, optionsBuilder) =>
                 {
-                    var options = sp.GetRequiredService<IOptions<DataBuilderOptions>>().Value;
-                    setupAction.Invoke(options.DefaultTenant, optionsBuilder);
-
                     optionsBuilder.ReplaceServices();
+
+                    optionsBuilder.UseDataBuilder(builder);
+
+                    setupAction.Invoke((builder.Dependency as DataBuilderDependency).Options.DefaultTenant,
+                        optionsBuilder);
                 });
             }
 

@@ -26,6 +26,7 @@ namespace Librame.Extensions.Data.Accessors
     using Core.Services;
     using Data.Aspects;
     using Data.Builders;
+    using Data.Mappers;
     using Data.Resources;
     using Data.Services;
     using Data.Stores;
@@ -40,22 +41,35 @@ namespace Librame.Extensions.Data.Accessors
         /// 构造一个数据库上下文访问器基类。
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
         protected DbContextAccessorBase(DbContextOptions options)
             : base(options)
         {
-            InitializeAccessorBase(options);
+            var dataBuilderExtension = DataBuilderDbContextOptionsExtension.Extract(options);
+            var relationalExtension = RelationalOptionsExtension.Extract(options);
+
+            AccessorTypeParameterMapper = dataBuilderExtension.DataBuilder.AccessorTypeParameterMapper;
+            DatabaseDesignTimeType = dataBuilderExtension.DataBuilder.DatabaseDesignTimeType;
+
+            Dependency = dataBuilderExtension.DataBuilder.Dependency as DataBuilderDependency;
+            
+            InitializeAccessorBase(dataBuilderExtension, relationalExtension);
         }
 
 
-        private void InitializeAccessorBase(DbContextOptions options)
+        private void InitializeAccessorBase(DataBuilderDbContextOptionsExtension dataBuilderExtension,
+            RelationalOptionsExtension relationalExtension)
         {
-            // Database.GetDbConnection().ConnectionString 的信息不一定完整（比如密码）
-            CurrentConnectionString = Dependency.Options.OptionsExtensionConnectionStringFactory?.Invoke(options);
-            CurrentConnectionString.NotEmpty("BuilderOptions.OptionsExtensionConnectionStringFactory");
+            if (Dependency.Options.DefaultTenant.IsNull())
+                throw new InvalidOperationException($"The data builder options extension '{dataBuilderExtension}' options default tenant is null.");
 
-            CurrentTenant = Dependency.Options.DefaultTenant.NotNull("Dependency.Options.DefaultTenant");
-            
+            // Database.GetDbConnection().ConnectionString 的信息不一定完整（比如密码）
+            if (relationalExtension.ConnectionString.IsEmpty())
+                throw new InvalidOperationException($"The relational options extension '{relationalExtension}' connection string is empty.");
+
+            CurrentTenant = Dependency.Options.DefaultTenant;
+            CurrentConnectionString = relationalExtension.ConnectionString;
+
             if (Dependency.Options.SupportsCreateDatabase)
                 EnsureDatabaseCreated();
         }
@@ -64,48 +78,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <summary>
         /// 构建器依赖。
         /// </summary>
-        public DataBuilderDependency Dependency
-            => GetService<DataBuilderDependency>();
-
-
-        /// <summary>
-        /// 配置数据库上下文选项构建器。
-        /// </summary>
-        /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => OnConfiguringCore(optionsBuilder);
-
-        /// <summary>
-        /// 配置数据库上下文选项构建器核心。
-        /// </summary>
-        /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
-        protected virtual void OnConfiguringCore(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
-
-
-        /// <summary>
-        /// 配置模型构建器。
-        /// </summary>
-        /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            OnModelCreatingCore(modelBuilder);
-
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                entityType.TryAddDeleteStatusQueryFilter();
-            }
-        }
-
-        /// <summary>
-        /// 配置模型构建器核心。
-        /// </summary>
-        /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
-        protected virtual void OnModelCreatingCore(ModelBuilder modelBuilder)
-        {
-        }
+        public DataBuilderDependency Dependency { get; }
 
 
         #region EnsureDatabaseCreated and EnsureDatabaseChanged
@@ -253,7 +226,62 @@ namespace Librame.Extensions.Data.Accessors
         #endregion
 
 
+        #region OnConfiguring and OnModelCreating
+
+        /// <summary>
+        /// 配置数据库上下文选项构建器。
+        /// </summary>
+        /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => OnConfiguringCore(optionsBuilder);
+
+        /// <summary>
+        /// 配置数据库上下文选项构建器核心。
+        /// </summary>
+        /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
+        protected virtual void OnConfiguringCore(DbContextOptionsBuilder optionsBuilder)
+        {
+        }
+
+
+        /// <summary>
+        /// 配置模型构建器。
+        /// </summary>
+        /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            OnModelCreatingCore(modelBuilder);
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                entityType.TryAddDeleteStatusQueryFilter();
+            }
+        }
+
+        /// <summary>
+        /// 配置模型构建器核心。
+        /// </summary>
+        /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
+        protected virtual void OnModelCreatingCore(ModelBuilder modelBuilder)
+        {
+        }
+
+        #endregion
+
+
         #region IAccessor
+
+        /// <summary>
+        /// 访问器泛型类型映射描述符。
+        /// </summary>
+        public AccessorTypeParameterMapper AccessorTypeParameterMapper { get; }
+
+        /// <summary>
+        /// 数据库设计时类型。
+        /// </summary>
+        public Type DatabaseDesignTimeType { get; }
+
 
         /// <summary>
         /// 时钟服务。

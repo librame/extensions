@@ -70,7 +70,7 @@ namespace Librame.Extensions.Examples
                 .AddData(dependency =>
                 {
                     dependency.Options.MigrationAssemblyReferences.Add(
-                        AssemblyReference.Load("Microsoft.EntityFrameworkCore.SqlServer"));
+                        AssemblyDescriptor.Create("Microsoft.EntityFrameworkCore.SqlServer"));
                 })
                 .AddAccessor<ExampleDbContextAccessor>((tenant, optionsBuilder) =>
                 {

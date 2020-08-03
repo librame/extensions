@@ -84,8 +84,8 @@ namespace Librame.Extensions.Data.Tests
                     dependency.Options.DefaultTenant.DataSynchronization = true;
                     dependency.Options.DefaultTenant.StructureSynchronization = true;
 
-                    dependency.Options.MigrationAssemblyReferences.Add(
-                        AssemblyReference.Load("Microsoft.EntityFrameworkCore.SqlServer"));
+                    //dependency.Options.MigrationAssemblyReferences.Add(
+                    //    AssemblyDescriptor.Create("Microsoft.EntityFrameworkCore.SqlServer"));
                 })
                 .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
                 {

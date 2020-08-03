@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations.Design;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -33,10 +32,6 @@ namespace Librame.Extensions.Data.Compilers
     /// </summary>
     public static class ModelSnapshotCompiler
     {
-        private static readonly ConcurrentDictionary<Type, IReadOnlyList<MetadataReference>> _references
-            = new ConcurrentDictionary<Type, IReadOnlyList<MetadataReference>>();
-
-
         /// <summary>
         /// 生成模型快照名称。
         /// </summary>
@@ -123,19 +118,16 @@ namespace Librame.Extensions.Data.Compilers
         private static IReadOnlyList<MetadataReference> GetMetadataReferences(DataBuilderOptions options,
             Type accessorType)
         {
-            return _references.GetOrAdd(accessorType, t =>
-            {
-                var references = new List<AssemblyReference>(options?.MigrationAssemblyReferences.Distinct());
+            var references = new List<AssemblyDescriptor>(options?.MigrationAssemblyReferences.Distinct());
 
-                // Add DbContextAccessor AssemblyReference
-                var accessorReference = AssemblyReference.Load(accessorType?.Assembly);
-                if (!references.Contains(accessorReference))
-                    references.Add(accessorReference);
+            // Add DbContextAccessor AssemblyReference
+            var accessorReference = AssemblyDescriptor.Create(accessorType?.Assembly);
+            if (!references.Contains(accessorReference))
+                references.Add(accessorReference);
 
-                references.Sort();
+            references.Sort();
 
-                return references.Select(refer => refer.ToMetadataReference()).AsReadOnlyList();
-            });
+            return references.Select(refer => refer.ToMetadataReference()).AsReadOnlyList();
 
             //var metadatas = new List<MetadataReference>();
             //foreach (var reference in references)

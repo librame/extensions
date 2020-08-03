@@ -97,7 +97,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.Configure<DataBuilderOptions>(options =>
             {
-                var reference = AssemblyReference.Load(designTimeType.Assembly);
+                var reference = AssemblyDescriptor.Create(designTimeType.Assembly);
                 if (!options.MigrationAssemblyReferences.Contains(reference))
                     options.MigrationAssemblyReferences.Add(reference);
             });

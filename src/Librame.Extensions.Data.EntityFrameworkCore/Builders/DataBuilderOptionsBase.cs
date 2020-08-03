@@ -11,10 +11,8 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Librame.Extensions.Data.Builders
 {
@@ -98,13 +96,6 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
-        /// 默认选项扩展连接字符串工厂方法。
-        /// </summary>
-        public Func<DbContextOptions, string> OptionsExtensionConnectionStringFactory { get; set; }
-            = options => options.Extensions.OfType<RelationalOptionsExtension>().First().ConnectionString;
-
-
-        /// <summary>
         /// 已创建数据库的后置动作（默认无动作）。
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
@@ -150,16 +141,16 @@ namespace Librame.Extensions.Data.Builders
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
-        public List<AssemblyReference> MigrationAssemblyReferences { get; }
-            = new List<AssemblyReference>
+        public List<AssemblyDescriptor> MigrationAssemblyReferences { get; }
+            = new List<AssemblyDescriptor>
             {
-                AssemblyReference.Load("Librame.Extensions.Data.Abstractions"),
-                AssemblyReference.Load("Librame.Extensions.Data.EntityFrameworkCore"),
-                AssemblyReference.Load("Microsoft.EntityFrameworkCore"),
-                AssemblyReference.Load("Microsoft.EntityFrameworkCore.Relational"),
-                AssemblyReference.Load("netstandard"),
-                AssemblyReference.Load("System.Runtime"),
-                AssemblyReference.Load("System.Private.CoreLib")
+                AssemblyDescriptor.Create("Librame.Extensions.Data.Abstractions"),
+                AssemblyDescriptor.Create("Librame.Extensions.Data.EntityFrameworkCore"),
+                AssemblyDescriptor.Create("Microsoft.EntityFrameworkCore"),
+                AssemblyDescriptor.Create("Microsoft.EntityFrameworkCore.Relational"),
+                AssemblyDescriptor.Create("netstandard"),
+                AssemblyDescriptor.Create("System.Runtime"),
+                AssemblyDescriptor.Create("System.Private.CoreLib")
             };
 
     }
