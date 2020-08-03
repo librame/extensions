@@ -26,12 +26,7 @@ namespace Librame.Models
 
         // 除主键外的唯一索引相等比较（参见实体映射的唯一索引配置）。
         public bool Equals(Article<TGenId, TCategoryId, TCreatedBy> other)
-        {
-            if (other.IsNull())
-                return false;
-
-            return CategoryId.Equals(other.CategoryId) && Title == other.Title;
-        }
+            => other.IsNotNull() && CategoryId.Equals(other.CategoryId) && Title == other.Title;
 
         public override bool Equals(object obj)
             => obj is Article<TGenId, TCategoryId, TCreatedBy> other && Equals(other);
