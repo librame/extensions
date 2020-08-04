@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.Extensions.Caching.Memory;
 using System;
 
 namespace Librame.Extensions.Data.Builders
@@ -23,6 +24,11 @@ namespace Librame.Extensions.Data.Builders
     /// </summary>
     public interface IDataBuilder : IExtensionBuilder
     {
+        /// <summary>
+        /// 内存缓存。
+        /// </summary>
+        IMemoryCache MemoryCache { get; }
+
         /// <summary>
         /// 访问器类型参数映射器。
         /// </summary>
@@ -40,9 +46,9 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="serviceType">给定的服务类型（支持非泛型）。</param>
         /// <param name="implementationTypeDefinition">给定的实现类型定义。</param>
         /// <param name="populateServiceFactory">给定的填充服务类型工厂方法（可选；当服务类型为泛型类型定义时，此参数必填）。</param>
-        /// <param name="populateImplementationFactory">给定的填充实现类型工厂方法（可选；默认使用 <see cref="AccessorTypeParameterMapper"/> 填充实现类型定义）。</param>
+        /// <param name="populateImplementationFactory">给定的填充实现类型工厂方法（可选；默认使用 <see cref="Mappers.AccessorTypeParameterMapper"/> 填充实现类型定义）。</param>
         /// <param name="addEnumerable">添加为可枚举集合（可选；默认不是可枚举集合）。</param>
-        /// <param name="accessorTypeParameterMapper">给定的 <see cref="Mappers.AccessorTypeParameterMapper"/>（可选；默认使用 <see cref="AccessorTypeParameterMapper"/>）。</param>
+        /// <param name="accessorTypeParameterMapper">给定的 <see cref="Mappers.AccessorTypeParameterMapper"/>（可选；默认使用 <see cref="Mappers.AccessorTypeParameterMapper"/>）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         IDataBuilder AddGenericServiceByPopulateAccessorTypeParameters(Type serviceType,
             Type implementationTypeDefinition,

@@ -33,8 +33,8 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 标识生成器工厂。
         /// </summary>
-        /// <value>返回 <see cref="IIdentityGeneratorFactory"/>。</value>
-        IIdentityGeneratorFactory Factory { get; }
+        /// <value>返回 <see cref="IIdentificationGeneratorFactory"/>。</value>
+        IIdentificationGeneratorFactory Factory { get; }
 
 
         /// <summary>

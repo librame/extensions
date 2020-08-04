@@ -42,15 +42,5 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         public ILoggerFactory LoggerFactory
             => Accessor.LoggerFactory;
-
-
-        /// <summary>
-        /// 获取服务。
-        /// </summary>
-        /// <typeparam name="TService">指定的服务类型。</typeparam>
-        /// <param name="isRequired">是必需的服务（可选；默认必需，不存在将抛出异常）。</param>
-        /// <returns>返回 <typeparamref name="TService"/>。</returns>
-        public virtual TService GetService<TService>(bool isRequired = true)
-            => Accessor.GetService<TService>(isRequired);
     }
 }

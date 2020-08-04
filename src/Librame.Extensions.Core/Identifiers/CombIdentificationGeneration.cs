@@ -13,9 +13,9 @@
 namespace Librame.Extensions.Core.Identifiers
 {
     /// <summary>
-    /// COMB 标识方式。
+    /// COMB 标识生成。
     /// </summary>
-    public enum CombIdentityMode
+    public enum CombIdentificationGeneration
     {
         /// <summary>
         /// 作为二进制。

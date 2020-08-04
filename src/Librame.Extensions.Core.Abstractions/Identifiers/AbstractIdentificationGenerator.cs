@@ -22,7 +22,7 @@ namespace Librame.Extensions.Core.Identifiers
     /// 抽象标识生成器接口。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public abstract class AbstractIdentityGenerator<TId> : IIdentityGenerator<TId>
+    public abstract class AbstractIdentificationGenerator<TId> : IIdentificationGenerator<TId>
     {
         /// <summary>
         /// 标识类型。

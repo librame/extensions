@@ -105,7 +105,7 @@ namespace Librame.Extensions.Core.Serializers
         /// 转换为来源实例。
         /// </summary>
         /// <returns>返回 <typeparamref name="TSource"/>。</returns>
-        public TSource ToTSource()
+        public virtual TSource ToTSource()
             => Source;
 
 
@@ -114,7 +114,7 @@ namespace Librame.Extensions.Core.Serializers
         /// </summary>
         /// <param name="other">给定的 <see cref="SerializableString{TSource}"/>。</param>
         /// <returns>返回布尔值。</returns>
-        public bool Equals(SerializableString<TSource> other)
+        public virtual bool Equals(SerializableString<TSource> other)
             => Value == other?.Value;
 
         /// <summary>

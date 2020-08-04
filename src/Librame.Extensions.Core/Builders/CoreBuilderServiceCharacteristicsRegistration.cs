@@ -48,7 +48,7 @@ namespace Librame.Extensions.Core.Builders
                 { typeof(IDecorator<>), ServiceCharacteristics.Transient() },
                 
                 // Identifiers
-                { typeof(IIdentityGeneratorFactory), ServiceCharacteristics.Singleton() },
+                { typeof(IIdentificationGeneratorFactory), ServiceCharacteristics.Singleton() },
 
                 // Localizers
                 { typeof(IEnhancedStringLocalizer<>), ServiceCharacteristics.Transient() },

@@ -52,10 +52,10 @@ namespace Librame.Extensions.Core.Builders
             AddService(typeof(IDecorator<>), typeof(CoreDecorator<>));
 
             // Identifiers
-            AddService(typeof(IIdentityGeneratorFactory), sp =>
+            AddService(typeof(IIdentificationGeneratorFactory), sp =>
             {
                 var options = sp.GetRequiredService<IOptions<CoreBuilderOptions>>();
-                return new IdentityGeneratorFactory(options.Value.Identifier);
+                return new IdentificationGeneratorFactory(options.Value.Identifier);
             });
 
             // Localizers

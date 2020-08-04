@@ -168,8 +168,8 @@ namespace Librame.Extensions.Core
         /// <returns>返回布尔值。</returns>
         public static bool operator ==(AssemblyDescriptor left, AssemblyDescriptor right)
         {
-            if (ReferenceEquals(left, null))
-                return ReferenceEquals(right, null);
+            if (left is null)
+                return right is null;
             
             return left.Equals(right);
         }
@@ -190,7 +190,7 @@ namespace Librame.Extensions.Core
         /// <param name="right">给定的 <see cref="AssemblyDescriptor"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator <(AssemblyDescriptor left, AssemblyDescriptor right)
-            => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+            => left is null ? right is AssemblyDescriptor : left.CompareTo(right) < 0;
 
         /// <summary>
         /// 比较小于等于。
@@ -199,7 +199,7 @@ namespace Librame.Extensions.Core
         /// <param name="right">给定的 <see cref="AssemblyDescriptor"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator <=(AssemblyDescriptor left, AssemblyDescriptor right)
-            => ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+            => left is null || left.CompareTo(right) <= 0;
 
         /// <summary>
         /// 比较大于。
@@ -208,7 +208,7 @@ namespace Librame.Extensions.Core
         /// <param name="right">给定的 <see cref="AssemblyDescriptor"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator >(AssemblyDescriptor left, AssemblyDescriptor right)
-            => !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+            => left is AssemblyDescriptor && left.CompareTo(right) > 0;
 
         /// <summary>
         /// 比较大于等于。
@@ -217,7 +217,7 @@ namespace Librame.Extensions.Core
         /// <param name="right">给定的 <see cref="AssemblyDescriptor"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator >=(AssemblyDescriptor left, AssemblyDescriptor right)
-            => ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+            => left is null ? right is null : left.CompareTo(right) >= 0;
 
 
         /// <summary>

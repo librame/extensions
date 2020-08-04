@@ -176,14 +176,14 @@ namespace Librame.Extensions
             Func<string, TValue, string> formatFactory)
             where TValue : struct
         {
-            string valueString = value.ToString();
+            var valueString = value.ToString();
 
             if (valueString.Length >= length)
                 return valueString;
 
-            string format = "0:";
+            var format = "0:";
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
                 format += "0";
 
             format = "{" + format + "}";
@@ -197,69 +197,79 @@ namespace Librame.Extensions
         #region System
 
         /// <summary>
-        /// 将长整数转换为进制字符串。
+        /// 将长整数转换为进制字符串（可逆）。
         /// </summary>
         /// <param name="number">给定的长整数。</param>
         /// <param name="system">给定的进制（可选；进制越低，位数越长；默认为 52 进制）。</param>
         /// <param name="mapCharset">映射字符集（可选；默认使用 <see cref="IExtensionPreferenceSetting.AllLetters"/>）。</param>
         /// <returns>返回字符串。</returns>
-        public static string AsSystemString(this long number, int system = 52,
+        public static string AsSystemString(this long number, int? system = null,
             string mapCharset = null)
         {
-            if (mapCharset.IsEmpty())
-                mapCharset = ExtensionSettings.Preference.AllLetters;
-
-            system.NotOutOfRange(2, mapCharset.Length, nameof(system));
-
-            mapCharset = mapCharset.Substring(0, system);
+            (var sys, var mc) = ValidSystemParameters(system, mapCharset);
 
             var values = new List<string>();
 
             var n = number;
             while (n > 0)
             {
-                var mod = n % system;
-                n = Math.Abs(n / system);
+                var mod = n % sys.Value;
+                n = Math.Abs(n / sys.Value);
 
-                var ch = mapCharset[Convert.ToInt32(mod)];
-                values.Insert(0, ch.ToString());
+                var c = mc[Convert.ToInt32(mod)];
+                values.Insert(0, c.ToString());
             }
 
             return string.Join("", values);
         }
 
         /// <summary>
-        /// 将进制字符串还原为长整数。
+        /// 将进制字符串还原为长整数（可逆）。
         /// </summary>
         /// <param name="systemString">给定的进制字符串。</param>
         /// <param name="system">给定的进制（可选；进制越低，位数越长；默认为 52 进制）。</param>
         /// <param name="mapCharset">映射字符集（可选；默认使用 <see cref="IExtensionPreferenceSetting.AllLetters"/>）。</param>
         /// <returns>返回长整数。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static long FromSystemString(this string systemString, int system = 52,
+        public static long FromSystemString(this string systemString, int? system = null,
             string mapCharset = null)
         {
             systemString.NotEmpty(nameof(systemString));
 
-            if (mapCharset.IsEmpty())
-                mapCharset = ExtensionSettings.Preference.AllLetters;
-
-            system.NotOutOfRange(2, mapCharset.Length, nameof(system));
-
-            mapCharset = mapCharset.Substring(0, system);
+            (var sys, var mc) = ValidSystemParameters(system, mapCharset);
 
             var value = 0L;
-
-            systemString.ToCharArray().Reverse().ForEach((ch, i) =>
+            systemString.ToCharArray().Reverse().ForEach((c, i) =>
             {
-                var indexOf = mapCharset.CompatibleIndexOf(ch);
+                var indexOf = mc.CompatibleIndexOf(c);
                 if (indexOf >= 0)
                 {
-                    value += indexOf * (long)Math.Pow(system, i);
+                    value += indexOf * (long)Math.Pow(sys.Value, i);
                 }
             });
 
             return value;
+        }
+
+        private static (int? system, string mapCharset) ValidSystemParameters(int? system = null,
+            string mapCharset = null)
+        {
+            if (mapCharset.IsEmpty())
+                mapCharset = ExtensionSettings.Preference.AllLetters;
+
+            if (system.HasValue)
+            {
+                system.Value.NotOutOfRange(2, mapCharset.Length, nameof(system));
+
+                if (mapCharset.Length > system.Value)
+                    mapCharset = mapCharset.Substring(0, system.Value);
+            }
+            else
+            {
+                system = mapCharset.Length;
+            }
+
+            return (system, mapCharset);
         }
 
         #endregion

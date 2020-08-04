@@ -15,22 +15,22 @@ namespace Librame.Extensions.Core.Tests
             var provider = TestServiceProvider.Current;
 
             var clock = provider.GetRequiredService<IClockService>();
-            var factory = provider.GetRequiredService<IIdentityGeneratorFactory>();
+            var factory = provider.GetRequiredService<IIdentificationGeneratorFactory>();
 
-            var guidGenerator = factory.GetGenerator<Guid>();
+            var guidGenerator = factory.GetIdGenerator<Guid>();
             var guid = guidGenerator.GenerateId(clock);
             Assert.NotEqual(Guid.Empty, guid);
 
-            var longGenerator = factory.GetGenerator<long>();
+            var longGenerator = factory.GetIdGenerator<long>();
             var lid = longGenerator.GenerateId(clock);
             Assert.True(lid > 0);
 
-            var stringGenerator = factory.GetGenerator<string>();
-            var strid = stringGenerator.GenerateId(clock);
+            var stringGenerator = factory.GetIdGenerator<string>() as MonggoIdentificationGenerator;
+            var strid = stringGenerator.GenerateId(clock, out var descriptor);
             Assert.NotEmpty(strid);
 
-            var shortid = (stringGenerator as StringIdentityGenerator).GenerateShortId(clock, 8);
-            Assert.NotEmpty(shortid);
+            var parse = MonggoIdentificationDescriptor.Parse(strid);
+            Assert.Equal(parse, descriptor);
         }
 
     }

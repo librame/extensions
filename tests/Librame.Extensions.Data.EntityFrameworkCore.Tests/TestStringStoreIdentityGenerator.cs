@@ -11,7 +11,7 @@ namespace Librame.Extensions.Data.Tests
     public class TestStringStoreIdentityGenerator : StringDataStoreIdentityGenerator
     {
         public TestStringStoreIdentityGenerator(IClockService clock,
-            IIdentityGeneratorFactory factory, ILoggerFactory loggerFactory)
+            IIdentificationGeneratorFactory factory, ILoggerFactory loggerFactory)
             : base(clock, factory, loggerFactory)
         {
         }

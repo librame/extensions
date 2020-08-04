@@ -12,6 +12,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,7 +27,6 @@ namespace Librame.Extensions.Data.Accessors
     using Core.Services;
     using Data.Aspects;
     using Data.Builders;
-    using Data.Mappers;
     using Data.Resources;
     using Data.Services;
     using Data.Stores;
@@ -42,27 +42,27 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         /// <param name="options">给定的 <see cref="DbContextOptions"/>。</param>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         protected DbContextAccessorBase(DbContextOptions options)
             : base(options)
         {
-            var dataBuilderExtension = DataBuilderDbContextOptionsExtension.Extract(options);
+            MemoryCache = options.FindExtension<CoreOptionsExtension>().MemoryCache;
+
+            var dataBuilder = MemoryCache.GetDataBuilder();
+            if (dataBuilder.IsNull())
+                throw new InvalidOperationException($"You need to register to builder.{nameof(AccessorDataBuilderExtensions.AddAccessor)}().");
+
+            Dependency = dataBuilder.Dependency as DataBuilderDependency;
+
             var relationalExtension = RelationalOptionsExtension.Extract(options);
-
-            Dependency = dataBuilderExtension.DataBuilder.Dependency as DataBuilderDependency;
-
-            AccessorTypeParameterMapper = dataBuilderExtension.DataBuilder.AccessorTypeParameterMapper;
-            DatabaseDesignTimeType = dataBuilderExtension.DataBuilder.DatabaseDesignTimeType;
-            ServiceProvider = dataBuilderExtension.ServiceProvider;
-            
-            InitializeAccessorBase(dataBuilderExtension, relationalExtension);
+            InitializeAccessorBase(relationalExtension);
         }
 
 
-        private void InitializeAccessorBase(DataBuilderDbContextOptionsExtension dataBuilderExtension,
-            RelationalOptionsExtension relationalExtension)
+        private void InitializeAccessorBase(RelationalOptionsExtension relationalExtension)
         {
             if (Dependency.Options.DefaultTenant.IsNull())
-                throw new InvalidOperationException($"The data builder options extension '{dataBuilderExtension}' options default tenant is null.");
+                throw new InvalidOperationException($"The data builder dependency '{Dependency}' options default tenant is null.");
 
             // Database.GetDbConnection().ConnectionString 的信息不一定完整（比如密码）
             if (relationalExtension.ConnectionString.IsEmpty())
@@ -98,6 +98,11 @@ namespace Librame.Extensions.Data.Accessors
                 CreationValidator.SetCreated(this);
 
                 Dependency.Options.PostDatabaseCreatedAction?.Invoke(this);
+
+                // 初始化迁移
+                if (!IsFromMigrateInvoke)
+                    Migrate();
+
                 return true;
             }
 
@@ -120,6 +125,11 @@ namespace Librame.Extensions.Data.Accessors
                 await CreationValidator.SetCreatedAsync(this, cancellationToken).ConfigureAwait();
 
                 Dependency.Options.PostDatabaseCreatedAction?.Invoke(this);
+
+                // 初始化迁移
+                if (!IsFromMigrateInvoke)
+                    await MigrateAsync(cancellationToken).ConfigureAwait();
+
                 return true;
             }
 
@@ -264,34 +274,24 @@ namespace Librame.Extensions.Data.Accessors
         #region IAccessor
 
         /// <summary>
-        /// 访问器泛型类型映射描述符。
-        /// </summary>
-        public AccessorTypeParameterMapper AccessorTypeParameterMapper { get; }
-
-        /// <summary>
-        /// 数据库设计时类型。
-        /// </summary>
-        public Type DatabaseDesignTimeType { get; }
-
-        /// <summary>
-        /// 服务提供程序。
-        /// </summary>
-        public IServiceProvider ServiceProvider { get; }
-
-
-        /// <summary>
         /// 时钟服务。
         /// </summary>
         /// <value>返回 <see cref="IClockService"/>。</value>
         public IClockService Clock
-            => GetService<IClockService>();
+            => this.GetService<IClockService>();
 
         /// <summary>
         /// 数据库创建验证器。
         /// </summary>
         /// <value>返回 <see cref="IDatabaseCreationValidator"/>。</value>
         public IDatabaseCreationValidator CreationValidator
-            => GetService<IDatabaseCreationValidator>();
+            => this.GetService<IDatabaseCreationValidator>();
+
+        /// <summary>
+        /// 内存缓存。
+        /// </summary>
+        /// <value>返回 <see cref="IMemoryCache"/>。</value>
+        public IMemoryCache MemoryCache { get; }
 
 
         /// <summary>
@@ -442,14 +442,14 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回受影响的行数。</returns>
         protected virtual int MigrateCore()
         {
-            var migration = GetService<IMigrationAccessorService>();
+            var migration = this.GetService<IMigrationAccessorService>();
             migration.Migrate(this);
 
             Dependency.Options.PostMigratedAction?.Invoke(this);
 
             if (Dependency.Options.UseInitializer)
             {
-                var initializer = GetService<IStoreInitializer>();
+                var initializer = this.GetService<IStoreInitializer>();
                 initializer.Initialize(this);
 
                 ContainsInitializationData = true;
@@ -470,14 +470,14 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回一个包含受影响的行数的异步操作。</returns>
         protected virtual async Task<int> MigrateCoreAsync(CancellationToken cancellationToken = default)
         {
-            var migration = GetService<IMigrationAccessorService>();
+            var migration = this.GetService<IMigrationAccessorService>();
             await migration.MigrateAsync(this, cancellationToken).ConfigureAwait();
 
             Dependency.Options.PostMigratedAction?.Invoke(this);
 
             if (Dependency.Options.UseInitializer)
             {
-                var initializer = GetService<IStoreInitializer>();
+                var initializer = this.GetService<IStoreInitializer>();
                 await initializer.InitializeAsync(this, cancellationToken).ConfigureAwait();
 
                 ContainsInitializationData = true;
@@ -499,7 +499,7 @@ namespace Librame.Extensions.Data.Accessors
         protected virtual int MigrateSynchronization()
         {
             // 可能存在结构迁移
-            var migration = GetService<IMigrationAccessorService>();
+            var migration = this.GetService<IMigrationAccessorService>();
             migration.Migrate(this);
 
             //Dependency.Options.PostMigratedAction?.Invoke(this);
@@ -515,7 +515,7 @@ namespace Librame.Extensions.Data.Accessors
         protected virtual async Task<int> MigrateSynchronizationAsync(CancellationToken cancellationToken = default)
         {
             // 可能存在结构迁移
-            var migration = GetService<IMigrationAccessorService>();
+            var migration = this.GetService<IMigrationAccessorService>();
             await migration.MigrateAsync(this, cancellationToken).ConfigureAwait();
 
             //Dependency.Options.PostMigratedAction?.Invoke(this);
@@ -613,7 +613,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回受影响的行数。</returns>
         protected virtual int SaveChangesCore(bool acceptAllChangesOnSuccess)
         {
-            var aspects = GetService<IServicesManager<ISaveChangesAccessorAspect>>();
+            var aspects = this.GetService<IServicesManager<ISaveChangesAccessorAspect>>();
             aspects.ForEach(aspect =>
             {
                 if (aspect.Enabled)
@@ -643,7 +643,7 @@ namespace Librame.Extensions.Data.Accessors
         protected virtual async Task<int> SaveChangesCoreAsync(bool acceptAllChangesOnSuccess,
             CancellationToken cancellationToken = default)
         {
-            var aspects = GetService<IServicesManager<ISaveChangesAccessorAspect>>();
+            var aspects = this.GetService<IServicesManager<ISaveChangesAccessorAspect>>();
             aspects.ForEach(async aspect =>
             {
                 if (aspect.Enabled)
@@ -792,7 +792,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回是否已切换的布尔值。</returns>
         public virtual bool TrySwitchTenant()
         {
-            var tenantService = GetService<IMultiTenancyAccessorService>();
+            var tenantService = this.GetService<IMultiTenancyAccessorService>();
 
             var tenant = tenantService.GetCurrentTenant(this);
 
@@ -806,7 +806,7 @@ namespace Librame.Extensions.Data.Accessors
         /// <returns>返回一个包含是否已切换的布尔值的异步操作。</returns>
         public virtual async Task<bool> TrySwitchTenantAsync(CancellationToken cancellationToken = default)
         {
-            var tenantService = GetService<IMultiTenancyAccessorService>();
+            var tenantService = this.GetService<IMultiTenancyAccessorService>();
 
             var tenant = await tenantService.GetCurrentTenantAsync(this, cancellationToken)
                 .ConfigureAwait();
@@ -933,29 +933,13 @@ namespace Librame.Extensions.Data.Accessors
         /// 日志工厂。
         /// </summary>
         public ILoggerFactory LoggerFactory
-            => GetService<ILoggerFactory>();
+            => this.GetService<ILoggerFactory>();
 
         /// <summary>
         /// 日志。
         /// </summary>
         protected ILogger Logger
             => LoggerFactory.CreateLogger(GetType());
-
-
-        /// <summary>
-        /// 获取服务。
-        /// </summary>
-        /// <typeparam name="TService">指定的服务类型。</typeparam>
-        /// <param name="isRequired">是必需的服务（可选；默认必需，不存在将抛出异常）。</param>
-        /// <returns>返回 <typeparamref name="TService"/>。</returns>
-        public virtual TService GetService<TService>(bool isRequired = true)
-        {
-            if (isRequired)
-                return ServiceProvider.GetRequiredService<TService>();
-
-            return ServiceProvider.GetService<TService>();
-            //return AccessorExtensions.GetService<TService>(this); // 新版本可能会造成访问冲突
-        }
 
         #endregion
 

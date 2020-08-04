@@ -61,7 +61,7 @@ namespace Librame.Extensions
         /// <returns>返回长整数。</returns>
         public static long ToUnixTicks(this DateTime dateTime)
         {
-            var unixEpoch = CompatibilityExtensions.CompatibleUnixEpoch();
+            var unixEpoch = ExtensionSettings.Preference.UnixEpoch;
 
             return (long)TimeSpan.FromTicks(dateTime.Ticks - unixEpoch.Ticks)
                 .TotalMilliseconds - GetUtcOffset();
@@ -78,7 +78,7 @@ namespace Librame.Extensions
         /// <returns>返回长整数。</returns>
         public static long ToUnixTicks(this DateTimeOffset dateTimeOffset)
         {
-            var unixEpochOffset = CompatibilityExtensions.CompatibleUnixEpochOffset();
+            var unixEpochOffset = ExtensionSettings.Preference.UnixEpochOffset;
 
             return (long)TimeSpan.FromTicks(dateTimeOffset.Ticks - unixEpochOffset.Ticks)
                 .TotalMilliseconds - GetUtcOffset();

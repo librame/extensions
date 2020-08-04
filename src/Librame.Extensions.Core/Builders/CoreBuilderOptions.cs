@@ -47,9 +47,9 @@ namespace Librame.Extensions.Core.Builders
         /// </summary>
         public CoreBuilderOptions()
         {
-            Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLServer;
-            Identifier.LongIdentifierGenerator = SnowflakeIdentityGenerator.Default;
-            Identifier.StringIdentifierGenerator = StringIdentityGenerator.Default;
+            Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.SQLServer;
+            Identifier.LongIdentificationGenerator = SnowflakeIdentificationGenerator.Default;
+            Identifier.StringIdentificationGenerator = MonggoIdentificationGenerator.Default;
         }
 
     }

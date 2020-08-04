@@ -28,10 +28,10 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个 <see cref="LongDataStoreIdentityGenerator"/>。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="factory">给定的 <see cref="IIdentityGeneratorFactory"/>。</param>
+        /// <param name="factory">给定的 <see cref="IIdentificationGeneratorFactory"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         public LongDataStoreIdentityGenerator(IClockService clock,
-            IIdentityGeneratorFactory factory, ILoggerFactory loggerFactory)
+            IIdentificationGeneratorFactory factory, ILoggerFactory loggerFactory)
             : base(clock, factory, loggerFactory)
         {
         }

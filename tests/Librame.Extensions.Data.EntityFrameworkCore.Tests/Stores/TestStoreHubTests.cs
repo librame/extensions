@@ -11,7 +11,6 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    using Extensions.Core;
     using Extensions.Core.Identifiers;
     using Extensions.Core.Services;
     using Extensions.Data.Builders;
@@ -23,14 +22,12 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void MySqlTest()
         {
-            // Initialize Database Test: 6s
-            // Default Sharding Test: 5s
             var services = new ServiceCollection();
 
             services
                 .AddLibrame(dependency =>
                 {
-                    dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.MySQL;
+                    dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.MySQL;
                 })
                 .AddData(dependency =>
                 {
@@ -63,8 +60,6 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void SqlServerTest()
         {
-            // Initialize Database Test: 27s
-            // Default Sharding Test: 5s
             var services = new ServiceCollection();
 
             services
@@ -104,14 +99,12 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void SqliteTest()
         {
-            // Initialize Database Test: 5s
-            // Default Sharding Test: 5s
             var services = new ServiceCollection();
 
             services
                 .AddLibrame(dependency =>
                 {
-                    dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLite;
+                    dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.SQLite;
                 })
                 .AddData(dependency =>
                 {

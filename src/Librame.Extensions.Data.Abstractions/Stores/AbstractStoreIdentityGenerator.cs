@@ -29,10 +29,10 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个 <see cref="AbstractStoreIdentityGenerator"/>。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <param name="factory">给定的 <see cref="IIdentityGeneratorFactory"/>。</param>
+        /// <param name="factory">给定的 <see cref="IIdentificationGeneratorFactory"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected AbstractStoreIdentityGenerator(IClockService clock,
-            IIdentityGeneratorFactory factory, ILoggerFactory loggerFactory)
+            IIdentificationGeneratorFactory factory, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             Clock = clock.NotNull(nameof(clock));
@@ -49,8 +49,8 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 标识生成器工厂。
         /// </summary>
-        /// <value>返回 <see cref="IIdentityGeneratorFactory"/>。</value>
-        public IIdentityGeneratorFactory Factory { get; }
+        /// <value>返回 <see cref="IIdentificationGeneratorFactory"/>。</value>
+        public IIdentificationGeneratorFactory Factory { get; }
 
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace Librame.Extensions.Data.Stores
         public virtual TId GenerateId<TId>(string idName)
             where TId : IEquatable<TId>
         {
-            var generator = Factory.GetGenerator<TId>();
+            var generator = Factory.GetIdGenerator<TId>();
 
             var id = generator.GenerateId(Clock);
             Logger.LogTrace($"Generate {generator.IdType.Name} {idName}: {id}.");
@@ -79,7 +79,7 @@ namespace Librame.Extensions.Data.Stores
             CancellationToken cancellationToken = default)
             where TId : IEquatable<TId>
         {
-            var generator = Factory.GetGenerator<TId>();
+            var generator = Factory.GetIdGenerator<TId>();
 
             var id = await generator.GenerateIdAsync(Clock, cancellationToken).ConfigureAwait();
             Logger.LogTrace($"Generate {generator.IdType.Name} {idName}: {id}.");

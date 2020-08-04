@@ -20,12 +20,12 @@ namespace Librame.Extensions.Core.Identifiers
     using Services;
 
     /// <summary>
-    /// 雪花标识生成器。
+    /// 雪花标识生成器（可生成长度 18 位的长整数标识）。
     /// </summary>
     /// <remarks>
     /// 参考：https://www.cnblogs.com/zhaoshujie/p/12010052.html
     /// </remarks>
-    public class SnowflakeIdentityGenerator : AbstractIdentityGenerator<long>
+    public class SnowflakeIdentificationGenerator : AbstractIdentificationGenerator<long>
     {
         // 唯一时间，这是一个避免重复的随机量，自行设定不要大于当前时间戳
         private const long _twepoch = 687888001020L;
@@ -57,11 +57,11 @@ namespace Librame.Extensions.Core.Identifiers
 
 
         /// <summary>
-        /// 构造一个 <see cref="SnowflakeIdentityGenerator"/>。
+        /// 构造一个 <see cref="SnowflakeIdentificationGenerator"/>。
         /// </summary>
         /// <param name="machineId">给定的机器标识。</param>
         /// <param name="dataCenterId">给定的数据中心标识。</param>
-        public SnowflakeIdentityGenerator(long machineId, long dataCenterId)
+        public SnowflakeIdentificationGenerator(long machineId, long dataCenterId)
         {
             if (machineId >= 0)
                 _machineId = machineId.NotGreater(_maxMachineId, nameof(machineId));
@@ -210,9 +210,9 @@ namespace Librame.Extensions.Core.Identifiers
 
 
         /// <summary>
-        /// 设备与数据中心为 0 的默认雪花标识符生成器。
+        /// 设备与数据中心为 0 的默认雪花标识生成器。
         /// </summary>
-        public static readonly SnowflakeIdentityGenerator Default
-            = new SnowflakeIdentityGenerator(0, 0);
+        public static readonly SnowflakeIdentificationGenerator Default
+            = new SnowflakeIdentificationGenerator(0, 0);
     }
 }

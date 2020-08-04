@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -44,14 +45,19 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
-        /// 访问器泛型类型映射描述符。
+        /// 内存缓存。
+        /// </summary>
+        public IMemoryCache MemoryCache { get; private set; }
+
+        /// <summary>
+        /// 访问器类型参数映射器。
         /// </summary>
         public AccessorTypeParameterMapper AccessorTypeParameterMapper { get; private set; }
 
         /// <summary>
         /// 数据库设计时类型。
         /// </summary>
-        public Type DatabaseDesignTimeType { get; internal set; }
+        public Type DatabaseDesignTimeType { get; private set; }
 
 
         private void AddInternalServices()
@@ -86,9 +92,9 @@ namespace Librame.Extensions.Data.Builders
         /// <param name="serviceType">给定的服务类型（支持非泛型）。</param>
         /// <param name="implementationTypeDefinition">给定的实现类型定义。</param>
         /// <param name="populateServiceFactory">给定的填充服务类型工厂方法（可选；当服务类型为泛型类型定义时，此参数必填）。</param>
-        /// <param name="populateImplementationFactory">给定的填充实现类型工厂方法（可选；默认使用 <see cref="AccessorTypeParameterMapper"/> 填充实现类型定义）。</param>
+        /// <param name="populateImplementationFactory">给定的填充实现类型工厂方法（可选；默认使用 <see cref="Mappers.AccessorTypeParameterMapper"/> 填充实现类型定义）。</param>
         /// <param name="addEnumerable">添加为可枚举集合（可选；默认不是可枚举集合）。</param>
-        /// <param name="accessorTypeParameterMapper">给定的 <see cref="Mappers.AccessorTypeParameterMapper"/>（可选；默认使用 <see cref="AccessorTypeParameterMapper"/>）。</param>
+        /// <param name="accessorTypeParameterMapper">给定的 <see cref="Mappers.AccessorTypeParameterMapper"/>（可选；默认使用 <see cref="Mappers.AccessorTypeParameterMapper"/>）。</param>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
         public virtual IDataBuilder AddGenericServiceByPopulateAccessorTypeParameters(Type serviceType,
@@ -128,7 +134,7 @@ namespace Librame.Extensions.Data.Builders
 
                 accessorTypeParameterMapper = accessorTypeParameterMapper ?? AccessorTypeParameterMapper;
                 if (accessorTypeParameterMapper.IsNull())
-                    throw new InvalidOperationException($"The {nameof(AccessorTypeParameterMapper)} is null. You should use the {nameof(AccessorDataBuilderExtensions.AddAccessor)}().");
+                    throw new InvalidOperationException($"The {nameof(Mappers.AccessorTypeParameterMapper)} is null. You should use the {nameof(AccessorDataBuilderExtensions.AddAccessor)}().");
 
                 return populateTypeDefinitionFactory.Invoke(populateTypeDefinition, accessorTypeParameterMapper);
             }

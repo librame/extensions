@@ -232,6 +232,17 @@ namespace Librame.Extensions
         DateTimeOffset BaseDateTimeOffset { get; }
 
         /// <summary>
+        /// 定义 Unix 时间等于 0 的时间点。
+        /// </summary>
+        DateTime UnixEpoch { get; }
+
+        /// <summary>
+        /// 定义 Unix 时间等于 0 的时间点。
+        /// </summary>
+        DateTimeOffset UnixEpochOffset { get; }
+
+
+        /// <summary>
         /// 中国农历（阴阳合历）。
         /// </summary>
         ChineseLunisolarCalendar ChineseCalendar { get; }

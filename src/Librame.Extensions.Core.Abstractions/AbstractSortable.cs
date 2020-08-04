@@ -72,7 +72,12 @@ namespace Librame.Extensions.Core
         /// <param name="right">给定的 <see cref="AbstractSortable"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator ==(AbstractSortable left, AbstractSortable right)
-            => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.Equals(right);
+        {
+            if (left is null)
+                return right is null;
+
+            return left.Equals(right);
+        }
 
         /// <summary>
         /// 不等比较。
@@ -90,7 +95,7 @@ namespace Librame.Extensions.Core
         /// <param name="right">给定的 <see cref="AbstractSortable"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator <(AbstractSortable left, AbstractSortable right)
-            => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+            => left is null ? right is AbstractSortable : left.CompareTo(right) < 0;
 
         /// <summary>
         /// 小于等于比较。
@@ -99,7 +104,7 @@ namespace Librame.Extensions.Core
         /// <param name="right">给定的 <see cref="AbstractSortable"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator <=(AbstractSortable left, AbstractSortable right)
-            => ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+            => left is null || left.CompareTo(right) <= 0;
 
         /// <summary>
         /// 大于比较。
@@ -108,7 +113,7 @@ namespace Librame.Extensions.Core
         /// <param name="right">给定的 <see cref="AbstractSortable"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator >(AbstractSortable left, AbstractSortable right)
-            => !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+            => left is AbstractSortable && left.CompareTo(right) > 0;
 
         /// <summary>
         /// 大于等于比较。
@@ -117,6 +122,6 @@ namespace Librame.Extensions.Core
         /// <param name="right">给定的 <see cref="AbstractSortable"/>。</param>
         /// <returns>返回布尔值。</returns>
         public static bool operator >=(AbstractSortable left, AbstractSortable right)
-            => ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+            => left is null ? right is null : left.CompareTo(right) >= 0;
     }
 }

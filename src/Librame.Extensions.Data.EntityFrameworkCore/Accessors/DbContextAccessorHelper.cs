@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;

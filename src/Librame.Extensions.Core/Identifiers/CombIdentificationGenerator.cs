@@ -26,22 +26,22 @@ namespace Librame.Extensions.Core.Identifiers
     /// <remarks>
     /// 参考：https://mp.weixin.qq.com/s/C6xk42s-4SwyszJPTM0G6A。
     /// </remarks>
-    public class CombIdentityGenerator : AbstractIdentityGenerator<Guid>
+    public class CombIdentificationGenerator : AbstractIdentificationGenerator<Guid>
     {
         /// <summary>
-        /// 构造一个 <see cref="CombIdentityGenerator"/>。
+        /// 构造一个 <see cref="CombIdentificationGenerator"/>。
         /// </summary>
-        /// <param name="identityMode">给定的 <see cref="CombIdentityMode"/>。</param>
-        public CombIdentityGenerator(CombIdentityMode identityMode)
+        /// <param name="generation">给定的 <see cref="CombIdentificationGeneration"/>。</param>
+        public CombIdentificationGenerator(CombIdentificationGeneration generation)
         {
-            IdentityMode = identityMode;
+            Generation = generation;
         }
 
 
         /// <summary>
-        /// COMB 标识方式。
+        /// COMB 标识生成。
         /// </summary>
-        public CombIdentityMode IdentityMode { get; }
+        public CombIdentificationGeneration Generation { get; }
 
 
         /// <summary>
@@ -89,23 +89,23 @@ namespace Librame.Extensions.Core.Identifiers
                 var randomBytes = RandomUtility.GenerateByteArray(10);
                 var guidBytes = new byte[16];
 
-                switch (IdentityMode)
+                switch (Generation)
                 {
-                    case CombIdentityMode.AsString:
-                    case CombIdentityMode.AsBinary:
+                    case CombIdentificationGeneration.AsString:
+                    case CombIdentificationGeneration.AsBinary:
                         Buffer.BlockCopy(timestampBytes, 2, guidBytes, 0, 6);
                         Buffer.BlockCopy(randomBytes, 0, guidBytes, 6, 10);
 
                         // If formatting as a string, we have to reverse the order
                         // of the Data1 and Data2 blocks on little-endian systems.
-                        if (IdentityMode == CombIdentityMode.AsString && BitConverter.IsLittleEndian)
+                        if (Generation == CombIdentificationGeneration.AsString && BitConverter.IsLittleEndian)
                         {
                             Array.Reverse(guidBytes, 0, 4);
                             Array.Reverse(guidBytes, 4, 2);
                         }
                         break;
 
-                    case CombIdentityMode.AtEnd:
+                    case CombIdentificationGeneration.AtEnd:
                         Buffer.BlockCopy(randomBytes, 0, guidBytes, 0, 10);
                         Buffer.BlockCopy(timestampBytes, 2, guidBytes, 10, 6);
                         break;
@@ -155,27 +155,27 @@ namespace Librame.Extensions.Core.Identifiers
 
 
         /// <summary>
-        /// 支持 MySQL 排序类型的生成器（char(36)）。
+        /// 支持 MySQL 排序类型的 COMB 标识生成器（char(36)）。
         /// </summary>
-        public static readonly CombIdentityGenerator MySQL
-            = new CombIdentityGenerator(CombIdentityMode.AsString);
+        public static readonly CombIdentificationGenerator MySQL
+            = new CombIdentificationGenerator(CombIdentificationGeneration.AsString);
 
         /// <summary>
-        /// 支持 Oracle 排序类型的生成器（raw(16)）。
+        /// 支持 Oracle 排序类型的 COMB 标识生成器（raw(16)）。
         /// </summary>
-        public static readonly CombIdentityGenerator Oracle
-            = new CombIdentityGenerator(CombIdentityMode.AsBinary);
+        public static readonly CombIdentificationGenerator Oracle
+            = new CombIdentificationGenerator(CombIdentificationGeneration.AsBinary);
 
         /// <summary>
-        /// 支持 SQLite 排序类型的生成器（text）。
+        /// 支持 SQLite 排序类型的 COMB 标识生成器（text）。
         /// </summary>
-        public static readonly CombIdentityGenerator SQLite
-            = new CombIdentityGenerator(CombIdentityMode.AsString);
+        public static readonly CombIdentificationGenerator SQLite
+            = new CombIdentificationGenerator(CombIdentificationGeneration.AsString);
 
         /// <summary>
-        /// 支持 SQL Server 排序类型的生成器（uniqueidentifier）。
+        /// 支持 SQL Server 排序类型的 COMB 标识生成器（uniqueidentifier）。
         /// </summary>
-        public static readonly CombIdentityGenerator SQLServer
-            = new CombIdentityGenerator(CombIdentityMode.AtEnd);
+        public static readonly CombIdentificationGenerator SQLServer
+            = new CombIdentificationGenerator(CombIdentificationGeneration.AtEnd);
     }
 }

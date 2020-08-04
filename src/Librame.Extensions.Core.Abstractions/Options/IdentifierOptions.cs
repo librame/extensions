@@ -22,18 +22,18 @@ namespace Librame.Extensions.Core.Options
     public class IdentifierOptions
     {
         /// <summary>
-        /// GUID 型标识符生成器。
+        /// GUID 型标识生成器。
         /// </summary>
-        public IIdentityGenerator<Guid> GuidIdentifierGenerator { get; set; }
+        public IIdentificationGenerator<Guid> GuidIdentificationGenerator { get; set; }
 
         /// <summary>
-        /// 长整型标识符生成器。
+        /// 长整型标识生成器。
         /// </summary>
-        public IIdentityGenerator<long> LongIdentifierGenerator { get; set; }
+        public IIdentificationGenerator<long> LongIdentificationGenerator { get; set; }
 
         /// <summary>
-        /// 字符串标识符生成器。
+        /// 字符串标识生成器。
         /// </summary>
-        public IIdentityGenerator<string> StringIdentifierGenerator { get; set; }
+        public IIdentificationGenerator<string> StringIdentificationGenerator { get; set; }
     }
 }

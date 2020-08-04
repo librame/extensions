@@ -12,7 +12,7 @@ namespace Librame.Extensions.Data.Tests
     public class TestGuidStoreIdentityGenerator : GuidDataStoreIdentityGenerator
     {
         public TestGuidStoreIdentityGenerator(IClockService clock,
-            IIdentityGeneratorFactory factory, ILoggerFactory loggerFactory)
+            IIdentificationGeneratorFactory factory, ILoggerFactory loggerFactory)
             : base(clock, factory, loggerFactory)
         {
         }

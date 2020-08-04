@@ -10,6 +10,7 @@
 
 #endregion
 
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -18,31 +19,13 @@ using System.Threading.Tasks;
 namespace Librame.Extensions.Data.Accessors
 {
     using Core.Services;
-    using Data.Mappers;
-    using Data.Services;
     using Data.Validators;
 
     /// <summary>
     /// 访问器接口。
     /// </summary>
-    public interface IAccessor : ISaveChanges, IMultiTenancy, IMigration, IInfrastructureService, IDisposable
+    public interface IAccessor : IDisposable, IMigration, IMultiTenancy, ISaveChanges, IService
     {
-        /// <summary>
-        /// 访问器泛型类型映射描述符。
-        /// </summary>
-        AccessorTypeParameterMapper AccessorTypeParameterMapper { get; }
-
-        /// <summary>
-        /// 数据库设计时类型。
-        /// </summary>
-        Type DatabaseDesignTimeType { get; }
-
-        /// <summary>
-        /// 服务提供程序。
-        /// </summary>
-        IServiceProvider ServiceProvider { get; }
-
-
         /// <summary>
         /// 时钟服务。
         /// </summary>
@@ -54,6 +37,12 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         /// <value>返回 <see cref="IDatabaseCreationValidator"/>。</value>
         IDatabaseCreationValidator CreationValidator { get; }
+
+        /// <summary>
+        /// 内存缓存。
+        /// </summary>
+        /// <value>返回 <see cref="IMemoryCache"/>。</value>
+        IMemoryCache MemoryCache { get; }
 
 
         /// <summary>

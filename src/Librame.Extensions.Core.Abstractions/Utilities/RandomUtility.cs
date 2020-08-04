@@ -23,12 +23,12 @@ namespace Librame.Extensions.Core.Utilities
     /// </summary>
     public static class RandomUtility
     {
-        private static int _seed
+        private static int _location
             = Environment.TickCount;
 
         // 支持多线程，各线程维持独立的随机实例
         private static readonly ThreadLocal<Random> _random
-            = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref _seed)));
+            = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref _location)));
 
         // 支持多线程，各线程维持独立的随机数生成器实例
         private static readonly ThreadLocal<RandomNumberGenerator> _generator

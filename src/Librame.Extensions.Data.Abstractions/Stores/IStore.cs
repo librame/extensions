@@ -12,13 +12,13 @@
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Accessors;
-    using Services;
+    using Core.Services;
+    using Data.Accessors;
 
     /// <summary>
     /// 存储接口。
     /// </summary>
-    public interface IStore : IInfrastructureService
+    public interface IStore : IService
     {
         /// <summary>
         /// 访问器。

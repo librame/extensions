@@ -25,6 +25,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.EntityFrameworkCore.Update.Internal;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -67,34 +68,16 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.NotNull(nameof(builder));
             setupAction.NotNull(nameof(setupAction));
 
-            var typeParameterMapper = AccessorTypeParameterMappingHelper.ParseMapper(typeof(TImplementation));
-            if (typeParameterMapper.IsNotNull())
-                builder.SetProperty(p => p.AccessorTypeParameterMapper, typeParameterMapper);
+            var mapper = AccessorTypeParameterMappingHelper.ParseMapper(typeof(TImplementation));
+            builder.SetProperty(p => p.AccessorTypeParameterMapper, mapper);
 
             if (poolSize > 0)
             {
-                builder.Services.AddDbContextPool<TAccessor, TImplementation>((sp, optionsBuilder) =>
-                {
-                    optionsBuilder.ReplaceServices();
-
-                    optionsBuilder.UseDataBuilder(builder, sp);
-
-                    setupAction.Invoke((builder.Dependency as DataBuilderDependency).Options.DefaultTenant,
-                        optionsBuilder);
-                },
-                poolSize);
+                builder.Services.AddDbContextPool<TAccessor, TImplementation>(ConfigureOptionsBuilder, poolSize);
             }
             else
             {
-                builder.Services.AddDbContext<TAccessor, TImplementation>((sp, optionsBuilder) =>
-                {
-                    optionsBuilder.ReplaceServices();
-
-                    optionsBuilder.UseDataBuilder(builder, sp);
-
-                    setupAction.Invoke((builder.Dependency as DataBuilderDependency).Options.DefaultTenant,
-                        optionsBuilder);
-                });
+                builder.Services.AddDbContext<TAccessor, TImplementation>(ConfigureOptionsBuilder);
             }
 
             builder.Services.TryAddScoped(sp => (TImplementation)sp.GetRequiredService<TAccessor>());
@@ -102,6 +85,25 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder
                 .AddInternalAccessorServices()
                 .AddDesignTimeServices<TImplementation>();
+
+            // ConfigureOptionsBuilder
+            void ConfigureOptionsBuilder(IServiceProvider applicationServiceProvider,
+                DbContextOptionsBuilder optionsBuilder)
+            {
+                optionsBuilder.ReplaceServices();
+
+                if (builder.MemoryCache.IsNull())
+                {
+                    var memoryCache = applicationServiceProvider.GetRequiredService<IMemoryCache>();
+                    memoryCache.SetDataBuilder(builder);
+
+                    builder.SetProperty(p => p.MemoryCache, memoryCache);
+                    optionsBuilder.UseMemoryCache(memoryCache);
+                }
+
+                setupAction.Invoke((builder.Dependency as DataBuilderDependency).Options.DefaultTenant,
+                    optionsBuilder);
+            }
         }
 
 

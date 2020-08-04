@@ -424,6 +424,37 @@ namespace Librame.Extensions
             => new DateTimeOffset(BaseDateTime);
 
         /// <summary>
+        /// 定义 Unix 时间等于 0 的时间点。
+        /// </summary>
+        public virtual DateTime UnixEpoch
+        {
+            get
+            {
+#if !NET48
+                return DateTime.UnixEpoch;
+#else
+                return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+#endif
+            }
+        }
+
+        /// <summary>
+        /// 定义 Unix 时间等于 0 的时间点。
+        /// </summary>
+        public virtual DateTimeOffset UnixEpochOffset
+        {
+            get
+            {
+#if !NET48
+                return DateTimeOffset.UnixEpoch;
+#else
+                return new DateTimeOffset(UnixEpoch, TimeZoneInfo.Utc.GetUtcOffset(UnixEpoch));
+#endif
+            }
+        }
+
+
+        /// <summary>
         /// 中国农历（阴阳合历）。
         /// </summary>
         public virtual ChineseLunisolarCalendar ChineseCalendar { get; }

@@ -39,7 +39,7 @@ namespace Librame.Extensions.Examples
 
         static void RunMySql()
         {
-            var builder = CreateBuilder(options => options.GuidIdentifierGenerator = CombIdentityGenerator.MySQL)
+            var builder = CreateBuilder(options => options.GuidIdentificationGenerator = CombIdentificationGenerator.MySQL)
                 .AddData(dependency =>
                 {
                     // for MySQL
@@ -90,7 +90,7 @@ namespace Librame.Extensions.Examples
 
         static void RunSqlite()
         {
-            var builder = CreateBuilder(options => options.GuidIdentifierGenerator = CombIdentityGenerator.SQLite)
+            var builder = CreateBuilder(options => options.GuidIdentificationGenerator = CombIdentificationGenerator.SQLite)
                 .AddData(dependency =>
                 {
                     // for SQLite

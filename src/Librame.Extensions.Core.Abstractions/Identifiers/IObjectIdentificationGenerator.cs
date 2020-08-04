@@ -10,6 +10,7 @@
 
 #endregion
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,25 +19,30 @@ namespace Librame.Extensions.Core.Identifiers
     using Services;
 
     /// <summary>
-    /// 标识生成器接口。
+    /// 对象标识生成器接口。
     /// </summary>
-    /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public interface IIdentityGenerator<TId> : IObjectIdentityGenerator
+    public interface IObjectIdentificationGenerator
     {
         /// <summary>
-        /// 生成标识。
+        /// 标识类型。
         /// </summary>
-        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
-        /// <returns>返回 <typeparamref name="TId"/>。</returns>
-        TId GenerateId(IClockService clock);
+        Type IdType { get; }
+
 
         /// <summary>
-        /// 异步生成标识。
+        /// 生成对象标识。
+        /// </summary>
+        /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
+        /// <returns>返回标识符对象。</returns>
+        object GenerateObjectId(IClockService clock);
+
+        /// <summary>
+        /// 异步生成对象标识。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
-        Task<TId> GenerateIdAsync(IClockService clock,
+        /// <returns>返回一个包含标识符对象的异步操作。</returns>
+        Task<object> GenerateObjectIdAsync(IClockService clock,
             CancellationToken cancellationToken = default);
     }
 }

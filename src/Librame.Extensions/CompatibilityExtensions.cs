@@ -279,33 +279,5 @@ namespace Librame.Extensions
 #endif
         }
 
-
-        /// <summary>
-        /// 定义 Unix 时间等于 0 的时间点。
-        /// </summary>
-        /// <returns>返回 <see cref="DateTime"/>。</returns>
-        public static DateTime CompatibleUnixEpoch()
-        {
-#if !NET48
-            return DateTime.UnixEpoch;
-#else
-            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-#endif
-        }
-
-        /// <summary>
-        /// 定义 Unix 时间等于 0 的时间点。
-        /// </summary>
-        /// <returns>返回 <see cref="DateTimeOffset"/>。</returns>
-        public static DateTimeOffset CompatibleUnixEpochOffset()
-        {
-#if !NET48
-            return DateTimeOffset.UnixEpoch;
-#else
-            var dateTime = CompatibleUnixEpoch();
-            return new DateTimeOffset(dateTime, TimeZoneInfo.Utc.GetUtcOffset(dateTime));
-#endif
-        }
-
     }
 }
