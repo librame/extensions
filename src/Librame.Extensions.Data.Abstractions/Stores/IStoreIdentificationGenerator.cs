@@ -22,7 +22,7 @@ namespace Librame.Extensions.Data.Stores
     /// <summary>
     /// 存储标识生成器接口。
     /// </summary>
-    public interface IStoreIdentityGenerator : IService
+    public interface IStoreIdentificationGenerator : IService
     {
         /// <summary>
         /// 时钟服务。

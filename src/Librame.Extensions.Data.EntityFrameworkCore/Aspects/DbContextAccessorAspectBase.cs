@@ -47,24 +47,24 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个数据库上下文访问器截面基类。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="priority">给定的优先级（数值越小越优先）。</param>
-        protected DbContextAccessorAspectBase(IStoreIdentityGenerator identifierGenerator,
+        protected DbContextAccessorAspectBase(IStoreIdentificationGenerator generator,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory, float priority)
-            : base(identifierGenerator, options, loggerFactory, priority)
+            : base(generator, options, loggerFactory, priority)
         {
-            DataIdentifierGenerator = identifierGenerator.CastTo<IStoreIdentityGenerator,
-                IDataStoreIdentityGenerator<TGenId>>(nameof(identifierGenerator));
+            DataGenerator = generator.CastTo<IStoreIdentificationGenerator,
+                IDataStoreIdentificationGenerator<TGenId>>(nameof(generator));
         }
 
 
         /// <summary>
         /// 数据存储标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IDataStoreIdentityGenerator{TGenId}"/>。</value>
-        protected IDataStoreIdentityGenerator<TGenId> DataIdentifierGenerator { get; }
+        /// <value>返回 <see cref="IDataStoreIdentificationGenerator{TGenId}"/>。</value>
+        protected IDataStoreIdentificationGenerator<TGenId> DataGenerator { get; }
 
 
         #region PreProcess

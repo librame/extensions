@@ -35,12 +35,12 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个 <see cref="AbstractAccessorAspect{TBuilderOptions}"/>。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{TBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         /// <param name="priority">给定的优先级（数值越小越优先）。</param>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        protected AbstractAccessorAspect(IStoreIdentityGenerator identifierGenerator,
+        protected AbstractAccessorAspect(IStoreIdentificationGenerator identifierGenerator,
             IOptions<TBuilderOptions> options, ILoggerFactory loggerFactory, float priority)
             : base(options, loggerFactory)
         {
@@ -54,8 +54,8 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 存储标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentityGenerator"/>。</value>
-        public IStoreIdentityGenerator IdentifierGenerator { get; }
+        /// <value>返回 <see cref="IStoreIdentificationGenerator"/>。</value>
+        public IStoreIdentificationGenerator IdentifierGenerator { get; }
 
         /// <summary>
         /// 时钟。

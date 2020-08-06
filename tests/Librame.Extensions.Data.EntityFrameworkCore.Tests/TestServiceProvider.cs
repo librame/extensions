@@ -14,10 +14,10 @@ namespace Librame.Extensions.Data.Tests
                 // 此处不配置 EntityFrameworkCore，EFCore 由 TestStoreHubTests 单独配置
                 services.AddLibrame()
                     .AddData(depend => depend.SupportsEntityFrameworkDesignTimeServices = false)
-                    .AddStoreIdentifierGenerator<TestGuidStoreIdentityGenerator>();
+                    .AddStoreIdentifierGenerator<TestGuidStoreIdentificationGenerator>();
 
-                services.AddSingleton<TestLongStoreIdentityGenerator>();
-                services.AddSingleton<TestStringStoreIdentityGenerator>();
+                services.AddSingleton<TestLongStoreIdentificationGenerator>();
+                services.AddSingleton<TestStringStoreIdentificationGenerator>();
 
                 return services.BuildServiceProvider();
             });

@@ -21,9 +21,9 @@ namespace Librame.Extensions.Data.Tests
         private IList<Article<Guid, int, Guid>> _articles = null;
 
 
-        public TestStoreInitializer(IStoreIdentityGenerator identityGenerator,
-            IDataInitializationValidator validator, ILoggerFactory loggerFactory)
-            : base(identityGenerator, validator, loggerFactory)
+        public TestStoreInitializer(IDataInitializationValidator validator,
+            IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
+            : base(validator, generator, loggerFactory)
         {
         }
 
@@ -121,7 +121,7 @@ namespace Librame.Extensions.Data.Tests
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var generator = IdentityGenerator as TestGuidStoreIdentityGenerator;
+                var generator = Generator as TestGuidStoreIdentificationGenerator;
 
                 for (int i = 0; i < 10; i++)
                 {
@@ -159,7 +159,7 @@ namespace Librame.Extensions.Data.Tests
             {
                 _articles = new List<Article<Guid, int, Guid>>();
 
-                var identifier = IdentityGenerator as TestGuidStoreIdentityGenerator;
+                var identifier = Generator as TestGuidStoreIdentificationGenerator;
 
                 for (int i = 0; i < 10; i++)
                 {

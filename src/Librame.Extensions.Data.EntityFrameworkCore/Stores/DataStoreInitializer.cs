@@ -31,12 +31,12 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个数据存储初始化器。
         /// </summary>
-        /// <param name="identityGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected DataStoreInitializer(IStoreIdentityGenerator identityGenerator,
-            IDataInitializationValidator validator, ILoggerFactory loggerFactory)
-            : base(identityGenerator, validator, loggerFactory)
+        protected DataStoreInitializer(IDataInitializationValidator validator,
+            IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
+            : base(validator, generator, loggerFactory)
         {
         }
 
@@ -66,12 +66,12 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个数据存储初始化器。
         /// </summary>
-        /// <param name="identityGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected DataStoreInitializer(IStoreIdentityGenerator identityGenerator,
-            IDataInitializationValidator validator, ILoggerFactory loggerFactory)
-            : base(identityGenerator, validator, loggerFactory)
+        protected DataStoreInitializer(IDataInitializationValidator validator,
+            IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
+            : base(validator, generator, loggerFactory)
         {
         }
 
@@ -106,23 +106,23 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 构造一个数据存储初始化器。
         /// </summary>
-        /// <param name="identityGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected DataStoreInitializer(IStoreIdentityGenerator identityGenerator,
-            IDataInitializationValidator validator, ILoggerFactory loggerFactory)
-            : base(validator, identityGenerator, loggerFactory)
+        protected DataStoreInitializer(IDataInitializationValidator validator,
+            IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
+            : base(validator, generator, loggerFactory)
         {
-            DataIdentityGenerator = identityGenerator.CastTo<IStoreIdentityGenerator,
-                IDataStoreIdentityGenerator<TGenId>>(nameof(identityGenerator));
+            DataGenerator = generator.CastTo<IStoreIdentificationGenerator,
+                IDataStoreIdentificationGenerator<TGenId>>(nameof(generator));
         }
 
 
         /// <summary>
         /// 数据标识生成器。
         /// </summary>
-        /// <value>返回 <see cref="IDataStoreIdentityGenerator{TGenId}"/>。</value>
-        protected IDataStoreIdentityGenerator<TGenId> DataIdentityGenerator { get; }
+        /// <value>返回 <see cref="IDataStoreIdentificationGenerator{TGenId}"/>。</value>
+        protected IDataStoreIdentificationGenerator<TGenId> DataGenerator { get; }
 
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace Librame.Extensions.Data.Stores
                     currentTenant.PopulateCreation(Clock);
 
                     // 设定标识
-                    currentTenant.Id = DataIdentityGenerator.GenerateTenantId();
+                    currentTenant.Id = DataGenerator.GenerateTenantId();
 
                     Logger.LogTrace($"Add default tenant '{currentTenant}' to {Accessor.CurrentConnectionString}.");
 
@@ -209,7 +209,7 @@ namespace Librame.Extensions.Data.Stores
                     await currentTenant.PopulateCreationAsync(Clock).ConfigureAwait();
 
                     // 设定标识
-                    currentTenant.Id = await DataIdentityGenerator.GenerateTenantIdAsync().ConfigureAwait();
+                    currentTenant.Id = await DataGenerator.GenerateTenantIdAsync().ConfigureAwait();
 
                     Logger.LogTrace($"Add default tenant '{currentTenant}' to {Accessor.CurrentConnectionString}.");
 

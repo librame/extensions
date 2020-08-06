@@ -27,8 +27,8 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 标识符生成器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentityGenerator"/>。</value>
-        public IStoreIdentityGenerator IdentifierGenerator { get; }
+        /// <value>返回 <see cref="IStoreIdentificationGenerator"/>。</value>
+        public IStoreIdentificationGenerator IdentifierGenerator { get; }
 
         /// <summary>
         /// 时钟。

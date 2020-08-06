@@ -448,8 +448,8 @@ namespace Librame.Extensions.Data.Services
             dbContextAccessor.MigrationsManager.TryAdd(p => p.ModelHash == hash,
                 () =>
                 {
-                    var identifierGenerator = (IDataStoreIdentityGenerator<TGenId>)dbContextAccessor
-                        .GetService<IStoreIdentityGenerator>();
+                    var identifierGenerator = (IDataStoreIdentificationGenerator<TGenId>)dbContextAccessor
+                        .GetService<IStoreIdentificationGenerator>();
 
                     var migration = ObjectExtensions.EnsureCreate<TMigration>();
 

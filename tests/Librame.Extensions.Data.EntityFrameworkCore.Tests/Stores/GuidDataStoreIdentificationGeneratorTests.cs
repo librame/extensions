@@ -1,29 +1,30 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    public class LongDataStoreIdentityGeneratorTests
+    public class GuidDataStoreIdentificationGeneratorTests
     {
         [Fact]
         public void AllTest()
         {
-            var generator = TestServiceProvider.Current.GetRequiredService<TestLongStoreIdentityGenerator>();
+            var generator = TestServiceProvider.Current.GetRequiredService<TestGuidStoreIdentificationGenerator>();
 
             var id = generator.GenerateAuditId();
-            Assert.NotEqual(0, id);
+            Assert.NotEqual(Guid.Empty, id);
 
             id = generator.GenerateMigrationId();
-            Assert.NotEqual(0, id);
+            Assert.NotEqual(Guid.Empty, id);
 
             id = generator.GenerateTabulationId();
-            Assert.NotEqual(0, id);
+            Assert.NotEqual(Guid.Empty, id);
 
             id = generator.GenerateTenantId();
-            Assert.NotEqual(0, id);
+            Assert.NotEqual(Guid.Empty, id);
 
             id = generator.GenerateArticleId();
-            Assert.NotEqual(0, id);
+            Assert.NotEqual(Guid.Empty, id);
         }
 
     }

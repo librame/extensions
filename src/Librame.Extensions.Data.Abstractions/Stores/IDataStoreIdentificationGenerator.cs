@@ -20,7 +20,7 @@ namespace Librame.Extensions.Data.Stores
     /// 数据存储标识生成器接口。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public interface IDataStoreIdentityGenerator<TId> : IStoreIdentityGenerator
+    public interface IDataStoreIdentificationGenerator<TId> : IStoreIdentificationGenerator
         where TId : IEquatable<TId>
     {
         /// <summary>

@@ -50,7 +50,7 @@ namespace Librame.Extensions.Data.Tests
                 })
                 .AddDatabaseDesignTime<MySqlDesignTimeServices>()
                 .AddStoreHub<TestStoreHub>()
-                .AddStoreIdentifierGenerator<TestGuidStoreIdentityGenerator>()
+                .AddStoreIdentifierGenerator<TestGuidStoreIdentificationGenerator>()
                 .AddStoreInitializer<TestStoreInitializer>();
 
             TestStores(services.BuildServiceProvider());
@@ -89,7 +89,7 @@ namespace Librame.Extensions.Data.Tests
                 })
                 .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
                 .AddStoreHub<TestStoreHub>()
-                .AddStoreIdentifierGenerator<TestGuidStoreIdentityGenerator>()
+                .AddStoreIdentifierGenerator<TestGuidStoreIdentificationGenerator>()
                 .AddStoreInitializer<TestStoreInitializer>();
 
             TestStores(services.BuildServiceProvider());
@@ -124,7 +124,7 @@ namespace Librame.Extensions.Data.Tests
                 })
                 .AddDatabaseDesignTime<SqliteDesignTimeServices>()
                 .AddStoreHub<TestStoreHub>()
-                .AddStoreIdentifierGenerator<TestGuidStoreIdentityGenerator>()
+                .AddStoreIdentifierGenerator<TestGuidStoreIdentificationGenerator>()
                 .AddStoreInitializer<TestStoreInitializer>();
 
             TestStores(services.BuildServiceProvider());
@@ -202,7 +202,7 @@ namespace Librame.Extensions.Data.Tests
             IList<Category<int, Guid>> categories)
         {
             var clock = serviceProvider.GetRequiredService<IClockService>();
-            var identifierGenerator = serviceProvider.GetRequiredService<TestGuidStoreIdentityGenerator>();
+            var identifierGenerator = serviceProvider.GetRequiredService<TestGuidStoreIdentificationGenerator>();
 
             var categoryId = categories.First().Id;
             var shardingArticle = "Sharding Article";

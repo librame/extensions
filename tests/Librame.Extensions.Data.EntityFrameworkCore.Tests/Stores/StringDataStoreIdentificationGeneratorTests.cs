@@ -3,12 +3,12 @@ using Xunit;
 
 namespace Librame.Extensions.Data.Tests
 {
-    public class StringDataStoreIdentityGeneratorTests
+    public class StringDataStoreIdentificationGeneratorTests
     {
         [Fact]
         public void AllTest()
         {
-            var generator = TestServiceProvider.Current.GetRequiredService<TestStringStoreIdentityGenerator>();
+            var generator = TestServiceProvider.Current.GetRequiredService<TestStringStoreIdentificationGenerator>();
 
             var id = generator.GenerateAuditId();
             Assert.NotEmpty(id);

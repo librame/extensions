@@ -20,17 +20,17 @@ namespace Librame.Extensions.Data.Stores
     using Core.Services;
 
     /// <summary>
-    /// <see cref="long"/> 数据存储标识符生成器。
+    /// <see cref="string"/> 数据存储标识符生成器。
     /// </summary>
-    public class LongDataStoreIdentityGenerator : AbstractDataStoreIdentityGenerator<long>
+    public class StringDataStoreIdentificationGenerator : AbstractDataStoreIdentificationGenerator<string>
     {
         /// <summary>
-        /// 构造一个 <see cref="LongDataStoreIdentityGenerator"/>。
+        /// 构造一个 <see cref="StringDataStoreIdentificationGenerator"/>。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="factory">给定的 <see cref="IIdentificationGeneratorFactory"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public LongDataStoreIdentityGenerator(IClockService clock,
+        public StringDataStoreIdentificationGenerator(IClockService clock,
             IIdentificationGeneratorFactory factory, ILoggerFactory loggerFactory)
             : base(clock, factory, loggerFactory)
         {
@@ -41,19 +41,19 @@ namespace Librame.Extensions.Data.Stores
         /// 生成标识。
         /// </summary>
         /// <param name="idName">给定的标识名称。</param>
-        /// <returns>返回 <see cref="long"/>。</returns>
-        public virtual long GenerateId(string idName)
-            => GenerateId<long>(idName);
+        /// <returns>返回 <see cref="string"/>。</returns>
+        public virtual string GenerateId(string idName)
+            => GenerateId<string>(idName);
 
         /// <summary>
         /// 异步生成标识。
         /// </summary>
         /// <param name="idName">给定的标识名称。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
-        /// <returns>返回一个包含 <see cref="long"/> 的异步操作。</returns>
-        public virtual Task<long> GenerateIdAsync(string idName,
+        /// <returns>返回一个包含 <see cref="string"/> 的异步操作。</returns>
+        public virtual Task<string> GenerateIdAsync(string idName,
             CancellationToken cancellationToken = default)
-            => GenerateIdAsync<long>(idName, cancellationToken);
+            => GenerateIdAsync<string>(idName, cancellationToken);
 
     }
 }

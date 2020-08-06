@@ -157,13 +157,13 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 添加存储标识符生成器。
         /// </summary>
-        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentityGenerator"/> 接口的存储标识符类型，推荐使用 <see cref="GuidDataStoreIdentityGenerator"/>。</typeparam>
+        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentificationGenerator"/> 接口的存储标识符类型，推荐使用 <see cref="GuidDataStoreIdentificationGenerator"/>。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         public virtual IDataBuilder AddStoreIdentifierGenerator<TGenerator>()
-            where TGenerator : class, IStoreIdentityGenerator
+            where TGenerator : class, IStoreIdentificationGenerator
         {
-            AddService<IStoreIdentityGenerator, TGenerator>();
-            AddService(sp => (TGenerator)sp.GetService<IStoreIdentityGenerator>());
+            AddService<IStoreIdentificationGenerator, TGenerator>();
+            AddService(sp => (TGenerator)sp.GetService<IStoreIdentificationGenerator>());
             return this;
         }
 

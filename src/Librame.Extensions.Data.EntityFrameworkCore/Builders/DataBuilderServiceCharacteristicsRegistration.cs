@@ -62,7 +62,7 @@ namespace Librame.Extensions.Data.Builders
 
                 // Stores
                 { typeof(IStoreHub), ServiceCharacteristics.Scoped() },
-                { typeof(IStoreIdentityGenerator), ServiceCharacteristics.Singleton() },
+                { typeof(IStoreIdentificationGenerator), ServiceCharacteristics.Singleton() },
                 { typeof(IStoreInitializer), ServiceCharacteristics.Singleton() },
 
                 // Validators

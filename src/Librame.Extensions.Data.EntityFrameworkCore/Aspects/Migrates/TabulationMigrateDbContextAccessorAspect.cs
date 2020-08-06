@@ -57,12 +57,12 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个实体迁移数据库上下文访问器截面。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public TabulationMigrateDbContextAccessorAspect(IStoreIdentityGenerator identifierGenerator,
+        public TabulationMigrateDbContextAccessorAspect(IStoreIdentificationGenerator generator,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(identifierGenerator, options, loggerFactory, priority: 2)
+            : base(generator, options, loggerFactory, priority: 2)
         {
         }
 
@@ -220,7 +220,7 @@ namespace Librame.Extensions.Data.Aspects
         {
             var entity = ObjectExtensions.EnsureCreate<TTabulation>();
 
-            entity.Id = DataIdentifierGenerator.GenerateTabulationId();
+            entity.Id = DataGenerator.GenerateTabulationId();
 
             entity.TableName = tableName;
             entity.Schema = schema;

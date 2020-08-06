@@ -11,7 +11,9 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,8 +38,12 @@ namespace Librame.Extensions.Data.Accessors
     /// <summary>
     /// 数据库上下文访问器基类。
     /// </summary>
-    public class DbContextAccessorBase : DbContext, IAccessor
+    public class DbContextAccessorBase : DbContext, IAccessor, IInfrastructure<IServiceProvider>
     {
+        private IServiceProvider _internalServiceProvider;
+        private bool _initializing;
+
+
         /// <summary>
         /// 构造一个数据库上下文访问器基类。
         /// </summary>
@@ -46,6 +53,8 @@ namespace Librame.Extensions.Data.Accessors
         protected DbContextAccessorBase(DbContextOptions options)
             : base(options)
         {
+            _internalServiceProvider = InitializeInternalServiceProvider(options);
+
             MemoryCache = options.FindExtension<CoreOptionsExtension>().MemoryCache;
 
             var dataBuilder = MemoryCache.GetDataBuilder();
@@ -56,6 +65,68 @@ namespace Librame.Extensions.Data.Accessors
 
             var relationalExtension = RelationalOptionsExtension.Extract(options);
             InitializeAccessorBase(relationalExtension);
+        }
+
+
+        [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
+        private IServiceProvider InitializeInternalServiceProvider(DbContextOptions options)
+        {
+            var dbContextType = typeof(DbContext);
+
+            dbContextType.GetMethod("CheckDisposed", BindingFlags.NonPublic)
+                .Invoke(this, Array.Empty<object>());
+
+            var dbContextDependencies = dbContextType.GetProperty("DbContextDependencies", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(this) as IDbContextDependencies;
+
+            var contextServicesField = dbContextType.GetField("_contextServices", BindingFlags.NonPublic | BindingFlags.Instance);
+            var contextServices = contextServicesField.GetValue(this) as IDbContextServices;
+
+            var serviceScopeField = dbContextType.GetField("_serviceScope", BindingFlags.NonPublic | BindingFlags.Instance);
+            
+            if (contextServices != null)
+            {
+                return contextServices.InternalServiceProvider;
+            }
+
+            if (_initializing)
+            {
+                throw new InvalidOperationException(CoreStrings.RecursiveOnConfiguring);
+            }
+
+            try
+            {
+                _initializing = true;
+
+                var optionsBuilder = new DbContextOptionsBuilder(options);
+
+                OnConfiguring(optionsBuilder);
+
+                if (options.IsFrozen
+                    && !ReferenceEquals(options, optionsBuilder.Options))
+                {
+                    throw new InvalidOperationException(CoreStrings.PoolingOptionsModified);
+                }
+
+                var serviceScope = ServiceProviderCache.Instance.GetOrAdd(optionsBuilder.Options, providerRequired: true)
+                    .GetRequiredService<IServiceScopeFactory>()
+                    .CreateScope();
+                serviceScopeField.SetValue(this, serviceScope);
+
+                var scopedServiceProvider = serviceScope.ServiceProvider;
+
+                contextServices = scopedServiceProvider.GetService<IDbContextServices>();
+                contextServices.Initialize(scopedServiceProvider, optionsBuilder.Options, this);
+                contextServicesField.SetValue(this, contextServices);
+
+                dbContextDependencies.InfrastructureLogger.ContextInitialized(this, optionsBuilder.Options);
+            }
+            finally
+            {
+                _initializing = false;
+            }
+
+            return contextServices.InternalServiceProvider;
         }
 
 
@@ -80,6 +151,16 @@ namespace Librame.Extensions.Data.Accessors
         /// 构建器依赖。
         /// </summary>
         public DataBuilderDependency Dependency { get; }
+
+
+        IServiceProvider IInfrastructure<IServiceProvider>.Instance
+            => Instance;
+
+        /// <summary>
+        /// 内部服务提供程序实例。
+        /// </summary>
+        protected virtual IServiceProvider Instance
+            => _internalServiceProvider;
 
 
         #region EnsureDatabaseCreated and EnsureDatabaseChanged

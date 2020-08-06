@@ -31,11 +31,11 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个 <see cref="AbstractStoreInitializer"/>。
         /// </summary>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
-        /// <param name="identityGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected AbstractStoreInitializer(IDataInitializationValidator validator,
-            IStoreIdentityGenerator identityGenerator, ILoggerFactory loggerFactory)
-            : base(validator, identityGenerator, loggerFactory)
+            IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
+            : base(validator, generator, loggerFactory)
         {
         }
 
@@ -104,14 +104,14 @@ namespace Librame.Extensions.Data.Stores
         /// 构造一个 <see cref="AbstractStoreInitializer"/>。
         /// </summary>
         /// <param name="validator">给定的 <see cref="IDataInitializationValidator"/>。</param>
-        /// <param name="identityGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
         protected AbstractStoreInitializer(IDataInitializationValidator validator,
-            IStoreIdentityGenerator identityGenerator, ILoggerFactory loggerFactory)
+            IStoreIdentificationGenerator generator, ILoggerFactory loggerFactory)
             : base(loggerFactory)
         {
             Validator = validator.NotNull(nameof(validator));
-            IdentityGenerator = identityGenerator.NotNull(nameof(identityGenerator));
+            Generator = generator.NotNull(nameof(generator));
         }
 
 
@@ -124,15 +124,15 @@ namespace Librame.Extensions.Data.Stores
         /// <summary>
         /// 标识生成器。
         /// </summary>
-        /// <value>返回 <see cref="IStoreIdentityGenerator"/>。</value>
-        public IStoreIdentityGenerator IdentityGenerator { get; }
+        /// <value>返回 <see cref="IStoreIdentificationGenerator"/>。</value>
+        public IStoreIdentificationGenerator Generator { get; }
 
         /// <summary>
         /// 时钟。
         /// </summary>
         /// <value>返回 <see cref="IClockService"/>。</value>
         public IClockService Clock
-            => IdentityGenerator.Clock;
+            => Generator.Clock;
 
 
         /// <summary>

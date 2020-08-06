@@ -56,12 +56,12 @@ namespace Librame.Extensions.Data.Aspects
         /// <summary>
         /// 构造一个审计保存变化访问器截面。
         /// </summary>
-        /// <param name="identifierGenerator">给定的 <see cref="IStoreIdentityGenerator"/>。</param>
+        /// <param name="generator">给定的 <see cref="IStoreIdentificationGenerator"/>。</param>
         /// <param name="options">给定的 <see cref="IOptions{DataBuilderOptions}"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        public AuditSaveChangesDbContextAccessorAspect(IStoreIdentityGenerator identifierGenerator,
+        public AuditSaveChangesDbContextAccessorAspect(IStoreIdentificationGenerator generator,
             IOptions<DataBuilderOptions> options, ILoggerFactory loggerFactory)
-            : base(identifierGenerator, options, loggerFactory, priority: 1)
+            : base(generator, options, loggerFactory, priority: 1)
         {
         }
 
@@ -221,7 +221,7 @@ namespace Librame.Extensions.Data.Aspects
             audit.EntityId = entityId;
             audit.State = state;
 
-            audit.Id = DataIdentifierGenerator.GenerateAuditId();
+            audit.Id = DataGenerator.GenerateAuditId();
             audit.EntityTypeName = StoreHelper.CreatedByTypeName(entry.Metadata.ClrType);
             audit.StateName = entry.State.ToString();
             audit.PropertyTableName = GetAuditPropertyTableName(model);

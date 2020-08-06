@@ -24,17 +24,17 @@ namespace Librame.Extensions.Data.Stores
     /// 抽象数据存储标识生成器。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    public abstract class AbstractDataStoreIdentityGenerator<TId> : AbstractStoreIdentityGenerator,
-        IDataStoreIdentityGenerator<TId>
+    public abstract class AbstractDataStoreIdentificationGenerator<TId> : AbstractStoreIdentificationGenerator,
+        IDataStoreIdentificationGenerator<TId>
         where TId : IEquatable<TId>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractDataStoreIdentityGenerator{TId}"/>。
+        /// 构造一个 <see cref="AbstractDataStoreIdentificationGenerator{TId}"/>。
         /// </summary>
         /// <param name="clock">给定的 <see cref="IClockService"/>。</param>
         /// <param name="factory">给定的 <see cref="IIdentificationGeneratorFactory"/>。</param>
         /// <param name="loggerFactory">给定的 <see cref="ILoggerFactory"/>。</param>
-        protected AbstractDataStoreIdentityGenerator(IClockService clock,
+        protected AbstractDataStoreIdentificationGenerator(IClockService clock,
             IIdentificationGeneratorFactory factory, ILoggerFactory loggerFactory)
             : base(clock, factory, loggerFactory)
         {

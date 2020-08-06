@@ -9,7 +9,7 @@ namespace Librame.Extensions.Examples
     using Core.Services;
     using Data.Stores;
 
-    public class ExampleStoreIdentifierGenerator : GuidDataStoreIdentityGenerator
+    public class ExampleStoreIdentifierGenerator : GuidDataStoreIdentificationGenerator
     {
         public ExampleStoreIdentifierGenerator(IClockService clock,
             IIdentificationGeneratorFactory factory, ILoggerFactory loggerFactory)

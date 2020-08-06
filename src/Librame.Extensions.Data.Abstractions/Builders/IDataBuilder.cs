@@ -68,10 +68,10 @@ namespace Librame.Extensions.Data.Builders
         /// <summary>
         /// 添加存储标识符生成器。
         /// </summary>
-        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentityGenerator"/> 接口的存储标识符类型，推荐从 <see cref="AbstractDataStoreIdentityGenerator{TGenId}"/> 派生。</typeparam>
+        /// <typeparam name="TGenerator">指定实现 <see cref="IStoreIdentificationGenerator"/> 接口的存储标识符类型，推荐从 <see cref="AbstractDataStoreIdentificationGenerator{TGenId}"/> 派生。</typeparam>
         /// <returns>返回 <see cref="IDataBuilder"/>。</returns>
         IDataBuilder AddStoreIdentifierGenerator<TGenerator>()
-            where TGenerator : class, IStoreIdentityGenerator;
+            where TGenerator : class, IStoreIdentificationGenerator;
 
         /// <summary>
         /// 添加存储初始化器。
