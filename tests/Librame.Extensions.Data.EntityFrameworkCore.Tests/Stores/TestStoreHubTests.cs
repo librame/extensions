@@ -66,7 +66,7 @@ namespace Librame.Extensions.Data.Tests
                 .AddLibrame(dependency =>
                 {
                     // SQLServer (Default)
-                    //dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLServer;
+                    //dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.SQLServer;
                 })
                 .AddData(dependency =>
                 {

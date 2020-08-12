@@ -21,7 +21,16 @@ namespace Librame.Extensions.Core
     /// <typeparam name="TCloneable">指定的可克隆对象类型。</typeparam>
     public abstract class AbstractCloneable<TCloneable> : ICloneable<TCloneable>
     {
-        private ConcurrentDictionary<Type, object> _clonedTypes = null;
+        private ConcurrentDictionary<Type, object> _clonedTypes;
+
+
+        /// <summary>
+        /// 构造一个 <see cref="AbstractCloneable{TCloneable}"/>。
+        /// </summary>
+        protected AbstractCloneable()
+        {
+            _clonedTypes = new ConcurrentDictionary<Type, object>();
+        }
 
 
         /// <summary>

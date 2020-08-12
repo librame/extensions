@@ -13,6 +13,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -89,7 +90,7 @@ namespace Librame.Extensions.Data.Aspects
                 notification.Adds = adds;
                 notification.Updates = updates;
 
-                var mediator = dbContextAccessor.GetService<IMediator>();
+                var mediator = dbContextAccessor.ApplicationServiceProvider.GetService<IMediator>();
                 mediator.Publish(notification).ConfigureAwaitCompleted();
             }
         }
@@ -112,8 +113,8 @@ namespace Librame.Extensions.Data.Aspects
                 notification.Adds = adds;
                 notification.Updates = updates;
 
-                var mediator = dbContextAccessor.GetService<IMediator>();
-                await mediator.Publish(notification).ConfigureAwait();
+                var mediator = dbContextAccessor.ApplicationServiceProvider.GetService<IMediator>();
+                await mediator.Publish(notification, cancellationToken).ConfigureAwait();
             }
         }
 

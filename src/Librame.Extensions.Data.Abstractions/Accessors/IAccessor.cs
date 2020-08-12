@@ -27,6 +27,18 @@ namespace Librame.Extensions.Data.Accessors
     public interface IAccessor : IDisposable, IMigration, IMultiTenancy, ISaveChanges, IService
     {
         /// <summary>
+        /// 应用服务提供程序。
+        /// </summary>
+        /// <value>返回 <see cref="IServiceProvider"/>。</value>
+        IServiceProvider ApplicationServiceProvider { get; }
+
+        /// <summary>
+        /// 内存缓存。
+        /// </summary>
+        /// <value>返回 <see cref="IMemoryCache"/>。</value>
+        IMemoryCache MemoryCache { get; }
+
+        /// <summary>
         /// 时钟服务。
         /// </summary>
         /// <value>返回 <see cref="IClockService"/>。</value>
@@ -37,12 +49,6 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         /// <value>返回 <see cref="IDatabaseCreationValidator"/>。</value>
         IDatabaseCreationValidator CreationValidator { get; }
-
-        /// <summary>
-        /// 内存缓存。
-        /// </summary>
-        /// <value>返回 <see cref="IMemoryCache"/>。</value>
-        IMemoryCache MemoryCache { get; }
 
 
         /// <summary>

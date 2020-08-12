@@ -21,7 +21,6 @@ namespace Librame.Extensions.Network.Options
         /// 启用编解码。
         /// </summary>
         public bool EnableCodec { get; set; }
-            = false;
 
         /// <summary>
         /// 邮箱地址。

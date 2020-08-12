@@ -159,7 +159,7 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 确保克隆。
+        /// 确保克隆（支持克隆类型的字段与属性集合）。
         /// </summary>
         /// <param name="source">给定要克隆的源对象。</param>
         /// <param name="type">给定要克隆的类型（可选）。</param>

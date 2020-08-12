@@ -30,7 +30,7 @@ namespace Librame.Extensions.Network.DotNetty.Demo
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
     internal class WebSocketClient : ChannelServiceBase, IWebSocketClient
     {
-        private readonly WebSocketClientOptions _clientOptions = null;
+        private readonly WebSocketClientOptions _clientOptions;
 
 
         public WebSocketClient(IBootstrapWrapperFactory wrapperFactory,

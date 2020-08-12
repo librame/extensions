@@ -10,7 +10,7 @@
 
 #endregion
 
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -105,7 +105,7 @@ namespace Librame.Extensions.Data.Accessors
             var sb = new StringBuilder();
 
             sb.Append(invokeTypeName);
-            sb.Append(";");
+            sb.Append(';');
 
             // 访问器文件路径组合器已作有效隔离
             sb.Append(accessorFilePath);
@@ -177,7 +177,7 @@ namespace Librame.Extensions.Data.Accessors
         {
             if (designTimeType.IsNull())
             {
-                var dataBuilder = accessor.GetService<IDataBuilder>();
+                var dataBuilder = accessor.ApplicationServiceProvider.GetService<IDataBuilder>();
                 designTimeType = dataBuilder.DatabaseDesignTimeType;
             }
 

@@ -16,6 +16,7 @@ using Librame.Extensions.Data.Stores;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -125,7 +126,7 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             {
                 if (DbContextAccessor.Dependency.Options.UseInitializer)
                 {
-                    var initializer = DbContextAccessor.GetService<IStoreInitializer>();
+                    var initializer = DbContextAccessor.ApplicationServiceProvider.GetService<IStoreInitializer>();
                     initializer.Validator.SetInitialized(DbContextAccessor);
                 }
 
@@ -197,7 +198,7 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             {
                 if (DbContextAccessor.Dependency.Options.UseInitializer)
                 {
-                    var initializer = DbContextAccessor.GetService<IStoreInitializer>();
+                    var initializer = DbContextAccessor.ApplicationServiceProvider.GetService<IStoreInitializer>();
                     await initializer.Validator.SetInitializedAsync(DbContextAccessor,
                         cancellationToken).ConfigureAwait();
                 }
@@ -209,8 +210,8 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
         }
 
 
-        private List<ModificationCommandBatch> _lastWritingBatches = null;
-        private List<EntityState> _lastWritingStates = null;
+        private List<ModificationCommandBatch> _lastWritingBatches;
+        private List<EntityState> _lastWritingStates;
 
         [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
         private IEnumerable<ModificationCommandBatch> VerifyLastWritingSaveChangesCommandBatches

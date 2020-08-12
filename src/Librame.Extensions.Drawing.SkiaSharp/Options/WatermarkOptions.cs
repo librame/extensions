@@ -27,7 +27,6 @@ namespace Librame.Extensions.Drawing.Options
         /// 是否生成随机坐标（默认不随机）。
         /// </summary>
         public bool IsRandom { get; set; }
-            = false;
 
         /// <summary>
         /// 水印文本。

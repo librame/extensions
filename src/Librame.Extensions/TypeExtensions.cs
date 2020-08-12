@@ -255,7 +255,7 @@ namespace Librame.Extensions
             if (type.IsGenericType)
             {
                 var argumentTypes = type.GetGenericArguments();
-                sb.Append("[");
+                sb.Append('[');
 
                 argumentTypes.ForEach((argType, i) =>
                 {
@@ -265,7 +265,7 @@ namespace Librame.Extensions
                         sb.Append(", ");
                 });
 
-                sb.Append("]");
+                sb.Append(']');
             }
 
             return sb.ToString();

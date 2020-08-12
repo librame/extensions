@@ -11,9 +11,9 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+//using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Internal;
+//using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+//using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,10 +38,10 @@ namespace Librame.Extensions.Data.Accessors
     /// <summary>
     /// 数据库上下文访问器基类。
     /// </summary>
-    public class DbContextAccessorBase : DbContext, IAccessor, IInfrastructure<IServiceProvider>
+    public class DbContextAccessorBase : DbContext, IAccessor //, IInfrastructure<IServiceProvider>
     {
-        private IServiceProvider _internalServiceProvider;
-        private bool _initializing;
+        //private IServiceProvider _internalServiceProvider;
+        //private bool _initializing;
 
 
         /// <summary>
@@ -53,9 +53,9 @@ namespace Librame.Extensions.Data.Accessors
         protected DbContextAccessorBase(DbContextOptions options)
             : base(options)
         {
-            _internalServiceProvider = InitializeInternalServiceProvider(options);
-
-            MemoryCache = options.FindExtension<CoreOptionsExtension>().MemoryCache;
+            var extension = options.FindExtension<CoreOptionsExtension>();
+            ApplicationServiceProvider = extension.ApplicationServiceProvider;
+            MemoryCache = extension.MemoryCache;
 
             var dataBuilder = MemoryCache.GetDataBuilder();
             if (dataBuilder.IsNull())
@@ -63,72 +63,81 @@ namespace Librame.Extensions.Data.Accessors
 
             Dependency = dataBuilder.Dependency as DataBuilderDependency;
 
+            //if (initializeInternalServiceProvider)
+            //{
+            //    _internalServiceProvider = InitializeInternalServiceProvider(options);
+            //}
+            //else
+            //{
+            //    _internalServiceProvider = (IServiceProvider)typeof(DbContext)
+            //        .GetProperty("InternalServiceProvider", BindingFlags.NonPublic | BindingFlags.Instance)
+            //        .GetValue(this);
+            //}
+
             var relationalExtension = RelationalOptionsExtension.Extract(options);
             InitializeAccessorBase(relationalExtension);
         }
 
 
-        [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
-        private IServiceProvider InitializeInternalServiceProvider(DbContextOptions options)
-        {
-            var dbContextType = typeof(DbContext);
+        //[SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
+        //private IServiceProvider InitializeInternalServiceProvider(DbContextOptions options)
+        //{
+        //    var dbContextType = typeof(DbContext);
 
-            dbContextType.GetMethod("CheckDisposed", BindingFlags.NonPublic)
-                .Invoke(this, Array.Empty<object>());
+        //    dbContextType.GetMethod("CheckDisposed", BindingFlags.NonPublic | BindingFlags.Instance)
+        //        .Invoke(this, Array.Empty<object>());
 
-            var dbContextDependencies = dbContextType.GetProperty("DbContextDependencies", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(this) as IDbContextDependencies;
+        //    var contextServicesField = dbContextType.GetField("_contextServices", BindingFlags.NonPublic | BindingFlags.Instance);
+        //    var contextServices = (IDbContextServices)contextServicesField.GetValue(this);
 
-            var contextServicesField = dbContextType.GetField("_contextServices", BindingFlags.NonPublic | BindingFlags.Instance);
-            var contextServices = contextServicesField.GetValue(this) as IDbContextServices;
-
-            var serviceScopeField = dbContextType.GetField("_serviceScope", BindingFlags.NonPublic | BindingFlags.Instance);
+        //    var serviceScopeField = dbContextType.GetField("_serviceScope", BindingFlags.NonPublic | BindingFlags.Instance);
             
-            if (contextServices != null)
-            {
-                return contextServices.InternalServiceProvider;
-            }
+        //    if (contextServices != null)
+        //    {
+        //        return contextServices.InternalServiceProvider;
+        //    }
 
-            if (_initializing)
-            {
-                throw new InvalidOperationException(CoreStrings.RecursiveOnConfiguring);
-            }
+        //    if (_initializing)
+        //    {
+        //        throw new InvalidOperationException(CoreStrings.RecursiveOnConfiguring);
+        //    }
 
-            try
-            {
-                _initializing = true;
+        //    try
+        //    {
+        //        _initializing = true;
 
-                var optionsBuilder = new DbContextOptionsBuilder(options);
+        //        var optionsBuilder = new DbContextOptionsBuilder(options);
 
-                OnConfiguring(optionsBuilder);
+        //        OnConfiguring(optionsBuilder);
 
-                if (options.IsFrozen
-                    && !ReferenceEquals(options, optionsBuilder.Options))
-                {
-                    throw new InvalidOperationException(CoreStrings.PoolingOptionsModified);
-                }
+        //        if (options.IsFrozen
+        //            && !ReferenceEquals(options, optionsBuilder.Options))
+        //        {
+        //            throw new InvalidOperationException(CoreStrings.PoolingOptionsModified);
+        //        }
 
-                var serviceScope = ServiceProviderCache.Instance.GetOrAdd(optionsBuilder.Options, providerRequired: true)
-                    .GetRequiredService<IServiceScopeFactory>()
-                    .CreateScope();
-                serviceScopeField.SetValue(this, serviceScope);
+        //        var serviceScope = ServiceProviderCache.Instance.GetOrAdd(optionsBuilder.Options, providerRequired: true)
+        //            .GetRequiredService<IServiceScopeFactory>()
+        //            .CreateScope();
+        //        serviceScopeField.SetValue(this, serviceScope);
 
-                var scopedServiceProvider = serviceScope.ServiceProvider;
+        //        var scopedServiceProvider = serviceScope.ServiceProvider;
 
-                contextServices = scopedServiceProvider.GetService<IDbContextServices>();
-                contextServices.Initialize(scopedServiceProvider, optionsBuilder.Options, this);
-                contextServicesField.SetValue(this, contextServices);
+        //        contextServices = scopedServiceProvider.GetService<IDbContextServices>();
+        //        contextServices.Initialize(scopedServiceProvider, optionsBuilder.Options, this);
+        //        contextServicesField.SetValue(this, contextServices);
 
-                dbContextDependencies.InfrastructureLogger.ContextInitialized(this, optionsBuilder.Options);
-            }
-            finally
-            {
-                _initializing = false;
-            }
+        //        //var dbContextDependenciesProperty = dbContextType.GetProperty("DbContextDependencies", BindingFlags.NonPublic | BindingFlags.Instance);
+        //        //var dbContextDependencies = (IDbContextDependencies)dbContextDependenciesProperty.GetValue(this);
+        //        //dbContextDependencies?.InfrastructureLogger.ContextInitialized(this, optionsBuilder.Options);
+        //    }
+        //    finally
+        //    {
+        //        _initializing = false;
+        //    }
 
-            return contextServices.InternalServiceProvider;
-        }
-
+        //    return contextServices.InternalServiceProvider;
+        //}
 
         private void InitializeAccessorBase(RelationalOptionsExtension relationalExtension)
         {
@@ -153,14 +162,14 @@ namespace Librame.Extensions.Data.Accessors
         public DataBuilderDependency Dependency { get; }
 
 
-        IServiceProvider IInfrastructure<IServiceProvider>.Instance
-            => Instance;
+        //IServiceProvider IInfrastructure<IServiceProvider>.Instance
+        //    => Instance;
 
-        /// <summary>
-        /// 内部服务提供程序实例。
-        /// </summary>
-        protected virtual IServiceProvider Instance
-            => _internalServiceProvider;
+        ///// <summary>
+        ///// 内部服务提供程序实例。
+        ///// </summary>
+        //protected virtual IServiceProvider Instance
+        //    => _internalServiceProvider;
 
 
         #region EnsureDatabaseCreated and EnsureDatabaseChanged
@@ -355,24 +364,30 @@ namespace Librame.Extensions.Data.Accessors
         #region IAccessor
 
         /// <summary>
-        /// 时钟服务。
+        /// 应用服务提供程序。
         /// </summary>
-        /// <value>返回 <see cref="IClockService"/>。</value>
-        public IClockService Clock
-            => this.GetService<IClockService>();
-
-        /// <summary>
-        /// 数据库创建验证器。
-        /// </summary>
-        /// <value>返回 <see cref="IDatabaseCreationValidator"/>。</value>
-        public IDatabaseCreationValidator CreationValidator
-            => this.GetService<IDatabaseCreationValidator>();
+        /// <value>返回 <see cref="IServiceProvider"/>。</value>
+        public IServiceProvider ApplicationServiceProvider { get; }
 
         /// <summary>
         /// 内存缓存。
         /// </summary>
         /// <value>返回 <see cref="IMemoryCache"/>。</value>
         public IMemoryCache MemoryCache { get; }
+
+        /// <summary>
+        /// 时钟服务。
+        /// </summary>
+        /// <value>返回 <see cref="IClockService"/>。</value>
+        public IClockService Clock
+            => ApplicationServiceProvider.GetService<IClockService>();
+
+        /// <summary>
+        /// 数据库创建验证器。
+        /// </summary>
+        /// <value>返回 <see cref="IDatabaseCreationValidator"/>。</value>
+        public IDatabaseCreationValidator CreationValidator
+            => ApplicationServiceProvider.GetService<IDatabaseCreationValidator>();
 
 
         /// <summary>
@@ -1014,7 +1029,7 @@ namespace Librame.Extensions.Data.Accessors
         /// 日志工厂。
         /// </summary>
         public ILoggerFactory LoggerFactory
-            => this.GetService<ILoggerFactory>();
+            => ApplicationServiceProvider.GetService<ILoggerFactory>();
 
         /// <summary>
         /// 日志。

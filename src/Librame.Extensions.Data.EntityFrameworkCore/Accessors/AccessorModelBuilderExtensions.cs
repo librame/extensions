@@ -11,7 +11,7 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -241,7 +241,7 @@ namespace Librame.Extensions.Data.Accessors
 
                 if (protectPrivacyData)
                 {
-                    var protector = accessor.GetService<IPrivacyDataProtector>();
+                    var protector = accessor.ApplicationServiceProvider.GetService<IPrivacyDataProtector>();
                     b.ConfigurePrivacyData(protector);
                 }
             });

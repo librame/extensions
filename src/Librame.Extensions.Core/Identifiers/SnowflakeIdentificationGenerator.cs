@@ -49,10 +49,10 @@ namespace Librame.Extensions.Core.Identifiers
         // 一微秒内可以产生计数，如果达到该值则等到下一微妙在进行生成
         private long _sequenceMask = -1L ^ -1L << _sequenceBits;
 
-        private readonly long _machineId = 0L;
-        private readonly long _dataCenterId = 0L;
+        private readonly long _machineId;
+        private readonly long _dataCenterId;
 
-        private long _sequence = 0L;
+        private long _sequence;
         private long _lastTimestamp = -1L;
 
 

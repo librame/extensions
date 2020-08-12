@@ -24,7 +24,7 @@ namespace Librame.Extensions.Core.Identifiers
     /// </summary>
     public class IdentificationGeneratorFactory : IIdentificationGeneratorFactory
     {
-        private List<IObjectIdentificationGenerator> _generators = null;
+        private List<IObjectIdentificationGenerator> _generators;
 
 
         /// <summary>

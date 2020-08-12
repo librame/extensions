@@ -27,7 +27,7 @@ namespace Librame.Extensions.Core.Builders
     /// </summary>
     public static class CoreBuilderServiceCharacteristicsRegistration
     {
-        private static IServiceCharacteristicsRegister _register = null;
+        private static IServiceCharacteristicsRegister _register;
 
         /// <summary>
         /// 当前注册器。

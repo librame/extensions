@@ -44,13 +44,10 @@ namespace Librame.Extensions.Storage.Services
         public Encoding Encoding { get; }
 
         public bool UseAccessToken { get; set; }
-            = false;
 
         public bool UseAuthorizationCode { get; set; }
-            = false;
 
         public bool UseCookieValue { get; set; }
-            = false;
 
         public bool UseBreakpointResume { get; set; }
             = true;

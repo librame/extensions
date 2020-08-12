@@ -22,8 +22,8 @@ namespace Librame.Extensions.Core.Proxies
     internal class InvokeDependency<TInterface> : IInvokeDependency<TInterface>
         where TInterface : class
     {
-        private readonly ConcurrentDictionary<InvokeDependencyKey, IEnumerable<Action<TInterface>>> _preActions = null;
-        private readonly ConcurrentDictionary<InvokeDependencyKey, IEnumerable<Action<TInterface, object>>> _postActions = null;
+        private readonly ConcurrentDictionary<InvokeDependencyKey, IEnumerable<Action<TInterface>>> _preActions;
+        private readonly ConcurrentDictionary<InvokeDependencyKey, IEnumerable<Action<TInterface, object>>> _postActions;
 
 
         public InvokeDependency()

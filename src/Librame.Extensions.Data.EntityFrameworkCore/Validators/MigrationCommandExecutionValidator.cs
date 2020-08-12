@@ -27,7 +27,7 @@ namespace Librame.Extensions.Data.Validators
     /// </summary>
     public class MigrationCommandExecutionValidator : IMigrationCommandExecutionValidator
     {
-        private Encoding _defaultEncoding = null;
+        private Encoding _defaultEncoding;
 
 
         /// <summary>

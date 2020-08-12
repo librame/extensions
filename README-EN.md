@@ -79,9 +79,9 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
         "DefaultTenant": {
             "Name": "DefaultTenant",
             "Host": "localhost",
-            "EncryptedConnectionStrings": true,
-            "DefaultConnectionString": "fcuc9SMDHqvxk/3Ras0Emo09N9OorPNvSS8aZtpKC2Jh+NwoaOFOVoz7p4VKkFNr8lQULoTL6G7aYprarg49SpGtu3JVS3x5e8iV1+Ik18sFqR4dP5kjm8fNuZPZtMOS",
-            "WritingConnectionString": "fcuc9SMDHqvxk/3Ras0Emo09N9OorPNvSS8aZtpKC2Jh+NwoaOFOVoz7p4VKkFNrOH9h2XeXJ984w4jHBRgKtJGtu3JVS3x5e8iV1+Ik18sFqR4dP5kjm8fNuZPZtMOS",
+            "EncryptedConnectionStrings": false,
+            "DefaultConnectionString": "server=localhost;port=3306;database=librame_data_default;user=root;password=123456",
+            "WritingConnectionString": "server=localhost;port=3306;database=librame_data_writing;user=root;password=123456",
             "WritingSeparation": true,
             "DataSynchronization": true,
             "StructureSynchronization": true
@@ -122,7 +122,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
     var services = builder
         .AddLibrame(dependency =>
         {
-            dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.MySQL;
+            dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.MySQL;
         })
         .AddData(dependency =>
         {
@@ -151,7 +151,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
         .AddLibrame(dependency =>
         {
             // SQLServer (Default)
-            //dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLServer;
+            //dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.SQLServer;
         })
         .AddData(dependency =>
         {
@@ -176,7 +176,7 @@ Take Librame.Extensions.Data.EntityFrameworkCore as an example:
     var services = builder
         .AddLibrame(dependency =>
         {
-            dependency.Options.Identifier.GuidIdentifierGenerator = CombIdentityGenerator.SQLite;
+            dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.SQLite;
         })
         .AddData(dependency =>
         {

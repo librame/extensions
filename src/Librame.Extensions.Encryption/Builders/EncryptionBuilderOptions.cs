@@ -37,13 +37,11 @@ namespace Librame.Extensions.Encryption.Builders
         /// 生成随机密钥（默认不随机生成；注：如果启用此选项，请自行保存密钥，否则会无法正确解密）。
         /// </summary>
         public bool GenerateRandomKey { get; set; }
-            = false;
 
         /// <summary>
         /// 生成随机向量（默认不随机生成；注：如果启用此选项，请自行保存向量，否则会无法正确解密）。
         /// </summary>
         public bool GenerateRandomVector { get; set; }
-            = false;
 
 
         /// <summary>

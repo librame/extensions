@@ -30,8 +30,8 @@ namespace Librame.Extensions.Core.Mediators
         private static ConcurrentDictionary<Type, INotificationHandlerWrapperIndication> _notificationHandlers
             = new ConcurrentDictionary<Type, INotificationHandlerWrapperIndication>();
 
-        private ServiceFactory _serviceFactory = null;
-        private ILogger _logger = null;
+        private ServiceFactory _serviceFactory;
+        private ILogger _logger;
 
 
         public ServiceFactoryMediator(ServiceFactory serviceFactory)

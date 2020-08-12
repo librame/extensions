@@ -23,7 +23,6 @@ namespace Librame.Extensions.Network.Options
         /// 启用编解码（默认禁用）。
         /// </summary>
         public bool EnableCodec { get; set; }
-            = false;
 
         /// <summary>
         /// 平台信息。

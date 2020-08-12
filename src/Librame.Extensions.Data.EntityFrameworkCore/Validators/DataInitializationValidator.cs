@@ -57,7 +57,7 @@ namespace Librame.Extensions.Data.Validators
 
         public async Task SetInitializedAsync(IAccessor accessor, CancellationToken cancellationToken = default)
         {
-            var now = await accessor.Clock.GetNowOffsetAsync().ConfigureAwait();
+            var now = await accessor.Clock.GetNowOffsetAsync(cancellationToken: cancellationToken).ConfigureAwait();
 
             var filePath = GetReportFilePath(accessor as DbContextAccessorBase);
             filePath.WriteAllText($"The data was successfully initialized at {now}.");

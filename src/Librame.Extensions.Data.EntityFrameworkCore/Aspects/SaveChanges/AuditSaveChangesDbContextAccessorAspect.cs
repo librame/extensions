@@ -12,8 +12,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -87,7 +87,7 @@ namespace Librame.Extensions.Data.Aspects
             var dictionary = GetAdds(dbContextAccessor, entityEntries);
             if (dictionary.IsNotNull())
             {
-                var mediator = dbContextAccessor.GetService<IMediator>();
+                var mediator = dbContextAccessor.ApplicationServiceProvider.GetService<IMediator>();
                 mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary)).ConfigureAwaitCompleted();
             }
         }
@@ -109,8 +109,8 @@ namespace Librame.Extensions.Data.Aspects
             var dictionary = GetAdds(dbContextAccessor, entityEntries);
             if (dictionary.IsNotNull())
             {
-                var mediator = dbContextAccessor.GetService<IMediator>();
-                await mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary)).ConfigureAwait();
+                var mediator = dbContextAccessor.ApplicationServiceProvider.GetService<IMediator>();
+                await mediator.Publish(new AuditNotification<TAudit, TAuditProperty>(dictionary), cancellationToken).ConfigureAwait();
             }
         }
 

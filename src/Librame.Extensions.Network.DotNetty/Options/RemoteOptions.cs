@@ -25,7 +25,6 @@ namespace Librame.Extensions.Network.DotNetty.Options
         /// 使用 Libuv（默认使用）。
         /// </summary>
         public bool UseLibuv { get; set; }
-            = false;
 
         /// <summary>
         /// 退出命名。
@@ -43,7 +42,6 @@ namespace Librame.Extensions.Network.DotNetty.Options
         /// 是 SSL（默认不是）。
         /// </summary>
         public bool IsSsl { get; set; }
-            = false;
 
         /// <summary>
         /// 主机。

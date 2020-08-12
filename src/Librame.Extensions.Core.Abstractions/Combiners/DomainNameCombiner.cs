@@ -40,7 +40,7 @@ namespace Librame.Extensions.Core.Combiners
         /// <summary>
         /// 从根域名开始的顺序集合。
         /// </summary>
-        private List<string> _allLevelSegments = null;
+        private List<string> _allLevelSegments;
 
 
         /// <summary>

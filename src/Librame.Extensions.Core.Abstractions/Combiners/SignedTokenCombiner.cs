@@ -34,8 +34,8 @@ namespace Librame.Extensions.Core.Combiners
         private static readonly Func<string, string> DefaultSignatureFactory
             = s => s.Sha256Base64String();
 
-        private List<string> _dataSegments = null;
-        private Func<string, string> _signatureFactory = null;
+        private List<string> _dataSegments;
+        private Func<string, string> _signatureFactory;
 
 
         /// <summary>

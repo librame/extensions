@@ -34,9 +34,9 @@ namespace Librame.Extensions.Data.Collections
         where T : IParentIdentifier<TId>
         where TId : IEquatable<TId>
     {
-        private IList<TreeingNode<T, TId>> _children = null;
-        private PropertyInfo _idProperty = null;
-        private PropertyInfo _parentIdProperty = null;
+        private IList<TreeingNode<T, TId>> _children;
+        private PropertyInfo _idProperty;
+        private PropertyInfo _parentIdProperty;
 
 
         /// <summary>
@@ -341,7 +341,7 @@ namespace Librame.Extensions.Data.Collections
 
             // Current Node
             sb.Append(toStringFactory.Invoke(this));
-            sb.Append(";");
+            sb.Append(';');
 
             // Children Nodes
             int i = 0;
@@ -351,7 +351,7 @@ namespace Librame.Extensions.Data.Collections
                 sb.Append(child.ToString(toStringFactory));
 
                 if (i != Children.Count - 1)
-                    sb.Append(";");
+                    sb.Append(';');
 
                 i++;
             }

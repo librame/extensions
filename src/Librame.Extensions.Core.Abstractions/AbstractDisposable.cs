@@ -19,7 +19,7 @@ namespace Librame.Extensions.Core
     /// </summary>
     public abstract class AbstractDisposable : IDisposable
     {
-        private bool _disposed = false;
+        private bool _disposed;
 
 
         /// <summary>
