@@ -96,6 +96,18 @@ namespace Librame.Extensions.Data.Builders
 
 
         /// <summary>
+        /// 已初始化访问器的后置动作（默认根据条件确保数据库已创建）。
+        /// </summary>
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public Action<DbContextAccessorBase> PostAccessorInitializedAction { get; set; }
+            = accessor =>
+            {
+                if (accessor.Dependency.Options.SupportsCreateDatabase)
+                    accessor.EnsureDatabaseCreated();
+            };
+
+        /// <summary>
         /// 已创建数据库的后置动作（默认无动作）。
         /// </summary>
         [Newtonsoft.Json.JsonIgnore]

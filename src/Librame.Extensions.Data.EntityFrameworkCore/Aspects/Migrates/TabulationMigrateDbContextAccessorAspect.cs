@@ -90,7 +90,7 @@ namespace Librame.Extensions.Data.Aspects
                 notification.Adds = adds;
                 notification.Updates = updates;
 
-                var mediator = dbContextAccessor.ApplicationServiceProvider.GetService<IMediator>();
+                var mediator = dbContextAccessor.GetService<IMediator>();
                 mediator.Publish(notification).ConfigureAwaitCompleted();
             }
         }
@@ -113,7 +113,7 @@ namespace Librame.Extensions.Data.Aspects
                 notification.Adds = adds;
                 notification.Updates = updates;
 
-                var mediator = dbContextAccessor.ApplicationServiceProvider.GetService<IMediator>();
+                var mediator = dbContextAccessor.GetService<IMediator>();
                 await mediator.Publish(notification, cancellationToken).ConfigureAwait();
             }
         }

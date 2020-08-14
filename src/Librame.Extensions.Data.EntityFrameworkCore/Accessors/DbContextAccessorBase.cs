@@ -11,9 +11,7 @@
 #endregion
 
 using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-//using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -21,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-//using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,12 +35,8 @@ namespace Librame.Extensions.Data.Accessors
     /// <summary>
     /// 数据库上下文访问器基类。
     /// </summary>
-    public class DbContextAccessorBase : DbContext, IAccessor //, IInfrastructure<IServiceProvider>
+    public class DbContextAccessorBase : DbContext, IAccessor
     {
-        //private IServiceProvider _internalServiceProvider;
-        //private bool _initializing;
-
-
         /// <summary>
         /// 构造一个数据库上下文访问器基类。
         /// </summary>
@@ -54,7 +47,8 @@ namespace Librame.Extensions.Data.Accessors
             : base(options)
         {
             var extension = options.FindExtension<CoreOptionsExtension>();
-            ApplicationServiceProvider = extension.ApplicationServiceProvider;
+            var relationalExtension = RelationalOptionsExtension.Extract(options);
+
             MemoryCache = extension.MemoryCache;
 
             var dataBuilder = MemoryCache.GetDataBuilder();
@@ -63,84 +57,6 @@ namespace Librame.Extensions.Data.Accessors
 
             Dependency = dataBuilder.Dependency as DataBuilderDependency;
 
-            //if (initializeInternalServiceProvider)
-            //{
-            //    _internalServiceProvider = InitializeInternalServiceProvider(options);
-            //}
-            //else
-            //{
-            //    _internalServiceProvider = (IServiceProvider)typeof(DbContext)
-            //        .GetProperty("InternalServiceProvider", BindingFlags.NonPublic | BindingFlags.Instance)
-            //        .GetValue(this);
-            //}
-
-            var relationalExtension = RelationalOptionsExtension.Extract(options);
-            InitializeAccessorBase(relationalExtension);
-        }
-
-
-        //[SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
-        //private IServiceProvider InitializeInternalServiceProvider(DbContextOptions options)
-        //{
-        //    var dbContextType = typeof(DbContext);
-
-        //    dbContextType.GetMethod("CheckDisposed", BindingFlags.NonPublic | BindingFlags.Instance)
-        //        .Invoke(this, Array.Empty<object>());
-
-        //    var contextServicesField = dbContextType.GetField("_contextServices", BindingFlags.NonPublic | BindingFlags.Instance);
-        //    var contextServices = (IDbContextServices)contextServicesField.GetValue(this);
-
-        //    var serviceScopeField = dbContextType.GetField("_serviceScope", BindingFlags.NonPublic | BindingFlags.Instance);
-            
-        //    if (contextServices != null)
-        //    {
-        //        return contextServices.InternalServiceProvider;
-        //    }
-
-        //    if (_initializing)
-        //    {
-        //        throw new InvalidOperationException(CoreStrings.RecursiveOnConfiguring);
-        //    }
-
-        //    try
-        //    {
-        //        _initializing = true;
-
-        //        var optionsBuilder = new DbContextOptionsBuilder(options);
-
-        //        OnConfiguring(optionsBuilder);
-
-        //        if (options.IsFrozen
-        //            && !ReferenceEquals(options, optionsBuilder.Options))
-        //        {
-        //            throw new InvalidOperationException(CoreStrings.PoolingOptionsModified);
-        //        }
-
-        //        var serviceScope = ServiceProviderCache.Instance.GetOrAdd(optionsBuilder.Options, providerRequired: true)
-        //            .GetRequiredService<IServiceScopeFactory>()
-        //            .CreateScope();
-        //        serviceScopeField.SetValue(this, serviceScope);
-
-        //        var scopedServiceProvider = serviceScope.ServiceProvider;
-
-        //        contextServices = scopedServiceProvider.GetService<IDbContextServices>();
-        //        contextServices.Initialize(scopedServiceProvider, optionsBuilder.Options, this);
-        //        contextServicesField.SetValue(this, contextServices);
-
-        //        //var dbContextDependenciesProperty = dbContextType.GetProperty("DbContextDependencies", BindingFlags.NonPublic | BindingFlags.Instance);
-        //        //var dbContextDependencies = (IDbContextDependencies)dbContextDependenciesProperty.GetValue(this);
-        //        //dbContextDependencies?.InfrastructureLogger.ContextInitialized(this, optionsBuilder.Options);
-        //    }
-        //    finally
-        //    {
-        //        _initializing = false;
-        //    }
-
-        //    return contextServices.InternalServiceProvider;
-        //}
-
-        private void InitializeAccessorBase(RelationalOptionsExtension relationalExtension)
-        {
             if (Dependency.Options.DefaultTenant.IsNull())
                 throw new InvalidOperationException($"The data builder dependency '{Dependency}' options default tenant is null.");
 
@@ -151,8 +67,7 @@ namespace Librame.Extensions.Data.Accessors
             CurrentTenant = Dependency.Options.DefaultTenant;
             CurrentConnectionString = relationalExtension.ConnectionString;
 
-            if (Dependency.Options.SupportsCreateDatabase)
-                EnsureDatabaseCreated();
+            Dependency.Options.PostAccessorInitializedAction?.Invoke(this);
         }
 
 
@@ -162,23 +77,13 @@ namespace Librame.Extensions.Data.Accessors
         public DataBuilderDependency Dependency { get; }
 
 
-        //IServiceProvider IInfrastructure<IServiceProvider>.Instance
-        //    => Instance;
-
-        ///// <summary>
-        ///// 内部服务提供程序实例。
-        ///// </summary>
-        //protected virtual IServiceProvider Instance
-        //    => _internalServiceProvider;
-
-
-        #region EnsureDatabaseCreated and EnsureDatabaseChanged
+        #region EnsureDatabase
 
         /// <summary>
         /// 确保已创建数据库。
         /// </summary>
         /// <returns>返回是否已创建的布尔值。</returns>
-        protected virtual bool EnsureDatabaseCreated()
+        internal protected virtual bool EnsureDatabaseCreated()
         {
             if (CreationValidator.IsCreated(this))
                 return true;
@@ -317,26 +222,10 @@ namespace Librame.Extensions.Data.Accessors
         #endregion
 
 
-        #region OnConfiguring and OnModelCreating
+        #region OnModelCreating
 
         /// <summary>
-        /// 配置数据库上下文选项构建器。
-        /// </summary>
-        /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => OnConfiguringCore(optionsBuilder);
-
-        /// <summary>
-        /// 配置数据库上下文选项构建器核心。
-        /// </summary>
-        /// <param name="optionsBuilder">给定的 <see cref="DbContextOptionsBuilder"/>。</param>
-        protected virtual void OnConfiguringCore(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
-
-
-        /// <summary>
-        /// 配置模型构建器。
+        /// 配置模型构建器（配置模型映射推荐重写 <see cref="OnModelCreatingCore(ModelBuilder)"/> 而不是本方法）。
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
@@ -351,7 +240,7 @@ namespace Librame.Extensions.Data.Accessors
         }
 
         /// <summary>
-        /// 配置模型构建器核心。
+        /// 配置模型构建器核心（重写时注意区分 <see cref="OnModelCreating(ModelBuilder)"/> 与本方法，否则可能会导致访问冲突而退出进程）。
         /// </summary>
         /// <param name="modelBuilder">给定的 <see cref="ModelBuilder"/>。</param>
         protected virtual void OnModelCreatingCore(ModelBuilder modelBuilder)
@@ -364,12 +253,6 @@ namespace Librame.Extensions.Data.Accessors
         #region IAccessor
 
         /// <summary>
-        /// 应用服务提供程序。
-        /// </summary>
-        /// <value>返回 <see cref="IServiceProvider"/>。</value>
-        public IServiceProvider ApplicationServiceProvider { get; }
-
-        /// <summary>
         /// 内存缓存。
         /// </summary>
         /// <value>返回 <see cref="IMemoryCache"/>。</value>
@@ -380,14 +263,14 @@ namespace Librame.Extensions.Data.Accessors
         /// </summary>
         /// <value>返回 <see cref="IClockService"/>。</value>
         public IClockService Clock
-            => ApplicationServiceProvider.GetService<IClockService>();
+            => this.GetService<IClockService>();
 
         /// <summary>
         /// 数据库创建验证器。
         /// </summary>
         /// <value>返回 <see cref="IDatabaseCreationValidator"/>。</value>
         public IDatabaseCreationValidator CreationValidator
-            => ApplicationServiceProvider.GetService<IDatabaseCreationValidator>();
+            => this.GetService<IDatabaseCreationValidator>();
 
 
         /// <summary>
@@ -1023,13 +906,13 @@ namespace Librame.Extensions.Data.Accessors
         #endregion
 
 
-        #region IInfrastructureService
+        #region IService
 
         /// <summary>
         /// 日志工厂。
         /// </summary>
         public ILoggerFactory LoggerFactory
-            => ApplicationServiceProvider.GetService<ILoggerFactory>();
+            => this.GetService<ILoggerFactory>();
 
         /// <summary>
         /// 日志。

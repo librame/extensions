@@ -10,7 +10,7 @@
 
 #endregion
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -177,7 +177,7 @@ namespace Librame.Extensions.Data.Accessors
         {
             if (designTimeType.IsNull())
             {
-                var dataBuilder = accessor.ApplicationServiceProvider.GetService<IDataBuilder>();
+                var dataBuilder = accessor.GetService<IDataBuilder>();
                 designTimeType = dataBuilder.DatabaseDesignTimeType;
             }
 

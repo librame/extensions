@@ -208,7 +208,7 @@ namespace Librame.Extensions.Data.Services
             // 数据迁移支持写入连接（包括未启用读写分离的默认连接）// 或启用数据同步的默认与写入连接（数据同步改为在 AccessorBatchExecutor 底层实现）
             if (dbContextAccessor.IsWritingConnectionString()) // || dbContextAccessor.CurrentTenant.DataSynchronization
             {
-                aspects = dbContextAccessor.ApplicationServiceProvider.GetService<IServicesManager<IMigrateAccessorAspect>>();
+                aspects = dbContextAccessor.GetService<IServicesManager<IMigrateAccessorAspect>>();
                 aspects.ForEach(aspect =>
                 {
                     if (aspect.Enabled)
@@ -246,7 +246,7 @@ namespace Librame.Extensions.Data.Services
             // 数据迁移支持写入连接（包括未启用读写分离的默认连接）// 或启用数据同步的默认与写入连接（数据同步改为在 AccessorBatchExecutor 底层实现）
             if (dbContextAccessor.IsWritingConnectionString()) // || dbContextAccessor.CurrentTenant.DataSynchronization
             {
-                aspects = dbContextAccessor.ApplicationServiceProvider.GetService<IServicesManager<IMigrateAccessorAspect>>();
+                aspects = dbContextAccessor.GetService<IServicesManager<IMigrateAccessorAspect>>();
                 aspects.ForEach(async aspect =>
                 {
                     if (aspect.Enabled)
@@ -475,7 +475,7 @@ namespace Librame.Extensions.Data.Services
                     MemoryCache.Remove(cacheKey);
 
                     // 发送迁移通知
-                    var mediator = dbContextAccessor.ApplicationServiceProvider.GetService<IMediator>();
+                    var mediator = dbContextAccessor.GetService<IMediator>();
                     mediator.Publish(new MigrationNotification<TMigration>
                     {
                         Migration = addedPost.Entity

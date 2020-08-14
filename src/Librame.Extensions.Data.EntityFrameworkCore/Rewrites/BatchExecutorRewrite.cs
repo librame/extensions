@@ -126,7 +126,7 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             {
                 if (DbContextAccessor.Dependency.Options.UseInitializer)
                 {
-                    var initializer = DbContextAccessor.ApplicationServiceProvider.GetService<IStoreInitializer>();
+                    var initializer = DbContextAccessor.GetService<IStoreInitializer>();
                     initializer.Validator.SetInitialized(DbContextAccessor);
                 }
 
@@ -198,7 +198,7 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             {
                 if (DbContextAccessor.Dependency.Options.UseInitializer)
                 {
-                    var initializer = DbContextAccessor.ApplicationServiceProvider.GetService<IStoreInitializer>();
+                    var initializer = DbContextAccessor.GetService<IStoreInitializer>();
                     await initializer.Validator.SetInitializedAsync(DbContextAccessor,
                         cancellationToken).ConfigureAwait();
                 }
