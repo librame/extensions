@@ -73,12 +73,32 @@ namespace Librame.Extensions.Core.Builders
 
 
         /// <summary>
+        /// 添加服务引用（支持服务特征）。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <typeparam name="TImplementation">指定的实现类型。</typeparam>
+        /// <param name="factory">给定的服务类型对象引用转换为实现实例的工厂方法（可选；默认直接表示为实现实例）。</param>
+        /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
+        IExtensionBuilder AddServiceReference<TService, TImplementation>(Func<object, TImplementation> factory = null)
+            where TImplementation : TService;
+
+
+        /// <summary>
         /// 添加服务（支持服务特征）。
         /// </summary>
         /// <typeparam name="TService">指定的服务类型。</typeparam>
         /// <param name="factory">给定的服务对象工厂方法。</param>
         /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
-        IExtensionBuilder AddService<TService>(Func<IServiceProvider, TService> factory);
+        IExtensionBuilder AddService<TService>(Func<IServiceProvider, TService> factory)
+            where TService : class;
+
+        /// <summary>
+        /// 添加服务（支持服务特征）。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="factory">给定的服务对象工厂方法。</param>
+        /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
+        IExtensionBuilder AddService<TService>(Func<IServiceProvider, object> factory);
 
         /// <summary>
         /// 添加服务（支持服务特征）。

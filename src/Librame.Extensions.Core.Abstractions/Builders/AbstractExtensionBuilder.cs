@@ -126,8 +126,40 @@ namespace Librame.Extensions.Core.Builders
             Services.AddByCharacteristics(serviceType, implementationType, characteristics);
 
             // 如果要添加现类型服务自身
-            if (addImplementationTypeItself)
+            if (addImplementationTypeItself && !Services.Any(p => p.ServiceType == implementationType))
                 AddService(implementationType, sp => sp.GetRequiredService(serviceType));
+
+            return this;
+        }
+
+
+        /// <summary>
+        /// 添加服务引用（支持服务特征）。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <typeparam name="TImplementation">指定的实现类型。</typeparam>
+        /// <param name="factory">给定的服务类型对象引用转换为实现实例的工厂方法（可选；默认直接表示为实现实例）。</param>
+        /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
+        public virtual IExtensionBuilder AddServiceReference<TService, TImplementation>
+            (Func<object, TImplementation> factory = null)
+            where TImplementation : TService
+        {
+            var implementationType = typeof(TImplementation);
+
+            // 提前判定此实现服务类型是否已存在
+            if (!Services.Any(p => p.ServiceType == implementationType))
+            {
+                var serviceType = typeof(TService);
+                var characteristics = GetServiceCharacteristics(serviceType);
+
+                if (factory.IsNull())
+                    factory = obj => (TImplementation)obj;
+
+                Services.AddByCharacteristics(implementationType,
+                    // 解决可能出现获取指定服务类型对象并表示为实现类型时抛出已存在此服务缓存键的异常
+                    sp => factory.Invoke(sp.GetRequiredService(serviceType)),
+                    characteristics);
+            }
 
             return this;
         }
@@ -140,14 +172,23 @@ namespace Librame.Extensions.Core.Builders
         /// <param name="factory">给定的服务对象工厂方法。</param>
         /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
         public virtual IExtensionBuilder AddService<TService>(Func<IServiceProvider, TService> factory)
+            where TService : class
         {
             var serviceType = typeof(TService);
-
             var characteristics = GetServiceCharacteristics(serviceType);
-            Services.AddByCharacteristics(serviceType, sp => factory.Invoke(sp), characteristics);
+            Services.AddByCharacteristics(serviceType, factory, characteristics);
 
             return this;
         }
+
+        /// <summary>
+        /// 添加服务（支持服务特征）。
+        /// </summary>
+        /// <typeparam name="TService">指定的服务类型。</typeparam>
+        /// <param name="factory">给定的服务对象工厂方法。</param>
+        /// <returns>返回 <see cref="IExtensionBuilder"/>。</returns>
+        public virtual IExtensionBuilder AddService<TService>(Func<IServiceProvider, object> factory)
+            => AddService(typeof(TService), factory);
 
         /// <summary>
         /// 添加服务（支持服务特征）。

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Librame.Extensions.Data.Builders
 {
@@ -150,7 +151,7 @@ namespace Librame.Extensions.Data.Builders
             where THub : class, IStoreHub
         {
             AddService<IStoreHub, THub>();
-            AddService(sp => (THub)sp.GetService<IStoreHub>());
+            AddServiceReference<IStoreHub, THub>();
             return this;
         }
 
@@ -163,7 +164,7 @@ namespace Librame.Extensions.Data.Builders
             where TGenerator : class, IStoreIdentificationGenerator
         {
             AddService<IStoreIdentificationGenerator, TGenerator>();
-            AddService(sp => (TGenerator)sp.GetService<IStoreIdentificationGenerator>());
+            AddServiceReference<IStoreIdentificationGenerator, TGenerator>();
             return this;
         }
 
@@ -176,7 +177,7 @@ namespace Librame.Extensions.Data.Builders
             where TInitializer : class, IStoreInitializer
         {
             AddService<IStoreInitializer, TInitializer>();
-            AddService(sp => (TInitializer)sp.GetService<IStoreInitializer>());
+            AddServiceReference<IStoreInitializer, TInitializer>();
             return this;
         }
 

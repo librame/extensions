@@ -43,6 +43,26 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// 通过特征添加服务。
         /// </summary>
+        /// <typeparam name="TImplementation">指定的实现类型。</typeparam>
+        /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
+        /// <param name="serviceType">给定的服务类型。</param>
+        /// <param name="factory">给定的服务对象工厂方法。</param>
+        /// <param name="characteristics">给定的 <see cref="ServiceCharacteristics"/>。</param>
+        /// <returns>返回 <see cref="IServiceCollection"/>。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
+        public static IServiceCollection AddByCharacteristics<TImplementation>(this IServiceCollection services,
+            Type serviceType, Func<IServiceProvider, TImplementation> factory, ServiceCharacteristics characteristics)
+            where TImplementation : class
+        {
+            services.NotNull(nameof(services));
+            
+            var descriptor = new ServiceDescriptor(serviceType, factory, characteristics.Lifetime);
+            return services.AddByCharacteristics(descriptor, characteristics);
+        }
+
+        /// <summary>
+        /// 通过特征添加服务。
+        /// </summary>
         /// <param name="services">给定的 <see cref="IServiceCollection"/>。</param>
         /// <param name="serviceType">给定的服务类型。</param>
         /// <param name="factory">给定的服务对象工厂方法。</param>
@@ -102,7 +122,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddByCharacteristics(this IServiceCollection services,
             ServiceDescriptor descriptor, ServiceCharacteristics characteristics)
         {
-            if (characteristics.TryAdd && services.Contains(descriptor))
+            if (characteristics.TryAdd && services.Any(p => p.ServiceType == descriptor.ServiceType))
                 return services;
 
             services.Add(descriptor);
