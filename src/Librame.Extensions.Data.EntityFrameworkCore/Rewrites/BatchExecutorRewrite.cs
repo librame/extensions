@@ -76,7 +76,7 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
         public virtual int Execute(IEnumerable<ModificationCommandBatch> commandBatches,
             IRelationalConnection connection)
         {
-            commandBatches = VerifyLastWritingSaveChangesCommandBatches(out var resetUnchangedState, commandBatches);
+            commandBatches = VerifyLastWritingBatches(out var resetUnchangedState, commandBatches);
             if (commandBatches.IsNull())
                 return 0; // 当直接通过 DbContext.SubmitSaveChangesSynchronization() 调用时可能会存在无变化的情况
 
@@ -148,7 +148,7 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
         public virtual async Task<int> ExecuteAsync(IEnumerable<ModificationCommandBatch> commandBatches,
             IRelationalConnection connection, CancellationToken cancellationToken = default)
         {
-            commandBatches = VerifyLastWritingSaveChangesCommandBatches(out var resetUnchangedState, commandBatches);
+            commandBatches = VerifyLastWritingBatches(out var resetUnchangedState, commandBatches);
             if (commandBatches.IsNull())
                 return 0; // 当直接通过 DbContext.SubmitSaveChangesSynchronizationAsync() 调用时可能会存在无变化的情况
 
@@ -210,11 +210,11 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
         }
 
 
-        private List<ModificationCommandBatch> _lastWritingBatches;
-        private List<EntityState> _lastWritingStates;
+        private List<ModificationCommandBatch> _cacheLastWritingBatches;
+        private List<EntityState> _cacheLastWritingStates;
 
         [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
-        private IEnumerable<ModificationCommandBatch> VerifyLastWritingSaveChangesCommandBatches
+        private IEnumerable<ModificationCommandBatch> VerifyLastWritingBatches
             (out bool resetUnchangedState, IEnumerable<ModificationCommandBatch> commandBatches = null)
         {
             if (DbContextAccessor?.IsWritingConnectionString() == true)
@@ -222,8 +222,8 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
                 commandBatches.NotNull(nameof(commandBatches));
 
                 // 缓存实体写入状态
-                if (_lastWritingStates.IsNull())
-                    _lastWritingStates = new List<EntityState>();
+                if (_cacheLastWritingStates.IsNull())
+                    _cacheLastWritingStates = new List<EntityState>();
 
                 foreach (var batch in commandBatches)
                 {
@@ -232,26 +232,26 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
                         var entries = command.Entries
                             .Select(entry => entry.EntityState);
 
-                        _lastWritingStates.AddRange(entries);
+                        _cacheLastWritingStates.AddRange(entries);
                     }
                 }
 
-                _lastWritingBatches = commandBatches.ToList();
+                _cacheLastWritingBatches = commandBatches.ToList();
                 resetUnchangedState = false;
 
                 return commandBatches;
             }
 
-            if (_lastWritingBatches.IsNotNull())
+            if (_cacheLastWritingBatches.IsNotNull())
             {
                 // 重置为上次写入的实体状态
-                ResetEntityStates(_lastWritingBatches, i => _lastWritingStates[i]);
+                ResetEntityStates(_cacheLastWritingBatches, i => _cacheLastWritingStates[i]);
 
-                commandBatches = _lastWritingBatches;
+                commandBatches = _cacheLastWritingBatches;
 
                 // 清空缓存，确保仅用一次
-                _lastWritingBatches = null;
-                _lastWritingStates = null;
+                _cacheLastWritingBatches = null;
+                _cacheLastWritingStates = null;
             }
 
             resetUnchangedState = true;

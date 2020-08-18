@@ -48,7 +48,7 @@ namespace Librame.Extensions.Data.Accessors
             DataTabulation<TGenId, TCreatedBy>,
             DataTenant<TGenId, TCreatedBy>,
             TGenId, TIncremId, TCreatedBy>,
-        IDataAccessor<TGenId, TIncremId, TCreatedBy>
+            IDataAccessor<TGenId, TIncremId, TCreatedBy>
         where TGenId : IEquatable<TGenId>
         where TIncremId : IEquatable<TIncremId>
         where TCreatedBy : IEquatable<TCreatedBy>

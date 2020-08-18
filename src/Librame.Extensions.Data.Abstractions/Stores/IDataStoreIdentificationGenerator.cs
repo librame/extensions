@@ -24,6 +24,22 @@ namespace Librame.Extensions.Data.Stores
         where TId : IEquatable<TId>
     {
         /// <summary>
+        /// 生成标识。
+        /// </summary>
+        /// <param name="idName">给定的标识名称。</param>
+        /// <returns>返回 <typeparamref name="TId"/>。</returns>
+        TId GenerateId(string idName);
+
+        /// <summary>
+        /// 异步生成标识。
+        /// </summary>
+        /// <param name="idName">给定的标识名称。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
+        Task<TId> GenerateIdAsync(string idName, CancellationToken cancellationToken = default);
+
+
+        /// <summary>
         /// 生成审计标识。
         /// </summary>
         /// <returns>返回 <typeparamref name="TId"/>。</returns>

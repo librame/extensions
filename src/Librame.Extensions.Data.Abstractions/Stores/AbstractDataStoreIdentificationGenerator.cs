@@ -42,11 +42,29 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
+        /// 生成标识。
+        /// </summary>
+        /// <param name="idName">给定的标识名称。</param>
+        /// <returns>返回 <typeparamref name="TId"/>。</returns>
+        public virtual TId GenerateId(string idName)
+            => GenerateId<TId>(idName);
+
+        /// <summary>
+        /// 异步生成标识。
+        /// </summary>
+        /// <param name="idName">给定的标识名称。</param>
+        /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
+        /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
+        public virtual Task<TId> GenerateIdAsync(string idName, CancellationToken cancellationToken = default)
+            => GenerateIdAsync<TId>(idName, cancellationToken);
+
+
+        /// <summary>
         /// 生成审计标识。
         /// </summary>
         /// <returns>返回 <typeparamref name="TId"/>。</returns>
         public virtual TId GenerateAuditId()
-            => GenerateId<TId>("AuditId");
+            => GenerateId("AuditId");
 
         /// <summary>
         /// 异步生成审计标识。
@@ -54,7 +72,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
         public virtual Task<TId> GenerateAuditIdAsync(CancellationToken cancellationToken = default)
-            => GenerateIdAsync<TId>("AuditId", cancellationToken);
+            => GenerateIdAsync("AuditId", cancellationToken);
 
 
         /// <summary>
@@ -62,7 +80,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
         public virtual TId GenerateMigrationId()
-            => GenerateId<TId>("MigrationId");
+            => GenerateId("MigrationId");
 
         /// <summary>
         /// 异步生成迁移标识。
@@ -70,7 +88,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
         public virtual Task<TId> GenerateMigrationIdAsync(CancellationToken cancellationToken = default)
-            => GenerateIdAsync<TId>("MigrationId", cancellationToken);
+            => GenerateIdAsync("MigrationId", cancellationToken);
 
 
         /// <summary>
@@ -78,7 +96,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回 <typeparamref name="TId"/>。</returns>
         public virtual TId GenerateTabulationId()
-            => GenerateId<TId>("TabulationId");
+            => GenerateId("TabulationId");
 
         /// <summary>
         /// 异步生成表格标识。
@@ -86,7 +104,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
         public virtual Task<TId> GenerateTabulationIdAsync(CancellationToken cancellationToken = default)
-            => GenerateIdAsync<TId>("TabulationId", cancellationToken);
+            => GenerateIdAsync("TabulationId", cancellationToken);
 
 
         /// <summary>
@@ -94,7 +112,7 @@ namespace Librame.Extensions.Data.Stores
         /// </summary>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
         public virtual TId GenerateTenantId()
-            => GenerateId<TId>("TenantId");
+            => GenerateId("TenantId");
 
         /// <summary>
         /// 异步生成租户标识。
@@ -102,6 +120,6 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含 <typeparamref name="TId"/> 的异步操作。</returns>
         public virtual Task<TId> GenerateTenantIdAsync(CancellationToken cancellationToken = default)
-            => GenerateIdAsync<TId>("TenantId", cancellationToken);
+            => GenerateIdAsync("TenantId", cancellationToken);
     }
 }
