@@ -10,7 +10,6 @@ using System;
 
 namespace Librame.Extensions.Examples
 {
-    using Core;
     using Core.Builders;
     using Core.Identifiers;
     using Core.Options;
@@ -69,8 +68,8 @@ namespace Librame.Extensions.Examples
             var builder = CreateBuilder()
                 .AddData(dependency =>
                 {
-                    dependency.Options.MigrationAssemblyReferences.Add(
-                        AssemblyDescriptor.Create("Microsoft.EntityFrameworkCore.SqlServer"));
+                    //dependency.Options.MigrationAssemblyReferences.Add(
+                    //    AssemblyDescriptor.Create("Microsoft.EntityFrameworkCore.SqlServer"));
                 })
                 .AddAccessor<ExampleDbContextAccessor>((tenant, optionsBuilder) =>
                 {

@@ -27,6 +27,25 @@ namespace Librame.Extensions
     public static class TypeExtensions
     {
         /// <summary>
+        /// 获取非公共字段。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <param name="name">给定的字段名称。</param>
+        /// <returns>返回 <see cref="FieldInfo"/>。</returns>
+        public static FieldInfo GetNonPublicField(this Type type, string name)
+            => type?.GetField(name, ExtensionSettings.BindingFlagsWithNonPublic);
+
+        /// <summary>
+        /// 获取非公共属性。
+        /// </summary>
+        /// <param name="type">给定的类型。</param>
+        /// <param name="name">给定的属性名称。</param>
+        /// <returns>返回 <see cref="PropertyInfo"/>。</returns>
+        public static PropertyInfo GetNonPublicProperty(this Type type, string name)
+            => type?.GetProperty(name, ExtensionSettings.BindingFlagsWithNonPublic);
+
+
+        /// <summary>
         /// 是否为具实类型（非接口与抽象类型，即可实例化类型）。
         /// </summary>
         /// <param name="type">给定的类型。</param>
@@ -283,7 +302,7 @@ namespace Librame.Extensions
         /// <returns>返回字段信息数组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FieldInfo[] GetAllFields(this Type type)
-            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllBindingFlags);
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.BindingFlagsWithAllAndStatic);
 
         /// <summary>
         /// 获取所有非静态字段集合（包括公开、非公开、实例等）。
@@ -292,7 +311,7 @@ namespace Librame.Extensions
         /// <returns>返回字段信息数组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static FieldInfo[] GetAllFieldsWithoutStatic(this Type type)
-            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.AllBindingFlagsWithoutStatic);
+            => type.NotNull(nameof(type)).GetFields(ExtensionSettings.BindingFlagsWithAll);
 
 
         /// <summary>
@@ -302,7 +321,7 @@ namespace Librame.Extensions
         /// <returns>返回字段信息数组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static PropertyInfo[] GetAllProperties(this Type type)
-            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllBindingFlags);
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.BindingFlagsWithAllAndStatic);
 
         /// <summary>
         /// 获取所有非静态属性集合（包括公开、非公开、实例等）。
@@ -311,7 +330,7 @@ namespace Librame.Extensions
         /// <returns>返回字段信息数组。</returns>
         [SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods")]
         public static PropertyInfo[] GetAllPropertiesWithoutStatic(this Type type)
-            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.AllBindingFlagsWithoutStatic);
+            => type.NotNull(nameof(type)).GetProperties(ExtensionSettings.BindingFlagsWithAll);
 
         #endregion
 
@@ -545,10 +564,10 @@ namespace Librame.Extensions
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="sources">给定的源类型实例集合。</param>
         /// <param name="compares">给定的比较类型实例集合。</param>
-        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为 <see cref="ExtensionSettings.AllPropertiesBindingFlags"/>）。</param>
+        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为 <see cref="ExtensionSettings.BindingFlagsWithPublic"/>）。</param>
         /// <returns>返回布尔值。</returns>
         public static bool SequencePropertyValuesEquals<T>(this IEnumerable<T> sources, IEnumerable<T> compares,
-            BindingFlags bindingFlags = ExtensionSettings.AllPropertiesBindingFlags)
+            BindingFlags bindingFlags = ExtensionSettings.BindingFlagsWithPublic)
         {
             sources.NotEmpty(nameof(sources));
             compares.NotEmpty(nameof(compares));
@@ -582,10 +601,10 @@ namespace Librame.Extensions
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="source">给定的源类型实例。</param>
         /// <param name="compare">给定的比较类型实例。</param>
-        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为 <see cref="ExtensionSettings.AllPropertiesBindingFlags"/>）。</param>
+        /// <param name="bindingFlags">给定的 <see cref="BindingFlags"/>（可选；默认为 <see cref="ExtensionSettings.BindingFlagsWithPublic"/>）。</param>
         /// <returns>返回布尔值。</returns>
         public static bool PropertyValuesEquals<T>(this T source, T compare,
-            BindingFlags bindingFlags = ExtensionSettings.AllPropertiesBindingFlags)
+            BindingFlags bindingFlags = ExtensionSettings.BindingFlagsWithPublic)
             where T : class
         {
             source.NotNull(nameof(source));
@@ -610,35 +629,39 @@ namespace Librame.Extensions
         #region SetProperty
 
         /// <summary>
-        /// 设置属性。
+        /// 设置具有 set 访问器（支持私有）的属性。
         /// </summary>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <typeparam name="TProperty">指定的属性类型。</typeparam>
         /// <param name="element">给定的 <typeparamref name="T"/>。</param>
         /// <param name="propertyExpression">给定的属性表达式。</param>
         /// <param name="newProperty">给定的 <typeparamref name="TProperty"/>。</param>
+        /// <param name="bindingFlags">给定的绑定标识（可选；默认为 <see cref="ExtensionSettings.BindingFlagsWithPublic"/>）。</param>
         /// <returns>返回布尔值。</returns>
         public static T SetProperty<T, TProperty>(this T element,
-            Expression<Func<T, TProperty>> propertyExpression, TProperty newProperty)
+            Expression<Func<T, TProperty>> propertyExpression, TProperty newProperty,
+            BindingFlags bindingFlags = ExtensionSettings.BindingFlagsWithPublic)
             where T : class
-            => element.SetProperty(propertyExpression.AsPropertyName(), newProperty);
+            => element.SetProperty(propertyExpression.AsPropertyName(), newProperty, bindingFlags);
 
         /// <summary>
-        /// 设置属性。
+        /// 设置具有 set 访问器（支持私有）的属性。
         /// </summary>
         /// <typeparam name="T">指定的类型。</typeparam>
         /// <param name="element">给定的 <typeparamref name="T"/>。</param>
         /// <param name="propertyName">给定的属性名称。</param>
         /// <param name="newPropertyValue">给定的新属性值。</param>
+        /// <param name="bindingFlags">给定的绑定标识（可选；默认为 <see cref="ExtensionSettings.BindingFlagsWithPublic"/>）。</param>
         /// <returns>返回 <typeparamref name="T"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public static T SetProperty<T>(this T element, string propertyName, object newPropertyValue)
+        public static T SetProperty<T>(this T element, string propertyName, object newPropertyValue,
+            BindingFlags bindingFlags = ExtensionSettings.BindingFlagsWithPublic)
             where T : class
         {
             element.NotNull(nameof(element));
 
             // 如果 T 为接口、抽象等类型，typeof(T) 方法获取的属性可能因没有定义 set 方法导致参数异常
-            var property = element.GetType().GetProperty(propertyName);
+            var property = element.GetType().GetProperty(propertyName, bindingFlags);
             property.NotNull(nameof(property));
 
             property.SetValue(element, newPropertyValue);
@@ -646,18 +669,20 @@ namespace Librame.Extensions
         }
 
         /// <summary>
-        /// 设置属性。
+        /// 设置具有 set 访问器（支持私有）的属性。
         /// </summary>
         /// <param name="obj">给定的对象。</param>
         /// <param name="propertyName">给定的属性名称。</param>
         /// <param name="newPropertyValue">给定的新属性值。</param>
+        /// <param name="bindingFlags">给定的绑定标识（可选；默认为 <see cref="ExtensionSettings.BindingFlagsWithPublic"/>）。</param>
         /// <returns>返回对象。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数")]
-        public static object SetProperty(this object obj, string propertyName, object newPropertyValue)
+        public static object SetProperty(this object obj, string propertyName, object newPropertyValue,
+            BindingFlags bindingFlags = ExtensionSettings.BindingFlagsWithPublic)
         {
             obj.NotNull(nameof(obj));
 
-            var property = obj.GetType().GetProperty(propertyName);
+            var property = obj.GetType().GetProperty(propertyName, bindingFlags);
             property.NotNull(nameof(property));
 
             property.SetValue(obj, newPropertyValue);

@@ -206,7 +206,7 @@ namespace Microsoft.EntityFrameworkCore
         private static void CheckDisposed(DbContext dbContext)
         {
             var disposed = (bool)typeof(DbContext)
-                .GetField("_disposed", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetNonPublicField("_disposed")
                 .GetValue(dbContext);
 
             if (disposed)

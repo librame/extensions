@@ -80,6 +80,9 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             if (commandBatches.IsNull())
                 return 0; // 当直接通过 DbContext.SubmitSaveChangesSynchronization() 调用时可能会存在无变化的情况
 
+            if (!resetUnchangedState)
+                RepairLastWritingBatches(commandBatches); // 修复可能发生变化的列修改（如参数名称等）
+
             var rowsAffected = 0;
             IDbContextTransaction startedTransaction = null;
             try
@@ -152,6 +155,9 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             if (commandBatches.IsNull())
                 return 0; // 当直接通过 DbContext.SubmitSaveChangesSynchronizationAsync() 调用时可能会存在无变化的情况
 
+            if (!resetUnchangedState)
+                RepairLastWritingBatches(commandBatches); // 修复可能发生变化的列修改（如参数名称等）
+
             var rowsAffected = 0;
             IDbContextTransaction startedTransaction = null;
             try
@@ -221,83 +227,107 @@ namespace Microsoft.EntityFrameworkCore.Update.Internal
             {
                 commandBatches.NotNull(nameof(commandBatches));
 
-                // 缓存实体写入状态
-                if (_cacheLastWritingStates.IsNull())
-                    _cacheLastWritingStates = new List<EntityState>();
-
-                foreach (var batch in commandBatches)
-                {
-                    foreach (var command in batch.ModificationCommands)
-                    {
-                        var entries = command.Entries
-                            .Select(entry => entry.EntityState);
-
-                        _cacheLastWritingStates.AddRange(entries);
-                    }
-                }
-
+                // 缓存上次写入批处理与状态集合
                 _cacheLastWritingBatches = commandBatches.ToList();
+                _cacheLastWritingStates = commandBatches.SelectMany(batch =>
+                {
+                    return batch.ModificationCommands.SelectMany(cmd =>
+                    {
+                        return cmd.Entries.Select(entry => entry.EntityState);
+                    });
+                })
+                .ToList();
+
                 resetUnchangedState = false;
 
                 return commandBatches;
             }
 
-            if (_cacheLastWritingBatches.IsNotNull())
+            commandBatches = _cacheLastWritingBatches;
+            resetUnchangedState = true;
+
+            if (commandBatches.IsNotNull())
             {
                 // 重置为上次写入的实体状态
-                ResetEntityStates(_cacheLastWritingBatches, i => _cacheLastWritingStates[i]);
-
-                commandBatches = _cacheLastWritingBatches;
-
-                // 清空缓存，确保仅用一次
-                _cacheLastWritingBatches = null;
-                _cacheLastWritingStates = null;
+                ResetEntityStates(commandBatches, i => _cacheLastWritingStates[i]);
             }
 
-            resetUnchangedState = true;
+            // 清空缓存，确保仅用一次
+            _cacheLastWritingBatches = null;
+            _cacheLastWritingStates = null;
+
             return commandBatches;
+        }
+
+        private void RepairLastWritingBatches(IEnumerable<ModificationCommandBatch> fixedBatches)
+        {
+            if (_cacheLastWritingBatches.IsNull() || _cacheLastWritingBatches.Count != fixedBatches.Count())
+                return;
+
+            for (var i = 0; i < _cacheLastWritingBatches.Count; i++)
+            {
+                var fixedBatch = fixedBatches.ElementAt(i);
+                var cacheBatch = _cacheLastWritingBatches[i];
+
+                if (fixedBatch.ModificationCommands.Count != cacheBatch.ModificationCommands.Count)
+                    continue;
+
+                for (var j = 0; j < cacheBatch.ModificationCommands.Count; j++)
+                {
+                    var fixedCommand = fixedBatch.ModificationCommands[j];
+                    var cacheCommand = cacheBatch.ModificationCommands[j];
+
+                    if (fixedCommand.ColumnModifications.Count != cacheCommand.ColumnModifications.Count)
+                        continue;
+
+                    for (var k = 0; k < fixedCommand.ColumnModifications.Count; k++)
+                    {
+                        var fixedColumn = fixedCommand.ColumnModifications[k];
+                        var cacheColumn = cacheCommand.ColumnModifications[k];
+
+                        // 尝试更新可能存在变化的列修改（如当启用读写数据同步、参数名称发生改变时，可能会出现添加重复参数名称导致数据同步失败）
+                        cacheColumn.TryUpdate(fixedColumn);
+                    }
+                }
+            }
         }
 
         [SuppressMessage("Usage", "EF1001:Internal EF Core API usage.", Justification = "<挂起>")]
         private static void ResetEntityStates(IEnumerable<ModificationCommandBatch> batches,
-            Func<int, EntityState> stateFunc, bool resetPrimaryKey = false)
+            Func<int, EntityState> resetStateFunc, bool resetPrimaryKey = false)
         {
-            var entries = new List<IUpdateEntry>();
-
-            foreach (var batch in batches)
+            var entries = batches.SelectMany(batch =>
             {
-                foreach (var command in batch.ModificationCommands)
+                return batch.ModificationCommands.SelectMany(cmd => cmd.Entries);
+            })
+            .ToList();
+
+            entries.ForEach((entry, i) =>
+            {
+                if (entry is InternalEntityEntry entityEntry)
                 {
-                    entries.AddRange(command.Entries);
+                    // 设定原始实体状态
+                    entityEntry.SetEntityState(resetStateFunc.Invoke(i));
+
+                    if (resetPrimaryKey)
+                    {
+                        // 如果是自增长主键且已设置标识，则需要重置
+                        (var isGenerated, var isSet) = entityEntry.IsKeySet;
+                        if (entry.EntityState == EntityState.Added && isGenerated && isSet)
+                        {
+                            var keyProperties = entry.EntityType.GetProperties()
+                                .Where(p => p.IsPrimaryKey());
+
+                            foreach (var key in keyProperties)
+                            {
+                                // 重置自生成主键默认值
+                                entityEntry.Entity.SetProperty(key.Name, key.GetDefaultValue());
+                            }
+                        }
+                    }
                 }
-            }
-
-            for (var i = 0; i < entries.Count; i++)
-            {
-                var entry = entries[i] as InternalEntityEntry;
-
-                // 设定原始实体状态
-                entry.SetEntityState(stateFunc.Invoke(i));
-
-                if (!resetPrimaryKey)
-                    continue;
-
-                //// 如果是自增长主键且已设置标识，则需要重置
-                //(var isGenerated, var isSet) = entry.IsKeySet;
-                //if (entry.EntityState == EntityState.Added && isGenerated && isSet)
-                //{
-                //    var keyProperties = entry.EntityType.GetProperties()
-                //        .Where(p => p.IsPrimaryKey());
-
-                //    foreach (var key in keyProperties)
-                //    {
-                //        // 重置自生成主键默认值
-                //        entry.Entity.SetProperty(key.Name, key.GetDefaultValue());
-                //    }
-                //}
-            }
+            });
         }
 
     }
-
 }

@@ -151,22 +151,28 @@ namespace Librame.Extensions
 
 
         /// <summary>
-        /// 所有绑定标记（包含公共、非公共、实例、静态等标记）。
+        /// 具有所有（含静态）绑定标记（包含实例、公共、非公共、静态等标记）。
         /// </summary>
-        public const BindingFlags AllBindingFlags
-            = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+        public const BindingFlags BindingFlagsWithAllAndStatic
+            = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
         /// <summary>
-        /// 除静态外的所有绑定标记（包含公共、非公共、实例等标记）。
+        /// 具有所有绑定标记（包含实例、公共、非公共等标记）。
         /// </summary>
-        public const BindingFlags AllBindingFlagsWithoutStatic
-            = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+        public const BindingFlags BindingFlagsWithAll
+            = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         /// <summary>
-        /// 所有属性绑定标记（包含公共、实例等标记）。
+        /// 具有公共绑定标记（包含实例、公共等标记）。
         /// </summary>
-        public const BindingFlags AllPropertiesBindingFlags
-            = BindingFlags.Public | BindingFlags.Instance;
+        public const BindingFlags BindingFlagsWithPublic
+            = BindingFlags.Instance | BindingFlags.Public;
+
+        /// <summary>
+        /// 具有非公共绑定标记（包含实例、公共等标记）。
+        /// </summary>
+        public const BindingFlags BindingFlagsWithNonPublic
+            = BindingFlags.Instance | BindingFlags.NonPublic;
 
         #endregion
 
