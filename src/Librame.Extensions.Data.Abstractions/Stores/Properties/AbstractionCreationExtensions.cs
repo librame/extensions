@@ -12,6 +12,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -291,6 +292,152 @@ namespace Librame.Extensions.Data.Stores
             var newCreatedBy = await creation.GetObjectCreatedByAsync(cancellationToken).ConfigureAwait();
             return await creation.SetObjectCreatedByAsync(newCreatedByFactory.Invoke(newCreatedBy), cancellationToken)
                 .ConfigureAwait();
+        }
+
+
+        /// <summary>
+        /// 导入创建。
+        /// </summary>
+        /// <typeparam name="TCreatedBy">指定的创建者类型（支持所有整数、<see cref="Guid"/> 类型）。</typeparam>
+        /// <typeparam name="TCreatedTime">指定的创建时间类型（支持 <see cref="DateTime"/>、<see cref="DateTimeOffset"/>、长整形周期数等类型）。</typeparam>
+        /// <param name="creation">给定的 <see cref="ICreation{TCreatedBy, TCreatedTime}"/>。</param>
+        /// <param name="by">给定的字符串使为者。</param>
+        /// <param name="time">给定的字符串时间。</param>
+        /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static void ImportCreation<TCreatedBy, TCreatedTime>(this ICreation<TCreatedBy, TCreatedTime> creation,
+            string by, string time, IFormatProvider provider = null)
+            where TCreatedBy : IEquatable<TCreatedBy>
+            where TCreatedTime : struct
+        {
+            creation.NotNull(nameof(creation));
+
+            creation.CreatedBy = by.ToCreatedBy<TCreatedBy>(provider);
+            creation.CreatedTime = time.ToCreatedTime<TCreatedTime>(provider);
+        }
+
+        /// <summary>
+        /// 导入发表。
+        /// </summary>
+        /// <typeparam name="TPublishedBy">指定的发表者类型（支持所有整数、<see cref="Guid"/> 类型）。</typeparam>
+        /// <typeparam name="TPublishedTime">指定的发表时间类型（支持 <see cref="DateTime"/>、<see cref="DateTimeOffset"/>、长整形周期数等类型）。</typeparam>
+        /// <param name="publication">给定的 <see cref="IPublication{TPublishedBy, TPublishedTime}"/>。</param>
+        /// <param name="by">给定的字符串使为者。</param>
+        /// <param name="time">给定的字符串时间。</param>
+        /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static void ImportPublication<TPublishedBy, TPublishedTime>(this IPublication<TPublishedBy, TPublishedTime> publication,
+            string by, string time, IFormatProvider provider = null)
+            where TPublishedBy : IEquatable<TPublishedBy>
+            where TPublishedTime : struct
+        {
+            publication.ImportCreation(by, time, provider);
+
+            publication.PublishedBy = by.ToCreatedBy<TPublishedBy>(provider);
+            publication.PublishedTime = time.ToCreatedTime<TPublishedTime>(provider);
+        }
+
+        /// <summary>
+        /// 导入更新。
+        /// </summary>
+        /// <typeparam name="TUpdatedBy">指定的更新者类型（支持所有整数、<see cref="Guid"/> 类型）。</typeparam>
+        /// <typeparam name="TUpdatedTime">指定的更新时间类型（支持 <see cref="DateTime"/>、<see cref="DateTimeOffset"/>、长整形周期数等类型）。</typeparam>
+        /// <param name="updation">给定的 <see cref="IUpdation{TUpdatedBy, TUpdatedTime}"/>。</param>
+        /// <param name="by">给定的字符串使为者。</param>
+        /// <param name="time">给定的字符串时间。</param>
+        /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static void ImportUpdation<TUpdatedBy, TUpdatedTime>(this IUpdation<TUpdatedBy, TUpdatedTime> updation,
+            string by, string time, IFormatProvider provider = null)
+            where TUpdatedBy : IEquatable<TUpdatedBy>
+            where TUpdatedTime : struct
+        {
+            updation.ImportCreation(by, time, provider);
+
+            updation.UpdatedBy = by.ToCreatedBy<TUpdatedBy>(provider);
+            updation.UpdatedTime = time.ToCreatedTime<TUpdatedTime>(provider);
+        }
+
+
+        /// <summary>
+        /// 转为创建者（支持所有整数、<see cref="Guid"/> 类型创建者的字符串形式）。
+        /// </summary>
+        /// <typeparam name="TCreatedBy">指定的创建者类型（支持所有整数、<see cref="Guid"/> 类型）。</typeparam>
+        /// <param name="by">给定的字符串使为者。</param>
+        /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
+        /// <returns>返回 <typeparamref name="TCreatedBy"/>。</returns>
+        public static TCreatedBy ToCreatedBy<TCreatedBy>(this string by, IFormatProvider provider = null)
+            where TCreatedBy : IEquatable<TCreatedBy>
+            => (TCreatedBy)by.ToCreatedBy(typeof(TCreatedBy), provider);
+
+        /// <summary>
+        /// 转为创建者（支持所有整数、<see cref="Guid"/> 类型创建者的字符串形式）。
+        /// </summary>
+        /// <param name="by">给定的字符串使为者。</param>
+        /// <param name="byType">给定的使为者类型（支持所有整数、<see cref="Guid"/> 类型）。</param>
+        /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
+        /// <returns>返回使为者对象。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static object ToCreatedBy(this string by, Type byType, IFormatProvider provider = null)
+        {
+            byType.NotNull(nameof(byType));
+
+            if (provider.IsNull())
+                provider = CultureInfo.InvariantCulture;
+
+            object obj = byType.Name switch
+            {
+                "Guid" => Guid.Parse(by),
+                "SByte" => sbyte.Parse(by, provider),
+                "Byte" => byte.Parse(by, provider),
+                "Int16" => short.Parse(by, provider),
+                "UInt16" => ushort.Parse(by, provider),
+                "Int32" => int.Parse(by, provider),
+                "UInt32" => uint.Parse(by, provider),
+                "Int64" => long.Parse(by, provider),
+                "UInt64" => ulong.Parse(by, provider),
+                _ => new NotSupportedException()
+            };
+
+            return obj;
+        }
+
+
+        /// <summary>
+        /// 转为创建时间（支持 <see cref="DateTime"/>、<see cref="DateTimeOffset"/>、长整形周期数等类型时间的字符串形式）。
+        /// </summary>
+        /// <typeparam name="TCreatedTime">指定的创建时间类型（支持 <see cref="DateTime"/>、<see cref="DateTimeOffset"/>、长整形周期数等类型）。</typeparam>
+        /// <param name="time">给定的字符串时间。</param>
+        /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
+        /// <returns>返回 <typeparamref name="TCreatedTime"/>。</returns>
+        public static TCreatedTime ToCreatedTime<TCreatedTime>(this string time, IFormatProvider provider = null)
+            where TCreatedTime : struct
+            => (TCreatedTime)time.ToCreatedTime(typeof(TCreatedTime), provider);
+
+        /// <summary>
+        /// 转为创建时间（支持 <see cref="DateTime"/>、<see cref="DateTimeOffset"/>、长整形周期数等类型时间的字符串形式）。
+        /// </summary>
+        /// <param name="time">给定的字符串时间。</param>
+        /// <param name="timeType">给定的时间类型（支持 <see cref="DateTime"/>、<see cref="DateTimeOffset"/>、长整形周期数等类型）。</param>
+        /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
+        /// <returns>返回时间对象。</returns>
+        [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
+        public static object ToCreatedTime(this string time, Type timeType, IFormatProvider provider = null)
+        {
+            timeType.NotNull(nameof(timeType));
+
+            if (provider.IsNull())
+                provider = CultureInfo.InvariantCulture;
+
+            object obj = timeType.Name switch
+            {
+                "DateTime" => DateTime.Parse(time, provider),
+                "DateTimeOffset" => DateTimeOffset.Parse(time, provider),
+                "Int64" => new DateTime(long.Parse(time, provider)),
+                _ => new NotSupportedException()
+            };
+
+            return obj;
         }
 
     }

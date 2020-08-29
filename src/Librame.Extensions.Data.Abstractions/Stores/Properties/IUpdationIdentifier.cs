@@ -14,8 +14,6 @@ using System;
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Core.Identifiers;
-
     /// <summary>
     /// 更新标识符接口。
     /// </summary>
@@ -35,8 +33,9 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TUpdatedBy">指定的更新者类型。</typeparam>
     /// <typeparam name="TUpdatedTime">指定的更新时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
-    public interface IUpdationIdentifier<TId, TUpdatedBy, TUpdatedTime> : IIdentifier<TId>,
-        IUpdation<TUpdatedBy, TUpdatedTime>, IObjectUpdationIdentifier
+    public interface IUpdationIdentifier<TId, TUpdatedBy, TUpdatedTime>
+        : ICreationIdentifier<TId, TUpdatedBy, TUpdatedTime>
+        , IUpdation<TUpdatedBy, TUpdatedTime>, IObjectUpdationIdentifier
         where TId : IEquatable<TId>
         where TUpdatedBy : IEquatable<TUpdatedBy>
         where TUpdatedTime : struct

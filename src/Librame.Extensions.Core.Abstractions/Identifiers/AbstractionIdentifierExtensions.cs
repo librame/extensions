@@ -69,14 +69,16 @@ namespace Librame.Extensions.Core.Identifiers
         /// <typeparam name="TGenId">指定的生成式标识类型（如：<see cref="Guid"/>、<see cref="long"/>、<see cref="string"/> 等类型）。</typeparam>
         /// <param name="identifier">给定的 <see cref="IGenerativeIdentifier{TGenId}"/>。</param>
         /// <param name="id">给定的字符串标识。</param>
+        /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
         /// <returns>返回 <typeparamref name="TGenId"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static TGenId ImportId<TGenId>(this IGenerativeIdentifier<TGenId> identifier, string id)
+        public static TGenId ImportId<TGenId>(this IGenerativeIdentifier<TGenId> identifier,
+            string id, IFormatProvider provider = null)
             where TGenId : IEquatable<TGenId>
         {
             identifier.NotNull(nameof(identifier));
 
-            identifier.Id = (TGenId)id.ToGenerativeId(identifier.IdType);
+            identifier.Id = (TGenId)id.ToGenerativeId(identifier.IdType, provider);
             return identifier.Id;
         }
 
@@ -86,14 +88,16 @@ namespace Librame.Extensions.Core.Identifiers
         /// <typeparam name="TIncremId">指定的增量式标识类型（如：整数型标识）。</typeparam>
         /// <param name="identifier">给定的 <see cref="IIncrementalIdentifier{TIncremId}"/>。</param>
         /// <param name="id">给定的字符串标识。</param>
+        /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
         /// <returns>返回 <typeparamref name="TIncremId"/>。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static TIncremId ImportId<TIncremId>(this IIncrementalIdentifier<TIncremId> identifier, string id)
+        public static TIncremId ImportId<TIncremId>(this IIncrementalIdentifier<TIncremId> identifier,
+            string id, IFormatProvider provider = null)
             where TIncremId : IEquatable<TIncremId>
         {
             identifier.NotNull(nameof(identifier));
 
-            identifier.Id = (TIncremId)id.ToIncrementalId(identifier.IdType);
+            identifier.Id = (TIncremId)id.ToIncrementalId(identifier.IdType, provider);
             return identifier.Id;
         }
 
@@ -105,8 +109,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// <param name="id">给定的字符串标识。</param>
         /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
         /// <returns>返回 <typeparamref name="TGenId"/>。</returns>
-        public static TGenId ToGenerativeId<TGenId>(this string id,
-            IFormatProvider provider = null)
+        public static TGenId ToGenerativeId<TGenId>(this string id, IFormatProvider provider = null)
             where TGenId : IEquatable<TGenId>
             => (TGenId)id.ToGenerativeId(typeof(TGenId), provider);
 
@@ -118,8 +121,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
         /// <returns>返回标识对象。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static object ToGenerativeId(this string id, Type idType,
-            IFormatProvider provider = null)
+        public static object ToGenerativeId(this string id, Type idType, IFormatProvider provider = null)
         {
             idType.NotNull(nameof(idType));
 
@@ -145,8 +147,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// <param name="id">给定的字符串标识。</param>
         /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
         /// <returns>返回 <typeparamref name="TIncremId"/>。</returns>
-        public static TIncremId ToIncrementalId<TIncremId>(this string id,
-            IFormatProvider provider = null)
+        public static TIncremId ToIncrementalId<TIncremId>(this string id, IFormatProvider provider = null)
             where TIncremId : IEquatable<TIncremId>
             => (TIncremId)id.ToIncrementalId(typeof(TIncremId), provider);
 
@@ -158,8 +159,7 @@ namespace Librame.Extensions.Core.Identifiers
         /// <param name="provider">给定的 <see cref="IFormatProvider"/>（可选；默认使用 <see cref="CultureInfo.InvariantCulture"/>）。</param>
         /// <returns>返回标识对象。</returns>
         [SuppressMessage("Design", "CA1062:验证公共方法的参数", Justification = "<挂起>")]
-        public static object ToIncrementalId(this string id, Type idType,
-            IFormatProvider provider = null)
+        public static object ToIncrementalId(this string id, Type idType, IFormatProvider provider = null)
         {
             idType.NotNull(nameof(idType));
 
