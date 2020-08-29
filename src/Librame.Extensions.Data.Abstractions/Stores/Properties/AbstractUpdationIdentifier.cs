@@ -23,16 +23,19 @@ namespace Librame.Extensions.Data.Stores
     /// <summary>
     /// 抽象更新标识符（继承自抽象创建）。
     /// </summary>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TUpdatedBy">指定的更新者。</typeparam>
     [NotMapped]
-    public abstract class AbstractUpdation<TUpdatedBy>
-        : AbstractUpdation<TUpdatedBy, DateTimeOffset>, IUpdation<TUpdatedBy>
+    public abstract class AbstractUpdationIdentifier<TId, TUpdatedBy>
+        : AbstractUpdationIdentifier<TId, TUpdatedBy, DateTimeOffset>
+        , IUpdationIdentifier<TId, TUpdatedBy>
+        where TId : IEquatable<TId>
         where TUpdatedBy : IEquatable<TUpdatedBy>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractUpdation{TId, TUpdatedBy}"/>。
+        /// 构造一个 <see cref="AbstractUpdationIdentifier{TId, TUpdatedBy}"/>。
         /// </summary>
-        protected AbstractUpdation()
+        protected AbstractUpdationIdentifier()
         {
             UpdatedTime = CreatedTime = DataSettings.Preference.DefaultCreatedTime;
             UpdatedTimeTicks = CreatedTimeTicks = UpdatedTime.Ticks;
@@ -128,12 +131,14 @@ namespace Librame.Extensions.Data.Stores
     /// <summary>
     /// 抽象更新标识符（继承自抽象创建）。
     /// </summary>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TUpdatedBy">指定的更新者。</typeparam>
     /// <typeparam name="TUpdatedTime">指定的更新时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
     [NotMapped]
-    public abstract class AbstractUpdation<TUpdatedBy, TUpdatedTime>
-        : AbstractCreation<TUpdatedBy, TUpdatedTime>
-        , IUpdation<TUpdatedBy, TUpdatedTime>
+    public abstract class AbstractUpdationIdentifier<TId, TUpdatedBy, TUpdatedTime>
+        : AbstractCreationIdentifier<TId, TUpdatedBy, TUpdatedTime>
+        , IUpdationIdentifier<TId, TUpdatedBy, TUpdatedTime>
+        where TId : IEquatable<TId>
         where TUpdatedBy : IEquatable<TUpdatedBy>
         where TUpdatedTime : struct
     {

@@ -21,18 +21,21 @@ namespace Librame.Extensions.Data.Stores
     using Resources;
 
     /// <summary>
-    /// 抽象发表。
+    /// 抽象发表标识符（继承自抽象创建）。
     /// </summary>
-    /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
+    /// <typeparam name="TPublishedBy">指定的发表者。</typeparam>
     [NotMapped]
-    public abstract class AbstractPublication<TPublishedBy>
-        : AbstractPublication<TPublishedBy, DateTimeOffset>, IPublication<TPublishedBy>
+    public abstract class AbstractPublicationIdentifier<TId, TPublishedBy>
+        : AbstractPublicationIdentifier<TId, TPublishedBy, DateTimeOffset>
+        , IPublicationIdentifier<TId, TPublishedBy>
+        where TId : IEquatable<TId>
         where TPublishedBy : IEquatable<TPublishedBy>
     {
         /// <summary>
         /// 构造一个 <see cref="AbstractPublicationIdentifier{TId, TPublishedBy}"/>。
         /// </summary>
-        protected AbstractPublication()
+        protected AbstractPublicationIdentifier()
         {
             PublishedTime = CreatedTime = DataSettings.Preference.DefaultCreatedTime;
             PublishedTimeTicks = CreatedTimeTicks = PublishedTime.Ticks;
@@ -126,14 +129,16 @@ namespace Librame.Extensions.Data.Stores
 
 
     /// <summary>
-    /// 抽象发表（继承自抽象创建）。
+    /// 抽象发表标识符（继承自抽象创建）。
     /// </summary>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TPublishedBy">指定的发表者。</typeparam>
     /// <typeparam name="TPublishedTime">指定的发表时间类型（提供对 DateTime 或 DateTimeOffset 的支持）。</typeparam>
     [NotMapped]
-    public abstract class AbstractPublication<TPublishedBy, TPublishedTime>
-        : AbstractCreation<TPublishedBy, TPublishedTime>
-        , IPublication<TPublishedBy, TPublishedTime>
+    public abstract class AbstractPublicationIdentifier<TId, TPublishedBy, TPublishedTime>
+        : AbstractCreationIdentifier<TId, TPublishedBy, TPublishedTime>
+        , IPublicationIdentifier<TId, TPublishedBy, TPublishedTime>
+        where TId : IEquatable<TId>
         where TPublishedBy : IEquatable<TPublishedBy>
         where TPublishedTime : struct
     {
@@ -249,7 +254,7 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 转换为键值对字符串。
+        /// 转换为标识键值对字符串。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()

@@ -21,38 +21,80 @@ namespace Librame.Extensions.Data.Stores
     using Resources;
 
     /// <summary>
-    /// 抽象标识符实体。
+    /// 抽象实体更新（默认已实现 <see cref="IUpdationIdentifier{TId, TUpdatedBy, DateTimeOffset}"/>、<see cref="IUpdatedTimeTicks"/>、<see cref="IRanking{Single}"/>、<see cref="IState{DataStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
+    /// <typeparam name="TUpdatedBy">指定的更新者类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntity<TId> : AbstractIdentifierEntity<TId, float, DataStatus>,
-        IRanking<float>, IState<DataStatus>
+    public abstract class AbstractEntityUpdation<TId, TUpdatedBy>
+        : AbstractEntityUpdation<TId, TUpdatedBy, DateTimeOffset>, IUpdation<TUpdatedBy>
         where TId : IEquatable<TId>
+        where TUpdatedBy : IEquatable<TUpdatedBy>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractIdentifierEntity{TId}"/> 默认实例。
+        /// 构造一个 <see cref="AbstractEntityUpdation{TId, TUpdatedBy}"/>。
         /// </summary>
-        protected AbstractIdentifierEntity()
+        protected AbstractEntityUpdation()
         {
-            Rank = DataSettings.Preference.DefaultRank;
-            Status = DataSettings.Preference.DefaultStatus;
+            UpdatedTime = CreatedTime = DataSettings.Preference.DefaultCreatedTime;
+            UpdatedTimeTicks = CreatedTimeTicks = CreatedTime.Ticks;
         }
 
+
+        /// <summary>
+        /// 创建时间周期数。
+        /// </summary>
+        [Display(Name = nameof(CreatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
+        public virtual long CreatedTimeTicks { get; set; }
+
+        /// <summary>
+        /// 更新时间周期数。
+        /// </summary>
+        [Display(Name = nameof(UpdatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
+        public virtual long UpdatedTimeTicks { get; set; }
     }
 
 
     /// <summary>
-    /// 抽象标识符实体。
+    /// 抽象实体更新（默认已实现 <see cref="IUpdationIdentifier{TId, TUpdatedBy, TUpdatedTime}"/>、<see cref="IRanking{Single}"/>、<see cref="IState{DataStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
+    /// <typeparam name="TUpdatedBy">指定的更新者类型。</typeparam>
+    /// <typeparam name="TUpdatedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
+    [NotMapped]
+    public abstract class AbstractEntityUpdation<TId, TUpdatedBy, TUpdatedTime>
+        : AbstractEntityUpdation<TId, TUpdatedBy, TUpdatedTime, float, DataStatus>
+        where TId : IEquatable<TId>
+        where TUpdatedBy : IEquatable<TUpdatedBy>
+        where TUpdatedTime : struct
+    {
+        /// <summary>
+        /// 构造一个 <see cref="AbstractEntityUpdation{TId, TUpdatedBy, TUpdatedTime}"/>。
+        /// </summary>
+        protected AbstractEntityUpdation()
+        {
+            Rank = DataSettings.Preference.DefaultRank;
+            Status = DataSettings.Preference.DefaultStatus;
+        }
+    }
+
+
+    /// <summary>
+    /// 抽象实体更新（默认已实现 <see cref="IUpdationIdentifier{TId, TUpdatedBy, TUpdatedTime}"/>、<see cref="IRanking{TRank}"/>、<see cref="IState{TStatus}"/> 等接口）。
+    /// </summary>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
+    /// <typeparam name="TUpdatedBy">指定的更新者类型。</typeparam>
+    /// <typeparam name="TUpdatedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
     /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntity<TId, TRank, TStatus> : AbstractIdentifier<TId>,
-        IRanking<TRank>, IState<TStatus>
+    public abstract class AbstractEntityUpdation<TId, TUpdatedBy, TUpdatedTime, TRank, TStatus>
+        : AbstractUpdationIdentifier<TId, TUpdatedBy, TUpdatedTime>, IRanking<TRank>, IState<TStatus>
         where TId : IEquatable<TId>
         where TRank : struct
         where TStatus : struct
+        where TUpdatedBy : IEquatable<TUpdatedBy>
+        where TUpdatedTime : struct
     {
         /// <summary>
         /// 排序。
@@ -71,14 +113,14 @@ namespace Librame.Extensions.Data.Stores
         /// 获取排名类型。
         /// </summary>
         [NotMapped]
-        public virtual Type RankType
+        public Type RankType
             => typeof(TRank);
 
         /// <summary>
         /// 获取状态类型。
         /// </summary>
         [NotMapped]
-        public virtual Type StatusType
+        public Type StatusType
             => typeof(TStatus);
 
 
@@ -131,8 +173,7 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="newRank">给定的新对象排名。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含排名（兼容整数、单双精度的排序字段）的异步操作。</returns>
-        public virtual ValueTask<object> SetObjectRankAsync(object newRank,
-            CancellationToken cancellationToken = default)
+        public virtual ValueTask<object> SetObjectRankAsync(object newRank, CancellationToken cancellationToken = default)
         {
             var realNewRank = newRank.CastTo<object, TRank>(nameof(newRank));
 
@@ -171,14 +212,6 @@ namespace Librame.Extensions.Data.Stores
                 return newStatus;
             });
         }
-
-
-        /// <summary>
-        /// 转换为字符串。
-        /// </summary>
-        /// <returns>返回字符串。</returns>
-        public override string ToString()
-            => $"{base.ToString()};{nameof(Rank)}={Rank};{nameof(Status)}={Status}";
 
     }
 }

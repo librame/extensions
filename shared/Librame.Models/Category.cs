@@ -8,7 +8,7 @@ namespace Librame.Models
     using Extensions.Data.Stores;
 
     [Description("分类")]
-    public class Category<TIncremId, TCreatedBy> : AbstractIdentifierEntityCreation<TIncremId, TCreatedBy>,
+    public class Category<TIncremId, TCreatedBy> : AbstractEntityCreation<TIncremId, TCreatedBy>,
         IIncrementalIdentifier<TIncremId>,
         IEquatable<Category<TIncremId, TCreatedBy>>
         where TIncremId : IEquatable<TIncremId>

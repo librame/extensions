@@ -25,9 +25,8 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据表格")]
-    public class DataTabulation<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>,
-        IGenerativeIdentifier<TGenId>,
-        IEquatable<DataTabulation<TGenId, TCreatedBy>>
+    public class DataTabulation<TGenId, TCreatedBy> : AbstractCreationIdentifier<TGenId, TCreatedBy>,
+        IGenerativeIdentifier<TGenId>, IEquatable<DataTabulation<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {

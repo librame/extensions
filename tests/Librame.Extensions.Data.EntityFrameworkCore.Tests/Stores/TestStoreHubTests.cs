@@ -19,81 +19,81 @@ namespace Librame.Extensions.Data.Tests
 
     public class TestStoreHubTests
     {
-        [Fact]
-        public void MySqlTest()
-        {
-            var services = new ServiceCollection();
+        //[Fact]
+        //public void MySqlTest()
+        //{
+        //    var services = new ServiceCollection();
 
-            services
-                .AddLibrame(dependency =>
-                {
-                    dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.MySQL;
-                })
-                .AddData(dependency =>
-                {
-                    dependency.Options.DefaultTenant.DefaultConnectionString
-                        = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_default;user=root;password=123456;");
-                    dependency.Options.DefaultTenant.WritingConnectionString
-                        = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_writing;user=root;password=123456;");
+        //    services
+        //        .AddLibrame(dependency =>
+        //        {
+        //            dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.MySQL;
+        //        })
+        //        .AddData(dependency =>
+        //        {
+        //            dependency.Options.DefaultTenant.DefaultConnectionString
+        //                = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_default;user=root;password=123456;");
+        //            dependency.Options.DefaultTenant.WritingConnectionString
+        //                = MySqlConnectionStringHelper.Validate("server=localhost;port=3306;database=librame_data_writing;user=root;password=123456;");
                     
-                    dependency.Options.DefaultTenant.WritingSeparation = true;
-                    dependency.Options.DefaultTenant.DataSynchronization = true;
-                    dependency.Options.DefaultTenant.StructureSynchronization = true;
-                })
-                .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
-                {
-                    optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
-                    {
-                        mySql.MigrationsAssembly(typeof(TestStoreHubTests).GetAssemblyDisplayName());
-                        mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
-                    });
-                })
-                .AddDatabaseDesignTime<MySqlDesignTimeServices>()
-                .AddStoreHub<TestStoreHub>()
-                .AddStoreIdentifierGenerator<TestGuidStoreIdentificationGenerator>()
-                .AddStoreInitializer<TestStoreInitializer>();
+        //            dependency.Options.DefaultTenant.WritingSeparation = true;
+        //            dependency.Options.DefaultTenant.DataSynchronization = true;
+        //            dependency.Options.DefaultTenant.StructureSynchronization = true;
+        //        })
+        //        .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
+        //        {
+        //            optionsBuilder.UseMySql(tenant.DefaultConnectionString, mySql =>
+        //            {
+        //                mySql.MigrationsAssembly(typeof(TestStoreHubTests).GetAssemblyDisplayName());
+        //                mySql.ServerVersion(new Version(5, 7, 28), ServerType.MySql);
+        //            });
+        //        })
+        //        .AddDatabaseDesignTime<MySqlDesignTimeServices>()
+        //        .AddStoreHub<TestStoreHub>()
+        //        .AddStoreIdentifierGenerator<TestGuidStoreIdentificationGenerator>()
+        //        .AddStoreInitializer<TestStoreInitializer>();
 
-            TestStores(services.BuildServiceProvider());
-        }
+        //    TestStores(services.BuildServiceProvider());
+        //}
 
 
-        [Fact]
-        public void SqlServerTest()
-        {
-            var services = new ServiceCollection();
+        //[Fact]
+        //public void SqlServerTest()
+        //{
+        //    var services = new ServiceCollection();
 
-            services
-                .AddLibrame(dependency =>
-                {
-                    // SQLServer (Default)
-                    //dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.SQLServer;
-                })
-                .AddData(dependency =>
-                {
-                    dependency.Options.DefaultTenant.DefaultConnectionString
-                        = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
-                    dependency.Options.DefaultTenant.WritingConnectionString
-                        = "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True";
+        //    services
+        //        .AddLibrame(dependency =>
+        //        {
+        //            // SQLServer (Default)
+        //            //dependency.Options.Identifier.GuidIdentificationGenerator = CombIdentificationGenerator.SQLServer;
+        //        })
+        //        .AddData(dependency =>
+        //        {
+        //            dependency.Options.DefaultTenant.DefaultConnectionString
+        //                = "Data Source=.;Initial Catalog=librame_data_default;Integrated Security=True";
+        //            dependency.Options.DefaultTenant.WritingConnectionString
+        //                = "Data Source=.;Initial Catalog=librame_data_writing;Integrated Security=True";
 
-                    dependency.Options.DefaultTenant.WritingSeparation = true;
-                    dependency.Options.DefaultTenant.DataSynchronization = true;
-                    dependency.Options.DefaultTenant.StructureSynchronization = true;
+        //            dependency.Options.DefaultTenant.WritingSeparation = true;
+        //            dependency.Options.DefaultTenant.DataSynchronization = true;
+        //            dependency.Options.DefaultTenant.StructureSynchronization = true;
 
-                    //dependency.Options.MigrationAssemblyReferences.Add(
-                    //    AssemblyDescriptor.Create("Microsoft.EntityFrameworkCore.SqlServer"));
-                })
-                .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
-                {
-                    optionsBuilder.UseSqlServer(tenant.DefaultConnectionString,
-                        sqlServer => sqlServer.MigrationsAssembly(typeof(TestStoreHubTests).GetAssemblyDisplayName()));
-                })
-                .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
-                .AddStoreHub<TestStoreHub>()
-                .AddStoreIdentifierGenerator<TestGuidStoreIdentificationGenerator>()
-                .AddStoreInitializer<TestStoreInitializer>();
+        //            //dependency.Options.MigrationAssemblyReferences.Add(
+        //            //    AssemblyDescriptor.Create("Microsoft.EntityFrameworkCore.SqlServer"));
+        //        })
+        //        .AddAccessor<TestDbContextAccessor>((tenant, optionsBuilder) =>
+        //        {
+        //            optionsBuilder.UseSqlServer(tenant.DefaultConnectionString,
+        //                sqlServer => sqlServer.MigrationsAssembly(typeof(TestStoreHubTests).GetAssemblyDisplayName()));
+        //        })
+        //        .AddDatabaseDesignTime<SqlServerDesignTimeServices>()
+        //        .AddStoreHub<TestStoreHub>()
+        //        .AddStoreIdentifierGenerator<TestGuidStoreIdentificationGenerator>()
+        //        .AddStoreInitializer<TestStoreInitializer>();
 
-            TestStores(services.BuildServiceProvider());
-        }
+        //    TestStores(services.BuildServiceProvider());
+        //}
 
 
         [Fact]

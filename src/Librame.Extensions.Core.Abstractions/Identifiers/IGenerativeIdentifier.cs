@@ -17,7 +17,7 @@ namespace Librame.Extensions.Core.Identifiers
     /// <summary>
     /// 生成式标识符接口。
     /// </summary>
-    /// <typeparam name="TGenId">指定的生成式标识类型（如字符串、GUID型标识）。</typeparam>
+    /// <typeparam name="TGenId">指定的生成式标识类型（如：<see cref="Guid"/>、<see cref="long"/>、<see cref="string"/> 等类型）。</typeparam>
     public interface IGenerativeIdentifier<TGenId> : IIdentifier<TGenId>
         where TGenId : IEquatable<TGenId>
     {

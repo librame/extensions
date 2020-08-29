@@ -10,6 +10,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -20,7 +21,7 @@ namespace Librame.Extensions.Data.Collections
     /// <summary>
     /// 分页集合。
     /// </summary>
-    /// <typeparam name="T">指定的分页类型。</typeparam>
+    /// <typeparam name="T">指定的类型。</typeparam>
     public class PagingCollection<T> : IPageable<T>
     {
         private readonly ICollection<T> _rows;
@@ -52,6 +53,12 @@ namespace Librame.Extensions.Data.Collections
             }
 
             Descriptor = descriptor;
+        }
+
+        private PagingCollection()
+        {
+            _rows = Array.Empty<T>();
+            Descriptor = new PagingDescriptor(0);
         }
 
         
@@ -95,6 +102,13 @@ namespace Librame.Extensions.Data.Collections
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
+
+
+        /// <summary>
+        /// 空实例。
+        /// </summary>
+        public readonly static IPageable<T> Empty
+            = new PagingCollection<T>();
 
     }
 }

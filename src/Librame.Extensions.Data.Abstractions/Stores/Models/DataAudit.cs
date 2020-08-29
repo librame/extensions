@@ -26,9 +26,8 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据审计")]
     [NonAudited]
-    public class DataAudit<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>,
-        IGenerativeIdentifier<TGenId>,
-        IEquatable<DataAudit<TGenId, TCreatedBy>>
+    public class DataAudit<TGenId, TCreatedBy> : AbstractCreationIdentifier<TGenId, TCreatedBy>,
+        IGenerativeIdentifier<TGenId>, IEquatable<DataAudit<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {

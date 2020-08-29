@@ -18,12 +18,12 @@ namespace Librame.Extensions.Data.Collections
     /// <summary>
     /// 可分页接口。
     /// </summary>
-    /// <typeparam name="T">指定的分页类型。</typeparam>
+    /// <typeparam name="T">指定的类型。</typeparam>
     [SuppressMessage("Microsoft.Design", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public interface IPageable<T> : IEnumerable<T>, IPagingInfo
     {
         /// <summary>
-        /// 描述符。
+        /// 分页描述符。
         /// </summary>
         PagingDescriptor Descriptor { get; }
     }

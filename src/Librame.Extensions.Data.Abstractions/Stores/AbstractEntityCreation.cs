@@ -21,20 +21,20 @@ namespace Librame.Extensions.Data.Stores
     using Resources;
 
     /// <summary>
-    /// 抽象标识符实体创建。
+    /// 抽象实体创建（默认已实现 <see cref="ICreationIdentifier{TId, TCreatedBy, DateTimeOffset}"/>、<see cref="ICreatedTimeTicks"/>、<see cref="IRanking{Single}"/>、<see cref="IState{DataStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntityCreation<TId, TCreatedBy>
-        : AbstractIdentifierEntityCreation<TId, TCreatedBy, DateTimeOffset>, ICreation<TCreatedBy>
+    public abstract class AbstractEntityCreation<TId, TCreatedBy>
+        : AbstractEntityCreation<TId, TCreatedBy, DateTimeOffset>, ICreation<TCreatedBy>
         where TId : IEquatable<TId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractIdentifierEntityCreation{TId, TCreatedBy}"/>。
+        /// 构造一个 <see cref="AbstractEntityCreation{TId, TCreatedBy}"/>。
         /// </summary>
-        protected AbstractIdentifierEntityCreation()
+        protected AbstractEntityCreation()
         {
             CreatedTime = DataSettings.Preference.DefaultCreatedTime;
             CreatedTimeTicks = CreatedTime.Ticks;
@@ -50,22 +50,22 @@ namespace Librame.Extensions.Data.Stores
 
 
     /// <summary>
-    /// 抽象标识符实体创建。
+    /// 抽象实体创建（默认已实现 <see cref="ICreationIdentifier{TId, TCreatedBy, TCreatedTime}"/>、<see cref="IRanking{Single}"/>、<see cref="IState{DataStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     /// <typeparam name="TCreatedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntityCreation<TId, TCreatedBy, TCreatedTime>
-        : AbstractIdentifierEntityCreation<TId, TCreatedBy, TCreatedTime, float, DataStatus>
+    public abstract class AbstractEntityCreation<TId, TCreatedBy, TCreatedTime>
+        : AbstractEntityCreation<TId, TCreatedBy, TCreatedTime, float, DataStatus>
         where TId : IEquatable<TId>
         where TCreatedBy : IEquatable<TCreatedBy>
         where TCreatedTime : struct
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractIdentifierEntityCreation{TId, TCreatedBy, TCreatedTime}"/>。
+        /// 构造一个 <see cref="AbstractEntityCreation{TId, TCreatedBy, TCreatedTime}"/>。
         /// </summary>
-        protected AbstractIdentifierEntityCreation()
+        protected AbstractEntityCreation()
         {
             Rank = DataSettings.Preference.DefaultRank;
             Status = DataSettings.Preference.DefaultStatus;
@@ -74,7 +74,7 @@ namespace Librame.Extensions.Data.Stores
 
 
     /// <summary>
-    /// 抽象标识符实体创建。
+    /// 抽象实体创建（默认已实现 <see cref="ICreationIdentifier{TId, TCreatedBy, TCreatedTime}"/>、<see cref="IRanking{TRank}"/>、<see cref="IState{TStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
@@ -82,8 +82,8 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntityCreation<TId, TCreatedBy, TCreatedTime, TRank, TStatus>
-        : AbstractCreation<TId, TCreatedBy, TCreatedTime>, IRanking<TRank>, IState<TStatus>
+    public abstract class AbstractEntityCreation<TId, TCreatedBy, TCreatedTime, TRank, TStatus>
+        : AbstractCreationIdentifier<TId, TCreatedBy, TCreatedTime>, IRanking<TRank>, IState<TStatus>
         where TId : IEquatable<TId>
         where TCreatedBy : IEquatable<TCreatedBy>
         where TCreatedTime : struct

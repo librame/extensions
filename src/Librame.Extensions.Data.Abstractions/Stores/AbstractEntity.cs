@@ -18,83 +18,42 @@ using System.Threading.Tasks;
 
 namespace Librame.Extensions.Data.Stores
 {
-    using Resources;
+    using Core.Identifiers;
+    using Data.Resources;
 
     /// <summary>
-    /// 抽象标识符实体发表。
+    /// 抽象实体（默认已实现 <see cref="IIdentifier{TId}"/>、<see cref="IRanking{Single}"/>、<see cref="IState{DataStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntityPublication<TId, TPublishedBy>
-        : AbstractIdentifierEntityPublication<TId, TPublishedBy, DateTimeOffset>, IPublication<TPublishedBy>
+    public abstract class AbstractEntity<TId> : AbstractEntity<TId, float, DataStatus>,
+        IRanking<float>, IState<DataStatus>
         where TId : IEquatable<TId>
-        where TPublishedBy : IEquatable<TPublishedBy>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractIdentifierEntityPublication{TId, TPublishedBy}"/>。
+        /// 构造一个 <see cref="AbstractEntity{TId}"/> 默认实例。
         /// </summary>
-        protected AbstractIdentifierEntityPublication()
-        {
-            PublishedTime = CreatedTime = DataSettings.Preference.DefaultCreatedTime;
-            PublishedTimeTicks = CreatedTimeTicks = CreatedTime.Ticks;
-        }
-
-
-        /// <summary>
-        /// 创建时间周期数。
-        /// </summary>
-        [Display(Name = nameof(CreatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
-        public virtual long CreatedTimeTicks { get; set; }
-
-        /// <summary>
-        /// 发表时间周期数。
-        /// </summary>
-        [Display(Name = nameof(PublishedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
-        public virtual long PublishedTimeTicks { get; set; }
-    }
-
-
-    /// <summary>
-    /// 抽象标识符实体发表。
-    /// </summary>
-    /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
-    /// <typeparam name="TPublishedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
-    [NotMapped]
-    public abstract class AbstractIdentifierEntityPublication<TId, TPublishedBy, TPublishedTime>
-        : AbstractIdentifierEntityPublication<TId, TPublishedBy, TPublishedTime, float, DataStatus>
-        where TId : IEquatable<TId>
-        where TPublishedBy : IEquatable<TPublishedBy>
-        where TPublishedTime : struct
-    {
-        /// <summary>
-        /// 构造一个 <see cref="AbstractIdentifierEntityPublication{TId, TPublishedBy, TPublishedTime}"/>。
-        /// </summary>
-        protected AbstractIdentifierEntityPublication()
+        protected AbstractEntity()
         {
             Rank = DataSettings.Preference.DefaultRank;
             Status = DataSettings.Preference.DefaultStatus;
         }
+
     }
 
 
     /// <summary>
-    /// 抽象标识符实体发表。
+    /// 抽象实体（默认已实现 <see cref="IIdentifier{TId}"/>、<see cref="IRanking{TRank}"/>、<see cref="IState{TStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
-    /// <typeparam name="TPublishedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
     /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntityPublication<TId, TPublishedBy, TPublishedTime, TRank, TStatus>
-        : AbstractPublication<TId, TPublishedBy, TPublishedTime>, IRanking<TRank>, IState<TStatus>
+    public abstract class AbstractEntity<TId, TRank, TStatus> : AbstractIdentifier<TId>,
+        IRanking<TRank>, IState<TStatus>
         where TId : IEquatable<TId>
         where TRank : struct
         where TStatus : struct
-        where TPublishedBy : IEquatable<TPublishedBy>
-        where TPublishedTime : struct
     {
         /// <summary>
         /// 排序。
@@ -113,14 +72,14 @@ namespace Librame.Extensions.Data.Stores
         /// 获取排名类型。
         /// </summary>
         [NotMapped]
-        public Type RankType
+        public virtual Type RankType
             => typeof(TRank);
 
         /// <summary>
         /// 获取状态类型。
         /// </summary>
         [NotMapped]
-        public Type StatusType
+        public virtual Type StatusType
             => typeof(TStatus);
 
 
@@ -173,7 +132,8 @@ namespace Librame.Extensions.Data.Stores
         /// <param name="newRank">给定的新对象排名。</param>
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含排名（兼容整数、单双精度的排序字段）的异步操作。</returns>
-        public virtual ValueTask<object> SetObjectRankAsync(object newRank, CancellationToken cancellationToken = default)
+        public virtual ValueTask<object> SetObjectRankAsync(object newRank,
+            CancellationToken cancellationToken = default)
         {
             var realNewRank = newRank.CastTo<object, TRank>(nameof(newRank));
 
@@ -212,6 +172,14 @@ namespace Librame.Extensions.Data.Stores
                 return newStatus;
             });
         }
+
+
+        /// <summary>
+        /// 转换为字符串。
+        /// </summary>
+        /// <returns>返回字符串。</returns>
+        public override string ToString()
+            => $"{base.ToString()};{nameof(Rank)}={Rank};{nameof(Status)}={Status}";
 
     }
 }

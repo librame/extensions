@@ -25,9 +25,8 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据租户")]
-    public class DataTenant<TGenId, TCreatedBy> : AbstractIdentifierEntityCreation<TGenId, TCreatedBy>,
-        IGenerativeIdentifier<TGenId>,
-        ITenant
+    public class DataTenant<TGenId, TCreatedBy> : AbstractEntityCreation<TGenId, TCreatedBy>,
+        IGenerativeIdentifier<TGenId>, ITenant
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {

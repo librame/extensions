@@ -21,23 +21,23 @@ namespace Librame.Extensions.Data.Stores
     using Resources;
 
     /// <summary>
-    /// 抽象标识符实体更新。
+    /// 抽象实体发表（默认已实现 <see cref="IPublicationIdentifier{TId, TPublishedBy, DateTimeOffset}"/>、<see cref="IPublishedTimeTicks"/>、<see cref="IRanking{Single}"/>、<see cref="IState{DataStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TUpdatedBy">指定的更新者类型。</typeparam>
+    /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntityUpdation<TId, TUpdatedBy>
-        : AbstractIdentifierEntityUpdation<TId, TUpdatedBy, DateTimeOffset>, IUpdation<TUpdatedBy>
+    public abstract class AbstractEntityPublication<TId, TPublishedBy>
+        : AbstractEntityPublication<TId, TPublishedBy, DateTimeOffset>, IPublication<TPublishedBy>
         where TId : IEquatable<TId>
-        where TUpdatedBy : IEquatable<TUpdatedBy>
+        where TPublishedBy : IEquatable<TPublishedBy>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractIdentifierEntityUpdation{TId, TUpdatedBy}"/>。
+        /// 构造一个 <see cref="AbstractEntityPublication{TId, TPublishedBy}"/>。
         /// </summary>
-        protected AbstractIdentifierEntityUpdation()
+        protected AbstractEntityPublication()
         {
-            UpdatedTime = CreatedTime = DataSettings.Preference.DefaultCreatedTime;
-            UpdatedTimeTicks = CreatedTimeTicks = CreatedTime.Ticks;
+            PublishedTime = CreatedTime = DataSettings.Preference.DefaultCreatedTime;
+            PublishedTimeTicks = CreatedTimeTicks = CreatedTime.Ticks;
         }
 
 
@@ -48,30 +48,30 @@ namespace Librame.Extensions.Data.Stores
         public virtual long CreatedTimeTicks { get; set; }
 
         /// <summary>
-        /// 更新时间周期数。
+        /// 发表时间周期数。
         /// </summary>
-        [Display(Name = nameof(UpdatedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
-        public virtual long UpdatedTimeTicks { get; set; }
+        [Display(Name = nameof(PublishedTimeTicks), ResourceType = typeof(AbstractEntityResource))]
+        public virtual long PublishedTimeTicks { get; set; }
     }
 
 
     /// <summary>
-    /// 抽象标识符实体更新。
+    /// 抽象实体发表（默认已实现 <see cref="IPublicationIdentifier{TId, TPublishedBy, TPublishedTime}"/>、<see cref="IRanking{Single}"/>、<see cref="IState{DataStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TUpdatedBy">指定的更新者类型。</typeparam>
-    /// <typeparam name="TUpdatedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
+    /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
+    /// <typeparam name="TPublishedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntityUpdation<TId, TUpdatedBy, TUpdatedTime>
-        : AbstractIdentifierEntityUpdation<TId, TUpdatedBy, TUpdatedTime, float, DataStatus>
+    public abstract class AbstractEntityPublication<TId, TPublishedBy, TPublishedTime>
+        : AbstractEntityPublication<TId, TPublishedBy, TPublishedTime, float, DataStatus>
         where TId : IEquatable<TId>
-        where TUpdatedBy : IEquatable<TUpdatedBy>
-        where TUpdatedTime : struct
+        where TPublishedBy : IEquatable<TPublishedBy>
+        where TPublishedTime : struct
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractIdentifierEntityUpdation{TId, TUpdatedBy, TUpdatedTime}"/>。
+        /// 构造一个 <see cref="AbstractEntityPublication{TId, TPublishedBy, TPublishedTime}"/>。
         /// </summary>
-        protected AbstractIdentifierEntityUpdation()
+        protected AbstractEntityPublication()
         {
             Rank = DataSettings.Preference.DefaultRank;
             Status = DataSettings.Preference.DefaultStatus;
@@ -80,21 +80,21 @@ namespace Librame.Extensions.Data.Stores
 
 
     /// <summary>
-    /// 抽象标识符实体更新。
+    /// 抽象实体发表（默认已实现 <see cref="IPublicationIdentifier{TId, TPublishedBy, TPublishedTime}"/>、<see cref="IRanking{TRank}"/>、<see cref="IState{TStatus}"/> 等接口）。
     /// </summary>
     /// <typeparam name="TId">指定的标识类型。</typeparam>
-    /// <typeparam name="TUpdatedBy">指定的更新者类型。</typeparam>
-    /// <typeparam name="TUpdatedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
+    /// <typeparam name="TPublishedBy">指定的发表者类型。</typeparam>
+    /// <typeparam name="TPublishedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
     /// <typeparam name="TRank">指定的排序类型（兼容整数、单双精度的排序字段）。</typeparam>
     /// <typeparam name="TStatus">指定的状态类型（兼容不支持枚举类型的实体框架）。</typeparam>
     [NotMapped]
-    public abstract class AbstractIdentifierEntityUpdation<TId, TUpdatedBy, TUpdatedTime, TRank, TStatus>
-        : AbstractUpdation<TId, TUpdatedBy, TUpdatedTime>, IRanking<TRank>, IState<TStatus>
+    public abstract class AbstractEntityPublication<TId, TPublishedBy, TPublishedTime, TRank, TStatus>
+        : AbstractPublicationIdentifier<TId, TPublishedBy, TPublishedTime>, IRanking<TRank>, IState<TStatus>
         where TId : IEquatable<TId>
         where TRank : struct
         where TStatus : struct
-        where TUpdatedBy : IEquatable<TUpdatedBy>
-        where TUpdatedTime : struct
+        where TPublishedBy : IEquatable<TPublishedBy>
+        where TPublishedTime : struct
     {
         /// <summary>
         /// 排序。

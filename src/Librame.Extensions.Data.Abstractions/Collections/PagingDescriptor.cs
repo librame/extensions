@@ -55,7 +55,7 @@ namespace Librame.Extensions.Data.Collections
         public int Index { get; private set; }
 
         /// <summary>
-        /// 是否通过跳数计算。
+        /// 是否通过跳过的条数计算。
         /// </summary>
         public bool IsComputedBySkip { get; private set; }
 

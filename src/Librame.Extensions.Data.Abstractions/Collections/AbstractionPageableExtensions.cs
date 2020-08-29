@@ -26,6 +26,40 @@ namespace Librame.Extensions.Data.Collections
     /// </summary>
     public static class AbstractionPageableExtensions
     {
+        /// <summary>
+        /// 投影分页。
+        /// </summary>
+        /// <typeparam name="TSource">指定的来源类型。</typeparam>
+        /// <typeparam name="TResult">指定的结果类型。</typeparam>
+        /// <param name="sources">给定的来源 <see cref="IPageable{TSource}"/>。</param>
+        /// <param name="selector">给定的投影选择器。</param>
+        /// <returns>返回 <see cref="IPageable{TResult}"/>。</returns>
+        public static IPageable<TResult> SelectPaging<TSource, TResult>(this IPageable<TSource> sources,
+            Func<TSource, TResult> selector)
+        {
+            if (sources.IsNull())
+                return null;
+
+            return new PagingCollection<TResult>(sources.Select(selector).ToList(), sources.Descriptor);
+        }
+
+        /// <summary>
+        /// 投影分页。
+        /// </summary>
+        /// <typeparam name="TSource">指定的来源类型。</typeparam>
+        /// <typeparam name="TResult">指定的结果类型。</typeparam>
+        /// <param name="sources">给定的来源 <see cref="IPageable{TSource}"/>。</param>
+        /// <param name="selector">给定的投影选择器。</param>
+        /// <returns>返回 <see cref="IPageable{TResult}"/>。</returns>
+        public static IPageable<TResult> SelectPaging<TSource, TResult>(this IPageable<TSource> sources,
+            Func<TSource, int, TResult> selector)
+        {
+            if (sources.IsNull())
+                return null;
+
+            return new PagingCollection<TResult>(sources.Select(selector).ToList(), sources.Descriptor);
+        }
+
 
         #region ICollection
 

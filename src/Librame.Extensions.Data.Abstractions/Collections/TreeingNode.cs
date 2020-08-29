@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,17 +34,8 @@ namespace Librame.Extensions.Data.Collections
         where TId : IEquatable<TId>
     {
         private IList<TreeingNode<T, TId>> _children;
-        private PropertyInfo _idProperty;
-        private PropertyInfo _parentIdProperty;
 
 
-        /// <summary>
-        /// 构造一个 <see cref="TreeingNode{T, TId}"/>。
-        /// </summary>
-        public TreeingNode()
-            : this(default)
-        {
-        }
         /// <summary>
         /// 构造一个 <see cref="TreeingNode{T, TId}"/>。
         /// </summary>
@@ -58,36 +48,6 @@ namespace Librame.Extensions.Data.Collections
             DepthLevel = depthLevel;
 
             _children = children ?? new List<TreeingNode<T, TId>>();
-
-            if (_idProperty.IsNull() && _parentIdProperty.IsNull())
-                Initialize();
-        }
-
-
-        private void Initialize()
-        {
-            var properties = typeof(T).GetRuntimeProperties();
-
-            var id = nameof(IParentIdentifier<TId>.Id);
-            var parentId = nameof(IParentIdentifier<TId>.ParentId);
-
-            foreach (var property in properties)
-            {
-                if (property.Name == id)
-                {
-                    _idProperty = property;
-                    continue;
-                }
-
-                if (property.Name == parentId)
-                {
-                    _parentIdProperty = property;
-                    continue;
-                }
-
-                if (_idProperty.IsNotNull() && _parentIdProperty.IsNotNull())
-                    break;
-            }
         }
 
 
@@ -127,8 +87,8 @@ namespace Librame.Extensions.Data.Collections
         /// </summary>
         public TId Id
         {
-            get { return (TId)_idProperty.GetValue(Item, null); }
-            set { _idProperty.SetValue(Item, value); }
+            get { return Item.Id; }
+            set { Item.Id = value; }
         }
 
         /// <summary>
@@ -136,8 +96,8 @@ namespace Librame.Extensions.Data.Collections
         /// </summary>
         public TId ParentId
         {
-            get { return (TId)_parentIdProperty.GetValue(Item, null); }
-            set { _parentIdProperty.SetValue(Item, value); }
+            get { return Item.ParentId; }
+            set { Item.ParentId = value; }
         }
 
 
@@ -145,7 +105,7 @@ namespace Librame.Extensions.Data.Collections
         /// 标识类型。
         /// </summary>
         public Type IdType
-            => typeof(TId);
+            => Item.IdType;
 
 
         /// <summary>
@@ -153,7 +113,7 @@ namespace Librame.Extensions.Data.Collections
         /// </summary>
         /// <returns>返回标识（兼容各种引用与值类型标识）。</returns>
         public virtual object GetObjectId()
-            => Id;
+            => Item.GetObjectId();
 
         /// <summary>
         /// 异步获取对象标识。
@@ -161,7 +121,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectIdAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunOrCancelValueAsync(() => (object)Id);
+            => Item.GetObjectIdAsync(cancellationToken);
 
 
         /// <summary>
@@ -169,7 +129,7 @@ namespace Librame.Extensions.Data.Collections
         /// </summary>
         /// <returns>返回标识（兼容各种引用与值类型标识）。</returns>
         public virtual object GetObjectParentId()
-            => ParentId;
+            => Item.GetObjectParentId();
 
         /// <summary>
         /// 异步获取对象标识。
@@ -177,7 +137,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="cancellationToken">给定的 <see cref="CancellationToken"/>（可选）。</param>
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
         public virtual ValueTask<object> GetObjectParentIdAsync(CancellationToken cancellationToken)
-            => cancellationToken.RunOrCancelValueAsync(() => (object)ParentId);
+            => Item.GetObjectParentIdAsync(cancellationToken);
 
 
         /// <summary>
@@ -186,10 +146,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="newId">给定的新对象标识。</param>
         /// <returns>返回标识（兼容各种引用与值类型标识）。</returns>
         public virtual object SetObjectId(object newId)
-        {
-            Id = newId.CastTo<object, TId>(nameof(newId));
-            return newId;
-        }
+            => Item.SetObjectId(newId);
 
         /// <summary>
         /// 异步设置对象标识。
@@ -199,15 +156,7 @@ namespace Librame.Extensions.Data.Collections
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
         public virtual ValueTask<object> SetObjectIdAsync(object newId,
             CancellationToken cancellationToken = default)
-        {
-            var realNewId = newId.CastTo<object, TId>(nameof(newId));
-
-            return cancellationToken.RunOrCancelValueAsync(() =>
-            {
-                Id = realNewId;
-                return newId;
-            });
-        }
+            => Item.SetObjectIdAsync(newId, cancellationToken);
 
 
         /// <summary>
@@ -216,10 +165,7 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="newParentId">给定的新对象标识。</param>
         /// <returns>返回标识（兼容各种引用与值类型标识）。</returns>
         public virtual object SetObjectParentId(object newParentId)
-        {
-            ParentId = newParentId.CastTo<object, TId>(nameof(newParentId));
-            return newParentId;
-        }
+            => Item.SetObjectParentId(newParentId);
 
         /// <summary>
         /// 异步设置对象标识。
@@ -229,15 +175,7 @@ namespace Librame.Extensions.Data.Collections
         /// <returns>返回一个包含标识（兼容各种引用与值类型标识）的异步操作。</returns>
         public virtual ValueTask<object> SetObjectParentIdAsync(object newParentId,
             CancellationToken cancellationToken = default)
-        {
-            var realNewParentId = newParentId.CastTo<object, TId>(nameof(newParentId));
-
-            return cancellationToken.RunOrCancelValueAsync(() =>
-            {
-                ParentId = realNewParentId;
-                return newParentId;
-            });
-        }
+            => Item.SetObjectParentIdAsync(newParentId, cancellationToken);
 
 
         /// <summary>

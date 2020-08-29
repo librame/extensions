@@ -10,8 +10,8 @@ namespace Librame.Extensions.Data.Tests
         [Fact]
         public void AllTest()
         {
-            var table = TableDescriptor.Create<AbstractIdentifierEntity<int>>();
-            var defaultName = "AbstractIdentifierEntities";
+            var table = TableDescriptor.Create<AbstractEntity<int>>();
+            var defaultName = "AbstractEntities";
 
             // Prefix
             Assert.Equal(defaultName, table);

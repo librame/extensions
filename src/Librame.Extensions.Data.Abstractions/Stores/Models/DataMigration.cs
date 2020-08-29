@@ -26,9 +26,8 @@ namespace Librame.Extensions.Data.Stores
     /// <typeparam name="TGenId">指定的生成式标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [Description("数据迁移")]
-    public class DataMigration<TGenId, TCreatedBy> : AbstractCreation<TGenId, TCreatedBy>,
-        IGenerativeIdentifier<TGenId>,
-        IEquatable<DataMigration<TGenId, TCreatedBy>>
+    public class DataMigration<TGenId, TCreatedBy> : AbstractCreationIdentifier<TGenId, TCreatedBy>,
+        IGenerativeIdentifier<TGenId>, IEquatable<DataMigration<TGenId, TCreatedBy>>
         where TGenId : IEquatable<TGenId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {

@@ -21,18 +21,21 @@ namespace Librame.Extensions.Data.Stores
     using Resources;
 
     /// <summary>
-    /// 抽象创建。
+    /// 抽象创建标识符。
     /// </summary>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     [NotMapped]
-    public abstract class AbstractCreation<TCreatedBy>
-        : AbstractCreation<TCreatedBy, DateTimeOffset>, ICreation<TCreatedBy>
+    public abstract class AbstractCreationIdentifier<TId, TCreatedBy>
+        : AbstractCreationIdentifier<TId, TCreatedBy, DateTimeOffset>
+        , ICreationIdentifier<TId, TCreatedBy>
+        where TId : IEquatable<TId>
         where TCreatedBy : IEquatable<TCreatedBy>
     {
         /// <summary>
-        /// 构造一个 <see cref="AbstractCreation{TCreatedBy}"/>。
+        /// 构造一个 <see cref="AbstractCreationIdentifier{TId, TCreatedBy}"/>。
         /// </summary>
-        protected AbstractCreation()
+        protected AbstractCreationIdentifier()
         {
             CreatedTime = DataSettings.Preference.DefaultCreatedTime;
             CreatedTimeTicks = CreatedTime.Ticks;
@@ -79,7 +82,7 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 转换为键值对字符串。
+        /// 转换为标识键值对字符串。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
@@ -89,12 +92,15 @@ namespace Librame.Extensions.Data.Stores
 
 
     /// <summary>
-    /// 抽象创建。
+    /// 抽象创建标识符。
     /// </summary>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
     /// <typeparam name="TCreatedBy">指定的创建者类型。</typeparam>
     /// <typeparam name="TCreatedTime">指定的创建时间类型（提供对 <see cref="DateTime"/> 或 <see cref="DateTimeOffset"/> 的支持）。</typeparam>
     [NotMapped]
-    public abstract class AbstractCreation<TCreatedBy, TCreatedTime> : ICreation<TCreatedBy, TCreatedTime>
+    public abstract class AbstractCreationIdentifier<TId, TCreatedBy, TCreatedTime>
+        : AbstractIdentifier<TId>, ICreationIdentifier<TId, TCreatedBy, TCreatedTime>
+        where TId : IEquatable<TId>
         where TCreatedBy : IEquatable<TCreatedBy>
         where TCreatedTime : struct
     {
@@ -219,11 +225,11 @@ namespace Librame.Extensions.Data.Stores
 
 
         /// <summary>
-        /// 转换为键值对字符串。
+        /// 转换为标识键值对字符串。
         /// </summary>
         /// <returns>返回字符串。</returns>
         public override string ToString()
-            => $"{nameof(CreatedBy)}={CreatedBy};{nameof(CreatedTime)}={CreatedTime}";
+            => $"{base.ToString()};{nameof(CreatedBy)}={CreatedBy};{nameof(CreatedTime)}={CreatedTime}";
 
     }
 }

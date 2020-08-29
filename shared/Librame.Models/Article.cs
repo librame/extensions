@@ -10,7 +10,7 @@ namespace Librame.Models
 
     [Description("文章")]
     [Shardable]
-    public class Article<TGenId, TCategoryId, TCreatedBy> : AbstractIdentifierEntityCreation<TGenId, TCreatedBy>,
+    public class Article<TGenId, TCategoryId, TCreatedBy> : AbstractEntityCreation<TGenId, TCreatedBy>,
         IGenerativeIdentifier<TGenId>,
         IEquatable<Article<TGenId, TCategoryId, TCreatedBy>>
         where TCategoryId : IEquatable<TCategoryId>

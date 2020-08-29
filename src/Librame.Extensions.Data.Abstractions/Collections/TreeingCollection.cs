@@ -23,10 +23,10 @@ namespace Librame.Extensions.Data.Collections
     /// <summary>
     /// 树形列表。
     /// </summary>
-    /// <typeparam name="T">指定的树形元素类型。</typeparam>
-    /// <typeparam name="TId">指定的树形元素标识类型。</typeparam>
+    /// <typeparam name="T">指定实现 <see cref="IParentIdentifier{TId}"/> 的元素类型。</typeparam>
+    /// <typeparam name="TId">指定的标识类型。</typeparam>
     [NotMapped]
-    public class TreeingCollection<T, TId> : ITreeable<T, TId>, IEnumerable<TreeingNode<T, TId>>
+    public class TreeingCollection<T, TId> : ITreeable<T, TId>
         where T : IParentIdentifier<TId>
         where TId : IEquatable<TId>
     {
@@ -48,7 +48,12 @@ namespace Librame.Extensions.Data.Collections
         /// <param name="nodes">给定的节点列表。</param>
         public TreeingCollection(IEnumerable<TreeingNode<T, TId>> nodes)
         {
-            _nodes = nodes;
+            _nodes = nodes.NotNull(nameof(nodes));
+        }
+
+        private TreeingCollection()
+        {
+            _nodes = Enumerable.Empty<TreeingNode<T, TId>>();
         }
 
 
@@ -68,6 +73,13 @@ namespace Librame.Extensions.Data.Collections
 
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
+
+
+        /// <summary>
+        /// 空实例。
+        /// </summary>
+        public readonly static ITreeable<T, TId> Empty
+            = new TreeingCollection<T, TId>();
 
     }
 }

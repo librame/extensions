@@ -26,9 +26,9 @@ namespace Librame.Extensions.Examples
             Console.WriteLine("Press any key to continue");
             Console.ReadKey();
 
-            RunMySql();
+            //RunMySql();
 
-            RunSqlServer();
+            //RunSqlServer();
 
             RunSqlite();
 

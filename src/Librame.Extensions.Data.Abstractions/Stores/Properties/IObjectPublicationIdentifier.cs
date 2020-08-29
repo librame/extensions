@@ -10,16 +10,14 @@
 
 #endregion
 
-using System;
-
-namespace Librame.Extensions.Core.Identifiers
+namespace Librame.Extensions.Data.Stores
 {
+    using Core.Identifiers;
+
     /// <summary>
-    /// 增量式标识符接口。
+    /// 对象发表标识符接口。
     /// </summary>
-    /// <typeparam name="TIncremId">指定的增量式标识类型（如：整数型标识）。</typeparam>
-    public interface IIncrementalIdentifier<TIncremId> : IIdentifier<TIncremId>
-        where TIncremId : IEquatable<TIncremId>
+    public interface IObjectPublicationIdentifier : IObjectPublication, IObjectIdentifier
     {
     }
 }
