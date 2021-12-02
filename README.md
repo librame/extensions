@@ -1,11 +1,13 @@
 Librame.Extensions 系列
 =========================
 
-[![Join the chat at https://gitter.im/librame/extensions](https://img.shields.io/gitter/room/librame/extensions.js.svg?style=flat-square)](https://gitter.im/librame/extensions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/librame/extensions/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-orange.svg)](https://github.com/librame/extensions/blob/master/LICENSE)
 [![Available on NuGet https://www.nuget.org/packages?q=Librame.Extensions](https://img.shields.io/nuget/v/Librame.Extensions.svg?style=flat-square)](https://www.nuget.org/packages?q=Librame.Extensions)
+[![Join the chat at https://gitter.im/librame/extensions](https://img.shields.io/gitter/room/librame/extensions.js.svg?style=flat-square)](https://gitter.im/librame/extensions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 简体中文 | [English](/README-EN.md)
+
+适用于 .NET 6 的全新 [LibrameTick.Extensions](https://github.com/librame/extensions-tick) 框架已发布。
 
 Librame.Extensions 是一个基于 .NET Standard/Framework 的基础工具系列库，主要包括核心、数据、图画、加密、网络、存储等方面。
 
