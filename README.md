@@ -36,7 +36,7 @@ Librame.Extensions.Core (and Core.Abstractions)
 
 Librame.Extensions.Data.EntityFrameworkCore (and Data.Abstractions)
 
-- [x] Accessors (DbContextAccessor): 多租户, 写入分离, 迁移, 数据审计, 实体/表管理
+- [x] Accessors (DbContextAccessor): 多租户, 写入分离, 实时迁移, 数据审计, 实体/表管理
 - [x] Collections: IPageable, ITreeable (Data.Abstractions)
 - [x] Stores: GuidStoreIdentifierGenerator, GuidStoreInitializer, StoreHub
 
