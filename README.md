@@ -7,7 +7,7 @@ Librame.Extensions 系列
 
 简体中文 | [English](/README-EN.md)
 
-适用于 .NET 6 的全新 [LibrameTick.Extensions](https://github.com/librame/extensions-tick) 框架现已发布。
+### 适用于 .NET 6 的全新 [LibrameTick.Extensions](https://github.com/librame/extensions-tick) 框架现已发布。
 
 Librame.Extensions 是一个基于 .NET Standard/Framework 的基础工具系列库，主要包括核心、数据、图画、加密、网络、存储等方面。
 
