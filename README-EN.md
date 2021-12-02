@@ -7,7 +7,7 @@ Librame.Extensions Series
 
 English | [简体中文](/README.md)
 
-A new [LibrameTick.Extensions](https://github.com/librame/extensions-tick) framework for.NET 6 is now available.
+### A new [LibrameTick.Extensions](https://github.com/librame/extensions-tick) framework for.NET 6 is now available.
 
 Librame.Extensions is a library of basic tools series based on the .NET Standard/Framework, including Core, Data, Drawing, Encryption, Network, Storage, and more.
 
