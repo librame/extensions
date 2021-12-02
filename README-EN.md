@@ -36,7 +36,7 @@ Librame.Extensions.Core (and Core.Abstractions)
 
 Librame.Extensions.Data.EntityFrameworkCore (and Data.Abstractions)
 
-- [x] Accessors (DbContextAccessor): multi-tenancy, writing separation, data migration, data audit, entity/table Management
+- [x] Accessors (DbContextAccessor): multi-tenancy, writing separation, live migration, data audit, entity/table management
 - [x] Collections: IPageable, ITreeable (Data.Abstractions)
 - [x] Stores: GuidStoreIdentifierGenerator, GuidStoreInitializer, StoreHub
 
