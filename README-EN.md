@@ -1,10 +1,13 @@
 Librame.Extensions Series
 =========================
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/librame/extensions/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-orange.svg)](https://github.com/librame/extensions/blob/master/LICENSE)
 [![Available on NuGet https://www.nuget.org/packages?q=Librame.Extensions](https://img.shields.io/nuget/v/Librame.Extensions.svg?style=flat-square)](https://www.nuget.org/packages?q=Librame.Extensions)
+[![Join the chat at https://gitter.im/librame/extensions](https://img.shields.io/gitter/room/librame/extensions.js.svg?style=flat-square)](https://gitter.im/librame/extensions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 English | [简体中文](/README.md)
+
+A new [LibrameTick.Extensions](https://github.com/librame/extensions-tick) framework for.NET 6 is now available.
 
 Librame.Extensions is a library of basic tools series based on the .NET Standard/Framework, including Core, Data, Drawing, Encryption, Network, Storage, and more.
 
